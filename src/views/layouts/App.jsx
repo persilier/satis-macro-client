@@ -1,9 +1,10 @@
 import React from 'react';
+import FormBuilder from "../../modules/SAT20-137/views/components/FormBuilder";
 
 function App() {
     return (
-        <div className="App">
-            <h1>Satis client 2020</h1>
+        <div>
+            <FormBuilder getFormData={(data) => console.log(data)}/>
         </div>
     );
 }
