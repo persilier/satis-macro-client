@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Modal from "./Modal";
 import styled from "styled-components";
 import EditPanelModal from "./EditPanelModal.jsx";
-import {PANEL_ONE} from "../../constants/globalConstants";
+import {PANEL_ONE, PANEL_TWO} from "../constants/globalConstants";
 import TextField from "./TextField";
 import Textarea from "./Textarea";
 import Select from "./Select";
@@ -12,13 +12,19 @@ const ActionButton = styled.span`
     cursor: pointer;
 `;
 
-const LayoutTwo = (props) => {
+const LayoutOne = (props) => {
+    const panel1 = props.editFormData ? props.editFormData.content["panel-1"] : {title: 'Panel 1', content: []};
+    const panel2 = props.editFormData ? props.editFormData.content["panel-2"] : {title: 'Panel 2', content: []};
+    const actionData = props.editFormData ? props.editFormData.content.action : {title: '', endpoint: '/login'};
+    const descriptionData = props.editFormData ? props.editFormData.description : '';
+
     const [showModal, setShowModal] = useState(false);
     const [showEditPanelModal, setShowEditPanelModal] = useState(false);
     const [editPanel, setEditPanel] = useState(undefined);
-    const [panelOne, setPanelOne] = useState({title: 'Panel 1', content: []});
-    const [action, setAction] = useState({title: '', endpoint: '/login'});
-    const [description, setDescription] = useState('');
+    const [panelOne, setPanelOne] = useState(panel1);
+    const [panelTwo, setPanelTwo] = useState(panel2);
+    const [action, setAction] = useState(actionData);
+    const [description, setDescription] = useState(descriptionData);
 
     const onClickAddButton = (layout) => {
         setEditPanel(layout);
@@ -51,10 +57,24 @@ const LayoutTwo = (props) => {
         setPanelOne(newPanelOne);
     };
 
+    const updatePanelTwo = (title) => {
+        const newPanelTwo = {
+            ...panelTwo,
+            title: title
+        };
+        setPanelTwo(newPanelTwo);
+    };
+
     const addElementPanelOne = (element) => {
         let newPanelOne = panelOne;
         newPanelOne.content.push(element);
         setPanelOne(newPanelOne);
+    };
+
+    const addElementPanelTwo = (element) => {
+        let newPanelTwo = panelTwo;
+        newPanelTwo.content.push(element);
+        setPanelTwo(newPanelTwo);
     };
 
     const onClickSaveButton = () => {
@@ -64,6 +84,7 @@ const LayoutTwo = (props) => {
             content: {
                 'layout': 'layout-1',
                 'panel-1': panelOne,
+                'panel-2': panelTwo,
                 'action': action,
             }
         };
@@ -71,41 +92,29 @@ const LayoutTwo = (props) => {
     };
 
     const deleteInput = (index, panel) => {
-        let newPanelOne = {...panelOne};
-        newPanelOne.content.splice(index, 1);
-        setPanelOne(newPanelOne);
+        if (panel === 'panel-1') {
+            let newPanelOne = {...panelOne};
+            newPanelOne.content.splice(index, 1);
+            setPanelOne(newPanelOne);
+        } else {
+            let newPanelTwo = {...panelTwo};
+            newPanelTwo.content.splice(index, 1);
+            setPanelTwo(newPanelTwo);
+        }
     };
 
     const printInputs = (input, index, panel) => {
         if (input.type === 'text' || input.type === 'password' || input.type === 'email' || input.type === 'number' || input.type === 'date' || input.type === 'file' || input.type === 'tel') {
             return (
-                <TextField
-                    deleteInput={(index, panel) => deleteInput(index, panel)}
-                    key={index}
-                    input={input}
-                    panel={panel}
-                    index={index}
-                />
+                <TextField deleteInput={(index, panel) => deleteInput(index, panel)} key={index} input={input} index={index} panel={panel}/>
             )
         } else if (input.type === 'textarea') {
             return (
-                <Textarea
-                    deleteInput={(index, panel) => deleteInput(index, panel)}
-                    key={index}
-                    input={input}
-                    panel={panel}
-                    index={index}
-                />
+                <Textarea deleteInput={(index, panel) => deleteInput(index, panel)} key={index} input={input} panel={panel}/>
             )
         } else if (input.type === 'select' || input.type === 'checkbox-group' || input.type === 'radio-group') {
             return (
-                <Select
-                    deleteInput={(index, panel) => deleteInput(index, panel)}
-                    key={index}
-                    input={input}
-                    panel={panel}
-                    index={index}
-                />
+                <Select deleteInput={(index, panel) => deleteInput(index, panel)} key={index} input={input} panel={panel}/>
             );
         }
     };
@@ -140,7 +149,7 @@ const LayoutTwo = (props) => {
             </div>
 
             <div className={"row"}>
-                <div className="col">
+                <div className="col" style={{paddingRight: '1px'}}>
                     <div className="card">
                         <div className="card-header" style={{display: "flex"}}>
                             {panelOne.title}
@@ -161,6 +170,35 @@ const LayoutTwo = (props) => {
                                     <div className="form-row">
                                         {
                                             panelOne.content.map((input, index) => printInputs(input, index, 'panel-1'))
+                                        }
+                                    </div>
+                                ) : 'Veillez editer votre panel'
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col" style={{paddingLeft: '1px'}}>
+                    <div className="card">
+                        <div className="card-header" style={{display: "flex"}}>
+                            {panelTwo.title}
+                            <ActionButton>
+                                <i
+                                    className={"fa fa-pencil-square-o mr-1"}
+                                    onClick={() => onClickEditButton(PANEL_TWO)}
+                                />
+                                <i
+                                    className={"fa fa-plus ml-1"}
+                                    onClick={() => onClickAddButton(PANEL_TWO)}
+                                />
+                            </ActionButton>
+                        </div>
+                        <div className="card-body">
+                            {
+                                panelTwo.content.length ? (
+                                    <div className="form-row">
+                                        {
+                                            panelTwo.content.map((index, input) => printInputs(index, input, 'panel-2'))
                                         }
                                     </div>
                                 ) : 'Veillez editer votre panel'
@@ -190,7 +228,7 @@ const LayoutTwo = (props) => {
 
             <div className="form-row mt-3" style={{display: "flex", justifyContent: "flex-end"}}>
                 {
-                    props.defaultLayoutSelected ? '' : (
+                    props.layoutSelected ? '' : (
                         <button
                             onClick={() => returnLayoutChoice()}
                             className={"btn btn-default ml-2 pr-5 pl-5"}
@@ -211,6 +249,7 @@ const LayoutTwo = (props) => {
                 isOpen={showModal}
                 panel={editPanel}
                 panelOne={addElementPanelOne}
+                panelTwo={addElementPanelTwo}
                 onRequestClose={handleCloseModal}
                 contentLabel="Minimal Modal Example"
                 ariaHideApp={false}
@@ -220,6 +259,7 @@ const LayoutTwo = (props) => {
             <EditPanelModal
                 panel={editPanel}
                 panelOne={updatePanelOne}
+                panelTwo={updatePanelTwo}
                 isOpen={showEditPanelModal}
                 onRequestClose={handleCloseEditPanelModal}
                 contentLabel="Minimal Modal Example"
@@ -230,4 +270,4 @@ const LayoutTwo = (props) => {
     );
 };
 
-export default LayoutTwo;
+export default LayoutOne;

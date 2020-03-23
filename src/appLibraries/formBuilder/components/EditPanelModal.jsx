@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import ReactModal from "react-modal";
-import {PANEL_ONE, PANEL_TWO} from "../../constants/globalConstants";
+import {PANEL_ONE, PANEL_TWO} from "../constants/globalConstants";
 
 const EditPanelModal = (props) => {
     const [title, setTitle] = useState('');

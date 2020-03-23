@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Modal from "./Modal";
 import styled from "styled-components";
 import EditPanelModal from "./EditPanelModal.jsx";
-import {PANEL_ONE, PANEL_THREE, PANEL_TWO} from "../../constants/globalConstants";
+import {PANEL_ONE, PANEL_THREE, PANEL_TWO} from "../constants/globalConstants";
 import TextField from "./TextField";
 import Textarea from "./Textarea";
 import Select from "./Select";
@@ -13,14 +13,20 @@ const ActionButton = styled.span`
 `;
 
 const LayoutFour = (props) => {
+    const panel1 = props.editFormData ? props.editFormData.content["panel-1"] : {title: 'Panel 1', content: []};
+    const panel2 = props.editFormData ? props.editFormData.content["panel-2"] : {title: 'Panel 2', content: []};
+    const panel3 = props.editFormData ? props.editFormData.content["panel-3"] : {title: 'Panel 3', content: []};
+    const actionData = props.editFormData ? props.editFormData.content.action : {title: '', endpoint: '/login'};
+    const descriptionData = props.editFormData ? props.editFormData.description : '';
+
     const [showModal, setShowModal] = useState(false);
     const [showEditPanelModal, setShowEditPanelModal] = useState(false);
     const [editPanel, setEditPanel] = useState(undefined);
-    const [panelOne, setPanelOne] = useState({title: 'Panel 1', content: []});
-    const [panelTwo, setPanelTwo] = useState({title: 'Panel 2', content: []});
-    const [panelThree, setPanelThree] = useState({title: 'Panel 3', content: []});
-    const [action, setAction] = useState({title: '', endpoint: '/login'});
-    const [description, setDescription] = useState('');
+    const [panelOne, setPanelOne] = useState(panel1);
+    const [panelTwo, setPanelTwo] = useState(panel2);
+    const [panelThree, setPanelThree] = useState(panel3);
+    const [action, setAction] = useState(actionData);
+    const [description, setDescription] = useState(descriptionData);
 
     const onClickAddButton = (layout) => {
         setEditPanel(layout);
@@ -92,7 +98,7 @@ const LayoutFour = (props) => {
             name: '',
             description: description,
             content: {
-                'layout': 'layout-1',
+                'layout': 'layout-4',
                 'panel-1': panelOne,
                 'panel-2': panelTwo,
                 'panel-3': panelThree,
@@ -294,7 +300,7 @@ const LayoutFour = (props) => {
 
             <div className="form-row mt-3" style={{display: "flex", justifyContent: "flex-end"}}>
                 {
-                    props.defaultLayoutSelected ? '' : (
+                    props.layoutSelected ? '' : (
                         <button
                             onClick={() => returnLayoutChoice()}
                             className={"btn btn-default ml-2 pr-5 pl-5"}

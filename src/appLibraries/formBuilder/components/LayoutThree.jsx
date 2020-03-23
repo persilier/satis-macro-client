@@ -1,8 +1,7 @@
 import React, {useState} from "react";
 import Modal from "./Modal";
 import styled from "styled-components";
-import EditPanelModal from "./EditPanelModal.jsx";
-import {PANEL_ONE, PANEL_TWO} from "../../constants/globalConstants";
+import {PANEL_ONE} from "../constants/globalConstants";
 import TextField from "./TextField";
 import Textarea from "./Textarea";
 import Select from "./Select";
@@ -12,52 +11,28 @@ const ActionButton = styled.span`
     cursor: pointer;
 `;
 
-const LayoutOne = (props) => {
+const LayoutThree = (props) => {
+    const contentData = props.editFormData ? props.editFormData.content.content : [];
+    const actionData = props.editFormData ? props.editFormData.content.action : {title: '', endpoint: '/login'};
+    const descriptionData = props.editFormData ? props.editFormData.description : '';
+
     const [showModal, setShowModal] = useState(false);
-    const [showEditPanelModal, setShowEditPanelModal] = useState(false);
+    const [panelOne, setPanelOne] = useState({content: contentData});
+    const [action, setAction] = useState(actionData);
+    const [description, setDescription] = useState(descriptionData);
     const [editPanel, setEditPanel] = useState(undefined);
-    const [panelOne, setPanelOne] = useState({title: 'Panel 1', content: []});
-    const [panelTwo, setPanelTwo] = useState({title: 'Panel 2', content: []});
-    const [action, setAction] = useState({title: '', endpoint: '/login'});
-    const [description, setDescription] = useState('');
 
     const onClickAddButton = (layout) => {
         setEditPanel(layout);
         setShowModal(true);
     };
 
-    const onClickEditButton = (layout) => {
-        setEditPanel(layout);
-        setShowEditPanelModal(true);
-    };
-
     const handleCloseModal =  () => {
         setShowModal(false);
     };
 
-    const handleCloseEditPanelModal =  () => {
-        setEditPanel(undefined);
-        setShowEditPanelModal(false);
-    };
-
     const returnLayoutChoice = () => {
         props.returnLayoutChoice();
-    };
-
-    const updatePanelOne = (title) => {
-        const newPanelOne = {
-            ...panelOne,
-            title: title
-        };
-        setPanelOne(newPanelOne);
-    };
-
-    const updatePanelTwo = (title) => {
-        const newPanelTwo = {
-            ...panelTwo,
-            title: title
-        };
-        setPanelTwo(newPanelTwo);
     };
 
     const addElementPanelOne = (element) => {
@@ -66,20 +41,13 @@ const LayoutOne = (props) => {
         setPanelOne(newPanelOne);
     };
 
-    const addElementPanelTwo = (element) => {
-        let newPanelTwo = panelTwo;
-        newPanelTwo.content.push(element);
-        setPanelTwo(newPanelTwo);
-    };
-
     const onClickSaveButton = () => {
         const newForm = {
             name: '',
             description: description,
             content: {
-                'layout': 'layout-1',
-                'panel-1': panelOne,
-                'panel-2': panelTwo,
+                'layout': 'layout-3',
+                'content': panelOne.content,
                 'action': action,
             }
         };
@@ -87,29 +55,41 @@ const LayoutOne = (props) => {
     };
 
     const deleteInput = (index, panel) => {
-        if (panel === 'panel-1') {
-            let newPanelOne = {...panelOne};
-            newPanelOne.content.splice(index, 1);
-            setPanelOne(newPanelOne);
-        } else {
-            let newPanelTwo = {...panelTwo};
-            newPanelTwo.content.splice(index, 1);
-            setPanelTwo(newPanelTwo);
-        }
+        let newPanelOne = {...panelOne};
+        newPanelOne.content.splice(index, 1);
+        setPanelOne(newPanelOne);
     };
 
     const printInputs = (input, index, panel) => {
         if (input.type === 'text' || input.type === 'password' || input.type === 'email' || input.type === 'number' || input.type === 'date' || input.type === 'file' || input.type === 'tel') {
             return (
-                <TextField deleteInput={(index, panel) => deleteInput(index, panel)} key={index} input={input} index={index} panel={panel}/>
+                <TextField
+                    deleteInput={(index, panel) => deleteInput(index, panel)}
+                    key={index}
+                    input={input}
+                    panel={panel}
+                    index={index}
+                />
             )
         } else if (input.type === 'textarea') {
             return (
-                <Textarea deleteInput={(index, panel) => deleteInput(index, panel)} key={index} input={input} panel={panel}/>
+                <Textarea
+                    deleteInput={(index, panel) => deleteInput(index, panel)}
+                    key={index}
+                    input={input}
+                    panel={panel}
+                    index={index}
+                />
             )
         } else if (input.type === 'select' || input.type === 'checkbox-group' || input.type === 'radio-group') {
             return (
-                <Select deleteInput={(index, panel) => deleteInput(index, panel)} key={index} input={input} panel={panel}/>
+                <Select
+                    deleteInput={(index, panel) => deleteInput(index, panel)}
+                    key={index}
+                    input={input}
+                    panel={panel}
+                    index={index}
+                />
             );
         }
     };
@@ -144,59 +124,23 @@ const LayoutOne = (props) => {
             </div>
 
             <div className={"row"}>
-                <div className="col" style={{paddingRight: '1px'}}>
+                <div className="col">
                     <div className="card">
-                        <div className="card-header" style={{display: "flex"}}>
-                            {panelOne.title}
-                            <ActionButton>
-                                <i
-                                    className={"fa fa-pencil-square-o mr-1"}
-                                    onClick={() => onClickEditButton(PANEL_ONE)}
-                                />
-                                <i
-                                    className={"fa fa-plus ml-1"}
-                                    onClick={() => onClickAddButton(PANEL_ONE)}
-                                />
-                            </ActionButton>
-                        </div>
+                        <ActionButton>
+                            <i
+                                className={"fa fa-plus ml-1 mr-3"}
+                                onClick={() => onClickAddButton(PANEL_ONE)}
+                            />
+                        </ActionButton>
                         <div className="card-body">
                             {
                                 panelOne.content.length ? (
                                     <div className="form-row">
                                         {
-                                            panelOne.content.map((input, index) => printInputs(input, index, 'panel-1'))
+                                            panelOne.content.map((input, index) => printInputs(input, index, 'without-panel'))
                                         }
                                     </div>
-                                ) : 'Veillez editer votre panel'
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col" style={{paddingLeft: '1px'}}>
-                    <div className="card">
-                        <div className="card-header" style={{display: "flex"}}>
-                            {panelTwo.title}
-                            <ActionButton>
-                                <i
-                                    className={"fa fa-pencil-square-o mr-1"}
-                                    onClick={() => onClickEditButton(PANEL_TWO)}
-                                />
-                                <i
-                                    className={"fa fa-plus ml-1"}
-                                    onClick={() => onClickAddButton(PANEL_TWO)}
-                                />
-                            </ActionButton>
-                        </div>
-                        <div className="card-body">
-                            {
-                                panelTwo.content.length ? (
-                                    <div className="form-row">
-                                        {
-                                            panelTwo.content.map((index, input) => printInputs(index, input, 'panel-2'))
-                                        }
-                                    </div>
-                                ) : 'Veillez editer votre panel'
+                                ) : 'Veillez editer votre Formulaire'
                             }
                         </div>
                     </div>
@@ -223,7 +167,7 @@ const LayoutOne = (props) => {
 
             <div className="form-row mt-3" style={{display: "flex", justifyContent: "flex-end"}}>
                 {
-                    props.defaultLayoutSelected ? '' : (
+                    props.layoutSelected ? "" : (
                         <button
                             onClick={() => returnLayoutChoice()}
                             className={"btn btn-default ml-2 pr-5 pl-5"}
@@ -244,25 +188,13 @@ const LayoutOne = (props) => {
                 isOpen={showModal}
                 panel={editPanel}
                 panelOne={addElementPanelOne}
-                panelTwo={addElementPanelTwo}
                 onRequestClose={handleCloseModal}
                 contentLabel="Minimal Modal Example"
                 ariaHideApp={false}
                 handleCloseModal={handleCloseModal}
             />
-
-            <EditPanelModal
-                panel={editPanel}
-                panelOne={updatePanelOne}
-                panelTwo={updatePanelTwo}
-                isOpen={showEditPanelModal}
-                onRequestClose={handleCloseEditPanelModal}
-                contentLabel="Minimal Modal Example"
-                ariaHideApp={false}
-                handleCloseModal={handleCloseEditPanelModal}
-            />
         </div>
     );
 };
 
-export default LayoutOne;
+export default LayoutThree;

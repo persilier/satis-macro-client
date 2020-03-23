@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import Modal from "./Modal";
 import styled from "styled-components";
-import {PANEL_ONE} from "../../constants/globalConstants";
+import EditPanelModal from "./EditPanelModal.jsx";
+import {PANEL_ONE} from "../constants/globalConstants";
 import TextField from "./TextField";
 import Textarea from "./Textarea";
 import Select from "./Select";
@@ -11,24 +12,47 @@ const ActionButton = styled.span`
     cursor: pointer;
 `;
 
-const LayoutThree = (props) => {
+const LayoutTwo = (props) => {
+    const panel = props.editFormData ? props.editFormData.content["panel-1"] : {title: 'Panel 1', content: []};
+    const actionData = props.editFormData ? props.editFormData.content.action : {title: '', endpoint: '/login'};
+    const descriptionData = props.editFormData ? props.editFormData.description : '';
+
     const [showModal, setShowModal] = useState(false);
-    const [panelOne, setPanelOne] = useState({content: []});
-    const [action, setAction] = useState({title: '', endpoint: '/login'});
-    const [description, setDescription] = useState('');
+    const [showEditPanelModal, setShowEditPanelModal] = useState(false);
     const [editPanel, setEditPanel] = useState(undefined);
+    const [panelOne, setPanelOne] = useState(panel);
+    const [action, setAction] = useState(actionData);
+    const [description, setDescription] = useState(descriptionData);
 
     const onClickAddButton = (layout) => {
         setEditPanel(layout);
         setShowModal(true);
     };
 
+    const onClickEditButton = (layout) => {
+        setEditPanel(layout);
+        setShowEditPanelModal(true);
+    };
+
     const handleCloseModal =  () => {
         setShowModal(false);
     };
 
+    const handleCloseEditPanelModal =  () => {
+        setEditPanel(undefined);
+        setShowEditPanelModal(false);
+    };
+
     const returnLayoutChoice = () => {
         props.returnLayoutChoice();
+    };
+
+    const updatePanelOne = (title) => {
+        const newPanelOne = {
+            ...panelOne,
+            title: title
+        };
+        setPanelOne(newPanelOne);
     };
 
     const addElementPanelOne = (element) => {
@@ -42,8 +66,8 @@ const LayoutThree = (props) => {
             name: '',
             description: description,
             content: {
-                'layout': 'layout-3',
-                'content': panelOne.content,
+                'layout': 'layout-2',
+                'panel-1': panelOne,
                 'action': action,
             }
         };
@@ -122,21 +146,28 @@ const LayoutThree = (props) => {
             <div className={"row"}>
                 <div className="col">
                     <div className="card">
-                        <ActionButton>
-                            <i
-                                className={"fa fa-plus ml-1 mr-3"}
-                                onClick={() => onClickAddButton(PANEL_ONE)}
-                            />
-                        </ActionButton>
+                        <div className="card-header" style={{display: "flex"}}>
+                            {panelOne.title}
+                            <ActionButton>
+                                <i
+                                    className={"fa fa-pencil-square-o mr-1"}
+                                    onClick={() => onClickEditButton(PANEL_ONE)}
+                                />
+                                <i
+                                    className={"fa fa-plus ml-1"}
+                                    onClick={() => onClickAddButton(PANEL_ONE)}
+                                />
+                            </ActionButton>
+                        </div>
                         <div className="card-body">
                             {
                                 panelOne.content.length ? (
                                     <div className="form-row">
                                         {
-                                            panelOne.content.map((input, index) => printInputs(input, index, 'without-panel'))
+                                            panelOne.content.map((input, index) => printInputs(input, index, 'panel-1'))
                                         }
                                     </div>
-                                ) : 'Veillez editer votre Formulaire'
+                                ) : 'Veillez editer votre panel'
                             }
                         </div>
                     </div>
@@ -163,7 +194,7 @@ const LayoutThree = (props) => {
 
             <div className="form-row mt-3" style={{display: "flex", justifyContent: "flex-end"}}>
                 {
-                    props.defaultLayoutSelected ? '' : (
+                    props.layoutSelected ? "" : (
                         <button
                             onClick={() => returnLayoutChoice()}
                             className={"btn btn-default ml-2 pr-5 pl-5"}
@@ -189,8 +220,18 @@ const LayoutThree = (props) => {
                 ariaHideApp={false}
                 handleCloseModal={handleCloseModal}
             />
+
+            <EditPanelModal
+                panel={editPanel}
+                panelOne={updatePanelOne}
+                isOpen={showEditPanelModal}
+                onRequestClose={handleCloseEditPanelModal}
+                contentLabel="Minimal Modal Example"
+                ariaHideApp={false}
+                handleCloseModal={handleCloseEditPanelModal}
+            />
         </div>
     );
 };
 
-export default LayoutThree;
+export default LayoutTwo;

@@ -7,7 +7,7 @@ import ConfigSelect from "./ConfigSelect";
 import ConfigCheckboxGroup from "./ConfigCheckboxGroup";
 import ConfigRadioGroup from "./ConfigRadioGroup";
 import ListElement from "./ListElements";
-import {PANEL_ONE, PANEL_TWO} from "../../constants/globalConstants";
+import {PANEL_ONE, PANEL_TWO} from "../constants/globalConstants";
 
 const Modal = (props) => {
     const [informChild, setInformChild] = useState(false);
