@@ -7,6 +7,12 @@ import LayoutOne from "./LayoutOne";
 import LayoutTwo from "./LayoutTwo";
 import LayoutThree from "./LayoutThree";
 import LayoutFour from "./LayoutFour";
+import {loadCss, loadScript} from "../../../helpers/function";
+
+/*loadCss("assets/plugins/global/plugins.bundle.css");
+loadCss("assets/css/style.bundle.css");
+loadScript("assets/plugins/global/plugins.bundle.js");
+loadScript("assets/js/scripts.bundle.js");*/
 
 const FormBuilder = (props) => {
     let choice = undefined;

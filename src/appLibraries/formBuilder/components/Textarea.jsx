@@ -21,7 +21,7 @@ const Textarea = (props) => {
 
     return (
         <div
-            className={input.inputClass}
+            className={input.inputClass+" mb-4"}
             onMouseEnter={() => setEdit(true)}
             onMouseLeave={() => setEdit(false)}
         >

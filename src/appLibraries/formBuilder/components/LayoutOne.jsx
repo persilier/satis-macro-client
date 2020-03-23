@@ -148,62 +148,86 @@ const LayoutOne = (props) => {
                 </div>
             </div>
 
-            <div className={"row"}>
-                <div className="col" style={{paddingRight: '1px'}}>
-                    <div className="card">
-                        <div className="card-header" style={{display: "flex"}}>
-                            {panelOne.title}
-                            <ActionButton>
-                                <i
-                                    className={"fa fa-pencil-square-o mr-1"}
-                                    onClick={() => onClickEditButton(PANEL_ONE)}
-                                />
-                                <i
-                                    className={"fa fa-plus ml-1"}
-                                    onClick={() => onClickAddButton(PANEL_ONE)}
-                                />
-                            </ActionButton>
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="kt-portlet">
+                        <div className="kt-portlet__head kt-portlet__head--lg">
+                            <div className="kt-portlet__head-label">
+                                <h3 className="kt-portlet__head-title">
+                                    {panelOne.title}
+                                </h3>
+                            </div>
+                            <div className="kt-portlet__head-toolbar">
+                                <h6>
+                                    <ActionButton>
+                                        <i
+                                            className={"fa fa-pencil-square-o mr-1"}
+                                            onClick={() => onClickEditButton(PANEL_ONE)}
+                                        />
+                                        <i
+                                            className={"fa fa-plus ml-1"}
+                                            onClick={() => onClickAddButton(PANEL_ONE)}
+                                        />
+                                    </ActionButton>
+                                </h6>
+                            </div>
                         </div>
-                        <div className="card-body">
-                            {
-                                panelOne.content.length ? (
-                                    <div className="form-row">
-                                        {
-                                            panelOne.content.map((input, index) => printInputs(input, index, 'panel-1'))
-                                        }
-                                    </div>
-                                ) : 'Veillez editer votre panel'
-                            }
+
+                        <div className="kt-form">
+                            <div className="kt-portlet__body">
+                                {
+                                    panelOne.content.length ? (
+                                        <div className="form-row">
+                                            {
+                                                panelOne.content.map((input, index) => printInputs(input, index, 'panel-1'))
+                                            }
+                                        </div>
+                                    ) : 'Veillez editer votre panel'
+                                }
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
-                <div className="col" style={{paddingLeft: '1px'}}>
-                    <div className="card">
-                        <div className="card-header" style={{display: "flex"}}>
-                            {panelTwo.title}
-                            <ActionButton>
-                                <i
-                                    className={"fa fa-pencil-square-o mr-1"}
-                                    onClick={() => onClickEditButton(PANEL_TWO)}
-                                />
-                                <i
-                                    className={"fa fa-plus ml-1"}
-                                    onClick={() => onClickAddButton(PANEL_TWO)}
-                                />
-                            </ActionButton>
+                <div className="col-md-6">
+                    <div className="kt-portlet">
+                        <div className="kt-portlet__head kt-portlet__head--lg">
+                            <div className="kt-portlet__head-label">
+                                <h3 className="kt-portlet__head-title">
+                                    {panelTwo.title}
+                                </h3>
+                            </div>
+                            <div className="kt-portlet__head-toolbar">
+                                <h6>
+                                    <ActionButton>
+                                        <i
+                                            className={"fa fa-pencil-square-o mr-1"}
+                                            onClick={() => onClickEditButton(PANEL_TWO)}
+                                        />
+                                        <i
+                                            className={"fa fa-plus ml-1"}
+                                            onClick={() => onClickAddButton(PANEL_TWO)}
+                                        />
+                                    </ActionButton>
+                                </h6>
+                            </div>
                         </div>
-                        <div className="card-body">
-                            {
-                                panelTwo.content.length ? (
-                                    <div className="form-row">
-                                        {
-                                            panelTwo.content.map((index, input) => printInputs(index, input, 'panel-2'))
-                                        }
-                                    </div>
-                                ) : 'Veillez editer votre panel'
-                            }
+
+                        <div className="kt-form">
+                            <div className="kt-portlet__body">
+                                {
+                                    panelTwo.content.length ? (
+                                        <div className="form-row">
+                                            {
+                                                panelTwo.content.map((index, input) => printInputs(index, input, 'panel-2'))
+                                            }
+                                        </div>
+                                    ) : 'Veillez editer votre panel'
+                                }
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
