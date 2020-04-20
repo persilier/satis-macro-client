@@ -125,14 +125,16 @@ const ConfigSelect = (props) => {
 
                 <div className="col">
                     <label htmlFor="name">Name</label>
-                    <input id={"name"} type="text" className="form-control" value={name} onChange={(e) => onChangeInput(e)}/>
+                    <input id={"name"} type="text" className="form-control" value={name}
+                           onChange={(e) => onChangeInput(e)}/>
                 </div>
             </div>
 
             <div className="form-row">
                 <div className="col">
                     <label htmlFor="model">Model</label>
-                    <select name="model" id="model" className="form-control" value={model} onChange={(e) => onChangeInput(e)}>
+                    <select name="model" id="model" className="form-control" value={model}
+                            onChange={(e) => onChangeInput(e)}>
                         <option value="Actor">Actor</option>
                         <option value="Institution">Institution</option>
                         <option value="User">User</option>
@@ -159,17 +161,20 @@ const ConfigSelect = (props) => {
             <div className="form-row">
                 <div className="col">
                     <label htmlFor="minLength">Min length</label>
-                    <input id={"minLength"} type="number" className={"form-control"} value={minLength} onChange={(e) => onChangeInput(e)}/>
+                    <input id={"minLength"} type="number" className={"form-control"} value={minLength}
+                           onChange={(e) => onChangeInput(e)}/>
                 </div>
 
                 <div className="col">
                     <label htmlFor="maxLength">Max length</label>
-                    <input id={"maxLength"} type="number" className={"form-control"} value={maxLength} onChange={(e) => onChangeInput(e)}/>
+                    <input id={"maxLength"} type="number" className={"form-control"} value={maxLength}
+                           onChange={(e) => onChangeInput(e)}/>
                 </div>
 
                 <div className="col">
                     <label htmlFor="regExp">RegExp</label>
-                    <input id={"regExp"} type="text" className={"form-control"} value={regExp} onChange={(e) => onChangeInput(e)}/>
+                    <input id={"regExp"} type="text" className={"form-control"} value={regExp}
+                           onChange={(e) => onChangeInput(e)}/>
                 </div>
             </div>
         </div>

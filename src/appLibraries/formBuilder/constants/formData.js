@@ -1,112 +1,112 @@
-export const exampleOne = {
-    'layout': 'layout-1',
-    'panel-1': {
-        title: 'Panel 1',
-        content: [
-            {
-                ...
-            },
-            {
-                ...
-            },
-        ]
-    },
-    'panel-2': {
-        title: 'Panel 2',
-        content: [
-            {
-                ...
-            },
-            {
-                ...
-            },
-        ]
-    },
-    'action': {
-        title: 'Envoyer',
-        endpoint: '/login'
-    }
-};
+// export const exampleOne = {
+//     'layout': 'layout-1',
+//     'panel-1': {
+//         title: 'Panel 1',
+//         content: [
+//             {
+//                 ...
+//             },
+//             {
+//                 ...
+//             },
+//         ]
+//     },
+//     'panel-2': {
+//         title: 'Panel 2',
+//         content: [
+//             {
+//                 ...
+//             },
+//             {
+//                 ...
+//             },
+//         ]
+//     },
+//     'action': {
+//         title: 'Envoyer',
+//         endpoint: '/login'
+//     }
+// };
+//
+// export const exampleTwo = {
+//     'layout': 'layout-2',
+//     'panel-1': {
+//         title: 'Panel 1',
+//         content: [
+//             {
+//                 ...
+//             },
+//             {
+//                 ...
+//             },
+//         ]
+//     },
+//     'action': {
+//         title: 'Envoyer',
+//         endpoint: '/login'
+//     }
+// };
+//
+// export const exampleThree = {
+//     layout: 'layout-3',
+//     content: [
+//         {
+//             ...
+//         },
+//         {
+//             ...
+//         },
+//     ],
+//     'action': {
+//         title: 'Envoyer',
+//         endpoint: '/login'
+//     }
+// };
+//
+// export const exampleFour = {
+//     'layout': 'layout-4',
+//     'panel-1': {
+//         title: 'Panel 1',
+//         content: [
+//             {
+//                 ...
+//             },
+//             {
+//                 ...
+//             },
+//         ]
+//     },
+//     'panel-2': {
+//         title: 'Panel 2',
+//         content: [
+//             {
+//                 ...
+//             },
+//             {
+//                 ...
+//             },
+//         ]
+//     },
+//     'panel-3': {
+//         title: 'Panel 3',
+//         content: [
+//             {
+//                 ...
+//             },
+//             {
+//                 ...
+//             },
+//         ]
+//     }
+//     ,
+//     'action': {
+//         title: 'Envoyer',
+//         endpoint: '/login'
+//     }
+// };
 
-export const exampleTwo = {
-    'layout': 'layout-2',
-    'panel-1': {
-        title: 'Panel 1',
-        content: [
-            {
-                ...
-            },
-            {
-                ...
-            },
-        ]
-    },
-    'action': {
-        title: 'Envoyer',
-        endpoint: '/login'
-    }
-};
 
-export const exampleThree = {
-    layout: 'layout-3',
-    content: [
-        {
-            ...
-        },
-        {
-            ...
-        },
-    ],
-    'action': {
-        title: 'Envoyer',
-        endpoint: '/login'
-    }
-};
-
-export const exampleFour = {
-    'layout': 'layout-4',
-    'panel-1': {
-        title: 'Panel 1',
-        content: [
-            {
-                ...
-            },
-            {
-                ...
-            },
-        ]
-    },
-    'panel-2': {
-        title: 'Panel 2',
-        content: [
-            {
-                ...
-            },
-            {
-                ...
-            },
-        ]
-    },
-    'panel-3': {
-        title: 'Panel 3',
-        content: [
-            {
-                ...
-            },
-            {
-                ...
-            },
-        ]
-    }
-    ,
-    'action': {
-        title: 'Envoyer',
-        endpoint: '/login'
-    }
-};
-
-
-var layoutOne = {
+export const layoutOne = {
     "name":"",
     "description": "Formulaire du layout 1",
     "content": {

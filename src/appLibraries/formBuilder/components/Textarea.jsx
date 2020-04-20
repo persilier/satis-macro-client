@@ -46,7 +46,7 @@ const Textarea = (props) => {
                 cols={input.cols}
                 rows={input.rows}
                 onChange={(e) => onChangeInput(e)}
-                value={input.value}
+                value={textarea || ''}
             >
                 {input.value}
             </textarea>

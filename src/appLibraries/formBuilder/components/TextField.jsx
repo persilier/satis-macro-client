@@ -45,7 +45,7 @@ const TextField = (props) => {
                 type={input.type}
                 className="form-control"
                 name={input.name}
-                value={textField}
+                value={textField || ''}
                 onChange={(e) => onChangeInput(e)}
             />
         </div>

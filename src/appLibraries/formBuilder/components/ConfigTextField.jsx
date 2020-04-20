@@ -40,7 +40,7 @@ const ConfigTextField = (props) => {
                 setName(e.target.value);
                 break;
             case 'placeholder':
-                setPlaceholder(e.target.value);
+                 setPlaceholder(e.target.value);
                 break;
             case 'regExp':
                 setRegExp(e.target.value);
