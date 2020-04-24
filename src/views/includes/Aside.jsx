@@ -20,7 +20,7 @@ const Aside = () => {
                             <i className="kt-menu__section-icon flaticon-more-v2"/>
                         </li>
                         <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                            <a href="javascript:;" className="kt-menu__link kt-menu__toggle">
+                            <a href="#" className="kt-menu__link kt-menu__toggle">
                                 <i className="kt-menu__link-icon flaticon-settings"/>
                                 <span className="kt-menu__link-text">Paramètres</span>
                                 <i className="kt-menu__ver-arrow la la-angle-right"/>
@@ -41,16 +41,78 @@ const Aside = () => {
                                     </li>
 
                                     <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/mail" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Mail</span>
-                                        </Link>
-                                    </li>
-
-                                    <li className="kt-menu__item " aria-haspopup="true">
                                         <Link to="/settings/institution" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Institution</span>
+                                        </Link>
+                                    </li>
+
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="#" className="kt-menu__link kt-menu__toggle"><i
+                                            className="kt-menu__link-icon flaticon-customer"></i><span
+                                            className="kt-menu__link-text">Clients</span><i
+                                            className="kt-menu__ver-arrow la la-angle-right"></i></a>
+                                        <div className="kt-menu__submenu "><span className="kt-menu__arrow"></span>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent"
+                                                    aria-haspopup="true"><span className="kt-menu__link"><span
+                                                    className="kt-menu__link-text">Clients</span></span>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true"><Link
+                                                    to="/settings/client" className="kt-menu__link "><i
+                                                    className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                    className="kt-menu__link-text">Client</span></Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true"><Link
+                                                    to="/settings/client/category" className="kt-menu__link "><i
+                                                    className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                    className="kt-menu__link-text"> Category Client</span></Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true"><Link
+                                                    to="/settings/client/type" className="kt-menu__link "><i
+                                                    className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                    className="kt-menu__link-text">Type Client</span></Link>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="#" className="kt-menu__link kt-menu__toggle"><i
+                                        className="kt-menu__link-icon flaticon2-contract"></i><span
+                                        className="kt-menu__link-text">FAQs</span><i
+                                        className="kt-menu__ver-arrow la la-angle-right"></i></a>
+                                        <div className="kt-menu__submenu "><span className="kt-menu__arrow"></span>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent"
+                                                    aria-haspopup="true"><span className="kt-menu__link"><span
+                                                    className="kt-menu__link-text">FAQs</span></span>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true"><Link
+                                                    to="/settings/faq" className="kt-menu__link "><i
+                                                    className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                    className="kt-menu__link-text">Liste des FAQs</span></Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true"><Link
+                                                    to="/settings/faq/addfaq" className="kt-menu__link "><i
+                                                    className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                    className="kt-menu__link-text"> Les FAQs</span></Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true"><Link
+                                                    to="/settings/faq/category" className="kt-menu__link "><i
+                                                    className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span
+                                                    className="kt-menu__link-text">Catégorie</span></Link>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+                                    <li className="kt-menu__item " aria-haspopup="true">
+                                        <Link to="/settings/datatable" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">DataTable</span>
                                         </Link>
                                     </li>
 
@@ -58,41 +120,6 @@ const Aside = () => {
                                         <Link to="/settings/user" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Utilisateur</span>
-                                        </Link>
-                                    </li>
-
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/user" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">FAQ</span>
-                                        </Link>
-                                    </li>
-
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/performance_indicator" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Indicateur de performance</span>
-                                        </Link>
-                                    </li>
-
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/unit_type" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Type d'unité</span>
-                                        </Link>
-                                    </li>
-
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/unit" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Unité</span>
-                                        </Link>
-                                    </li>
-
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/positions" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Position</span>
                                         </Link>
                                     </li>
                                 </ul>

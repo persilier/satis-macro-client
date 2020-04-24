@@ -5314,6 +5314,8 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   --tag-remove-bg:rgba(211, 148, 148, 0.3);
   --tag-remove-btn-bg:none;
   --tag-remove-btn-bg--hover:#c77777;
+  --tag--min-width:1ch;
+  --tag--max-width:auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -5426,7 +5428,8 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   text-overflow: ellipsis;
   display: inline-block;
   vertical-align: top;
-  min-width: 10px; }
+  min-width: var(--tag--min-width);
+  max-width: var(--tag--max-width); }
 
 .tagify__tag > div > [contenteditable] {
   outline: 0;

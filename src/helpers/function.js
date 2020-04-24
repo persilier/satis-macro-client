@@ -34,6 +34,14 @@ export const loadScript = async function(src) {
             tag.id = "profile-info-user";
             removeExistingScript("profile-info-user");
             break;
+            // case "assets/js/pages/components/extended/blockui.js":
+            // tag.id = "blockui";
+            // removeExistingScript("blockui");
+            // break;
+            // case "assets/js/pages/components/extended/sweetalert2.js":
+            // tag.id = "sweetalert2";
+            // removeExistingScript("sweetalert2");
+            // break;
         default:
             break;
     }

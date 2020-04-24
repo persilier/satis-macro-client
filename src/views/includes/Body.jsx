@@ -3,90 +3,65 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import SMS from "../pages/SMS";
-import Mail from "../pages/Mail";
-import PerformanceIndicator from "../pages/PerformanceIndicator";
-import PerformanceEditForm from "../components/PerformanceEditForm";
-import PerformanceAddForm from "../components/PerformanceAddForm";
-import UnitType from "../pages/UnitType";
-import UnitTypeAddForm from "../components/UnitTypeAddForm";
-import UnitTypeEditForm from "../components/UinitTypeEditForm";
-import Unit from "../pages/Unit";
-import UnitAddForm from "../components/UnitAddForm";
-import UnitEditForm from "../components/UnitEditForm";
-import Position from "../pages/Position";
-import PositionAddForm from "../components/PositionAddForm";
-import PositionEditForm from "../components/PositionEditForm";
+import InstitutionPage from "../pages/InstitutionPage";
+import FAQPage from "../pages/FAQPage";
+import FAQS from "../pages/FAQS";
+import FaqCategoryDataTable from "../pages/FaqCategoryDataTable";
+import DataTable from "../components/DataTable";
+import UpdateFaqCategory from "../components/UpdateFaqCategory";
+import UpdateFaq from "../components/UpdateFaq";
+import UpdateInstitution from "../components/UpdateInstitution";
+import CategoryClientPage from "../pages/CategoryClientPage";
+import ClientPage from "../pages/ClientPage";
+import UpdateCategoryClient from "../components/UpdateCategoryClient";
+import TypeClientPage from "../pages/TypeClientPage";
+import UpdateTypeClient from "../components/UpdateTypeClient";
+
 
 const Body = () => {
     return (
         <Switch>
             <Route exact path="/">
-                <SMS/>
+                <FAQPage/>
             </Route>
-
             <Route exact path="/settings/sms">
-                <SMS/>
+                <h1>Coucou!!!</h1>
             </Route>
-
-            <Route exact path="/settings/mail">
-                <Mail/>
+            <Route exact path="/settings/institution">
+                <InstitutionPage/>
             </Route>
-
-            <Route exact path="/settings/performance_indicator">
-                <PerformanceIndicator/>
+            <Route exact path="/settings/faq/category">
+                <FaqCategoryDataTable/>
             </Route>
-
-            <Route excat path="/settings/performance_indicator/add">
-                <PerformanceAddForm/>
+            <Route exact path="/settings/faq/addfaq">
+                <FAQS/>
             </Route>
-
-            <Route excat path="/settings/performance_indicator/detail">
-                <h1>Détail</h1>
+            <Route exact path="/settings/client">
+                <ClientPage/>
             </Route>
-
-            <Route excat path="/settings/performance_indicator/:id/edit">
-                <PerformanceEditForm/>
+            <Route exact path={`/settings/faq/category/:categoryelemtslug`}>
+                <UpdateFaqCategory/>
             </Route>
-
-            <Route exact path="/settings/unit_type">
-                <UnitType/>
+            <Route exact path={`/settings/client/category/:categoryelemtid`}>
+                <UpdateCategoryClient/>
             </Route>
-
-            <Route exact path="/settings/unit_type/add">
-                <UnitTypeAddForm/>
+            <Route exact path={`/settings/faq/:faqelemtslug`}>
+                <UpdateFaq/>
             </Route>
-
-            <Route exact path="/settings/unit_type/detail">
-                <h1>Détail</h1>
+            <Route exact path={`/settings/client/type/:typeelemtid`}>
+                <UpdateTypeClient/>
             </Route>
-
-            <Route exact path="/settings/unit_type/:id/edit">
-                <UnitTypeEditForm/>
+            <Route exact path={`/settings/institution/:institutionelemtslug`}>
+                <UpdateInstitution/>
             </Route>
-
-            <Route exact path="/settings/unit">
-                <Unit/>
+            <Route exact path="/settings/faq">
+                <FAQPage/>
             </Route>
-
-            <Route exact path="/settings/unit/add">
-                <UnitAddForm/>
+            <Route exact path="/settings/client/category">
+                <CategoryClientPage/>
             </Route>
-
-            <Route exact path="/settings/unit/:id/edit">
-                <UnitEditForm/>
-            </Route>
-
-            <Route exact path="/settings/positions">
-                <Position/>
-            </Route>
-
-            <Route exact path="/settings/positions/add">
-                <PositionAddForm/>
-            </Route>
-
-            <Route exact path="/settings/positions/:id/edit">
-                <PositionEditForm/>
+            <Route exact path="/settings/client/type">
+                <TypeClientPage/>
             </Route>
         </Switch>
     );
