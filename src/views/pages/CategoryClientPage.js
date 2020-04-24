@@ -13,11 +13,14 @@ const CategoryClientPage = () => {
             })
     }, []);
 
-    const onDeleted = (elemt) => {
+    const onDeleted = (elemt, index) => {
         axios.delete(`http://127.0.0.1:8000/category-clients/${elemt}`
         )
             .then(function (response) {
                 console.log(response, 'OK');
+                const newCategory=[...data];
+                newCategory.splice(index,1);
+                setData(newCategory)
             })
             .catch(function (response) {
                 console.log(response.response);
