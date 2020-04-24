@@ -1,34 +1,45 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
-} from "../../config/toastConfig";
+    useParams,
+    Link
+} from "react-router-dom";
+import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
+import {ToastBottomEnd} from "./Toast";
 
-const SMS = () => {
+const UnitEditForm = () => {
+    const [unitTypes, setUnitTypes] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+
+    const {id} = useParams();
     const defaultData = {
-        senderID: "",
-        username: "",
-        indicatif: "",
-        password: "",
-        api: ""
+        name: "",
+        description: "",
+        unit_type_id: unitTypes.length ? unitTypes[0].id : "",
+        institution_id: institutions.length ? institutions[0].id : ""
     };
     const defaultError = {
-        senderID: [],
-        username: [],
-        indicatif: [],
-        password: [],
-        api: [],
+        name: [],
+        description: [],
+        unit_type_id: [],
+        institution_id: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+    console.log(data);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/configurations/sms")
+        axios.get(`http://127.0.0.1:8000/units/${id}/edit`)
             .then(response => {
-                const newData = {...defaultData, ...response.data};
+                const newData = {
+                    name: response.data.unit.name.fr,
+                    description: response.data.unit.description.fr,
+                    unit_type_id: response.data.unit.unit_type_id,
+                    institution_id: response.data.unit.institution_id
+                };
+                setUnitTypes(response.data.unitTypes);
+                setInstitutions(response.data.institutions);
                 setData(newData);
             })
             .catch(error => {
@@ -37,33 +48,27 @@ const SMS = () => {
         ;
     }, []);
 
-    const onChangeSenderID = (e) => {
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.senderID = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeUsername = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.username = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
 
-    const onChangeIndicatif = (e) => {
+    const onChangeUnitType = (e) => {
         const newData = {...data};
-        newData.indicatif = e.target.value;
+        newData.unit_type_id = e.target.value;
         setData(newData);
     };
 
-    const onChangePassword = (e) => {
+    const onChangeInstitution = (e) => {
         const newData = {...data};
-        newData.password = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeApi = (e) => {
-        const newData = {...data};
-        newData.api = e.target.value;
+        newData.institution_id = e.target.value;
         setData(newData);
     };
 
@@ -71,13 +76,10 @@ const SMS = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put("http://127.0.0.1:8000/configurations/sms", data)
+        axios.put(`http://127.0.0.1:8000/units/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
-                const newData = {...data};
-                newData.password = "";
-                setData(newData);
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
             })
             .catch(errorRequest => {
@@ -177,7 +179,7 @@ const SMS = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        SMS
+                                        Modification d'unité
                                     </h3>
                                 </div>
                             </div>
@@ -194,40 +196,20 @@ const SMS = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className={error.senderID.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="senderID">Sender ID</label>
-                                        <input
-                                            id="senderID"
-                                            type="text"
-                                            className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le sender ID"
-                                            value={data.senderID}
-                                            onChange={(e) => onChangeSenderID(e)}
-                                        />
-                                        {
-                                            error.senderID.length ? (
-                                                error.senderID.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
 
-                                    </div>
-                                    <div className={error.username.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="username">User Name</label>
+                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="name">Votre name</label>
                                         <input
-                                            id="username"
+                                            id="name"
                                             type="text"
-                                            className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer votre name"
-                                            value={data.username}
-                                            onChange={(e) => onChangeUsername(e)}
+                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer le name"
+                                            value={data.name}
+                                            onChange={(e) => onChangeName(e)}
                                         />
                                         {
-                                            error.username.length ? (
-                                                error.username.map((error, index) => (
+                                            error.name.length ? (
+                                                error.name.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -235,19 +217,21 @@ const SMS = () => {
                                             ) : ""
                                         }
                                     </div>
-                                    <div className={error.password.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="password">Password</label>
-                                        <input
-                                            type="password"
-                                            className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                            id="password"
-                                            placeholder="Password"
-                                            value={data.password}
-                                            onChange={(e) => onChangePassword(e)}
+
+                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="description">La description</label>
+                                        <textarea
+                                            id="description"
+                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer la description"
+                                            cols="30"
+                                            rows="5"
+                                            value={data.description}
+                                            onChange={(e) => onChangeDescription(e)}
                                         />
                                         {
-                                            error.password.length ? (
-                                                error.password.map((error, index) => (
+                                            error.description.length ? (
+                                                error.description.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -255,19 +239,24 @@ const SMS = () => {
                                             ) : ""
                                         }
                                     </div>
-                                    <div className={error.indicatif.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="indicatif">Indicatif Pays</label>
-                                        <input
-                                            type="number"
-                                            className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                            id="indicatif"
-                                            placeholder="Veillez entrer l'indicatif"
-                                            value={data.indicatif}
-                                            onChange={(e) => onChangeIndicatif(e)}
-                                        />
+
+                                    <div className={error.unit_type_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="unit_type">Type d'unite</label>
+                                        <select
+                                            id="institution"
+                                            className={error.unit_type_id.length ? "form-control is-invalid" : "form-control"}
+                                            value={data.unit_type_id}
+                                            onChange={(e) => onChangeUnitType(e)}
+                                        >
+                                            {
+                                                unitTypes.map((unitType, index) => (
+                                                    <option key={index} value={unitType.id}>{unitType.name.fr}</option>
+                                                ))
+                                            }
+                                        </select>
                                         {
-                                            error.indicatif.length ? (
-                                                error.indicatif.map((error, index) => (
+                                            error.unit_type_id.length ? (
+                                                error.unit_type_id.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -275,19 +264,24 @@ const SMS = () => {
                                             ) : ""
                                         }
                                     </div>
-                                    <div className={error.api.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="api">API</label>
-                                        <input
-                                            type="text"
-                                            className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                            id="api"
-                                            placeholder="Veillez entrer l'API"
-                                            value={data.api}
-                                            onChange={(e) => onChangeApi(e)}
-                                        />
+
+                                    <div className={error.institution_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="institution">L'institution</label>
+                                        <select
+                                            id="institution"
+                                            className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                            value={data.institution_id}
+                                            onChange={(e) => onChangeInstitution(e)}
+                                        >
+                                            {
+                                                institutions.map((institution, index) => (
+                                                    <option key={index} value={institution.id}>{institution.name}</option>
+                                                ))
+                                            }
+                                        </select>
                                         {
-                                            error.api.length ? (
-                                                error.api.map((error, index) => (
+                                            error.institution_id.length ? (
+                                                error.institution_id.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -307,6 +301,17 @@ const SMS = () => {
                                                 </button>
                                             )
                                         }
+                                        {
+                                            !startRequest ? (
+                                                <Link to="/settings/unit" className="btn btn-secondary  mx-2">
+                                                    Cancel
+                                                </Link>
+                                            ) : (
+                                                <Link to="/settings/unit" className="btn btn-secondary  mx-2" disabled>
+                                                    Cancel
+                                                </Link>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </form>
@@ -318,4 +323,4 @@ const SMS = () => {
     );
 };
 
-export default SMS;
+export default UnitEditForm;

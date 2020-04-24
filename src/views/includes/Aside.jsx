@@ -81,6 +81,20 @@ const Aside = () => {
                                             <span className="kt-menu__link-text">Type d'unité</span>
                                         </Link>
                                     </li>
+
+                                    <li className="kt-menu__item " aria-haspopup="true">
+                                        <Link to="/settings/unit" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Unité</span>
+                                        </Link>
+                                    </li>
+
+                                    <li className="kt-menu__item " aria-haspopup="true">
+                                        <Link to="/settings/positions" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Position</span>
+                                        </Link>
+                                    </li>
                                 </ul>
                             </div>
                         </li>

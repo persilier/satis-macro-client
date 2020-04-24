@@ -4,6 +4,8 @@ import {
     useParams,
     Link
 } from "react-router-dom";
+import {ToastBottomEnd} from "./Toast";
+import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
 
 const PerformanceEditForm = () => {
     const {id} = useParams();
@@ -17,7 +19,7 @@ const PerformanceEditForm = () => {
         name: [],
         description: [],
         value: [],
-        mesure_unit: [],
+        mesure_unit: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -72,10 +74,12 @@ const PerformanceEditForm = () => {
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
             })
             .catch(errorRequest => {
                 setStartRequest(false);
-                setError({...error, ...errorRequest.response.data.error});
+                setError({...defaultError, ...errorRequest.response.data.error});
+                ToastBottomEnd.fire(toastEditErrorMessageConfig);
             })
         ;
     };
@@ -278,8 +282,7 @@ const PerformanceEditForm = () => {
                                             !startRequest ? (
                                                 <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
                                             ) : (
-                                                <button className="btn btn-primary" type="button" disabled>
-                                                    <span className="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"/>
+                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                     Loading...
                                                 </button>
                                             )

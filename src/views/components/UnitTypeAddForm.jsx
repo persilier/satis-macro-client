@@ -1,69 +1,33 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
-} from "../../config/toastConfig";
+    Link
+} from "react-router-dom";
+import {ToastBottomEnd} from "./Toast";
+import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 
-const SMS = () => {
+const UnitTypeAddForm = () => {
     const defaultData = {
-        senderID: "",
-        username: "",
-        indicatif: "",
-        password: "",
-        api: ""
+        name: "",
+        description: "",
     };
     const defaultError = {
-        senderID: [],
-        username: [],
-        indicatif: [],
-        password: [],
-        api: [],
+        name: [],
+        description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
-    useEffect(() => {
-        axios.get("http://127.0.0.1:8000/configurations/sms")
-            .then(response => {
-                const newData = {...defaultData, ...response.data};
-                setData(newData);
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            })
-        ;
-    }, []);
-
-    const onChangeSenderID = (e) => {
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.senderID = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeUsername = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.username = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeIndicatif = (e) => {
-        const newData = {...data};
-        newData.indicatif = e.target.value;
-        setData(newData);
-    };
-
-    const onChangePassword = (e) => {
-        const newData = {...data};
-        newData.password = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeApi = (e) => {
-        const newData = {...data};
-        newData.api = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
 
@@ -71,19 +35,17 @@ const SMS = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put("http://127.0.0.1:8000/configurations/sms", data)
+        axios.post(`http://127.0.0.1:8000/unit-types`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
-                const newData = {...data};
-                newData.password = "";
-                setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                setData(defaultData);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
             })
             .catch(errorRequest => {
                 setStartRequest(false);
                 setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
     };
@@ -177,7 +139,7 @@ const SMS = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        SMS
+                                        Ajout du type d'unité
                                     </h3>
                                 </div>
                             </div>
@@ -194,40 +156,20 @@ const SMS = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className={error.senderID.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="senderID">Sender ID</label>
-                                        <input
-                                            id="senderID"
-                                            type="text"
-                                            className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le sender ID"
-                                            value={data.senderID}
-                                            onChange={(e) => onChangeSenderID(e)}
-                                        />
-                                        {
-                                            error.senderID.length ? (
-                                                error.senderID.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
 
-                                    </div>
-                                    <div className={error.username.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="username">User Name</label>
+                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="name">Votre name</label>
                                         <input
-                                            id="username"
+                                            id="name"
                                             type="text"
-                                            className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer votre name"
-                                            value={data.username}
-                                            onChange={(e) => onChangeUsername(e)}
+                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer le name"
+                                            value={data.name}
+                                            onChange={(e) => onChangeName(e)}
                                         />
                                         {
-                                            error.username.length ? (
-                                                error.username.map((error, index) => (
+                                            error.name.length ? (
+                                                error.name.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -235,59 +177,21 @@ const SMS = () => {
                                             ) : ""
                                         }
                                     </div>
-                                    <div className={error.password.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="password">Password</label>
-                                        <input
-                                            type="password"
-                                            className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                            id="password"
-                                            placeholder="Password"
-                                            value={data.password}
-                                            onChange={(e) => onChangePassword(e)}
+
+                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="description">La description</label>
+                                        <textarea
+                                            id="description"
+                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer la description"
+                                            cols="30"
+                                            rows="5"
+                                            value={data.description}
+                                            onChange={(e) => onChangeDescription(e)}
                                         />
                                         {
-                                            error.password.length ? (
-                                                error.password.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                    <div className={error.indicatif.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="indicatif">Indicatif Pays</label>
-                                        <input
-                                            type="number"
-                                            className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                            id="indicatif"
-                                            placeholder="Veillez entrer l'indicatif"
-                                            value={data.indicatif}
-                                            onChange={(e) => onChangeIndicatif(e)}
-                                        />
-                                        {
-                                            error.indicatif.length ? (
-                                                error.indicatif.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                    <div className={error.api.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="api">API</label>
-                                        <input
-                                            type="text"
-                                            className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                            id="api"
-                                            placeholder="Veillez entrer l'API"
-                                            value={data.api}
-                                            onChange={(e) => onChangeApi(e)}
-                                        />
-                                        {
-                                            error.api.length ? (
-                                                error.api.map((error, index) => (
+                                            error.description.length ? (
+                                                error.description.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -307,6 +211,17 @@ const SMS = () => {
                                                 </button>
                                             )
                                         }
+                                        {
+                                            !startRequest ? (
+                                                <Link to="/settings/unit_type" className="btn btn-secondary mx-2">
+                                                    Cancel
+                                                </Link>
+                                            ) : (
+                                                <Link to="/settings/unit_type" className="btn btn-secondary mx-2" disabled>
+                                                    Cancel
+                                                </Link>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </form>
@@ -318,4 +233,4 @@ const SMS = () => {
     );
 };
 
-export default SMS;
+export default UnitTypeAddForm;

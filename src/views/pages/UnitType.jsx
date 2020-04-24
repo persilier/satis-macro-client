@@ -4,36 +4,70 @@ import {
     Link
 } from "react-router-dom";
 import {loadCss, loadScript} from "../../helper/function";
+import LoadingTable from "../components/LoadingTable";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmDeleteConfig} from "../../config/confirmConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
-loadScript("assets/plugins/custom/datatables/datatables.bundle.js");
-loadScript("assets/js/pages/crud/datatables/extensions/buttons.js");
 
-const unitType = () => {
-    const [performances, setPerformances] = useState([]);
+const UnitType = () => {
+    const [load, setLoad] = useState(true);
+    const [unitTypes, setUnitTypes] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/performance-indicators")
+        axios.get("http://127.0.0.1:8000/unit-types")
             .then(response => {
-                setPerformances(response.data);
+                setLoad(false);
+                setUnitTypes(response.data);
             })
             .catch(error => {
+                setLoad(false);
                 console.log("Something is wrong");
             })
     }, []);
 
-    const deleteunitType = (performanceId, index) => {
-        axios.delete(`http://127.0.0.1:8000/performance-indicators/${performanceId}`)
-            .then(response => {
-                const newPerformances = [...performances];
-                newPerformances.splice(index, 1);
-                setPerformances(newPerformances);
-                console.log("Request is successful");
-            })
-            .catch(error => {
-                console.log("Something is wrong");
+    const deleteUnitType = (unitTypeId, index) => {
+        DeleteConfirmation.fire(confirmDeleteConfig)
+            .then((result) => {
+                if (result.value) {
+                    axios.delete(`http://127.0.0.1:8000/unit-types/${unitTypeId}`)
+                        .then(response => {
+                            const newUnitTypes = [...unitTypes];
+                            newUnitTypes.splice(index, 1);
+                            setUnitTypes(newUnitTypes);
+                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                        })
+                        .catch(error => {
+                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                        })
+                    ;
+                }
             })
         ;
+    };
+
+    const filterByInput = (e) => {
+        function myFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        myFunction();
     };
 
     return (
@@ -143,169 +177,172 @@ const unitType = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                Indicateur de performance
+                                Type d'unité
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/performance_indicator/add"} className="btn btn-brand btn-icon-sm">
+                                    <Link to={"/settings/unit_type/add"} className="btn btn-brand btn-icon-sm">
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="kt-portlet__body">
-                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                            <div className="row">
-                                <div className="col-sm-6 text-left">
-                                    <div id="kt_table_1_filter" className="dataTables_filter"><label>Search:<input
-                                        type="search" className="form-control form-control-sm" placeholder=""
-                                        aria-controls="kt_table_1"/></label></div>
-                                </div>
-                                <div className="col-sm-6 text-right">
-                                    <div className="dt-buttons btn-group flex-wrap">
-                                        <button className="btn btn-secondary buttons-print" tabIndex="0"
-                                                aria-controls="kt_table_1" type="button"><span>Print</span></button>
-                                        <button className="btn btn-secondary buttons-copy buttons-html5" tabIndex="0"
-                                                aria-controls="kt_table_1" type="button"><span>Copy</span></button>
-                                        <button className="btn btn-secondary buttons-excel buttons-html5" tabIndex="0"
-                                                aria-controls="kt_table_1" type="button"><span>Excel</span></button>
-                                        <button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0"
-                                                aria-controls="kt_table_1" type="button"><span>CSV</span></button>
-                                        <button className="btn btn-secondary buttons-pdf buttons-html5" tabIndex="0"
-                                                aria-controls="kt_table_1" type="button"><span>PDF</span></button>
+
+                    {
+                        load ? (
+                            <LoadingTable/>
+                        ) : (
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row">
+                                        <div className="col-sm-6 text-left">
+                                            <div id="kt_table_1_filter" className="dataTables_filter">
+                                                <label>
+                                                    Search:
+                                                    <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-6 text-right">
+                                            <div className="dt-buttons btn-group flex-wrap">
+                                                <button className="btn btn-secondary buttons-print" tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>Print</span></button>
+                                                <button className="btn btn-secondary buttons-copy buttons-html5" tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>Copy</span></button>
+                                                <button className="btn btn-secondary buttons-excel buttons-html5" tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>Excel</span></button>
+                                                <button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>CSV</span></button>
+                                                <button className="btn btn-secondary buttons-pdf buttons-html5" tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>PDF</span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-sm-12">
+                                            <table
+                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                style={{ width: "952px" }}>
+                                                <thead>
+                                                <tr role="row">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Nom
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "300px" }}
+                                                        aria-label="Ship City: activate to sort column ascending">Description
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {
+                                                    unitTypes.length ? (
+                                                        unitTypes.map((unitType, index) => (
+                                                            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+                                                                <td>{unitType.name["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description["fr"]}</td>
+                                                                <td>
+                                                                    <Link to="/settings/unit_type/detail"
+                                                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                                                          title="Détail">
+                                                                        <i className="la la-eye"/>
+                                                                    </Link>
+                                                                    <Link to={`/settings/unit_type/${unitType.id}/edit`}
+                                                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                                                          title="Modifier">
+                                                                        <i className="la la-edit"/>
+                                                                    </Link>
+                                                                    <button
+                                                                        onClick={(e) => deleteUnitType(unitType.id, index)}
+                                                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                                                        title="Supprimer">
+                                                                        <i className="la la-trash"/>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan={100} className="text-center">
+                                                                <span className="kt-datatable--error">Le tableau est vide</span>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <th rowSpan="1" colSpan="1">Nom</th>
+                                                    <th rowSpan="1" colSpan="1">Description</th>
+                                                    <th rowSpan="1" colSpan="1">Action</th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-5">
+                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                 aria-live="polite">Showing 1 to 10 of 40 entries
+                                            </div>
+                                        </div>
+                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                            <div className="dataTables_length" id="kt_table_1_length">
+                                                <label>
+                                                    Show
+                                                    <select name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
+                                                        <option value="10">10</option>
+                                                        <option value="25">25</option>
+                                                        <option value="50">50</option>
+                                                        <option value="100">100</option>
+                                                    </select>
+                                                    entries
+                                                </label>
+                                            </div>
+                                            <div className="dataTables_paginate paging_simple_numbers" id="kt_table_1_paginate">
+                                                <ul className="pagination">
+                                                    <li className="paginate_button page-item previous disabled" id="kt_table_1_previous">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="0" tabIndex="0" className="page-link"><i className="la la-angle-left"/></a>
+                                                    </li>
+                                                    <li className="paginate_button page-item active">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
+                                                    </li>
+                                                    <li className="paginate_button page-item ">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="2" tabIndex="0" className="page-link">2</a>
+                                                    </li>
+                                                    <li className="paginate_button page-item ">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="3" tabIndex="0" className="page-link">3</a>
+                                                    </li>
+                                                    <li className="paginate_button page-item ">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
+                                                    </li>
+                                                    <li className="paginate_button page-item next" id="kt_table_1_next">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
+                                                            <i className="la la-angle-right"/>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-sm-12">
-                                    <table
-                                        className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                        id="kt_table_1" role="grid" aria-describedby="kt_table_1_info"
-                                        style={{ width: "952px" }}>
-                                        <thead>
-                                        <tr role="row">
-                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                colSpan="1" style={{ width: "70.25px" }}
-                                                aria-label="Country: activate to sort column ascending">Nom
-                                            </th>
-                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                colSpan="1" style={{ width: "300px" }}
-                                                aria-label="Ship City: activate to sort column ascending">Description
-                                            </th>
-                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                colSpan="1" style={{ width: "20px" }}
-                                                aria-label="Ship Address: activate to sort column ascending">Value
-                                            </th>
-                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                colSpan="1" style={{ width: "15px" }}
-                                                aria-label="Company Agent: activate to sort column ascending">Unité de mésure
-                                            </th>
-                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                Action
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {
-                                            performances.length ? (
-                                                performances.map((performance, index) => (
-                                                    <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                        <td>{performance.name["fr"]}</td>
-                                                        <td style={{ textOverflow: "ellipsis", width: "300px" }}>{performance.description["fr"]}</td>
-                                                        <td>{performance.value}</td>
-                                                        <td>{performance.mesure_unit}</td>
-                                                        <td>
-                                                            <Link to="/settings/performance_indicator/detail"
-                                                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                                  title="Détail">
-                                                                <i className="la la-eye"/>
-                                                            </Link>
-                                                            <Link to={`/settings/performance_indicator/${performance.id}/edit`}
-                                                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                                  title="Modifier">
-                                                                <i className="la la-edit"/>
-                                                            </Link>
-                                                            <button
-                                                                onClick={(e) => deleteunitType(performance.id, index)}
-                                                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                                title="Supprimer">
-                                                                <i className="la la-trash"/>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            ) : (
-                                                <tr/>
-                                            )
-                                        }
-                                        </tbody>
-                                        <tfoot>
-                                        <tr>
-                                            <th rowSpan="1" colSpan="1">Nom</th>
-                                            <th rowSpan="1" colSpan="1">Description</th>
-                                            <th rowSpan="1" colSpan="1">Valeur</th>
-                                            <th rowSpan="1" colSpan="1">Unité de mésure</th>
-                                            <th rowSpan="1" colSpan="1">Action</th>
-                                        </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-12 col-md-5">
-                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                         aria-live="polite">Showing 1 to 10 of 40 entries
-                                    </div>
-                                </div>
-                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                    <div className="dataTables_length" id="kt_table_1_length">
-                                        <label>
-                                            Show
-                                            <select name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
-                                                <option value="10">10</option>
-                                                <option value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                            </select>
-                                            entries
-                                        </label>
-                                    </div>
-                                    <div className="dataTables_paginate paging_simple_numbers" id="kt_table_1_paginate">
-                                        <ul className="pagination">
-                                            <li className="paginate_button page-item previous disabled" id="kt_table_1_previous">
-                                                <a href="#" aria-controls="kt_table_1" data-dt-idx="0" tabIndex="0" className="page-link"><i className="la la-angle-left"/></a>
-                                            </li>
-                                            <li className="paginate_button page-item active">
-                                                <a href="#" aria-controls="kt_table_1" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a href="#" aria-controls="kt_table_1" data-dt-idx="2" tabIndex="0" className="page-link">2</a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a href="#" aria-controls="kt_table_1" data-dt-idx="3" tabIndex="0" className="page-link">3</a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
-                                            </li>
-                                            <li className="paginate_button page-item next" id="kt_table_1_next">
-                                                <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
-                                                    <i className="la la-angle-right"/>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        )
+                    }
+
                 </div>
             </div>
         </div>
     );
 };
 
-export default unitType;
+export default UnitType;

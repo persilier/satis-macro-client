@@ -3,6 +3,8 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
+import {ToastBottomEnd} from "./Toast";
+import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 
 const PerformanceAddForm = () => {
     const defaultData = {
@@ -54,10 +56,12 @@ const PerformanceAddForm = () => {
                 setStartRequest(false);
                 setError(defaultError);
                 setData(defaultData);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
             })
             .catch(errorRequest => {
                 setStartRequest(false);
-                setError({...error, ...errorRequest.response.data.error});
+                setError({...defaultError, ...errorRequest.response.data.error});
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
     };
@@ -151,7 +155,7 @@ const PerformanceAddForm = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Modification d'indicateur de performance
+                                        Ajout d'indicateur de performance
                                     </h3>
                                 </div>
                             </div>
@@ -260,8 +264,7 @@ const PerformanceAddForm = () => {
                                             !startRequest ? (
                                                 <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
                                             ) : (
-                                                <button className="btn btn-primary" type="button" disabled>
-                                                    <span className="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"/>
+                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                     Loading...
                                                 </button>
                                             )

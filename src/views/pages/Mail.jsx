@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {ToastBottomEnd} from "../components/Toast";
+import {
+    toastEditErrorMessageConfig,
+    toastEditSuccessMessageConfig
+} from "../../config/toastConfig";
 
 const Mail = () => {
     const defaultData = {
@@ -87,11 +92,15 @@ const Mail = () => {
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
-                setData(defaultData);
+                const newData = {...data};
+                newData.password = "";
+                setData(newData);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
             })
             .catch(errorRequest => {
                 setStartRequest(false);
-                setError({...error, ...errorRequest.response.data.error});
+                setError({...defaultError, ...errorRequest.response.data.error});
+                ToastBottomEnd.fire(toastEditErrorMessageConfig);
             })
         ;
     };
@@ -357,8 +366,7 @@ const Mail = () => {
                                             !startRequest ? (
                                                 <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
                                             ) : (
-                                                <button className="btn btn-primary" type="button" disabled>
-                                                    <span className="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"/>
+                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                     Loading...
                                                 </button>
                                             )

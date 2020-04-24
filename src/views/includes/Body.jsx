@@ -2,13 +2,21 @@ import React from "react";
 import {
   Switch,
   Route,
-  useParams
 } from "react-router-dom";
 import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
 import PerformanceEditForm from "../components/PerformanceEditForm";
 import PerformanceAddForm from "../components/PerformanceAddForm";
+import UnitType from "../pages/UnitType";
+import UnitTypeAddForm from "../components/UnitTypeAddForm";
+import UnitTypeEditForm from "../components/UinitTypeEditForm";
+import Unit from "../pages/Unit";
+import UnitAddForm from "../components/UnitAddForm";
+import UnitEditForm from "../components/UnitEditForm";
+import Position from "../pages/Position";
+import PositionAddForm from "../components/PositionAddForm";
+import PositionEditForm from "../components/PositionEditForm";
 
 const Body = () => {
     return (
@@ -42,7 +50,43 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/unit_type">
+                <UnitType/>
+            </Route>
 
+            <Route exact path="/settings/unit_type/add">
+                <UnitTypeAddForm/>
+            </Route>
+
+            <Route exact path="/settings/unit_type/detail">
+                <h1>Détail</h1>
+            </Route>
+
+            <Route exact path="/settings/unit_type/:id/edit">
+                <UnitTypeEditForm/>
+            </Route>
+
+            <Route exact path="/settings/unit">
+                <Unit/>
+            </Route>
+
+            <Route exact path="/settings/unit/add">
+                <UnitAddForm/>
+            </Route>
+
+            <Route exact path="/settings/unit/:id/edit">
+                <UnitEditForm/>
+            </Route>
+
+            <Route exact path="/settings/positions">
+                <Position/>
+            </Route>
+
+            <Route exact path="/settings/positions/add">
+                <PositionAddForm/>
+            </Route>
+
+            <Route exact path="/settings/positions/:id/edit">
+                <PositionEditForm/>
             </Route>
         </Switch>
     );

@@ -11,16 +11,17 @@ import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadScript("personal/js/paginateTable.js");
 
-const PerformanceIndicator = () => {
+const Unit = () => {
     const [load, setLoad] = useState(true);
-    const [performances, setPerformances] = useState([]);
+    const [units, setUnits] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/performance-indicators")
+        axios.get("http://127.0.0.1:8000/units")
             .then(response => {
                 setLoad(false);
-                setPerformances(response.data);
+                setUnits(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -28,15 +29,15 @@ const PerformanceIndicator = () => {
             })
     }, []);
 
-    const deletePerformanceIndicator = (performanceId, index) => {
+    const deleteUnit = (unitId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/performance-indicators/${performanceId}`)
+                    axios.delete(`http://127.0.0.1:8000/units/${unitId}`)
                         .then(response => {
-                            const newPerformances = [...performances];
-                            newPerformances.splice(index, 1);
-                            setPerformances(newPerformances);
+                            const newUnits = [...units];
+                            newUnits.splice(index, 1);
+                            setUnits(newUnits);
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
@@ -117,37 +118,37 @@ const PerformanceIndicator = () => {
                                     <ul className="kt-nav">
                                         <li className="kt-nav__head">
                                             Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."></i>
+                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."/>
                                         </li>
-                                        <li className="kt-nav__separator"></li>
+                                        <li className="kt-nav__separator"/>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-drop"></i>
+                                                <i className="kt-nav__link-icon flaticon2-drop"/>
                                                 <span className="kt-nav__link-text">Order</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-calendar-8"></i>
+                                                <i className="kt-nav__link-icon flaticon2-calendar-8"/>
                                                 <span className="kt-nav__link-text">Ticket</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"></i>
+                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"/>
                                                 <span className="kt-nav__link-text">Goal</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-new-email"></i>
+                                                <i className="kt-nav__link-icon flaticon2-new-email"/>
                                                 <span className="kt-nav__link-text">Support Case</span>
                                                 <span className="kt-nav__link-badge">
 																		<span className="kt-badge kt-badge--success">5</span>
 																	</span>
                                             </a>
                                         </li>
-                                        <li className="kt-nav__separator"></li>
+                                        <li className="kt-nav__separator"/>
                                         <li className="kt-nav__foot">
                                             <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
                                             <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more...">Learn more</a>
@@ -177,14 +178,14 @@ const PerformanceIndicator = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                Indicateur de performance
+                                Unité
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/performance_indicator/add"} className="btn btn-brand btn-icon-sm">
+                                    <Link to={"/settings/unit/add"} className="btn btn-brand btn-icon-sm">
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
@@ -200,11 +201,10 @@ const PerformanceIndicator = () => {
                                 <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                     <div className="row">
                                         <div className="col-sm-6 text-left">
-                                            <div id="kt_table_1_filter" className="dataTables_filter">
-                                                <label>
-                                                    Search:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                </label>
+                                            <div id="kt_table_1_filter" className="dataTables_filter"><label>
+                                                Search:
+                                                <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                            </label>
                                             </div>
                                         </div>
                                         <div className="col-sm-6 text-right">
@@ -229,50 +229,50 @@ const PerformanceIndicator = () => {
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{ width: "952px" }}>
                                                 <thead>
-                                                <tr role="row">
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Nom
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "300px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Description
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "20px" }}
-                                                        aria-label="Ship Address: activate to sort column ascending">Value
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "15px" }}
-                                                        aria-label="Company Agent: activate to sort column ascending">Unité de mésure
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                        Action
-                                                    </th>
-                                                </tr>
+                                                    <tr role="row">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Nom
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "250px" }}
+                                                            aria-label="Ship City: activate to sort column ascending">Description
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70px" }}
+                                                            aria-label="Country: activate to sort column ascending">Nom type unité
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70px" }}
+                                                            aria-label="Country: activate to sort column ascending">Nom institution
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                            Action
+                                                        </th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    performances.length ? (
-                                                        performances.map((performance, index) => (
+                                                    units.length ? (
+                                                        units.map((unit, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{performance.name["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{performance.description["fr"]}</td>
-                                                                <td>{performance.value}</td>
-                                                                <td>{performance.mesure_unit}</td>
+                                                                <td>{unit.name["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{unit.description["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.unit_type.name["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution.name}</td>
                                                                 <td>
-                                                                    <Link to="/settings/performance_indicator/detail"
+                                                                    <Link to="/settings/unit/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
                                                                     </Link>
-                                                                    <Link to={`/settings/performance_indicator/${performance.id}/edit`}
+                                                                    <Link to={`/settings/unit/${unit.id}/edit`}
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Modifier">
                                                                         <i className="la la-edit"/>
                                                                     </Link>
                                                                     <button
-                                                                        onClick={(e) => deletePerformanceIndicator(performance.id, index)}
+                                                                        onClick={(e) => deleteUnit(unit.id, index)}
                                                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                         title="Supprimer">
                                                                         <i className="la la-trash"/>
@@ -293,8 +293,8 @@ const PerformanceIndicator = () => {
                                                 <tr>
                                                     <th rowSpan="1" colSpan="1">Nom</th>
                                                     <th rowSpan="1" colSpan="1">Description</th>
-                                                    <th rowSpan="1" colSpan="1">Valeur</th>
-                                                    <th rowSpan="1" colSpan="1">Unité de mésure</th>
+                                                    <th rowSpan="1" colSpan="1">Nom type unité</th>
+                                                    <th rowSpan="1" colSpan="1">Nom de l'institution</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -356,4 +356,4 @@ const PerformanceIndicator = () => {
     );
 };
 
-export default PerformanceIndicator;
+export default Unit;
