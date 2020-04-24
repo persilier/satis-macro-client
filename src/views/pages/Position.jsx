@@ -312,7 +312,6 @@ const Position = () => {
                                                 <label>
                                                     Show
                                                     <select name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
-                                                        <option value="10">5</option>
                                                         <option value="10">10</option>
                                                         <option value="25">25</option>
                                                         <option value="50">50</option>
@@ -337,11 +336,6 @@ const Position = () => {
                                                     </li>
                                                     <li className="paginate_button page-item ">
                                                         <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
-                                                    </li>
-                                                    <li className="paginate_button page-item next" id="kt_table_1_next">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
-                                                            <i className="la la-angle-right"/>
-                                                        </a>
                                                     </li>
                                                 </ul>
                                             </div>
