@@ -17,6 +17,12 @@ import UnitEditForm from "../components/UnitEditForm";
 import Position from "../pages/Position";
 import PositionAddForm from "../components/PositionAddForm";
 import PositionEditForm from "../components/PositionEditForm";
+import FAQs from "../pages/FAQs";
+import FAQsPage from "../pages/FAQsPage";
+import CategoryFAQs from "../pages/CategoryFAQs";
+import Institution from "../pages/Institution";
+import AddInstitutions from "../components/AddInstitutions";
+import EditInstitutions from "../components/EditInstitution";
 
 const Body = () => {
     return (
@@ -29,8 +35,32 @@ const Body = () => {
                 <SMS/>
             </Route>
 
+            <Route exact path="/settings/faqs/add">
+                <FAQs/>
+            </Route>
+
+            <Route exact path="/settings/faqs/list">
+                <FAQsPage/>
+            </Route>
+
+            <Route exact path="/settings/faqs/category">
+                <CategoryFAQs/>
+            </Route>
+
             <Route exact path="/settings/mail">
                 <Mail/>
+            </Route>
+
+            <Route exact path="/settings/institution">
+                <Institution/>
+            </Route>
+
+            <Route exact path="/settings/institution/add">
+                <AddInstitutions/>
+            </Route>
+
+            <Route exact path="/settings/institution/edit/:editinstitutionlug">
+                <EditInstitutions/>
             </Route>
 
             <Route exact path="/settings/performance_indicator">

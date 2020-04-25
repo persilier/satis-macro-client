@@ -1,11 +1,12 @@
 import React from "react";
 import {
-  Link
+    Link
 } from "react-router-dom";
 
 const Aside = () => {
     return (
-        <div className="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop" id="kt_aside">
+        <div className="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop"
+             id="kt_aside">
             <div className="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
                 <div id="kt_aside_menu" className="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1">
                     <ul className="kt-menu__nav ">
@@ -19,7 +20,8 @@ const Aside = () => {
                             <h4 className="kt-menu__section-text">Paramètres</h4>
                             <i className="kt-menu__section-icon flaticon-more-v2"/>
                         </li>
-                        <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
+                        <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                            data-ktmenu-submenu-toggle="hover">
                             <a href="javascript:;" className="kt-menu__link kt-menu__toggle">
                                 <i className="kt-menu__link-icon flaticon-settings"/>
                                 <span className="kt-menu__link-text">Paramètres</span>
@@ -61,11 +63,34 @@ const Aside = () => {
                                         </Link>
                                     </li>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/user" className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">FAQ</span>
-                                        </Link>
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="javascript:;" className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span className="kt-menu__link-text">FAQs</span>
+                                        <i className="kt-menu__ver-arrow la la-angle-right"></i>
+                                        </a>
+                                        <div className="kt-menu__submenu "><span className="kt-menu__arrow"></span>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item " aria-haspopup="true">
+                                                    <Link to="/settings/faqs/list"  className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                        <span className="kt-menu__link-text">FAQs</span>
+                                                    </Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true">
+                                                    <Link to="/settings/faqs/add" className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                        <span className="kt-menu__link-text">Editer FAQ</span></Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true">
+                                                    <Link to="/settings/faqs/category"  className="kt-menu__link "
+                                                    ><i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                        <span className="kt-menu__link-text">Catégorie FAQ</span>
+                                                    </Link>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </li>
 
                                     <li className="kt-menu__item " aria-haspopup="true">
