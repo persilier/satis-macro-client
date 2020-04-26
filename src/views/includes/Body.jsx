@@ -23,6 +23,10 @@ import CategoryFAQs from "../pages/CategoryFAQs";
 import Institution from "../pages/Institution";
 import AddInstitutions from "../components/AddInstitutions";
 import EditInstitutions from "../components/EditInstitution";
+import AddCategoryFaqs from "../components/AddCategoryFaqs";
+import EditCategoryFaqs from "../components/EditCategoryFaqs";
+import AddFaqs from "../components/AddFaqs";
+import EditFaqs from "../components/EditFaqs";
 
 const Body = () => {
     return (
@@ -43,8 +47,15 @@ const Body = () => {
                 <FAQsPage/>
             </Route>
 
+            <Route exact path="/settings/faqs/faq/add">
+                <AddFaqs/>
+            </Route>
+
             <Route exact path="/settings/faqs/category">
                 <CategoryFAQs/>
+            </Route>
+            <Route exact path="/settings/faqs/category/add">
+                <AddCategoryFaqs/>
             </Route>
 
             <Route exact path="/settings/mail">
@@ -61,6 +72,14 @@ const Body = () => {
 
             <Route exact path="/settings/institution/edit/:editinstitutionlug">
                 <EditInstitutions/>
+            </Route>
+
+            <Route exact path="/settings/faqs/category/edit/:editcategoryslug">
+                <EditCategoryFaqs/>
+            </Route>
+
+            <Route exact path="/settings/faqs/faq/edit/:editfaqid">
+                <EditFaqs/>
             </Route>
 
             <Route exact path="/settings/performance_indicator">
