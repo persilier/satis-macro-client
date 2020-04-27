@@ -17,6 +17,12 @@ import UnitEditForm from "../components/UnitEditForm";
 import Position from "../pages/Position";
 import PositionAddForm from "../components/PositionAddForm";
 import PositionEditForm from "../components/PositionEditForm";
+import ClaimCategory from "../pages/ClaimCategory";
+import ClaimCategoryAddForm from "../components/ClaimCategoryAddForm";
+import ClaimCategoryEditForm from "../components/ClaimCategoryEditForm";
+import ClaimObjectAddForm from "../components/ClaimObjectAddForm";
+import ClaimObjectEditForm from "../components/ClaimObjectEditForm";
+import ClaimObject from "../pages/ClaimObject";
 
 const Body = () => {
     return (
@@ -87,6 +93,30 @@ const Body = () => {
 
             <Route exact path="/settings/positions/:id/edit">
                 <PositionEditForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_categories">
+                <ClaimCategory/>
+            </Route>
+
+            <Route exact path="/settings/claim_categories/add">
+                <ClaimCategoryAddForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_categories/:id/edit">
+                <ClaimCategoryEditForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_objects">
+                <ClaimObject/>
+            </Route>
+
+            <Route exact path="/settings/claim_objects/add">
+                <ClaimObjectAddForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_objects/:id/edit">
+                <ClaimObjectEditForm/>
             </Route>
         </Switch>
     );
