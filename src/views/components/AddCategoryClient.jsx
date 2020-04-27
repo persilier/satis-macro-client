@@ -1,79 +1,59 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
-    Link,
-    useParams
+    Link
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 
-const EditFaqs = () => {
+const AddCategoryClient = () => {
     const defaultData = {
-        faq_category_id: "",
-        question: "",
-        answer: "",
+        institutions_id: "",
+        name: "",
+        description: "",
     };
     const defaultError = {
-        faq_category_id: [],
-        question: [],
-        answer: [],
+        institutions_id: [],
+        name: [],
+        description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
-    const [categorieData, setCategorieData] = useState([]);
-    const [getCategory, setGetCategory] = useState(undefined);
+    const [institutionData, setInstitutionData] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
 
-    const {editfaqid} = useParams();
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/faq-categories')
-            .then(response => {
-                setCategorieData(response.data)
-            });
-
-        axios.get(`http://127.0.0.1:8000/faqs/${editfaqid}`)
-            .then(response => {
-                const newFaq = {
-                    faq_category_id: response.data.category.id,
-                    question: response.data.question,
-                    answer: response.data.answer
-                };
-                setData(newFaq)
+        axios.get('http://127.0.0.1:8000/institutions')
+            .then(response =>{
+                setInstitutionData(response.data)
             })
 
     }, []);
-    const onChangeCategory = (e) => {
-        let select = document.getElementById("categorie");
-        let choice = select.selectedIndex;
-        let valeur = select.options[choice].value;
-        setGetCategory(document.getElementById('categorie').value = valeur);
+    const onChangeInstituion = (e) => {
         const newData = {...data};
-        newData.faq_category_id = e.target.value;
+        newData.institutions_id = e.target.value;
         setData(newData);
     };
 
-    const onChangeQuiz = (e) => {
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.question = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeAnswers = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.answer = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
+
 
     const onSubmit = (e) => {
         e.preventDefault();
+        console.log(data, 'data');
 
-        const formData = {
-            faq_category_id: getCategory,
-            question: data.question,
-            answer: data.answer
-        };
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/faqs/${editfaqid}`, data)
+        axios.post(`http://127.0.0.1:8000/category-clients`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -119,28 +99,15 @@ const EditFaqs = () => {
                             <a href="#" className="btn kt-subheader__btn-primary">
                                 Actions &nbsp;
                             </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions"
-                                 data-placement="left">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true"
-                                   aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                                        <g fill="none" fill-rule="evenodd">
-                                            <path d="M0 0h24v24H0z"/>
-                                            <path
-                                                d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z"
-                                                fill="#000" fill-rule="nonzero" opacity=".3"/>
-                                            <path
-                                                d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z"
-                                                fill="#000"/>
-                                        </g>
-                                    </svg>
+                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions" data-placement="left">
+                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z" fill="#000" fill-rule="nonzero" opacity=".3"/><path d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z" fill="#000"/></g></svg>
                                 </a>
                                 <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
                                     <ul className="kt-nav">
                                         <li className="kt-nav__head">
                                             Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip"
-                                               data-placement="right" title="Click to learn more..."/>
+                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more..."/>
                                         </li>
                                         <li className="kt-nav__separator"/>
                                         <li className="kt-nav__item">
@@ -173,9 +140,7 @@ const EditFaqs = () => {
                                         <li className="kt-nav__separator"/>
                                         <li className="kt-nav__foot">
                                             <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#"
-                                               data-toggle="kt-tooltip" data-placement="right"
-                                               title="Click to learn more...">Learn more</a>
+                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -192,7 +157,7 @@ const EditFaqs = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Modifier une FAQ
+                                        Ajout de Type Client
                                     </h3>
                                 </div>
                             </div>
@@ -205,34 +170,32 @@ const EditFaqs = () => {
                                                 <i className="flaticon-warning kt-font-brand"/>
                                             </div>
                                             <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that
-                                                receive updated styles from Bootstrap with additional classes.
+                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
                                             </div>
                                         </div>
                                     </div>
 
 
-                                    <div
-                                        className={error.faq_category_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="exampleSelect1">Catégorie</label>
-                                        {categorieData.data ? (
+                                    <div className={error.institutions_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="exampleSelect1">Institution</label>
+                                        {institutionData.data ?(
                                             <select
                                                 name="categorie"
                                                 id="categorie"
-                                                className={error.faq_category_id.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.faq_category_id}
-                                                onChange={(e) => onChangeCategory(e)}>
+                                                className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
+                                                value={data.institutions_id}
+                                                onChange={(e) => onChangeInstituion(e)}>
                                                 <option value=""> None</option>
-                                                {categorieData.data.map((element, i) => (
+                                                {institutionData.data.map((element, i) => (
                                                     <option key={i} value={element.id}>{element.name}</option>
                                                 ))}
                                             </select>
-                                        ) : ''
+                                        ):''
                                         }
 
                                         {
-                                            error.faq_category_id.length ? (
-                                                error.faq_category_id.map((error, index) => (
+                                            error.institutions_id.length ? (
+                                                error.institutions_id.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -241,19 +204,19 @@ const EditFaqs = () => {
                                         }
                                     </div>
 
-                                    <div className={error.question.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="quiz">La question</label>
+                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="name">Le Nom</label>
                                         <input
-                                            id="quiz"
+                                            id="name"
                                             type="text"
-                                            className={error.question.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la question"
-                                            value={data.question}
-                                            onChange={(e) => onChangeQuiz(e)}
+                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer le nom"
+                                            value={data.name}
+                                            onChange={(e) => onChangeName(e)}
                                         />
                                         {
-                                            error.question.length ? (
-                                                error.question.map((error, index) => (
+                                            error.name.length ? (
+                                                error.name.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -262,20 +225,20 @@ const EditFaqs = () => {
                                         }
                                     </div>
 
-                                    <div className={error.answer.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="answer">La réponse'</label>
+                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="description">La Description'</label>
                                         <textarea
-                                            id="answer"
-                                            className={error.answer.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la réponse"
+                                            id="description"
+                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer la description"
                                             cols="30"
                                             rows="5"
-                                            value={data.answer}
-                                            onChange={(e) => onChangeAnswers(e)}
+                                            value={data.description}
+                                            onChange={(e) => onChangeDescription(e)}
                                         />
                                         {
-                                            error.answer.length ? (
-                                                error.answer.map((error, index) => (
+                                            error.description.length ? (
+                                                error.description.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -288,28 +251,25 @@ const EditFaqs = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)}
-                                                        className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
                                             ) : (
-                                                <button
-                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                    type="button" disabled>
+                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                     Loading...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
-                                                <Link to="/settings/faqs/add" className="btn btn-secondary mx-2">
+                                                <Link to="/settings/clients/category" className="btn btn-secondary mx-2">
                                                     Cancel
                                                 </Link>
                                             ) : (
-                                                <Link to="/settings/faqs/add" className="btn btn-secondary mx-2"
-                                                      disabled>
+                                                <Link to="/settings/clients/category" className="btn btn-secondary mx-2" disabled>
                                                     Cancel
                                                 </Link>
                                             )
                                         }
+
                                     </div>
                                 </div>
                             </form>
@@ -321,4 +281,4 @@ const EditFaqs = () => {
     );
 };
 
-export default EditFaqs;
+export default AddCategoryClient;

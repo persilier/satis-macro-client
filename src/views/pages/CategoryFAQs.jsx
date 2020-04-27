@@ -249,7 +249,7 @@ const CategoryFAQs = () => {
                                                                 <td>{category.name}</td>
                                                                 <td >{category.slug}</td>
                                                                 <td>
-                                                                    <Link to="/settings/performance_indicator/detail"
+                                                                    <Link to="/settings/faqs/category/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>

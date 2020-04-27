@@ -27,6 +27,12 @@ import AddCategoryFaqs from "../components/AddCategoryFaqs";
 import EditCategoryFaqs from "../components/EditCategoryFaqs";
 import AddFaqs from "../components/AddFaqs";
 import EditFaqs from "../components/EditFaqs.jsx";
+import CategoryClient from "../pages/CategoryClient";
+import TypeClient from "../pages/TypeClient";
+import AddCategoryClient from "../components/AddCategoryClient";
+import EditCategoryClient from "../components/EditCategoryClient";
+import AddTypeClient from "../components/AddTypeClient";
+import EditTypeClient from "../components/EditTypeClient";
 
 const Body = () => {
     return (
@@ -37,6 +43,22 @@ const Body = () => {
 
             <Route exact path="/settings/sms">
                 <SMS/>
+            </Route>
+
+            <Route exact path="/settings/clients/category">
+                <CategoryClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/category/add">
+                <AddCategoryClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/type">
+                <TypeClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/type/add">
+                <AddTypeClient/>
             </Route>
 
             <Route exact path="/settings/faqs/add">
@@ -80,6 +102,14 @@ const Body = () => {
 
             <Route exact path="/settings/faqs/faq/edit/:editfaqid">
                 <EditFaqs/>
+            </Route>
+
+            <Route exact path="/settings/clients/type/edit/:edittypeid">
+                <EditTypeClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/category/edit/:editcategoryid">
+                <EditCategoryClient/>
             </Route>
 
             <Route exact path="/settings/performance_indicator">

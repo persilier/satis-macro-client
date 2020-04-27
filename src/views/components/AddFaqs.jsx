@@ -33,7 +33,6 @@ const AddFaqs = () => {
         const newData = {...data};
         newData.faq_category_id = e.target.value;
         setData(newData);
-        console.log(newData, 'newdata')
     };
 
     const onChangeQuiz = (e) => {
@@ -157,7 +156,7 @@ const AddFaqs = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Ajout d'institution
+                                        Ajout de FAQs
                                     </h3>
                                 </div>
                             </div>

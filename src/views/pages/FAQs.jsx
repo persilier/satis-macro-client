@@ -254,7 +254,7 @@ const FAQs = () => {
                                                                 <td >{faq.question}</td>
                                                                 <td >{faq.answer}</td>
                                                                 <td>
-                                                                    <Link to="/settings/performance_indicator/detail"
+                                                                    <Link to="/settings/faqs/faq/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
