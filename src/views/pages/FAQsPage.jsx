@@ -1,5 +1,5 @@
 import React from "react";
-import FaqListe from "../components/FaqListe";
+import FaqListe from "../components/FaqListe.jsx";
 
 
 const FAQsPage=()=>{

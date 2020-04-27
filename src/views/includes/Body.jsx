@@ -26,7 +26,7 @@ import EditInstitutions from "../components/EditInstitution";
 import AddCategoryFaqs from "../components/AddCategoryFaqs";
 import EditCategoryFaqs from "../components/EditCategoryFaqs";
 import AddFaqs from "../components/AddFaqs";
-import EditFaqs from "../components/EditFaqs";
+import EditFaqs from "../components/EditFaqs.jsx";
 
 const Body = () => {
     return (
