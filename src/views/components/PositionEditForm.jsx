@@ -7,6 +7,7 @@ import {
 import {Multiselect} from "multiselect-react-dropdown";
 import {ToastBottomEnd} from "./Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const PositionEditForm = () => {
     const [selectedValues, setSelectedValues] = useState([]);
@@ -28,7 +29,7 @@ const PositionEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/positions/${id}/edit`)
+        axios.get(`${apiConfig.baseUrl}/positions/${id}/edit`)
             .then(response => {
                 const newData = {
                     name: response.data.position.name.fr,
@@ -92,7 +93,7 @@ const PositionEditForm = () => {
 
         console.log(data);
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/positions/${id}`, data)
+        axios.put(`${apiConfig.baseUrl}/positions/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -280,21 +281,21 @@ const PositionEditForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/positions" className="btn btn-secondary  mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/positions" className="btn btn-secondary  mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

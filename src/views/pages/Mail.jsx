@@ -5,6 +5,7 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const Mail = () => {
     const defaultData = {
@@ -30,7 +31,7 @@ const Mail = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/configurations/mail")
+        axios.get(`${apiConfig.baseUrl}/configurations/mail`)
             .then(response => {
                 const newData = {...defaultData, ...response.data};
                 newData.security = newData.security.toLowerCase();
@@ -88,7 +89,7 @@ const Mail = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put("http://127.0.0.1:8000/configurations/mail", data)
+        axios.put(`${apiConfig.baseUrl}/configurations/mail`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -364,10 +365,10 @@ const Mail = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }

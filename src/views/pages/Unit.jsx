@@ -9,6 +9,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
+import apiConfig from "../../config/apiConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 loadScript("personal/js/paginateTable.js");
@@ -18,7 +19,7 @@ const Unit = () => {
     const [units, setUnits] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/units")
+        axios.get(`${apiConfig.baseUrl}/units`)
             .then(response => {
                 setLoad(false);
                 setUnits(response.data);
@@ -33,7 +34,7 @@ const Unit = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/units/${unitId}`)
+                    axios.delete(`${apiConfig.baseUrl}/units/${unitId}`)
                         .then(response => {
                             const newUnits = [...units];
                             newUnits.splice(index, 1);

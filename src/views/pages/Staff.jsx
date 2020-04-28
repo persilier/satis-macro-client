@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss} from "../../helper/function";
+import {loadCss, loadScript} from "../../helper/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -13,15 +13,15 @@ import apiConfig from "../../config/apiConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
-const Position = () => {
+const   Staff = () => {
     const [load, setLoad] = useState(true);
-    const [positions, setPositions] = useState([]);
+    const [staffs, setStaffs] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/positions`)
+        axios.get(`${apiConfig.baseUrl}/staff`)
             .then(response => {
                 setLoad(false);
-                setPositions(response.data);
+               setStaffs(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -29,15 +29,15 @@ const Position = () => {
             })
     }, []);
 
-    const deletePosition = (positionId, index) => {
+    const deleteStaff = (staffId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/positions/${positionId}`)
+                    axios.delete(`${apiConfig.baseUrl}/staff/${staffId}`)
                         .then(response => {
-                            const newPositions = [...positions];
-                            newPositions.splice(index, 1);
-                            setPositions(newPositions);
+                            const newStaffs = [...staffs];
+                            newStaffs.splice(index, 1);
+                            setStaffs(newStaffs);
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
@@ -118,37 +118,37 @@ const Position = () => {
                                     <ul className="kt-nav">
                                         <li className="kt-nav__head">
                                             Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."/>
+                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."></i>
                                         </li>
-                                        <li className="kt-nav__separator"/>
+                                        <li className="kt-nav__separator"></li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-drop"/>
+                                                <i className="kt-nav__link-icon flaticon2-drop"></i>
                                                 <span className="kt-nav__link-text">Order</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-calendar-8"/>
+                                                <i className="kt-nav__link-icon flaticon2-calendar-8"></i>
                                                 <span className="kt-nav__link-text">Ticket</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"/>
+                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"></i>
                                                 <span className="kt-nav__link-text">Goal</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__item">
                                             <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-new-email"/>
+                                                <i className="kt-nav__link-icon flaticon2-new-email"></i>
                                                 <span className="kt-nav__link-text">Support Case</span>
                                                 <span className="kt-nav__link-badge">
-                                                    <span className="kt-badge kt-badge--success">5</span>
-                                                </span>
+																		<span className="kt-badge kt-badge--success">5</span>
+																	</span>
                                             </a>
                                         </li>
-                                        <li className="kt-nav__separator"/>
+                                        <li className="kt-nav__separator"></li>
                                         <li className="kt-nav__foot">
                                             <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
                                             <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more...">Learn more</a>
@@ -178,14 +178,14 @@ const Position = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                Position
+                                Agent
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/positions/add"} className="btn btn-brand btn-icon-sm">
+                                    <Link to={"/settings/staffs/add"} className="btn btn-brand btn-icon-sm">
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
@@ -201,10 +201,11 @@ const Position = () => {
                                 <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                     <div className="row">
                                         <div className="col-sm-6 text-left">
-                                            <div id="kt_table_1_filter" className="dataTables_filter"><label>
-                                                Search:
-                                                <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                            </label>
+                                            <div id="kt_table_1_filter" className="dataTables_filter">
+                                                <label>
+                                                    Search:
+                                                    <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                </label>
                                             </div>
                                         </div>
                                         <div className="col-sm-6 text-right">
@@ -222,7 +223,6 @@ const Position = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <table
@@ -230,51 +230,68 @@ const Position = () => {
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{ width: "952px" }}>
                                                 <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "250px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institutions
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
+                                                <tr role="row">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Nom
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "50px" }}
+                                                        aria-label="Country: activate to sort column ascending">Téléphone
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "50px" }}
+                                                        aria-label="Country: activate to sort column ascending">Email
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Unité
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Position
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "53px" }} aria-label="Type: activate to sort column ascending">
+                                                        Action
+                                                    </th>
+                                                </tr>
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    positions.length ? (
-                                                        positions.map((position, index) => (
+                                                    staffs.length ? (
+                                                        staffs.map((staff, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{position.name["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{position.description["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>
+                                                                <td>{staff.identite.lastname+" "+staff.identite.firstname}</td>
+                                                                <td>
                                                                     {
-                                                                        position.institutions.map((institution, index) => (
-                                                                            index === position.institutions.length - 1 ? institution.name : institution.name+", "
+                                                                        staff.identite.telephone.map((tel, index) => (
+                                                                            index === staff.identite.telephone.length - 1 ? tel : tel+", "
+                                                                        ))
+                                                                    }
+
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        staff.identite.email.map((mail, index) => (
+                                                                            index === staff.identite.email.length - 1 ? mail : mail+", "
                                                                         ))
                                                                     }
                                                                 </td>
+                                                                <td>{staff.unit.name["fr"]}</td>
+                                                                <td>{staff.position.name["fr"]}</td>
                                                                 <td>
-                                                                    <Link to="/settings/positions/detail"
+                                                                    <Link to="/settings/staffs/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
                                                                     </Link>
-                                                                    <Link to={`/settings/positions/${position.id}/edit`}
+                                                                    <Link to={`/settings/staffs/${staff.id}/edit`}
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Modifier">
                                                                         <i className="la la-edit"/>
                                                                     </Link>
                                                                     <button
-                                                                        onClick={(e) => deletePosition(position.id, index)}
+                                                                        onClick={(e) => deleteStaff(staff.id, index)}
                                                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                         title="Supprimer">
                                                                         <i className="la la-trash"/>
@@ -294,8 +311,10 @@ const Position = () => {
                                                 <tfoot>
                                                 <tr>
                                                     <th rowSpan="1" colSpan="1">Nom</th>
-                                                    <th rowSpan="1" colSpan="1">Description</th>
-                                                    <th rowSpan="1" colSpan="1">Institutions</th>
+                                                    <th rowSpan="1" colSpan="1">Téléphone</th>
+                                                    <th rowSpan="1" colSpan="1">Email</th>
+                                                    <th rowSpan="1" colSpan="1">Unité</th>
+                                                    <th rowSpan="1" colSpan="1">Position</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -338,6 +357,11 @@ const Position = () => {
                                                     <li className="paginate_button page-item ">
                                                         <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
                                                     </li>
+                                                    <li className="paginate_button page-item next" id="kt_table_1_next">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
+                                                            <i className="la la-angle-right"/>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -346,10 +370,11 @@ const Position = () => {
                             </div>
                         )
                     }
+
                 </div>
             </div>
         </div>
     );
 };
 
-export default Position;
+export default Staff;

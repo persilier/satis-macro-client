@@ -9,6 +9,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
+import apiConfig from "../../config/apiConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -17,7 +18,7 @@ const PerformanceIndicator = () => {
     const [performances, setPerformances] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/performance-indicators")
+        axios.get(`${apiConfig.baseUrl}/performance-indicators`)
             .then(response => {
                 setLoad(false);
                 setPerformances(response.data);
@@ -32,7 +33,7 @@ const PerformanceIndicator = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/performance-indicators/${performanceId}`)
+                    axios.delete(`${apiConfig.baseUrl}/performance-indicators/${performanceId}`)
                         .then(response => {
                             const newPerformances = [...performances];
                             newPerformances.splice(index, 1);

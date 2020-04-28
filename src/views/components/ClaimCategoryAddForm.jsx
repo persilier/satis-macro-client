@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const ClaimCategoryAddForm = () => {
     const defaultData = {
@@ -35,7 +36,7 @@ const ClaimCategoryAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/unit-types`, data)
+        axios.post(`${apiConfig.baseUrl}/claim-categories`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -204,21 +205,21 @@ const ClaimCategoryAddForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/claim_categories" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/claim_categories" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

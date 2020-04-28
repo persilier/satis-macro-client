@@ -3,6 +3,7 @@ import axios from 'axios';
 import HeaderBuilder from "../components/HeaderBuilder";
 import {editData} from "../../constants/headerBuilder";
 import AppLibrariesModel from "../../appLibraries/models/AppLibrariesModel";
+import apiConfig from "../../config/apiConfig";
 
 const TestHeaderBuilder = () => {
     const [headerForm, setHeaderForm] = useState(undefined);
@@ -23,7 +24,7 @@ const TestHeaderBuilder = () => {
         if (getHeader !== undefined) {
             axios({
                 method: 'put',
-                url: `http://127.0.0.1:8000/header/${getHeader}`,
+                url: `${apiConfig.baseUrl}/header/${getHeader}`,
                 data: {
                     name: data.name,
                     content_default: data.content

@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const ClaimObjectAddForm = () => {
     const [claimCategories, setClaimCategories] = useState([]);
@@ -12,13 +13,13 @@ const ClaimObjectAddForm = () => {
     const defaultData = {
         name: "",
         description: "",
-        unit_type_id: claimCategories.length ? claimCategories[0].id : "",
+        claim_category_id: claimCategories.length ? claimCategories[0].id : "",
     };
 
     const defaultError = {
         name: [],
         description: [],
-        unit_type_id: [],
+        claim_category_id: [],
     };
     const [data, setData] = useState(defaultData);
 
@@ -26,10 +27,10 @@ const ClaimObjectAddForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/claim-categories")
+        axios.get(`${apiConfig.baseUrl}/claim-categories`)
             .then(response => {
                 const newData = {...data};
-                newData.unit_type_id = response.data[0].id;
+                newData.claim_category_id = response.data[0].id;
                 setClaimCategories(response.data);
                 setData(newData);
             })
@@ -51,9 +52,9 @@ const ClaimObjectAddForm = () => {
         setData(newData);
     };
 
-    const onChangeUnitType = (e) => {
+    const onChangeClaimCategory = (e) => {
         const newData = {...data};
-        newData.unit_type_id = e.target.value;
+        newData.claim_category_id = e.target.value;
         setData(newData);
     };
 
@@ -61,7 +62,7 @@ const ClaimObjectAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/units`, data)
+        axios.post(`${apiConfig.baseUrl}/claim-objects`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -184,7 +185,7 @@ const ClaimObjectAddForm = () => {
                                     </div>
 
                                     <div className={error.name.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="name">Votre name</label>
+                                        <label htmlFor="name">Name</label>
                                         <input
                                             id="name"
                                             type="text"
@@ -226,13 +227,13 @@ const ClaimObjectAddForm = () => {
                                         }
                                     </div>
 
-                                    <div className={error.unit_type_id.length ? "form-group validated" : "form-group"}>
+                                    <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
                                         <label htmlFor="unit_type">La description</label>
                                         <select
                                             id="institution"
-                                            className={error.unit_type_id.length ? "form-control is-invalid" : "form-control"}
-                                            value={data.unit_type_id}
-                                            onChange={(e) => onChangeUnitType(e)}
+                                            className={error.claim_category_id.length ? "form-control is-invalid" : "form-control"}
+                                            value={data.claim_category_id}
+                                            onChange={(e) => onChangeClaimCategory(e)}
                                         >
                                             {
                                                 claimCategories.map((claimCategory, index) => (
@@ -241,8 +242,8 @@ const ClaimObjectAddForm = () => {
                                             }
                                         </select>
                                         {
-                                            error.unit_type_id.length ? (
-                                                error.unit_type_id.map((error, index) => (
+                                            error.claim_category_id.length ? (
+                                                error.claim_category_id.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -255,21 +256,21 @@ const ClaimObjectAddForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/claim_objects" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/claim_objects" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

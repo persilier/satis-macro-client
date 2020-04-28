@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 // import {addData} from "../../constants/headerBuilder";
 import axios from "axios";
+import apiConfig from "../../config/apiConfig";
 
 const HeaderBuilder = (props) => {
   // const dataState = props.editData ? props.editData : addData;
@@ -10,7 +11,7 @@ const HeaderBuilder = (props) => {
 
   useEffect(() => {
     // console.log('NAME', props.getHeader);
-    axios.get(`http://127.0.0.1:8000/header/${props.getHeader}`)
+    axios.get(`${apiConfig.baseUrl}/header/${props.getHeader}`)
         .then(response=>{
           setHeaderData(response.data)
         })

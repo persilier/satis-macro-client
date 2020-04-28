@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {formatInstitutions} from "../../helper/institution";
+import apiConfig from "../../config/apiConfig";
 
 const PositionAddForm = () => {
     const [institutions, setInstitutions] = useState([]);
@@ -26,7 +28,7 @@ const PositionAddForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/institutions")
+        axios.get(`${apiConfig.baseUrl}/institutions`)
             .then(response => {
                 setInstitutions(formatInstitutions(response.data.data));
             })
@@ -35,13 +37,6 @@ const PositionAddForm = () => {
             })
         ;
     }, []);
-
-    const formatInstitutions = (listInstitutions) => {
-        const newListInstitution = [];
-        for (let i = 0; i<listInstitutions.length; i++)
-            newListInstitution.push({id: listInstitutions[i].id, name: listInstitutions[i].name});
-        return newListInstitution;
-    };
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -75,7 +70,7 @@ const PositionAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/positions`, data)
+        axios.post(`${apiConfig.baseUrl}/positions`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -265,21 +260,21 @@ const PositionAddForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/positions" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/positions" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

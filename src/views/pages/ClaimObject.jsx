@@ -9,6 +9,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
+import apiConfig from "../../config/apiConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 loadScript("personal/js/paginateTable.js");
@@ -18,7 +19,7 @@ const ClaimObject = () => {
     const [claimObjects, setClaimObjects] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/units")
+        axios.get(`${apiConfig.baseUrl}/claim-objects`)
             .then(response => {
                 setLoad(false);
                 setClaimObjects(response.data);
@@ -33,7 +34,7 @@ const ClaimObject = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/units/${claimObjectId}`)
+                    axios.delete(`${apiConfig.baseUrl}/claim-objects/${claimObjectId}`)
                         .then(response => {
                             const newClaimObjects = [...claimObjects];
                             newClaimObjects.splice(index, 1);
@@ -254,7 +255,7 @@ const ClaimObject = () => {
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
                                                                 <td>{claimObject.name["fr"]}</td>
                                                                 <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.unit_type.name["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name["fr"]}</td>
                                                                 <td>
                                                                     <Link to="/settings/claim_objects/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"

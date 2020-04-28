@@ -6,9 +6,13 @@ import {
 import {loadCss, loadScript} from "../../helper/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig, toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
+import apiConfig from "../../config/apiConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -17,7 +21,7 @@ const ClaimCategory = () => {
     const [claimCategories, setClaimCategories] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/unit-types")
+        axios.get(`${apiConfig.baseUrl}/claim-categories`)
             .then(response => {
                 setLoad(false);
                 setClaimCategories(response.data);
@@ -32,7 +36,7 @@ const ClaimCategory = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/unit-types/${claimCategoryId}`)
+                    axios.delete(`${apiConfig.baseUrl}/claim-categories/${claimCategoryId}`)
                         .then(response => {
                             const newClaimCategories = [...claimCategories];
                             newClaimCategories.splice(index, 1);
@@ -40,7 +44,12 @@ const ClaimCategory = () => {
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            if (error.response.data.error)
+                                ToastBottomEnd.fire(
+                                    toastErrorMessageWithParameterConfig(error.response.data.error)
+                                );
+                            else
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
                         })
                     ;
                 }
