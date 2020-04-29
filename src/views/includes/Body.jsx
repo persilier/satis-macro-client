@@ -20,6 +20,12 @@ import PositionEditForm from "../components/PositionEditForm";
 import Staff from "../pages/Staff";
 import StaffAddForm from "../components/staff/StaffAddForm";
 import StaffEditForm from "../components/staff/StaffEditForm";
+import ClaimCategory from "../pages/ClaimCategory";
+import ClaimCategoryAddForm from "../components/ClaimCategoryAddForm";
+import ClaimCategoryEditForm from "../components/ClaimCategoryEditForm";
+import ClaimObject from "../pages/ClaimObject";
+import ClaimObjectAddForm from "../components/ClaimObjectAddForm";
+import ClaimObjectEditForm from "../components/ClaimObjectEditForm";
 
 const Body = () => {
     return (
@@ -90,6 +96,42 @@ const Body = () => {
 
             <Route exact path="/settings/positions/:id/edit">
                 <PositionEditForm/>
+            </Route>
+
+            <Route exact path="/settings/positions">
+                <Position/>
+            </Route>
+
+            <Route exact path="/settings/positions/add">
+                <PositionAddForm/>
+            </Route>
+
+            <Route exact path="/settings/positions/:id/edit">
+                <PositionEditForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_categories">
+                <ClaimCategory/>
+            </Route>
+
+            <Route exact path="/settings/claim_categories/add">
+                <ClaimCategoryAddForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_categories/:id/edit">
+                <ClaimCategoryEditForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_objects">
+                <ClaimObject/>
+            </Route>
+
+            <Route exact path="/settings/claim_objects/add">
+                <ClaimObjectAddForm/>
+            </Route>
+
+            <Route exact path="/settings/claim_objects/:id/edit">
+                <ClaimObjectEditForm/>
             </Route>
 
             <Route exact path="/settings/staffs">
