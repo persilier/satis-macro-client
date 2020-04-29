@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const AddCategoryFaqs = () => {
     const defaultData = {
@@ -26,7 +27,7 @@ const AddCategoryFaqs = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/faq-categories`, data)
+        axios.post(appConfig.apiDomaine+`/faq-categories`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

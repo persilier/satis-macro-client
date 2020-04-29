@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const EditFaqs = () => {
     const defaultData = {
@@ -26,12 +27,12 @@ const EditFaqs = () => {
 
     const {editfaqid} = useParams();
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/faq-categories')
+        axios.get(appConfig.apiDomaine+'/faq-categories')
             .then(response => {
                 setCategorieData(response.data)
             });
 
-        axios.get(`http://127.0.0.1:8000/faqs/${editfaqid}`)
+        axios.get(appConfig.apiDomaine+`/faqs/${editfaqid}`)
             .then(response => {
                 const newFaq = {
                     faq_category_id: response.data.category.id,
@@ -73,7 +74,7 @@ const EditFaqs = () => {
             answer: data.answer
         };
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/faqs/${editfaqid}`, data)
+        axios.put(appConfig.apiDomaine+`/faqs/${editfaqid}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

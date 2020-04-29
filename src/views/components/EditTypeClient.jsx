@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const EditTypeClient = () => {
     const defaultData = {
@@ -23,11 +24,11 @@ const EditTypeClient = () => {
     const [startRequest, setStartRequest] = useState(false);
     const {edittypeid} = useParams();
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/institutions')
+        axios.get(appConfig.apiDomaine+'/institutions')
             .then(response =>{
                 setInstitutionData(response.data)
             });
-        axios.get(`http://127.0.0.1:8000/type-clients/${edittypeid}`)
+        axios.get(appConfig.apiDomaine+`/type-clients/${edittypeid}`)
             .then(response => {
                 const newType = {
                     institutions_id: response.data.institution.id,
@@ -62,7 +63,7 @@ const EditTypeClient = () => {
         console.log(data, 'data');
 
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/type-clients/${edittypeid}`, data)
+        axios.put(appConfig.apiDomaine+`/type-clients/${edittypeid}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

@@ -9,6 +9,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
+import appConfig from "../../config/appConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -17,7 +18,7 @@ const TypeClient = () => {
     const [typeClient, setTypeClient] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/type-clients")
+        axios.get(appConfig.apiDomaine+"/type-clients")
             .then(response => {
                 setLoad(false);
                 setTypeClient(response.data);
@@ -32,7 +33,7 @@ const TypeClient = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/type-clients/${typeClientId}`)
+                    axios.delete(appConfig.apiDomaine+`/type-clients/${typeClientId}`)
                         .then(response => {
                             console.log(response, "OK");
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);

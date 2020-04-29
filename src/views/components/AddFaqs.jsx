@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const AddFaqs = () => {
     const defaultData = {
@@ -23,7 +24,7 @@ const AddFaqs = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/faq-categories')
+        axios.get(appConfig.apiDomaine+'/faq-categories')
             .then(response =>{
                 setCategorieData(response.data)
             })
@@ -52,7 +53,7 @@ const AddFaqs = () => {
         e.preventDefault();
 
     setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/faqs`, data)
+        axios.post(appConfig.apiDomaine+`/faqs`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

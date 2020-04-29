@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const AddTypeClient = () => {
     const defaultData = {
@@ -23,7 +24,7 @@ const AddTypeClient = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/institutions')
+        axios.get(appConfig.apiDomaine+'/institutions')
             .then(response =>{
                 setInstitutionData(response.data)
             })
@@ -53,7 +54,7 @@ const AddTypeClient = () => {
         console.log(data, 'data');
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/type-clients`, data)
+        axios.post(appConfig.apiDomaine+`/type-clients`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -157,7 +158,7 @@ const AddTypeClient = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Ajout de Catégorie Client
+                                        Ajout de Type Client
                                     </h3>
                                 </div>
                             </div>

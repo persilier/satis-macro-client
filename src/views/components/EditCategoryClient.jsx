@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const EditCategoryClient = () => {
     const defaultData = {
@@ -24,11 +25,11 @@ const EditCategoryClient = () => {
     const [startRequest, setStartRequest] = useState(false);
     const {editcategoryid} = useParams();
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/institutions')
+        axios.get(appConfig.apiDomaine+'/institutions')
             .then(response =>{
                 setInstitutionData(response.data)
             });
-        axios.get(`http://127.0.0.1:8000/category-clients/${editcategoryid}`)
+        axios.get(appConfig.apiDomaine+`/category-clients/${editcategoryid}`)
             .then(response => {
                 const newCategory = {
                     institutions_id: response.data.institution.id,
@@ -62,7 +63,7 @@ const EditCategoryClient = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/category-clients/${editcategoryid}`, data)
+        axios.put(appConfig.apiDomaine+`/category-clients/${editcategoryid}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

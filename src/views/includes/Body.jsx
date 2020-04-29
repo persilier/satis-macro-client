@@ -33,6 +33,9 @@ import AddCategoryClient from "../components/AddCategoryClient";
 import EditCategoryClient from "../components/EditCategoryClient";
 import AddTypeClient from "../components/AddTypeClient";
 import EditTypeClient from "../components/EditTypeClient";
+import Clients from "../pages/Clients";
+import AddClients from "../components/Clients/AddClients";
+import EditClient from "../components/Clients/EditClient";
 
 const Body = () => {
     return (
@@ -88,12 +91,24 @@ const Body = () => {
                 <Institution/>
             </Route>
 
+            <Route exact path="/settings/clients">
+                <Clients/>
+            </Route>
+
+            <Route exact path="/settings/clients/add">
+                <AddClients/>
+            </Route>
+
             <Route exact path="/settings/institution/add">
                 <AddInstitutions/>
             </Route>
 
             <Route exact path="/settings/institution/edit/:editinstitutionlug">
                 <EditInstitutions/>
+            </Route>
+
+            <Route exact path="/settings/clients/edit/:editclientid">
+                <EditClient/>
             </Route>
 
             <Route exact path="/settings/faqs/category/edit/:editcategoryslug">

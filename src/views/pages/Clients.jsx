@@ -13,15 +13,18 @@ import appConfig from "../../config/appConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
-const FAQs = () => {
+const Clients = () => {
     const [load, setLoad] = useState(true);
-    const [faqs, setFaqs] = useState([]);
+    const [clients, setClients] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+"/faqs")
+        axios.get("http://satis2020.local/clients")
             .then(response => {
                 setLoad(false);
-                setFaqs(response.data);
+                setClients(response.data);
+                {
+                    console.log(response.data, 'CLIENTS')
+                }
             })
             .catch(error => {
                 setLoad(false);
@@ -29,11 +32,11 @@ const FAQs = () => {
             })
     }, []);
 
-    const deleteFaqs = (faqId, index) => {
+    const deleteClient = (clientId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine+`/faqs/${faqId}`)
+                    axios.delete(appConfig.apiDomaine + `/clients/${clientId}`)
                         .then(response => {
                             console.log(response, "OK");
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
@@ -66,6 +69,7 @@ const FAQs = () => {
                 }
             }
         }
+
         myFunction();
     };
 
@@ -79,7 +83,8 @@ const FAQs = () => {
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                            <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="" className="kt-subheader__breadcrumbs-link">
                                 Datatables.net </a>
@@ -97,8 +102,10 @@ const FAQs = () => {
                             <a href="#" className="btn kt-subheader__btn-primary">
                                 Actions &nbsp;
                             </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="" data-placement="left" data-original-title="Quick actions">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title=""
+                                 data-placement="left" data-original-title="Quick actions">
+                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                          className="kt-svg-icon kt-svg-icon--success kt-svg-icon--md">
                                         <g fill="none" fill-rule="evenodd">
@@ -116,7 +123,9 @@ const FAQs = () => {
                                     <ul className="kt-nav">
                                         <li className="kt-nav__head">
                                             Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."></i>
+                                            <i className="flaticon2-information" data-toggle="kt-tooltip"
+                                               data-placement="right" title=""
+                                               data-original-title="Click to learn more..."></i>
                                         </li>
                                         <li className="kt-nav__separator"></li>
                                         <li className="kt-nav__item">
@@ -142,14 +151,17 @@ const FAQs = () => {
                                                 <i className="kt-nav__link-icon flaticon2-new-email"></i>
                                                 <span className="kt-nav__link-text">Support Case</span>
                                                 <span className="kt-nav__link-badge">
-																		<span className="kt-badge kt-badge--success">5</span>
+																		<span
+                                                                            className="kt-badge kt-badge--success">5</span>
 																	</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__separator"></li>
                                         <li className="kt-nav__foot">
                                             <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more...">Learn more</a>
+                                            <a className="btn btn-clean btn-bold btn-sm" href="#"
+                                               data-toggle="kt-tooltip" data-placement="right" title=""
+                                               data-original-title="Click to learn more...">Learn more</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -163,8 +175,10 @@ const FAQs = () => {
                 <div className="alert alert-light alert-elevate" role="alert">
                     <div className="alert-icon"><i className="flaticon-warning kt-font-brand"/></div>
                     <div className="alert-text">
-                        A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation
-                        <a className="kt-link kt-font-bold" href="https://datatables.net/extensions/buttons/" target="_blank">
+                        A common UI paradigm to use with interactive tables is to present buttons that will trigger some
+                        action. See official documentation
+                        <a className="kt-link kt-font-bold" href="https://datatables.net/extensions/buttons/"
+                           target="_blank">
                             here
                         </a>.
                     </div>
@@ -176,14 +190,14 @@ const FAQs = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                FAQs
+                                Clients
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/faqs/faq/add"} className="btn btn-brand btn-icon-sm" >
+                                    <Link to={"/settings/clients/add"} className="btn btn-brand btn-icon-sm">
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
@@ -202,71 +216,129 @@ const FAQs = () => {
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
                                                     Search:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                    <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)}
+                                                           className="form-control form-control-sm" placeholder=""
+                                                           aria-controls="kt_table_1"/>
                                                 </label>
                                             </div>
                                         </div>
                                         <div className="col-sm-6 text-right">
                                             <div className="dt-buttons btn-group flex-wrap">
                                                 <button className="btn btn-secondary buttons-print" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>Print</span></button>
-                                                <button className="btn btn-secondary buttons-copy buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>Copy</span></button>
-                                                <button className="btn btn-secondary buttons-excel buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>Excel</span></button>
-                                                <button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>CSV</span></button>
-                                                <button className="btn btn-secondary buttons-pdf buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>PDF</span></button>
+                                                        aria-controls="kt_table_1" type="button"><span>Print</span>
+                                                </button>
+                                                <button className="btn btn-secondary buttons-copy buttons-html5"
+                                                        tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>Copy</span>
+                                                </button>
+                                                <button className="btn btn-secondary buttons-excel buttons-html5"
+                                                        tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>Excel</span>
+                                                </button>
+                                                <button className="btn btn-secondary buttons-csv buttons-html5"
+                                                        tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>CSV</span>
+                                                </button>
+                                                <button className="btn btn-secondary buttons-pdf buttons-html5"
+                                                        tabIndex="0"
+                                                        aria-controls="kt_table_1" type="button"><span>PDF</span>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="row">
-                                        <div className="col-sm-12">
+                                    <div className="row table-responsive">
+                                        <div className="col-sm-12 ">
                                             <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline table"
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                style={{ width: "952px" }}>
+                                                style={{width: "952px"}}>
                                                 <thead>
                                                 <tr role="row">
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Catégorie
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "100.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">FirstName
                                                     </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "200px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Question
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "150px"}}
+                                                        aria-label="Ship City: activate to sort column ascending">LastName
                                                     </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "200px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Réponse
+
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "100px"}}
+                                                        aria-label="Ship Address: activate to sort column ascending">Telephone
                                                     </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "100px"}}
+                                                        aria-label="Ship Address: activate to sort column ascending">Account
+                                                        Number
+                                                    </th>
+
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "100px"}}
+                                                        aria-label="Ship Address: activate to sort column ascending">Email
+                                                    </th>
+
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1" colSpan="1"
+                                                        style={{width: "70.25px"}}
+                                                        aria-label="Type: activate to sort column ascending">
                                                         Action
                                                     </th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                {console.log(clients, 'data')}
                                                 {
-                                                    faqs.data? (
-                                                       faqs.data.map((faq, index) => (
-                                                            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{faq.category.name}</td>
-                                                                <td >{faq.question}</td>
-                                                                <td >{faq.answer}</td>
+                                                    clients.data ? (
+                                                        clients.data.map((client, index) => (
+                                                            <tr className="d-flex justify-content-center align-content-center odd"
+                                                                key={index} role="row" className="odd">
+                                                                <td>{client.identite.firstname}</td>
+                                                                <td>{client.identite.lastname}</td>
+                                                                {/*<td>{client.identite.sexe}</td>*/}
                                                                 <td>
-                                                                    <Link to="/settings/faqs/faq/detail"
+                                                                    {
+                                                                        client.identite.telephone.map((tel, index) => (
+                                                                            index === client.identite.telephone.length - 1 ? tel
+                                                                                : tel + ", "
+                                                                        ))
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        client.account_number.map((account, index) => (
+                                                                            index === client.account_number.length - 1 ? account : account + ", "
+                                                                        ))
+                                                                    }
+                                                                </td>
+                                                                {/*<td>{client.identite.ville}</td>*/}
+                                                                <td>
+                                                                    {
+                                                                        client.identite.email.map((mail, index) => (
+                                                                            index === client.identite.email.length - 1 ? mail : mail + ", "
+                                                                        ))
+                                                                    }
+                                                                </td>
+                                                                {/*<td>{client.institution.name}</td>*/}
+                                                                {/*<td>{client.unit.name}</td>*/}
+                                                                <td>
+                                                                    <Link to="/settings/clients/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
                                                                     </Link>
-                                                                    <Link to={`/settings/faqs/faq/edit/${faq.id}`}
+                                                                    <Link to={`/settings/clients/edit/${client.id}`}
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Modifier">
                                                                         <i className="la la-edit"/>
                                                                     </Link>
                                                                     <button
-                                                                        onClick={(e) => deleteFaqs(faq.id, index)}
+                                                                        onClick={(e) => deleteClient(client.id, index)}
                                                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                         title="Supprimer">
                                                                         <i className="la la-trash"/>
@@ -283,9 +355,6 @@ const FAQs = () => {
                                                     )
                                                 }
                                                 </tbody>
-                                                <tfoot>
-                                                <tr></tr>
-                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>
@@ -299,7 +368,8 @@ const FAQs = () => {
                                             <div className="dataTables_length" id="kt_table_1_length">
                                                 <label>
                                                     Show
-                                                    <select name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
+                                                    <select name="kt_table_1_length" aria-controls="kt_table_1"
+                                                            className="custom-select custom-select-sm form-control form-control-sm">
                                                         <option value="10">10</option>
                                                         <option value="25">25</option>
                                                         <option value="50">50</option>
@@ -308,25 +378,34 @@ const FAQs = () => {
                                                     entries
                                                 </label>
                                             </div>
-                                            <div className="dataTables_paginate paging_simple_numbers" id="kt_table_1_paginate">
+                                            <div className="dataTables_paginate paging_simple_numbers"
+                                                 id="kt_table_1_paginate">
                                                 <ul className="pagination">
-                                                    <li className="paginate_button page-item previous disabled" id="kt_table_1_previous">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="0" tabIndex="0" className="page-link"><i className="la la-angle-left"/></a>
+                                                    <li className="paginate_button page-item previous disabled"
+                                                        id="kt_table_1_previous">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="0"
+                                                           tabIndex="0" className="page-link"><i
+                                                            className="la la-angle-left"/></a>
                                                     </li>
                                                     <li className="paginate_button page-item active">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="1"
+                                                           tabIndex="0" className="page-link">1</a>
                                                     </li>
                                                     <li className="paginate_button page-item ">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="2" tabIndex="0" className="page-link">2</a>
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="2"
+                                                           tabIndex="0" className="page-link">2</a>
                                                     </li>
                                                     <li className="paginate_button page-item ">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="3" tabIndex="0" className="page-link">3</a>
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="3"
+                                                           tabIndex="0" className="page-link">3</a>
                                                     </li>
                                                     <li className="paginate_button page-item ">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="4"
+                                                           tabIndex="0" className="page-link">4</a>
                                                     </li>
                                                     <li className="paginate_button page-item next" id="kt_table_1_next">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5"
+                                                           tabIndex="0" className="page-link">
                                                             <i className="la la-angle-right"/>
                                                         </a>
                                                     </li>
@@ -344,4 +423,4 @@ const FAQs = () => {
     );
 };
 
-export default FAQs;
+export default Clients;
