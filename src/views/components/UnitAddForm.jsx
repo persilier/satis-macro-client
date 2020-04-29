@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const UnitAddForm = () => {
     const [unitTypes, setUnitTypes] = useState([]);
@@ -29,7 +30,7 @@ const UnitAddForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/units/create")
+        axios.get(`${apiConfig.baseUrl}/units/create`)
             .then(response => {
                 const newData = {...data};
                 newData.institution_id = response.data.institutions[0].id;
@@ -72,7 +73,7 @@ const UnitAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/units`, data)
+        axios.post(`${apiConfig.baseUrl}/units`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -238,7 +239,7 @@ const UnitAddForm = () => {
                                     </div>
 
                                     <div className={error.unit_type_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="unit_type">La description</label>
+                                        <label htmlFor="unit_type">Type d'unité</label>
                                         <select
                                             id="institution"
                                             className={error.unit_type_id.length ? "form-control is-invalid" : "form-control"}
@@ -291,21 +292,21 @@ const UnitAddForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/unit" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/unit" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

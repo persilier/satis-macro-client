@@ -5,6 +5,7 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const SMS = () => {
     const defaultData = {
@@ -26,7 +27,7 @@ const SMS = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/configurations/sms")
+        axios.get(`${apiConfig.baseUrl}/configurations/sms`)
             .then(response => {
                 const newData = {...defaultData, ...response.data};
                 setData(newData);
@@ -71,7 +72,7 @@ const SMS = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put("http://127.0.0.1:8000/configurations/sms", data)
+        axios.put(`${apiConfig.baseUrl}/configurations/sms`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -300,10 +301,10 @@ const SMS = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }

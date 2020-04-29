@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss} from "../../helper/function";
+import {loadCss, loadScript} from "../../helper/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -12,16 +12,17 @@ import {confirmDeleteConfig} from "../../config/confirmConfig";
 import apiConfig from "../../config/apiConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadScript("personal/js/paginateTable.js");
 
-const Position = () => {
+const ClaimObject = () => {
     const [load, setLoad] = useState(true);
-    const [positions, setPositions] = useState([]);
+    const [claimObjects, setClaimObjects] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/positions`)
+        axios.get(`${apiConfig.baseUrl}/claim-objects`)
             .then(response => {
                 setLoad(false);
-                setPositions(response.data);
+                setClaimObjects(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -29,15 +30,15 @@ const Position = () => {
             })
     }, []);
 
-    const deletePosition = (positionId, index) => {
+    const deleteClaimObject = (claimObjectId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/positions/${positionId}`)
+                    axios.delete(`${apiConfig.baseUrl}/claim-objects/${claimObjectId}`)
                         .then(response => {
-                            const newPositions = [...positions];
-                            newPositions.splice(index, 1);
-                            setPositions(newPositions);
+                            const newClaimObjects = [...claimObjects];
+                            newClaimObjects.splice(index, 1);
+                            setClaimObjects(newClaimObjects);
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
@@ -144,8 +145,8 @@ const Position = () => {
                                                 <i className="kt-nav__link-icon flaticon2-new-email"/>
                                                 <span className="kt-nav__link-text">Support Case</span>
                                                 <span className="kt-nav__link-badge">
-                                                    <span className="kt-badge kt-badge--success">5</span>
-                                                </span>
+																		<span className="kt-badge kt-badge--success">5</span>
+																	</span>
                                             </a>
                                         </li>
                                         <li className="kt-nav__separator"/>
@@ -178,14 +179,14 @@ const Position = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                Position
+                                Objet de plainte
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/positions/add"} className="btn btn-brand btn-icon-sm">
+                                    <Link to={"/settings/claim_objects/add"} className="btn btn-brand btn-icon-sm">
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
@@ -222,7 +223,6 @@ const Position = () => {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <table
@@ -230,51 +230,45 @@ const Position = () => {
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{ width: "952px" }}>
                                                 <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "250px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institutions
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
+                                                <tr role="row">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Nom
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "250px" }}
+                                                        aria-label="Ship City: activate to sort column ascending">Description
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70px" }}
+                                                        aria-label="Country: activate to sort column ascending">Nom de la catégorie
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        Action
+                                                    </th>
+                                                </tr>
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    positions.length ? (
-                                                        positions.map((position, index) => (
+                                                    claimObjects.length ? (
+                                                        claimObjects.map((claimObject, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{position.name["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{position.description["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>
-                                                                    {
-                                                                        position.institutions.map((institution, index) => (
-                                                                            index === position.institutions.length - 1 ? institution.name : institution.name+", "
-                                                                        ))
-                                                                    }
-                                                                </td>
+                                                                <td>{claimObject.name["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description["fr"]}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name["fr"]}</td>
                                                                 <td>
-                                                                    <Link to="/settings/positions/detail"
+                                                                    <Link to="/settings/claim_objects/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
                                                                     </Link>
-                                                                    <Link to={`/settings/positions/${position.id}/edit`}
+                                                                    <Link to={`/settings/claim_objects/${claimObject.id}/edit`}
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Modifier">
                                                                         <i className="la la-edit"/>
                                                                     </Link>
                                                                     <button
-                                                                        onClick={(e) => deletePosition(position.id, index)}
+                                                                        onClick={(e) => deleteClaimObject(claimObject.id, index)}
                                                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                         title="Supprimer">
                                                                         <i className="la la-trash"/>
@@ -295,7 +289,7 @@ const Position = () => {
                                                 <tr>
                                                     <th rowSpan="1" colSpan="1">Nom</th>
                                                     <th rowSpan="1" colSpan="1">Description</th>
-                                                    <th rowSpan="1" colSpan="1">Institutions</th>
+                                                    <th rowSpan="1" colSpan="1">Nom de la catégorie</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -338,6 +332,11 @@ const Position = () => {
                                                     <li className="paginate_button page-item ">
                                                         <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
                                                     </li>
+                                                    <li className="paginate_button page-item next" id="kt_table_1_next">
+                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
+                                                            <i className="la la-angle-right"/>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -352,4 +351,4 @@ const Position = () => {
     );
 };
 
-export default Position;
+export default ClaimObject;

@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const PerformanceAddForm = () => {
     const defaultData = {
@@ -51,7 +52,7 @@ const PerformanceAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/performance-indicators`, data)
+        axios.post(`${apiConfig.baseUrl}/performance-indicators`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -262,21 +263,21 @@ const PerformanceAddForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/performance_indicator" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/performance_indicator" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

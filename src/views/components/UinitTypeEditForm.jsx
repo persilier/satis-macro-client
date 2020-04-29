@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
+import apiConfig from "../../config/apiConfig";
 
 const UnitTypeEditForm = () => {
     const {id} = useParams();
@@ -22,7 +23,7 @@ const UnitTypeEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/unit-types/${id}`)
+        axios.get(`${apiConfig.baseUrl}/unit-types/${id}`)
             .then(response => {
                 const newData = {
                     name: response.data.name.fr,
@@ -52,7 +53,7 @@ const UnitTypeEditForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/unit-types/${id}`, data)
+        axios.put(`${apiConfig.baseUrl}/unit-types/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -220,21 +221,21 @@ const UnitTypeEditForm = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/unit_type" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/unit_type" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

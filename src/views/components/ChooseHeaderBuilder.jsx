@@ -3,6 +3,7 @@ import axios from 'axios';
 import HeaderBuilder from "../components/HeaderBuilder";
 import TestFormBuilder from "../pages/TestFormBuilder";
 import {update} from "sweetalert2";
+import apiConfig from "../../config/apiConfig";
 
 const ChooseHeaderBuilder = () => {
     const [getHeader, setGetHeader] = useState(undefined);
@@ -11,7 +12,7 @@ const ChooseHeaderBuilder = () => {
     const [modelData, setModelData] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/metadata/headers/data')
+        axios.get(`${apiConfig.baseUrl}/metadata/headers/data`)
             .then(response => setModelData(response.data))
 
     }, []);
@@ -46,7 +47,7 @@ const ChooseHeaderBuilder = () => {
         if (getHeader !== undefined) {
             axios({
                 method: 'put',
-                url: `http://127.0.0.1:8000/header/${getHeader}`,
+                url: `${apiConfig.baseUrl}/header/${getHeader}`,
                 data: {
                     name: data.name,
                     content_default: data.content

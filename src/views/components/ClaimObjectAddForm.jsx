@@ -1,64 +1,44 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {
-    useParams,
     Link
 } from "react-router-dom";
-import {Multiselect} from "multiselect-react-dropdown";
 import {ToastBottomEnd} from "./Toast";
-import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
+import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import apiConfig from "../../config/apiConfig";
 
-const PositionEditForm = () => {
-    const [selectedValues, setSelectedValues] = useState([]);
-    const [institutions, setInstitutions] = useState([]);
+const ClaimObjectAddForm = () => {
+    const [claimCategories, setClaimCategories] = useState([]);
 
-    const {id} = useParams();
     const defaultData = {
         name: "",
         description: "",
-        institutions: institutions.length ? institutions[0].id : ""
+        claim_category_id: claimCategories.length ? claimCategories[0].id : "",
     };
+
     const defaultError = {
         name: [],
         description: [],
-        institutions: []
+        claim_category_id: [],
     };
     const [data, setData] = useState(defaultData);
+
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/positions/${id}/edit`)
+        axios.get(`${apiConfig.baseUrl}/claim-categories`)
             .then(response => {
-                const newData = {
-                    name: response.data.position.name.fr,
-                    description: response.data.position.description.fr,
-                    institutions: reformatInstitution(formatInstitutions(response.data.position.institutions))
-                };
-                setSelectedValues(formatInstitutions(response.data.position.institutions));
-                setInstitutions(formatInstitutions(response.data.institutions));
+                const newData = {...data};
+                newData.claim_category_id = response.data[0].id;
+                setClaimCategories(response.data);
                 setData(newData);
             })
             .catch(error => {
-                console.log("Something is wrong");
+                console.log("something is wrong");
             })
         ;
     }, []);
-
-    const reformatInstitution = (listInstitutions) => {
-        const newListInstitution = [];
-        for (let i = 0; i<listInstitutions.length; i++)
-            newListInstitution.push(listInstitutions[i].id);
-        return newListInstitution;
-    };
-
-    const formatInstitutions = (listInstitutions) => {
-        const newListInstitution = [];
-        for (let i = 0; i<listInstitutions.length; i++)
-            newListInstitution.push({id: listInstitutions[i].id, name: listInstitutions[i].name});
-        return newListInstitution;
-    };
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -72,37 +52,27 @@ const PositionEditForm = () => {
         setData(newData);
     };
 
-    const getSelectedValue = (items) => {
+    const onChangeClaimCategory = (e) => {
         const newData = {...data};
-        newData.institutions = [];
-        for (let i = 0; i<items.length; i++)
-            newData.institutions.push(items[i].id);
-        setData(newData);
-    };
-
-    const onRemove = (selectedList, removedItem) => {
-        const newData = {...data};
-        newData.institutions = [];
-        for (let i = 0; i<selectedList.length; i++)
-            newData.institutions.push(selectedList[i].id);
+        newData.claim_category_id = e.target.value;
         setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
 
-        console.log(data);
         setStartRequest(true);
-        axios.put(`${apiConfig.baseUrl}/positions/${id}`, data)
+        axios.post(`${apiConfig.baseUrl}/claim-objects`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                setData(defaultData);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
             })
             .catch(errorRequest => {
                 setStartRequest(false);
                 setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
     };
@@ -196,7 +166,7 @@ const PositionEditForm = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Modification de la position
+                                        Ajout d'objet de plainte
                                     </h3>
                                 </div>
                             </div>
@@ -215,7 +185,7 @@ const PositionEditForm = () => {
                                     </div>
 
                                     <div className={error.name.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="name">Votre name</label>
+                                        <label htmlFor="name">Name</label>
                                         <input
                                             id="name"
                                             type="text"
@@ -257,18 +227,23 @@ const PositionEditForm = () => {
                                         }
                                     </div>
 
-                                    <div className={error.institutions.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="institution">Les Institution</label>
-                                        <Multiselect
-                                            options={institutions}
-                                            displayValue="name"
-                                            onRemove={onRemove}
-                                            selectedValues={selectedValues}
-                                            onSelect={getSelectedValue}
-                                        />
+                                    <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="unit_type">La description</label>
+                                        <select
+                                            id="institution"
+                                            className={error.claim_category_id.length ? "form-control is-invalid" : "form-control"}
+                                            value={data.claim_category_id}
+                                            onChange={(e) => onChangeClaimCategory(e)}
+                                        >
+                                            {
+                                                claimCategories.map((claimCategory, index) => (
+                                                    <option key={index} value={claimCategory.id}>{claimCategory.name.fr}</option>
+                                                ))
+                                            }
+                                        </select>
                                         {
-                                            error.institutions.length ? (
-                                                error.institutions.map((error, index) => (
+                                            error.claim_category_id.length ? (
+                                                error.claim_category_id.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -290,11 +265,11 @@ const PositionEditForm = () => {
                                         }
                                         {
                                             !startRequest ? (
-                                                <Link to="/settings/positions" className="btn btn-secondary  mx-2">
+                                                <Link to="/settings/claim_objects" className="btn btn-secondary mx-2">
                                                     Quitter
                                                 </Link>
                                             ) : (
-                                                <Link to="/settings/positions" className="btn btn-secondary  mx-2" disabled>
+                                                <Link to="/settings/claim_objects" className="btn btn-secondary mx-2" disabled>
                                                     Quitter
                                                 </Link>
                                             )
@@ -310,4 +285,4 @@ const PositionEditForm = () => {
     );
 };
 
-export default PositionEditForm;
+export default ClaimObjectAddForm;

@@ -120,6 +120,27 @@ const Aside = () => {
                                             <span className="kt-menu__link-text">Position</span>
                                         </Link>
                                     </li>
+
+                                    <li className="kt-menu__item " aria-haspopup="true">
+                                        <Link to="/settings/claim_categories" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Catégorie de plainte</span>
+                                        </Link>
+                                    </li>
+
+                                    <li className="kt-menu__item " aria-haspopup="true">
+                                        <Link to="/settings/claim_objects" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Objet de plainte</span>
+                                        </Link>
+                                    </li>
+
+                                    <li className="kt-menu__item " aria-haspopup="true">
+                                        <Link to="/settings/staffs" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Staff</span>
+                                        </Link>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
