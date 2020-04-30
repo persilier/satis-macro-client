@@ -107,10 +107,4 @@ export const toastDeleteErrorMessageConfig = {
     icon: 'error',
     title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>Echec de la suppression</strong>"
 };
-export const toastErrorMessageWithParameterConfig = (message) => {
-    return {
-        background: "#3c3e40",
-        icon: 'error',
-        title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>"+message+"</strong>"
-    }
-};
+

@@ -7,7 +7,6 @@ import {ToastBottomEnd} from "../Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig,toastErrorMessageWithParameterConfig} from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import TagsInput from 'react-tagsinput'
-// import 'TagsInput.css';
 
 const AddClients = () => {
     const defaultData = {
