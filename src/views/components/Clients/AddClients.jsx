@@ -336,7 +336,6 @@ const AddClients = () => {
                                                         className={error.email.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="email">L'email</label>
                                                         <TagsInput
-                                                            className={error.email.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.email}
                                                             onChange={onChangeEmail}/>
 
@@ -375,7 +374,6 @@ const AddClients = () => {
                                                         className={error.telephone.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="telephone">Le Téléphone</label>
                                                         <TagsInput
-                                                            className={error.telephone.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.telephone}
                                                             onChange={onChangePhone}
                                                         />
@@ -563,7 +561,6 @@ const AddClients = () => {
                                                         className={error.account_number.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="account">Numero de compte</label>
                                                         <TagsInput
-                                                            className={error.account_number.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.account_number}
                                                             onChange={onChangeAccount}/>
                                                         {
@@ -579,7 +576,6 @@ const AddClients = () => {
                                                     <div className={error.id_card.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="account">Numero Carte d'Identité</label>
                                                         <TagsInput
-                                                            className={error.id_card.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.id_card}
                                                             onChange={onChangeIdCard}/>
                                                         {

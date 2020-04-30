@@ -8,11 +8,9 @@ import {ToastBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import TagsInput from 'react-tagsinput'
-// import './react-tagsinput.css';
 
 const EditClients = () => {
     const defaultData = {
@@ -377,7 +375,6 @@ const EditClients = () => {
                                                         className={error.email.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="email">L'email</label>
                                                         <TagsInput
-                                                            className={error.email.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.email}
                                                             onChange={onChangeEmail}/>
 
@@ -395,7 +392,6 @@ const EditClients = () => {
                                                         className={error.telephone.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="telephone">Le Téléphone</label>
                                                         <TagsInput
-                                                            className={error.telephone.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.telephone}
                                                             onChange={onChangePhone}
                                                         />
@@ -583,7 +579,6 @@ const EditClients = () => {
                                                         className={error.account_number.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="account">Numero de compte</label>
                                                         <TagsInput
-                                                            className={error.account_number.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.account_number}
                                                             onChange={onChangeAccount}/>
                                                         {
@@ -600,7 +595,6 @@ const EditClients = () => {
                                                         className={error.id_card.length ? "form-group validated" : "form-group"}>
                                                         <label htmlFor="account">Numero Carte d'Identité</label>
                                                         <TagsInput
-                                                            className={error.id_card.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.id_card}
                                                             onChange={onChangeIdCard}/>
                                                         {
