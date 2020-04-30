@@ -66,7 +66,7 @@ const FaqListe = () => {
                                             ) : ''}
                                         </div>
                                     ))
-                                ) : "Le Tableau est vide"}
+                                ) : ""}
 
                             </div>
                         </div>
