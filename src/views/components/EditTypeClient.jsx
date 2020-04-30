@@ -195,7 +195,7 @@ const EditTypeClient = () => {
                                                 className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
                                                 value={data.institutions_id}
                                                 onChange={(e) => onChangeInstituion(e)}>
-                                                <option value=""> None</option>
+                                                <option value="" disabled> Sélectionnez une institution</option>
                                                 {institutionData.data.map((element, i) => (
                                                     <option key={i} value={element.id}>{element.name}</option>
                                                 ))}

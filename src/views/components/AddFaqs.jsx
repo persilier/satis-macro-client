@@ -185,7 +185,7 @@ const AddFaqs = () => {
                                                 className={error.faq_category_id.length ? "form-control is-invalid" : "form-control"}
                                                 value={data.faq_category_id}
                                                 onChange={(e) => onChangeCategory(e)}>
-                                                <option value=""> None</option>
+                                                <option value="" disabled> Sélectionnez une catégorie</option>
                                                 {categorieData.data.map((element, i) => (
                                                     <option key={i} value={element.id}>{element.name}</option>
                                                 ))}
