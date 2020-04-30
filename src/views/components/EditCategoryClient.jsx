@@ -1,50 +1,60 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
-    Link
+    Link,
+    useParams
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 
-const AddFaqs = () => {
+const EditCategoryClient = () => {
     const defaultData = {
-        faq_category_id: "",
-        question: "",
-        answer: "",
-     };
+        institutions_id: "",
+        name: "",
+        description: "",
+    };
     const defaultError = {
-        faq_category_id: [],
-        question: [],
-        answer: [],
+        institutions_id: [],
+        name: [],
+        description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
-    const [categorieData, setCategorieData] = useState([]);
+    const [institutionData, setInstitutionData] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
-
+    const {editcategoryid} = useParams();
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+'/faq-categories')
+        axios.get(appConfig.apiDomaine+'/institutions')
             .then(response =>{
-                setCategorieData(response.data)
+                setInstitutionData(response.data)
+            });
+        axios.get(appConfig.apiDomaine+`/category-clients/${editcategoryid}`)
+            .then(response => {
+                const newCategory = {
+                    institutions_id: response.data.institution.id,
+                    name: response.data.name,
+                    description: response.data.description
+                };
+                setData(newCategory)
             })
 
     }, []);
-    const onChangeCategory = (e) => {
+    const onChangeInstituion = (e) => {
         const newData = {...data};
-        newData.faq_category_id = e.target.value;
+        newData.institutions_id = e.target.value;
         setData(newData);
     };
 
-    const onChangeQuiz = (e) => {
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.question = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeAnswers = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.answer = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
 
@@ -52,8 +62,8 @@ const AddFaqs = () => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-    setStartRequest(true);
-        axios.post(appConfig.apiDomaine+`/faqs`, data)
+        setStartRequest(true);
+        axios.put(appConfig.apiDomaine+`/category-clients/${editcategoryid}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -157,7 +167,7 @@ const AddFaqs = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Ajout de FAQs
+                                        Modification Catégorie Client
                                     </h3>
                                 </div>
                             </div>
@@ -176,17 +186,17 @@ const AddFaqs = () => {
                                     </div>
 
 
-                                    <div className={error.faq_category_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="exampleSelect1">Catégorie</label>
-                                        {categorieData.data ?(
+                                    <div className={error.institutions_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="exampleSelect1">Institution</label>
+                                        {institutionData.data ?(
                                             <select
                                                 name="categorie"
                                                 id="categorie"
-                                                className={error.faq_category_id.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.faq_category_id}
-                                                onChange={(e) => onChangeCategory(e)}>
+                                                className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
+                                                value={data.institutions_id}
+                                                onChange={(e) => onChangeInstituion(e)}>
                                                 <option value=""> None</option>
-                                                {categorieData.data.map((element, i) => (
+                                                {institutionData.data.map((element, i) => (
                                                     <option key={i} value={element.id}>{element.name}</option>
                                                 ))}
                                             </select>
@@ -194,8 +204,8 @@ const AddFaqs = () => {
                                         }
 
                                         {
-                                            error.faq_category_id.length ? (
-                                                error.faq_category_id.map((error, index) => (
+                                            error.institutions_id.length ? (
+                                                error.institutions_id.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -204,19 +214,19 @@ const AddFaqs = () => {
                                         }
                                     </div>
 
-                                    <div className={error.question.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="quiz">La question</label>
+                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="name">Le Nom</label>
                                         <input
-                                            id="quiz"
+                                            id="name"
                                             type="text"
-                                            className={error.question.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la question"
-                                            value={data.question}
-                                            onChange={(e) => onChangeQuiz(e)}
+                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer le nom"
+                                            value={data.name}
+                                            onChange={(e) => onChangeName(e)}
                                         />
                                         {
-                                            error.question.length ? (
-                                                error.question.map((error, index) => (
+                                            error.name.length ? (
+                                                error.name.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -225,20 +235,20 @@ const AddFaqs = () => {
                                         }
                                     </div>
 
-                                    <div className={error.answer.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="answer">La réponse'</label>
+                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="description">La Description'</label>
                                         <textarea
-                                            id="answer"
-                                            className={error.answer.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la réponse"
+                                            id="description"
+                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer la description"
                                             cols="30"
                                             rows="5"
-                                            value={data.answer}
-                                            onChange={(e) => onChangeAnswers(e)}
+                                            value={data.description}
+                                            onChange={(e) => onChangeDescription(e)}
                                         />
                                         {
-                                            error.answer.length ? (
-                                                error.answer.map((error, index) => (
+                                            error.description.length ? (
+                                                error.description.map((error, index) => (
                                                     <div key={index} className="invalid-feedback">
                                                         {error}
                                                     </div>
@@ -260,11 +270,11 @@ const AddFaqs = () => {
                                         }
                                         {
                                             !startRequest ? (
-                                                <Link to="/settings/faqs/add" className="btn btn-secondary mx-2">
+                                                <Link to="/settings/clients/category" className="btn btn-secondary mx-2">
                                                     Cancel
                                                 </Link>
                                             ) : (
-                                                <Link to="/settings/faqs/add" className="btn btn-secondary mx-2" disabled>
+                                                <Link to="/settings/clients/category" className="btn btn-secondary mx-2" disabled>
                                                     Cancel
                                                 </Link>
                                             )
@@ -281,4 +291,4 @@ const AddFaqs = () => {
     );
 };
 
-export default AddFaqs;
+export default EditCategoryClient;

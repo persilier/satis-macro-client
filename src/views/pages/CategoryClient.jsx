@@ -13,15 +13,15 @@ import appConfig from "../../config/appConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
-const FAQs = () => {
+const CategoryClient = () => {
     const [load, setLoad] = useState(true);
-    const [faqs, setFaqs] = useState([]);
+    const [categoryClient, setCategoryClient] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+"/faqs")
+        axios.get(appConfig.apiDomaine +"/category-clients")
             .then(response => {
                 setLoad(false);
-                setFaqs(response.data);
+                setCategoryClient(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -29,11 +29,11 @@ const FAQs = () => {
             })
     }, []);
 
-    const deleteFaqs = (faqId, index) => {
+    const deleteCategoryClient = (categoryClientId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine+`/faqs/${faqId}`)
+                    axios.delete(appConfig.apiDomaine+`/category-clients/${categoryClientId}`)
                         .then(response => {
                             console.log(response, "OK");
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
@@ -176,14 +176,14 @@ const FAQs = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                FAQs
+                                Catégorie Client
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/faqs/faq/add"} className="btn btn-brand btn-icon-sm" >
+                                    <Link to={"/settings/clients/category/add"} className="btn btn-brand btn-icon-sm" >
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
@@ -231,15 +231,15 @@ const FAQs = () => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Catégorie
+                                                        aria-label="Country: activate to sort column ascending">Institution
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "200px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Question
+                                                        aria-label="Ship City: activate to sort column ascending">Nom
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "200px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Réponse
+                                                        aria-label="Ship City: activate to sort column ascending">Description
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                         Action
@@ -247,26 +247,27 @@ const FAQs = () => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                {console.log(categoryClient.data, "DATA")}
                                                 {
-                                                    faqs.data? (
-                                                       faqs.data.map((faq, index) => (
+                                                    categoryClient.data? (
+                                                        categoryClient.data.map((category, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{faq.category.name}</td>
-                                                                <td >{faq.question}</td>
-                                                                <td >{faq.answer}</td>
+                                                                <td>{category.institution.name}</td>
+                                                                <td >{category.name}</td>
+                                                                <td >{category.description}</td>
                                                                 <td>
-                                                                    <Link to="/settings/faqs/faq/detail"
+                                                                    <Link to="/settings/clients/category/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
                                                                     </Link>
-                                                                    <Link to={`/settings/faqs/faq/edit/${faq.id}`}
+                                                                    <Link to={`/settings/clients/category/edit/${category.id}`}
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Modifier">
                                                                         <i className="la la-edit"/>
                                                                     </Link>
                                                                     <button
-                                                                        onClick={(e) => deleteFaqs(faq.id, index)}
+                                                                        onClick={(e) => deleteCategoryClient(category.id, index)}
                                                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                         title="Supprimer">
                                                                         <i className="la la-trash"/>
@@ -344,4 +345,4 @@ const FAQs = () => {
     );
 };
 
-export default FAQs;
+export default CategoryClient;

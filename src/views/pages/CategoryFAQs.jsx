@@ -9,6 +9,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
+import appConfig from "../../config/appConfig";
 
 loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -17,7 +18,7 @@ const CategoryFAQs = () => {
     const [categoryFaqs, setCategoryFaqs] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/faq-categories")
+        axios.get(appConfig.apiDomaine+"/faq-categories")
             .then(response => {
                 setLoad(false);
                 setCategoryFaqs(response.data);
@@ -32,7 +33,7 @@ const CategoryFAQs = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`http://127.0.0.1:8000/faq-categories/${categoryId}`)
+                    axios.delete(appConfig.apiDomaine+`/faq-categories/${categoryId}`)
                         .then(response => {
                             console.log(response, "OK");
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
@@ -249,7 +250,7 @@ const CategoryFAQs = () => {
                                                                 <td>{category.name}</td>
                                                                 <td >{category.slug}</td>
                                                                 <td>
-                                                                    <Link to="/settings/performance_indicator/detail"
+                                                                    <Link to="/settings/faqs/category/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>

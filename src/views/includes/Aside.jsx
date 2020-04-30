@@ -93,6 +93,36 @@ const Aside = () => {
                                         </div>
                                     </li>
 
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="javascript:;" className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <span className="kt-menu__link-text">Clients</span>
+                                        <i className="kt-menu__ver-arrow la la-angle-right"></i>
+                                        </a>
+                                        <div className="kt-menu__submenu "><span className="kt-menu__arrow"></span>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item " aria-haspopup="true">
+                                                    <Link to="/settings/clients"  className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                        <span className="kt-menu__link-text">Client</span>
+                                                    </Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true">
+                                                    <Link to="/settings/clients/category" className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                        <span className="kt-menu__link-text">Catégorie Client</span></Link>
+                                                </li>
+                                                <li className="kt-menu__item " aria-haspopup="true">
+                                                    <Link to="/settings/clients/type"  className="kt-menu__link "
+                                                    ><i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                                        <span className="kt-menu__link-text">Type Client</span>
+                                                    </Link>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
                                     <li className="kt-menu__item " aria-haspopup="true">
                                         <Link to="/settings/performance_indicator" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>

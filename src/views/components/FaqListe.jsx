@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import appConfig from "../../config/appConfig";
 
 
 const FaqListe = () => {
@@ -7,12 +8,12 @@ const FaqListe = () => {
     const [data, setData] = useState([]);
     const [category, setCategory] = useState([]);
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/faq-categories`)
+        axios.get(appConfig.apiDomaine+`/faq-categories`)
             .then(response => {
                 setCategory(response.data)
             });
 
-        axios.get(`http://127.0.0.1:8000/faqs`)
+        axios.get(appConfig.apiDomaine+`/faqs`)
             .then(response => {
                 setData(response.data)
             })

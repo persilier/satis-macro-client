@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
 
 const EditInstitutions = () => {
     const {editinstitutionlug}=useParams();
@@ -26,7 +27,7 @@ const EditInstitutions = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/institutions/${editinstitutionlug}`)
+        axios.get(appConfig.apiDomaine+`/institutions/${editinstitutionlug}`)
             .then(response => {
                 const newInstitution={
                     name:response.data.name,
@@ -65,7 +66,7 @@ const EditInstitutions = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`http://127.0.0.1:8000/institutions/${editinstitutionlug}`, data)
+        axios.put(appConfig.apiDomaine+`/institutions/${editinstitutionlug}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

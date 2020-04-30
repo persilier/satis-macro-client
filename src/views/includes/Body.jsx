@@ -17,6 +17,7 @@ import UnitEditForm from "../components/UnitEditForm";
 import Position from "../pages/Position";
 import PositionAddForm from "../components/PositionAddForm";
 import PositionEditForm from "../components/PositionEditForm";
+
 import Staff from "../pages/Staff";
 import StaffAddForm from "../components/staff/StaffAddForm";
 import StaffEditForm from "../components/staff/StaffEditForm";
@@ -26,6 +27,26 @@ import ClaimCategoryEditForm from "../components/ClaimCategoryEditForm";
 import ClaimObject from "../pages/ClaimObject";
 import ClaimObjectAddForm from "../components/ClaimObjectAddForm";
 import ClaimObjectEditForm from "../components/ClaimObjectEditForm";
+
+import FAQs from "../pages/FAQs";
+import FAQsPage from "../pages/FAQsPage";
+import CategoryFAQs from "../pages/CategoryFAQs";
+import Institution from "../pages/Institution";
+import AddInstitutions from "../components/AddInstitutions";
+import EditInstitutions from "../components/EditInstitution";
+import AddCategoryFaqs from "../components/AddCategoryFaqs";
+import EditCategoryFaqs from "../components/EditCategoryFaqs";
+import AddFaqs from "../components/AddFaqs";
+import EditFaqs from "../components/EditFaqs.jsx";
+import CategoryClient from "../pages/CategoryClient";
+import TypeClient from "../pages/TypeClient";
+import AddCategoryClient from "../components/AddCategoryClient";
+import EditCategoryClient from "../components/EditCategoryClient";
+import AddTypeClient from "../components/AddTypeClient";
+import EditTypeClient from "../components/EditTypeClient";
+import Clients from "../pages/Clients";
+import AddClients from "../components/Clients/AddClients";
+import EditClient from "../components/Clients/EditClient";
 
 const Body = () => {
     return (
@@ -38,9 +59,85 @@ const Body = () => {
                 <SMS/>
             </Route>
 
+            <Route exact path="/settings/clients/category">
+                <CategoryClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/category/add">
+                <AddCategoryClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/type">
+                <TypeClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/type/add">
+                <AddTypeClient/>
+            </Route>
+
+            <Route exact path="/settings/faqs/add">
+                <FAQs/>
+            </Route>
+
+            <Route exact path="/settings/faqs/list">
+                <FAQsPage/>
+            </Route>
+
+            <Route exact path="/settings/faqs/faq/add">
+                <AddFaqs/>
+            </Route>
+
+            <Route exact path="/settings/faqs/category">
+                <CategoryFAQs/>
+            </Route>
+            <Route exact path="/settings/faqs/category/add">
+                <AddCategoryFaqs/>
+            </Route>
+
             <Route exact path="/settings/mail">
                 <Mail/>
             </Route>
+
+            <Route exact path="/settings/institution">
+                <Institution/>
+            </Route>
+
+            <Route exact path="/settings/clients">
+                <Clients/>
+            </Route>
+
+            <Route exact path="/settings/clients/add">
+                <AddClients/>
+            </Route>
+
+            <Route exact path="/settings/institution/add">
+                <AddInstitutions/>
+            </Route>
+
+            <Route exact path="/settings/institution/edit/:editinstitutionlug">
+                <EditInstitutions/>
+            </Route>
+
+            <Route exact path="/settings/clients/edit/:editclientid">
+                <EditClient/>
+            </Route>
+
+            <Route exact path="/settings/faqs/category/edit/:editcategoryslug">
+                <EditCategoryFaqs/>
+            </Route>
+
+            <Route exact path="/settings/faqs/faq/edit/:editfaqid">
+                <EditFaqs/>
+            </Route>
+
+            <Route exact path="/settings/clients/type/edit/:edittypeid">
+                <EditTypeClient/>
+            </Route>
+
+            <Route exact path="/settings/clients/category/edit/:editcategoryid">
+                <EditCategoryClient/>
+            </Route>
+
 
             <Route exact path="/settings/performance_indicator">
                 <PerformanceIndicator/>
