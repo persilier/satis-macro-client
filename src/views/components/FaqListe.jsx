@@ -18,6 +18,7 @@ const FaqListe = () => {
 
         axios.get(appConfig.apiDomaine+`/faqs`)
             .then(response => {
+                setLoad(false);
                 setData(response.data)
             })
     }, []);
@@ -29,7 +30,7 @@ const FaqListe = () => {
                     <LoadingTable/>
                 ) : (
                     <div className="row">
-                        <div className="col-xl-9">
+                        <div className="col-xl-12">
                             <div className="accordion accordion-solid accordion-toggle-plus" id="accordionExample1">
 
                                 {category.data ? (

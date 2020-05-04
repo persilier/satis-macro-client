@@ -9,7 +9,7 @@ import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../co
 import appConfig from "../../config/appConfig";
 
 const EditInstitutions = () => {
-    const {editinstitutionlug}=useParams();
+    const {editinstitutionlug} = useParams();
     const defaultData = {
         name: "",
         acronyme: "",
@@ -27,12 +27,12 @@ const EditInstitutions = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+`/institutions/${editinstitutionlug}`)
+        axios.get(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`)
             .then(response => {
-                const newInstitution={
-                    name:response.data.name,
-                    acronyme:response.data.acronyme,
-                    iso_code:response.data.iso_code
+                const newInstitution = {
+                    name: response.data.name,
+                    acronyme: response.data.acronyme,
+                    iso_code: response.data.iso_code
                 };
                 setData(newInstitution)
             })
@@ -66,7 +66,7 @@ const EditInstitutions = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine+`/institutions/${editinstitutionlug}`, data)
+        axios.put(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -112,15 +112,28 @@ const EditInstitutions = () => {
                             <a href="#" className="btn kt-subheader__btn-primary">
                                 Actions &nbsp;
                             </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions" data-placement="left">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z" fill="#000" fill-rule="nonzero" opacity=".3"/><path d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z" fill="#000"/></g></svg>
+                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions"
+                                 data-placement="left">
+                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M0 0h24v24H0z"/>
+                                            <path
+                                                d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z"
+                                                fill="#000" fill-rule="nonzero" opacity=".3"/>
+                                            <path
+                                                d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z"
+                                                fill="#000"/>
+                                        </g>
+                                    </svg>
                                 </a>
                                 <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
                                     <ul className="kt-nav">
                                         <li className="kt-nav__head">
                                             Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more..."/>
+                                            <i className="flaticon2-information" data-toggle="kt-tooltip"
+                                               data-placement="right" title="Click to learn more..."/>
                                         </li>
                                         <li className="kt-nav__separator"/>
                                         <li className="kt-nav__item">
@@ -153,7 +166,9 @@ const EditInstitutions = () => {
                                         <li className="kt-nav__separator"/>
                                         <li className="kt-nav__foot">
                                             <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
+                                            <a className="btn btn-clean btn-bold btn-sm" href="#"
+                                               data-toggle="kt-tooltip" data-placement="right"
+                                               title="Click to learn more...">Learn more</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -177,104 +192,128 @@ const EditInstitutions = () => {
 
                             <form method="POST" className="kt-form">
                                 <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
-                                            </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                    <div className="tab-content">
+                                        <div className="tab-pane active" id="kt_user_edit_tab_1" role="tabpanel">
+                                            <div className="kt-form kt-form--label-right">
+                                                <div className="kt-form__body">
+                                                    <div className="kt-section kt-section--first">
+                                                        <div className="kt-section__body">
+
+                                                            <div
+                                                                className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="name">le Nom</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    <input
+                                                                        id="name"
+                                                                        type="text"
+                                                                        className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder="Veillez entrer le nom"
+                                                                        value={data.name}
+                                                                        onChange={(e) => onChangeName(e)}
+                                                                    />
+                                                                    {
+                                                                        error.name.length ? (
+                                                                            error.name.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div
+                                                                className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="Acronyme">L'acronyme'</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    <input
+                                                                        id="Acronyme"
+                                                                        className={error.acronyme.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder="Veillez entrer l'acronyme"
+                                                                        type="text"
+                                                                        value={data.acronyme}
+                                                                        onChange={(e) => onChangeAcronyme(e)}
+                                                                    />
+                                                                    {
+                                                                        error.acronyme.length ? (
+                                                                            error.acronyme.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div
+                                                                className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="value">Le Code Iso</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    <input
+                                                                        id="value"
+                                                                        type="text"
+                                                                        className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder="Veillez entrer le code ISO"
+                                                                        value={data.iso_code}
+                                                                        onChange={(e) => onChangeIsoCode(e)}
+                                                                    />
+                                                                    {
+                                                                        error.iso_code.length ? (
+                                                                            error.iso_code.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div className="kt-portlet__foot">
+                                                            <div className="kt-form__actions">
+                                                                {
+                                                                    !startRequest ? (
+                                                                        <button type="submit"
+                                                                                onClick={(e) => onSubmit(e)}
+                                                                                className="btn btn-primary">Submit</button>
+                                                                    ) : (
+                                                                        <button
+                                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                            type="button" disabled>
+                                                                            Loading...
+                                                                        </button>
+                                                                    )
+                                                                }
+                                                                {
+                                                                    !startRequest ? (
+                                                                        <Link to="/settings/institution"
+                                                                              className="btn btn-secondary mx-2">
+                                                                            Cancel
+                                                                        </Link>
+                                                                    ) : (
+                                                                        <Link to="/settings/institution"
+                                                                              className="btn btn-secondary mx-2"
+                                                                              disabled>
+                                                                            Cancel
+                                                                        </Link>
+                                                                    )
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="name">le Nom</label>
-                                        <input
-                                            id="name"
-                                            type="text"
-                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le nom"
-                                            value={data.name}
-                                            onChange={(e) => onChangeName(e)}
-                                        />
-                                        {
-                                            error.name.length ? (
-                                                error.name.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.acronyme.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="Acronyme">L'acronyme'</label>
-                                        <input
-                                            id="Acronyme"
-                                            className={error.acronyme.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer l'acronyme"
-                                            type="text"
-                                            value={data.acronyme}
-                                            onChange={(e) => onChangeAcronyme(e)}
-                                        />
-                                        {
-                                            error.acronyme.length ? (
-                                                error.acronyme.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.iso_code.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="value">Le Code Iso</label>
-                                        <input
-                                            id="value"
-                                            type="text"
-                                            className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le code ISO"
-                                            value={data.iso_code}
-                                            onChange={(e) => onChangeIsoCode(e)}
-                                        />
-                                        {
-                                            error.iso_code.length ? (
-                                                error.iso_code.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
-                                            ) : (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
-                                                </button>
-                                            )
-                                        }
-                                        {
-                                            !startRequest ? (
-                                                <Link to="/settings/institution" className="btn btn-secondary mx-2">
-                                                    Cancel
-                                                </Link>
-                                            ) : (
-                                                <Link to="/settings/institution" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
-                                                </Link>
-                                            )
-                                        }
-
                                     </div>
                                 </div>
                             </form>

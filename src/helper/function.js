@@ -38,6 +38,10 @@ export const loadScript = async function(src) {
             tag.id = "profile-info-user";
             removeExistingScript("profile-info-user");
             break;
+            case "assets/js/pages/crud/file-upload/ktavatar.js":
+            tag.id = "profile";
+            removeExistingScript("profile");
+            break;
         default:
             break;
     }
