@@ -71,7 +71,7 @@ const EditClients = () => {
                     email: response.data.identite.email,
                     ville: response.data.identite.ville === null ? "" : response.data.identite.ville,
                     units_id: response.data.unit.id,
-                    id_card: response.data.id_card ? response.data.id_card:[],
+                    id_card: response.data.identite.id_card ? response.data.identite.id_card:[],
                     type_clients_id: response.data.type_client.id,
                     category_clients_id: response.data.category_client.id,
                     institutions_id: response.data.institution.id,
