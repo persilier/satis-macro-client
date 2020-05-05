@@ -178,7 +178,7 @@ const Position = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                Position
+                                Postes
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">

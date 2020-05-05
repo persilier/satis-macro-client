@@ -184,130 +184,141 @@ const SMS = () => {
                             </div>
 
                             <form method="POST" className="kt-form">
-                                <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
+                                <div className="kt-form kt-form--label-right">
+                                    <div className="kt-portlet__body">
+                                        <div className="form-group form-group-last">
+                                            <div className="alert alert-secondary" role="alert">
+                                                <div className="alert-icon">
+                                                    <i className="flaticon-warning kt-font-brand"/>
+                                                </div>
+                                                <div className="alert-text">
+                                                    The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                                </div>
                                             </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                        </div>
+                                        <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="senderID"
+                                                    type="text"
+                                                    className={error.senderID.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer l'identifiant de l'expéditeur"
+                                                    value={data.senderID}
+                                                    onChange={(e) => onChangeSenderID(e)}
+                                                />
+                                                {
+                                                    error.senderID.length ? (
+                                                        error.senderID.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={error.username.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="username">Votre nom</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="username"
+                                                    type="text"
+                                                    className={error.username.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer votre nom"
+                                                    value={data.username}
+                                                    onChange={(e) => onChangeUsername(e)}
+                                                />
+                                                {
+                                                    error.username.length ? (
+                                                        error.username.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={error.password.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    type="password"
+                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
+                                                    id="password"
+                                                    placeholder=". . . . . . . . . "
+                                                    value={data.password}
+                                                    onChange={(e) => onChangePassword(e)}
+                                                />
+                                                {
+                                                    error.password.length ? (
+                                                        error.password.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={error.indicatif.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="indicatif">Indicatif Pays</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    type="number"
+                                                    className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
+                                                    id="indicatif"
+                                                    placeholder="Veillez entrer l'indicatif"
+                                                    value={data.indicatif}
+                                                    onChange={(e) => onChangeIndicatif(e)}
+                                                />
+                                                {
+                                                    error.indicatif.length ? (
+                                                        error.indicatif.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className={error.api.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="api">API</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    type="text"
+                                                    className={error.api.length ? "form-control is-invalid" : "form-control"}
+                                                    id="api"
+                                                    placeholder="Veillez entrer l'API"
+                                                    value={data.api}
+                                                    onChange={(e) => onChangeApi(e)}
+                                                />
+                                                {
+                                                    error.api.length ? (
+                                                        error.api.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
                                             </div>
                                         </div>
                                     </div>
-                                    <div className={error.senderID.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="senderID">Sender ID</label>
-                                        <input
-                                            id="senderID"
-                                            type="text"
-                                            className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le sender ID"
-                                            value={data.senderID}
-                                            onChange={(e) => onChangeSenderID(e)}
-                                        />
-                                        {
-                                            error.senderID.length ? (
-                                                error.senderID.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-
-                                    </div>
-                                    <div className={error.username.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="username">User Name</label>
-                                        <input
-                                            id="username"
-                                            type="text"
-                                            className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer votre name"
-                                            value={data.username}
-                                            onChange={(e) => onChangeUsername(e)}
-                                        />
-                                        {
-                                            error.username.length ? (
-                                                error.username.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                    <div className={error.password.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="password">Password</label>
-                                        <input
-                                            type="password"
-                                            className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                            id="password"
-                                            placeholder="Password"
-                                            value={data.password}
-                                            onChange={(e) => onChangePassword(e)}
-                                        />
-                                        {
-                                            error.password.length ? (
-                                                error.password.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                    <div className={error.indicatif.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="indicatif">Indicatif Pays</label>
-                                        <input
-                                            type="number"
-                                            className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                            id="indicatif"
-                                            placeholder="Veillez entrer l'indicatif"
-                                            value={data.indicatif}
-                                            onChange={(e) => onChangeIndicatif(e)}
-                                        />
-                                        {
-                                            error.indicatif.length ? (
-                                                error.indicatif.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                    <div className={error.api.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="api">API</label>
-                                        <input
-                                            type="text"
-                                            className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                            id="api"
-                                            placeholder="Veillez entrer l'API"
-                                            value={data.api}
-                                            onChange={(e) => onChangeApi(e)}
-                                        />
-                                        {
-                                            error.api.length ? (
-                                                error.api.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
-                                            ) : (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Chargement...
-                                                </button>
-                                            )
-                                        }
+                                    <div className="kt-portlet__foot">
+                                        <div className="kt-form__actions text-right">
+                                            {
+                                                !startRequest ? (
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
+                                                ) : (
+                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                        Chargement...
+                                                    </button>
+                                                )
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </form>

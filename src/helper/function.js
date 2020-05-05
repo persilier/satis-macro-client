@@ -52,3 +52,14 @@ export const removeExistingScript = function (id) {
     if (document.getElementById(id))
         document.getElementById(id).remove();
 };
+
+export const formatSelectOption = function(options, key, translate) {
+    const newOptions = [];
+    for (let i = 0; i < options.length; i++) {
+        if (translate)
+            newOptions.push({value: options[i].id, label: ((options[i])[key])[translate]});
+        else
+            newOptions.push({value: options[i].id, label: (options[i])[key]});
+    }
+    return newOptions;
+};

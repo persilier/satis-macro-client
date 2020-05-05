@@ -241,11 +241,11 @@ const Unit = () => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom type unité
+                                                            aria-label="Country: activate to sort column ascending">Type Unité
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom institution
+                                                            aria-label="Country: activate to sort column ascending">Institution
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
@@ -294,8 +294,8 @@ const Unit = () => {
                                                 <tr>
                                                     <th rowSpan="1" colSpan="1">Nom</th>
                                                     <th rowSpan="1" colSpan="1">Description</th>
-                                                    <th rowSpan="1" colSpan="1">Nom type unité</th>
-                                                    <th rowSpan="1" colSpan="1">Nom de l'institution</th>
+                                                    <th rowSpan="1" colSpan="1">Type Unité</th>
+                                                    <th rowSpan="1" colSpan="1">Institution</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
