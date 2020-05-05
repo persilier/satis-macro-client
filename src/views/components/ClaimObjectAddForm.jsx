@@ -6,9 +6,12 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import apiConfig from "../../config/apiConfig";
+import Select from "react-select";
+import {formatSelectOption} from "../../helper/function";
 
 const ClaimObjectAddForm = () => {
     const [claimCategories, setClaimCategories] = useState([]);
+    const [claimCategory, setClaimCategory] = useState({});
 
     const defaultData = {
         name: "",
@@ -30,8 +33,8 @@ const ClaimObjectAddForm = () => {
         axios.get(`${apiConfig.baseUrl}/claim-categories`)
             .then(response => {
                 const newData = {...data};
-                newData.claim_category_id = response.data[0].id;
-                setClaimCategories(response.data);
+                newData.claim_category_id = "";
+                setClaimCategories(formatSelectOption(response.data, "name", "fr"));
                 setData(newData);
             })
             .catch(error => {
@@ -52,9 +55,10 @@ const ClaimObjectAddForm = () => {
         setData(newData);
     };
 
-    const onChangeClaimCategory = (e) => {
+    const onChangeClaimCategory = (selected) => {
         const newData = {...data};
-        newData.claim_category_id = e.target.value;
+        newData.claim_category_id = selected.value;
+        setClaimCategory(selected);
         setData(newData);
     };
 
@@ -172,110 +176,112 @@ const ClaimObjectAddForm = () => {
                             </div>
 
                             <form method="POST" className="kt-form">
-                                <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
+                                <div className="kt-form kt-form--label-right">
+                                    <div className="kt-portlet__body">
+                                        <div className="form-group form-group-last">
+                                            <div className="alert alert-secondary" role="alert">
+                                                <div className="alert-icon">
+                                                    <i className="flaticon-warning kt-font-brand"/>
+                                                </div>
+                                                <div className="alert-text">
+                                                    The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                                </div>
                                             </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                        </div>
+
+                                        <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'objet de plainte</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="name"
+                                                    type="text"
+                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le nom de l'objet de plainte"
+                                                    value={data.name}
+                                                    onChange={(e) => onChangeName(e)}
+                                                />
+                                                {
+                                                    error.name.length ? (
+                                                        error.name.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.claim_category_id.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Catégorie de l'objet de plainte</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <Select
+                                                    value={claimCategory}
+                                                    onChange={onChangeClaimCategory}
+                                                    options={claimCategories}
+                                                />
+                                                {
+                                                    error.claim_category_id.length ? (
+                                                        error.claim_category_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <textarea
+                                                    id="description"
+                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la description"
+                                                    cols="30"
+                                                    rows="5"
+                                                    value={data.description}
+                                                    onChange={(e) => onChangeDescription(e)}
+                                                />
+                                                {
+                                                    error.description.length ? (
+                                                        error.description.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="name">Name</label>
-                                        <input
-                                            id="name"
-                                            type="text"
-                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le name"
-                                            value={data.name}
-                                            onChange={(e) => onChangeName(e)}
-                                        />
-                                        {
-                                            error.name.length ? (
-                                                error.name.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="description">La description</label>
-                                        <textarea
-                                            id="description"
-                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la description"
-                                            cols="30"
-                                            rows="5"
-                                            value={data.description}
-                                            onChange={(e) => onChangeDescription(e)}
-                                        />
-                                        {
-                                            error.description.length ? (
-                                                error.description.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="unit_type">La description</label>
-                                        <select
-                                            id="institution"
-                                            className={error.claim_category_id.length ? "form-control is-invalid" : "form-control"}
-                                            value={data.claim_category_id}
-                                            onChange={(e) => onChangeClaimCategory(e)}
-                                        >
+                                    <div className="kt-portlet__foot">
+                                        <div className="kt-form__actions text-right">
                                             {
-                                                claimCategories.map((claimCategory, index) => (
-                                                    <option key={index} value={claimCategory.id}>{claimCategory.name.fr}</option>
-                                                ))
+                                                !startRequest ? (
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                ) : (
+                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                        Chargement...
+                                                    </button>
+                                                )
                                             }
-                                        </select>
-                                        {
-                                            error.claim_category_id.length ? (
-                                                error.claim_category_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
+                                            {
+                                                !startRequest ? (
+                                                    <Link to="/settings/claim_objects" className="btn btn-secondary mx-2">
+                                                        Quitter
+                                                    </Link>
+                                                ) : (
+                                                    <Link to="/settings/claim_objects" className="btn btn-secondary mx-2" disabled>
+                                                        Quitter
+                                                    </Link>
+                                                )
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
-                                            ) : (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Chargement...
-                                                </button>
-                                            )
-                                        }
-                                        {
-                                            !startRequest ? (
-                                                <Link to="/settings/claim_objects" className="btn btn-secondary mx-2">
-                                                    Quitter
-                                                </Link>
-                                            ) : (
-                                                <Link to="/settings/claim_objects" className="btn btn-secondary mx-2" disabled>
-                                                    Quitter
-                                                </Link>
-                                            )
-                                        }
-                                    </div>
-                                </div>
+
                             </form>
                         </div>
                     </div>

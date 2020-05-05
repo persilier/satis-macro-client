@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    Link
+    NavLink
 } from "react-router-dom";
 
 const Aside = () => {
@@ -35,33 +35,33 @@ const Aside = () => {
                                         </span>
                                     </li>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/sms" className="kt-menu__link ">
+                                    <NavLink to="/settings/sms" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/sms" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">SMS</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/mail" className="kt-menu__link ">
+                                    <NavLink to="/settings/mail" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/mail" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Mail</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/institution" className="kt-menu__link ">
+                                    <NavLink to="/settings/institution" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/institution" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Institution</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/user" className="kt-menu__link ">
+                                    <NavLink to="/settings/user" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/user" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Utilisateur</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
                                     <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                                         data-ktmenu-submenu-toggle="hover">
@@ -73,74 +73,74 @@ const Aside = () => {
                                         <div className="kt-menu__submenu "><span className="kt-menu__arrow"></span>
                                             <ul className="kt-menu__subnav">
                                                 <li className="kt-menu__item " aria-haspopup="true">
-                                                    <Link to="/settings/faqs/list"  className="kt-menu__link ">
+                                                    <NavLink to="/settings/faqs/list"  className="kt-menu__link ">
                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                                         <span className="kt-menu__link-text">FAQs</span>
-                                                    </Link>
+                                                    </NavLink>
                                                 </li>
                                                 <li className="kt-menu__item " aria-haspopup="true">
-                                                    <Link to="/settings/faqs/add" className="kt-menu__link ">
+                                                    <NavLink to="/settings/faqs/add" className="kt-menu__link ">
                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                                        <span className="kt-menu__link-text">Editer FAQ</span></Link>
+                                                        <span className="kt-menu__link-text">Editer FAQ</span></NavLink>
                                                 </li>
                                                 <li className="kt-menu__item " aria-haspopup="true">
-                                                    <Link to="/settings/faqs/category"  className="kt-menu__link "
+                                                    <NavLink to="/settings/faqs/category"  className="kt-menu__link "
                                                     ><i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                                         <span className="kt-menu__link-text">Catégorie FAQ</span>
-                                                    </Link>
+                                                    </NavLink>
                                                 </li>
                                             </ul>
                                         </div>
                                     </li>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/performance_indicator" className="kt-menu__link ">
+                                    <NavLink to="/settings/performance_indicator" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/performance_indicator" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Indicateur de performance</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/unit_type" className="kt-menu__link ">
+                                    <NavLink to="/settings/unit_type" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/unit_type" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Type d'unité</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/unit" className="kt-menu__link ">
+                                    <NavLink to="/settings/unit" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/unit" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Unité</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/positions" className="kt-menu__link ">
+                                    <NavLink to="/settings/positions" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/positions" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Position</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/claim_categories" className="kt-menu__link ">
+                                    <NavLink to="/settings/claim_categories" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/claim_categories" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Catégorie de plainte</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/claim_objects" className="kt-menu__link ">
+                                    <NavLink to="/settings/claim_objects" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/claim_objects" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Objet de plainte</span>
-                                        </Link>
-                                    </li>
+                                        </NavLink>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item " aria-haspopup="true">
-                                        <Link to="/settings/staffs" className="kt-menu__link ">
+                                    <NavLink to="/settings/staffs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/staffs" className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Staff</span>
-                                        </Link>
-                                    </li>
+                                            <span className="kt-menu__link-text">Agent</span>
+                                        </NavLink>
+                                    </NavLink>
                                 </ul>
                             </div>
                         </li>

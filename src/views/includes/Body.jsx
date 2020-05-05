@@ -10,7 +10,7 @@ import PerformanceEditForm from "../components/PerformanceEditForm";
 import PerformanceAddForm from "../components/PerformanceAddForm";
 import UnitType from "../pages/UnitType";
 import UnitTypeAddForm from "../components/UnitTypeAddForm";
-import UnitTypeEditForm from "../components/UinitTypeEditForm";
+import UnitTypeEditForm from "../components/UnitTypeEditForm";
 import Unit from "../pages/Unit";
 import UnitAddForm from "../components/UnitAddForm";
 import UnitEditForm from "../components/UnitEditForm";

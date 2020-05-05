@@ -3,13 +3,17 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
+import Select from "react-select";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import apiConfig from "../../config/apiConfig";
+import {formatSelectOption} from "../../helper/function";
 
 const UnitAddForm = () => {
     const [unitTypes, setUnitTypes] = useState([]);
     const [institutions, setInstitutions] = useState([]);
+    const [unitType, setUnitType] = useState({});
+    const [institution, setInstitution] = useState({});
 
     const defaultData = {
         name: "",
@@ -33,10 +37,10 @@ const UnitAddForm = () => {
         axios.get(`${apiConfig.baseUrl}/units/create`)
             .then(response => {
                 const newData = {...data};
-                newData.institution_id = response.data.institutions[0].id;
-                newData.unit_type_id = response.data.unitTypes[0].id;
-                setUnitTypes(response.data.unitTypes);
-                setInstitutions(response.data.institutions);
+                newData.institution_id = "";
+                newData.unit_type_id = "";
+                setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+                setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                 setData(newData);
             })
             .catch(error => {
@@ -57,15 +61,17 @@ const UnitAddForm = () => {
         setData(newData);
     };
 
-    const onChangeUnitType = (e) => {
+    const onChangeUnitType = (selected) => {
         const newData = {...data};
-        newData.unit_type_id = e.target.value;
+        newData.unit_type_id = selected.value;
+        setUnitType(selected);
         setData(newData);
     };
 
-    const onChangeInstitution = (e) => {
+    const onChangeInstitution = (selected) => {
         const newData = {...data};
-        newData.institution_id = e.target.value;
+        newData.institution_id = selected.value;
+        setInstitution(selected);
         setData(newData);
     };
 
@@ -183,133 +189,129 @@ const UnitAddForm = () => {
                             </div>
 
                             <form method="POST" className="kt-form">
-                                <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
+                                <div className="kt-form kt-form--label-right">
+                                    <div className="kt-portlet__body">
+                                        <div className="form-group form-group-last">
+                                            <div className="alert alert-secondary" role="alert">
+                                                <div className="alert-icon">
+                                                    <i className="flaticon-warning kt-font-brand"/>
+                                                </div>
+                                                <div className="alert-text">
+                                                    The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                                </div>
                                             </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                        </div>
+
+                                        <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'unité</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="name"
+                                                    type="text"
+                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le nom de l'unité"
+                                                    value={data.name}
+                                                    onChange={(e) => onChangeName(e)}
+                                                />
+                                                {
+                                                    error.name.length ? (
+                                                        error.name.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.unit_type_id.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'unité</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <Select
+                                                    value={unitType}
+                                                    onChange={onChangeUnitType}
+                                                    options={unitTypes}
+                                                />
+                                                {
+                                                    error.unit_type_id.length ? (
+                                                        error.unit_type_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <Select
+                                                    value={institution}
+                                                    onChange={onChangeInstitution}
+                                                    options={institutions}
+                                                />
+                                                {
+                                                    error.institution_id.length ? (
+                                                        error.institution_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <textarea
+                                                    id="description"
+                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la description"
+                                                    cols="30"
+                                                    rows="5"
+                                                    value={data.description}
+                                                    onChange={(e) => onChangeDescription(e)}
+                                                />
+                                                {
+                                                    error.description.length ? (
+                                                        error.description.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="name">Votre name</label>
-                                        <input
-                                            id="name"
-                                            type="text"
-                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le name"
-                                            value={data.name}
-                                            onChange={(e) => onChangeName(e)}
-                                        />
-                                        {
-                                            error.name.length ? (
-                                                error.name.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="description">La description</label>
-                                        <textarea
-                                            id="description"
-                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la description"
-                                            cols="30"
-                                            rows="5"
-                                            value={data.description}
-                                            onChange={(e) => onChangeDescription(e)}
-                                        />
-                                        {
-                                            error.description.length ? (
-                                                error.description.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.unit_type_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="unit_type">Type d'unité</label>
-                                        <select
-                                            id="institution"
-                                            className={error.unit_type_id.length ? "form-control is-invalid" : "form-control"}
-                                            value={data.unit_type_id}
-                                            onChange={(e) => onChangeUnitType(e)}
-                                        >
+                                    <div className="kt-portlet__foot">
+                                        <div className="kt-form__actions text-right">
                                             {
-                                                unitTypes.map((unitType, index) => (
-                                                    <option key={index} value={unitType.id}>{unitType.name.fr}</option>
-                                                ))
+                                                !startRequest ? (
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                ) : (
+                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                        Chargement...
+                                                    </button>
+                                                )
                                             }
-                                        </select>
-                                        {
-                                            error.unit_type_id.length ? (
-                                                error.unit_type_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.institution_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="institution">Veillez selectionnez l'institution</label>
-                                        <select
-                                            id="institution"
-                                            className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
-                                            value={data.institution_id}
-                                            onChange={(e) => onChangeInstitution(e)}
-                                        >
                                             {
-                                                institutions.map((institution, index) => (
-                                                    <option key={index} value={institution.id}>{institution.name}</option>
-                                                ))
+                                                !startRequest ? (
+                                                    <Link to="/settings/unit" className="btn btn-secondary mx-2">
+                                                        Quitter
+                                                    </Link>
+                                                ) : (
+                                                    <Link to="/settings/unit" className="btn btn-secondary mx-2" disabled>
+                                                        Quitter
+                                                    </Link>
+                                                )
                                             }
-                                        </select>
-                                        {
-                                            error.institution_id.length ? (
-                                                error.institution_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
-                                            ) : (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Chargement...
-                                                </button>
-                                            )
-                                        }
-                                        {
-                                            !startRequest ? (
-                                                <Link to="/settings/unit" className="btn btn-secondary mx-2">
-                                                    Quitter
-                                                </Link>
-                                            ) : (
-                                                <Link to="/settings/unit" className="btn btn-secondary mx-2" disabled>
-                                                    Quitter
-                                                </Link>
-                                            )
-                                        }
+                                        </div>
                                     </div>
                                 </div>
                             </form>
