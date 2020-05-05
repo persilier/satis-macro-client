@@ -16,6 +16,8 @@ import {formatPositions} from "../../../helper/position";
 import apiConfig from "../../../config/apiConfig";
 import './react-tagsinput.css';
 import ConfirmSaveForm from "./ConfirmSaveForm";
+import Select from "react-select";
+import {formatSelectOption} from "../../../helper/function";
 
 const StaffAddForm = () => {
     const [units, setUnits] = useState([]);
@@ -23,6 +25,9 @@ const StaffAddForm = () => {
     const [institutions, setInstitutions] = useState([]);
     const [institution_id, setInstitution_id] = useState("");
     const [foundData, setFoundData] = useState({});
+    const [institution, setInstitution] = useState({});
+    const [unit, setUnit] = useState({});
+    const [position, setPosition] = useState({});
 
     const defaultData = {
         firstname: "",
@@ -100,15 +105,17 @@ const StaffAddForm = () => {
         setData(newData);
     };
 
-    const onChangeUnit = (e) => {
+    const onChangeUnit = (selected) => {
         const newData = {...data};
-        newData.unit_id = e.target.value;
+        newData.unit_id = selected.value;
+        setUnit(selected);
         setData(newData);
     };
 
-    const onChangePosition = (e) => {
+    const onChangePosition = (selected) => {
         const newData = {...data};
-        newData.position_id = e.target.value;
+        newData.position_id = selected.value;
+        setPosition(selected);
         setData(newData);
     };
 
@@ -116,17 +123,19 @@ const StaffAddForm = () => {
         const newData = {...data};
         newData.position_id = "";
         newData.unit_id = "";
+        setUnit({});
+        setPosition({});
         setData(newData);
     };
 
-    const onChangeInstitution = (e) => {
-        setInstitution_id(e.target.value);
-        axios.get(`${apiConfig.baseUrl}/institutions/${e.target.value}/positions-units`)
+    const onChangeInstitution = (selected) => {
+        setInstitution_id(selected.value);
+        setInstitution(selected);
+        axios.get(`${apiConfig.baseUrl}/institutions/${selected.value}/positions-units`)
             .then(response => {
                 resetUnitsAndPositions();
                 setUnits(formatUnits(response.data.units));
                 setPositions(formatPositions(response.data.positions));
-                // resetUnitsAndPositions(response.data);
             })
             .catch(errorRequest => {
                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
@@ -273,194 +282,180 @@ const StaffAddForm = () => {
                                         </div>
                                     </div>
 
-                                    <div className="form-group row">
-                                        <div className={error.lastname.length ? "col validated" : "col"}>
-                                            <label htmlFor="lastname">Votre nom de famille</label>
-                                            <input
-                                                id="lastname"
-                                                type="text"
-                                                className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                placeholder="Veillez entrer le nom de famille"
-                                                value={data.lastname}
-                                                onChange={(e) => onChangeLastName(e)}
-                                            />
-                                            {
-                                                error.lastname.length ? (
-                                                    error.lastname.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
+                                    <div className="kt-section kt-section--first">
+                                        <div className="kt-section__body">
+                                            <h3 className="kt-section__title kt-section__title-lg">Informations personnelles:</h3>
+                                            <div className="form-group row">
+                                                <div className={error.lastname.length ? "col validated" : "col"}>
+                                                    <label htmlFor="lastname">Votre nom de famille</label>
+                                                    <input
+                                                        id="lastname"
+                                                        type="text"
+                                                        className={error.lastname.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer le nom de famille"
+                                                        value={data.lastname}
+                                                        onChange={(e) => onChangeLastName(e)}
+                                                    />
+                                                    {
+                                                        error.lastname.length ? (
+                                                            error.lastname.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
 
-                                        <div className={error.firstname.length ? "col validated" : "col"}>
-                                            <label htmlFor="firstname">Votre prénom</label>
-                                            <input
-                                                id="firstname"
-                                                type="text"
-                                                className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                placeholder="Veillez entrer le prénom"
-                                                value={data.firstname}
-                                                onChange={(e) => onChangeFirstName(e)}
-                                            />
-                                            {
-                                                error.firstname.length ? (
-                                                    error.firstname.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
+                                                <div className={error.firstname.length ? "col validated" : "col"}>
+                                                    <label htmlFor="firstname">Votre prénom</label>
+                                                    <input
+                                                        id="firstname"
+                                                        type="text"
+                                                        className={error.firstname.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer le prénom"
+                                                        value={data.firstname}
+                                                        onChange={(e) => onChangeFirstName(e)}
+                                                    />
+                                                    {
+                                                        error.firstname.length ? (
+                                                            error.firstname.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
+                                                    <label htmlFor="sexe">Votre sexe</label>
+                                                    <select
+                                                        id="sexe"
+                                                        className={error.sexe.length ? "form-control is-invalid" : "form-control"}
+                                                        value={data.sexe}
+                                                        onChange={(e) => onChangeSexe(e)}
+                                                    >
+                                                        <option value="" disabled={true}>Veillez choisir le Sexe</option>
+                                                        <option value="F">Féminin</option>
+                                                        <option value="M">Masculin</option>
+                                                    </select>
+                                                    {
+                                                        error.sexe.length ? (
+                                                            error.sexe.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <div className={error.telephone.length ? "col validated" : "col"}>
+                                                    <label htmlFor="telephone">Votre Téléphone(s)</label>
+                                                    <TagsInput value={data.telephone} onChange={onChangeTelephone} />
+                                                    {
+                                                        error.telephone.length ? (
+                                                            error.telephone.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+
+                                                <div className={error.email.length ? "col validated" : "col"}>
+                                                    <label htmlFor="email">Votre Email(s)</label>
+                                                    <TagsInput value={data.email} onChange={onChangeEmail} />
+                                                    {
+                                                        error.email.length ? (
+                                                            error.email.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+
+                                                <div className={error.ville.length ? "col validated" : "col"}>
+                                                    <label htmlFor="ville">Votre ville</label>
+                                                    <input
+                                                        id="ville"
+                                                        type="text"
+                                                        className={error.ville.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer votre ville"
+                                                        value={data.ville}
+                                                        onChange={(e) => onChangeVille(e)}
+                                                    />
+                                                    {
+                                                        error.ville.length ? (
+                                                            error.ville.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="row">
-                                        <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                            <label htmlFor="sexe">Votre sexe</label>
-                                            <select
-                                                id="sexe"
-                                                className={error.sexe.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.sexe}
-                                                onChange={(e) => onChangeSexe(e)}
-                                            >
-                                                <option value="" disabled={true}>Veillez choisir le Sexe</option>
-                                                <option value="F">Féminin</option>
-                                                <option value="M">Masculin</option>
-                                            </select>
-                                            {
-                                                error.sexe.length ? (
-                                                    error.sexe.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
-                                    </div>
+                                    <div className="kt-section">
+                                        <div className="kt-section__body">
+                                            <h3 className="kt-section__title kt-section__title-lg">Informations professionnelles:</h3>
+                                            <div className={"form-group"}>
+                                                <label htmlFor="institution">Institution</label>
+                                                <Select
+                                                    value={institution}
+                                                    onChange={onChangeInstitution}
+                                                    options={formatSelectOption(formatInstitutions(institutions), "name", false)}
+                                                />
+                                            </div>
 
-                                    <div className="form-group row">
-                                        <div className={error.telephone.length ? "col validated" : "col"}>
-                                            <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                            <TagsInput value={data.telephone} onChange={onChangeTelephone} />
-                                            {
-                                                error.telephone.length ? (
-                                                    error.telephone.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
+                                            <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
+                                                <div className="col">
+                                                    <label htmlFor="unit">Unité</label>
+                                                    <Select
+                                                        value={unit}
+                                                        onChange={onChangeUnit}
+                                                        options={formatSelectOption(units, "name", "fr")}
+                                                    />
+                                                    {
+                                                        error.unit_id.length ? (
+                                                            error.unit_id.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
 
-                                        <div className={error.email.length ? "col validated" : "col"}>
-                                            <label htmlFor="email">Votre Email(s)</label>
-                                            <TagsInput value={data.email} onChange={onChangeEmail} />
-                                            {
-                                                error.email.length ? (
-                                                    error.email.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
-
-                                        <div className={error.ville.length ? "col validated" : "col"}>
-                                            <label htmlFor="ville">Votre ville</label>
-                                            <input
-                                                id="ville"
-                                                type="text"
-                                                className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                placeholder="Veillez entrer votre ville"
-                                                value={data.ville}
-                                                onChange={(e) => onChangeVille(e)}
-                                            />
-                                            {
-                                                error.ville.length ? (
-                                                    error.ville.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <div className={"form-group"}>
-                                        <label htmlFor="institution">Institution</label>
-                                        <select
-                                            id="institution"
-                                            className={"form-control"}
-                                            value={institution_id}
-                                            onChange={(e) => onChangeInstitution(e)}
-                                        >
-                                            <option value="" disabled={true}>Veillez selectionez l'institution</option>
-                                            {
-                                                institutions.map((institution, index) => (
-                                                    <option key={index} value={institution.id}>{institution.name}</option>
-                                                ))
-                                            }
-                                        </select>
-                                    </div>
-
-                                    <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
-                                        <div className="col">
-                                            <label htmlFor="unit">Unité</label>
-                                            <select
-                                                id="unit"
-                                                className={error.unit_id.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.unit_id}
-                                                onChange={(e) => onChangeUnit(e)}
-                                            >
-                                                <option value="" disabled={true}>Veillez selectionnez l'unité</option>
-                                                {
-                                                    units.map((unit, index) => (
-                                                        <option key={index} value={unit.id}>{unit.name.fr}</option>
-                                                    ))
-                                                }
-                                            </select>
-                                            {
-                                                error.unit_id.length ? (
-                                                    error.unit_id.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
-
-                                        <div className="col">
-                                            <label htmlFor="position">Position</label>
-                                            <select
-                                                id="position"
-                                                className={error.position_id.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.position_id}
-                                                onChange={(e) => onChangePosition(e)}
-                                            >
-                                                <option value="" disabled={true}>Veillez selectionnez la position</option>
-                                                {
-                                                    positions.map((position, index) => (
-                                                        <option key={index} value={position.id}>{position.name.fr}</option>
-                                                    ))
-                                                }
-                                            </select>
-                                            {
-                                                error.position_id.length ? (
-                                                    error.position_id.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
+                                                <div className="col">
+                                                    <label htmlFor="position">Position</label>
+                                                    <Select
+                                                        value={position}
+                                                        onChange={onChangePosition}
+                                                        options={formatSelectOption(positions, "name", "fr")}
+                                                    />
+                                                    {
+                                                        error.position_id.length ? (
+                                                            error.position_id.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
