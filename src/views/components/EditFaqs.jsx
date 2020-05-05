@@ -27,12 +27,12 @@ const EditFaqs = () => {
 
     const {editfaqid} = useParams();
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+'/faq-categories')
+        axios.get(appConfig.apiDomaine + '/faq-categories')
             .then(response => {
                 setCategorieData(response.data)
             });
 
-        axios.get(appConfig.apiDomaine+`/faqs/${editfaqid}`)
+        axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
             .then(response => {
                 const newFaq = {
                     faq_category_id: response.data.category.id,
@@ -74,7 +74,7 @@ const EditFaqs = () => {
             answer: data.answer
         };
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine+`/faqs/${editfaqid}`, data)
+        axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -200,117 +200,136 @@ const EditFaqs = () => {
 
                             <form method="POST" className="kt-form">
                                 <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
-                                            </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that
-                                                receive updated styles from Bootstrap with additional classes.
+                                    <div className="tab-content">
+                                        <div className="tab-pane active" id="kt_user_edit_tab_1" role="tabpanel">
+                                            <div className="kt-form kt-form--label-right">
+                                                <div className="kt-form__body">
+                                                    <div className="kt-section kt-section--first">
+                                                        <div className="kt-section__body">
+                                                            <div
+                                                                className={error.faq_category_id.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="exampleSelect1">Catégorie</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    {categorieData.data ? (
+                                                                        <select
+                                                                            name="categorie"
+                                                                            id="categorie"
+                                                                            className={error.faq_category_id.length ? "form-control is-invalid" : "form-control"}
+                                                                            value={data.faq_category_id}
+                                                                            onChange={(e) => onChangeCategory(e)}>
+                                                                            <option value="" disabled> Sélectionnez une
+                                                                                catégorie
+                                                                            </option>
+                                                                            {categorieData.data.map((element, i) => (
+                                                                                <option key={i}
+                                                                                        value={element.id}>{element.name}</option>
+                                                                            ))}
+                                                                        </select>
+                                                                    ) : ''
+                                                                    }
+
+                                                                    {
+                                                                        error.faq_category_id.length ? (
+                                                                            error.faq_category_id.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div
+                                                                className={error.question.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="quiz">La question</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    <input
+                                                                        id="quiz"
+                                                                        type="text"
+                                                                        className={error.question.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder="Veillez entrer la question"
+                                                                        value={data.question}
+                                                                        onChange={(e) => onChangeQuiz(e)}
+                                                                    />
+                                                                    {
+                                                                        error.question.length ? (
+                                                                            error.question.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div
+                                                                className={error.answer.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="answer">La réponse'</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                <textarea
+                                                                    id="answer"
+                                                                    className={error.answer.length ? "form-control is-invalid" : "form-control"}
+                                                                    placeholder="Veillez entrer la réponse"
+                                                                    cols="30"
+                                                                    rows="5"
+                                                                    value={data.answer}
+                                                                    onChange={(e) => onChangeAnswers(e)}
+                                                                />
+                                                                    {
+                                                                        error.answer.length ? (
+                                                                            error.answer.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="kt-portlet__foot">
+                                                            <div className="kt-form__actions">
+                                                                {
+                                                                    !startRequest ? (
+                                                                        <button type="submit"
+                                                                                onClick={(e) => onSubmit(e)}
+                                                                                className="btn btn-primary">Submit</button>
+                                                                    ) : (
+                                                                        <button
+                                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                            type="button" disabled>
+                                                                            Loading...
+                                                                        </button>
+                                                                    )
+                                                                }
+                                                                {
+                                                                    !startRequest ? (
+                                                                        <Link to="/settings/faqs/add"
+                                                                              className="btn btn-secondary mx-2">
+                                                                            Cancel
+                                                                        </Link>
+                                                                    ) : (
+                                                                        <Link to="/settings/faqs/add"
+                                                                              className="btn btn-secondary mx-2"
+                                                                              disabled>
+                                                                            Cancel
+                                                                        </Link>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
-
-                                    <div
-                                        className={error.faq_category_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="exampleSelect1">Catégorie</label>
-                                        {categorieData.data ? (
-                                            <select
-                                                name="categorie"
-                                                id="categorie"
-                                                className={error.faq_category_id.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.faq_category_id}
-                                                onChange={(e) => onChangeCategory(e)}>
-                                                <option value="" disabled> Sélectionnez une catégorie</option>
-                                                {categorieData.data.map((element, i) => (
-                                                    <option key={i} value={element.id}>{element.name}</option>
-                                                ))}
-                                            </select>
-                                        ) : ''
-                                        }
-
-                                        {
-                                            error.faq_category_id.length ? (
-                                                error.faq_category_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.question.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="quiz">La question</label>
-                                        <input
-                                            id="quiz"
-                                            type="text"
-                                            className={error.question.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la question"
-                                            value={data.question}
-                                            onChange={(e) => onChangeQuiz(e)}
-                                        />
-                                        {
-                                            error.question.length ? (
-                                                error.question.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.answer.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="answer">La réponse'</label>
-                                        <textarea
-                                            id="answer"
-                                            className={error.answer.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la réponse"
-                                            cols="30"
-                                            rows="5"
-                                            value={data.answer}
-                                            onChange={(e) => onChangeAnswers(e)}
-                                        />
-                                        {
-                                            error.answer.length ? (
-                                                error.answer.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)}
-                                                        className="btn btn-primary">Submit</button>
-                                            ) : (
-                                                <button
-                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                    type="button" disabled>
-                                                    Loading...
-                                                </button>
-                                            )
-                                        }
-                                        {
-                                            !startRequest ? (
-                                                <Link to="/settings/faqs/add" className="btn btn-secondary mx-2">
-                                                    Cancel
-                                                </Link>
-                                            ) : (
-                                                <Link to="/settings/faqs/add" className="btn btn-secondary mx-2"
-                                                      disabled>
-                                                    Cancel
-                                                </Link>
-                                            )
-                                        }
                                     </div>
                                 </div>
                             </form>

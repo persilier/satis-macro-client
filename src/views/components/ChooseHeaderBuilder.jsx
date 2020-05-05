@@ -67,7 +67,6 @@ const ChooseHeaderBuilder = () => {
     };
     return (
         <div className="container">
-            {console.log(getHeader, 'GET')}
             <h1 className="text-center">Header Builder</h1>
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <div className="row">
@@ -77,6 +76,7 @@ const ChooseHeaderBuilder = () => {
                                 <div className="kt-portlet__body">
                                     <select name="model" id="model" className="form-control" value={model}
                                             onChange={(e) => onChangeSelect(e)}>
+                                        <option value="" disabled> Sélectionnez un formulaire</option>
                                         {modelData.map((model, i) => (
                                             <option key={i} value={model.name}>{model.description}</option>
 

@@ -7,6 +7,7 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import apiConfig from "../../config/apiConfig";
 
 const EditInstitutions = () => {
     const {editinstitutionlug} = useParams();
@@ -29,10 +30,12 @@ const EditInstitutions = () => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`)
             .then(response => {
+                console.log(response, "GET_INSTITUTION");
                 const newInstitution = {
                     name: response.data.name,
                     acronyme: response.data.acronyme,
-                    iso_code: response.data.iso_code
+                    iso_code: response.data.iso_code,
+                    logo:response.data.logo
                 };
                 setData(newInstitution)
             })
@@ -53,12 +56,6 @@ const EditInstitutions = () => {
     const onChangeIsoCode = (e) => {
         const newData = {...data};
         newData.iso_code = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeMesureUnit = (e) => {
-        const newData = {...data};
-        newData.logo = e.target.files[0];
         setData(newData);
     };
 
@@ -199,8 +196,7 @@ const EditInstitutions = () => {
                                                     <div className="kt-section kt-section--first">
                                                         <div className="kt-section__body">
 
-                                                            <div
-                                                                className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                                            <div className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
                                                                        htmlFor="name">le Nom</label>
                                                                 <div className="col-lg-9 col-xl-6">

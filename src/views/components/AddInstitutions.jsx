@@ -47,11 +47,11 @@ const AddInstitutions = () => {
         newData.logo = e.target.files[0];
         setData(newData);
     };
+
     const onChangeFile = (e) => {
         const newData = {...data};
         newData.logo = e.target.files[0];
         setData(newData);
-        // var file = e.target.files[0];
         var reader = new FileReader();
         reader.onload = function(e) {
             var image=document.getElementById('Image1');
@@ -60,6 +60,7 @@ const AddInstitutions = () => {
         };
         reader.readAsDataURL(newData.logo);
     };
+
     const onSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();

@@ -25,11 +25,11 @@ const EditCategoryClient = () => {
     const [startRequest, setStartRequest] = useState(false);
     const {editcategoryid} = useParams();
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+'/institutions')
-            .then(response =>{
+        axios.get(appConfig.apiDomaine + '/institutions')
+            .then(response => {
                 setInstitutionData(response.data)
             });
-        axios.get(appConfig.apiDomaine+`/category-clients/${editcategoryid}`)
+        axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
             .then(response => {
                 const newCategory = {
                     institutions_id: response.data.institution.id,
@@ -63,7 +63,7 @@ const EditCategoryClient = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine+`/category-clients/${editcategoryid}`, data)
+        axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -109,15 +109,28 @@ const EditCategoryClient = () => {
                             <a href="#" className="btn kt-subheader__btn-primary">
                                 Actions &nbsp;
                             </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions" data-placement="left">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z" fill="#000" fill-rule="nonzero" opacity=".3"/><path d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z" fill="#000"/></g></svg>
+                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions"
+                                 data-placement="left">
+                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M0 0h24v24H0z"/>
+                                            <path
+                                                d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z"
+                                                fill="#000" fill-rule="nonzero" opacity=".3"/>
+                                            <path
+                                                d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z"
+                                                fill="#000"/>
+                                        </g>
+                                    </svg>
                                 </a>
                                 <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
                                     <ul className="kt-nav">
                                         <li className="kt-nav__head">
                                             Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more..."/>
+                                            <i className="flaticon2-information" data-toggle="kt-tooltip"
+                                               data-placement="right" title="Click to learn more..."/>
                                         </li>
                                         <li className="kt-nav__separator"/>
                                         <li className="kt-nav__item">
@@ -150,7 +163,9 @@ const EditCategoryClient = () => {
                                         <li className="kt-nav__separator"/>
                                         <li className="kt-nav__foot">
                                             <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
+                                            <a className="btn btn-clean btn-bold btn-sm" href="#"
+                                               data-toggle="kt-tooltip" data-placement="right"
+                                               title="Click to learn more...">Learn more</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -174,112 +189,134 @@ const EditCategoryClient = () => {
 
                             <form method="POST" className="kt-form">
                                 <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
-                                            </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
+                                    <div className="tab-content">
+                                        <div className="tab-pane active" id="kt_user_edit_tab_1" role="tabpanel">
+                                            <div className="kt-form kt-form--label-right">
+                                                <div className="kt-form__body">
+                                                    <div className="kt-section kt-section--first">
+                                                        <div className="kt-section__body">
+                                                            <div
+                                                                className={error.institutions_id.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="exampleSelect1">Institution</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                {institutionData.data ? (
+                                                                    <select
+                                                                        name="categorie"
+                                                                        id="categorie"
+                                                                        className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
+                                                                        value={data.institutions_id}
+                                                                        onChange={(e) => onChangeInstituion(e)}>
+                                                                        <option value="" disabled> Sélectionnez une
+                                                                            institution
+                                                                        </option>
+                                                                        {institutionData.data.map((element, i) => (
+                                                                            <option key={i}
+                                                                                    value={element.id}>{element.name}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                ) : ''
+                                                                }
+
+                                                                {
+                                                                    error.institutions_id.length ? (
+                                                                        error.institutions_id.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                            </div>
+
+                                                            <div
+                                                                className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Le Nom</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                <input
+                                                                    id="name"
+                                                                    type="text"
+                                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                                    placeholder="Veillez entrer le nom"
+                                                                    value={data.name}
+                                                                    onChange={(e) => onChangeName(e)}
+                                                                />
+                                                                {
+                                                                    error.name.length ? (
+                                                                        error.name.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                            </div>
+
+                                                            <div
+                                                                className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La Description'</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                <textarea
+                                                                    id="description"
+                                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                                    placeholder="Veillez entrer la description"
+                                                                    cols="30"
+                                                                    rows="5"
+                                                                    value={data.description}
+                                                                    onChange={(e) => onChangeDescription(e)}
+                                                                />
+                                                                {
+                                                                    error.description.length ? (
+                                                                        error.description.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="kt-portlet__foot">
+                                                            <div className="kt-form__actions">
+                                                                {
+                                                                    !startRequest ? (
+                                                                        <button type="submit"
+                                                                                onClick={(e) => onSubmit(e)}
+                                                                                className="btn btn-primary">Submit</button>
+                                                                    ) : (
+                                                                        <button
+                                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                            type="button" disabled>
+                                                                            Loading...
+                                                                        </button>
+                                                                    )
+                                                                }
+                                                                {
+                                                                    !startRequest ? (
+                                                                        <Link to="/settings/clients/category"
+                                                                              className="btn btn-secondary mx-2">
+                                                                            Cancel
+                                                                        </Link>
+                                                                    ) : (
+                                                                        <Link to="/settings/clients/category"
+                                                                              className="btn btn-secondary mx-2"
+                                                                              disabled>
+                                                                            Cancel
+                                                                        </Link>
+                                                                    )
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
-
-                                    <div className={error.institutions_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="exampleSelect1">Institution</label>
-                                        {institutionData.data ?(
-                                            <select
-                                                name="categorie"
-                                                id="categorie"
-                                                className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
-                                                value={data.institutions_id}
-                                                onChange={(e) => onChangeInstituion(e)}>
-                                                <option value="" disabled> Sélectionnez une institution</option>
-                                                {institutionData.data.map((element, i) => (
-                                                    <option key={i} value={element.id}>{element.name}</option>
-                                                ))}
-                                            </select>
-                                        ):''
-                                        }
-
-                                        {
-                                            error.institutions_id.length ? (
-                                                error.institutions_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="name">Le Nom</label>
-                                        <input
-                                            id="name"
-                                            type="text"
-                                            className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer le nom"
-                                            value={data.name}
-                                            onChange={(e) => onChangeName(e)}
-                                        />
-                                        {
-                                            error.name.length ? (
-                                                error.name.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-
-                                    <div className={error.description.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="description">La Description'</label>
-                                        <textarea
-                                            id="description"
-                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la description"
-                                            cols="30"
-                                            rows="5"
-                                            value={data.description}
-                                            onChange={(e) => onChangeDescription(e)}
-                                        />
-                                        {
-                                            error.description.length ? (
-                                                error.description.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
-                                    </div>
-                                </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
-                                            ) : (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    Loading...
-                                                </button>
-                                            )
-                                        }
-                                        {
-                                            !startRequest ? (
-                                                <Link to="/settings/clients/category" className="btn btn-secondary mx-2">
-                                                    Cancel
-                                                </Link>
-                                            ) : (
-                                                <Link to="/settings/clients/category" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
-                                                </Link>
-                                            )
-                                        }
-
                                     </div>
                                 </div>
                             </form>

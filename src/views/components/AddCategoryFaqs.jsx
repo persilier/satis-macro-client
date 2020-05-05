@@ -138,19 +138,10 @@ const AddCategoryFaqs = () => {
 
                             <form method="POST" className="kt-form">
                                 <div className="kt-portlet__body">
-                                    <div className="form-group form-group-last">
-                                        <div className="alert alert-secondary" role="alert">
-                                            <div className="alert-icon">
-                                                <i className="flaticon-warning kt-font-brand"/>
-                                            </div>
-                                            <div className="alert-text">
-                                                The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div className={error.name.length ? "form-group validated" : "form-group"}>
+                                    <div className={error.name.length ? "form-group  validated" : "form-group "}>
                                         <label htmlFor="name">le Nom</label>
+                                        <div className="col-md-6 mb-3">
                                         <input
                                             id="name"
                                             type="text"
@@ -168,6 +159,7 @@ const AddCategoryFaqs = () => {
                                                 ))
                                             ) : ""
                                         }
+                                    </div>
                                     </div>
 
                                 </div>
