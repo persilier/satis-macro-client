@@ -47,6 +47,7 @@ import EditTypeClient from "../components/EditTypeClient";
 import Clients from "../pages/Clients";
 import AddClients from "../components/Clients/AddClients";
 import EditClient from "../components/Clients/EditClient";
+import TestPagination from "../pages/TestPagination";
 
 const Body = () => {
     return (
@@ -241,6 +242,10 @@ const Body = () => {
 
             <Route exact path="/settings/staffs/:id/edit">
                 <StaffEditForm/>
+            </Route>
+
+            <Route exact path="/settings/test-pagination">
+                <TestPagination/>
             </Route>
         </Switch>
     );
