@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import TagsInput from "react-tagsinput";
 import axios from "axios";
 import apiConfig from "../../../config/apiConfig";
@@ -10,13 +10,17 @@ import {
     toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
+import {formatSelectOption} from "../../../helper/function";
+import {formatInstitutions} from "../../../helper/institution";
+import Select from "react-select";
 
 const ConfirmSaveForm = (props) => {
-
     const [units, setUnits] = useState(props.units);
     const [positions, setPositions] = useState(props.positions);
     const institutions = props.institutions;
-    const [institution_id, setInstitution_id] = useState(props.institution_id);
+    const [institution, setInstitution] = useState(props.institution);
+    const [unit, setUnit] = useState(props.unit);
+    const [position, setPosition] = useState(props.position);
 
     const defaultData = {
         firstname: props.identite.firstname,
@@ -79,15 +83,17 @@ const ConfirmSaveForm = (props) => {
         setData(newData);
     };
 
-    const onChangeUnit = (e) => {
+    const onChangeUnit = (selected) => {
         const newData = {...data};
-        newData.unit_id = e.target.value;
+        newData.unit_id = selected.value;
+        setUnit(selected);
         setData(newData);
     };
 
-    const onChangePosition = (e) => {
+    const onChangePosition = (selected) => {
         const newData = {...data};
-        newData.position_id = e.target.value;
+        newData.position_id = selected.value;
+        setPosition(selected);
         setData(newData);
     };
 
@@ -95,17 +101,18 @@ const ConfirmSaveForm = (props) => {
         const newData = {...data};
         newData.position_id = "";
         newData.unit_id = "";
+        setUnit({});
+        setPosition({});
         setData(newData);
     };
 
-    const onChangeInstitution = (e) => {
-        setInstitution_id(e.target.value);
-        axios.get(`${apiConfig.baseUrl}/institutions/${e.target.value}/positions-units`)
+    const onChangeInstitution = (selected) => {
+        setInstitution(selected);
+        axios.get(`${apiConfig.baseUrl}/institutions/${selected.value}/positions-units`)
             .then(response => {
                 resetUnitsAndPositions();
                 setUnits(formatUnits(response.data.units));
                 setPositions(formatPositions(response.data.positions));
-                // resetUnitsAndPositions(response.data);
             })
             .catch(errorRequest => {
                 console.log(errorRequest.response.data);
@@ -119,11 +126,17 @@ const ConfirmSaveForm = (props) => {
 
         setStartRequest(true);
         axios.post(`http://127.0.0.1:8000/identites/${props.identite.id}/staff`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
+            .then(async (response) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                await setStartRequest(false);
+                await setError(defaultError);
+                await setUnits([]);
+                await setPositions([]);
+                await setInstitution({});
+                await setUnit({});
+                await setPosition({});
                 document.getElementById("closeConfirmSaveForm").click();
+                await props.resetFroundData();
             })
             .catch(errorRequest => {
                 setStartRequest(false);
@@ -133,15 +146,27 @@ const ConfirmSaveForm = (props) => {
         ;
     };
 
+    const onClickClose = async (e) => {
+        await setStartRequest(false);
+        await setError(defaultError);
+        await setUnits([]);
+        await setPositions([]);
+        await setInstitution({});
+        await setUnit({});
+        await setPosition({});
+        await document.getElementById("closeButton").click();
+        await props.resetFroundData();
+    };
+
     return (
-        <div className="modal fade" id="kt_modal_4" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div className="modal-dialog modal-lg" role="document">
+        <div className="modal fade" id="kt_modal_4" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog" data-backdrop="false"
+             style={{ display: "block", paddingRight: "17px"}} aria-modal="true">
+            <div className="modal-dialog modal-lg" role="document" style={{boxShadow: "0px 4px 23px 6px rgba(0,0,0,0.75)"}}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="exampleModalLabel">Ajout d'un agent avec des identifiants existant</h5>
-                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                        </button>
+                        <button onClick={(e) => onClickClose(e)} type="button" className="close"/>
+                        <button id="closeButton" style={{display: "none"}} type="button" className="close" data-dismiss="modal" aria-label="Close"/>
                     </div>
                     <div className="modal-body">
                         <form>
@@ -258,9 +283,9 @@ const ConfirmSaveForm = (props) => {
                                     </div>
 
                                     <div className={error.ville.length ? "col validated" : "col"}>
-                                        <label htmlFor="ville">Votre ville</label>
+                                        <label htmlFor="villeConfirm">Votre ville</label>
                                         <input
-                                            id="ville"
+                                            id="villeConfirm"
                                             type="text"
                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
                                             placeholder="Veillez entrer votre ville"
@@ -281,37 +306,21 @@ const ConfirmSaveForm = (props) => {
 
                                 <div className={"form-group"}>
                                     <label htmlFor="institutionEdit">Institution</label>
-                                    <select
-                                        id="institutionEdit"
-                                        className={"form-control"}
-                                        value={institution_id}
-                                        onChange={(e) => onChangeInstitution(e)}
-                                    >
-                                        <option value="" disabled={true}>Veillez selectionez l'institution</option>
-                                        {
-                                            institutions.map((institution, index) => (
-                                                <option key={index} value={institution.id}>{institution.name}</option>
-                                            ))
-                                        }
-                                    </select>
+                                    <Select
+                                        value={institution}
+                                        onChange={onChangeInstitution}
+                                        options={formatSelectOption(formatInstitutions(institutions), "name", false)}
+                                    />
                                 </div>
 
                                 <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
                                     <div className="col">
                                         <label htmlFor="unitEdit">Unité</label>
-                                        <select
-                                            id="unitEdit"
-                                            className={error.unit_id.length ? "form-control is-invalid" : "form-control"}
-                                            value={data.unit_id}
-                                            onChange={(e) => onChangeUnit(e)}
-                                        >
-                                            <option value="" disabled={true}>Veillez selectionnez l'unité</option>
-                                            {
-                                                units.map((unit, index) => (
-                                                    <option key={index} value={unit.id}>{unit.name.fr}</option>
-                                                ))
-                                            }
-                                        </select>
+                                        <Select
+                                            value={unit}
+                                            onChange={onChangeUnit}
+                                            options={formatSelectOption(units, "name", "fr")}
+                                        />
                                         {
                                             error.unit_id.length ? (
                                                 error.unit_id.map((error, index) => (
@@ -325,19 +334,11 @@ const ConfirmSaveForm = (props) => {
 
                                     <div className="col">
                                         <label htmlFor="positionEdit">Position</label>
-                                        <select
-                                            id="positionEdit"
-                                            className={error.position_id.length ? "form-control is-invalid" : "form-control"}
-                                            value={data.position_id}
-                                            onChange={(e) => onChangePosition(e)}
-                                        >
-                                            <option value="" disabled={true}>Veillez selectionnez la position</option>
-                                            {
-                                                positions.map((position, index) => (
-                                                    <option key={index} value={position.id}>{position.name.fr}</option>
-                                                ))
-                                            }
-                                        </select>
+                                        <Select
+                                            value={position}
+                                            onChange={onChangePosition}
+                                            options={formatSelectOption(positions, "name", "fr")}
+                                        />
                                         {
                                             error.position_id.length ? (
                                                 error.position_id.map((error, index) => (

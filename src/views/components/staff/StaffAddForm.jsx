@@ -23,7 +23,6 @@ const StaffAddForm = () => {
     const [units, setUnits] = useState([]);
     const [positions, setPositions] = useState([]);
     const [institutions, setInstitutions] = useState([]);
-    const [institution_id, setInstitution_id] = useState("");
     const [foundData, setFoundData] = useState({});
     const [institution, setInstitution] = useState({});
     const [unit, setUnit] = useState({});
@@ -129,7 +128,6 @@ const StaffAddForm = () => {
     };
 
     const onChangeInstitution = (selected) => {
-        setInstitution_id(selected.value);
         setInstitution(selected);
         axios.get(`${apiConfig.baseUrl}/institutions/${selected.value}/positions-units`)
             .then(response => {
@@ -158,6 +156,9 @@ const StaffAddForm = () => {
                 {
                     await setFoundData(errorRequest.response.data);
                     await document.getElementById("confirmSaveForm").click();
+                    await setInstitution({});
+                    await setUnit({});
+                    await setPosition({});
                     setStartRequest(false);
                     setError(defaultError);
                     setData(defaultData);
@@ -492,13 +493,16 @@ const StaffAddForm = () => {
                                 foundData.identite ? (
                                     <ConfirmSaveForm
                                         message={foundData.message}
+                                        unit={unit}
+                                        institution={institution}
+                                        position={position}
                                         identite={foundData.identite}
                                         units={units}
                                         positions={positions}
                                         institutions={institutions}
                                         unit_id={data.unit_id}
                                         position_id={data.position_id}
-                                        institution_id={institution_id}
+                                        resetFroundData={() => setFoundData({})}
                                     />
                                 ) : ""
                             }

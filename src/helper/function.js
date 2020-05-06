@@ -63,3 +63,8 @@ export const formatSelectOption = function(options, key, translate) {
     }
     return newOptions;
 };
+
+
+export const forceRound = (decimalNumber) => {
+    return ((""+decimalNumber).split('.'))[1] ? Math.trunc(decimalNumber) + 1 : Math.trunc(decimalNumber);
+};
