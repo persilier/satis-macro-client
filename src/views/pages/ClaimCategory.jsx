@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -12,16 +12,16 @@ import {
 } from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimCategory = () => {
     const [load, setLoad] = useState(true);
     const [claimCategories, setClaimCategories] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/claim-categories`)
+        axios.get(`${appConfig.apiDomaine}/claim-categories`)
             .then(response => {
                 setLoad(false);
                 setClaimCategories(response.data);
@@ -36,7 +36,7 @@ const ClaimCategory = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/claim-categories/${claimCategoryId}`)
+                    axios.delete(`${appConfig.apiDomaine}/claim-categories/${claimCategoryId}`)
                         .then(response => {
                             const newClaimCategories = [...claimCategories];
                             newClaimCategories.splice(index, 1);

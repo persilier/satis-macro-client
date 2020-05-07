@@ -163,6 +163,13 @@ const Aside = () => {
                                             <span className="kt-menu__link-text">Agent</span>
                                         </NavLink>
                                     </NavLink>
+
+                                    <NavLink to="/settings/severities" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <NavLink to="/settings/severities" className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Niveau de gravité</span>
+                                        </NavLink>
+                                    </NavLink>
                                 </ul>
                             </div>
                         </li>

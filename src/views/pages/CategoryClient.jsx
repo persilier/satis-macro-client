@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {loadCss, loadScript} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -11,7 +11,7 @@ import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const CategoryClient = () => {
     const [load, setLoad] = useState(true);

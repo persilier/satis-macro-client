@@ -5,9 +5,9 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
 import Select from "react-select";
-import {formatSelectOption} from "../../helper/function";
+import {formatSelectOption} from "../../helpers/function";
+import appConfig from "../../config/appConfig";
 
 const ClaimObjectAddForm = () => {
     const [claimCategories, setClaimCategories] = useState([]);
@@ -30,7 +30,7 @@ const ClaimObjectAddForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/claim-categories`)
+        axios.get(`${appConfig.apiDomaine}/claim-categories`)
             .then(response => {
                 const newData = {...data};
                 newData.claim_category_id = "";
@@ -66,7 +66,7 @@ const ClaimObjectAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/claim-objects`, data)
+        axios.post(`${appConfig.apiDomaine}/claim-objects`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

@@ -6,11 +6,11 @@ import {
 } from "react-router-dom";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
 import {ToastBottomEnd} from "./Toast";
-import apiConfig from "../../config/apiConfig";
 import Select from "react-select";
-import {formatSelectOption} from "../../helper/function";
+import {formatSelectOption} from "../../helpers/function";
+import appConfig from "../../config/appConfig";
 
-const UnitEditForm = () => {
+const ClaimObjectEditForm = () => {
     const [claimCategories, setClaimCategories] = useState([]);
     const [claimCategory, setClaimCategory] = useState({});
 
@@ -30,7 +30,7 @@ const UnitEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/claim-objects/${id}/edit`)
+        axios.get(`${appConfig.apiDomaine}/claim-objects/${id}/edit`)
             .then(response => {
                 const newData = {
                     name: response.data.claimObject.name.fr,
@@ -70,7 +70,7 @@ const UnitEditForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`${apiConfig.baseUrl}/claim-objects/${id}`, data)
+        axios.put(`${appConfig.apiDomaine}/claim-objects/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -293,4 +293,4 @@ const UnitEditForm = () => {
     );
 };
 
-export default UnitEditForm;
+export default ClaimObjectEditForm;

@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
 const UnitTypeEditForm = () => {
     const {id} = useParams();
@@ -23,7 +23,7 @@ const UnitTypeEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/unit-types/${id}`)
+        axios.get(`${appConfig.apiDomaine}/unit-types/${id}`)
             .then(response => {
                 const newData = {
                     name: response.data.name.fr,
@@ -53,7 +53,7 @@ const UnitTypeEditForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`${apiConfig.baseUrl}/unit-types/${id}`, data)
+        axios.put(`${appConfig.apiDomaine}/unit-types/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

@@ -5,7 +5,7 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
 const Mail = () => {
     const defaultData = {
@@ -31,7 +31,7 @@ const Mail = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/configurations/mail`)
+        axios.get(`${appConfig.apiDomaine}/configurations/mail`)
             .then(response => {
                 const newData = {...defaultData, ...response.data};
                 newData.security = newData.security.toLowerCase();
@@ -89,7 +89,7 @@ const Mail = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`${apiConfig.baseUrl}/configurations/mail`, data)
+        axios.put(`${appConfig.apiDomaine}/configurations/mail`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

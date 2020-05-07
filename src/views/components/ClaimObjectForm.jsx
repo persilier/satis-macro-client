@@ -1,92 +1,122 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
 import {
+    useParams,
+    Link
+} from "react-router-dom";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
+import {ToastBottomEnd} from "./Toast";
+import Select from "react-select";
+import {formatSelectOption} from "../../helpers/function";
 import appConfig from "../../config/appConfig";
 
-const SMS = () => {
+const ClaimObjectForm = () => {
+    const [claimCategories, setClaimCategories] = useState([]);
+    const [claimCategory, setClaimCategory] = useState({});
+
+    const {id} = useParams();
     const defaultData = {
-        senderID: "",
-        username: "",
-        indicatif: "",
-        password: "",
-        api: ""
+        name: "",
+        description: "",
+        claim_category_id: claimCategories.length ? claimCategories[0].id : "",
     };
     const defaultError = {
-        senderID: [],
-        username: [],
-        indicatif: [],
-        password: [],
-        api: [],
+        name: [],
+        description: [],
+        claim_category_id: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/configurations/sms`)
-            .then(response => {
-                const newData = {...defaultData, ...response.data};
-                setData(newData);
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            })
-        ;
+        if (id) {
+            axios.get(`${appConfig.apiDomaine}/claim-objects/${id}/edit`)
+                .then(response => {
+                    const newData = {
+                        name: response.data.claimObject.name.fr,
+                        description: response.data.claimObject.description.fr,
+                        claim_category_id: response.data.claimObject.claim_category_id,
+                    };
+                    setClaimCategory({value: response.data.claimObject.claim_category.id, label: response.data.claimObject.claim_category.name["fr"]});
+                    setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        } else {
+            axios.get(`${appConfig.apiDomaine}/claim-categories`)
+                .then(response => {
+                    const newData = {...data};
+                    newData.claim_category_id = "";
+                    setClaimCategories(formatSelectOption(response.data, "name", "fr"));
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("something is wrong");
+                })
+            ;
+        }
     }, []);
 
-    const onChangeSenderID = (e) => {
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.senderID = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeUsername = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.username = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
 
-    const onChangeIndicatif = (e) => {
+    const onChangeClaimCategory = (selected) => {
         const newData = {...data};
-        newData.indicatif = e.target.value;
-        setData(newData);
-    };
-
-    const onChangePassword = (e) => {
-        const newData = {...data};
-        newData.password = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeApi = (e) => {
-        const newData = {...data};
-        newData.api = e.target.value;
+        newData.claim_category_id = selected.value;
+        setClaimCategory(selected);
         setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/configurations/sms`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                const newData = {...data};
-                newData.password = "";
-                setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (id) {
+            axios.put(`${appConfig.apiDomaine}/claim-objects/${id}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        } else {
+            axios.post(`${appConfig.apiDomaine}/claim-objects`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setClaimCategory({});
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -178,7 +208,9 @@ const SMS = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        SMS
+                                        {
+                                            id ? "Modification d'objet de plainte" : "Ajout d'objet de plainte"
+                                        }
                                     </h3>
                                 </div>
                             </div>
@@ -196,20 +228,21 @@ const SMS = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
+
+                                        <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'objet de plainte</label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
-                                                    id="senderID"
+                                                    id="name"
                                                     type="text"
-                                                    className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer l'identifiant de l'expéditeur"
-                                                    value={data.senderID}
-                                                    onChange={(e) => onChangeSenderID(e)}
+                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le nom de l'objet de plainte"
+                                                    value={data.name}
+                                                    onChange={(e) => onChangeName(e)}
                                                 />
                                                 {
-                                                    error.senderID.length ? (
-                                                        error.senderID.map((error, index) => (
+                                                    error.name.length ? (
+                                                        error.name.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -218,20 +251,18 @@ const SMS = () => {
                                                 }
                                             </div>
                                         </div>
-                                        <div className={error.username.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="username">Votre nom</label>
+
+                                        <div className={error.claim_category_id.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Catégorie de l'objet de plainte</label>
                                             <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    id="username"
-                                                    type="text"
-                                                    className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer votre nom"
-                                                    value={data.username}
-                                                    onChange={(e) => onChangeUsername(e)}
+                                                <Select
+                                                    value={claimCategory}
+                                                    onChange={onChangeClaimCategory}
+                                                    options={claimCategories}
                                                 />
                                                 {
-                                                    error.username.length ? (
-                                                        error.username.map((error, index) => (
+                                                    error.claim_category_id.length ? (
+                                                        error.claim_category_id.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -240,64 +271,22 @@ const SMS = () => {
                                                 }
                                             </div>
                                         </div>
-                                        <div className={error.password.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe</label>
+
+                                        <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
                                             <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="password"
-                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                    id="password"
-                                                    placeholder=". . . . . . . . . "
-                                                    value={data.password}
-                                                    onChange={(e) => onChangePassword(e)}
+                                                <textarea
+                                                    id="description"
+                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la description"
+                                                    cols="30"
+                                                    rows="5"
+                                                    value={data.description}
+                                                    onChange={(e) => onChangeDescription(e)}
                                                 />
                                                 {
-                                                    error.password.length ? (
-                                                        error.password.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.indicatif.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="indicatif">Indicatif Pays</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="number"
-                                                    className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                                    id="indicatif"
-                                                    placeholder="Veillez entrer l'indicatif"
-                                                    value={data.indicatif}
-                                                    onChange={(e) => onChangeIndicatif(e)}
-                                                />
-                                                {
-                                                    error.indicatif.length ? (
-                                                        error.indicatif.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.api.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="api">API</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="text"
-                                                    className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                                    id="api"
-                                                    placeholder="Veillez entrer l'API"
-                                                    value={data.api}
-                                                    onChange={(e) => onChangeApi(e)}
-                                                />
-                                                {
-                                                    error.api.length ? (
-                                                        error.api.map((error, index) => (
+                                                    error.description.length ? (
+                                                        error.description.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -311,11 +300,22 @@ const SMS = () => {
                                         <div className="kt-form__actions text-right">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                         Chargement...
                                                     </button>
+                                                )
+                                            }
+                                            {
+                                                !startRequest ? (
+                                                    <Link to="/settings/claim_objects" className="btn btn-secondary mx-2">
+                                                        Quitter
+                                                    </Link>
+                                                ) : (
+                                                    <Link to="/settings/claim_objects" className="btn btn-secondary mx-2" disabled>
+                                                        Quitter
+                                                    </Link>
                                                 )
                                             }
                                         </div>
@@ -330,4 +330,4 @@ const SMS = () => {
     );
 };
 
-export default SMS;
+export default ClaimObjectForm;

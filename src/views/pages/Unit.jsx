@@ -3,23 +3,22 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
-loadScript("personal/js/paginateTable.js");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Unit = () => {
     const [load, setLoad] = useState(true);
     const [units, setUnits] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/units`)
+        axios.get(`${appConfig.apiDomaine}/units`)
             .then(response => {
                 setLoad(false);
                 setUnits(response.data);
@@ -34,7 +33,7 @@ const Unit = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/units/${unitId}`)
+                    axios.delete(`${appConfig.apiDomaine}/units/${unitId}`)
                         .then(response => {
                             const newUnits = [...units];
                             newUnits.splice(index, 1);

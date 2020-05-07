@@ -1,92 +1,141 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
 import {
+    useParams,
+    Link
+} from "react-router-dom";
+import {Multiselect} from "multiselect-react-dropdown";
+import {ToastBottomEnd} from "./Toast";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 
-const SMS = () => {
+const PositionForm = () => {
+    const [selectedValues, setSelectedValues] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+
+    const {id} = useParams();
     const defaultData = {
-        senderID: "",
-        username: "",
-        indicatif: "",
-        password: "",
-        api: ""
+        name: "",
+        description: "",
+        institutions: [],
     };
     const defaultError = {
-        senderID: [],
-        username: [],
-        indicatif: [],
-        password: [],
-        api: [],
+        name: [],
+        description: [],
+        institutions: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/configurations/sms`)
-            .then(response => {
-                const newData = {...defaultData, ...response.data};
-                setData(newData);
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            })
-        ;
+        if (id) {
+            axios.get(`${appConfig.apiDomaine}/positions/${id}/edit`)
+                .then(response => {
+                    const newData = {
+                        name: response.data.position.name.fr,
+                        description: response.data.position.description.fr,
+                        institutions: reformatInstitution(formatInstitutions(response.data.position.institutions))
+                    };
+                    setSelectedValues(formatInstitutions(response.data.position.institutions));
+                    setInstitutions(formatInstitutions(response.data.institutions));
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        } else {
+            axios.get(`${appConfig.apiDomaine}/institutions`)
+                .then(response => {
+                    setInstitutions(formatInstitutions(response.data.data));
+                })
+                .catch(error => {
+                    console.log("something is wrong");
+                })
+            ;
+        }
     }, []);
 
-    const onChangeSenderID = (e) => {
+    const reformatInstitution = (listInstitutions) => {
+        const newListInstitution = [];
+        for (let i = 0; i<listInstitutions.length; i++)
+            newListInstitution.push(listInstitutions[i].id);
+        return newListInstitution;
+    };
+
+    const formatInstitutions = (listInstitutions) => {
+        const newListInstitution = [];
+        for (let i = 0; i<listInstitutions.length; i++)
+            newListInstitution.push({id: listInstitutions[i].id, name: listInstitutions[i].name});
+        return newListInstitution;
+    };
+
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.senderID = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeUsername = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.username = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
 
-    const onChangeIndicatif = (e) => {
+    const getSelectedValue = (items) => {
         const newData = {...data};
-        newData.indicatif = e.target.value;
+        newData.institutions = [];
+        for (let i = 0; i<items.length; i++)
+            newData.institutions.push(items[i].id);
         setData(newData);
     };
 
-    const onChangePassword = (e) => {
+    const onRemove = (selectedList, removedItem) => {
         const newData = {...data};
-        newData.password = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeApi = (e) => {
-        const newData = {...data};
-        newData.api = e.target.value;
+        newData.institutions = [];
+        for (let i = 0; i<selectedList.length; i++)
+            newData.institutions.push(selectedList[i].id);
         setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/configurations/sms`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                const newData = {...data};
-                newData.password = "";
-                setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (id) {
+            axios.put(`${appConfig.apiDomaine}/positions/${id}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        } else {
+            axios.post(`${appConfig.apiDomaine}/positions`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setSelectedValues([]);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -178,7 +227,9 @@ const SMS = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        SMS
+                                        {
+                                            id ? "Modification de la position" : "Ajout de la position"
+                                        }
                                     </h3>
                                 </div>
                             </div>
@@ -196,20 +247,21 @@ const SMS = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
+
+                                        <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du poste</label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
-                                                    id="senderID"
+                                                    id="name"
                                                     type="text"
-                                                    className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer l'identifiant de l'expéditeur"
-                                                    value={data.senderID}
-                                                    onChange={(e) => onChangeSenderID(e)}
+                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le nom du poste"
+                                                    value={data.name}
+                                                    onChange={(e) => onChangeName(e)}
                                                 />
                                                 {
-                                                    error.senderID.length ? (
-                                                        error.senderID.map((error, index) => (
+                                                    error.name.length ? (
+                                                        error.name.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -218,20 +270,20 @@ const SMS = () => {
                                                 }
                                             </div>
                                         </div>
-                                        <div className={error.username.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="username">Votre nom</label>
+
+                                        <div className={error.institutions.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institutions</label>
                                             <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    id="username"
-                                                    type="text"
-                                                    className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer votre nom"
-                                                    value={data.username}
-                                                    onChange={(e) => onChangeUsername(e)}
+                                                <Multiselect
+                                                    options={institutions}
+                                                    displayValue="name"
+                                                    onRemove={onRemove}
+                                                    selectedValues={selectedValues}
+                                                    onSelect={getSelectedValue}
                                                 />
                                                 {
-                                                    error.username.length ? (
-                                                        error.username.map((error, index) => (
+                                                    error.institutions.length ? (
+                                                        error.institutions.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -240,64 +292,22 @@ const SMS = () => {
                                                 }
                                             </div>
                                         </div>
-                                        <div className={error.password.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe</label>
+
+                                        <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
                                             <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="password"
-                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                    id="password"
-                                                    placeholder=". . . . . . . . . "
-                                                    value={data.password}
-                                                    onChange={(e) => onChangePassword(e)}
+                                                <textarea
+                                                    id="description"
+                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la description"
+                                                    cols="30"
+                                                    rows="5"
+                                                    value={data.description}
+                                                    onChange={(e) => onChangeDescription(e)}
                                                 />
                                                 {
-                                                    error.password.length ? (
-                                                        error.password.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.indicatif.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="indicatif">Indicatif Pays</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="number"
-                                                    className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                                    id="indicatif"
-                                                    placeholder="Veillez entrer l'indicatif"
-                                                    value={data.indicatif}
-                                                    onChange={(e) => onChangeIndicatif(e)}
-                                                />
-                                                {
-                                                    error.indicatif.length ? (
-                                                        error.indicatif.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.api.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="api">API</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="text"
-                                                    className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                                    id="api"
-                                                    placeholder="Veillez entrer l'API"
-                                                    value={data.api}
-                                                    onChange={(e) => onChangeApi(e)}
-                                                />
-                                                {
-                                                    error.api.length ? (
-                                                        error.api.map((error, index) => (
+                                                    error.description.length ? (
+                                                        error.description.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -307,15 +317,27 @@ const SMS = () => {
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="kt-portlet__foot">
                                         <div className="kt-form__actions text-right">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                         Chargement...
                                                     </button>
+                                                )
+                                            }
+                                            {
+                                                !startRequest ? (
+                                                    <Link to="/settings/positions" className="btn btn-secondary mx-2">
+                                                        Quitter
+                                                    </Link>
+                                                ) : (
+                                                    <Link to="/settings/positions" className="btn btn-secondary mx-2" disabled>
+                                                        Quitter
+                                                    </Link>
                                                 )
                                             }
                                         </div>
@@ -330,4 +352,4 @@ const SMS = () => {
     );
 };
 
-export default SMS;
+export default PositionForm;

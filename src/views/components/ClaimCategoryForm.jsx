@@ -1,92 +1,92 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
 import {
+    useParams,
+    Link
+} from "react-router-dom";
+import {ToastBottomEnd} from "./Toast";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 
-const SMS = () => {
+const ClaimCategoryForm = () => {
+    const {id} = useParams();
     const defaultData = {
-        senderID: "",
-        username: "",
-        indicatif: "",
-        password: "",
-        api: ""
+        name: "",
+        description: "",
     };
     const defaultError = {
-        senderID: [],
-        username: [],
-        indicatif: [],
-        password: [],
-        api: [],
+        name: [],
+        description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/configurations/sms`)
-            .then(response => {
-                const newData = {...defaultData, ...response.data};
-                setData(newData);
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            })
-        ;
+        if (id) {
+            axios.get(`${appConfig.apiDomaine}/claim-categories/${id}`)
+                .then(response => {
+                    const newData = {
+                        name: response.data.name.fr,
+                        description: response.data.description.fr,
+                    };
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
-    const onChangeSenderID = (e) => {
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.senderID = e.target.value;
+        newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeUsername = (e) => {
+    const onChangeDescription = (e) => {
         const newData = {...data};
-        newData.username = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeIndicatif = (e) => {
-        const newData = {...data};
-        newData.indicatif = e.target.value;
-        setData(newData);
-    };
-
-    const onChangePassword = (e) => {
-        const newData = {...data};
-        newData.password = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeApi = (e) => {
-        const newData = {...data};
-        newData.api = e.target.value;
+        newData.description = e.target.value;
         setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/configurations/sms`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                const newData = {...data};
-                newData.password = "";
-                setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (id) {
+            axios.put(`${appConfig.apiDomaine}/claim-categories/${id}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        } else {
+            axios.post(`${appConfig.apiDomaine}/claim-categories`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -178,7 +178,9 @@ const SMS = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        SMS
+                                        {
+                                            id ? "Modification de catégorie de plainte" : "Ajout de catégorie de plainte"
+                                        }
                                     </h3>
                                 </div>
                             </div>
@@ -196,20 +198,21 @@ const SMS = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
+
+                                        <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de la catégorie</label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
-                                                    id="senderID"
+                                                    id="name"
                                                     type="text"
-                                                    className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer l'identifiant de l'expéditeur"
-                                                    value={data.senderID}
-                                                    onChange={(e) => onChangeSenderID(e)}
+                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le nom de la catégorie"
+                                                    value={data.name}
+                                                    onChange={(e) => onChangeName(e)}
                                                 />
                                                 {
-                                                    error.senderID.length ? (
-                                                        error.senderID.map((error, index) => (
+                                                    error.name.length ? (
+                                                        error.name.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -218,86 +221,22 @@ const SMS = () => {
                                                 }
                                             </div>
                                         </div>
-                                        <div className={error.username.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="username">Votre nom</label>
+
+                                        <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
                                             <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    id="username"
-                                                    type="text"
-                                                    className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer votre nom"
-                                                    value={data.username}
-                                                    onChange={(e) => onChangeUsername(e)}
+                                                <textarea
+                                                    id="description"
+                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la description"
+                                                    cols="30"
+                                                    rows="5"
+                                                    value={data.description}
+                                                    onChange={(e) => onChangeDescription(e)}
                                                 />
                                                 {
-                                                    error.username.length ? (
-                                                        error.username.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.password.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="password"
-                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                    id="password"
-                                                    placeholder=". . . . . . . . . "
-                                                    value={data.password}
-                                                    onChange={(e) => onChangePassword(e)}
-                                                />
-                                                {
-                                                    error.password.length ? (
-                                                        error.password.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.indicatif.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="indicatif">Indicatif Pays</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="number"
-                                                    className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                                    id="indicatif"
-                                                    placeholder="Veillez entrer l'indicatif"
-                                                    value={data.indicatif}
-                                                    onChange={(e) => onChangeIndicatif(e)}
-                                                />
-                                                {
-                                                    error.indicatif.length ? (
-                                                        error.indicatif.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : ""
-                                                }
-                                            </div>
-                                        </div>
-                                        <div className={error.api.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="api">API</label>
-                                            <div className="col-lg-9 col-xl-6">
-                                                <input
-                                                    type="text"
-                                                    className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                                    id="api"
-                                                    placeholder="Veillez entrer l'API"
-                                                    value={data.api}
-                                                    onChange={(e) => onChangeApi(e)}
-                                                />
-                                                {
-                                                    error.api.length ? (
-                                                        error.api.map((error, index) => (
+                                                    error.description.length ? (
+                                                        error.description.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -311,11 +250,22 @@ const SMS = () => {
                                         <div className="kt-form__actions text-right">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                         Chargement...
                                                     </button>
+                                                )
+                                            }
+                                            {
+                                                !startRequest ? (
+                                                    <Link to="/settings/claim_categories" className="btn btn-secondary mx-2">
+                                                        Quitter
+                                                    </Link>
+                                                ) : (
+                                                    <Link to="/settings/claim_categories" className="btn btn-secondary mx-2" disabled>
+                                                        Quitter
+                                                    </Link>
                                                 )
                                             }
                                         </div>
@@ -330,4 +280,4 @@ const SMS = () => {
     );
 };
 
-export default SMS;
+export default ClaimCategoryForm;

@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
 const PerformanceAddForm = () => {
     const defaultData = {
@@ -52,7 +52,7 @@ const PerformanceAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/performance-indicators`, data)
+        axios.post(`${appConfig.apiDomaine}/performance-indicators`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

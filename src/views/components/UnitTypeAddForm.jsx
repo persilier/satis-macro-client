@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
 const UnitTypeAddForm = () => {
     const defaultData = {
@@ -36,7 +36,7 @@ const UnitTypeAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/unit-types`, data)
+        axios.post(`${appConfig.apiDomaine}/unit-types`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

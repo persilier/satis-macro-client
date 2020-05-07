@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
 const PerformanceEditForm = () => {
     const {id} = useParams();
@@ -27,7 +27,7 @@ const PerformanceEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/performance-indicators/${id}`)
+        axios.get(`${appConfig.apiDomaine}/performance-indicators/${id}`)
             .then(response => {
                 const newData = {
                     name: response.data.name.fr,
@@ -71,7 +71,7 @@ const PerformanceEditForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`${apiConfig.baseUrl}/performance-indicators/${id}`, data)
+        axios.put(`${appConfig.apiDomaine}/performance-indicators/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

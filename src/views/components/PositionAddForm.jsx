@@ -6,8 +6,8 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import {formatInstitutions} from "../../helper/institution";
-import apiConfig from "../../config/apiConfig";
+import {formatInstitutions} from "../../helpers/institution";
+import appConfig from "../../config/appConfig";
 
 const PositionAddForm = () => {
     const [institutions, setInstitutions] = useState([]);
@@ -28,7 +28,7 @@ const PositionAddForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/institutions`)
+        axios.get(`${appConfig.apiDomaine}/institutions`)
             .then(response => {
                 setInstitutions(formatInstitutions(response.data.data));
             })
@@ -70,7 +70,7 @@ const PositionAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/positions`, data)
+        axios.post(`${appConfig.apiDomaine}/positions`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

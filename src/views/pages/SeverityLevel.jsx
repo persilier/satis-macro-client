@@ -3,25 +3,28 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
+import {loadCss} from "../../helpers/function";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig, toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const Institution = () => {
+const SeverityLevel = () => {
     const [load, setLoad] = useState(true);
-    const [institutions, setInstitution] = useState([]);
+    const [severityLevels, setSeverityLevels] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+"/institutions")
+        axios.get(`${appConfig.apiDomaine}/severity-levels`)
             .then(response => {
                 setLoad(false);
-                setInstitution(response.data);
+                setSeverityLevels(response.data.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -29,17 +32,23 @@ const Institution = () => {
             })
     }, []);
 
-    const deleteInstitution = (institutionId, index) => {
+    const deleteSeverityLevel = (severityLevelId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine+`/institutions/${institutionId}`)
+                    axios.delete(`${appConfig.apiDomaine}/severity-levels/${severityLevelId}`)
                         .then(response => {
-                            console.log(response, "OK");
+                            const newSeverityLevels = [...severityLevels];
+                            newSeverityLevels.splice(index, 1);
+                            setSeverityLevels(newSeverityLevels);
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            console.log(error.response.data);
+                            if (error.response.data.error)
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                            else
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
                         })
                     ;
                 }
@@ -176,14 +185,14 @@ const Institution = () => {
                                 <i className="kt-font-brand flaticon2-line-chart"/>
                             </span>
                             <h3 className="kt-portlet__head-title">
-                                Institution
+                                Niveau de gravité
                             </h3>
                         </div>
                         <div className="kt-portlet__head-toolbar">
                             <div className="kt-portlet__head-wrapper">
                                 &nbsp;
                                 <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/institution/add"} className="btn btn-brand btn-icon-sm">
+                                    <Link to={"/settings/severities/add"} className="btn btn-brand btn-icon-sm">
                                         <i className="flaticon2-plus"/> Add New
                                     </Link>
                                 </div>
@@ -231,15 +240,15 @@ const Institution = () => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Nom
+                                                        aria-label="Country: activate to sort column ascending">Nom du niveau
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Limite de temps
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "300px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Acronyme
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "20px" }}
-                                                        aria-label="Ship Address: activate to sort column ascending">Iso_Code
+                                                        aria-label="Ship City: activate to sort column ascending">Description
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                         Action
@@ -247,27 +256,26 @@ const Institution = () => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {console.log(institutions, 'institution')}
                                                 {
-                                                    institutions.data? (
-                                                        institutions.data.map((institution, index) => (
+                                                    severityLevels.length ? (
+                                                        severityLevels.map((severityLevel, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{institution.name}</td>
-                                                                <td >{institution.acronyme}</td>
-                                                                <td>{institution.iso_code}</td>
+                                                                <td>{severityLevel.name}</td>
+                                                                <td>{severityLevel.time_limit}</td>
+                                                                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description}</td>
                                                                 <td>
-                                                                    <Link to="/settings/institution/detail"
+                                                                    <Link to="/settings/severities/detail"
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Détail">
                                                                         <i className="la la-eye"/>
                                                                     </Link>
-                                                                    <Link to={`/settings/institution/edit/${institution.slug}`}
+                                                                    <Link to={`/settings/severities/${severityLevel.id}/edit`}
                                                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                           title="Modifier">
                                                                         <i className="la la-edit"/>
                                                                     </Link>
                                                                     <button
-                                                                        onClick={(e) => deleteInstitution(institution.id, index)}
+                                                                        onClick={(e) => deleteSeverityLevel(severityLevel.id, index)}
                                                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                                                         title="Supprimer">
                                                                         <i className="la la-trash"/>
@@ -286,9 +294,9 @@ const Institution = () => {
                                                 </tbody>
                                                 <tfoot>
                                                 <tr>
-                                                    <th rowSpan="1" colSpan="1">Nom</th>
-                                                    <th rowSpan="1" colSpan="1">Acronyme</th>
-                                                    <th rowSpan="1" colSpan="1">Iso_Code</th>
+                                                    <th rowSpan="1" colSpan="1">Nom du niveau</th>
+                                                    <th rowSpan="1" colSpan="1">Limite de temps</th>
+                                                    <th rowSpan="1" colSpan="1">Description</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -344,10 +352,11 @@ const Institution = () => {
                             </div>
                         )
                     }
+
                 </div>
             </div>
         </div>
     );
 };
 
-export default Institution;
+export default SeverityLevel;

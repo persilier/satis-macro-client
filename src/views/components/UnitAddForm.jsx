@@ -6,8 +6,8 @@ import {
 import Select from "react-select";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
-import {formatSelectOption} from "../../helper/function";
+import {formatSelectOption} from "../../helpers/function";
+import appConfig from "../../config/appConfig";
 
 const UnitAddForm = () => {
     const [unitTypes, setUnitTypes] = useState([]);
@@ -34,7 +34,7 @@ const UnitAddForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/units/create`)
+        axios.get(`${appConfig.apiDomaine}/units/create`)
             .then(response => {
                 const newData = {...data};
                 newData.institution_id = "";
@@ -79,7 +79,7 @@ const UnitAddForm = () => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/units`, data)
+        axios.post(`${appConfig.apiDomaine}/units`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {forceRound} from "../../helper/function";
+import {forceRound} from "../../helpers/function";
 
 
 const LIST  = [

@@ -3,22 +3,22 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const PerformanceIndicator = () => {
     const [load, setLoad] = useState(true);
     const [performances, setPerformances] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/performance-indicators`)
+        axios.get(`${appConfig.apiDomaine}/performance-indicators`)
             .then(response => {
                 setLoad(false);
                 setPerformances(response.data);
@@ -33,7 +33,7 @@ const PerformanceIndicator = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/performance-indicators/${performanceId}`)
+                    axios.delete(`${appConfig.apiDomaine}/performance-indicators/${performanceId}`)
                         .then(response => {
                             const newPerformances = [...performances];
                             newPerformances.splice(index, 1);

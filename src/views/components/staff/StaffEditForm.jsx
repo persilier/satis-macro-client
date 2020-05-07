@@ -11,19 +11,18 @@ import {
     toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
 import {ToastBottomEnd} from "../Toast";
-import apiConfig from "../../../config/apiConfig";
-import {formatUnits} from "../../../helper/unit";
-import {formatPositions} from "../../../helper/position";
+import {formatUnits} from "../../../helpers/unit";
+import {formatPositions} from "../../../helpers/position";
 import './react-tagsinput.css';
 import Select from "react-select";
-import {formatSelectOption} from "../../../helper/function";
-import {formatInstitutions} from "../../../helper/institution";
+import {formatSelectOption} from "../../../helpers/function";
+import {formatInstitutions} from "../../../helpers/institution";
+import appConfig from "../../../config/appConfig";
 
 const StaffEditForm = () => {
     const [units, setUnits] = useState([]);
     const [positions, setPositions] = useState([]);
     const [institutions, setInstitutions] = useState([]);
-    const [institution_id, setInstitution_id] = useState("");
     const [institution, setInstitution] = useState({});
     const [unit, setUnit] = useState({});
     const [position, setPosition] = useState({});
@@ -55,7 +54,7 @@ const StaffEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/staff/${id}/edit`)
+        axios.get(`${appConfig.apiDomaine}/staff/${id}/edit`)
             .then(response => {
                 console.log(response.data);
                 const newData = {
@@ -142,9 +141,8 @@ const StaffEditForm = () => {
     };
 
     const onChangeInstitution = (selected) => {
-        setInstitution_id(selected.value);
         setInstitution(selected);
-        axios.get(`${apiConfig.baseUrl}/institutions/${selected.value}/positions-units`)
+        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/positions-units`)
             .then(response => {
                 resetUnitsAndPositions();
                 setUnits(formatUnits(response.data.units));

@@ -3,22 +3,22 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const   Staff = () => {
     const [load, setLoad] = useState(true);
     const [staffs, setStaffs] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/staff`)
+        axios.get(`${appConfig.apiDomaine}/staff`)
             .then(response => {
                 setLoad(false);
                setStaffs(response.data);
@@ -33,7 +33,7 @@ const   Staff = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/staff/${staffId}`)
+                    axios.delete(`${appConfig.apiapiapiDomaine}/staff/${staffId}`)
                         .then(response => {
                             const newStaffs = [...staffs];
                             newStaffs.splice(index, 1);

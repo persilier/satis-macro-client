@@ -7,7 +7,7 @@ import {
 import {Multiselect} from "multiselect-react-dropdown";
 import {ToastBottomEnd} from "./Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
 const PositionEditForm = () => {
     const [selectedValues, setSelectedValues] = useState([]);
@@ -29,7 +29,7 @@ const PositionEditForm = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/positions/${id}/edit`)
+        axios.get(`${appConfig.apiDomaine}/positions/${id}/edit`)
             .then(response => {
                 const newData = {
                     name: response.data.position.name.fr,
@@ -90,10 +90,8 @@ const PositionEditForm = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
-        console.log(data);
         setStartRequest(true);
-        axios.put(`${apiConfig.baseUrl}/positions/${id}`, data)
+        axios.put(`${appConfig.apiDomaine}/positions/${id}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);

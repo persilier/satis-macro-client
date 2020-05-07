@@ -3,22 +3,22 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss} from "../../helper/function";
+import {loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Position = () => {
     const [load, setLoad] = useState(true);
     const [positions, setPositions] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/positions`)
+        axios.get(`${appConfig.apiDomaine}/positions`)
             .then(response => {
                 setLoad(false);
                 setPositions(response.data);
@@ -33,7 +33,7 @@ const Position = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/positions/${positionId}`)
+                    axios.delete(`${appConfig.apiDomaine}/positions/${positionId}`)
                         .then(response => {
                             const newPositions = [...positions];
                             newPositions.splice(index, 1);

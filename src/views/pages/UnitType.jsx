@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -12,16 +12,16 @@ import {
 } from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const UnitType = () => {
     const [load, setLoad] = useState(true);
     const [unitTypes, setUnitTypes] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/unit-types`)
+        axios.get(`${appConfig.apiDomaine}/unit-types`)
             .then(response => {
                 setLoad(false);
                 setUnitTypes(response.data);
@@ -36,7 +36,7 @@ const UnitType = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/unit-types/${unitTypeId}`)
+                    axios.delete(`${appConfig.apiDomaine}/unit-types/${unitTypeId}`)
                         .then(response => {
                             const newUnitTypes = [...unitTypes];
                             newUnitTypes.splice(index, 1);
