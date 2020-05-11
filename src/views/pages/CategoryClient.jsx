@@ -11,7 +11,7 @@ import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const CategoryClient = () => {
     const [load, setLoad] = useState(true);
@@ -252,7 +252,7 @@ const CategoryClient = () => {
                                                     categoryClient.data? (
                                                         categoryClient.data.map((category, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{category.institution.name}</td>
+                                                                <td>{category.institution?category.institution.name: ""}</td>
                                                                 <td >{category.name}</td>
                                                                 <td >{category.description}</td>
                                                                 <td>

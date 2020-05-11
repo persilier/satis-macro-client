@@ -4,8 +4,14 @@ import {
     Link
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import {formatSelectOption} from "../../helper/function";
+import Select from "react-select";
 
 const AddTypeClient = () => {
     const defaultData = {
@@ -21,18 +27,21 @@ const AddTypeClient = () => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [institutionData, setInstitutionData] = useState([]);
+    const [institution, setInstitution] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + '/institutions')
             .then(response => {
-                setInstitutionData(response.data)
+                setInstitutionData(response.data.data)
             })
 
     }, []);
-    const onChangeInstituion = (e) => {
+
+    const onChangeInstituion = (selected) => {
         const newData = {...data};
-        newData.institutions_id = e.target.value;
+        newData.institutions_id = selected.value;
+        setInstitution(selected);
         setData(newData);
     };
 
@@ -64,7 +73,8 @@ const AddTypeClient = () => {
             .catch(error => {
                 setStartRequest(false);
                 setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
             })
         ;
     };
@@ -193,21 +203,12 @@ const AddTypeClient = () => {
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
                                                                        htmlFor="exampleSelect1">Institution</label>
                                                                 <div className="col-lg-9 col-xl-6">
-                                                                    {institutionData.data ? (
-                                                                        <select
-                                                                            name="categorie"
-                                                                            id="categorie"
-                                                                            className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
-                                                                            value={data.institutions_id}
-                                                                            onChange={(e) => onChangeInstituion(e)}>
-                                                                            <option value="" disabled> Sélectionnez une
-                                                                                institution
-                                                                            </option>
-                                                                            {institutionData.data.map((element, i) => (
-                                                                                <option key={i}
-                                                                                        value={element.id}>{element.name}</option>
-                                                                            ))}
-                                                                        </select>
+                                                                    {institutionData ? (
+                                                                        <Select
+                                                                            value={institution}
+                                                                            onChange={onChangeInstituion}
+                                                                            options={formatSelectOption(institutionData,'name',false)}
+                                                                        />
                                                                     ) : ''
                                                                     }
 
@@ -278,12 +279,12 @@ const AddTypeClient = () => {
                                                             </div>
                                                         </div>
                                                         <div className="kt-portlet__foot">
-                                                            <div className="kt-form__actions">
+                                                            <div className="kt-form__actions text-right">
                                                                 {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Submit</button>
+                                                                                className="btn btn-primary">Envoyer</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -296,13 +297,13 @@ const AddTypeClient = () => {
                                                                     !startRequest ? (
                                                                         <Link to="/settings/clients/type"
                                                                               className="btn btn-secondary mx-2">
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     ) : (
                                                                         <Link to="/settings/clients/type"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     )
                                                                 }

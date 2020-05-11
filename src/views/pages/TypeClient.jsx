@@ -11,7 +11,7 @@ import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const TypeClient = () => {
     const [load, setLoad] = useState(true);
@@ -252,7 +252,7 @@ const TypeClient = () => {
                                                     typeClient.data? (
                                                         typeClient.data.map((type, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{type.institution.name}</td>
+                                                                <td>{type.institution?type.institution.name:""}</td>
                                                                 <td >{type.name}</td>
                                                                 <td >{type.description}</td>
                                                                 <td>
