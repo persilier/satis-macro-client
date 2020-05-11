@@ -8,7 +8,6 @@ import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastBottomEndConfig,
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
@@ -31,25 +30,25 @@ const EditFaqs = () => {
     const [categorieData, setCategorieData] = useState([]);
     const [category, setCategory] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
-
     const {editfaqid} = useParams();
+
     useEffect(() => {
         axios.get(appConfig.apiDomaine + '/faq-categories')
             .then(response => {
                 setCategorieData(response.data.data)
             });
-
-        axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
-            .then(response => {
-                const newFaq = {
-                    faq_category_id: response.data.category.id,
-                    question: response.data.question,
-                    answer: response.data.answer
-                };
-                setData(newFaq);
-                setCategory({value: response.data.category.id, label: response.data.category.name});
-
-            })
+        if (editfaqid) {
+            axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
+                .then(response => {
+                    const newFaq = {
+                        faq_category_id: response.data.category.id,
+                        question: response.data.question,
+                        answer: response.data.answer
+                    };
+                    setData(newFaq);
+                    setCategory({value: response.data.category.id, label: response.data.category.name});
+                })
+        }
 
     }, []);
     const onChangeCategory = (selected) => {
@@ -73,22 +72,39 @@ const EditFaqs = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-            })
-        ;
+        if(editfaqid){
+            axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else {
+            axios.post(appConfig.apiDomaine + `/faqs`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }
+
     };
 
     return (
@@ -194,9 +210,18 @@ const EditFaqs = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modifier une FAQ
-                                    </h3>
+                                    {
+                                        editfaqid?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modifier une FAQ
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout de FAQs
+                                            </h3>
+                                        )
+                                    }
+
                                 </div>
                             </div>
 
@@ -217,7 +242,7 @@ const EditFaqs = () => {
                                                                         <Select
                                                                             value={category}
                                                                             onChange={onChangeCategory}
-                                                                            options={formatSelectOption(categorieData,'name',false)}
+                                                                            options={formatSelectOption(categorieData, 'name', false)}
                                                                         />
                                                                     ) : ''
                                                                     }

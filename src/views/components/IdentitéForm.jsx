@@ -22,7 +22,7 @@ const IndentiteForm = (props) => {
         email: "",
         id_card: [],
     };
-    const [data, setData] = useState(props.getLoading === true ? props.getIdentite : defaultData);
+    const [data, setData] = useState(props.getLoading  ? props.getIdentite : defaultData);
     const [error, setError] = useState(defaultError);
 
     const onChangeFirstName = (e) => {

@@ -36,16 +36,19 @@ const EditCategoryClient = () => {
             .then(response => {
                 setInstitutionData(response.data.data)
             });
-        axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
-            .then(response => {
-                const newCategory = {
-                    institutions_id: (response.data.institution)?(response.data.institution.id):'',
-                    name: response.data.name,
-                    description: response.data.description
-                };
-                setData(newCategory);
-                setInstitution({value: response.data.institution.id, label: response.data.institution.name});
-            })
+        if (editcategoryid){
+            axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
+                .then(response => {
+                    const newCategory = {
+                        institutions_id: (response.data.institution)?(response.data.institution.id):'',
+                        name: response.data.name,
+                        description: response.data.description
+                    };
+                    setData(newCategory);
+                    setInstitution({value: response.data.institution.id, label: response.data.institution.name});
+                })
+
+        }
 
     }, []);
     const onChangeInstituion = (selected) => {
@@ -70,22 +73,40 @@ const EditCategoryClient = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-            })
-        ;
+
+        if (editcategoryid){
+            axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else {
+            axios.post(appConfig.apiDomaine + `/category-clients`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }
+
     };
 
     return (
@@ -191,9 +212,17 @@ const EditCategoryClient = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modification Catégorie Client
-                                    </h3>
+                                    {
+                                        editcategoryid?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modification Catégorie Client
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout de Catégorie Client
+                                            </h3>
+                                        )}
+
                                 </div>
                             </div>
 

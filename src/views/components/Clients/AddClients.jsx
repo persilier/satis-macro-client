@@ -61,11 +61,9 @@ const AddClients = (props) => {
         axios.get(appConfig.apiDomaine + '/clients/create', {params: {institution: newData.institutions_id}})
             .then(response => {
                 setUnitData(response.data.units);
-
                 setTypeClient(response.data.type_clients);
                 setCategoryClient(response.data.category_clients);
             })
-
     };
     const onChangeUnite = (selected) => {
         const newData = {...data};
@@ -104,6 +102,7 @@ const AddClients = (props) => {
 
         {console.log(formData, 'FORMDATA')}
         setStartRequest(true);
+
         axios.post(appConfig.apiDomaine + `/clients`, formData)
             .then(response => {
                 setStartRequest(false);

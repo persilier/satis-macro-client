@@ -30,22 +30,24 @@ const EditTypeClient = () => {
     const [institution, setInstitution] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
     const {edittypeid} = useParams();
+
     useEffect(() => {
         axios.get(appConfig.apiDomaine + '/institutions')
             .then(response => {
                 setInstitutionData(response.data)
             });
-        axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
-            .then(response => {
-                const newType = {
-                    institutions_id: (response.data.institution)?(response.data.institution.id):"",
-                    name: response.data.name,
-                    description: response.data.description
-                };
-                setData(newType);
-                setInstitution({value: response.data.institution.id, label: response.data.institution.name});
-            })
-
+        if(edittypeid){
+            axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
+                .then(response => {
+                    const newType = {
+                        institutions_id: (response.data.institution)?(response.data.institution.id):"",
+                        name: response.data.name,
+                        description: response.data.description
+                    };
+                    setData(newType);
+                    setInstitution({value: response.data.institution.id, label: response.data.institution.name});
+                })
+        }
     }, []);
     const onChangeInstituion = (selected) => {
         const newData = {...data};
@@ -69,23 +71,39 @@ const EditTypeClient = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(data, 'data');
-
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/type-clients/${edittypeid}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-            })
-        ;
+        if (edittypeid){
+            axios.put(appConfig.apiDomaine + `/type-clients/${edittypeid}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else{
+            axios.post(appConfig.apiDomaine + `/type-clients`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }
+
     };
 
     return (
@@ -191,9 +209,18 @@ const EditTypeClient = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modification Type Client
-                                    </h3>
+                                    {
+                                        edittypeid?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modification de Type Client
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout de Type Client
+                                            </h3>
+                                        )
+                                    }
+
                                 </div>
                             </div>
 

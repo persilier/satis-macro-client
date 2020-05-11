@@ -25,13 +25,15 @@ const EditCategoryFaqs = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+`/faq-categories/${editcategoryslug}`)
-            .then(response => {
-                const newCategory={
-                    name:response.data.name,
-                };
-                setData(newCategory)
-            })
+        if (editcategoryslug){
+            axios.get(appConfig.apiDomaine+`/faq-categories/${editcategoryslug}`)
+                .then(response => {
+                    const newCategory={
+                        name:response.data.name,
+                    };
+                    setData(newCategory)
+                })
+        }
     }, []);
 
     const onChangeName = (e) => {
@@ -43,20 +45,38 @@ const EditCategoryFaqs = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine+`/faq-categories/${editcategoryslug}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-            })
-        ;
+        if(editcategoryslug){
+            axios.put(appConfig.apiDomaine+`/faq-categories/${editcategoryslug}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else{
+            axios.post(appConfig.apiDomaine+`/faq-categories`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }
+
     };
 
     return (
@@ -147,9 +167,17 @@ const EditCategoryFaqs = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modification des catégories de FAQ
-                                    </h3>
+                                    {
+                                        editcategoryslug?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modification des catégories de FAQ
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout des catégories de FAQ
+                                            </h3>
+                                        )}
+
                                 </div>
                             </div>
 
