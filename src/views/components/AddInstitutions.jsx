@@ -51,10 +51,10 @@ const AddInstitutions = () => {
         newData.logo = e.target.files[0];
         setData(newData);
         var reader = new FileReader();
-        reader.onload = function(e) {
-            var image=document.getElementById('Image1');
-            console.log(image,'image');
-            image.src= e.target.result;
+        reader.onload = function (e) {
+            var image = document.getElementById('Image1');
+            console.log(image, 'image');
+            image.src = e.target.result;
         };
         reader.readAsDataURL(newData.logo);
     };
@@ -66,7 +66,7 @@ const AddInstitutions = () => {
         formData.set('name', data.name);
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
-console.log(formData, 'FORM');
+        console.log(formData, 'FORM');
         setStartRequest(true);
         axios.post(appConfig.apiDomaine + `/institutions`, formData)
             .then(response => {
@@ -207,7 +207,12 @@ console.log(formData, 'FORM');
                                                                     <div className="kt-avatar kt-avatar--outline"
                                                                          id="kt_user_add_avatar">
                                                                         <div className="kt-avatar__holder">
-                                                                            <img id="Image1" className="kt-avatar__holder" src="/assets/media/users/avatar_group.png" alt="logo"/>
+                                                                            <img
+                                                                                id="Image1"
+                                                                                className="kt-avatar__holder"
+                                                                                src="/assets/media/users/avatar_group.png"
+                                                                                alt="logo"
+                                                                            />
                                                                         </div>
                                                                         <label className="kt-avatar__upload"
                                                                                id="files"
@@ -217,7 +222,7 @@ console.log(formData, 'FORM');
                                                                             <input type="file"
                                                                                    id="file"
                                                                                    name="kt_user_add_user_avatar"
-                                                                                   onChange={(e)=>onChangeFile(e)}
+                                                                                   onChange={(e) => onChangeFile(e)}
                                                                             />
                                                                         </label>
                                                                         <span className="kt-avatar__cancel"
@@ -228,7 +233,8 @@ console.log(formData, 'FORM');
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                                            <div
+                                                                className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
                                                                        htmlFor="name">le Nom</label>
                                                                 <div className="col-lg-9 col-xl-6">
@@ -255,7 +261,8 @@ console.log(formData, 'FORM');
 
                                                             <div
                                                                 className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="Acronyme">L'acronyme</label>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="Acronyme">L'acronyme</label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <input
                                                                         id="Acronyme"
@@ -280,7 +287,8 @@ console.log(formData, 'FORM');
 
                                                             <div
                                                                 className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">Le Code Iso</label>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="value">Le Code Iso</label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <input
                                                                         id="value"
