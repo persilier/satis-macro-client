@@ -5,7 +5,11 @@ import {
     useParams
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 
 const EditCategoryFaqs = () => {
@@ -49,7 +53,8 @@ const EditCategoryFaqs = () => {
             .catch(error => {
                 setStartRequest(false);
                 setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
             })
         ;
     };
@@ -151,7 +156,7 @@ const EditCategoryFaqs = () => {
                             <form method="POST" className="kt-form">
                                 <div className="kt-portlet__body">
 
-                                    <div className={error.name.length ? "form-group  validated" : "form-group "}>
+                                    <div className={error.name.length ? "form-group  validated" : "form-group"}>
                                         <label htmlFor="name">le Nom</label>
                                         <div className="col-md-6 mb-3">
                                         <input
@@ -179,7 +184,7 @@ const EditCategoryFaqs = () => {
                                     <div className="kt-form__actions">
                                         {
                                             !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
                                             ) : (
                                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                     Loading...
@@ -189,11 +194,11 @@ const EditCategoryFaqs = () => {
                                         {
                                             !startRequest ? (
                                                 <Link to="/settings/faqs/category" className="btn btn-secondary mx-2">
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             ) : (
                                                 <Link to="/settings/faqs/category" className="btn btn-secondary mx-2" disabled>
-                                                    Cancel
+                                                    Quitter
                                                 </Link>
                                             )
                                         }

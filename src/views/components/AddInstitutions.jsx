@@ -4,7 +4,11 @@ import {
     Link
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 
 const AddInstitutions = () => {
@@ -42,12 +46,6 @@ const AddInstitutions = () => {
         setData(newData);
     };
 
-    const onChangeLogo = (e) => {
-        const newData = {...data};
-        newData.logo = e.target.files[0];
-        setData(newData);
-    };
-
     const onChangeFile = (e) => {
         const newData = {...data};
         newData.logo = e.target.files[0];
@@ -64,10 +62,11 @@ const AddInstitutions = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append('logo', data.logo, data.logo.name);
+        formData.append('logo', data.logo);
         formData.set('name', data.name);
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
+console.log(formData, 'FORM');
         setStartRequest(true);
         axios.post(appConfig.apiDomaine + `/institutions`, formData)
             .then(response => {
@@ -79,7 +78,8 @@ const AddInstitutions = () => {
             .catch(error => {
                 setStartRequest(false);
                 setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
             })
         ;
     };
@@ -207,7 +207,7 @@ const AddInstitutions = () => {
                                                                     <div className="kt-avatar kt-avatar--outline"
                                                                          id="kt_user_add_avatar">
                                                                         <div className="kt-avatar__holder">
-                                                                            <img id="Image1" className="kt-avatar__holder" src="/assets/media/users/Icon.png" alt="logo"/>
+                                                                            <img id="Image1" className="kt-avatar__holder" src="/assets/media/users/avatar_group.png" alt="logo"/>
                                                                         </div>
                                                                         <label className="kt-avatar__upload"
                                                                                id="files"
@@ -304,12 +304,12 @@ const AddInstitutions = () => {
                                                             </div>
                                                         </div>
                                                         <div className="kt-portlet__foot">
-                                                            <div className="kt-form__actions">
+                                                            <div className="kt-form__actions text-right">
                                                                 {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Submit</button>
+                                                                                className="btn btn-primary">Envoyer</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -322,13 +322,13 @@ const AddInstitutions = () => {
                                                                     !startRequest ? (
                                                                         <Link to="/settings/institution"
                                                                               className="btn btn-secondary mx-2">
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     ) : (
                                                                         <Link to="/settings/institution"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     )
                                                                 }
