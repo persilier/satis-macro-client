@@ -5,8 +5,14 @@ import {
     useParams
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import {formatSelectOption} from "../../helpers/function";
+import Select from "react-select";
 
 const EditFaqs = () => {
     const defaultData = {
@@ -22,34 +28,33 @@ const EditFaqs = () => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [categorieData, setCategorieData] = useState([]);
-    const [getCategory, setGetCategory] = useState(undefined);
+    const [category, setCategory] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
-
     const {editfaqid} = useParams();
+
     useEffect(() => {
         axios.get(appConfig.apiDomaine + '/faq-categories')
             .then(response => {
-                setCategorieData(response.data)
+                setCategorieData(response.data.data)
             });
-
-        axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
-            .then(response => {
-                const newFaq = {
-                    faq_category_id: response.data.category.id,
-                    question: response.data.question,
-                    answer: response.data.answer
-                };
-                setData(newFaq)
-            })
+        if (editfaqid) {
+            axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
+                .then(response => {
+                    const newFaq = {
+                        faq_category_id: response.data.category.id,
+                        question: response.data.question,
+                        answer: response.data.answer
+                    };
+                    setData(newFaq);
+                    setCategory({value: response.data.category.id, label: response.data.category.name});
+                })
+        }
 
     }, []);
-    const onChangeCategory = (e) => {
-        let select = document.getElementById("categorie");
-        let choice = select.selectedIndex;
-        let valeur = select.options[choice].value;
-        setGetCategory(document.getElementById('categorie').value = valeur);
+    const onChangeCategory = (selected) => {
         const newData = {...data};
-        newData.faq_category_id = e.target.value;
+        newData.faq_category_id = selected.value;
+        setCategory(selected);
         setData(newData);
     };
 
@@ -67,26 +72,39 @@ const EditFaqs = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
-        const formData = {
-            faq_category_id: getCategory,
-            question: data.question,
-            answer: data.answer
-        };
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if(editfaqid){
+            axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else {
+            axios.post(appConfig.apiDomaine + `/faqs`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }
+
     };
 
     return (
@@ -192,9 +210,18 @@ const EditFaqs = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modifier une FAQ
-                                    </h3>
+                                    {
+                                        editfaqid?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modifier une FAQ
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout de FAQs
+                                            </h3>
+                                        )
+                                    }
+
                                 </div>
                             </div>
 
@@ -211,21 +238,12 @@ const EditFaqs = () => {
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
                                                                        htmlFor="exampleSelect1">Catégorie</label>
                                                                 <div className="col-lg-9 col-xl-6">
-                                                                    {categorieData.data ? (
-                                                                        <select
-                                                                            name="categorie"
-                                                                            id="categorie"
-                                                                            className={error.faq_category_id.length ? "form-control is-invalid" : "form-control"}
-                                                                            value={data.faq_category_id}
-                                                                            onChange={(e) => onChangeCategory(e)}>
-                                                                            <option value="" disabled> Sélectionnez une
-                                                                                catégorie
-                                                                            </option>
-                                                                            {categorieData.data.map((element, i) => (
-                                                                                <option key={i}
-                                                                                        value={element.id}>{element.name}</option>
-                                                                            ))}
-                                                                        </select>
+                                                                    {categorieData ? (
+                                                                        <Select
+                                                                            value={category}
+                                                                            onChange={onChangeCategory}
+                                                                            options={formatSelectOption(categorieData, 'name', false)}
+                                                                        />
                                                                     ) : ''
                                                                     }
 
@@ -296,12 +314,12 @@ const EditFaqs = () => {
                                                             </div>
                                                         </div>
                                                         <div className="kt-portlet__foot">
-                                                            <div className="kt-form__actions">
+                                                            <div className="kt-form__actions text-right">
                                                                 {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Submit</button>
+                                                                                className="btn btn-primary">Envoyer</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -314,13 +332,13 @@ const EditFaqs = () => {
                                                                     !startRequest ? (
                                                                         <Link to="/settings/faqs/add"
                                                                               className="btn btn-secondary mx-2">
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     ) : (
                                                                         <Link to="/settings/faqs/add"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     )
                                                                 }

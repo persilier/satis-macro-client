@@ -5,11 +5,16 @@ import {
     Link
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 
 const EditInstitutions = () => {
     const {editinstitutionlug} = useParams();
+
     const defaultData = {
         name: "",
         acronyme: "",
@@ -23,21 +28,25 @@ const EditInstitutions = () => {
         logo: [],
     };
     const [data, setData] = useState(defaultData);
+    const [logo, setLogo] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`)
-            .then(response => {
-                console.log(response, "GET_INSTITUTION");
-                const newInstitution = {
-                    name: response.data.name,
-                    acronyme: response.data.acronyme,
-                    iso_code: response.data.iso_code,
-                    logo:response.data.logo
-                };
-                setData(newInstitution)
-            })
+        if(editinstitutionlug){
+            axios.get(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`)
+                .then(response => {
+                    console.log(response, "GET_INSTITUTION");
+                    const newInstitution = {
+                        name: response.data.name,
+                        acronyme: response.data.acronyme,
+                        iso_code: response.data.iso_code,
+                        logo:response.data.logo
+                    };
+                    setData(newInstitution)
+                })
+        }
+
     }, []);
 
     const onChangeName = (e) => {
@@ -58,23 +67,64 @@ const EditInstitutions = () => {
         setData(newData);
     };
 
+    const onChangeFile = (e) => {
+        const newData = {...data};
+        newData.logo = e.target.files[0];
+        setData(newData);
+        setLogo(newData);
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var image=document.getElementById('Image1');
+            console.log(image,'image');
+            image.src= e.target.result;
+        };
+        reader.readAsDataURL(newData.logo);
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
-
+        {console.log(data.logo.name,"data")}
+        const formData = new FormData();
+        if (logo){
+            formData.append('logo', data.logo);
+        }
+        formData.set('name', data.name);
+        formData.set('acronyme', data.acronyme);
+        formData.set('iso_code', data.iso_code);
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (editinstitutionlug){
+            formData.append("_method", "put");
+            axios.post(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`, formData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    // ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else {
+            axios.post(appConfig.apiDomaine + `/institutions`, formData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    // ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+
+        }
+
     };
 
     return (
@@ -180,9 +230,17 @@ const EditInstitutions = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modification d'une institution
-                                    </h3>
+                                    {
+                                        editinstitutionlug?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modification d'une institution
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout d'une institution
+                                            </h3>
+                                        )
+                                    }
                                 </div>
                             </div>
 
@@ -194,6 +252,49 @@ const EditInstitutions = () => {
                                                 <div className="kt-form__body">
                                                     <div className="kt-section kt-section--first">
                                                         <div className="kt-section__body">
+                                                            <div className="form-group row">
+                                                                <label className="col-xl-3 col-lg-3 col-form-label">Logo</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    <div className="kt-avatar kt-avatar--outline"
+                                                                         id="kt_user_add_avatar">
+                                                                        <div className="kt-avatar__holder">
+                                                                            {
+                                                                                editinstitutionlug?(
+                                                                                    <img
+                                                                                        id="Image1"
+                                                                                        className="kt-avatar__holder"
+                                                                                        src={data.logo}
+                                                                                        alt="logo"/>
+                                                                                ):(
+                                                                                    <img
+                                                                                        id="Image1"
+                                                                                        className="kt-avatar__holder"
+                                                                                        src="/assets/media/users/Icon.png"
+                                                                                        alt="logo"
+                                                                                    />
+                                                                                )
+                                                                            }
+
+                                                                        </div>
+                                                                        <label className="kt-avatar__upload"
+                                                                               id="files"
+                                                                               data-toggle="kt-tooltip"
+                                                                               title="Change avatar">
+                                                                            <i className="fa fa-pen"></i>
+                                                                            <input type="file"
+                                                                                   id="file"
+                                                                                   name="kt_user_add_user_avatar"
+                                                                                   onChange={(e)=>onChangeFile(e)}
+                                                                            />
+                                                                        </label>
+                                                                        <span className="kt-avatar__cancel"
+                                                                              data-toggle="kt-tooltip"
+                                                                              title="Cancel avatar">
+                                                                            <i className="fa fa-times"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
                                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
@@ -274,12 +375,12 @@ const EditInstitutions = () => {
 
                                                         </div>
                                                         <div className="kt-portlet__foot">
-                                                            <div className="kt-form__actions">
+                                                            <div className="kt-form__actions text-right">
                                                                 {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Submit</button>
+                                                                                className="btn btn-primary">Envoyer</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -292,13 +393,13 @@ const EditInstitutions = () => {
                                                                     !startRequest ? (
                                                                         <Link to="/settings/institution"
                                                                               className="btn btn-secondary mx-2">
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     ) : (
                                                                         <Link to="/settings/institution"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     )
                                                                 }

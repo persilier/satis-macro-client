@@ -5,8 +5,14 @@ import {
     useParams
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import {formatSelectOption} from "../../helpers/function";
+import Select from "react-select";
 
 const EditCategoryClient = () => {
     const defaultData = {
@@ -22,27 +28,33 @@ const EditCategoryClient = () => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [institutionData, setInstitutionData] = useState([]);
+    const [institution, setInstitution] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
     const {editcategoryid} = useParams();
     useEffect(() => {
         axios.get(appConfig.apiDomaine + '/institutions')
             .then(response => {
-                setInstitutionData(response.data)
+                setInstitutionData(response.data.data)
             });
-        axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
-            .then(response => {
-                const newCategory = {
-                    institutions_id: response.data.institution.id,
-                    name: response.data.name,
-                    description: response.data.description
-                };
-                setData(newCategory)
-            })
+        if (editcategoryid){
+            axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
+                .then(response => {
+                    const newCategory = {
+                        institutions_id: (response.data.institution)?(response.data.institution.id):'',
+                        name: response.data.name,
+                        description: response.data.description
+                    };
+                    setData(newCategory);
+                    setInstitution({value: response.data.institution.id, label: response.data.institution.name});
+                })
+
+        }
 
     }, []);
-    const onChangeInstituion = (e) => {
+    const onChangeInstituion = (selected) => {
         const newData = {...data};
-        newData.institutions_id = e.target.value;
+        newData.institutions_id = selected.value;
+        setInstitution(selected);
         setData(newData);
     };
 
@@ -61,21 +73,40 @@ const EditCategoryClient = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+
+        if (editcategoryid){
+            axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }else {
+            axios.post(appConfig.apiDomaine + `/category-clients`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                })
+            ;
+        }
+
     };
 
     return (
@@ -181,9 +212,17 @@ const EditCategoryClient = () => {
                         <div className="kt-portlet">
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        Modification Catégorie Client
-                                    </h3>
+                                    {
+                                        editcategoryid?(
+                                            <h3 className="kt-portlet__head-title">
+                                                Modification Catégorie Client
+                                            </h3>
+                                        ):(
+                                            <h3 className="kt-portlet__head-title">
+                                                Ajout de Catégorie Client
+                                            </h3>
+                                        )}
+
                                 </div>
                             </div>
 
@@ -199,23 +238,15 @@ const EditCategoryClient = () => {
                                                                 className={error.institutions_id.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="exampleSelect1">Institution</label>
                                                                 <div className="col-lg-9 col-xl-6">
-                                                                {institutionData.data ? (
-                                                                    <select
-                                                                        name="categorie"
-                                                                        id="categorie"
-                                                                        className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
-                                                                        value={data.institutions_id}
-                                                                        onChange={(e) => onChangeInstituion(e)}>
-                                                                        <option value="" disabled> Sélectionnez une
-                                                                            institution
-                                                                        </option>
-                                                                        {institutionData.data.map((element, i) => (
-                                                                            <option key={i}
-                                                                                    value={element.id}>{element.name}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                ) : ''
-                                                                }
+                                                                    {institutionData ? (
+                                                                        <Select
+                                                                            value={institution}
+                                                                            onChange={onChangeInstituion}
+                                                                            options={formatSelectOption(institutionData,'name',false)}
+                                                                        />
+                                                                    ) : ''
+                                                                    }
+
 
                                                                 {
                                                                     error.institutions_id.length ? (
@@ -282,12 +313,12 @@ const EditCategoryClient = () => {
                                                             </div>
                                                         </div>
                                                         <div className="kt-portlet__foot">
-                                                            <div className="kt-form__actions">
+                                                            <div className="kt-form__actions text-right">
                                                                 {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Submit</button>
+                                                                                className="btn btn-primary">Envoyer</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -300,13 +331,13 @@ const EditCategoryClient = () => {
                                                                     !startRequest ? (
                                                                         <Link to="/settings/clients/category"
                                                                               className="btn btn-secondary mx-2">
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     ) : (
                                                                         <Link to="/settings/clients/category"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
-                                                                            Cancel
+                                                                            Quitter
                                                                         </Link>
                                                                     )
                                                                 }

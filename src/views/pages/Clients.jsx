@@ -18,17 +18,13 @@ const Clients = () => {
     const [clients, setClients] = useState([]);
 
     useEffect(() => {
-        axios.get("http://satis2020.local/clients")
+        axios.get(appConfig.apiDomaine+"/clients")
             .then(response => {
                 setLoad(false);
                 setClients(response.data);
-                {
-                    console.log(response.data, 'CLIENTS')
-                }
             })
             .catch(error => {
                 setLoad(false);
-                console.log("Something is wrong");
             })
     }, []);
 
@@ -257,12 +253,7 @@ const Clients = () => {
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "100.25px"}}
-                                                        aria-label="Country: activate to sort column ascending">FirstName
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">LastName
+                                                        aria-label="Country: activate to sort column ascending">Nom
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
@@ -292,14 +283,12 @@ const Clients = () => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {console.log(clients, 'data')}
                                                 {
                                                     clients.data ? (
                                                         clients.data.map((client, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd"
                                                                 key={index} role="row" className="odd">
-                                                                <td>{client.identite.firstname}</td>
-                                                                <td>{client.identite.lastname}</td>
+                                                                <td>{client.identite.lastname} &ensp; {client.identite.firstname }</td>
                                                                 {/*<td>{client.identite.sexe}</td>*/}
                                                                 <td>
                                                                     {

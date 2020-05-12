@@ -252,7 +252,7 @@ const TypeClient = () => {
                                                     typeClient.data? (
                                                         typeClient.data.map((type, index) => (
                                                             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{type.institution.name}</td>
+                                                                <td>{type.institution?type.institution.name:""}</td>
                                                                 <td >{type.name}</td>
                                                                 <td >{type.description}</td>
                                                                 <td>

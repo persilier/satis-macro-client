@@ -10,11 +10,14 @@ import * as serviceWorker from './serviceWorker';
 import App from './views/layouts/App.jsx';
 import LoginPage from "./modules/login/views/Pages/LoginPage.jsx";
 import languageReducer from "./store/reducers/languageReducer";
+import identiteReducer from "./store/reducers/Identite";
 
-const login = true;
 const rootReducer = combineReducers({
+    identite: identiteReducer,
     language: languageReducer
 });
+
+const login = true;
 const store = createStore(rootReducer, composeWithDevTools());
 
 ReactDOM.render(

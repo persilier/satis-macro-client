@@ -16,17 +16,12 @@ import FAQs from "../pages/FAQs";
 import FAQsPage from "../pages/FAQsPage";
 import CategoryFAQs from "../pages/CategoryFAQs";
 import Institution from "../pages/Institution";
-import AddInstitutions from "../components/AddInstitutions";
 import EditInstitutions from "../components/EditInstitution";
-import AddCategoryFaqs from "../components/AddCategoryFaqs";
 import EditCategoryFaqs from "../components/EditCategoryFaqs";
-import AddFaqs from "../components/AddFaqs";
 import EditFaqs from "../components/EditFaqs.jsx";
 import CategoryClient from "../pages/CategoryClient";
 import TypeClient from "../pages/TypeClient";
-import AddCategoryClient from "../components/AddCategoryClient";
 import EditCategoryClient from "../components/EditCategoryClient";
-import AddTypeClient from "../components/AddTypeClient";
 import EditTypeClient from "../components/EditTypeClient";
 import Clients from "../pages/Clients";
 import AddClients from "../components/Clients/AddClients";
@@ -58,7 +53,7 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/clients/category/add">
-                <AddCategoryClient/>
+                <EditCategoryClient/>
             </Route>
 
             <Route exact path="/settings/clients/type">
@@ -66,7 +61,7 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/clients/type/add">
-                <AddTypeClient/>
+                <EditTypeClient/>
             </Route>
 
             <Route exact path="/settings/faqs/add">
@@ -78,14 +73,14 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/faqs/faq/add">
-                <AddFaqs/>
+                <EditFaqs/>
             </Route>
 
             <Route exact path="/settings/faqs/category">
                 <CategoryFAQs/>
             </Route>
             <Route exact path="/settings/faqs/category/add">
-                <AddCategoryFaqs/>
+                <EditCategoryFaqs/>
             </Route>
 
             <Route exact path="/settings/mail">
@@ -101,11 +96,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/clients/add">
-                <AddClients/>
+                <EditClient/>
             </Route>
 
             <Route exact path="/settings/institution/add">
-                <AddInstitutions/>
+                <EditInstitutions/>
             </Route>
 
             <Route exact path="/settings/institution/edit/:editinstitutionlug">
