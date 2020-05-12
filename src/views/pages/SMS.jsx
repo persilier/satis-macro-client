@@ -6,6 +6,7 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import FormInformation from "../components/FormInformation";
 
 const SMS = () => {
     const defaultData = {
@@ -29,7 +30,14 @@ const SMS = () => {
     useEffect(() => {
         axios.get(`${appConfig.apiDomaine}/configurations/sms`)
             .then(response => {
-                const newData = {...defaultData, ...response.data};
+                const newData = {
+                    enderID: "",
+                    username: "",
+                    indicatif: "",
+                    password: "",
+                    api: "",
+                    ...response.data
+                };
                 setData(newData);
             })
             .catch(error => {
@@ -95,77 +103,17 @@ const SMS = () => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Base controls
+                            Paramètre
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home">
+                            <a href="#link" className="kt-subheader__breadcrumbs-home">
                                 <i className="flaticon2-shelter"/>
                             </a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Forms
+                            <a href="#link" className="kt-subheader__breadcrumbs-link">
+                                SMS
                             </a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Form Controls </a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Base Inputs
-                            </a>
-                        </div>
-                    </div>
-                    <div className="kt-subheader__toolbar">
-                        <div className="kt-subheader__wrapper">
-                            <a href="#" className="btn kt-subheader__btn-primary">
-                                Actions &nbsp;
-                            </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions" data-placement="left">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z" fill="#000" fill-rule="nonzero" opacity=".3"/><path d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z" fill="#000"/></g></svg>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
-                                    <ul className="kt-nav">
-                                        <li className="kt-nav__head">
-                                            Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more..."/>
-                                        </li>
-                                        <li className="kt-nav__separator"/>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-drop"/>
-                                                <span className="kt-nav__link-text">Order</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-calendar-8"/>
-                                                <span className="kt-nav__link-text">Ticket</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"/>
-                                                <span className="kt-nav__link-text">Goal</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-new-email"/>
-                                                <span className="kt-nav__link-text">Support Case</span>
-                                                <span className="kt-nav__link-badge">
-                                                    <span className="kt-badge kt-badge--success">5</span>
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__separator"/>
-                                        <li className="kt-nav__foot">
-                                            <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -186,16 +134,8 @@ const SMS = () => {
                             <form method="POST" className="kt-form">
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
-                                        <div className="form-group form-group-last">
-                                            <div className="alert alert-secondary" role="alert">
-                                                <div className="alert-icon">
-                                                    <i className="flaticon-warning kt-font-brand"/>
-                                                </div>
-                                                <div className="alert-text">
-                                                    The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
+
                                         <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
                                             <div className="col-lg-9 col-xl-6">

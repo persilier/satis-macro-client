@@ -7,7 +7,6 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import apiConfig from "../../config/apiConfig";
 
 const EditInstitutions = () => {
     const {editinstitutionlug} = useParams();

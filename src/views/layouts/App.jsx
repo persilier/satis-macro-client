@@ -1,5 +1,6 @@
 import React from 'react';
 import HeaderMobile from "../includes/HeaderMobile";
+import {withRouter} from "react-router-dom"
 import Nav from "../includes/Nav";
 import Footer from "../includes/Footer";
 import Aside from "../includes/Aside";
@@ -39,4 +40,4 @@ function App() {
     );
 }
 
-export default App;
+export default withRouter(App);

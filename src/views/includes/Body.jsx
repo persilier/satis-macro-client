@@ -6,26 +6,12 @@ import {
 import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
-import PerformanceEditForm from "../components/PerformanceEditForm";
-import PerformanceAddForm from "../components/PerformanceAddForm";
 import UnitType from "../pages/UnitType";
 import Unit from "../pages/Unit";
-import UnitAddForm from "../components/UnitAddForm";
-import UnitEditForm from "../components/UnitEditForm";
 import Position from "../pages/Position";
-import PositionAddForm from "../components/PositionAddForm";
-import PositionEditForm from "../components/PositionEditForm";
-
 import Staff from "../pages/Staff";
-import StaffAddForm from "../components/staff/StaffAddForm";
-import StaffEditForm from "../components/staff/StaffEditForm";
 import ClaimCategory from "../pages/ClaimCategory";
-import ClaimCategoryAddForm from "../components/ClaimCategoryAddForm";
-import ClaimCategoryEditForm from "../components/ClaimCategoryEditForm";
 import ClaimObject from "../pages/ClaimObject";
-import ClaimObjectAddForm from "../components/ClaimObjectAddForm";
-import ClaimObjectEditForm from "../components/ClaimObjectEditForm";
-
 import FAQs from "../pages/FAQs";
 import FAQsPage from "../pages/FAQsPage";
 import CategoryFAQs from "../pages/CategoryFAQs";
@@ -47,8 +33,6 @@ import AddClients from "../components/Clients/AddClients";
 import EditClient from "../components/Clients/EditClient";
 import TestPagination from "../pages/TestPagination";
 import SeverityLevel from "../pages/SeverityLevel";
-import SeverityLevelAddForm from "../components/SeverityLevelAddForm";
-import SeverityLevelEditForm from "../components/SeverityLevetEditForm";
 import UnitTypeForm from "../components/UnitTypeForm";
 import PerformanceIndicatorForm from "../components/PerformanceIndicatorForm";
 import UnitForm from "../components/UnitForm";
@@ -202,11 +186,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/positions/add">
-                <PositionAddForm/>
+                <PositionForm/>
             </Route>
 
             <Route exact path="/settings/positions/:id/edit">
-                <PositionEditForm/>
+                <PositionForm/>
             </Route>
 
             <Route exact path="/settings/claim_categories">
