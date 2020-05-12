@@ -10,7 +10,7 @@ import * as serviceWorker from './serviceWorker';
 import App from './views/layouts/App.jsx';
 import LoginPage from "./modules/login/views/Pages/LoginPage.jsx";
 import languageReducer from "./store/reducers/languageReducer";
-import identiteReducer from "./store/reducers/Identite";
+import identiteReducer from "./store/reducers/IdentiteReducer";
 
 const rootReducer = combineReducers({
     identite: identiteReducer,

@@ -11,19 +11,15 @@ const FAQsPage=()=>{
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            FAQ </h3>
-                        <span className="kt-subheader__separator kt-hidden"></span>
+                            Paramètres
+                        </h3>
+                        <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"></i></a>
-                            <span className="kt-subheader__breadcrumbs-separator"></span>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Pages </a>
-                            <span className="kt-subheader__breadcrumbs-separator"></span>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                FAQ </a>
-                            <span className="kt-subheader__breadcrumbs-separator"></span>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                FAQ </a>
+                            <a href="#faq" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                            <span className="kt-subheader__breadcrumbs-separator"/>
+                            <a href="#faq" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                FAQs
+                            </a>
                         </div>
                     </div>
                 </div>

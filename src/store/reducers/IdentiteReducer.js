@@ -1,4 +1,4 @@
-import {ADD_IDENTITE} from "../actions/Identite";
+import {ADD_IDENTITE} from "../actions/IdentiteAction";
 
 const initialState = {
     identite:{
@@ -26,7 +26,7 @@ export default function identiteReducer (state = initialState, actions) {
                 email:data.email,
                 id_card:data.id_card,
             };
-            break;
+        default:
     }
     return state;
 };

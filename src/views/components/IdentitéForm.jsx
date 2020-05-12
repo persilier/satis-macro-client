@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import TagsInput from "react-tagsinput";
 import {connect} from "react-redux"
-import {addIdentite} from "../../store/actions/Identite";
+import {addIdentite} from "../../store/actions/IdentiteAction";
 
 const IndentiteForm = (props) => {
     const defaultData={
@@ -23,7 +23,7 @@ const IndentiteForm = (props) => {
         id_card: [],
     };
     const [data, setData] = useState(props.getLoading  ? props.getIdentite : defaultData);
-    const [error, setError] = useState(defaultError);
+    const [error] = useState(defaultError);
 
     const onChangeFirstName = (e) => {
         const newData = {...data};

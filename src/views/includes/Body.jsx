@@ -16,16 +16,14 @@ import FAQs from "../pages/FAQs";
 import FAQsPage from "../pages/FAQsPage";
 import CategoryFAQs from "../pages/CategoryFAQs";
 import Institution from "../pages/Institution";
-import EditInstitutions from "../components/EditInstitution";
-import EditCategoryFaqs from "../components/EditCategoryFaqs";
-import EditFaqs from "../components/EditFaqs.jsx";
+import CategoryFaqsForm from "../components/CategoryFaqsForm";
+import FaqsForm from "../components/FaqsForm.jsx";
 import CategoryClient from "../pages/CategoryClient";
 import TypeClient from "../pages/TypeClient";
-import EditCategoryClient from "../components/EditCategoryClient";
-import EditTypeClient from "../components/EditTypeClient";
+import CategoryClientForm from "../components/CategoryClientForm";
+import TypeClientForm from "../components/TypeClientForm";
 import Clients from "../pages/Clients";
-import AddClients from "../components/Clients/AddClients";
-import EditClient from "../components/Clients/EditClient";
+import ClientForm from "../components/Clients/ClientForm";
 import TestPagination from "../pages/TestPagination";
 import SeverityLevel from "../pages/SeverityLevel";
 import UnitTypeForm from "../components/UnitTypeForm";
@@ -36,6 +34,7 @@ import ClaimCategoryForm from "../components/ClaimCategoryForm";
 import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
+import InstitutionForm from "../components/InstitutionForm";
 
 const Body = () => {
     return (
@@ -53,7 +52,7 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/clients/category/add">
-                <EditCategoryClient/>
+                <CategoryClientForm/>
             </Route>
 
             <Route exact path="/settings/clients/type">
@@ -61,7 +60,7 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/clients/type/add">
-                <EditTypeClient/>
+                <TypeClientForm/>
             </Route>
 
             <Route exact path="/settings/faqs/add">
@@ -73,14 +72,14 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/faqs/faq/add">
-                <EditFaqs/>
+                <FaqsForm/>
             </Route>
 
             <Route exact path="/settings/faqs/category">
                 <CategoryFAQs/>
             </Route>
             <Route exact path="/settings/faqs/category/add">
-                <EditCategoryFaqs/>
+                <CategoryFaqsForm/>
             </Route>
 
             <Route exact path="/settings/mail">
@@ -96,35 +95,35 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/clients/add">
-                <EditClient/>
+                <ClientForm/>
             </Route>
 
             <Route exact path="/settings/institution/add">
-                <EditInstitutions/>
+                <InstitutionForm/>
             </Route>
 
             <Route exact path="/settings/institution/edit/:editinstitutionlug">
-                <EditInstitutions/>
+                <InstitutionForm/>
             </Route>
 
             <Route exact path="/settings/clients/edit/:editclientid">
-                <EditClient/>
+                <ClientForm/>
             </Route>
 
             <Route exact path="/settings/faqs/category/edit/:editcategoryslug">
-                <EditCategoryFaqs/>
+                <CategoryFaqsForm/>
             </Route>
 
             <Route exact path="/settings/faqs/faq/edit/:editfaqid">
-                <EditFaqs/>
+                <FaqsForm/>
             </Route>
 
             <Route exact path="/settings/clients/type/edit/:edittypeid">
-                <EditTypeClient/>
+                <TypeClientForm/>
             </Route>
 
             <Route exact path="/settings/clients/category/edit/:editcategoryid">
-                <EditCategoryClient/>
+                <CategoryClientForm/>
             </Route>
 
 
