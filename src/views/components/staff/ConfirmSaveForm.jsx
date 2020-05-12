@@ -1,18 +1,18 @@
 import React, {useState} from "react";
 import TagsInput from "react-tagsinput";
 import axios from "axios";
-import apiConfig from "../../../config/apiConfig";
-import {formatUnits} from "../../../helper/unit";
-import {formatPositions} from "../../../helper/position";
+import {formatUnits} from "../../../helpers/unit";
+import {formatPositions} from "../../../helpers/position";
 import {ToastBottomEnd} from "../Toast";
 import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
-import {formatSelectOption} from "../../../helper/function";
-import {formatInstitutions} from "../../../helper/institution";
+import {formatSelectOption} from "../../../helpers/function";
+import {formatInstitutions} from "../../../helpers/institution";
 import Select from "react-select";
+import appConfig from "../../../config/appConfig";
 
 const ConfirmSaveForm = (props) => {
     const [units, setUnits] = useState(props.units);
@@ -108,7 +108,7 @@ const ConfirmSaveForm = (props) => {
 
     const onChangeInstitution = (selected) => {
         setInstitution(selected);
-        axios.get(`${apiConfig.baseUrl}/institutions/${selected.value}/positions-units`)
+        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/positions-units`)
             .then(response => {
                 resetUnitsAndPositions();
                 setUnits(formatUnits(response.data.units));
@@ -125,7 +125,7 @@ const ConfirmSaveForm = (props) => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.post(`http://127.0.0.1:8000/identites/${props.identite.id}/staff`, data)
+        axios.post(`${appConfig.apiDomaine}/identites/${props.identite.id}/staff`, data)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 await setStartRequest(false);

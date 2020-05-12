@@ -14,7 +14,7 @@ import appConfig from "../../../config/appConfig";
 import TagsInput from 'react-tagsinput'
 import IdentiteForm from "../IdentitéForm";
 import Select from "react-select";
-import {formatSelectOption} from "../../../helper/function";
+import {formatSelectOption} from "../../../helpers/function";
 import {connect} from "react-redux";
 import {addIdentite} from "../../../store/actions/Identite";
 

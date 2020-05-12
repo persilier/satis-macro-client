@@ -11,7 +11,7 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import {formatSelectOption} from "../../helper/function";
+import {formatSelectOption} from "../../helpers/function";
 
 const EditTypeClient = () => {
     const defaultData = {

@@ -6,28 +6,12 @@ import {
 import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
-import PerformanceEditForm from "../components/PerformanceEditForm";
-import PerformanceAddForm from "../components/PerformanceAddForm";
 import UnitType from "../pages/UnitType";
-import UnitTypeAddForm from "../components/UnitTypeAddForm";
-import UnitTypeEditForm from "../components/UnitTypeEditForm";
 import Unit from "../pages/Unit";
-import UnitAddForm from "../components/UnitAddForm";
-import UnitEditForm from "../components/UnitEditForm";
 import Position from "../pages/Position";
-import PositionAddForm from "../components/PositionAddForm";
-import PositionEditForm from "../components/PositionEditForm";
-
 import Staff from "../pages/Staff";
-import StaffAddForm from "../components/staff/StaffAddForm";
-import StaffEditForm from "../components/staff/StaffEditForm";
 import ClaimCategory from "../pages/ClaimCategory";
-import ClaimCategoryAddForm from "../components/ClaimCategoryAddForm";
-import ClaimCategoryEditForm from "../components/ClaimCategoryEditForm";
 import ClaimObject from "../pages/ClaimObject";
-import ClaimObjectAddForm from "../components/ClaimObjectAddForm";
-import ClaimObjectEditForm from "../components/ClaimObjectEditForm";
-
 import FAQs from "../pages/FAQs";
 import FAQsPage from "../pages/FAQsPage";
 import CategoryFAQs from "../pages/CategoryFAQs";
@@ -43,6 +27,15 @@ import Clients from "../pages/Clients";
 import AddClients from "../components/Clients/AddClients";
 import EditClient from "../components/Clients/EditClient";
 import TestPagination from "../pages/TestPagination";
+import SeverityLevel from "../pages/SeverityLevel";
+import UnitTypeForm from "../components/UnitTypeForm";
+import PerformanceIndicatorForm from "../components/PerformanceIndicatorForm";
+import UnitForm from "../components/UnitForm";
+import PositionForm from "../components/PositionForm";
+import ClaimCategoryForm from "../components/ClaimCategoryForm";
+import ClaimObjectForm from "../components/ClaimObjectForm";
+import StaffForm from "../components/staff/StaffForm";
+import SeverityLevelForm from "../components/SeverityLevelForm";
 
 const Body = () => {
     return (
@@ -140,15 +133,11 @@ const Body = () => {
             </Route>
 
             <Route excat path="/settings/performance_indicator/add">
-                <PerformanceAddForm/>
-            </Route>
-
-            <Route excat path="/settings/performance_indicator/detail">
-                <h1>Détail</h1>
+                <PerformanceIndicatorForm/>
             </Route>
 
             <Route excat path="/settings/performance_indicator/:id/edit">
-                <PerformanceEditForm/>
+                <PerformanceIndicatorForm/>
             </Route>
 
             <Route exact path="/settings/unit_type">
@@ -156,15 +145,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/unit_type/add">
-                <UnitTypeAddForm/>
-            </Route>
-
-            <Route exact path="/settings/unit_type/detail">
-                <h1>Détail</h1>
+                <UnitTypeForm/>
             </Route>
 
             <Route exact path="/settings/unit_type/:id/edit">
-                <UnitTypeEditForm/>
+                <UnitTypeForm/>
             </Route>
 
             <Route exact path="/settings/unit">
@@ -172,11 +157,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/unit/add">
-                <UnitAddForm/>
+                <UnitForm/>
             </Route>
 
             <Route exact path="/settings/unit/:id/edit">
-                <UnitEditForm/>
+                <UnitForm/>
             </Route>
 
             <Route exact path="/settings/positions">
@@ -184,11 +169,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/positions/add">
-                <PositionAddForm/>
+                <PositionForm/>
             </Route>
 
             <Route exact path="/settings/positions/:id/edit">
-                <PositionEditForm/>
+                <PositionForm/>
             </Route>
 
             <Route exact path="/settings/positions">
@@ -196,11 +181,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/positions/add">
-                <PositionAddForm/>
+                <PositionForm/>
             </Route>
 
             <Route exact path="/settings/positions/:id/edit">
-                <PositionEditForm/>
+                <PositionForm/>
             </Route>
 
             <Route exact path="/settings/claim_categories">
@@ -208,11 +193,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/claim_categories/add">
-                <ClaimCategoryAddForm/>
+                <ClaimCategoryForm/>
             </Route>
 
             <Route exact path="/settings/claim_categories/:id/edit">
-                <ClaimCategoryEditForm/>
+                <ClaimCategoryForm/>
             </Route>
 
             <Route exact path="/settings/claim_objects">
@@ -220,11 +205,11 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/claim_objects/add">
-                <ClaimObjectAddForm/>
+                <ClaimObjectForm/>
             </Route>
 
             <Route exact path="/settings/claim_objects/:id/edit">
-                <ClaimObjectEditForm/>
+                <ClaimObjectForm/>
             </Route>
 
             <Route exact path="/settings/staffs">
@@ -232,15 +217,27 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/staffs/add">
-                <StaffAddForm/>
+                <StaffForm/>
             </Route>
 
             <Route exact path="/settings/staffs/:id/edit">
-                <StaffEditForm/>
+                <StaffForm/>
             </Route>
 
             <Route exact path="/settings/test-pagination">
                 <TestPagination/>
+            </Route>
+
+            <Route exact path="/settings/severities">
+                <SeverityLevel/>
+            </Route>
+
+            <Route exact path="/settings/severities/add">
+                <SeverityLevelForm/>
+            </Route>
+
+            <Route exact path="/settings/severities/:id/edit">
+                <SeverityLevelForm/>
             </Route>
         </Switch>
     );

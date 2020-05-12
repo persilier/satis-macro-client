@@ -12,7 +12,7 @@ import {
 import appConfig from "../../../config/appConfig";
 import TagsInput from 'react-tagsinput'
 import Select from "react-select";
-import {formatSelectOption} from '../../../helper/function';
+import {formatSelectOption} from "../../../helpers/function";
 import IdentiteForm from "../IdentitéForm";
 import {connect} from "react-redux"
 

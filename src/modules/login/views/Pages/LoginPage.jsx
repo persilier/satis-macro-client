@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {loadCss, loadScript} from "../../../../helper/function";
+import {loadCss, loadScript} from "../../../../helpers/function";
 
 const LoginPage = () => {
 

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {forceRound} from "../../helper/function";
+import {filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 
 
 const LIST  = [
@@ -50,7 +50,6 @@ const LIST  = [
     },
 ];
 const TestPagination = () => {
-    const defaultShowList = [];
     const [list, setList] = useState(LIST);
     const [numberPerPage, setNumberPerPage] = useState(2);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
@@ -58,36 +57,15 @@ const TestPagination = () => {
     const numberPage = forceRound(list.length/numberPerPage);
     const [showList, setShowList] = useState(list.slice(0, numberPerPage));
 
-    const searchElement = (e) => {
-        setSearch(true);
+    const searchElement = async (e) => {
         if (e.target.value) {
-            filterByInput(e);
+            await setSearch(true);
+            filterDataTableBySearchValue(e);
         } else {
-            filterByInput(e);
+            await setSearch(true);
+            filterDataTableBySearchValue(e);
             setSearch(false);
         }
-    };
-
-    const filterByInput = (e) => {
-        function myFunction() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-        myFunction();
     };
 
     const onChangeNumberPerPage = (e) => {
@@ -200,11 +178,11 @@ const TestPagination = () => {
                                 <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                          className="kt-svg-icon kt-svg-icon--success kt-svg-icon--md">
-                                        <g fill="none" fill-rule="evenodd">
+                                        <g fill="none" fillRule="evenodd">
                                             <path d="M0 0h24v24H0z"/>
                                             <path
                                                 d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z"
-                                                fill="#000" fill-rule="nonzero" opacity=".3"/>
+                                                fill="#000" fillRule="nonzero" opacity=".3"/>
                                             <path
                                                 d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z"
                                                 fill="#000"/>

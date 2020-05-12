@@ -11,7 +11,7 @@ import {
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import {formatSelectOption} from "../../helper/function";
+import {formatSelectOption} from "../../helpers/function";
 import Select from "react-select";
 
 const EditCategoryClient = () => {

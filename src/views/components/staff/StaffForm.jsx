@@ -1,25 +1,28 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {
+    useParams,
     Link
 } from "react-router-dom";
-import TagsInput from 'react-tagsinput'
-import {ToastBottomEnd} from "../Toast";
+import TagsInput from "react-tagsinput";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
+    toastEditErrorMessageConfig,
+    toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
-import {formatInstitutions} from "../../../helper/institution";
-import {formatUnits} from "../../../helper/unit";
-import {formatPositions} from "../../../helper/position";
-import apiConfig from "../../../config/apiConfig";
+import {ToastBottomEnd} from "../Toast";
+import {formatUnits} from "../../../helpers/unit";
+import {formatPositions} from "../../../helpers/position";
 import './react-tagsinput.css';
-import ConfirmSaveForm from "./ConfirmSaveForm";
 import Select from "react-select";
-import {formatSelectOption} from "../../../helper/function";
+import {formatSelectOption} from "../../../helpers/function";
+import {formatInstitutions} from "../../../helpers/institution";
+import appConfig from "../../../config/appConfig";
+import ConfirmSaveForm from "./ConfirmSaveForm";
 
-const StaffAddForm = () => {
+const StaffForm = () => {
     const [units, setUnits] = useState([]);
     const [positions, setPositions] = useState([]);
     const [institutions, setInstitutions] = useState([]);
@@ -28,6 +31,7 @@ const StaffAddForm = () => {
     const [unit, setUnit] = useState({});
     const [position, setPosition] = useState({});
 
+    const {id} = useParams();
     const defaultData = {
         firstname: "",
         lastname: "",
@@ -38,7 +42,6 @@ const StaffAddForm = () => {
         unit_id: "",
         position_id: "",
     };
-
     const defaultError = {
         name: [],
         firstname: [],
@@ -51,21 +54,48 @@ const StaffAddForm = () => {
         position_id: [],
     };
     const [data, setData] = useState(defaultData);
-
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/institutions`)
-            .then(response => {
-                const newData = {...data};
-                setInstitutions(formatInstitutions(response.data.data));
-                setData(newData);
-            })
-            .catch(error => {
-                console.log("something is wrong");
-            })
-        ;
+        if (id) {
+            axios.get(`${appConfig.apiDomaine}/staff/${id}/edit`)
+                .then(response => {
+                    console.log(response.data);
+                    const newData = {
+                        firstname: response.data.staff.identite.firstname,
+                        lastname: response.data.staff.identite.lastname,
+                        sexe: response.data.staff.identite.sexe,
+                        telephone: response.data.staff.identite.telephone,
+                        email: response.data.staff.identite.email,
+                        ville: response.data.staff.identite.ville === null ? "" : response.data.staff.identite.ville,
+                        unit_id: response.data.staff.unit_id,
+                        position_id: response.data.staff.position_id,
+                    };
+                    setUnits(response.data.staff.unit.institution.units);
+                    setPositions(response.data.staff.unit.institution.positions);
+                    setInstitutions(response.data.institutions);
+                    setInstitution({value: response.data.staff.unit.institution.id, label: response.data.staff.unit.institution.name});
+                    setPosition({value: response.data.staff.position.id, label: response.data.staff.position.name["fr"]});
+                    setUnit({value: response.data.staff.unit.id, label: response.data.staff.unit.name["fr"]});
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        } else {
+            axios.get(`${appConfig.apiDomaine}/institutions`)
+                .then(response => {
+                    const newData = {...data};
+                    setInstitutions(formatInstitutions(response.data.data));
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const onChangeFirstName = (e) => {
@@ -129,13 +159,14 @@ const StaffAddForm = () => {
 
     const onChangeInstitution = (selected) => {
         setInstitution(selected);
-        axios.get(`${apiConfig.baseUrl}/institutions/${selected.value}/positions-units`)
+        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/positions-units`)
             .then(response => {
                 resetUnitsAndPositions();
                 setUnits(formatUnits(response.data.units));
                 setPositions(formatPositions(response.data.positions));
             })
             .catch(errorRequest => {
+                console.log(errorRequest.response.data);
                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
             })
         ;
@@ -144,36 +175,60 @@ const StaffAddForm = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/staff`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(async (errorRequest) => {
-                if (errorRequest.response.data.identite)
-                {
-                    await setFoundData(errorRequest.response.data);
-                    await document.getElementById("confirmSaveForm").click();
-                    await setInstitution({});
-                    await setUnit({});
-                    await setPosition({});
+        if (id) {
+            axios.put(`${appConfig.apiDomaine}/staff/${id}`, data)
+                .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    if (errorRequest.response.data.staff) {
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                            errorRequest.response.data.staff.identite.lastname+" "+errorRequest.response.data.staff.identite.firstname+": "+errorRequest.response.data.message)
+                        );
+                    } else {
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    }
+                })
+            ;
+        } else {
+            axios.post(`${appConfig.apiDomaine}/staff`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setInstitution({});
+                    setUnit({});
+                    setPosition({});
+                    setError(defaultError);
                     setData(defaultData);
-                } else if (errorRequest.response.data.staff) {
-                    setStartRequest(false);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                        errorRequest.response.data.staff.identite.lastname+" "+errorRequest.response.data.staff.identite.firstname+": "+errorRequest.response.data.message)
-                    );
-                } else {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                }
-            })
-        ;
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(async (errorRequest) => {
+                    if (errorRequest.response.data.identite)
+                    {
+                        await setFoundData(errorRequest.response.data);
+                        await document.getElementById("confirmSaveForm").click();
+                        await setInstitution({});
+                        await setUnit({});
+                        await setPosition({});
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                    } else if (errorRequest.response.data.staff) {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                            errorRequest.response.data.staff.identite.lastname+" "+errorRequest.response.data.staff.identite.firstname+": "+errorRequest.response.data.message)
+                        );
+                    } else {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }
+                })
+            ;
+        }
     };
 
     return (
@@ -182,77 +237,21 @@ const StaffAddForm = () => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Base controls
+                            Paramètres
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home">
-                                <i className="flaticon2-shelter"/>
-                            </a>
+                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Forms
-                            </a>
+                            <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
+                                Agent
+                            </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Form Controls </a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Base Inputs
+                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                {
+                                    id ? "Modification" : "Ajout"
+                                }
                             </a>
-                        </div>
-                    </div>
-                    <div className="kt-subheader__toolbar">
-                        <div className="kt-subheader__wrapper">
-                            <a href="#" className="btn kt-subheader__btn-primary">
-                                Actions &nbsp;
-                            </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions" data-placement="left">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z" fill="#000" fill-rule="nonzero" opacity=".3"/><path d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z" fill="#000"/></g></svg>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
-                                    <ul className="kt-nav">
-                                        <li className="kt-nav__head">
-                                            Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more..."/>
-                                        </li>
-                                        <li className="kt-nav__separator"/>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-drop"/>
-                                                <span className="kt-nav__link-text">Order</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-calendar-8"/>
-                                                <span className="kt-nav__link-text">Ticket</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"/>
-                                                <span className="kt-nav__link-text">Goal</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-new-email"/>
-                                                <span className="kt-nav__link-text">Support Case</span>
-                                                <span className="kt-nav__link-badge">
-                                                    <span className="kt-badge kt-badge--success">5</span>
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__separator"/>
-                                        <li className="kt-nav__foot">
-                                            <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -265,7 +264,9 @@ const StaffAddForm = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Ajout d'un Agent
+                                        {
+                                            id ? "Modification d'un agent" : "Ajout d'un agent"
+                                        }
                                     </h3>
                                 </div>
                             </div>
@@ -514,4 +515,4 @@ const StaffAddForm = () => {
     );
 };
 
-export default StaffAddForm;
+export default StaffForm;
