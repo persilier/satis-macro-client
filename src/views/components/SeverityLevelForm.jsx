@@ -1,28 +1,63 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {
+    useParams,
     Link
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
-import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import apiConfig from "../../config/apiConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastEditErrorMessageConfig,
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
+import FormInformation from "./FormInformation";
 
-const UnitTypeAddForm = () => {
+const SeverityLevelForm = () => {
+    const {id} = useParams();
     const defaultData = {
         name: "",
+        time_limit: "",
         description: "",
     };
+
     const defaultError = {
         name: [],
+        time_limit: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
+    useEffect(() => {
+        if (id) {
+            axios.get(`${appConfig.apiDomaine}/severity-levels/${id}`)
+                .then(response => {
+                    const newData = {
+                        name: response.data.name,
+                        time_limit: response.data.time_limit,
+                        description: response.data.description,
+                    };
+                    setData(newData);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+    }, []);
+
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
+        setData(newData);
+    };
+
+    const onChangeTimeLimit = (e) => {
+        const newData = {...data};
+        newData.time_limit = e.target.value;
         setData(newData);
     };
 
@@ -34,21 +69,41 @@ const UnitTypeAddForm = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.post(`${apiConfig.baseUrl}/unit-types`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (id) {
+            axios.put(`${appConfig.apiDomaine}/severity-levels/${id}`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        } else {
+            axios.post(`${appConfig.apiDomaine}/severity-levels`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    console.log(errorRequest.response.data);
+                    setStartRequest(false);
+                    if (errorRequest.response.data.code === 422) {
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    } else {
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
+                    }
+
+                })
+            ;
+        }
     };
 
     return (
@@ -57,77 +112,21 @@ const UnitTypeAddForm = () => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Base controls
+                            Paramètres
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home">
-                                <i className="flaticon2-shelter"/>
-                            </a>
+                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Forms
-                            </a>
+                            <Link to="/settings/severities" className="kt-subheader__breadcrumbs-link">
+                                Niveau de gravité
+                            </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Form Controls </a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Base Inputs
+                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                {
+                                    id ? "Modification" : "Ajout"
+                                }
                             </a>
-                        </div>
-                    </div>
-                    <div className="kt-subheader__toolbar">
-                        <div className="kt-subheader__wrapper">
-                            <a href="#" className="btn kt-subheader__btn-primary">
-                                Actions &nbsp;
-                            </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="Quick actions" data-placement="left">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z" fill="#000" fill-rule="nonzero" opacity=".3"/><path d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z" fill="#000"/></g></svg>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
-                                    <ul className="kt-nav">
-                                        <li className="kt-nav__head">
-                                            Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more..."/>
-                                        </li>
-                                        <li className="kt-nav__separator"/>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-drop"/>
-                                                <span className="kt-nav__link-text">Order</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-calendar-8"/>
-                                                <span className="kt-nav__link-text">Ticket</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"/>
-                                                <span className="kt-nav__link-text">Goal</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-new-email"/>
-                                                <span className="kt-nav__link-text">Support Case</span>
-                                                <span className="kt-nav__link-badge">
-                                                    <span className="kt-badge kt-badge--success">5</span>
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__separator"/>
-                                        <li className="kt-nav__foot">
-                                            <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="Click to learn more...">Learn more</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -140,7 +139,9 @@ const UnitTypeAddForm = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Ajout du type d'unité
+                                        {
+                                            id ? "Modification d'un niveau de gravité" : "Ajout d'un niveau de gravité"
+                                        }
                                     </h3>
                                 </div>
                             </div>
@@ -148,31 +149,45 @@ const UnitTypeAddForm = () => {
                             <form method="POST" className="kt-form">
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
-                                        <div className="form-group form-group-last">
-                                            <div className="alert alert-secondary" role="alert">
-                                                <div className="alert-icon">
-                                                    <i className="flaticon-warning kt-font-brand"/>
-                                                </div>
-                                                <div className="alert-text">
-                                                    The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
 
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du type d'unité</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de la gravité</label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="name"
                                                     type="text"
                                                     className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer le nom du type d'unité"
+                                                    placeholder="Veillez entrer le nom de la gravité"
                                                     value={data.name}
                                                     onChange={(e) => onChangeName(e)}
                                                 />
                                                 {
                                                     error.name.length ? (
                                                         error.name.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : ""
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className={error.time_limit.length ? "form-group row validated" : "form-group row"}>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimit">Temps limite</label>
+                                            <div className="col-lg-9 col-xl-6">
+                                                <input
+                                                    id="timeLimit"
+                                                    type="number"
+                                                    className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la limitation de temps"
+                                                    value={data.time_limit}
+                                                    onChange={(e) => onChangeTimeLimit(e)}
+                                                />
+                                                {
+                                                    error.time_limit.length ? (
+                                                        error.time_limit.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -219,11 +234,11 @@ const UnitTypeAddForm = () => {
                                             }
                                             {
                                                 !startRequest ? (
-                                                    <Link to="/settings/unit_type" className="btn btn-secondary mx-2">
+                                                    <Link to="/settings/severities" className="btn btn-secondary mx-2">
                                                         Quitter
                                                     </Link>
                                                 ) : (
-                                                    <Link to="/settings/unit_type" className="btn btn-secondary mx-2" disabled>
+                                                    <Link to="/settings/severities" className="btn btn-secondary mx-2" disabled>
                                                         Quitter
                                                     </Link>
                                                 )
@@ -240,4 +255,4 @@ const UnitTypeAddForm = () => {
     );
 };
 
-export default UnitTypeAddForm;
+export default SeverityLevelForm;

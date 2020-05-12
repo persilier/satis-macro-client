@@ -3,8 +3,8 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
+import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastDeleteErrorMessageConfig,
@@ -21,9 +21,9 @@ import InfirmationTable from "../components/InfirmationTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const UnitType = () => {
+const SeverityLevel = () => {
     const [load, setLoad] = useState(true);
-    const [unitTypes, setUnitTypes] = useState([]);
+    const [severityLevels, setSeverityLevels] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(2);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
@@ -31,12 +31,12 @@ const UnitType = () => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/unit-types`)
+        axios.get(`${appConfig.apiDomaine}/severity-levels`)
             .then(response => {
                 setLoad(false);
-                setNumberPage(forceRound(response.data.length/numberPerPage));
-                setShowList(response.data.slice(0, numberPerPage));
-                setUnitTypes(response.data);
+                setNumberPage(forceRound(response.data.data.length/numberPerPage));
+                setShowList(response.data.data.slice(0, numberPerPage));
+                setSeverityLevels(response.data.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -58,8 +58,8 @@ const UnitType = () => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(unitTypes.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(unitTypes.length/parseInt(e.target.value)));
+        setShowList(severityLevels.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(severityLevels.length/parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -73,7 +73,7 @@ const UnitType = () => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(unitTypes.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(severityLevels.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -81,7 +81,7 @@ const UnitType = () => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                unitTypes.slice(
+                severityLevels.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -95,7 +95,7 @@ const UnitType = () => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                unitTypes.slice(
+                severityLevels.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -103,25 +103,25 @@ const UnitType = () => {
         }
     };
 
-    const deleteUnitType = (unitTypeId, index) => {
+    const deleteSeverityLevel = (severityLevelId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/unit-types/${unitTypeId}`)
+                    axios.delete(`${appConfig.apiDomaine}/severity-levels/${severityLevelId}`)
                         .then(response => {
-                            const newUnitTypes = [...unitTypes];
-                            newUnitTypes.splice(index, 1);
-                            setUnitTypes(newUnitTypes);
+                            const newSeverityLevels = [...severityLevels];
+                            newSeverityLevels.splice(index, 1);
+                            setSeverityLevels(newSeverityLevels);
                             if (showList.length > 1) {
                                 setShowList(
-                                    newUnitTypes.slice(
+                                    newSeverityLevels.slice(
                                         getEndByPosition(activeNumberPage) - numberPerPage,
                                         getEndByPosition(activeNumberPage)
                                     )
                                 );
                             } else {
                                 setShowList(
-                                    newUnitTypes.slice(
+                                    newSeverityLevels.slice(
                                         getEndByPosition(activeNumberPage - 1) - numberPerPage,
                                         getEndByPosition(activeNumberPage - 1)
                                     )
@@ -152,24 +152,25 @@ const UnitType = () => {
 
     const pages = arrayNumberPage();
 
-    const printBodyTable = (unitType, index) => {
+    const printBodyTable = (severityLevel, index) => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                <td>{unitType.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description["fr"]}</td>
+                <td>{severityLevel.name}</td>
+                <td>{severityLevel.time_limit}</td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description}</td>
                 <td>
-                    <Link to="/settings/unit_type/detail"
+                    <Link to="/settings/severities/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/unit_type/${unitType.id}/edit`}
+                    <Link to={`/settings/severities/${severityLevel.id}/edit`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Modifier">
                         <i className="la la-edit"/>
                     </Link>
                     <button
-                        onClick={(e) => deleteUnitType(unitType.id, index)}
+                        onClick={(e) => deleteSeverityLevel(severityLevel.id, index)}
                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                         title="Supprimer">
                         <i className="la la-trash"/>
@@ -192,7 +193,7 @@ const UnitType = () => {
                             <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                Type d'unité
+                                Niveau de gravité
                             </a>
                         </div>
                     </div>
@@ -204,9 +205,9 @@ const UnitType = () => {
 
                 <div className="kt-portlet">
                     <HeaderTablePage
-                        title={"Type d'unité"}
-                        addText={"Ajouter un type d'unité"}
-                        addLink={"/settings/unit_type/add"}
+                        title={"Niveau de gravité"}
+                        addText={"Ajouter un niveau de gravité"}
+                        addLink={"/settings/severities/add"}
                     />
 
                     {
@@ -233,30 +234,34 @@ const UnitType = () => {
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{ width: "952px" }}>
                                                 <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "300px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
+                                                <tr role="row">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Nom du niveau
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        aria-label="Country: activate to sort column ascending">Limite de temps
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                        colSpan="1" style={{ width: "300px" }}
+                                                        aria-label="Ship City: activate to sort column ascending">Description
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        Action
+                                                    </th>
+                                                </tr>
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    unitTypes.length ? (
+                                                    severityLevels.length ? (
                                                         search ? (
-                                                            unitTypes.map((unitType, index) => (
-                                                                printBodyTable(unitType, index)
+                                                            severityLevels.map((severityLevel, index) => (
+                                                                printBodyTable(severityLevel, index)
                                                             ))
                                                         ) : (
-                                                            showList.map((unitType, index) => (
-                                                                printBodyTable(unitType, index)
+                                                            showList.map((severityLevel, index) => (
+                                                                printBodyTable(severityLevel, index)
                                                             ))
                                                         )
                                                     ) : (
@@ -266,7 +271,8 @@ const UnitType = () => {
                                                 </tbody>
                                                 <tfoot>
                                                 <tr>
-                                                    <th rowSpan="1" colSpan="1">Nom</th>
+                                                    <th rowSpan="1" colSpan="1">Nom du niveau</th>
+                                                    <th rowSpan="1" colSpan="1">Limite de temps</th>
                                                     <th rowSpan="1" colSpan="1">Description</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
@@ -277,7 +283,7 @@ const UnitType = () => {
                                     <div className="row">
                                         <div className="col-sm-12 col-md-5">
                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {unitTypes.length} données
+                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {severityLevels.length} données
                                             </div>
                                         </div>
                                         {
@@ -307,4 +313,4 @@ const UnitType = () => {
     );
 };
 
-export default UnitType;
+export default SeverityLevel;

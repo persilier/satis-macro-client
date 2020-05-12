@@ -3,24 +3,36 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, loadScript} from "../../helper/function";
+import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
-import apiConfig from "../../config/apiConfig";
+import appConfig from "../../config/appConfig";
+import Pagination from "../components/Pagination";
+import EmptyTable from "../components/EmptyTable";
+import ExportButton from "../components/ExportButton";
+import HeaderTablePage from "../components/HeaderTablePage";
+import InfirmationTable from "../components/InfirmationTable";
 
-loadCss("assets/plugins/custom/datatables/datatables.bundle.css");
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const PerformanceIndicator = () => {
     const [load, setLoad] = useState(true);
     const [performances, setPerformances] = useState([]);
+    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [search, setSearch] = useState(false);
+    const [numberPage, setNumberPage] = useState(0);
+    const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${apiConfig.baseUrl}/performance-indicators`)
+        axios.get(`${appConfig.apiDomaine}/performance-indicators`)
             .then(response => {
                 setLoad(false);
+                setNumberPage(forceRound(response.data.length/numberPerPage));
+                setShowList(response.data.slice(0, numberPerPage));
                 setPerformances(response.data);
             })
             .catch(error => {
@@ -29,15 +41,89 @@ const PerformanceIndicator = () => {
             })
     }, []);
 
+    const searchElement = async (e) => {
+        if (e.target.value) {
+            await setSearch(true);
+            filterDataTableBySearchValue(e);
+        } else {
+            await setSearch(true);
+            filterDataTableBySearchValue(e);
+            setSearch(false);
+        }
+    };
+
+    const onChangeNumberPerPage = (e) => {
+        setActiveNumberPage(0);
+        setNumberPerPage(parseInt(e.target.value));
+        setShowList(performances.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(performances.length/parseInt(e.target.value)));
+    };
+
+    const getEndByPosition = (position) => {
+        let end = numberPerPage;
+        for (let i = 0; i<position; i++) {
+            end = end+numberPerPage;
+        }
+        return end;
+    };
+
+    const onClickPage = (e, page) => {
+        e.preventDefault();
+        setActiveNumberPage(page);
+        setShowList(performances.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+    };
+
+    const onClickNextPage = (e) => {
+        e.preventDefault();
+        if (activeNumberPage <= numberPage) {
+            setActiveNumberPage(activeNumberPage + 1);
+            setShowList(
+                performances.slice(
+                    getEndByPosition(
+                        activeNumberPage + 1) - numberPerPage,
+                    getEndByPosition(activeNumberPage + 1)
+                )
+            );
+        }
+    };
+
+    const onClickPreviousPage = (e) => {
+        e.preventDefault();
+        if (activeNumberPage >= 1) {
+            setActiveNumberPage(activeNumberPage - 1);
+            setShowList(
+                performances.slice(
+                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                    getEndByPosition(activeNumberPage - 1)
+                )
+            );
+        }
+    };
+
     const deletePerformanceIndicator = (performanceId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${apiConfig.baseUrl}/performance-indicators/${performanceId}`)
+                    axios.delete(`${appConfig.apiDomaine}/performance-indicators/${performanceId}`)
                         .then(response => {
                             const newPerformances = [...performances];
                             newPerformances.splice(index, 1);
                             setPerformances(newPerformances);
+                            if (showList.length > 1) {
+                                setShowList(
+                                    newPerformances.slice(
+                                        getEndByPosition(activeNumberPage) - numberPerPage,
+                                        getEndByPosition(activeNumberPage)
+                                    )
+                                );
+                            } else {
+                                setShowList(
+                                    newPerformances.slice(
+                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                        getEndByPosition(activeNumberPage - 1)
+                                    )
+                                );
+                            }
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
@@ -49,26 +135,43 @@ const PerformanceIndicator = () => {
         ;
     };
 
-    const filterByInput = (e) => {
-        function myFunction() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
+    const arrayNumberPage = () => {
+        const pages = [];
+        for (let i = 0; i < numberPage; i++) {
+            pages[i] = i;
         }
-        myFunction();
+        return pages
+    };
+
+    const pages = arrayNumberPage();
+
+    const printBodyTable = (performance, index) => {
+        return (
+            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+                <td>{performance.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{performance.description["fr"]}</td>
+                <td>{performance.value}</td>
+                <td>{performance.mesure_unit}</td>
+                <td>
+                    <Link to="/settings/performance_indicator/detail"
+                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                          title="Détail">
+                        <i className="la la-eye"/>
+                    </Link>
+                    <Link to={`/settings/performance_indicator/${performance.id}/edit`}
+                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                          title="Modifier">
+                        <i className="la la-edit"/>
+                    </Link>
+                    <button
+                        onClick={(e) => deletePerformanceIndicator(performance.id, index)}
+                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                        title="Supprimer">
+                        <i className="la la-trash"/>
+                    </button>
+                </td>
+            </tr>
+        );
     };
 
     return (
@@ -77,121 +180,29 @@ const PerformanceIndicator = () => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Buttons Examples
+                            Paramètres
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
                             <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Datatables.net </a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Extensions </a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" className="kt-subheader__breadcrumbs-link">
-                                Buttons
+                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                Indicateur de performance
                             </a>
-                        </div>
-                    </div>
-                    <div className="kt-subheader__toolbar">
-                        <div className="kt-subheader__wrapper">
-                            <a href="#" className="btn kt-subheader__btn-primary">
-                                Actions &nbsp;
-                            </a>
-                            <div className="dropdown dropdown-inline" data-toggle="kt-tooltip" title="" data-placement="left" data-original-title="Quick actions">
-                                <a href="#" className="btn btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                         className="kt-svg-icon kt-svg-icon--success kt-svg-icon--md">
-                                        <g fill="none" fill-rule="evenodd">
-                                            <path d="M0 0h24v24H0z"/>
-                                            <path
-                                                d="M5.857 2h7.88a1.5 1.5 0 01.968.355l4.764 4.029A1.5 1.5 0 0120 7.529v12.554c0 1.79-.02 1.917-1.857 1.917H5.857C4.02 22 4 21.874 4 20.083V3.917C4 2.127 4.02 2 5.857 2z"
-                                                fill="#000" fill-rule="nonzero" opacity=".3"/>
-                                            <path
-                                                d="M11 14H9a1 1 0 010-2h2v-2a1 1 0 012 0v2h2a1 1 0 010 2h-2v2a1 1 0 01-2 0v-2z"
-                                                fill="#000"/>
-                                        </g>
-                                    </svg>
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-fit dropdown-menu-md dropdown-menu-right">
-                                    <ul className="kt-nav">
-                                        <li className="kt-nav__head">
-                                            Add anything or jump to:
-                                            <i className="flaticon2-information" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more..."></i>
-                                        </li>
-                                        <li className="kt-nav__separator"></li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-drop"></i>
-                                                <span className="kt-nav__link-text">Order</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-calendar-8"></i>
-                                                <span className="kt-nav__link-text">Ticket</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-telegram-logo"></i>
-                                                <span className="kt-nav__link-text">Goal</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__item">
-                                            <a href="#" className="kt-nav__link">
-                                                <i className="kt-nav__link-icon flaticon2-new-email"></i>
-                                                <span className="kt-nav__link-text">Support Case</span>
-                                                <span className="kt-nav__link-badge">
-																		<span className="kt-badge kt-badge--success">5</span>
-																	</span>
-                                            </a>
-                                        </li>
-                                        <li className="kt-nav__separator"></li>
-                                        <li className="kt-nav__foot">
-                                            <a className="btn btn-label-brand btn-bold btn-sm" href="#">Upgrade plan</a>
-                                            <a className="btn btn-clean btn-bold btn-sm" href="#" data-toggle="kt-tooltip" data-placement="right" title="" data-original-title="Click to learn more...">Learn more</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <div className="alert alert-light alert-elevate" role="alert">
-                    <div className="alert-icon"><i className="flaticon-warning kt-font-brand"/></div>
-                    <div className="alert-text">
-                        A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation
-                        <a className="kt-link kt-font-bold" href="https://datatables.net/extensions/buttons/" target="_blank">
-                            here
-                        </a>.
-                    </div>
-                </div>
+                <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+
                 <div className="kt-portlet">
-                    <div className="kt-portlet__head kt-portlet__head--lg">
-                        <div className="kt-portlet__head-label">
-                            <span className="kt-portlet__head-icon">
-                                <i className="kt-font-brand flaticon2-line-chart"/>
-                            </span>
-                            <h3 className="kt-portlet__head-title">
-                                Indicateur de performance
-                            </h3>
-                        </div>
-                        <div className="kt-portlet__head-toolbar">
-                            <div className="kt-portlet__head-wrapper">
-                                &nbsp;
-                                <div className="dropdown dropdown-inline">
-                                    <Link to={"/settings/performance_indicator/add"} className="btn btn-brand btn-icon-sm">
-                                        <i className="flaticon2-plus"/> Add New
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <HeaderTablePage
+                        title={"Indicateur de performance"}
+                        addText={"Ajouter un indicateur"}
+                        addLink={"/settings/performance_indicator/add"}
+                    />
 
                     {
                         load ? (
@@ -204,24 +215,11 @@ const PerformanceIndicator = () => {
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
                                                     Search:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => filterByInput(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                    <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                 </label>
                                             </div>
                                         </div>
-                                        <div className="col-sm-6 text-right">
-                                            <div className="dt-buttons btn-group flex-wrap">
-                                                <button className="btn btn-secondary buttons-print" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>Print</span></button>
-                                                <button className="btn btn-secondary buttons-copy buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>Copy</span></button>
-                                                <button className="btn btn-secondary buttons-excel buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>Excel</span></button>
-                                                <button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>CSV</span></button>
-                                                <button className="btn btn-secondary buttons-pdf buttons-html5" tabIndex="0"
-                                                        aria-controls="kt_table_1" type="button"><span>PDF</span></button>
-                                            </div>
-                                        </div>
+                                        <ExportButton/>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">
@@ -255,38 +253,17 @@ const PerformanceIndicator = () => {
                                                 <tbody>
                                                 {
                                                     performances.length ? (
-                                                        performances.map((performance, index) => (
-                                                            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                                                                <td>{performance.name["fr"]}</td>
-                                                                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{performance.description["fr"]}</td>
-                                                                <td>{performance.value}</td>
-                                                                <td>{performance.mesure_unit}</td>
-                                                                <td>
-                                                                    <Link to="/settings/performance_indicator/detail"
-                                                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                                          title="Détail">
-                                                                        <i className="la la-eye"/>
-                                                                    </Link>
-                                                                    <Link to={`/settings/performance_indicator/${performance.id}/edit`}
-                                                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                                          title="Modifier">
-                                                                        <i className="la la-edit"/>
-                                                                    </Link>
-                                                                    <button
-                                                                        onClick={(e) => deletePerformanceIndicator(performance.id, index)}
-                                                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                                        title="Supprimer">
-                                                                        <i className="la la-trash"/>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        ))
+                                                        search ? (
+                                                            performances.map((performance, index) => (
+                                                                printBodyTable(performance, index)
+                                                            ))
+                                                        ) : (
+                                                            showList.map((performance, index) => (
+                                                                printBodyTable(performance, index)
+                                                            ))
+                                                        )
                                                     ) : (
-                                                        <tr>
-                                                            <td colSpan={100} className="text-center">
-                                                                <span className="kt-datatable--error">Le tableau est vide</span>
-                                                            </td>
-                                                        </tr>
+                                                        <EmptyTable/>
                                                     )
                                                 }
                                                 </tbody>
@@ -305,47 +282,25 @@ const PerformanceIndicator = () => {
                                     <div className="row">
                                         <div className="col-sm-12 col-md-5">
                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Showing 1 to 10 of 40 entries
+                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {performances.length} données
                                             </div>
                                         </div>
-                                        <div className="col-sm-12 col-md-7 dataTables_pager">
-                                            <div className="dataTables_length" id="kt_table_1_length">
-                                                <label>
-                                                    Show
-                                                    <select name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
-                                                        <option value="10">10</option>
-                                                        <option value="25">25</option>
-                                                        <option value="50">50</option>
-                                                        <option value="100">100</option>
-                                                    </select>
-                                                    entries
-                                                </label>
-                                            </div>
-                                            <div className="dataTables_paginate paging_simple_numbers" id="kt_table_1_paginate">
-                                                <ul className="pagination">
-                                                    <li className="paginate_button page-item previous disabled" id="kt_table_1_previous">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="0" tabIndex="0" className="page-link"><i className="la la-angle-left"/></a>
-                                                    </li>
-                                                    <li className="paginate_button page-item active">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="1" tabIndex="0" className="page-link">1</a>
-                                                    </li>
-                                                    <li className="paginate_button page-item ">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="2" tabIndex="0" className="page-link">2</a>
-                                                    </li>
-                                                    <li className="paginate_button page-item ">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="3" tabIndex="0" className="page-link">3</a>
-                                                    </li>
-                                                    <li className="paginate_button page-item ">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="4" tabIndex="0" className="page-link">4</a>
-                                                    </li>
-                                                    <li className="paginate_button page-item next" id="kt_table_1_next">
-                                                        <a href="#" aria-controls="kt_table_1" data-dt-idx="5" tabIndex="0" className="page-link">
-                                                            <i className="la la-angle-right"/>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        {
+                                            !search ? (
+                                                <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                    <Pagination
+                                                        numberPerPage={numberPerPage}
+                                                        onChangeNumberPerPage={onChangeNumberPerPage}
+                                                        activeNumberPage={activeNumberPage}
+                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                        pages={pages}
+                                                        onClickPage={(e, number) => onClickPage(e, number)}
+                                                        numberPage={numberPage}
+                                                        onClickNextPage={e => onClickNextPage(e)}
+                                                    />
+                                                </div>
+                                            ) : ""
+                                        }
                                     </div>
                                 </div>
                             </div>
