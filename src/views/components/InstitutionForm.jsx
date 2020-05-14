@@ -182,20 +182,23 @@ const EditInstitutions = () => {
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <div className="kt-avatar kt-avatar--outline"
                                                                          id="kt_user_add_avatar">
-                                                                        <div className="kt-avatar__holder">
+                                                                        <div className="kt-avatar__holder" style={{ textAlign:'center'}}>
                                                                             {
                                                                                 editinstitutionlug ? (
                                                                                     <img
                                                                                         id="Image1"
-                                                                                        className="kt-avatar__holder"
+                                                                                        // className="kt-avatar__holder"
                                                                                         src={data.logo}
-                                                                                        alt="logo"/>
+                                                                                        alt="logo"
+                                                                                        style={{maxWidth:"115px", maxHeight:"115px", textAlign:'center'}}
+                                                                                    />
                                                                                 ) : (
                                                                                     <img
                                                                                         id="Image1"
-                                                                                        className="kt-avatar__holder"
+                                                                                        // className="kt-avatar__holder"
                                                                                         src="/assets/media/users/Icon.png"
                                                                                         alt="logo"
+                                                                                         style={{maxWidth:"115px", maxHeight:"115px"}}
                                                                                     />
                                                                                 )
                                                                             }
