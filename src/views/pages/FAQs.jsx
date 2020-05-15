@@ -241,12 +241,12 @@ const FAQs = () => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        colSpan="1" style={{width: "100.25px"}}
                                                         aria-label="Country: activate to sort column ascending">Catégorie
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "200px"}}
+                                                        colSpan="1" style={{width: "150px"}}
                                                         aria-label="Ship City: activate to sort column ascending">Question
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"

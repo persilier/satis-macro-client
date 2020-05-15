@@ -232,15 +232,15 @@ const Institution = () => {
                                                 <thead>
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "70.25px" }}
+                                                        colSpan="1" style={{ width: "120px" }}
                                                         aria-label="Country: activate to sort column ascending">Nom
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "300px" }}
+                                                        colSpan="1" style={{ width: "150px" }}
                                                         aria-label="Ship City: activate to sort column ascending">Acronyme
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "20px" }}
+                                                        colSpan="1" style={{ width: "100px" }}
                                                         aria-label="Ship Address: activate to sort column ascending">Iso_Code
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
