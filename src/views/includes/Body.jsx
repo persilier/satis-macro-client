@@ -238,6 +238,10 @@ const Body = () => {
             <Route exact path="/settings/severities/:id/edit">
                 <SeverityLevelForm/>
             </Route>
+
+            <Route exact path="*">
+                <SMS/>
+            </Route>
         </Switch>
     );
 };
