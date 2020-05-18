@@ -41,14 +41,16 @@ const ClaimCategoryForm = (props) => {
         if (id) {
             axios.get(`${appConfig.apiDomaine}/claim-categories/${id}/edit`)
                 .then(response => {
-                    console.log(response.data);
                     const newData = {
                         name: response.data.claimCategory.name.fr,
                         description: response.data.claimCategory.description.fr,
-                        severity_levels_id: response.data.claimCategory.severity_levels_id,
-                        time_limit: response.data.claimCategory.time_limit
+                        severity_levels_id: response.data.claimCategory.severity_levels_id ? response.data.claimCategory.severity_levels_id : "",
+                        time_limit: response.data.claimCategory.time_limit ? response.data.claimCategory.time_limit : 0
                     };
-                    setSeverityLevel({value: response.data.claimCategory.severity_levels_id, label: response.data.claimCategory.severity_level.name[props.language.languageSelected]});
+                    setSeverityLevel({
+                        value: response.data.claimCategory.severity_levels_id ? response.data.claimCategory.severity_levels_id : "",
+                        label: response.data.claimCategory.severity_level ? response.data.claimCategory.severity_level.name[props.language.languageSelected] : ""
+                    });
                     setSeverityLevels(response.data.severityLevels);
                     setData(newData);
                 })
@@ -218,7 +220,7 @@ const ClaimCategoryForm = (props) => {
                                         </div>
 
                                         <div className={error.severity_levels_id.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Limitation de temps</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Niveau de gravité</label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <Select
                                                     value={severityLevel}
