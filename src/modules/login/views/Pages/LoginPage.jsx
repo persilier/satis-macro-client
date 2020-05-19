@@ -4,8 +4,8 @@ import {loadCss, loadScript} from "../../../../helpers/function";
 const LoginPage = () => {
 
     useEffect(() => {
-        loadCss("assets/css/pages/login/login-1.css");
-        loadScript("assets/js/pages/custom/login/login-1.js");
+        loadCss("/assets/css/pages/login/login-1.css");
+        loadScript("/assets/js/pages/custom/login/login-1.js");
     }, []);
 
     return (
@@ -16,7 +16,7 @@ const LoginPage = () => {
 					<div className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside" style={{ backgroundImage: "url(assets/media/bg/bg-4.jpg)"}}>
 						<div className="kt-grid__item">
 							<a href="/login" className="kt-login__logo">
-								<img src="assets/images/satisLogo.png"/>
+								<img src="/assets/images/satisLogo.png"/>
                                 <span style={{color: "white", fontSize: "1.5em", paddingLeft: "5px"}}>2020.1</span>
 							</a>
 						</div>
