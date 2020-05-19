@@ -1,20 +1,34 @@
+export const existingScript = function (id) {
+    return !!document.getElementById(id);
+};
+
+export const exitingStyleSheet = (id) => {
+    return !!document.getElementById(id);
+};
+
 export const loadCss = function (linkStylsheet) {
     var tag = document.createElement("link");
     tag.href = linkStylsheet;
     tag.rel = "stylesheet";
     switch (linkStylsheet) {
+        case "assets/plugins/custom/datatables/datatables.bundle.css":
+            tag.id = "style-dataTable";
+            if (!exitingStyleSheet("style-dataTable"))
+                document.getElementsByTagName("head")[0].append(tag);
+            break;
         case "/assets/plugins/custom/datatables/datatables.bundle.css":
             tag.id = "style-dataTable";
             if (!exitingStyleSheet("style-dataTable"))
                 document.getElementsByTagName("head")[0].append(tag);
             break;
+        case "/assets/css/pages/login/login-1.css":
+            tag.id = "style-login-page";
+            if (!exitingStyleSheet("style-login-page"))
+                document.getElementsByTagName("head")[0].append(tag);
+            break;
         default:
                 break;
     }
-};
-
-export const exitingStyleSheet = (id) => {
-    return !!document.getElementById(id);
 };
 
 export const loadScript = function(src) {
@@ -23,17 +37,23 @@ export const loadScript = function(src) {
 
     switch (src) {
         case "assets/plugins/custom/datatables/datatables.bundle.js":
-            tag.id = "profile-info-user";
-            if (!existingScript("profile-info-user"))
+            tag.id = "data-table-script";
+            if (!existingScript("data-table-script"))
+                document.getElementsByTagName('body')[0].appendChild(tag);
+            break;
+        case "/assets/plugins/custom/datatables/datatables.bundle.js":
+            tag.id = "data-table-script";
+            if (!existingScript("data-table-script"))
+                document.getElementsByTagName('body')[0].appendChild(tag);
+            break;
+        case "/assets/js/pages/custom/login/login-1.js":
+            tag.id = "script-login-page";
+            if (!existingScript("script-login-page"))
                 document.getElementsByTagName('body')[0].appendChild(tag);
             break;
         default:
             break;
     }
-};
-
-export const existingScript = function (id) {
-    return !!document.getElementById(id);
 };
 
 export const formatSelectOption = function(options, key, translate) {

@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  BrowserRouter as Router,
-} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import {createStore, combineReducers} from "redux";
 import {Provider} from "react-redux";
 import {composeWithDevTools} from "redux-devtools-extension";
@@ -17,19 +15,20 @@ const rootReducer = combineReducers({
     language: languageReducer
 });
 
-const login = true;
+const login = false;
 const store = createStore(rootReducer, composeWithDevTools());
 
 ReactDOM.render(
     <Provider store={store}>
         <Router>
-            {
-                !login ? (
-                    <LoginPage />
-                ) : (
-                    <App/>
-                )
-            }
+            <Switch>
+                <Route exact path="/login">
+                    { login ? <Redirect to={"/dashboard"}/> : <LoginPage /> }
+                </Route>
+                <Route path={"*"}>
+                    { login ? <App/> : <Redirect to={"/login"}/> }
+                </Route>
+            </Switch>
         </Router>
     </Provider>, document.getElementById('root')
 );
