@@ -1,4 +1,4 @@
-import {ADD_USER_INFO_TO_STORE, CONNECT_USER} from "../actions/authActions";
+import {ADD_USER_INFO_TO_STORE, CONNECT_USER, USER} from "../actions/authActions";
 
 const initialState = {
     user: {},
@@ -11,24 +11,16 @@ export default function (state = initialState, action) {
     switch (action.type) {
         case CONNECT_USER:
             newState = {
-                user: action.userData.name,
-                token: action.userData.access_token,
+                user:{
+                   username: action.userData.user.username
+                },
+                token:action.userData.token,
                 isLogin: true,
             };
-            console.log();
-            localStorage.setItem('isLogin', newState.isLogin);
-            localStorage.setItem('userName', newState.user);
+            localStorage.setItem('user', newState.user.username);
             localStorage.setItem('token', newState.token);
+            localStorage.setItem('isLogin', newState.isLogin);
             // window.location.reload();
-            return newState;
-        case ADD_USER_INFO_TO_STORE:
-            newState = {
-                user: {
-                    name: action.userInfo.name,
-                },
-                isLogin: action.userInfo.isLogin,
-                token: action.userInfo.token
-            };
             return newState;
 
         default:

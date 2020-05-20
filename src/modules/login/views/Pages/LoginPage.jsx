@@ -1,9 +1,10 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {loadCss, loadScript} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
-import {connectUser} from "../../../../store/actions/authActions";
+import * as authActions from "../../../../store/actions/authActions";
 import {connect} from 'react-redux';
+
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
 
@@ -12,25 +13,42 @@ const LoginPage = (props) => {
     useEffect(() => {
 
     }, []);
-
+    const [username, setUserName] = useState("");
+    const [password, setPassword] = useState("");
+    const onChangeUserName = (e) => {
+        setUserName(e.target.value)
+    };
+    const onChangePassword = (e) => {
+        setPassword(e.target.value)
+    };
     const onClickConnectButton = () => {
-    	const formData={
-			grant_type:'password',
-			client_id:2,
-			client_secret:'ASBK05EUsNYYPtEnY4LIOW0eceW2YaVCe5r7gREP',
-			username:'christ',
-			password:'123456789'
-		};
+        const formData = {
+            grant_type: 'password',
+            client_id: 2,
+            client_secret: 'OLtVn3nVYqFAC080vcmqsOPCHZCLypRUZzapXJwG',
+            username: username,
+            password: password
+        };
         console.log("Hello");
-		axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
-			.then(response => {
-				console.log(response);
-				props.connectUser(response)
-			})
-			.catch(error => {
-				console.log(error)
-			})
-		;
+        axios.post(`http://satis-hub.local/oauth/token`, formData)
+            .then(response => {
+                const token = response.data.access_token;
+                axios.get(`http://satis-hub.local/login`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
+                    .then(res => {
+                        const user = res.data.data;
+                        const data = {token, user};
+                        props.connectUser(data)
+                    });
+
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        ;
     };
     return (
 
@@ -93,14 +111,20 @@ const LoginPage = (props) => {
                                                   id="kt_login_form"
                                                   style={{marginBottom: '142px'}}>
                                                 <div className="form-group">
-                                                    <input className="form-control" type="text"
-                                                           placeholder="Votre Nom"
-                                                           name="username" autoComplete="off"/>
+                                                    <input className="form-control" type="email"
+                                                           placeholder="Votre Email"
+                                                           name="username" autoComplete="off"
+                                                           onChange={(e) => onChangeUserName(e)}
+														   value={username}
+                                                    />
                                                 </div>
                                                 <div className="form-group">
                                                     <input className="form-control" type="password"
                                                            placeholder="Votre Mot de Passe"
-                                                           name="password" autoComplete="off"/>
+                                                           name="password" autoComplete="off"
+                                                           onChange={(e) => onChangePassword(e)}
+														   value={password}
+                                                    />
                                                 </div>
 
                                                 <div className="kt-login__actions">
@@ -127,5 +151,13 @@ const LoginPage = (props) => {
 
     );
 };
+const mapDispatchToProps = dispatch => {
+    return {
+        connectUser: userData => {
+            dispatch(authActions.connectUser(userData))
+        },
 
-export default connect(null,{connectUser})(LoginPage);
+    };
+};
+
+export default connect(null, mapDispatchToProps)(LoginPage);
