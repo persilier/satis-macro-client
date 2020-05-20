@@ -35,14 +35,11 @@ import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/InstitutionForm";
+import Redirect from "react-router-dom/es/Redirect";
 
 const Body = () => {
     return (
         <Switch>
-            <Route exact path="/">
-                <SMS/>
-            </Route>
-
             <Route exact path="/settings/sms">
                 <SMS/>
             </Route>
@@ -239,8 +236,8 @@ const Body = () => {
                 <SeverityLevelForm/>
             </Route>
 
-            <Route exact path="*">
-                <SMS/>
+            <Route path={"*"}>
+                <Redirect to={"/dashboard"}/>
             </Route>
         </Switch>
     );

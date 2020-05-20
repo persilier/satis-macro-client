@@ -1,13 +1,11 @@
-import React, {useEffect} from 'react';
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Route,Switch, Redirect} from "react-router-dom";
+import LoginPage from "./modules/login/views/Pages/LoginPage.jsx";
+import App from "./views/layouts/App";
 import {connect} from 'react-redux';
-import App from "./views/layout/App";
-import LoginPage from "./appAuthModule/views/containers/LoginPage";
-import * as authActions from "./store/actions/authActions";
-import Configuration from "./views/container/Configuration";
+import {addUserInfoToStore} from "./store/actions/authActions";
 
-
-class routes extends React.Component{
+class RouteApp extends Component {
     componentDidMount() {
 
         if (localStorage.getItem('isLogin')) {
@@ -21,35 +19,32 @@ class routes extends React.Component{
             this.props.addUserInfoToStore(userInfo);
         }
     }
+
     connect=(userInfo)=>{
         this.props.addUserInfoToStore(userInfo)
     };
+
     render() {
+        // const login=false;
         const isLogin = this.props.user.isLogin;
         const token= this.props.user.token;
         console.log(isLogin);
         console.log("token",token);
-        console.log(this.props.user);
+        console.log(this.props.user , "user");
         return (
             <Router>
                 <Switch>
                     <Route exact path="/login">
-                        { isLogin ? <Redirect to={"/"}/> : <LoginPage onChangeConnected={this.connect}/> }
+                        { isLogin ? <Redirect to={"/"}/> : <LoginPage connectUser={connect} /> }
                     </Route>
                     <Route path={"*"}>
-                        { isLogin ? <App/> : <Redirect to={"/login"}/> }
+                        { !isLogin ? <App/> : <Redirect to={"/login"}/> }
                     </Route>
                 </Switch>
             </Router>
         );
     }
 }
-
-const mapDispatchToProps = dispatch => {
-    return {
-        addUserInfoToStore: userInfo => dispatch(authActions.addUserInfoToStore(userInfo))
-    }
-};
 
 const mapStateToProps = state => {
     console.log('mapStateToProps', state);
@@ -58,4 +53,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(routes);
+export default connect(mapStateToProps, {addUserInfoToStore}) (RouteApp);
