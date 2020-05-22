@@ -7,7 +7,6 @@ import {connectUser} from "./store/actions/authActions";
 
 class RouteApp extends Component {
     componentDidMount() {
-
         if (localStorage.getItem('isLogin')) {
             const userInfo = {
                 user: {

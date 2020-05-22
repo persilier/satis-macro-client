@@ -1,11 +1,16 @@
 import React from "react";
 import {connect} from "react-redux";
 import * as LanguageAction from "../../store/actions/languageAction";
+import * as authActions from "../../store/actions/authActions";
 
 const Nav = (props) => {
     const onClickLanguage = (e, lang) => {
         e.preventDefault();
         props.changeLanguage(lang);
+    };
+    const onClickLogoutLink = e => {
+        e.preventDefault();
+        props.logoutUser();
     };
 
     return (
@@ -792,7 +797,7 @@ const Nav = (props) => {
                                     </div>
                                 </a>
                                 <div className="kt-notification__custom kt-space-between">
-                                    <a href="custom/user/login-v2.html" target="_blank" className="btn btn-label btn-label-brand btn-sm btn-bold">Sign Out</a>
+                                    <a href="/logout" onClick={ onClickLogoutLink } target="_blank" className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
                                     <a href="custom/user/login-v2.html" target="_blank" className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>
                                 </div>
                             </div>
@@ -814,7 +819,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         changeLanguage: (language) => {
             dispatch(LanguageAction.changeLanguage(language))
-        }
+        },
+        logoutUser: () => dispatch( authActions.logoutUser())
     }
 };
 
