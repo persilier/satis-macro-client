@@ -8,7 +8,6 @@ import {connectUser, updateUser} from "./store/actions/authActions";
 class RouteApp extends Component {
     componentDidMount() {
         if (localStorage.getItem('isLogin')) {
-
             this.props.updateUser();
         }
     }

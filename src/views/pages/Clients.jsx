@@ -151,32 +151,31 @@ const Clients = () => {
             <tr className="d-flex justify-content-center align-content-center odd"
                 key={index} role="row" className="odd">
                 <td>{client.identite.lastname} &ensp; {client.identite.firstname }</td>
-                {/*<td>{client.identite.sexe}</td>*/}
+
                 <td>
-                    {
+                    {client.identite.telephone?
                         client.identite.telephone.map((tel, index) => (
                             index === client.identite.telephone.length - 1 ? tel
                                 : tel + ", "
-                        ))
+                        )):""
                     }
                 </td>
                 <td>
-                    {
+                    {client.account_number?
                         client.account_number.map((account, index) => (
                             index === client.account_number.length - 1 ? account : account + ", "
-                        ))
+                        )):""
                     }
                 </td>
-                {/*<td>{client.identite.ville}</td>*/}
+
                 <td>
-                    {
+                    {client.identite.email?
                         client.identite.email.map((mail, index) => (
                             index === client.identite.email.length - 1 ? mail : mail + ", "
-                        ))
+                        )):""
                     }
                 </td>
-                {/*<td>{client.institution.name}</td>*/}
-                {/*<td>{client.unit.name}</td>*/}
+
                 <td>
                     <Link to="/settings/clients/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"

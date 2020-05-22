@@ -249,10 +249,10 @@ const TypeClient = () => {
                                                         aria-label="Ship City: activate to sort column ascending">Type
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "230px" }}
+                                                        colSpan="1" style={{ width: "200px" }}
                                                         aria-label="Ship City: activate to sort column ascending">Description
                                                     </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Type: activate to sort column ascending">
                                                         Action
                                                     </th>
                                                 </tr>
