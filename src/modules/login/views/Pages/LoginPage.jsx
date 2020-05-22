@@ -30,15 +30,15 @@ const LoginPage = (props) => {
         const formData = {
             grant_type: 'password',
             client_id: 2,
-            client_secret: 'OLtVn3nVYqFAC080vcmqsOPCHZCLypRUZzapXJwG',
+            client_secret: 'YggQ6KkjR3hVUZ098XqHTa2zEGEejVtNxbw7z7dI',
             username: username,
             password: password
         };
         console.log("Hello");
-        axios.post(`http://satis-hub.local/oauth/token`, formData)
+        axios.post(appConfig.apiDomaine +`/oauth/token`, formData)
             .then(response => {
                 const token = response.data.access_token;
-                axios.get(`http://satis-hub.local/login`, {
+                axios.get(appConfig.apiDomaine +`/login`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }

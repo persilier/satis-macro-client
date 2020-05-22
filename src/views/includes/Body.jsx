@@ -2,6 +2,7 @@ import React from "react";
 import {
   Switch,
   Route,
+  Redirect
 } from "react-router-dom";
 import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
@@ -35,7 +36,6 @@ import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/InstitutionForm";
-import Redirect from "react-router-dom/es/Redirect";
 
 const Body = () => {
     return (
