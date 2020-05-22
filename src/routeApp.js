@@ -3,20 +3,13 @@ import {BrowserRouter as Router, Route,Switch, Redirect} from "react-router-dom"
 import LoginPage from "./modules/login/views/Pages/LoginPage.jsx";
 import App from "./views/layouts/App";
 import {connect} from 'react-redux';
-import {connectUser} from "./store/actions/authActions";
+import {connectUser, updateUser} from "./store/actions/authActions";
 
 class RouteApp extends Component {
     componentDidMount() {
-
         if (localStorage.getItem('isLogin')) {
-            const userInfo = {
-                user: {
-                    name: localStorage.getItem('userName'),
-                },
-                isLogin: localStorage.getItem('isLogin'),
-                token: localStorage.getItem('token'),
-            };
-            this.props.connectUser(userInfo);
+
+            this.props.updateUser();
         }
     }
 
@@ -25,7 +18,6 @@ class RouteApp extends Component {
     };
 
     render() {
-        // const login=false;
         const isLogin = this.props.user.isLogin;
         return (
             <Router>
@@ -52,6 +44,9 @@ const mapDispatchToProps = dispatch => {
     return {
         connectUser: userData => {
             dispatch(connectUser(userData))
+        },
+        updateUser: () => {
+            dispatch(updateUser())
         },
     };
 };

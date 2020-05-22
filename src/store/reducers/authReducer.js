@@ -1,4 +1,4 @@
-import {ADD_USER_INFO_TO_STORE, CONNECT_USER, USER} from "../actions/authActions";
+import {CONNECT_USER, LOGOUT_USER, UPDATE_USER} from "../actions/authActions";
 
 const initialState = {
     user: {},
@@ -20,9 +20,24 @@ export default function (state = initialState, action) {
             localStorage.setItem('user', newState.user.username);
             localStorage.setItem('token', newState.token);
             localStorage.setItem('isLogin', newState.isLogin);
-            // window.location.reload();
+            window.location.reload();
             return newState;
-
+        case LOGOUT_USER:
+            newState= {
+                user: {},
+                isLogin: false,
+            };
+            localStorage.clear();
+            window.location.reload();
+            return newState;
+        case UPDATE_USER:
+            newState={
+                user:{
+                    name:localStorage.getItem('user')},
+                isLogin:localStorage.getItem('isLogin'),
+                token:localStorage.getItem('token')
+            };
+            return newState;
         default:
             return state;
     }
