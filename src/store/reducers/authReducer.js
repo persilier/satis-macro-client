@@ -33,7 +33,8 @@ export default function (state = initialState, action) {
         case UPDATE_USER:
             newState={
                 user:{
-                    name:localStorage.getItem('user')},
+                    username:localStorage.getItem('user')
+                },
                 isLogin:localStorage.getItem('isLogin'),
                 token:localStorage.getItem('token')
             };
