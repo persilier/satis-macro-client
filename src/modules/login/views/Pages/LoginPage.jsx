@@ -4,6 +4,11 @@ import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import * as authActions from "../../../../store/actions/authActions";
 import {connect} from 'react-redux';
+import {ToastBottomEnd} from "../../../../views/components/Toast";
+import {
+	toastConnectErrorMessageConfig,
+	toastConnectSuccessMessageConfig
+} from "../../../../config/toastConfig";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
@@ -41,12 +46,14 @@ const LoginPage = (props) => {
                     .then(res => {
                         const user = res.data.data;
                         const data = {token, user};
-                        props.connectUser(data)
+                        props.connectUser(data);
+						ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     });
 
             })
             .catch(error => {
-                console.log(error)
+                console.log(error);
+				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;
     };

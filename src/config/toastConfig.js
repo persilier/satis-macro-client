@@ -83,6 +83,16 @@ export const toastAddSuccessMessageConfig = {
     icon: 'success',
     title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succes de l'enregistrement</strong>"
 };
+export const toastConnectSuccessMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Connexion réussie</strong>"
+};
+export const toastConnectErrorMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Connexion échouée</strong>"
+};
 
 export const toastEditSuccessMessageConfig = {
     background: "#3c3e40",
