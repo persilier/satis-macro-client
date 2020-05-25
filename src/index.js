@@ -8,7 +8,8 @@ import * as serviceWorker from './serviceWorker';
 import languageReducer from "./store/reducers/languageReducer";
 import identiteReducer from "./store/reducers/IdentiteReducer";
 import authReducer from "./store/reducers/authReducer";
-import RouteApp from './routeApp.js'
+import RouteApp from "./routeApp";
+import NatureAppChoice from "./NatureAppChoice";
 
 const rootReducer = combineReducers({
     identite: identiteReducer,
@@ -19,9 +20,17 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer, composeWithDevTools());
 
+const choice = undefined;
+
 ReactDOM.render(
     <Provider store={store}>
-        <RouteApp/>
+        {
+            !choice ? (
+                <RouteApp/>
+            ) : (
+                <RouteApp/>
+            )
+        }
     </Provider>, document.getElementById('root')
 );
 

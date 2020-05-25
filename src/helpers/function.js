@@ -26,6 +26,11 @@ export const loadCss = function (linkStylsheet) {
             if (!exitingStyleSheet("style-login-page"))
                 document.getElementsByTagName("head")[0].append(tag);
             break;
+        case "/assets/css/pages/error/error-1.css":
+            tag.id = "style-choice-nature-page";
+            if (!exitingStyleSheet("style-choice-nature-page"))
+                document.getElementsByTagName("head")[0].append(tag);
+            break;
         default:
                 break;
     }
