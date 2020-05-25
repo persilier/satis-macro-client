@@ -55,6 +55,12 @@ const Aside = () => {
                                             <span className="kt-menu__link-text">Institution</span>
                                         </li>
                                     </NavLink>
+                                    <NavLink to="/settings/institution/type" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Type Institution</span>
+                                        </li>
+                                    </NavLink>
 
                                     <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                                         data-ktmenu-submenu-toggle="hover">

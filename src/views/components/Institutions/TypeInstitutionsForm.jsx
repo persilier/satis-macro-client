@@ -1,63 +1,45 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
-    Link,
-    useParams
+    Link, useParams
 } from "react-router-dom";
-import {ToastBottomEnd} from "./Toast";
+import {ToastBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
-} from "../../config/toastConfig";
-import appConfig from "../../config/appConfig";
-import {formatSelectOption} from "../../helpers/function";
+} from "../../../config/toastConfig";
+import appConfig from "../../../config/appConfig";
 import Select from "react-select";
+import {formatSelectOption} from "../../../helpers/function";
 
-const CategoryClientForm = () => {
+const TypeInstitutionsForm = () => {
     const defaultData = {
-        institutions_id: "",
         name: "",
         description: "",
     };
     const defaultError = {
-        institutions_id: [],
         name: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
-    const [institutionData, setInstitutionData] = useState([]);
-    const [institution, setInstitution] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
-    const {editcategoryid} = useParams();
+    const {edittypeid} = useParams();
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + '/institutions')
-            .then(response => {
-                setInstitutionData(response.data.data)
-            });
-        if (editcategoryid) {
-            axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
+
+        if (edittypeid) {
+            axios.get(appConfig.apiDomaine + `/type-institutions/${edittypeid}`)
                 .then(response => {
-                    const newCategory = {
-                        institutions_id: (response.data.institution) ? (response.data.institution.id) : '',
+                    const newType = {
                         name: response.data.name,
                         description: response.data.description
                     };
-                    setData(newCategory);
-                    setInstitution({value: response.data.institution.id, label: response.data.institution.name});
+                    setData(newType);
                 })
-
         }
-
     }, []);
-    const onChangeInstituion = (selected) => {
-        const newData = {...data};
-        newData.institutions_id = selected.value;
-        setInstitution(selected);
-        setData(newData);
-    };
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -75,9 +57,8 @@ const CategoryClientForm = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-
-        if (editcategoryid) {
-            axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
+        if (edittypeid) {
+            axios.put(appConfig.apiDomaine + `/type-institutions/${edittypeid}`, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -87,12 +68,11 @@ const CategoryClientForm = () => {
                 .catch(error => {
                     setStartRequest(false);
                     setError({...defaultError});
-                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                 })
             ;
         } else {
-            axios.post(appConfig.apiDomaine + `/category-clients`, data)
+            axios.post(appConfig.apiDomaine + `/type-institutions`, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -123,13 +103,13 @@ const CategoryClientForm = () => {
                             <a href="#" className="kt-subheader__breadcrumbs-home"><i
                                 className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <Link to="/settings/clients/category" className="kt-subheader__breadcrumbs-link">
-                                Catégorie Client
+                            <Link to="/settings/clients/type" className="kt-subheader__breadcrumbs-link">
+                                Type d'institution
                             </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                 {
-                                    editcategoryid ? "Modification" : "Ajout"
+                                    edittypeid ? "Modification" : "Ajout"
                                 }
                             </a>
                         </div>
@@ -145,7 +125,8 @@ const CategoryClientForm = () => {
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
                                         {
-                                            editcategoryid ? "Modification Catégorie Client" : "Ajout de Catégorie Client"
+                                            edittypeid ?
+                                                "Modification de Type Client" : " Ajout de Type Client"
                                         }
                                     </h3>
                                 </div>
@@ -158,34 +139,7 @@ const CategoryClientForm = () => {
                                             <div className="kt-form kt-form--label-right">
                                                 <div className="kt-form__body">
                                                     <div className="kt-section kt-section--first">
-                                                        <div className="kt-section__body">
-                                                            <div
-                                                                className={error.institutions_id.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="exampleSelect1">Institution</label>
-                                                                <div className="col-lg-9 col-xl-6">
-                                                                    {institutionData ? (
-                                                                        <Select
-                                                                            value={institution}
-                                                                            onChange={onChangeInstituion}
-                                                                            options={formatSelectOption(institutionData, 'name', false)}
-                                                                        />
-                                                                    ) : ''
-                                                                    }
-
-
-                                                                    {
-                                                                        error.institutions_id.length ? (
-                                                                            error.institutions_id.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
-                                                                </div>
-                                                            </div>
+                                                        <div className="kt-section__body">>
 
                                                             <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>
@@ -218,15 +172,15 @@ const CategoryClientForm = () => {
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
                                                                        htmlFor="description">La Description'</label>
                                                                 <div className="col-lg-9 col-xl-6">
-                                                                <textarea
-                                                                    id="description"
-                                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la description"
-                                                                    cols="30"
-                                                                    rows="5"
-                                                                    value={data.description}
-                                                                    onChange={(e) => onChangeDescription(e)}
-                                                                />
+                                                                     <textarea
+                                                                         id="description"
+                                                                         className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                                         placeholder="Veillez entrer la description"
+                                                                         cols="30"
+                                                                         rows="5"
+                                                                         value={data.description}
+                                                                         onChange={(e) => onChangeDescription(e)}
+                                                                     />
                                                                     {
                                                                         error.description.length ? (
                                                                             error.description.map((error, index) => (
@@ -257,12 +211,12 @@ const CategoryClientForm = () => {
                                                                 }
                                                                 {
                                                                     !startRequest ? (
-                                                                        <Link to="/settings/clients/category"
+                                                                        <Link to="/settings/clients/type"
                                                                               className="btn btn-secondary mx-2">
                                                                             Quitter
                                                                         </Link>
                                                                     ) : (
-                                                                        <Link to="/settings/clients/category"
+                                                                        <Link to="/settings/clients/type"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
                                                                             Quitter
@@ -287,4 +241,4 @@ const CategoryClientForm = () => {
     );
 };
 
-export default CategoryClientForm;
+export default TypeInstitutionsForm;
