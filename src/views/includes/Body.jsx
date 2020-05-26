@@ -35,7 +35,9 @@ import ClaimCategoryForm from "../components/ClaimCategoryForm";
 import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
-import InstitutionForm from "../components/InstitutionForm";
+import InstitutionForm from "../components/Institutions/InstitutionForm";
+import TypeInstitutionsForm from "../components/Institutions/TypeInstitutionsForm";
+import TypeInstitution from "../pages/TypeInstitution";
 
 const Body = () => {
     return (
@@ -101,6 +103,16 @@ const Body = () => {
 
             <Route exact path="/settings/institution/edit/:editinstitutionlug">
                 <InstitutionForm/>
+            </Route>
+            <Route exact path="/settings/institution/type">
+                <TypeInstitution/>
+            </Route>
+            <Route exact path="/settings/institution/type/add">
+                <TypeInstitutionsForm/>
+            </Route>
+
+            <Route exact path="/settings/institution/type/edit/:edittypeid">
+                <TypeInstitutionsForm/>
             </Route>
 
             <Route exact path="/settings/clients/edit/:editclientid">

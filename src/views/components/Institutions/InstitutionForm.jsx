@@ -4,23 +4,28 @@ import {
     useParams,
     Link
 } from "react-router-dom";
-import {ToastBottomEnd} from "./Toast";
+import {ToastBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-} from "../../config/toastConfig";
-import appConfig from "../../config/appConfig";
+} from "../../../config/toastConfig";
+import appConfig from "../../../config/appConfig";
+import Select from "react-select";
+import {formatSelectOption} from "../../../helpers/function";
+
 
 const EditInstitutions = () => {
     const {editinstitutionlug} = useParams();
 
     const defaultData = {
+        institution_type_id:"",
         name: "",
         acronyme: "",
         iso_code: "",
         logo: ""
     };
     const defaultError = {
+        institution_type_id:[],
         name: [],
         acronyme: [],
         iso_code: [],
@@ -30,13 +35,20 @@ const EditInstitutions = () => {
     const [logo, setLogo] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+    const [typeInstitution, setTypeInstitution] = useState([]);
+    const [typeInstitutionData, setTypeInstitutionData] = useState([]);
 
     useEffect(() => {
+        axios.get(appConfig.apiDomaine + '/type_institutions')
+            .then(response => {
+                setTypeInstitutionData(response.data.data)
+            });
         if (editinstitutionlug) {
             axios.get(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`)
                 .then(response => {
                     console.log(response, "GET_INSTITUTION");
                     const newInstitution = {
+                        institution_type_id: (response.data.institution_type) ? (response.data.institution_type.id) : '',
                         name: response.data.name,
                         acronyme: response.data.acronyme,
                         iso_code: response.data.iso_code,
@@ -51,6 +63,12 @@ const EditInstitutions = () => {
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
+        setData(newData);
+    };
+    const onChangeTypeInstituion = (selected) => {
+        const newData = {...data};
+        newData.institution_type_id = selected.value;
+        setTypeInstitution(selected);
         setData(newData);
     };
 
@@ -225,6 +243,34 @@ const EditInstitutions = () => {
                                                             </div>
 
                                                             <div
+                                                                className={error.institution_type_id.length ? "form-group row validated" : "form-group row"}>
+                                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                       htmlFor="exampleSelect1">Type</label>
+                                                                <div className="col-lg-9 col-xl-6">
+                                                                    {typeInstitutionData ? (
+                                                                        <Select
+                                                                            value={typeInstitution}
+                                                                            onChange={onChangeTypeInstituion}
+                                                                            options={formatSelectOption(typeInstitutionData, 'name', false)}
+                                                                        />
+                                                                    ) : ''
+                                                                    }
+
+
+                                                                    {
+                                                                        error.institution_type_id.length ? (
+                                                                            error.institution_type_id.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
                                                                        htmlFor="name">le Nom</label>
@@ -253,7 +299,7 @@ const EditInstitutions = () => {
                                                             <div
                                                                 className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="Acronyme">L'acronyme'</label>
+                                                                       htmlFor="Acronyme">L'acronyme</label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <input
                                                                         id="Acronyme"

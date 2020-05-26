@@ -149,7 +149,7 @@ const CategoryClient = () => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd"
                 key={index} role="row" className="odd">
-                <td>{category.institution ? category.institution.name : ""}</td>
+
                 <td>{category.name}</td>
                 <td>{category.description}</td>
                 <td>
@@ -241,11 +241,7 @@ const CategoryClient = () => {
                                                 style={{width: "952px"}}>
                                                 <thead>
                                                 <tr role="row">
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
-                                                        aria-label="Country: activate to sort column ascending">Institution
-                                                    </th>
+
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "150px"}}

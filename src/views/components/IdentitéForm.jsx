@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import TagsInput from "react-tagsinput";
-import {connect} from "react-redux"
+import './staff/react-tagsinput.css';
+import {connect} from "react-redux";
 import {addIdentite} from "../../store/actions/IdentiteAction";
 
 const IndentiteForm = (props) => {
-    const defaultData={
-        firstname:"",
+    const defaultData = {
+        firstname: "",
         lastname: "",
         sexe: "",
         ville: "",
@@ -22,7 +23,7 @@ const IndentiteForm = (props) => {
         email: "",
         id_card: [],
     };
-    const [data, setData] = useState(props.getLoading  ? props.getIdentite : defaultData);
+    const [data, setData] = useState(props.getLoading ? props.getIdentite : defaultData);
     const [error] = useState(defaultError);
 
     const onChangeFirstName = (e) => {
@@ -172,7 +173,10 @@ const IndentiteForm = (props) => {
                     <div className="form-group row">
                         <div className={error.telephone.length ? "col validated" : "col"}>
                             <label htmlFor="telephone">Votre Téléphone(s)</label>
-                            <TagsInput value={data.telephone} onChange={onChangeTelephone}/>
+                            <TagsInput
+                                value={data.telephone}
+                                onChange={onChangeTelephone}
+                            />
                             {
                                 error.telephone.length ? (
                                     error.telephone.map((error, index) => (
@@ -186,7 +190,10 @@ const IndentiteForm = (props) => {
 
                         <div className={error.email.length ? "col validated" : "col"}>
                             <label htmlFor="email">Votre Email(s)</label>
-                            <TagsInput value={data.email} onChange={onChangeEmail}/>
+                            <TagsInput
+                                value={data.email}
+                                onChange={onChangeEmail}
+                            />
                             {
                                 error.email.length ? (
                                     error.email.map((error, index) => (

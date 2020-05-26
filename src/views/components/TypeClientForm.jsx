@@ -26,35 +26,22 @@ const TypeClientForm = () => {
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
-    const [institutionData, setInstitutionData] = useState([]);
-    const [institution, setInstitution] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
     const {edittypeid} = useParams();
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + '/institutions')
-            .then(response => {
-                setInstitutionData(response.data)
-            });
-        if(edittypeid){
+        if (edittypeid) {
             axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
                 .then(response => {
                     const newType = {
-                        institutions_id: (response.data.institution)?(response.data.institution.id):"",
+                        institutions_id: (response.data.institution) ? (response.data.institution.id) : "",
                         name: response.data.name,
                         description: response.data.description
                     };
                     setData(newType);
-                    setInstitution({value: response.data.institution.id, label: response.data.institution.name});
                 })
         }
     }, []);
-    const onChangeInstituion = (selected) => {
-        const newData = {...data};
-        newData.institutions_id = selected.value;
-        setInstitution(selected);
-        setData(newData);
-    };
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -72,7 +59,7 @@ const TypeClientForm = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (edittypeid){
+        if (edittypeid) {
             axios.put(appConfig.apiDomaine + `/type-clients/${edittypeid}`, data)
                 .then(response => {
                     setStartRequest(false);
@@ -87,7 +74,7 @@ const TypeClientForm = () => {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                 })
             ;
-        }else{
+        } else {
             axios.post(appConfig.apiDomaine + `/type-clients`, data)
                 .then(response => {
                     setStartRequest(false);
@@ -140,10 +127,10 @@ const TypeClientForm = () => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                    {
-                                        edittypeid?
-                                           "Modification de Type Client": " Ajout de Type Client"
-                                    }
+                                        {
+                                            edittypeid ?
+                                                "Modification de Type Client" : " Ajout de Type Client"
+                                        }
                                     </h3>
                                 </div>
                             </div>
@@ -156,34 +143,6 @@ const TypeClientForm = () => {
                                                 <div className="kt-form__body">
                                                     <div className="kt-section kt-section--first">
                                                         <div className="kt-section__body">>
-
-
-                                                            <div
-                                                                className={error.institutions_id.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="exampleSelect1">Institution</label>
-                                                                <div className="col-lg-9 col-xl-6">
-                                                                    {institutionData ? (
-                                                                        <Select
-                                                                            value={institution}
-                                                                            onChange={onChangeInstituion}
-                                                                            options={formatSelectOption(institutionData,'name',false)}
-                                                                        />
-                                                                    ) : ''
-                                                                    }
-
-                                                                    {
-                                                                        error.institutions_id.length ? (
-                                                                            error.institutions_id.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
-                                                                </div>
-                                                            </div>
 
                                                             <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>

@@ -18,9 +18,9 @@ import InfirmationTable from "../components/InfirmationTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const TypeClient = () => {
+const TypeInstitution = () => {
     const [load, setLoad] = useState(true);
-    const [typeClient, setTypeClient] = useState([]);
+    const [typeInstitution, setTypeInstitution] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
@@ -28,10 +28,10 @@ const TypeClient = () => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+"/type-clients")
+        axios.get(appConfig.apiDomaine+"/type-institutions")
             .then(response => {
                 setLoad(false);
-                setTypeClient(response.data.data);
+                setTypeInstitution(response.data.data);
                 setShowList(response.data.data.slice(0, numberPerPage));
                 setNumberPage(forceRound(response.data.data.length / numberPerPage));
             })
@@ -55,8 +55,8 @@ const TypeClient = () => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(typeClient.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(typeClient.length / parseInt(e.target.value)));
+        setShowList(typeInstitution.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(typeInstitution.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -70,7 +70,7 @@ const TypeClient = () => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(typeClient.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(typeInstitution.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -78,7 +78,7 @@ const TypeClient = () => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                typeClient.slice(
+                typeInstitution.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -92,7 +92,7 @@ const TypeClient = () => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                typeClient.slice(
+                typeInstitution.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -100,16 +100,16 @@ const TypeClient = () => {
         }
     };
 
-    const deleteTypeClient = (typeClientId, index) => {
+    const deleteTypeClient = (typeInstitutionId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine+`/type-clients/${typeClientId}`)
+                    axios.delete(appConfig.apiDomaine+`/type-institutions/${typeInstitutionId}`)
                         .then(response => {
                             console.log(response, "OK");
-                            const newType = [...typeClient];
+                            const newType = [...typeInstitution];
                             newType.splice(index, 1);
-                            setTypeClient(newType);
+                            setTypeInstitution(newType);
                             if (showList.length > 1) {
                                 setShowList(
                                     newType.slice(
@@ -152,12 +152,12 @@ const TypeClient = () => {
                 <td >{type.name}</td>
                 <td >{type.description}</td>
                 <td>
-                    <Link to="/settings/clients/type/detail"
+                    <Link to="/settings/institution/type/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/clients/type/edit/${type.id}`}
+                    <Link to={`/settings/institution/type/edit/${type.id}`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Modifier">
                         <i className="la la-edit"/>
@@ -186,14 +186,14 @@ const TypeClient = () => {
                             <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                Client
+                                Institution
                             </a>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Type Client
+                                    Type Institution
                                 </a>
                             </div>
                         </div>
@@ -207,9 +207,9 @@ const TypeClient = () => {
 
                 <div className="kt-portlet">
                     <HeaderTablePage
-                        title={"Type Client"}
-                        addText={"Ajouter un Type Client"}
-                        addLink={"/settings/clients/type/add"}
+                        title={"Type Institution"}
+                        addText={"Ajouter un Type Institution"}
+                        addLink={"/settings/institution/type/add"}
                     />
 
                     {
@@ -242,7 +242,7 @@ const TypeClient = () => {
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "150px" }}
-                                                        aria-label="Ship City: activate to sort column ascending">Nom
+                                                        aria-label="Ship City: activate to sort column ascending">Type
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "200px" }}
@@ -255,9 +255,9 @@ const TypeClient = () => {
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    typeClient.length ? (
+                                                    typeInstitution.length ? (
                                                         search ? (
-                                                            typeClient.map((type, index) => (
+                                                            typeInstitution.map((type, index) => (
                                                                 printBodyTable(type, index)
                                                             ))
                                                         ) : (
@@ -279,7 +279,7 @@ const TypeClient = () => {
                                     <div className="row">
                                         <div className="col-sm-12 col-md-5">
                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {typeClient.length} données
+                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {typeInstitution.length} données
                                             </div>
                                         </div>
                                         {
@@ -309,4 +309,4 @@ const TypeClient = () => {
     );
 };
 
-export default TypeClient;
+export default TypeInstitution;
