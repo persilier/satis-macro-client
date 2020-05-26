@@ -11,7 +11,8 @@ import {
     toastErrorMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
-import TagsInput from 'react-tagsinput'
+import TagsInput from 'react-tagsinput';
+import '../staff/react-tagsinput.css'
 import IdentiteForm from "../IdentitéForm";
 import Select from "react-select";
 import {formatSelectOption} from "../../../helpers/function";
@@ -367,7 +368,8 @@ const EditClients = (props) => {
                                                 <label htmlFor="account">Numero de compte</label>
                                                 <TagsInput
                                                     value={data.account_number}
-                                                    onChange={onChangeAccount}/>
+                                                    onChange={onChangeAccount}
+                                                />
                                                 {
                                                     error.account_number.length ? (
                                                         error.account_number.map((error, index) => (

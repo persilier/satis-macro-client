@@ -27,16 +27,11 @@ const CategoryClientForm = () => {
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
-    const [institutionData, setInstitutionData] = useState([]);
-    const [institution, setInstitution] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
     const {editcategoryid} = useParams();
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + '/institutions')
-            .then(response => {
-                setInstitutionData(response.data.data)
-            });
+
         if (editcategoryid) {
             axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
                 .then(response => {
@@ -46,18 +41,11 @@ const CategoryClientForm = () => {
                         description: response.data.description
                     };
                     setData(newCategory);
-                    setInstitution({value: response.data.institution.id, label: response.data.institution.name});
                 })
 
         }
 
     }, []);
-    const onChangeInstituion = (selected) => {
-        const newData = {...data};
-        newData.institutions_id = selected.value;
-        setInstitution(selected);
-        setData(newData);
-    };
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -159,33 +147,6 @@ const CategoryClientForm = () => {
                                                 <div className="kt-form__body">
                                                     <div className="kt-section kt-section--first">
                                                         <div className="kt-section__body">
-                                                            <div
-                                                                className={error.institutions_id.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="exampleSelect1">Institution</label>
-                                                                <div className="col-lg-9 col-xl-6">
-                                                                    {institutionData ? (
-                                                                        <Select
-                                                                            value={institution}
-                                                                            onChange={onChangeInstituion}
-                                                                            options={formatSelectOption(institutionData, 'name', false)}
-                                                                        />
-                                                                    ) : ''
-                                                                    }
-
-
-                                                                    {
-                                                                        error.institutions_id.length ? (
-                                                                            error.institutions_id.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
-                                                                </div>
-                                                            </div>
 
                                                             <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>
