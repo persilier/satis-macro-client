@@ -3,7 +3,6 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {connect} from "react-redux";
 import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
@@ -20,13 +19,12 @@ import {ERROR_401} from "../../config/errorPage";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ClaimObject = (props) => {
+const User = () => {
     const permission = "macroPermission";
     if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
         window.location.href = ERROR_401;
-
     const [load, setLoad] = useState(true);
-    const [claimObjects, setClaimObjects] = useState([]);
+    const [users, setUsers] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(2);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
@@ -34,12 +32,12 @@ const ClaimObject = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/claim-objects`)
+        axios.get(`${appConfig.apiDomaine}/users`)
             .then(response => {
                 setLoad(false);
-                setNumberPage(forceRound(response.data.data.length/numberPerPage));
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setClaimObjects(response.data.data);
+                setNumberPage(forceRound(response.data.length/numberPerPage));
+                setShowList(response.data.slice(0, numberPerPage));
+                setUsers(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -61,8 +59,8 @@ const ClaimObject = (props) => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(claimObjects.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(claimObjects.length/parseInt(e.target.value)));
+        setShowList(users.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(users.length/parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -76,7 +74,7 @@ const ClaimObject = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(claimObjects.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(users.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -84,7 +82,7 @@ const ClaimObject = (props) => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                claimObjects.slice(
+                users.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -98,7 +96,7 @@ const ClaimObject = (props) => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                claimObjects.slice(
+                users.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -106,25 +104,25 @@ const ClaimObject = (props) => {
         }
     };
 
-    const deleteClaimObject = (claimObjectId, index) => {
+    const deleteUnit = (unitId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/claim-objects/${claimObjectId}`)
+                    axios.delete(`${appConfig.apiDomaine}/users/${unitId}`)
                         .then(response => {
-                            const newClaimObjects = [...claimObjects];
-                            newClaimObjects.splice(index, 1);
-                            setClaimObjects(newClaimObjects);
+                            const newUnits = [...users];
+                            newUnits.splice(index, 1);
+                            setUsers(newUnits);
                             if (showList.length > 1) {
                                 setShowList(
-                                    newClaimObjects.slice(
+                                    newUnits.slice(
                                         getEndByPosition(activeNumberPage) - numberPerPage,
                                         getEndByPosition(activeNumberPage)
                                     )
                                 );
                             } else {
                                 setShowList(
-                                    newClaimObjects.slice(
+                                    newUnits.slice(
                                         getEndByPosition(activeNumberPage - 1) - numberPerPage,
                                         getEndByPosition(activeNumberPage - 1)
                                     )
@@ -151,27 +149,26 @@ const ClaimObject = (props) => {
 
     const pages = arrayNumberPage();
 
-    const printBodyTable = (claimObject, index) => {
+    const printBodyTable = (user, index) => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                <td>{claimObject.name}</td>
-                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description}</td>
-                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name["fr"]}</td>
-                <td>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
-                <td>{claimObject.severity_level ? claimObject.severity_level.name[props.language] : ""}</td>
+                <td>{user.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{user.description["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{user.unit_type.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{user.institution ? user.institution.name : ""}</td>
                 <td>
-                    <Link to="/settings/claim_objects/detail"
+                    <Link to="/settings/users/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/claim_objects/${claimObject.id}/edit`}
+                    <Link to={`/settings/users/${user.id}/edit`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Modifier">
                         <i className="la la-edit"/>
                     </Link>
                     <button
-                        onClick={(e) => deleteClaimObject(claimObject.id, index)}
+                        onClick={(e) => deleteUnit(user.id, index)}
                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                         title="Supprimer">
                         <i className="la la-trash"/>
@@ -182,7 +179,7 @@ const ClaimObject = (props) => {
     };
 
     return (
-        permission === "macroPermission" || permission === "proPermission" || permission === "hubPermission" ? (
+        permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -195,7 +192,7 @@ const ClaimObject = (props) => {
                                 <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Objet de plainte
+                                    Unité
                                 </a>
                             </div>
                         </div>
@@ -207,9 +204,9 @@ const ClaimObject = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Objet de plainte"}
-                            addText={"Ajouter un objet de plainte"}
-                            addLink={"/settings/claim_objects/add"}
+                            title={"Unité"}
+                            addText={"Ajouter un unité"}
+                            addLink={"/settings/users/add"}
                         />
 
                         {
@@ -246,15 +243,11 @@ const ClaimObject = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom de la catégorie
+                                                            aria-label="Country: activate to sort column ascending">Type Unité
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Temps limite
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Niveau de gravité
+                                                            aria-label="Country: activate to sort column ascending">Institution
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
@@ -263,14 +256,14 @@ const ClaimObject = (props) => {
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        claimObjects.length ? (
+                                                        users.length ? (
                                                             search ? (
-                                                                claimObjects.map((claimObject, index) => (
-                                                                    printBodyTable(claimObject, index)
+                                                                users.map((user, index) => (
+                                                                    printBodyTable(user, index)
                                                                 ))
                                                             ) : (
-                                                                showList.map((claimObject, index) => (
-                                                                    printBodyTable(claimObject, index)
+                                                                showList.map((user, index) => (
+                                                                    printBodyTable(user, index)
                                                                 ))
                                                             )
                                                         ) : (
@@ -282,9 +275,8 @@ const ClaimObject = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
                                                         <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Nom de la catégorie</th>
-                                                        <th rowSpan="1" colSpan="1">Temps limite</th>
-                                                        <th rowSpan="1" colSpan="1">Niveau de gravité</th>
+                                                        <th rowSpan="1" colSpan="1">Type Unité</th>
+                                                        <th rowSpan="1" colSpan="1">Institution</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
@@ -294,7 +286,7 @@ const ClaimObject = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {claimObjects.length} données
+                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {users.length} données
                                                 </div>
                                             </div>
                                             {
@@ -325,10 +317,4 @@ const ClaimObject = (props) => {
     );
 };
 
-const mapStateToProps = (state) => {
-    return {
-        language: state.language.languageSelected
-    }
-};
-
-export default connect(mapStateToProps)(ClaimObject);
+export default User;

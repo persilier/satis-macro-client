@@ -26,7 +26,12 @@ export const loadCss = function (linkStylsheet) {
             if (!exitingStyleSheet("style-login-page"))
                 document.getElementsByTagName("head")[0].append(tag);
             break;
-        case "/assets/css/pages/error/error-1.css":
+        case "/assets/css/pages/error/error-6.css":
+            tag.id = "style-error401-page";
+            if (!exitingStyleSheet("style-error401-page"))
+                document.getElementsByTagName("head")[0].append(tag);
+            break;
+        case "/assets/css/pages/pricing/pricing-3.css":
             tag.id = "style-choice-nature-page";
             if (!exitingStyleSheet("style-choice-nature-page"))
                 document.getElementsByTagName("head")[0].append(tag);

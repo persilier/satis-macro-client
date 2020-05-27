@@ -38,6 +38,8 @@ import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/Institutions/InstitutionForm";
 import TypeInstitutionsForm from "../components/Institutions/TypeInstitutionsForm";
 import TypeInstitution from "../pages/TypeInstitution";
+import User from "../pages/User";
+import UserForm from "../components/UserForm";
 
 const Body = () => {
     return (
@@ -246,6 +248,18 @@ const Body = () => {
 
             <Route exact path="/settings/severities/:id/edit">
                 <SeverityLevelForm/>
+            </Route>
+
+            <Route exact path="/settings/users">
+                <User/>
+            </Route>
+
+            <Route exact path="/settings/users/add">
+                <UserForm/>
+            </Route>
+
+            <Route exact path="/settings/users/:id/edit">
+                <UserForm/>
             </Route>
 
             <Route path={"*"}>

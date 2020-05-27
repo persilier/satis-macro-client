@@ -15,10 +15,15 @@ import EmptyTable from "../components/EmptyTable";
 import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
+import {ERROR_401} from "../../config/errorPage";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const   Staff = () => {
+    const permission = "macroPermission";
+    if (permission !== "macroPermission" && permission !== "proPermission")
+        window.location.href = ERROR_401;
+
     const [load, setLoad] = useState(true);
     const [staffs, setStaffs] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(2);
@@ -189,145 +194,147 @@ const   Staff = () => {
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                Agent
-                            </a>
+        permission === "macroPermission" || permission === "proPermission" ? (
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                Paramètres
+                            </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                    Agent
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
 
-                <div className="kt-portlet">
-                    <HeaderTablePage
-                        title={"Agent"}
-                        addText={"Ajouter un agent"}
-                        addLink={"/settings/staffs/add"}
-                    />
+                    <div className="kt-portlet">
+                        <HeaderTablePage
+                            title={"Agent"}
+                            addText={"Ajouter un agent"}
+                            addLink={"/settings/staffs/add"}
+                        />
 
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
-                            <div className="kt-portlet__body">
-                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                    <div className="row">
-                                        <div className="col-sm-6 text-left">
-                                            <div id="kt_table_1_filter" className="dataTables_filter">
-                                                <label>
-                                                    Search:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <ExportButton/>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12">
-                                            <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                style={{ width: "952px" }}>
-                                                <thead>
-                                                <tr role="row">
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Nom
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "50px" }}
-                                                        aria-label="Country: activate to sort column ascending">Téléphone
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "50px" }}
-                                                        aria-label="Country: activate to sort column ascending">Email
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Unité
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                        colSpan="1" style={{ width: "70.25px" }}
-                                                        aria-label="Country: activate to sort column ascending">Position
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "53px" }} aria-label="Type: activate to sort column ascending">
-                                                        Action
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {
-                                                    staffs.length ? (
-                                                        search ? (
-                                                            staffs.map((staff, index) => (
-                                                                printBodyTable(staff, index)
-                                                            ))
-                                                        ) : (
-                                                            showList.map((staff, index) => (
-                                                                printBodyTable(staff, index)
-                                                            ))
-                                                        )
-                                                    ) : (
-                                                        <EmptyTable/>
-                                                    )
-                                                }
-                                                </tbody>
-                                                <tfoot>
-                                                <tr>
-                                                    <th rowSpan="1" colSpan="1">Nom</th>
-                                                    <th rowSpan="1" colSpan="1">Téléphone</th>
-                                                    <th rowSpan="1" colSpan="1">Email</th>
-                                                    <th rowSpan="1" colSpan="1">Unité</th>
-                                                    <th rowSpan="1" colSpan="1">Position</th>
-                                                    <th rowSpan="1" colSpan="1">Action</th>
-                                                </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12 col-md-5">
-                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {staffs.length} données
-                                            </div>
-                                        </div>
-                                        {
-                                            !search ? (
-                                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                    <Pagination
-                                                        numberPerPage={numberPerPage}
-                                                        onChangeNumberPerPage={onChangeNumberPerPage}
-                                                        activeNumberPage={activeNumberPage}
-                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                        pages={pages}
-                                                        onClickPage={(e, number) => onClickPage(e, number)}
-                                                        numberPage={numberPage}
-                                                        onClickNextPage={e => onClickNextPage(e)}
-                                                    />
+                        {
+                            load ? (
+                                <LoadingTable/>
+                            ) : (
+                                <div className="kt-portlet__body">
+                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                        <div className="row">
+                                            <div className="col-sm-6 text-left">
+                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                                    <label>
+                                                        Search:
+                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                    </label>
                                                 </div>
-                                            ) : ""
-                                        }
+                                            </div>
+                                            <ExportButton/>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12">
+                                                <table
+                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                    style={{ width: "952px" }}>
+                                                    <thead>
+                                                    <tr role="row">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Nom
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "50px" }}
+                                                            aria-label="Country: activate to sort column ascending">Téléphone
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "50px" }}
+                                                            aria-label="Country: activate to sort column ascending">Email
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Unité
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Position
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "53px" }} aria-label="Type: activate to sort column ascending">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {
+                                                        staffs.length ? (
+                                                            search ? (
+                                                                staffs.map((staff, index) => (
+                                                                    printBodyTable(staff, index)
+                                                                ))
+                                                            ) : (
+                                                                showList.map((staff, index) => (
+                                                                    printBodyTable(staff, index)
+                                                                ))
+                                                            )
+                                                        ) : (
+                                                            <EmptyTable/>
+                                                        )
+                                                    }
+                                                    </tbody>
+                                                    <tfoot>
+                                                    <tr>
+                                                        <th rowSpan="1" colSpan="1">Nom</th>
+                                                        <th rowSpan="1" colSpan="1">Téléphone</th>
+                                                        <th rowSpan="1" colSpan="1">Email</th>
+                                                        <th rowSpan="1" colSpan="1">Unité</th>
+                                                        <th rowSpan="1" colSpan="1">Position</th>
+                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                    </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-5">
+                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {staffs.length} données
+                                                </div>
+                                            </div>
+                                            {
+                                                !search ? (
+                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                        <Pagination
+                                                            numberPerPage={numberPerPage}
+                                                            onChangeNumberPerPage={onChangeNumberPerPage}
+                                                            activeNumberPage={activeNumberPage}
+                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                            pages={pages}
+                                                            onClickPage={(e, number) => onClickPage(e, number)}
+                                                            numberPage={numberPage}
+                                                            onClickNextPage={e => onClickNextPage(e)}
+                                                        />
+                                                    </div>
+                                                ) : ""
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    }
+                            )
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        ) : ""
     );
 };
 

@@ -9,15 +9,12 @@ import {
 	toastConnectErrorMessageConfig,
 	toastConnectSuccessMessageConfig
 } from "../../../../config/toastConfig";
+import {listConnectData} from "../../../../constants/userClient";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
 
 const LoginPage = (props) => {
-
-    useEffect(() => {
-
-    }, []);
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const onChangeUserName = (e) => {
@@ -28,13 +25,12 @@ const LoginPage = (props) => {
     };
     const onClickConnectButton = () => {
         const formData = {
-            grant_type: 'password',
-            client_id: 2,
-            client_secret: 'YggQ6KkjR3hVUZ098XqHTa2zEGEejVtNxbw7z7dI',
+            grant_type: listConnectData[props.plan].grant_type,
+            client_id: listConnectData[props.plan].client_id,
+            client_secret: listConnectData[props.plan].client_secret,
             username: username,
             password: password
         };
-        console.log("Hello");
         axios.post(appConfig.apiDomaine +`/oauth/token`, formData)
             .then(response => {
                 const token = response.data.access_token;
@@ -42,13 +38,15 @@ const LoginPage = (props) => {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
-                })
-                    .then(res => {
-                        const user = res.data.data;
-                        const data = {token, user};
-                        props.connectUser(data);
-						ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
-                    });
+                }).then(response => {
+                    const user = response.data;
+                    const data = {token: token, user: user};
+                    localStorage.setItem("userData", JSON.stringify(response.data));
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('isLogin', true);
+                    props.connectUser(data);
+                    ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
+                });
 
             })
             .catch(error => {
@@ -72,7 +70,7 @@ const LoginPage = (props) => {
 
                                 <div
                                     className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                    style={{backgroundImage: "url(assets/media/bg/bg-4.jpg)"}}>
+                                    style={{backgroundImage: "url(/assets/media/bg/bg-4.jpg)"}}>
                                     <div className="kt-grid__item">
                                         <a href="/login" className="kt-login__logo">
                                             <img src="/assets/images/satisLogo.png"/>
@@ -158,13 +156,19 @@ const LoginPage = (props) => {
 
     );
 };
+
+const mapStateToProps = state => {
+    return {
+        plan: state.plan.plan
+    };
+};
+
 const mapDispatchToProps = dispatch => {
     return {
         connectUser: userData => {
             dispatch(authActions.connectUser(userData))
         },
-
     };
 };
 
-export default connect(null, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

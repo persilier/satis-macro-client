@@ -2,8 +2,10 @@ import React from "react";
 import {
     NavLink
 } from "react-router-dom";
+import {connect} from "react-redux";
+import {verifyPermission} from "../../helpers/permission";
 
-const Aside = () => {
+const Aside = (props) => {
     return (
         <div className="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop"
              id="kt_aside">
@@ -65,7 +67,7 @@ const Aside = () => {
                                     <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                                         data-ktmenu-submenu-toggle="hover">
                                         <a href="#FAQs" onClick={e => e.preventDefault()} className="kt-menu__link kt-menu__toggle">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">FAQs</span>
                                             <i className="kt-menu__ver-arrow la la-angle-right"/>
                                         </a>
@@ -144,12 +146,16 @@ const Aside = () => {
                                         </li>
                                     </NavLink>
 
-                                    <NavLink to="/settings/positions" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Position</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-position') ? (
+                                            <NavLink to="/settings/positions" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Position</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
 
                                     <NavLink to="/settings/claim_categories" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
@@ -178,6 +184,13 @@ const Aside = () => {
                                             <span className="kt-menu__link-text">Niveau de gravité</span>
                                         </li>
                                     </NavLink>
+
+                                    <NavLink to="/settings/users" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Utilisateur</span>
+                                        </li>
+                                    </NavLink>
                                 </ul>
                             </div>
                         </li>
@@ -188,4 +201,10 @@ const Aside = () => {
     );
 };
 
-export default Aside;
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
+
+export default connect(mapStateToProps)(Aside);

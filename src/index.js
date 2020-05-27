@@ -8,29 +8,22 @@ import * as serviceWorker from './serviceWorker';
 import languageReducer from "./store/reducers/languageReducer";
 import identiteReducer from "./store/reducers/IdentiteReducer";
 import authReducer from "./store/reducers/authReducer";
-import RouteApp from "./routeApp";
-import NatureAppChoice from "./NatureAppChoice";
+import planReducer from "./store/reducers/planReducer";
+import AppContainer from "./AppContainer";
 
 const rootReducer = combineReducers({
     identite: identiteReducer,
     language: languageReducer,
     user: authReducer,
+    plan: planReducer
 });
 
 
 const store = createStore(rootReducer, composeWithDevTools());
 
-const choice = undefined;
-
 ReactDOM.render(
     <Provider store={store}>
-        {
-            !choice ? (
-                <RouteApp/>
-            ) : (
-                <RouteApp/>
-            )
-        }
+        <AppContainer/>
     </Provider>, document.getElementById('root')
 );
 
