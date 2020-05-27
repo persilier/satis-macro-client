@@ -13,8 +13,12 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import FormInformation from "./FormInformation";
+import {ERROR_401} from "../../config/errorPage";
 
 const UnitTypeForm = () => {
+    const permission = "proPermission";
+    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+        window.location.href = ERROR_401;
     const {id} = useParams();
     const defaultData = {
         name: "",
@@ -89,8 +93,6 @@ const UnitTypeForm = () => {
             ;
         }
     };
-
-    const permission = "macroPermission";
 
     return (
         permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (

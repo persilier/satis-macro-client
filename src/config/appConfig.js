@@ -3,7 +3,7 @@ const appConfig =  {
     name: 'SATIS',
     enterprise: 'DMD',
     contact: '21256325',
-    apiDomaine: "http://satis-macro.local"
+    apiDomaine: "http://satis-pro.local"
 };
 
 export default appConfig;

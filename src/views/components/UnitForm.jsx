@@ -1,25 +1,25 @@
 import React from "react";
-import FilialeUnitForm from "../../APP_MACRO/Filiale/FilialeUnitForm";
 import ProUnitForm from "../../APP_PRO/ProUnitForm";
 import HubUnitForm from "../../APP_HUB/HubUnitForm";
 import HoldingUnitForm from "../../APP_MACRO/Holding/HoldingUnitForm";
+import {ERROR_401} from "../../config/errorPage";
 
 const UnitForm = () => {
+    const permission = "macroPermission";
+    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+        window.location.href = ERROR_401;
     const nature = "MACRO";
-    const hubPermission = "hubPermission";
-    const proPermission = "proPermission";
-    const macroPermission = "macroPermission";
     return (
         nature === "MACRO" ? (
-            macroPermission === "macroPermission" ? (
+            permission === "macroPermission" ? (
                 <HoldingUnitForm/>
             ) : ""
         ) : nature === "PRO" ? (
-            proPermission === "proPermission" ? (
+            permission === "proPermission" ? (
                 <ProUnitForm/>
             ) : ""
         ) : (
-            hubPermission === "hubPermission" ? (
+            permission === "hubPermission" ? (
                 <HubUnitForm/>
             ) : ""
         )

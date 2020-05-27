@@ -8,7 +8,7 @@ const Nav = (props) => {
         e.preventDefault();
         props.changeLanguage(lang);
     };
-    const onClickLogoutLink = e => {
+    const onClickLogoutLink = (e) => {
         e.preventDefault();
         props.logoutUser();
     };
@@ -711,8 +711,8 @@ const Nav = (props) => {
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-                            <span className="kt-header__topbar-welcome kt-visible-desktop">Hi,</span>
-                            <span className="kt-header__topbar-username kt-visible-desktop">Nick</span>
+                            <span className="kt-header__topbar-welcome kt-visible-desktop">Salut,</span>
+                            <span className="kt-header__topbar-username kt-visible-desktop">{props.user.firstName}</span>
                             <img alt="Pic" src="/assets/media/users/300_21.jpg" />
                             <span className="kt-header__topbar-icon kt-bg-brand kt-hidden"><b>S</b></span>
                         </div>
@@ -723,7 +723,7 @@ const Nav = (props) => {
                                     <span className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold kt-hidden">S</span>
                                 </div>
                                 <div className="kt-user-card__name">
-                                    Sean Stone
+                                    {props.user.lastName+" "+props.user.firstName}
                                 </div>
                                 <div className="kt-user-card__badge">
                                     <span className="btn btn-label-primary btn-sm btn-bold btn-font-md">23 messages</span>
@@ -811,7 +811,11 @@ const Nav = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        language: state.language
+        language: state.language,
+        user: {
+            lastName: state.user.user.data.identite.lastname,
+            firstName: state.user.user.data.identite.firstname
+        }
     };
 };
 

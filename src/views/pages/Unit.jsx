@@ -15,11 +15,14 @@ import EmptyTable from "../components/EmptyTable";
 import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
+import {ERROR_401} from "../../config/errorPage";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Unit = () => {
-    window.location.href = "/error401";
+    const permission = "macroPermission";
+    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+        window.location.href = ERROR_401;
     const [load, setLoad] = useState(true);
     const [units, setUnits] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(2);
@@ -175,12 +178,8 @@ const Unit = () => {
         );
     };
 
-    const macroPermission = "macroPermission";
-    const hubPermission = "hubPermission";
-    const proPermission = "proPermission";
-
     return (
-        macroPermission === "macroPermission" || hubPermission === "hubPermission" || proPermission === "proPermission" ? (
+        permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">

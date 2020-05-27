@@ -11,30 +11,25 @@ export default function (state = initialState, action) {
     switch (action.type) {
         case CONNECT_USER:
             newState = {
-                user:{
-                   username: action.userData.user.username
-                },
+                user: action.userData.user,
                 token:action.userData.token,
                 isLogin: true,
             };
-            localStorage.setItem('user', newState.user.username);
-            localStorage.setItem('token', newState.token);
-            localStorage.setItem('isLogin', newState.isLogin);
-            window.location.reload();
+            window.location.href = "/dashboard";
             return newState;
         case LOGOUT_USER:
             newState= {
                 user: {},
                 isLogin: false,
             };
+            const plan = localStorage.getItem('plan');
             localStorage.clear();
-            window.location.reload();
+            localStorage.setItem('plan', plan);
+            window.location.href = "/login";
             return newState;
         case UPDATE_USER:
             newState={
-                user:{
-                    username:localStorage.getItem('user')
-                },
+                user: JSON.parse(localStorage.getItem('userData')),
                 isLogin:localStorage.getItem('isLogin'),
                 token:localStorage.getItem('token')
             };

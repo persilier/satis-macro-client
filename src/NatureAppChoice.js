@@ -1,40 +1,99 @@
 import React from "react";
+import {connect} from "react-redux";
 import {loadCss} from "./helpers/function";
+import {DeleteConfirmation} from "./views/components/ConfirmationAlert";
+import {chosePlan} from "./config/confirmConfig";
+import {changePlan} from "./store/actions/planAction";
 
-loadCss("/assets/css/pages/error/error-1.css");
+loadCss("/assets/css/pages/pricing/pricing-3.css");
 
-const NatureAppChoice = () => {
+const NatureAppChoice = (props) => {
+
+    const onMakeChoice = (e, choice) => {
+        e.preventDefault();
+        DeleteConfirmation.fire(chosePlan("SATIS "+choice))
+            .then((result) => {
+                if (result.value) {
+                    props.changePlan(choice)
+                }
+            })
+        ;
+    };
+
     return (
-        <div className="kt-page-content-white kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent kt-aside--enabled kt-aside--fixed kt-page--loading">
-            <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
-                <div className="kt-grid__item kt-grid__item--fluid kt-grid  kt-error-v1"
-                     style={{ backgroundImage: "url(/assets/media/error/bg1.jpg)" }}>
-                    <div className="kt-error-v1__container" style={{paddingBottom: "200px"}}>
-                        <h1 className="kt-error-v1__number">404</h1>
-                        <p className="kt-error-v1__desc">
-                            <label className="kt-radio kt-radio--bold kt-radio--brand">
-                                <input type="radio" name="radio6"/>
-                                MACRO
-                                <span/>
-                            </label>
-                        </p>
-                        <p className="kt-error-v1__desc">
-                            <label className="kt-radio kt-radio--bold kt-radio--brand">
-                                <input type="radio" name="radio6"/>
-                                PRO
-                                <span/>
-                            </label>
-                        </p>
-                        <p className="kt-error-v1__desc">
-                            <label className="kt-radio kt-radio--bold kt-radio--brand">
-                                <input type="radio" name="radio6"/>
-                                HUB
-                                <span/>
-                            </label>
-                        </p>
-                        <p className="kt-error-v1__desc">
-                            <button className="btn btn-primary">Valider</button>
-                        </p>
+        <div className="kt-portlet">
+            <div className="kt-portlet__head">
+                <div className="kt-portlet__head-label">
+                    <span className="kt-portlet__head-icon">
+                        <i className="la la-puzzle-piece"/>
+                    </span>
+                    <h3 className="kt-portlet__head-title">
+                       WELCOME IN SATIS 2020
+                    </h3>
+                </div>
+            </div>
+            <div className="kt-portlet__body">
+                <div className="kt-pricing-3 kt-pricing-3--fixed">
+                    <div className="kt-pricing-3__items">
+                        <div className="row row-no-padding">
+                            <div className="kt-pricing-3__item col-lg-4">
+                                <div className="kt-pricing-3__wrapper">
+                                    <h3 className="kt-pricing-3__title">PRO</h3>
+                                    <span className="kt-pricing-3__price">
+                                        <span className="kt-pricing-3__label">CFA</span>
+                                        <span className="kt-pricing-3__number">10.000.000.000</span>
+                                        <span className="kt-pricing-3__text">/&nbsp;&nbsp;Par Installation</span>
+                                    </span>
+                                    <br/>
+                                    <span className="kt-pricing-3__description">
+                                        <span>Lorem ipsum dolor sit amet adipiscing elit</span>
+                                        <span>sed do eiusmod tempors labore et dolore</span>
+                                        <span>magna siad enim aliqua</span>
+                                    </span>
+                                    <div className="kt-pricing-3__btn">
+                                        <button onClick={e => onMakeChoice(e, "PRO")} type="button" className="btn btn-brand btn-wide btn-upper btn-bold">Souscrire</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="kt-pricing-3__item kt-pricing-3__item--focus col-lg-4">
+                                <div className="kt-pricing-3__wrapper">
+                                    <h3 className="kt-pricing-3__title kt-font-light">MACRO</h3>
+                                    <span className="kt-pricing-3__price">
+                                        <span className="kt-pricing-3__label kt-font-brand kt-opacity-7">CFA</span>
+                                        <span className="kt-pricing-3__number kt-font-brand">50.000.000.000</span>
+                                        <span className="kt-pricing-3__text kt-font-brand kt-opacity-7">/&nbsp;&nbsp;Par Installation</span>
+                                    </span>
+                                    <br/>
+                                    <span className="kt-pricing-3__description">
+                                        <span>Lorem ipsum dolor sit amet adipiscing elit</span>
+                                        <span>sed do eiusmod tempors labore et dolore</span>
+                                        <span>magna siad enim aliqua</span>
+                                    </span>
+                                    <div className="kt-pricing-3__btn">
+                                        <button onClick={e => onMakeChoice(e, "MACRO")} type="button" className="btn btn-light btn-wide btn-upper btn-bold">Souscrire</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="kt-pricing-3__item col-lg-4">
+                                <div className="kt-pricing-3__wrapper">
+                                    <h3 className="kt-pricing-3__title">HUB</h3>
+                                    <span className="kt-pricing-3__price">
+                                        <span className="kt-pricing-3__label">CFA</span>
+                                        <span className="kt-pricing-3__number">20.000.000.000</span>
+                                        <span className="kt-pricing-3__text">/&nbsp;&nbsp;Par Installation</span>
+                                    </span>
+                                    <br/>
+                                    <span className="kt-pricing-3__description">
+                                        <span>Lorem ipsum dolor sit amet adipiscing elit</span>
+                                        <span>sed do eiusmod tempors labore et dolore</span>
+                                        <span>magna siad enim aliqua</span>
+                                    </span>
+                                    <div className="kt-pricing-3__btn">
+                                        <button onClick={e => onMakeChoice(e, "HUB")} type="button" className="btn btn-brand btn-wide btn-upper btn-bold">Souscrire</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -42,4 +101,10 @@ const NatureAppChoice = () => {
     );
 };
 
-export default NatureAppChoice;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changePlan: (plan) => dispatch(changePlan(plan))
+    };
+};
+
+export default connect(null, mapDispatchToProps)(NatureAppChoice);

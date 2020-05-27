@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     useParams,
     Link
 } from "react-router-dom";
-import {Multiselect} from "multiselect-react-dropdown";
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
@@ -14,21 +14,28 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import FormInformation from "./FormInformation";
+import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
-const PositionForm = () => {
-    const [selectedValues, setSelectedValues] = useState([]);
-    const [institutions, setInstitutions] = useState([]);
+axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
+const PositionForm = (props) => {
     const {id} = useParams();
+    if (!id) {
+        if (!verifyPermission(props.userPermissions, 'store-position'))
+            window.location.href = ERROR_401;
+    } else {
+        if (!verifyPermission(props.userPermissions, 'update-position'))
+            window.location.href = ERROR_401;
+    }
+
     const defaultData = {
         name: "",
         description: "",
-        institutions: [],
     };
     const defaultError = {
         name: [],
         description: [],
-        institutions: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -36,46 +43,20 @@ const PositionForm = () => {
 
     useEffect(() => {
         if (id) {
-            axios.get(`${appConfig.apiDomaine}/positions/${id}/edit`)
+            axios.get(`${appConfig.apiDomaine}/positions/${id}`)
                 .then(response => {
                     const newData = {
-                        name: response.data.position.name.fr,
-                        description: response.data.position.description.fr,
-                        institutions: reformatInstitution(formatInstitutions(response.data.position.institutions))
+                        name: response.data.name.fr,
+                        description: response.data.description.fr,
                     };
-                    setSelectedValues(formatInstitutions(response.data.position.institutions));
-                    setInstitutions(formatInstitutions(response.data.institutions));
                     setData(newData);
                 })
                 .catch(error => {
                     console.log("Something is wrong");
                 })
             ;
-        } else {
-            axios.get(`${appConfig.apiDomaine}/institutions`)
-                .then(response => {
-                    setInstitutions(formatInstitutions(response.data.data));
-                })
-                .catch(error => {
-                    console.log("something is wrong");
-                })
-            ;
         }
     }, []);
-
-    const reformatInstitution = (listInstitutions) => {
-        const newListInstitution = [];
-        for (let i = 0; i<listInstitutions.length; i++)
-            newListInstitution.push(listInstitutions[i].id);
-        return newListInstitution;
-    };
-
-    const formatInstitutions = (listInstitutions) => {
-        const newListInstitution = [];
-        for (let i = 0; i<listInstitutions.length; i++)
-            newListInstitution.push({id: listInstitutions[i].id, name: listInstitutions[i].name});
-        return newListInstitution;
-    };
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -86,22 +67,6 @@ const PositionForm = () => {
     const onChangeDescription = (e) => {
         const newData = {...data};
         newData.description = e.target.value;
-        setData(newData);
-    };
-
-    const getSelectedValue = (items) => {
-        const newData = {...data};
-        newData.institutions = [];
-        for (let i = 0; i<items.length; i++)
-            newData.institutions.push(items[i].id);
-        setData(newData);
-    };
-
-    const onRemove = (selectedList, removedItem) => {
-        const newData = {...data};
-        newData.institutions = [];
-        for (let i = 0; i<selectedList.length; i++)
-            newData.institutions.push(selectedList[i].id);
         setData(newData);
     };
 
@@ -125,7 +90,6 @@ const PositionForm = () => {
             axios.post(`${appConfig.apiDomaine}/positions`, data)
                 .then(response => {
                     setStartRequest(false);
-                    setSelectedValues([]);
                     setError(defaultError);
                     setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
@@ -139,10 +103,8 @@ const PositionForm = () => {
         }
     };
 
-    const permission = "macroPermission";
-
-    return (
-        permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (
+    const printJsx = () => {
+        return (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -209,41 +171,18 @@ const PositionForm = () => {
                                                     }
                                                 </div>
                                             </div>
-
-                                            <div className={error.institutions.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institutions</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Multiselect
-                                                        options={institutions}
-                                                        displayValue="name"
-                                                        onRemove={onRemove}
-                                                        selectedValues={selectedValues}
-                                                        onSelect={getSelectedValue}
-                                                    />
-                                                    {
-                                                        error.institutions.length ? (
-                                                            error.institutions.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
                                                 <div className="col-lg-9 col-xl-6">
-                                                <textarea
-                                                    id="description"
-                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
-                                                    cols="30"
-                                                    rows="5"
-                                                    value={data.description}
-                                                    onChange={(e) => onChangeDescription(e)}
-                                                />
+                                                    <textarea
+                                                        id="description"
+                                                        className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer la description"
+                                                        cols="30"
+                                                        rows="5"
+                                                        value={data.description}
+                                                        onChange={(e) => onChangeDescription(e)}
+                                                    />
                                                     {
                                                         error.description.length ? (
                                                             error.description.map((error, index) => (
@@ -288,8 +227,24 @@ const PositionForm = () => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        );
+    };
+
+    return (
+        id ?
+            verifyPermission(props.userPermissions, 'update-position') ? (
+                printJsx()
+            ) : ""
+        : verifyPermission(props.userPermissions, 'store-position') ? (
+                printJsx()
+            ) : ""
     );
 };
 
-export default PositionForm;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions
+    }
+};
+
+export default connect(mapStateToProps)(PositionForm);

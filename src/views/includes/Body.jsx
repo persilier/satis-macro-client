@@ -36,6 +36,8 @@ import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/InstitutionForm";
+import User from "../pages/User";
+import UserForm from "../components/UserForm";
 
 const Body = () => {
     return (
@@ -234,6 +236,18 @@ const Body = () => {
 
             <Route exact path="/settings/severities/:id/edit">
                 <SeverityLevelForm/>
+            </Route>
+
+            <Route exact path="/settings/users">
+                <User/>
+            </Route>
+
+            <Route exact path="/settings/users/add">
+                <UserForm/>
+            </Route>
+
+            <Route exact path="/settings/users/:id/edit">
+                <UserForm/>
             </Route>
 
             <Route path={"*"}>

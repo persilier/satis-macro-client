@@ -14,3 +14,16 @@ export const toastDeleteErrorMessageConfig = {
     icon: 'error',
     title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>Echec de la suppression</strong>"
 };
+
+export const chosePlan = (plan) => {
+    return {
+        title: `Êtes-vous sûr de vouloir choisir ${plan} comme plan?`,
+        text: "Vous ne pouvez pas revenir en arrière!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, Choisir!',
+        cancelButtonText: "Quitter"
+    };
+};

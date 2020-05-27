@@ -20,14 +20,11 @@ class RouteApp extends Component {
         const isLogin = this.props.user.isLogin;
         return (
             <Router>
-                <Switch>
-                    <Route exact path="/login">
-                        { isLogin ? <Redirect to={"/"}/> : <LoginPage connectUser={connect} /> }
-                    </Route>
-                    <Route path={"/"}>
-                        { isLogin ? <App/> : <Redirect to={"/login"}/> }
-                    </Route>
-                </Switch>
+                {
+                    !isLogin ? (
+                        <LoginPage connectUser={connect} />
+                    ) : <App/>
+                }
             </Router>
         );
     }
