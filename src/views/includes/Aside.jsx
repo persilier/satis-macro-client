@@ -64,67 +64,48 @@ const Aside = (props) => {
                                         </li>
                                     </NavLink>
 
-                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
-                                        data-ktmenu-submenu-toggle="hover">
-                                        <a href="#FAQs" onClick={e => e.preventDefault()} className="kt-menu__link kt-menu__toggle">
+                                    <NavLink to="/settings/faqs/list" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">FAQs</span>
-                                            <i className="kt-menu__ver-arrow la la-angle-right"/>
-                                        </a>
-                                        <div className="kt-menu__submenu "><span className="kt-menu__arrow"/>
-                                            <ul className="kt-menu__subnav">
-                                                <NavLink to="/settings/faqs/list" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li to="/settings/faqs/list"  className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">FAQs</span>
-                                                    </li>
-                                                </NavLink>
-                                                <NavLink to="/settings/faqs/add" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li to="/settings/faqs/add" className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Editer FAQ</span>
-                                                    </li>
-                                                </NavLink>
-                                                <NavLink to="/settings/faqs/category" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li to="/settings/faqs/category"  className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Catégorie FAQ</span>
-                                                    </li>
-                                                </NavLink>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    </NavLink>
 
-                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
-                                        data-ktmenu-submenu-toggle="hover">
-                                        <a href="#Clients" onClick={e => e.preventDefault()} className="kt-menu__link kt-menu__toggle">
+                                    <NavLink to="/settings/faqs/add" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Clients</span>
-                                        <i className="kt-menu__ver-arrow la la-angle-right"/>
-                                        </a>
-                                        <div className="kt-menu__submenu "><span className="kt-menu__arrow"/>
-                                            <ul className="kt-menu__subnav">
-                                                <NavLink to="/settings/clients" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li  className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Client</span>
-                                                    </li>
-                                                </NavLink>
-                                                <NavLink to="/settings/clients/category" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Catégorie Client</span>
-                                                    </li>
-                                                </NavLink>
-                                                <NavLink to="/settings/clients/type" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li  className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Type Client</span>
-                                                    </li>
-                                                </NavLink>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                            <span className="kt-menu__link-text">Editer FAQs</span>
+                                        </li>
+                                    </NavLink>
+
+                                    <NavLink to="/settings/faqs/category" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Catégorie FAQs</span>
+                                        </li>
+                                    </NavLink>
+
+                                    <NavLink to="/settings/clients" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Clients </span>
+                                        </li>
+                                    </NavLink>
+
+                                    <NavLink to="/settings/clients/category" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Catégorie Clients </span>
+                                        </li>
+                                    </NavLink>
+
+                                    <NavLink to="/settings/clients/type" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Type Clients </span>
+                                        </li>
+                                    </NavLink>
+
                                     <NavLink to="/settings/performance_indicator" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
