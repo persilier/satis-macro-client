@@ -6,7 +6,7 @@ const Footer = () => {
             <div className="kt-container  kt-container--fluid ">
                 <div className="kt-footer__wrapper">
                     <div className="kt-footer__copyright">
-                        2019&nbsp;&copy;&nbsp;<a href="http://keenthemes.com/metronic" target="_blank" className="kt-link">Keenthemes</a>
+                        {new Date().getFullYear()}&nbsp;&copy;&nbsp;<a href="http://www.dmdconsult.com/" target="_blank" className="kt-link">DMD SARL</a>
                     </div>
                     <div className="kt-footer__menu">
                         <a href="/" target="_blank" className="kt-link">About</a>

@@ -5,10 +5,10 @@ import RouteApp from "./routeApp";
 import {loadPlan} from "./store/actions/planAction";
 
 class AppContainer extends Component{
-    componentDidMount() {
-        if (localStorage.getItem("plan")) {
+    constructor(props) {
+        super(props);
+        if (localStorage.getItem("plan"))
             this.props.loadPlan(localStorage.getItem("plan"))
-        }
     }
 
     render() {

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     Link
@@ -19,13 +20,16 @@ import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
+import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const UnitType = () => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+const UnitType = (props) => {
+    if (!verifyPermission(props.userPermissions, "list-unit-type"))
         window.location.href = ERROR_401;
+
     const [load, setLoad] = useState(true);
     const [unitTypes, setUnitTypes] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(2);
@@ -134,7 +138,6 @@ const UnitType = () => {
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
-                            console.log(error.response.data);
                             if (error.response.data.error)
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                             else
@@ -167,24 +170,32 @@ const UnitType = () => {
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/unit_type/${unitType.id}/edit`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteUnitType(unitType.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+                    {
+                        verifyPermission(props.userPermissions, 'update-unit-type') ? (
+                            <Link to={`/settings/unit_type/${unitType.id}/edit`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : ""
+                    }
+                    {
+                        verifyPermission(props.userPermissions, 'destroy-unit-type') ? (
+                            <button
+                                onClick={(e) => deleteUnitType(unitType.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Supprimer">
+                                <i className="la la-trash"/>
+                            </button>
+                        ) : ""
+                    }
                 </td>
             </tr>
         );
     };
 
     return (
-        permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (
+        verifyPermission(props.userPermissions, 'list-unit-type') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -209,6 +220,7 @@ const UnitType = () => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={"store-unit-type"}
                             title={"Type d'unité"}
                             addText={"Ajouter un type d'unité"}
                             addLink={"/settings/unit_type/add"}
@@ -314,4 +326,10 @@ const UnitType = () => {
     );
 };
 
-export default UnitType;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
+
+export default connect(mapStateToProps)(UnitType);

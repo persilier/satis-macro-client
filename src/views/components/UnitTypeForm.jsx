@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
+import {connect} from "react-redux";
 import {
     useParams,
     Link
 } from "react-router-dom";
+import Select from "react-select";
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
@@ -13,19 +15,33 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import FormInformation from "./FormInformation";
-import {ERROR_401} from "../../config/errorPage";
+import {ERROR_401, redirectError401Page} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
+import {formatSelectOption} from "../../helpers/function";
+import {AUTH_TOKEN} from "../../constants/token";
 
-const UnitTypeForm = () => {
-    const permission = "proPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
-        window.location.href = ERROR_401;
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
+const UnitTypeForm = (props) => {
     const {id} = useParams();
+    if (id) {
+        if (!verifyPermission(props.userPermissions, 'update-unit-type'))
+            window.location.href = ERROR_401;
+    } else {
+        if (!verifyPermission(props.userPermissions, 'store-unit-type'))
+            window.location.href = ERROR_401;
+    }
+
+    const [parents, setParents] = useState([]);
+    const [parent, setParent] = useState({});
     const defaultData = {
         name: "",
+        parent_id: "",
         description: "",
     };
     const defaultError = {
         name: [],
+        parent_id: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
@@ -34,24 +50,41 @@ const UnitTypeForm = () => {
 
     useEffect(() => {
         if (id) {
-            axios.get(`${appConfig.apiDomaine}/unit-types/${id}`)
+            axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
                 .then(response => {
                     const newData = {
-                        name: response.data.name.fr,
-                        description: response.data.description.fr,
+                        name: response.data.unitType.name.fr,
+                        description: response.data.unitType.description.fr,
                     };
+                    setParent(response.data.unitType.parent ? {id: response.data.unitType.parent.id, label: response.data.unitType.parent.name.fr} : {});
+                    setParents(response.data.unitTypes);
                     setData(newData);
                 })
                 .catch(error => {
                     console.log("Something is wrong");
                 })
             ;
+        } else {
+            axios.get(`${appConfig.apiDomaine}/unit-types`)
+                .then(response => {
+                    setParents(response.data);
+                })
+                .catch(error => {
+                    console.log("Something is wrong")
+                })
         }
     }, []);
 
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
+        setData(newData);
+    };
+
+    const onChangeParent = (selected) => {
+        const newData = {...data};
+        newData.parent_id = selected.value;
+        setParent(selected);
         setData(newData);
     };
 
@@ -86,6 +119,7 @@ const UnitTypeForm = () => {
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(errorRequest => {
+                    redirectError401Page(errorRequest.response.data.code);
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
@@ -94,8 +128,8 @@ const UnitTypeForm = () => {
         }
     };
 
-    return (
-        permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (
+    const printJsx = () => {
+        return (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -163,6 +197,26 @@ const UnitTypeForm = () => {
                                                 </div>
                                             </div>
 
+                                            <div className={error.parent_id.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Type Unité Parent</label>
+                                                <div className="col-lg-9 col-xl-6">
+                                                    <Select
+                                                        value={parent}
+                                                        onChange={onChangeParent}
+                                                        options={formatSelectOption(parents, "name", "fr")}
+                                                    />
+                                                    {
+                                                        error.parent_id.length ? (
+                                                            error.parent_id.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
                                                 <div className="col-lg-9 col-xl-6">
@@ -218,8 +272,24 @@ const UnitTypeForm = () => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        );
+    };
+
+    return (
+        id ?
+            verifyPermission(props.userPermissions, 'update-unit-type') ? (
+                printJsx()
+            ) : ""
+        : verifyPermission(props.userPermissions, 'store-unit-type') ? (
+                printJsx()
+            ) : ""
     );
 };
 
-export default UnitTypeForm;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+    };
+};
+
+export default connect(mapStateToProps)(UnitTypeForm);

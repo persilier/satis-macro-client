@@ -13,11 +13,14 @@ import {
 import appConfig from "../../../config/appConfig";
 import TagsInput from 'react-tagsinput';
 import '../staff/react-tagsinput.css'
-import IdentiteForm from "../IdentitéForm";
+import IdentityForm from "../IdentityForm";
 import Select from "react-select";
 import {formatSelectOption} from "../../../helpers/function";
 import {connect} from "react-redux";
-import {addIdentite} from "../../../store/actions/IdentiteAction";
+import {addIdentity} from "../../../store/actions/IdentityAction";
+import {AUTH_TOKEN} from "../../../constants/token";
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const EditClients = (props) => {
     const defaultData = {
@@ -236,10 +239,10 @@ const EditClients = (props) => {
                                 <div className="kt-portlet">
                                     {
                                         !editclientid ? (
-                                            <IdentiteForm/>
+                                            <IdentityForm/>
                                         ) : (
                                             (identity) ? (
-                                                <IdentiteForm
+                                                <IdentityForm
                                                     getIdentite={identity}
                                                     getLoading={true}
                                                 />) : (
@@ -424,8 +427,8 @@ const EditClients = (props) => {
 };
 const mapStateToProps = state => {
     return {
-        identite: state.identite
+        identite: state.identity
     }
 };
 
-export default connect(mapStateToProps, {addIdentite})(EditClients);
+export default connect(mapStateToProps, {addIdentite: addIdentity})(EditClients);

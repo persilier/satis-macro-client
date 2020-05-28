@@ -17,7 +17,7 @@ const HeaderTablePage = (props) => {
                 </h3>
             </div>
             {
-                verifyPermission(props.userPermissions, 'store-position') ? (
+                verifyPermission(props.userPermissions, props.addPermission) ? (
                     <div className="kt-portlet__head-toolbar">
                         <div className="kt-portlet__head-wrapper">
                             &nbsp;

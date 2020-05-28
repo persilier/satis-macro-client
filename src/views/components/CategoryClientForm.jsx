@@ -6,13 +6,10 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {
-    toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import {formatSelectOption} from "../../helpers/function";
-import Select from "react-select";
 
 const CategoryClientForm = () => {
     const defaultData = {

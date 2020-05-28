@@ -156,7 +156,7 @@ const ClaimObject = (props) => {
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
                 <td>{claimObject.name}</td>
                 <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description}</td>
-                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name[props.language]}</td>
                 <td>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
                 <td>{claimObject.severity_level ? claimObject.severity_level.name[props.language] : ""}</td>
                 <td>
