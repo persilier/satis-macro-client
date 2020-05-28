@@ -20,6 +20,7 @@ const Nav = (props) => {
                     <div className="kt-header__brand-logo">
                         <a href="index.html">
                             <img alt="Logo" src="/assets/images/satisLogo.png" width={"100"} height={"34"} />
+                            <span className="mx-2 text-white font-weight-bolder">{props.plan}</span>
                         </a>
                     </div>
                     <div className="kt-header__brand-nav">
@@ -812,6 +813,7 @@ const Nav = (props) => {
 const mapStateToProps = (state) => {
     return {
         language: state.language,
+        plan: state.plan.plan,
         user: {
             lastName: state.user.user.data.identite.lastname,
             firstName: state.user.user.data.identite.firstname
@@ -824,7 +826,7 @@ const mapDispatchToProps = (dispatch) => {
         changeLanguage: (language) => {
             dispatch(LanguageAction.changeLanguage(language))
         },
-        logoutUser: () => dispatch( authActions.logoutUser())
+        logoutUser: () => dispatch( authActions.logoutUser()),
     }
 };
 

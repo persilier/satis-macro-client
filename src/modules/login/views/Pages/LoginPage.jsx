@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {loadCss, loadScript} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
@@ -39,18 +39,16 @@ const LoginPage = (props) => {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
+                    ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     const user = response.data;
                     const data = {token: token, user: user};
                     localStorage.setItem("userData", JSON.stringify(response.data));
                     localStorage.setItem('token', token);
-                    localStorage.setItem('isLogin', true);
-                    props.connectUser(data);
-                    ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
+                    window.location.href = "/dashboard";
                 });
 
             })
             .catch(error => {
-                console.log(error);
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;
@@ -78,12 +76,12 @@ const LoginPage = (props) => {
                                                 color: "white",
                                                 fontSize: "1.5em",
                                                 paddingLeft: "5px"
-                                            }}>2020.1</span>
+                                            }}>{props.plan}  {appConfig.version}</span>
                                         </a>
                                     </div>
                                     <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
                                         <div className="kt-grid__item kt-grid__item--middle">
-                                            <h3 className="kt-login__title">Bienvenue sur SATIS 2020.1!</h3>
+                                            <h3 className="kt-login__title">Bienvenue sur {appConfig.appFullName(props.plan)}!</h3>
                                             <h4 className="kt-login__subtitle">Votre nouvel outil de gestion des
                                                 plaintes.</h4>
                                         </div>
@@ -91,7 +89,7 @@ const LoginPage = (props) => {
                                     <div className="kt-grid__item">
                                         <div className="kt-login__info">
                                             <div className="kt-login__copyright">
-                                                &copy SATIS 2020.1
+                                                &copy {appConfig.appFullName(props.plan)}
                                             </div>
                                             <div className="kt-login__menu">
                                                 <a href="#" className="kt-link">Privacy</a>
@@ -163,12 +161,4 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        connectUser: userData => {
-            dispatch(authActions.connectUser(userData))
-        },
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps)(LoginPage);

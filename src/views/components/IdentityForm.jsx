@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import TagsInput from "react-tagsinput";
 import './staff/react-tagsinput.css';
 import {connect} from "react-redux";
-import {addIdentite} from "../../store/actions/IdentiteAction";
+import {addIdentity} from "../../store/actions/IdentityAction";
 
 const IndentiteForm = (props) => {
     const defaultData = {
@@ -234,4 +234,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, {addIdentite})(IndentiteForm);
+export default connect(mapStateToProps, {addIdentite: addIdentity})(IndentiteForm);

@@ -1,4 +1,4 @@
-import {ADD_IDENTITE} from "../actions/IdentiteAction";
+import {ADD_IDENTITY} from "../actions/IdentityAction";
 
 const initialState = {
     identite:{
@@ -13,9 +13,9 @@ const initialState = {
 
 };
 
-export default function identiteReducer (state = initialState, actions) {
+export default function identityReducer (state = initialState, actions) {
     switch (actions.type) {
-        case ADD_IDENTITE:
+        case ADD_IDENTITY:
             const data = actions.data;
             return {
                 firstname:data.firstname,

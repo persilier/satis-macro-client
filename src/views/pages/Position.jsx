@@ -18,9 +18,10 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const Position = (props) => {
     if (!verifyPermission(props.userPermissions, "list-position"))
@@ -213,6 +214,7 @@ const Position = (props) => {
                     <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={"store-position"}
                             title={"Postes"}
                             addText={"Ajouter d'un poste"}
                             addLink={"/settings/positions/add"}

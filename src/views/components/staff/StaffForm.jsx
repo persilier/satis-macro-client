@@ -5,6 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import TagsInput from "react-tagsinput";
+import Select from "react-select";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
@@ -16,7 +17,6 @@ import {ToastBottomEnd} from "../Toast";
 import {formatUnits} from "../../../helpers/unit";
 import {formatPositions} from "../../../helpers/position";
 import './react-tagsinput.css';
-import Select from "react-select";
 import {formatSelectOption} from "../../../helpers/function";
 import {formatInstitutions} from "../../../helpers/institution";
 import appConfig from "../../../config/appConfig";

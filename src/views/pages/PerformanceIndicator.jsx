@@ -39,7 +39,7 @@ const PerformanceIndicator = () => {
                 setLoad(false);
                 console.log("Something is wrong");
             })
-    }, []);
+    });
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -184,9 +184,9 @@ const PerformanceIndicator = () => {
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                            <a href="#/icon" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                            <a href="#indicatorPerformance" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                 Indicateur de performance
                             </a>
                         </div>

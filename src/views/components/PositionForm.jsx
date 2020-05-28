@@ -16,8 +16,9 @@ import appConfig from "../../config/appConfig";
 import FormInformation from "./FormInformation";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {AUTH_TOKEN} from "../../constants/token";
 
-axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const PositionForm = (props) => {
     const {id} = useParams();

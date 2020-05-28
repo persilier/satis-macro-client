@@ -49,7 +49,7 @@ const PerformanceIndicatorForm = () => {
                 })
             ;
         }
-    }, []);
+    });
 
     const onChangeName = (e) => {
         const newData = {...data};
