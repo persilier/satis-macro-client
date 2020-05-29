@@ -103,18 +103,8 @@ const Body = () => {
                 <InstitutionForm/>
             </Route>
 
-            <Route exact path="/settings/institution/edit/:editinstitutionlug">
+            <Route exact path="/settings/institution/edit/:id">
                 <InstitutionForm/>
-            </Route>
-            <Route exact path="/settings/institution/type">
-                <TypeInstitution/>
-            </Route>
-            <Route exact path="/settings/institution/type/add">
-                <TypeInstitutionsForm/>
-            </Route>
-
-            <Route exact path="/settings/institution/type/edit/:edittypeid">
-                <TypeInstitutionsForm/>
             </Route>
 
             <Route exact path="/settings/clients/edit/:editclientid">
