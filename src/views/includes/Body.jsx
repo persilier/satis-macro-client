@@ -1,8 +1,8 @@
 import React from "react";
 import {
-  Switch,
-  Route,
-  Redirect
+    Switch,
+    Route,
+    Redirect
 } from "react-router-dom";
 import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
@@ -36,10 +36,10 @@ import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/Institutions/InstitutionForm";
-import TypeInstitutionsForm from "../components/Institutions/TypeInstitutionsForm";
-import TypeInstitution from "../pages/TypeInstitution";
 import User from "../pages/User";
 import UserForm from "../components/UserForm";
+import {verifyPermission} from "../../helpers/permission";
+import FilialeInstitutionForm from "../../APP_MACRO/Filiale/FilialeInstitutionForm";
 
 const Body = () => {
     return (
@@ -101,6 +101,10 @@ const Body = () => {
 
             <Route exact path="/settings/institution/add">
                 <InstitutionForm/>
+            </Route>
+
+            <Route exact path="/settings/institution/edit">
+                <FilialeInstitutionForm/>
             </Route>
 
             <Route exact path="/settings/institution/edit/:id">

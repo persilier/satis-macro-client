@@ -153,9 +153,10 @@ const Clients = () => {
                 <td>{client.identite.lastname} &ensp; {client.identite.firstname }</td>
 
                 <td>
+
                     {client.identite.telephone?
                         client.identite.telephone.map((tel, index) => (
-                            index === client.identite.telephone.length - 1 ? tel
+                                index === client.identite.telephone.length - 1 ? tel
                                 : tel + ", "
                         )):""
                     }
