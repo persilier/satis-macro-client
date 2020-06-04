@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     Link
@@ -16,13 +17,48 @@ import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
+import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const Unit = () => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/my/units`,
+        destroy: unitId => `${appConfig.apiDomaine}/my/units/${unitId}`,
+    },
+    MACRO: {
+        holding: {
+            list: `${appConfig.apiDomaine}/any/units`,
+            destroy: unitId => `${appConfig.apiDomaine}/any/units/${unitId}`,
+        },
+        filial: {
+            list: `${appConfig.apiDomaine}/my/units`,
+            destroy: unitId => `${appConfig.apiDomaine}/my/units/${unitId}`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        list: `${appConfig.apiDomaine}/without-link/units`,
+        destroy: unitId => `${appConfig.apiDomaine}/without-link/units/${unitId}`,
+    }
+};
+
+const Unit = (props) => {
+    if (!(verifyPermission(props.userPermissions, 'list-any-unit') || verifyPermission(props.userPermissions, 'list-my-unit') || verifyPermission(props.userPermissions, 'list-without-link-unit')))
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'list-any-unit'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'list-my-unit'))
+            endPoint = endPointConfig[props.plan].filial
+    } else {
+        endPoint = endPointConfig[props.plan]
+    }
     const [load, setLoad] = useState(true);
     const [units, setUnits] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(2);
@@ -32,7 +68,7 @@ const Unit = () => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/units`)
+        axios.get(endPoint.list)
             .then(response => {
                 setLoad(false);
                 setNumberPage(forceRound(response.data.length/numberPerPage));
@@ -108,7 +144,8 @@ const Unit = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/units/${unitId}`)
+                    console.log(endPoint.destroy(unitId));
+                    axios.delete(endPoint.destroy(unitId))
                         .then(response => {
                             const newUnits = [...units];
                             newUnits.splice(index, 1);
@@ -154,32 +191,45 @@ const Unit = () => {
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
                 <td>{unit.name["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "250px" }}>{unit.description["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.parent ? unit.parent.name["fr"] : ""}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.unit_type.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : ""}</td>
+                {
+                    verifyPermission(props.userPermissions, 'list-any-unit') ? (
+                        <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : ""}</td>
+                    ) : <td style={{display: "none"}}/>
+                }
                 <td>
                     <Link to="/settings/unit/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/unit/${unit.id}/edit`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteUnit(unit.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+                    {
+                        verifyPermission(props.userPermissions, 'update-any-unit') || verifyPermission(props.userPermissions, 'update-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
+                            <Link to={`/settings/unit/${unit.id}/edit`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : ""
+                    }
+                    {
+                        verifyPermission(props.userPermissions, 'destroy-any-unit') || verifyPermission(props.userPermissions, 'destroy-my-unit') || verifyPermission(props.userPermissions, 'destroy-without-link-unit') ? (
+                            <button
+                                onClick={(e) => deleteUnit(unit.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Supprimer">
+                                <i className="la la-trash"/>
+                            </button>
+                        ) : ""
+                    }
                 </td>
             </tr>
         );
     };
 
     return (
-        permission === "macroPermission" || permission === "hubPermission" || permission === "proPermission" ? (
+        verifyPermission(props.userPermissions, 'list-any-unit') || verifyPermission(props.userPermissions, 'list-my-unit') || verifyPermission(props.userPermissions, 'list-without-link-unit') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -204,6 +254,7 @@ const Unit = () => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={['store-any-unit', 'store-my-unit', 'store-without-link-unit']}
                             title={"Unité"}
                             addText={"Ajouter un unité"}
                             addLink={"/settings/unit/add"}
@@ -243,12 +294,20 @@ const Unit = () => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Type Unité
+                                                            aria-label="Country: activate to sort column ascending">Unité Parent
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institution
+                                                            aria-label="Country: activate to sort column ascending">Type Unité
                                                         </th>
+                                                        {
+                                                            verifyPermission(props.userPermissions, 'list-any-unit') ? (
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                    colSpan="1" style={{ width: "70px" }}
+                                                                    aria-label="Country: activate to sort column ascending">Institution
+                                                                </th>
+                                                            ) : <th style={{display: "none"}}/>
+                                                        }
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -275,8 +334,13 @@ const Unit = () => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
                                                         <th rowSpan="1" colSpan="1">Description</th>
+                                                        <th rowSpan="1" colSpan="1">Unité Parent</th>
                                                         <th rowSpan="1" colSpan="1">Type Unité</th>
-                                                        <th rowSpan="1" colSpan="1">Institution</th>
+                                                        {
+                                                            verifyPermission(props.userPermissions, 'list-any-unit') ? (
+                                                                <th rowSpan="1" colSpan="1">Institution</th>
+                                                            ) : <th style={{display: "none"}}/>
+                                                        }
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
@@ -317,4 +381,11 @@ const Unit = () => {
     );
 };
 
-export default Unit;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
+    };
+};
+
+export default connect(mapStateToProps)(Unit);

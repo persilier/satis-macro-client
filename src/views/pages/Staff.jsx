@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     Link
@@ -16,13 +17,48 @@ import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
+import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const   Staff = () => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "proPermission")
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/my/staff`,
+        destroy: unitId => `${appConfig.apiDomaine}/my/staff/${unitId}`,
+    },
+    MACRO: {
+        holding: {
+            list: `${appConfig.apiDomaine}/any/staff`,
+            destroy: unitId => `${appConfig.apiDomaine}/any/staff/${unitId}`,
+        },
+        filial: {
+            list: `${appConfig.apiDomaine}/my/staff`,
+            destroy: unitId => `${appConfig.apiDomaine}/my/staff/${unitId}`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        list: `${appConfig.apiDomaine}/maybe/no/staff`,
+        destroy: unitId => `${appConfig.apiDomaine}/maybe/no/staff/${unitId}`,
+    }
+};
+
+const   Staff = (props) => {
+    if (!(verifyPermission(props.userPermissions, 'list-staff-from-any-unit') || verifyPermission(props.userPermissions, 'list-staff-from-my-unit')|| verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit')) )
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'list-any-unit'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'list-my-unit'))
+            endPoint = endPointConfig[props.plan].filial
+    } else {
+        endPoint = endPointConfig[props.plan]
+    }
 
     const [load, setLoad] = useState(true);
     const [staffs, setStaffs] = useState([]);
@@ -33,7 +69,7 @@ const   Staff = () => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/staff`)
+        axios.get(endPoint.list)
             .then(response => {
                 setLoad(false);
                 setNumberPage(forceRound(response.data.length/numberPerPage));
@@ -109,7 +145,7 @@ const   Staff = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiapiapiDomaine}/staff/${staffId}`)
+                    axios.delete(endPoint.destroy(staffId))
                         .then(response => {
                             const newStaffs = [...staffs];
                             newStaffs.splice(index, 1);
@@ -169,7 +205,20 @@ const   Staff = () => {
                         ))
                     }
                 </td>
-                <td>{staff.unit.name["fr"]}</td>
+                {
+                    verifyPermission(props.userPermissions, 'listx-staff-from-maybe-no-unit') ? (
+                        staff.unit ? (
+                            <td>{staff.unit.name["fr"]}</td>
+                            ) : <td/>
+                    ) : (
+                        <td>{staff.unit.name["fr"]}</td>
+                    )
+                }
+                {
+                    verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
+                        <td>{staff.institution.name}</td>
+                    ) : <td style={{ display: "none" }}/>
+                }
                 <td>{staff.position.name["fr"]}</td>
                 <td>
                     <Link to="/settings/staffs/detail"
@@ -177,24 +226,32 @@ const   Staff = () => {
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/staffs/${staff.id}/edit`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteStaff(staff.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+                    {
+                        verifyPermission(props.userPermissions, "update-staff-from-any-unit") || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
+                            <Link to={`/settings/staffs/${staff.id}/edit`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : ""
+                    }
+                    {
+                        verifyPermission(props.userPermissions, "destroy-staff-from-any-unit") || verifyPermission(props.userPermissions, 'destroy-staff-from-my-unit') || verifyPermission(props.userPermissions, 'destroy-staff-from-maybe-no-unit') ? (
+                            <button
+                                onClick={(e) => deleteStaff(staff.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Supprimer">
+                                <i className="la la-trash"/>
+                            </button>
+                        ) : ""
+                    }
                 </td>
             </tr>
         );
     };
 
     return (
-        permission === "macroPermission" || permission === "proPermission" ? (
+        verifyPermission(props.userPermissions, 'list-staff-from-any-unit') || verifyPermission(props.userPermissions, 'list-staff-from-my-unit') || verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -219,6 +276,7 @@ const   Staff = () => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={["store-staff-from-any-unit", "store-staff-from-my-unit", 'list-staff-from-maybe-no-unit']}
                             title={"Agent"}
                             addText={"Ajouter un agent"}
                             addLink={"/settings/staffs/add"}
@@ -265,6 +323,14 @@ const   Staff = () => {
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Unité
                                                         </th>
+                                                        {
+                                                            verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                    colSpan="1" style={{ width: "70.25px" }}
+                                                                    aria-label="Country: activate to sort column ascending">Institution
+                                                                </th>
+                                                            ) : <th style={{display: "none"}}/>
+                                                        }
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Position
@@ -297,6 +363,11 @@ const   Staff = () => {
                                                         <th rowSpan="1" colSpan="1">Téléphone</th>
                                                         <th rowSpan="1" colSpan="1">Email</th>
                                                         <th rowSpan="1" colSpan="1">Unité</th>
+                                                        {
+                                                            verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
+                                                                <th rowSpan="1" colSpan="1">Institution</th>
+                                                            ) : <th style={{display: "none"}}/>
+                                                        }
                                                         <th rowSpan="1" colSpan="1">Position</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
@@ -338,4 +409,11 @@ const   Staff = () => {
     );
 };
 
-export default Staff;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan
+    };
+};
+
+export default connect(mapStateToProps)(Staff);

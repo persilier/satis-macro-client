@@ -5,6 +5,6 @@ export const logoutUser = () => {
     return { type: LOGOUT_USER }
 };
 
-export const updateUser=()=>{
-    return{type:UPDATE_USER}
+export const updateUser=(data)=>{
+    return{type:UPDATE_USER, data: data}
 };

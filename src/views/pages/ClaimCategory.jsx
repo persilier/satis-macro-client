@@ -20,12 +20,12 @@ import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimCategory = (props) => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+    if (!verifyPermission(props.userPermissions, 'list-claim-category'))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -164,32 +164,38 @@ const ClaimCategory = (props) => {
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
                 <td>{claimCategory.name[props.language]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{claimCategory.description[props.language]}</td>
-                <td>{claimCategory.severity_level ? claimCategory.time_limit : ""}</td>
-                <td>{claimCategory.severity_level ? claimCategory.severity_level.name[props.language] : ""}</td>
                 <td>
                     <Link to="/settings/claim_categories/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/claim_categories/${claimCategory.id}/edit`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteClaimCategory(claimCategory.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+                    {
+                        verifyPermission(props.userPermissions, 'update-claim-category') ? (
+                            <Link to={`/settings/claim_categories/${claimCategory.id}/edit`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : ""
+                    }
+                    {
+                        verifyPermission(props.userPermissions, 'destroy-claim-category') ? (
+                            <button
+                                onClick={(e) => deleteClaimCategory(claimCategory.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Supprimer">
+                                <i className="la la-trash"/>
+                            </button>
+                        ) : ""
+                    }
                 </td>
             </tr>
         );
     };
 
     return (
-        permission === "macroPermission" || permission === "proPermission" || permission === "hubPermission" ? (
+        verifyPermission(props.userPermissions, 'list-claim-category') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -214,6 +220,7 @@ const ClaimCategory = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={"store-claim-category"}
                             title={"Catégories de plainte"}
                             addText={"Ajouter une catégorie de plainte"}
                             addLink={"/settings/claim_categories/add"}
@@ -252,14 +259,6 @@ const ClaimCategory = (props) => {
                                                             colSpan="1" style={{ width: "300px" }}
                                                             aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Temps limite
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Niveau de gravité
-                                                        </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -286,8 +285,6 @@ const ClaimCategory = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
                                                         <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Temps limite</th>
-                                                        <th rowSpan="1" colSpan="1">Niveau de gravité</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
@@ -330,6 +327,7 @@ const ClaimCategory = (props) => {
 
 const mapStateToProps = (state) => {
     return {
+        userPermissions: state.user.user.permissions,
         language: state.language.languageSelected
     }
 };

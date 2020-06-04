@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     useParams,
@@ -14,22 +15,53 @@ import {
 import appConfig from "../../config/appConfig";
 import FormInformation from "./FormInformation";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
-const SeverityLevelForm = () => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
-        window.location.href = ERROR_401;
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        store: `${appConfig.apiDomaine}/severity-levels`,
+        update: id => `${appConfig.apiDomaine}/severity-levels/${id}`,
+        create: `${appConfig.apiDomaine}/severity-levels/create`,
+        edit: id => `${appConfig.apiDomaine}/severity-levels/${id}/edit`
+    },
+    MACRO: {
+        plan: "MACRO",
+        store: `${appConfig.apiDomaine}/severity-levels`,
+        update: id => `${appConfig.apiDomaine}/severity-levels/${id}`,
+        create: `${appConfig.apiDomaine}/severity-levels/create`,
+        edit: id => `${appConfig.apiDomaine}/severity-levels/${id}/edit`
+    },
+    HUB: {
+        plan: "HUB",
+        store: `${appConfig.apiDomaine}/severity-levels`,
+        update: id => `${appConfig.apiDomaine}/severity-levels/${id}`,
+        create: `${appConfig.apiDomaine}/severity-levels/create`,
+        edit: id => `${appConfig.apiDomaine}/severity-levels/${id}/edit`,
+    }
+};
 
+const SeverityLevelForm = (props) => {
     const {id} = useParams();
+    if (!id) {
+        if (!verifyPermission(props.userPermissions, 'store-severity-level'))
+            window.location.href = ERROR_401;
+    } else {
+        if (!verifyPermission(props.userPermissions, 'update-severity-level'))
+            window.location.href = ERROR_401;
+    }
+
+    const endpoint = endPointConfig[props.plan];
+
     const defaultData = {
         name: "",
-        time_limit: "",
+        color: "#000000",
         description: "",
     };
 
     const defaultError = {
         name: [],
-        time_limit: [],
+        color: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
@@ -41,9 +73,9 @@ const SeverityLevelForm = () => {
             axios.get(`${appConfig.apiDomaine}/severity-levels/${id}`)
                 .then(response => {
                     const newData = {
-                        name: response.data.name,
-                        time_limit: response.data.time_limit,
-                        description: response.data.description,
+                        name: response.data.name["fr"],
+                        color: response.data.color,
+                        description: response.data.description["fr"],
                     };
                     setData(newData);
                 })
@@ -60,9 +92,9 @@ const SeverityLevelForm = () => {
         setData(newData);
     };
 
-    const onChangeTimeLimit = (e) => {
+    const onChangeColor = (e) => {
         const newData = {...data};
-        newData.time_limit = e.target.value;
+        newData.color = e.target.value;
         setData(newData);
     };
 
@@ -76,7 +108,7 @@ const SeverityLevelForm = () => {
         e.preventDefault();
         setStartRequest(true);
         if (id) {
-            axios.put(`${appConfig.apiDomaine}/severity-levels/${id}`, data)
+            axios.put(endpoint.update(id), data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -89,7 +121,7 @@ const SeverityLevelForm = () => {
                 })
             ;
         } else {
-            axios.post(`${appConfig.apiDomaine}/severity-levels`, data)
+            axios.post(endpoint.store, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -111,8 +143,8 @@ const SeverityLevelForm = () => {
         }
     };
 
-    return (
-        permission === "macroPermission" || permission === "proPermission" || permission === "hubPermission" ? (
+    const printJsx = () => {
+        return (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -180,20 +212,20 @@ const SeverityLevelForm = () => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.time_limit.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimit">Temps limite</label>
+                                            <div className={error.color.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="color">Couleur du niveau de gravité</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
-                                                        id="timeLimit"
-                                                        type="number"
-                                                        className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer la limitation de temps"
-                                                        value={data.time_limit}
-                                                        onChange={(e) => onChangeTimeLimit(e)}
+                                                        id="color"
+                                                        type="color"
+                                                        className={error.color.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez choisir la couleur représentative du niveau de gravité"
+                                                        value={data.color}
+                                                        onChange={(e) => onChangeColor(e)}
                                                     />
                                                     {
-                                                        error.time_limit.length ? (
-                                                            error.time_limit.map((error, index) => (
+                                                        error.color.length ? (
+                                                            error.color.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -258,8 +290,27 @@ const SeverityLevelForm = () => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        );
+    };
+
+    return (
+        id ? (
+            verifyPermission(props.userPermissions, 'update-severity-level') ? (
+                printJsx()
+            ) : ""
+        ) : (
+            verifyPermission(props.userPermissions, 'store-severity-level') ? (
+                printJsx()
+            ) : ""
+        )
     );
 };
 
-export default SeverityLevelForm;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan
+    }
+};
+
+export default connect(mapStateToProps)(SeverityLevelForm);

@@ -61,6 +61,14 @@ export const loadScript = function(src) {
             if (!existingScript("script-login-page"))
                 document.getElementsByTagName('body')[0].appendChild(tag);
             break;
+        case "/assets/plugins/global/plugins.bundle.js":
+            tag.id = "script-global-one";
+            document.getElementsByTagName('body')[0].appendChild(tag);
+            break;
+        case "/assets/js/scripts.bundle.js":
+            tag.id = "script-global-two";
+            document.getElementsByTagName('body')[0].appendChild(tag);
+            break;
         default:
             break;
     }

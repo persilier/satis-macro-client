@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     Link
@@ -19,29 +20,49 @@ import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const SeverityLevel = () => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/severity-levels`,
+        destroy: unitId => `${appConfig.apiDomaine}/severity-levels/${unitId}`,
+    },
+    MACRO: {
+        plan: "MACRO",
+        list: `${appConfig.apiDomaine}/severity-levels`,
+        destroy: unitId => `${appConfig.apiDomaine}/severity-levels/${unitId}`,
+    },
+    HUB: {
+        plan: "HUB",
+        list: `${appConfig.apiDomaine}/severity-levels`,
+        destroy: unitId => `${appConfig.apiDomaine}/severity-levels/${unitId}`,
+    }
+};
+
+const SeverityLevel = (props) => {
+    if (!verifyPermission(props.userPermissions, 'list-severity-level'))
         window.location.href = ERROR_401;
+
+    const endPoint = endPointConfig[props.plan];
 
     const [load, setLoad] = useState(true);
     const [severityLevels, setSeverityLevels] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/severity-levels`)
+        axios.get(endPoint.list)
             .then(response => {
                 setLoad(false);
-                setNumberPage(forceRound(response.data.data.length/numberPerPage));
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setSeverityLevels(response.data.data);
+                setNumberPage(forceRound(response.data.length/numberPerPage));
+                setShowList(response.data.slice(0, numberPerPage));
+                setSeverityLevels(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -112,7 +133,7 @@ const SeverityLevel = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/severity-levels/${severityLevelId}`)
+                    axios.delete(endPoint.destroy(severityLevelId))
                         .then(response => {
                             const newSeverityLevels = [...severityLevels];
                             newSeverityLevels.splice(index, 1);
@@ -160,33 +181,41 @@ const SeverityLevel = () => {
     const printBodyTable = (severityLevel, index) => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                <td>{severityLevel.name}</td>
-                <td>{severityLevel.time_limit}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description}</td>
+                <td>{severityLevel.name["fr"]}</td>
+                <td><div className="p-2" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>{severityLevel.color} {severityLevel.color === "#ffffff" ? " Blanc" : ""}</div></td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description["fr"]}</td>
                 <td>
                     <Link to="/settings/severities/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/severities/${severityLevel.id}/edit`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteSeverityLevel(severityLevel.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+                    {
+                        verifyPermission(props.userPermissions, 'update-severity-level') ? (
+                            <Link to={`/settings/severities/${severityLevel.id}/edit`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : ""
+                    }
+                    {
+                        verifyPermission(props.userPermissions, 'destroy-severity-level') ? (
+                            <button
+                                onClick={(e) => deleteSeverityLevel(severityLevel.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Supprimer">
+                                <i className="la la-trash"/>
+                            </button>
+                        ) : ""
+                    }
                 </td>
             </tr>
         );
     };
 
     return (
-        permission === "macroPermission" || permission === "proPermission" || permission === "hubPermission" ? (
+        verifyPermission(props.userPermissions, 'list-severity-level') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -211,6 +240,7 @@ const SeverityLevel = () => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={"store-severity-level"}
                             title={"Niveau de gravité"}
                             addText={"Ajouter un niveau de gravité"}
                             addLink={"/settings/severities/add"}
@@ -247,7 +277,7 @@ const SeverityLevel = () => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Limite de temps
+                                                            aria-label="Country: activate to sort column ascending">Couleur
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "300px" }}
@@ -278,7 +308,7 @@ const SeverityLevel = () => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom du niveau</th>
-                                                        <th rowSpan="1" colSpan="1">Limite de temps</th>
+                                                        <th rowSpan="1" colSpan="1">Couleur</th>
                                                         <th rowSpan="1" colSpan="1">Description</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
@@ -320,4 +350,11 @@ const SeverityLevel = () => {
     );
 };
 
-export default SeverityLevel;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan
+    };
+};
+
+export default connect(mapStateToProps)(SeverityLevel);

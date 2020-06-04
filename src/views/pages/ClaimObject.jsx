@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {connect} from "react-redux";
 import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
@@ -17,12 +17,12 @@ import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimObject = (props) => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
+    if (!verifyPermission(props.userPermissions, 'list-claim-object'))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -37,9 +37,9 @@ const ClaimObject = (props) => {
         axios.get(`${appConfig.apiDomaine}/claim-objects`)
             .then(response => {
                 setLoad(false);
-                setNumberPage(forceRound(response.data.data.length/numberPerPage));
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setClaimObjects(response.data.data);
+                setNumberPage(forceRound(response.data.length/numberPerPage));
+                setShowList(response.data.slice(0, numberPerPage));
+                setClaimObjects(response.data);
             })
             .catch(error => {
                 setLoad(false);
@@ -154,35 +154,51 @@ const ClaimObject = (props) => {
     const printBodyTable = (claimObject, index) => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
-                <td>{claimObject.name}</td>
-                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description}</td>
+                <td>{claimObject.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name[props.language]}</td>
                 <td>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
-                <td>{claimObject.severity_level ? claimObject.severity_level.name[props.language] : ""}</td>
+                <td>
+                    {
+                        claimObject.severity_level ? (
+                            <div className="p-2" style={{backgroundColor: claimObject.severity_level.color, color: claimObject.severity_level.color === "#ffffff" ? "black" : "white"}}>
+                                {claimObject.severity_level.name[props.language]} {claimObject.severity_level.color === "#ffffff" ? " Blanc" : "" }
+                            </div>
+                        ) : ""
+                    }
+                </td>
                 <td>
                     <Link to="/settings/claim_objects/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/claim_objects/${claimObject.id}/edit`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteClaimObject(claimObject.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+                    {
+                        verifyPermission(props.userPermissions, 'update-claim-category') ? (
+                            <Link to={`/settings/claim_objects/${claimObject.id}/edit`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : ""
+                    }
+                    {
+                        verifyPermission(props.userPermissions, 'destroy-claim-category') ? (
+                            <button
+                                onClick={(e) => deleteClaimObject(claimObject.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Supprimer">
+                                <i className="la la-trash"/>
+                            </button>
+                        ) : ""
+                    }
                 </td>
             </tr>
         );
     };
 
     return (
-        permission === "macroPermission" || permission === "proPermission" || permission === "hubPermission" ? (
+        verifyPermission(props.userPermissions, 'list-claim-category') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -207,6 +223,7 @@ const ClaimObject = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={"store-claim-object"}
                             title={"Objet de plainte"}
                             addText={"Ajouter un objet de plainte"}
                             addLink={"/settings/claim_objects/add"}
@@ -327,6 +344,7 @@ const ClaimObject = (props) => {
 
 const mapStateToProps = (state) => {
     return {
+        userPermissions: state.user.user.permissions,
         language: state.language.languageSelected
     }
 };

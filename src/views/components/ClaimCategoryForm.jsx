@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     useParams,
     Link
 } from "react-router-dom";
-import {connect} from "react-redux";
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
@@ -13,30 +13,27 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import Select from "react-select";
-import {formatSelectOption} from "../../helpers/function";
 import FormInformation from "./FormInformation";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
 const ClaimCategoryForm = (props) => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "hubPermission" && permission !== "proPermission")
-        window.location.href = ERROR_401;
-
     const {id} = useParams();
-    const [severityLevels, setSeverityLevels] = useState([]);
-    const [severityLevel, setSeverityLevel] = useState({});
+    if (id) {
+        if (!verifyPermission(props.userPermissions, 'update-claim-category'))
+            window.location.href = ERROR_401;
+    } else {
+        if (!verifyPermission(props.userPermissions, 'store-claim-category'))
+            window.location.href = ERROR_401;
+    }
+
     const defaultData = {
         name: "",
         description: "",
-        severity_levels_id: "",
-        time_limit: "",
     };
     const defaultError = {
         name: [],
         description: [],
-        severity_levels_id: [],
-        time_limit: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -44,29 +41,13 @@ const ClaimCategoryForm = (props) => {
 
     useEffect(() => {
         if (id) {
-            axios.get(`${appConfig.apiDomaine}/claim-categories/${id}/edit`)
+            axios.get(`${appConfig.apiDomaine}/claim-categories/${id}`)
                 .then(response => {
                     const newData = {
-                        name: response.data.claimCategory.name.fr,
-                        description: response.data.claimCategory.description.fr,
-                        severity_levels_id: response.data.claimCategory.severity_levels_id ? response.data.claimCategory.severity_levels_id : "",
-                        time_limit: response.data.claimCategory.time_limit ? response.data.claimCategory.time_limit : 0
+                        name: response.data.name.fr,
+                        description: response.data.description.fr,
                     };
-                    setSeverityLevel({
-                        value: response.data.claimCategory.severity_levels_id ? response.data.claimCategory.severity_levels_id : "",
-                        label: response.data.claimCategory.severity_level ? response.data.claimCategory.severity_level.name[props.language.languageSelected] : ""
-                    });
-                    setSeverityLevels(response.data.severityLevels);
                     setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
-        } else {
-            axios.get(`${appConfig.apiDomaine}/severity-levels`)
-                .then(response => {
-                    setSeverityLevels(response.data.data);
                 })
                 .catch(error => {
                     console.log("Something is wrong");
@@ -78,19 +59,6 @@ const ClaimCategoryForm = (props) => {
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeTimeLimit = (e) => {
-        const newData = {...data};
-        newData.time_limit = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeSeverityLevel = (selected) => {
-        const newData = {...data};
-        newData.severity_levels_id = selected.value;
-        setSeverityLevel(selected);
         setData(newData);
     };
 
@@ -133,8 +101,8 @@ const ClaimCategoryForm = (props) => {
         }
     };
 
-    return (
-        permission === "macroPermission" || permission === "proPermission" || permission === "hubPermission" ? (
+    const printJsx = () => {
+        return (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -202,49 +170,6 @@ const ClaimCategoryForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Limitation de temps</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        id="timeLimite"
-                                                        type="number"
-                                                        className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer la limitation de temps"
-                                                        value={data.time_limit}
-                                                        onChange={(e) => onChangeTimeLimit(e)}
-                                                    />
-                                                    {
-                                                        error.time_limit.length ? (
-                                                            error.time_limit.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
-                                            <div className={error.severity_levels_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Niveau de gravité</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Select
-                                                        value={severityLevel}
-                                                        onChange={onChangeSeverityLevel}
-                                                        options={formatSelectOption(severityLevels, "name", "fr")}
-                                                    />
-                                                    {
-                                                        error.severity_levels_id.length ? (
-                                                            error.severity_levels_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
                                                 <div className="col-lg-9 col-xl-6">
@@ -300,12 +225,25 @@ const ClaimCategoryForm = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        );
+    };
+
+    return (
+        id ? (
+            verifyPermission(props.userPermissions, 'update-claim-category') ? (
+                printJsx()
+            ) : ""
+        ) : (
+            verifyPermission(props.userPermissions, 'store-claim-category') ? (
+                printJsx()
+            ) : ""
+        )
     );
 };
 
 const mapDispatchToProps = (state) => {
     return {
+        userPermissions: state.user.user.permissions,
         language: state.language
     }
 };

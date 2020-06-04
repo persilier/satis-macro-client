@@ -163,6 +163,7 @@ const UnitType = (props) => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
                 <td>{unitType.name["fr"]}</td>
+                <td>{unitType.parent ? unitType.parent.name["fr"] : ""}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description["fr"]}</td>
                 <td>
                     <Link to="/settings/unit_type/detail"
@@ -256,6 +257,10 @@ const UnitType = (props) => {
                                                             aria-label="Country: activate to sort column ascending">Nom
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Unité Parent
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "300px" }}
                                                             aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
@@ -284,6 +289,7 @@ const UnitType = (props) => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
+                                                        <th rowSpan="1" colSpan="1">Unité Parent</th>
                                                         <th rowSpan="1" colSpan="1">Description</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>

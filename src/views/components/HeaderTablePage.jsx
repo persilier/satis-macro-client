@@ -4,6 +4,18 @@ import {connect} from "react-redux";
 import {verifyPermission} from "../../helpers/permission";
 
 const HeaderTablePage = (props) => {
+    let permission = false;
+    if (Array.isArray(props.addPermission)) {
+        for (let i = 0; i < props.addPermission.length; i++) {
+            if (verifyPermission(props.userPermissions, props.addPermission[i])) {
+                permission = true;
+                break;
+            }
+        }
+    }
+    else
+        permission = verifyPermission(props.userPermissions, props.addPermission);
+
     return (
         <div className="kt-portlet__head kt-portlet__head--lg">
             <div className="kt-portlet__head-label">
@@ -17,7 +29,7 @@ const HeaderTablePage = (props) => {
                 </h3>
             </div>
             {
-                verifyPermission(props.userPermissions, props.addPermission) ? (
+                permission ? (
                     <div className="kt-portlet__head-toolbar">
                         <div className="kt-portlet__head-wrapper">
                             &nbsp;

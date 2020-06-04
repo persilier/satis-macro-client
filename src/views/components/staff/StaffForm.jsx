@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     useParams,
@@ -15,18 +16,67 @@ import {
 } from "../../../config/toastConfig";
 import {ToastBottomEnd} from "../Toast";
 import {formatUnits} from "../../../helpers/unit";
-import {formatPositions} from "../../../helpers/position";
 import './react-tagsinput.css';
 import {formatSelectOption} from "../../../helpers/function";
 import {formatInstitutions} from "../../../helpers/institution";
 import appConfig from "../../../config/appConfig";
 import ConfirmSaveForm from "./ConfirmSaveForm";
 import {ERROR_401} from "../../../config/errorPage";
+import {verifyPermission} from "../../../helpers/permission";
+import {AUTH_TOKEN} from "../../../constants/token";
+import FormInformation from "../FormInformation";
 
-const StaffForm = () => {
-    const permission = "macroPermission";
-    if (permission !== "macroPermission" && permission !== "proPermission")
-        window.location.href = ERROR_401;
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        store: `${appConfig.apiDomaine}/my/staff`,
+        update: id => `${appConfig.apiDomaine}/my/staff/${id}`,
+        create: `${appConfig.apiDomaine}/my/staff/create`,
+        edit: id => `${appConfig.apiDomaine}/my/staff/${id}/edit`
+    },
+    MACRO: {
+        holding: {
+            store: `${appConfig.apiDomaine}/any/staff`,
+            update: id => `${appConfig.apiDomaine}/any/staff/${id}`,
+            create: `${appConfig.apiDomaine}/any/staff/create`,
+            edit: id => `${appConfig.apiDomaine}/any/staff/${id}/edit`
+        },
+        filial: {
+            store: `${appConfig.apiDomaine}/my/staff`,
+            update: id => `${appConfig.apiDomaine}/my/staff/${id}`,
+            create: `${appConfig.apiDomaine}/my/staff/create`,
+            edit: id => `${appConfig.apiDomaine}/my/staff/${id}/edit`
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        store: `${appConfig.apiDomaine}/maybe/no/staff`,
+        update: id => `${appConfig.apiDomaine}/maybe/no/staff/${id}`,
+        create: `${appConfig.apiDomaine}/maybe/no/staff/create`,
+        edit: id => `${appConfig.apiDomaine}/maybe/no/staff/${id}/edit`
+    }
+};
+
+const StaffForm = (props) => {
+    const {id} = useParams();
+    if (id) {
+        if (!(verifyPermission(props.userPermissions, "update-staff-from-any-unit") || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
+            window.location.href = ERROR_401;
+    } else {
+        if (!(verifyPermission(props.userPermissions, "store-staff-from-any-unit") || verifyPermission(props.userPermissions, 'store-staff-from-my-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit')))
+            window.location.href = ERROR_401;
+    }
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'update-my-unit'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     const [units, setUnits] = useState([]);
     const [positions, setPositions] = useState([]);
@@ -36,7 +86,6 @@ const StaffForm = () => {
     const [unit, setUnit] = useState({});
     const [position, setPosition] = useState({});
 
-    const {id} = useParams();
     const defaultData = {
         firstname: "",
         lastname: "",
@@ -45,6 +94,7 @@ const StaffForm = () => {
         email: [],
         ville: "",
         unit_id: "",
+        institution_id: "",
         position_id: "",
     };
     const defaultError = {
@@ -56,6 +106,7 @@ const StaffForm = () => {
         email: [],
         ville: [],
         unit_id: [],
+        institution_id: [],
         position_id: [],
     };
     const [data, setData] = useState(defaultData);
@@ -64,7 +115,7 @@ const StaffForm = () => {
 
     useEffect(() => {
         if (id) {
-            axios.get(`${appConfig.apiDomaine}/staff/${id}/edit`)
+            axios.get(endPoint.edit(id))
                 .then(response => {
                     console.log(response.data);
                     const newData = {
@@ -76,12 +127,22 @@ const StaffForm = () => {
                         ville: response.data.staff.identite.ville === null ? "" : response.data.staff.identite.ville,
                         unit_id: response.data.staff.unit_id,
                         position_id: response.data.staff.position_id,
+                        institution_id: response.data.staff.institution_id,
                     };
-                    setUnits(response.data.staff.unit.institution.units);
-                    setPositions(response.data.staff.unit.institution.positions);
-                    setInstitutions(response.data.institutions);
-                    setInstitution({value: response.data.staff.unit.institution.id, label: response.data.staff.unit.institution.name});
+                    setPositions(response.data.positions);
+                    if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')) {
+                        setInstitutions(response.data.institutions);
+                        setInstitution({value: response.data.staff.institution.id, label: response.data.staff.institution.name});
+                    }
                     setPosition({value: response.data.staff.position.id, label: response.data.staff.position.name["fr"]});
+
+                    if (verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit'))
+                        setUnits(response.data.units);
+                    else if (verifyPermission(props.userPermissions, 'update-staff-from-my-unit'))
+                        setUnits(response.data.units);
+                    else if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit'))
+                        setUnits(response.data.staff.institution.units);
+
                     setUnit({value: response.data.staff.unit.id, label: response.data.staff.unit.name["fr"]});
                     setData(newData);
                 })
@@ -90,11 +151,12 @@ const StaffForm = () => {
                 })
             ;
         } else {
-            axios.get(`${appConfig.apiDomaine}/institutions`)
+            axios.get(endPoint.create)
                 .then(response => {
-                    const newData = {...data};
-                    setInstitutions(formatInstitutions(response.data.data));
-                    setData(newData);
+                    if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit'))
+                        setInstitutions(formatInstitutions(response.data.institutions));
+                    setUnits(response.data.units ? response.data.units : []);
+                    setPositions(response.data.positions);
                 })
                 .catch(error => {
                     console.log("something is wrong");
@@ -153,35 +215,36 @@ const StaffForm = () => {
         setData(newData);
     };
 
-    const resetUnitsAndPositions = () => {
-        const newData = {...data};
-        newData.position_id = "";
-        newData.unit_id = "";
-        setUnit({});
-        setPosition({});
-        setData(newData);
-    };
-
     const onChangeInstitution = (selected) => {
+        const newData = {...data};
+        newData.institution_id = selected.value;
         setInstitution(selected);
-        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/positions-units`)
-            .then(response => {
-                resetUnitsAndPositions();
-                setUnits(formatUnits(response.data.units));
-                setPositions(formatPositions(response.data.positions));
-            })
-            .catch(errorRequest => {
-                console.log(errorRequest.response.data);
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
-            })
-        ;
+
+        if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit')) {
+            axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/units`)
+                .then(response => {
+                    newData.unit_id = "";
+                    setUnit({});
+                    setUnits(formatUnits(response.data.units));
+                })
+                .catch(errorRequest => {
+                    console.log(errorRequest.response.data);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
+                })
+            ;
+        }
+        setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
+        let newData = data;
+        if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
+            delete newData.institution_id;
+
         if (id) {
-            axios.put(`${appConfig.apiDomaine}/staff/${id}`, data)
+            axios.put(endPoint.update(id), newData)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -189,9 +252,11 @@ const StaffForm = () => {
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
-                    if (errorRequest.response.data.staff) {
+                    if (errorRequest.response.data.error.staff) {
+                        // Existing staff
+                        setStartRequest(false);
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                            errorRequest.response.data.staff.identite.lastname+" "+errorRequest.response.data.staff.identite.firstname+": "+errorRequest.response.data.message)
+                            errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
                         );
                     } else {
                         setError({...defaultError, ...errorRequest.response.data.error});
@@ -200,7 +265,7 @@ const StaffForm = () => {
                 })
             ;
         } else {
-            axios.post(`${appConfig.apiDomaine}/staff`, data)
+            axios.post(endPoint.store, newData)
                 .then(response => {
                     setStartRequest(false);
                     setInstitution({});
@@ -211,9 +276,12 @@ const StaffForm = () => {
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(async (errorRequest) => {
-                    if (errorRequest.response.data.identite)
+                    console.log(errorRequest.response.data);
+                    if (errorRequest.response.data.error.identite)
                     {
-                        await setFoundData(errorRequest.response.data);
+                        // Existing entity
+                        console.log("Found data");
+                        await setFoundData(errorRequest.response.data.error);
                         await document.getElementById("confirmSaveForm").click();
                         await setInstitution({});
                         await setUnit({});
@@ -221,12 +289,14 @@ const StaffForm = () => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                    } else if (errorRequest.response.data.staff) {
+                    } else if (errorRequest.response.data.error.staff) {
+                        // Existing staff
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                            errorRequest.response.data.staff.identite.lastname+" "+errorRequest.response.data.staff.identite.firstname+": "+errorRequest.response.data.message)
+                            errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
                         );
                     } else {
+                        // Validation errors
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
@@ -236,8 +306,8 @@ const StaffForm = () => {
         }
     };
 
-    return (
-        permission === "macroPermission" || permission === "proPermission" ? (
+    const printJsx = () => {
+        return (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -279,16 +349,9 @@ const StaffForm = () => {
 
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
-                                        <div className="form-group form-group-last">
-                                            <div className="alert alert-secondary" role="alert">
-                                                <div className="alert-icon">
-                                                    <i className="flaticon-warning kt-font-brand"/>
-                                                </div>
-                                                <div className="alert-text">
-                                                    The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes.
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <FormInformation
+                                            information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}
+                                        />
 
                                         <div className="kt-section kt-section--first">
                                             <div className="kt-section__body">
@@ -419,15 +482,48 @@ const StaffForm = () => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations professionnelles:</h3>
                                                 <div className={"form-group"}>
-                                                    <label htmlFor="institution">Institution</label>
-                                                    <Select
-                                                        value={institution}
-                                                        onChange={onChangeInstitution}
-                                                        options={formatSelectOption(formatInstitutions(institutions), "name", false)}
-                                                    />
+                                                    <div className={"form-group"}>
+                                                        <label htmlFor="position">Position</label>
+                                                        <Select
+                                                            value={position}
+                                                            onChange={onChangePosition}
+                                                            options={formatSelectOption(positions, "name", "fr")}
+                                                        />
+                                                        {
+                                                            error.position_id.length ? (
+                                                                error.position_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
                                                 </div>
 
                                                 <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
+                                                            <div className="col">
+                                                                <label htmlFor="institution">Institution</label>
+                                                                <Select
+                                                                    value={institution}
+                                                                    onChange={onChangeInstitution}
+                                                                    options={formatSelectOption(formatInstitutions(institutions), "name", false)}
+                                                                />
+                                                                {
+                                                                    error.institution_id.length ? (
+                                                                        error.institution_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        ) : ""
+                                                    }
+
                                                     <div className="col">
                                                         <label htmlFor="unit">Unité</label>
                                                         <Select
@@ -438,24 +534,6 @@ const StaffForm = () => {
                                                         {
                                                             error.unit_id.length ? (
                                                                 error.unit_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-
-                                                    <div className="col">
-                                                        <label htmlFor="position">Position</label>
-                                                        <Select
-                                                            value={position}
-                                                            onChange={onChangePosition}
-                                                            options={formatSelectOption(positions, "name", "fr")}
-                                                        />
-                                                        {
-                                                            error.position_id.length ? (
-                                                                error.position_id.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -499,6 +577,8 @@ const StaffForm = () => {
                                 {
                                     foundData.identite ? (
                                         <ConfirmSaveForm
+                                            plan={props.plan}
+                                            userPermissions={props.userPermissions}
                                             message={foundData.message}
                                             unit={unit}
                                             institution={institution}
@@ -509,7 +589,7 @@ const StaffForm = () => {
                                             institutions={institutions}
                                             unit_id={data.unit_id}
                                             position_id={data.position_id}
-                                            resetFroundData={() => setFoundData({})}
+                                            resetFoundData={() => setFoundData({})}
                                         />
                                     ) : ""
                                 }
@@ -518,8 +598,27 @@ const StaffForm = () => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        );
+    };
+
+    return (
+        id ? (
+            verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
+                printJsx()
+            ) : ""
+        ) : (
+            verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-my-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') ? (
+                printJsx()
+            ) : ""
+        )
     );
 };
 
-export default StaffForm;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan
+    };
+};
+
+export default connect(mapStateToProps)(StaffForm);

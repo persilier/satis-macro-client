@@ -41,7 +41,6 @@ const LoginPage = (props) => {
                 }).then(response => {
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     const user = response.data;
-                    const data = {token: token, user: user};
                     localStorage.setItem("userData", JSON.stringify(response.data));
                     localStorage.setItem('token', token);
                     window.location.href = "/dashboard";
