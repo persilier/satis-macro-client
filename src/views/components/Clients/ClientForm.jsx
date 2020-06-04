@@ -154,7 +154,6 @@ const EditClients = (props) => {
 
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
-                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
                 })
             ;

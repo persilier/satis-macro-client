@@ -1,43 +1,33 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
-    useParams,
     Link
 } from "react-router-dom";
-import {ToastBottomEnd} from "../Toast";
+import {ToastBottomEnd} from "../../views/components/Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig,
-} from "../../../config/toastConfig";
-import appConfig from "../../../config/appConfig";
-import Select from "react-select";
-import {formatSelectOption} from "../../../helpers/function";
-import {ERROR_401} from "../../../config/errorPage";
-import {verifyPermission} from "../../../helpers/permission";
+} from "../../config/toastConfig";
+import appConfig from "../../config/appConfig";
+import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 
-const InstitutionForm = (props) => {
-    const {id} = useParams();
-    if (!id) {
-        if (!verifyPermission(props.userPermissions, 'store-any-institution'))
-            window.location.href = ERROR_401;
-    } else {
-        if (!verifyPermission(props.userPermissions, 'update-any-institution'))
-            window.location.href = ERROR_401;
-    }
+const FilialeInstitutionForm = (props) => {
+
+    if (!verifyPermission(props.userPermissions, 'update-my-institution'))
+        window.location.href = ERROR_401;
+
     const defaultData = {
-        institution_type_id: "",
         name: "",
         acronyme: "",
         iso_code: "",
         logo: ""
     };
     const defaultError = {
-        institution_type_id: [],
         name: [],
         acronyme: [],
         iso_code: [],
@@ -47,50 +37,25 @@ const InstitutionForm = (props) => {
     const [logo, setLogo] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [typeInstitution, setTypeInstitution] = useState([]);
-    const [typeInstitutionData, setTypeInstitutionData] = useState([]);
 
     useEffect(() => {
-        if (verifyPermission(props.userPermissions, 'store-any-institution')) {
-            axios.get(appConfig.apiDomaine + '/any/institutions/create')
-                .then(response => {
-                    setTypeInstitutionData(response.data.institutionTypes)
-                });
-        }
 
-        if (id) {
-            axios.get(appConfig.apiDomaine + `/any/institutions/${id}`)
-                .then(response => {
-                    console.log(response, "GET_INSTITUTION");
-                    const newInstitution = {
-                        institution_type_id: (response.data.institution_type_id !== null) ? (response.data.institution_type.id) : '',
-                        name: response.data.name,
-                        acronyme: response.data.acronyme,
-                        iso_code: response.data.iso_code,
-                        logo: response.data.logo
-                    };
-                    setData(newInstitution);
-                    if (response.data.institution_type_id !== null) {
-                        setTypeInstitution({
-                            value: response.data.institution_type.id,
-                            label: response.data.institution_type.name
-                        });
-                    }
-                });
-
-        }
+        axios.get(appConfig.apiDomaine + `/my/institutions`)
+            .then(response => {
+                const newInstitution = {
+                    name: response.data.name,
+                    acronyme: response.data.acronyme,
+                    iso_code: response.data.iso_code,
+                    logo: response.data.logo
+                };
+                setData(newInstitution);
+            });
 
     }, []);
 
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
-        setData(newData);
-    };
-    const onChangeTypeInstituion = (selected) => {
-        const newData = {...data};
-        newData.institution_type_id = selected.value;
-        setTypeInstitution(selected);
         setData(newData);
     };
 
@@ -117,7 +82,9 @@ const InstitutionForm = (props) => {
             console.log(image, 'image');
             image.src = e.target.result;
         };
+        if(newData.logo){
         reader.readAsDataURL(newData.logo);
+        }
     };
 
     const onSubmit = (e) => {
@@ -127,39 +94,23 @@ const InstitutionForm = (props) => {
             formData.append('logo', data.logo);
         }
         formData.set('name', data.name);
-        formData.set('institution_type_id', data.institution_type_id);
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
         setStartRequest(true);
-        if (id) {
-            formData.append("_method", "put");
-            axios.post(appConfig.apiDomaine + `/any/institutions/${id}`, formData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(appConfig.apiDomaine + `/any/institutions`, formData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                })
-            ;
-        }
+
+        formData.append("_method", "put");
+        axios.post(appConfig.apiDomaine + `/my/institutions`, formData)
+            .then(response => {
+                setStartRequest(false);
+                setError(defaultError);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+            })
+            .catch(error => {
+                setStartRequest(false);
+                setError({...defaultError});
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+            })
+        ;
     };
     const printJsx = () => {
         return (
@@ -181,7 +132,7 @@ const InstitutionForm = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        "Modification"
                                     }
                                 </a>
                             </div>
@@ -196,10 +147,7 @@ const InstitutionForm = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            {
-                                                id ?
-                                                    "Modification d'une institution" : "Ajout d'une institution"
-                                            }
+                                            Modification d'une institution
                                         </h3>
                                     </div>
                                 </div>
@@ -220,32 +168,17 @@ const InstitutionForm = (props) => {
                                                                              id="kt_user_add_avatar">
                                                                             <div className="kt-avatar__holder"
                                                                                  style={{textAlign: 'center'}}>
-                                                                                {
-                                                                                    id ? (
-                                                                                        <img
-                                                                                            id="Image1"
-                                                                                            // className="kt-avatar__holder"
-                                                                                            src={data.logo}
-                                                                                            alt="logo"
-                                                                                            style={{
-                                                                                                maxWidth: "115px",
-                                                                                                maxHeight: "115px",
-                                                                                                textAlign: 'center'
-                                                                                            }}
-                                                                                        />
-                                                                                    ) : (
-                                                                                        <img
-                                                                                            id="Image1"
-                                                                                            // className="kt-avatar__holder"
-                                                                                            src="/assets/media/users/Icon.png"
-                                                                                            alt="logo"
-                                                                                            style={{
-                                                                                                maxWidth: "115px",
-                                                                                                maxHeight: "115px"
-                                                                                            }}
-                                                                                        />
-                                                                                    )
-                                                                                }
+
+                                                                                <img
+                                                                                    id="Image1"
+                                                                                    src={data.logo}
+                                                                                    alt="logo"
+                                                                                    style={{
+                                                                                        maxWidth: "115px",
+                                                                                        maxHeight: "115px",
+                                                                                        textAlign: 'center'
+                                                                                    }}
+                                                                                />
 
                                                                             </div>
                                                                             <label className="kt-avatar__upload"
@@ -265,34 +198,6 @@ const InstitutionForm = (props) => {
                                                                             <i className="fa fa-times"></i>
                                                                         </span>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div
-                                                                    className={error.institution_type_id.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Type</label>
-                                                                    <div className="col-lg-9 col-xl-6">
-                                                                        {typeInstitutionData ? (
-                                                                            <Select
-                                                                                value={typeInstitution}
-                                                                                onChange={onChangeTypeInstituion}
-                                                                                options={formatSelectOption(typeInstitutionData, 'name', false)}
-                                                                            />
-                                                                        ) : ''
-                                                                        }
-
-
-                                                                        {
-                                                                            error.institution_type_id.length ? (
-                                                                                error.institution_type_id.map((error, index) => (
-                                                                                    <div key={index}
-                                                                                         className="invalid-feedback">
-                                                                                        {error}
-                                                                                    </div>
-                                                                                ))
-                                                                            ) : ""
-                                                                        }
                                                                     </div>
                                                                 </div>
 
@@ -390,20 +295,11 @@ const InstitutionForm = (props) => {
                                                                             </button>
                                                                         )
                                                                     }
-                                                                    {
-                                                                        !startRequest ? (
-                                                                            <Link to="/settings/institution"
-                                                                                  className="btn btn-secondary mx-2">
-                                                                                Quitter
-                                                                            </Link>
-                                                                        ) : (
-                                                                            <Link to="/settings/institution"
-                                                                                  className="btn btn-secondary mx-2"
-                                                                                  disabled>
-                                                                                Quitter
-                                                                            </Link>
-                                                                        )
-                                                                    }
+
+                                                                    <Link to={'/setting/dashboard'}
+                                                                        className="btn btn-secondary mx-2">
+                                                                        Quitter
+                                                                    </Link>
 
                                                                 </div>
                                                             </div>
@@ -423,13 +319,9 @@ const InstitutionForm = (props) => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-any-institution') ? (
-                printJsx()
-            ) : ""
-            : verifyPermission(props.userPermissions, 'store-any-institution') ? (
-                printJsx()
-            ) : ""
+        verifyPermission(props.userPermissions, 'update-my-institution') ?
+            printJsx()
+            : ""
     );
 
 };
@@ -439,4 +331,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(InstitutionForm);
+export default connect(mapStateToProps)(FilialeInstitutionForm);
