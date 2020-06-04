@@ -15,10 +15,19 @@ import EmptyTable from "../components/EmptyTable";
 import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
+import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
+import {connect} from "react-redux";
+
+axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const CategoryClient = () => {
+const CategoryClient = (props) => {
+    if (!verifyPermission(props.userPermissions, "list-category-client"))
+        window.location.href = ERROR_401;
+
     const [load, setLoad] = useState(true);
     const [categoryClient, setCategoryClient] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
@@ -30,10 +39,11 @@ const CategoryClient = () => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/category-clients")
             .then(response => {
+                console.log(response.data, 'RESPONSE');
                 setLoad(false);
-                setCategoryClient(response.data.data);
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.data.length / numberPerPage));
+                setCategoryClient(response.data);
+                setShowList(response.data.slice(0, numberPerPage));
+                setNumberPage(forceRound(response.data.length / numberPerPage));
             })
             .catch(error => {
                 setLoad(false);
@@ -106,7 +116,6 @@ const CategoryClient = () => {
                 if (result.value) {
                     axios.delete(appConfig.apiDomaine + `/category-clients/${categoryClientId}`)
                         .then(response => {
-                            console.log(response, "OK");
                             const newCategory = [...categoryClient];
                             newCategory.splice(index, 1);
                             setCategoryClient(newCategory);
@@ -150,171 +159,198 @@ const CategoryClient = () => {
             <tr className="d-flex justify-content-center align-content-center odd"
                 key={index} role="row" className="odd">
 
-                <td>{category.name}</td>
-                <td>{category.description}</td>
-                <td>
+                <td>{category.name.fr}</td>
+                <td>{category.description.fr}</td>
+                <td style={{textAlign:'center'}}>
                     <Link to="/settings/clients/category/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link
-                        to={`/settings/clients/category/edit/${category.id}`}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteCategoryClient(category.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+
+                    {
+                        verifyPermission(props.userPermissions, 'show-category-client') ?
+                            <Link
+                                to={`/settings/clients/category/edit/${category.id}`}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                            : ""
+                    }
+
+                    {verifyPermission(props.userPermissions, "destroy-category-client") ?
+                        <button
+                            onClick={(e) => deleteCategoryClient(category.id, index)}
+                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                            title="Supprimer">
+                            <i className="la la-trash"/>
+                        </button>
+                        : ""
+                    }
                 </td>
             </tr>
         )
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                Client
-                            </a>
+        verifyPermission(props.userPermissions, "list-category-client") ? (
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                Paramètres
+                            </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Categorie Client
+                                <a href="" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link">
+                                    Client
                                 </a>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link">
+                                        Categorie Client
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <InfirmationTable
+                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
 
-                <div className="kt-portlet">
+                    <div className="kt-portlet">
 
-                    <HeaderTablePage
-                        title={"Catégorie Client"}
-                        addText={"Ajouter une Catégorie Client"}
-                        addLink={"/settings/clients/category/add"}
-                    />
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
-                            <div className="kt-portlet__body">
-                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                    <div className="row">
-                                        <div className="col-sm-6 text-left">
-                                            <div id="kt_table_1_filter" className="dataTables_filter">
-                                                <label>
-                                                    Search:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)}
-                                                           className="form-control form-control-sm" placeholder=""
-                                                           aria-controls="kt_table_1"/>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <ExportButton/>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12">
-                                            <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                style={{width: "952px"}}>
-                                                <thead>
-                                                <tr role="row">
-
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Nom
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Description
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                        aria-label="Type: activate to sort column ascending">
-                                                        Action
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {
-                                                    categoryClient.length ? (
-                                                        search ? (
-                                                            categoryClient.map((category, index) => (
-                                                                printBodyTable(category, index)
-                                                            ))
-                                                        ) : (
-                                                            showList.map((category, index) => (
-                                                                printBodyTable(category, index)
-                                                            ))
-                                                        )
-                                                    ) : (
-                                                        <EmptyTable/>
-                                                    )
-                                                }
-                                                </tbody>
-                                                <tfoot>
-                                                <tr>
-
-                                                </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12 col-md-5">
-                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {categoryClient.length} données
-                                            </div>
-                                        </div>
-                                        {
-                                            !search ? (
-                                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                    <Pagination
-                                                        numberPerPage={numberPerPage}
-                                                        onChangeNumberPerPage={onChangeNumberPerPage}
-                                                        activeNumberPage={activeNumberPage}
-                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                        pages={pages}
-                                                        onClickPage={(e, number) => onClickPage(e, number)}
-                                                        numberPage={numberPage}
-                                                        onClickNextPage={e => onClickNextPage(e)}
-                                                    />
+                        <HeaderTablePage
+                            title={"Catégorie Client"}
+                            addText={"Ajouter une Catégorie Client"}
+                            addLink={"/settings/clients/category/add"}
+                        />
+                        {
+                            load ? (
+                                <LoadingTable/>
+                            ) : (
+                                <div className="kt-portlet__body">
+                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                        <div className="row">
+                                            <div className="col-sm-6 text-left">
+                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                                    <label>
+                                                        Search:
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control form-control-sm"
+                                                               placeholder=""
+                                                               aria-controls="kt_table_1"/>
+                                                    </label>
                                                 </div>
-                                            ) : ""
-                                        }
+                                            </div>
+                                            <ExportButton/>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12">
+                                                <table
+                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                    style={{width: "952px"}}>
+                                                    <thead>
+                                                    <tr role="row">
+
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "150px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Nom
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "150px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Description
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Type: activate to sort column ascending">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {
+                                                        categoryClient.length ? (
+                                                            search ? (
+                                                                categoryClient.map((category, index) => (
+                                                                    printBodyTable(category, index)
+                                                                ))
+                                                            ) : (
+                                                                showList.map((category, index) => (
+                                                                    printBodyTable(category, index)
+                                                                ))
+                                                            )
+                                                        ) : (
+                                                            <EmptyTable/>
+                                                        )
+                                                    }
+                                                    </tbody>
+                                                    <tfoot>
+                                                    <tr>
+
+                                                    </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-5">
+                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {categoryClient.length} données
+                                                </div>
+                                            </div>
+                                            {
+                                                !search ? (
+                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                        <Pagination
+                                                            numberPerPage={numberPerPage}
+                                                            onChangeNumberPerPage={onChangeNumberPerPage}
+                                                            activeNumberPage={activeNumberPage}
+                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                            pages={pages}
+                                                            onClickPage={(e, number) => onClickPage(e, number)}
+                                                            numberPage={numberPage}
+                                                            onClickNextPage={e => onClickNextPage(e)}
+                                                        />
+                                                    </div>
+                                                ) : ""
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    }
+                            )
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        ) : ""
+
     );
 };
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
 
-export default CategoryClient;
+export default connect(mapStateToProps)(CategoryClient);

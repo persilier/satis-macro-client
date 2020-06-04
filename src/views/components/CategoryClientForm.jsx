@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import axios from "axios";
 import {
     Link,
@@ -10,22 +11,33 @@ import {
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
-const CategoryClientForm = () => {
+axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+
+
+const CategoryClientForm = (props) => {
+    const {editcategoryid} = useParams();
+
+    if (!editcategoryid) {
+        if (!verifyPermission(props.userPermissions, 'store-category-client'))
+            window.location.href = ERROR_401;
+    } else {
+        if (!verifyPermission(props.userPermissions, 'update-category-client'))
+            window.location.href = ERROR_401;
+    }
     const defaultData = {
-        institutions_id: "",
         name: "",
         description: "",
     };
     const defaultError = {
-        institutions_id: [],
         name: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const {editcategoryid} = useParams();
 
     useEffect(() => {
 
@@ -33,13 +45,11 @@ const CategoryClientForm = () => {
             axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
                 .then(response => {
                     const newCategory = {
-                        institutions_id: (response.data.institution) ? (response.data.institution.id) : '',
-                        name: response.data.name,
-                        description: response.data.description
+                        name: response.data.name.fr,
+                        description: response.data.description.fr
                     };
                     setData(newCategory);
                 })
-
         }
 
     }, []);
@@ -94,8 +104,8 @@ const CategoryClientForm = () => {
         }
 
     };
-
-    return (
+    const printJsx = () => {
+        return (
         <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
@@ -243,6 +253,24 @@ const CategoryClientForm = () => {
             </div>
         </div>
     );
+    };
+
+    return (
+        editcategoryid ?
+            verifyPermission(props.userPermissions, 'update-category-client') ? (
+                printJsx()
+            ) : ""
+            : verifyPermission(props.userPermissions, 'store-category-client') ? (
+                printJsx()
+            ) : ""
+    );
+
 };
 
-export default CategoryClientForm;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions
+    }
+};
+
+export default connect(mapStateToProps)(CategoryClientForm);

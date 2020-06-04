@@ -157,7 +157,7 @@ const Institution = () => {
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
-                    <Link to={`/settings/institution/edit/${institution.slug}`}
+                    <Link to={`/settings/institution/edit/${institution.id}`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Modifier">
                         <i className="la la-edit"/>

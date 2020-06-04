@@ -15,7 +15,7 @@ import {formatSelectOption} from "../../../helpers/function";
 
 
 const EditInstitutions = () => {
-    const {editinstitutionlug} = useParams();
+    const {id} = useParams();
 
     const defaultData = {
         institution_type_id:"",
@@ -43,8 +43,8 @@ const EditInstitutions = () => {
             .then(response => {
                 setTypeInstitutionData(response.data.data)
             });
-        if (editinstitutionlug) {
-            axios.get(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`)
+        if (id) {
+            axios.get(appConfig.apiDomaine + `/institutions/${id}`)
                 .then(response => {
                     console.log(response, "GET_INSTITUTION");
                     const newInstitution = {
@@ -111,9 +111,9 @@ const EditInstitutions = () => {
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
         setStartRequest(true);
-        if (editinstitutionlug) {
+        if (id) {
             formData.append("_method", "put");
-            axios.post(appConfig.apiDomaine + `/institutions/${editinstitutionlug}`, formData)
+            axios.post(appConfig.apiDomaine + `/institutions/${id}`, formData)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -163,7 +163,7 @@ const EditInstitutions = () => {
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                 {
-                                    editinstitutionlug ? "Modification" : "Ajout"
+                                    id ? "Modification" : "Ajout"
                                 }
                             </a>
                         </div>
@@ -179,7 +179,7 @@ const EditInstitutions = () => {
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
                                         {
-                                            editinstitutionlug ?
+                                            id ?
                                                 "Modification d'une institution" : "Ajout d'une institution"
                                         }
                                     </h3>
@@ -202,7 +202,7 @@ const EditInstitutions = () => {
                                                                          id="kt_user_add_avatar">
                                                                         <div className="kt-avatar__holder" style={{ textAlign:'center'}}>
                                                                             {
-                                                                                editinstitutionlug ? (
+                                                                                id ? (
                                                                                     <img
                                                                                         id="Image1"
                                                                                         // className="kt-avatar__holder"
