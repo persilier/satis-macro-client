@@ -49,30 +49,33 @@ const UnitTypeForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
-                .then(response => {
-                    const newData = {
-                        name: response.data.unitType.name.fr,
-                        description: response.data.unitType.description.fr,
-                    };
-                    setParent(response.data.unitType.parent ? {id: response.data.unitType.parent.id, label: response.data.unitType.parent.name.fr} : {});
-                    setParents(response.data.unitTypes);
-                    setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
-        } else {
-            axios.get(`${appConfig.apiDomaine}/unit-types`)
-                .then(response => {
-                    setParents(response.data);
-                })
-                .catch(error => {
-                    console.log("Something is wrong")
-                })
+        async function fetchData () {
+            if (id) {
+                axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
+                    .then(response => {
+                        const newData = {
+                            name: response.data.unitType.name.fr,
+                            description: response.data.unitType.description.fr,
+                        };
+                        setParent(response.data.unitType.parent ? {id: response.data.unitType.parent.id, label: response.data.unitType.parent.name.fr} : {});
+                        setParents(response.data.unitTypes);
+                        setData(newData);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            } else {
+                axios.get(`${appConfig.apiDomaine}/unit-types`)
+                    .then(response => {
+                        setParents(response.data);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong")
+                    })
+            }
         }
+        fetchData();
     }, []);
 
     const onChangeName = (e) => {
@@ -139,13 +142,13 @@ const UnitTypeForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/unit_type" className="kt-subheader__breadcrumbs-link">
                                     Type d'unité
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
                                         id ? "Modification" : "Ajout"
                                     }

@@ -62,24 +62,27 @@ const   Staff = (props) => {
 
     const [load, setLoad] = useState(true);
     const [staffs, setStaffs] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(endPoint.list)
-            .then(response => {
-                setLoad(false);
-                setNumberPage(forceRound(response.data.length/numberPerPage));
-                setShowList(response.data.slice(0, numberPerPage));
-               setStaffs(response.data);
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        async function fetchData() {
+            await axios.get(endPoint.list)
+                .then(response => {
+                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setStaffs(response.data);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                });
+        }
+        fetchData();
     }, []);
 
     const searchElement = async (e) => {
@@ -188,7 +191,7 @@ const   Staff = (props) => {
 
     const printBodyTable = (staff, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{staff.identite.lastname+" "+staff.identite.firstname}</td>
                 <td>
                     {
@@ -261,9 +264,9 @@ const   Staff = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     Agent
                                 </a>
                             </div>

@@ -163,7 +163,7 @@ const StaffForm = (props) => {
                 })
             ;
         }
-    }, []);
+    }, [endPoint, id, props.userPermissions]);
 
     const onChangeFirstName = (e) => {
         const newData = {...data};
@@ -317,13 +317,13 @@ const StaffForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
                                     Agent
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
                                         id ? "Modification" : "Ajout"
                                     }

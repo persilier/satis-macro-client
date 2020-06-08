@@ -68,17 +68,21 @@ const Unit = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(endPoint.list)
-            .then(response => {
-                setLoad(false);
-                setNumberPage(forceRound(response.data.length/numberPerPage));
-                setShowList(response.data.slice(0, numberPerPage));
-                setUnits(response.data);
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        async function fetchData () {
+            await axios.get(endPoint.list)
+                .then(response => {
+                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setUnits(response.data);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+        fetchData();
     }, []);
 
     const searchElement = async (e) => {
@@ -144,7 +148,6 @@ const Unit = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    console.log(endPoint.destroy(unitId));
                     axios.delete(endPoint.destroy(unitId))
                         .then(response => {
                             const newUnits = [...units];
@@ -188,7 +191,7 @@ const Unit = (props) => {
 
     const printBodyTable = (unit, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{unit.name["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "250px" }}>{unit.description["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.parent ? unit.parent.name["fr"] : ""}</td>

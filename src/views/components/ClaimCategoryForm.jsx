@@ -40,20 +40,23 @@ const ClaimCategoryForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(`${appConfig.apiDomaine}/claim-categories/${id}`)
-                .then(response => {
-                    const newData = {
-                        name: response.data.name.fr,
-                        description: response.data.description.fr,
-                    };
-                    setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
+        async function fetchData () {
+            if (id) {
+                await axios.get(`${appConfig.apiDomaine}/claim-categories/${id}`)
+                    .then(response => {
+                        const newData = {
+                            name: response.data.name.fr,
+                            description: response.data.description.fr,
+                        };
+                        setData(newData);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
         }
+        fetchData();
     }, []);
 
     const onChangeName = (e) => {
@@ -112,13 +115,13 @@ const ClaimCategoryForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/claim_categories" className="kt-subheader__breadcrumbs-link">
                                     Catégorie de plainte
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
                                         id ? "Modification" : "Ajout"
                                     }

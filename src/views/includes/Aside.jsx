@@ -38,19 +38,27 @@ const Aside = (props) => {
                                         </span>
                                     </li>
 
-                                    <NavLink exact to="/settings/sms" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">SMS</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions, "update-sms-parameters") ? (
+                                            <NavLink exact to="/settings/sms" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">SMS</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
 
-                                    <NavLink exact to="/settings/mail" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Mail</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions, 'update-mail-parameters') ? (
+                                            <NavLink exact to="/settings/mail" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Mail</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
 
                                     <NavLink exact to="/settings/institution" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
@@ -117,12 +125,17 @@ const Aside = (props) => {
                                             : ""
                                     }
 
-                                    <NavLink exact to="/settings/performance_indicator" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Indicateur de performance</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions, "list-performance-indicator") ? (
+                                            <NavLink exact to="/settings/performance_indicator" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Indicateur de performance</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
+
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-unit-type') ? (
@@ -200,13 +213,6 @@ const Aside = (props) => {
                                             </NavLink>
                                         ) : ""
                                     }
-
-                                    <NavLink exact to="/settings/users" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Utilisateur</span>
-                                        </li>
-                                    </NavLink>
                                 </ul>
                             </div>
                         </li>

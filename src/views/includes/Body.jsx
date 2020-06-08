@@ -25,7 +25,6 @@ import CategoryClientForm from "../components/CategoryClientForm";
 import TypeClientForm from "../components/TypeClientForm";
 import Clients from "../pages/Clients";
 import ClientForm from "../components/Clients/ClientForm";
-import TestPagination from "../pages/TestPagination";
 import SeverityLevel from "../pages/SeverityLevel";
 import UnitTypeForm from "../components/UnitTypeForm";
 import PerformanceIndicatorForm from "../components/PerformanceIndicatorForm";
@@ -36,10 +35,6 @@ import ClaimObjectForm from "../components/ClaimObjectForm";
 import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/Institutions/InstitutionForm";
-import TypeInstitutionsForm from "../components/Institutions/TypeInstitutionsForm";
-import TypeInstitution from "../pages/TypeInstitution";
-import User from "../pages/User";
-import UserForm from "../components/UserForm";
 
 const Body = () => {
     return (
@@ -224,10 +219,6 @@ const Body = () => {
                 <StaffForm/>
             </Route>
 
-            <Route exact path="/settings/test-pagination">
-                <TestPagination/>
-            </Route>
-
             <Route exact path="/settings/severities">
                 <SeverityLevel/>
             </Route>
@@ -238,18 +229,6 @@ const Body = () => {
 
             <Route exact path="/settings/severities/:id/edit">
                 <SeverityLevelForm/>
-            </Route>
-
-            <Route exact path="/settings/users">
-                <User/>
-            </Route>
-
-            <Route exact path="/settings/users/add">
-                <UserForm/>
-            </Route>
-
-            <Route exact path="/settings/users/:id/edit">
-                <UserForm/>
             </Route>
 
             <Route path={"*"}>
