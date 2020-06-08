@@ -43,20 +43,23 @@ const PositionForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(`${appConfig.apiDomaine}/positions/${id}`)
-                .then(response => {
-                    const newData = {
-                        name: response.data.name.fr,
-                        description: response.data.description.fr,
-                    };
-                    setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
+        async function fetchData () {
+            if (id) {
+                await axios.get(`${appConfig.apiDomaine}/positions/${id}`)
+                    .then(response => {
+                        const newData = {
+                            name: response.data.name.fr,
+                            description: response.data.description.fr,
+                        };
+                        setData(newData);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
         }
+        fetchData();
     }, []);
 
     const onChangeName = (e) => {

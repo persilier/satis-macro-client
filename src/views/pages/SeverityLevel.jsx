@@ -57,17 +57,21 @@ const SeverityLevel = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(endPoint.list)
-            .then(response => {
-                setLoad(false);
-                setNumberPage(forceRound(response.data.length/numberPerPage));
-                setShowList(response.data.slice(0, numberPerPage));
-                setSeverityLevels(response.data);
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        async function fetchData () {
+            await axios.get(endPoint.list)
+                .then(response => {
+                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setSeverityLevels(response.data);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+        fetchData();
     }, []);
 
     const searchElement = async (e) => {
@@ -180,7 +184,7 @@ const SeverityLevel = (props) => {
 
     const printBodyTable = (severityLevel, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{severityLevel.name["fr"]}</td>
                 <td><div className="p-2" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>{severityLevel.color} {severityLevel.color === "#ffffff" ? " Blanc" : ""}</div></td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description["fr"]}</td>

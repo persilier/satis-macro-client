@@ -53,39 +53,42 @@ const ClaimObjectForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(`${appConfig.apiDomaine}/claim-objects/${id}/edit`)
-                .then( response => {
-                    setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
-                    setSeverityLevels(formatSelectOption(response.data.severityLevels, "name", "fr"));
-                    const newData = {
-                        name: response.data.claimObject.name["fr"],
-                        description: response.data.claimObject.description["fr"],
-                        claim_category_id: response.data.claimObject.claim_category_id,
-                        severity_levels_id: response.data.claimObject.severity_levels_id === null ? "" : response.data.claimObject.severity_levels_id,
-                        time_limit: response.data.claimObject.time_limit === null ? 0 : response.data.claimObject.time_limit,
-                    };
-                    setData(newData);
-                    setClaimCategory({value: response.data.claimObject.claim_category_id, label: response.data.claimObject.claim_category.name["fr"]});
-                    setSeverityLevel(
-                        response.data.claimObject.severity_levels_id === null ? {} : {value: response.data.claimObject.severity_levels_id, label: response.data.claimObject.severity_level.name["fr"]}
-                    );
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
-        } else {
-            axios.get(`${appConfig.apiDomaine}/claim-objects/create`)
-                .then(response => {
-                    setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
-                    setSeverityLevels(formatSelectOption(response.data.severityLevels, "name", "fr"));
-                })
-                .catch(error => {
-                    console.log("something is wrong");
-                })
-            ;
+        async function fetchData () {
+            if (id) {
+                await axios.get(`${appConfig.apiDomaine}/claim-objects/${id}/edit`)
+                    .then( response => {
+                        setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
+                        setSeverityLevels(formatSelectOption(response.data.severityLevels, "name", "fr"));
+                        const newData = {
+                            name: response.data.claimObject.name["fr"],
+                            description: response.data.claimObject.description["fr"],
+                            claim_category_id: response.data.claimObject.claim_category_id,
+                            severity_levels_id: response.data.claimObject.severity_levels_id === null ? "" : response.data.claimObject.severity_levels_id,
+                            time_limit: response.data.claimObject.time_limit === null ? 0 : response.data.claimObject.time_limit,
+                        };
+                        setData(newData);
+                        setClaimCategory({value: response.data.claimObject.claim_category_id, label: response.data.claimObject.claim_category.name["fr"]});
+                        setSeverityLevel(
+                            response.data.claimObject.severity_levels_id === null ? {} : {value: response.data.claimObject.severity_levels_id, label: response.data.claimObject.severity_level.name["fr"]}
+                        );
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            } else {
+                await axios.get(`${appConfig.apiDomaine}/claim-objects/create`)
+                    .then(response => {
+                        setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
+                        setSeverityLevels(formatSelectOption(response.data.severityLevels, "name", "fr"));
+                    })
+                    .catch(error => {
+                        console.log("something is wrong");
+                    })
+                ;
+            }
         }
+        fetchData();
     }, []);
 
     const onChangeName = (e) => {
@@ -165,13 +168,13 @@ const ClaimObjectForm = (props) => {
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                            <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <Link to="/settings/claim_objects" className="kt-subheader__breadcrumbs-link">
                                 Objet de plainte
                             </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                            <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                 {
                                     id ? "Modification" : "Ajout"
                                 }

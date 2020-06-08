@@ -37,17 +37,21 @@ const ClaimCategory = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        axios.get(`${appConfig.apiDomaine}/claim-categories`)
-            .then(response => {
-                setLoad(false);
-                setNumberPage(forceRound(response.data.length/numberPerPage));
-                setShowList(response.data.slice(0, numberPerPage));
-                setClaimCategories(response.data);
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        async function fetchData () {
+            await axios.get(`${appConfig.apiDomaine}/claim-categories`)
+                .then(response => {
+                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setClaimCategories(response.data);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+        fetchData();
     }, []);
 
     const searchElement = async (e) => {
@@ -161,7 +165,7 @@ const ClaimCategory = (props) => {
 
     const printBodyTable = (claimCategory, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{claimCategory.name[props.language]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{claimCategory.description[props.language]}</td>
                 <td>
@@ -205,9 +209,9 @@ const ClaimCategory = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     Catégorie de plainte
                                 </a>
                             </div>

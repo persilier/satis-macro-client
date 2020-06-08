@@ -69,21 +69,24 @@ const SeverityLevelForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(`${appConfig.apiDomaine}/severity-levels/${id}`)
-                .then(response => {
-                    const newData = {
-                        name: response.data.name["fr"],
-                        color: response.data.color,
-                        description: response.data.description["fr"],
-                    };
-                    setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
+        async function fetchData () {
+            if (id) {
+                await axios.get(`${appConfig.apiDomaine}/severity-levels/${id}`)
+                    .then(response => {
+                        const newData = {
+                            name: response.data.name["fr"],
+                            color: response.data.color,
+                            description: response.data.description["fr"],
+                        };
+                        setData(newData);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
         }
+        fetchData();
     }, []);
 
     const onChangeName = (e) => {
@@ -154,13 +157,13 @@ const SeverityLevelForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/severities" className="kt-subheader__breadcrumbs-link">
                                     Niveau de gravité
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
