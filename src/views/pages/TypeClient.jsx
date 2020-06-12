@@ -232,6 +232,7 @@ const TypeClient = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
+                            addPermission={"store-type-client"}
                             title={"Type Client"}
                             addText={"Ajouter un Type Client"}
                             addLink={"/settings/clients/type/add"}

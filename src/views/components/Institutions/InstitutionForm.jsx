@@ -224,7 +224,6 @@ const InstitutionForm = (props) => {
                                                                                     id ? (
                                                                                         <img
                                                                                             id="Image1"
-                                                                                            // className="kt-avatar__holder"
                                                                                             src={data.logo}
                                                                                             alt="logo"
                                                                                             style={{
@@ -236,7 +235,6 @@ const InstitutionForm = (props) => {
                                                                                     ) : (
                                                                                         <img
                                                                                             id="Image1"
-                                                                                            // className="kt-avatar__holder"
                                                                                             src="/assets/media/users/Icon.png"
                                                                                             alt="logo"
                                                                                             style={{

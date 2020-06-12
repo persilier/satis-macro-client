@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss,  filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -15,10 +15,46 @@ import EmptyTable from "../components/EmptyTable";
 import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
+import {connect} from "react-redux";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
-const Clients = () => {
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/my/clients`,
+        destroy: clientId => `${appConfig.apiDomaine}/my/clients/${clientId}`,
+    },
+    MACRO: {
+        holding: {
+            list: `${appConfig.apiDomaine}/any/clients`,
+            destroy: clientId => `${appConfig.apiDomaine}/any/clients/${clientId}`,
+        },
+        filial: {
+            list: `${appConfig.apiDomaine}/my/clients`,
+            destroy: clientId => `${appConfig.apiDomaine}/my/clients/${clientId}`,
+        }
+    },
+
+};
+
+const Clients = (props) => {
+    if (!(verifyPermission(props.userPermissions, "list-client-from-my-institution") || verifyPermission(props.userPermissions, "list-client-from-any-institution"))) {
+        window.location.href = ERROR_401;
+    }
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'list-client-from-any-institution') || verifyPermission(props.userPermissions, 'store-client-from-any-institution'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'list-client-from-my-institution') || verifyPermission(props.userPermissions, 'store-client-from-my-institution'))
+            endPoint = endPointConfig[props.plan].filial
+    } else {
+        endPoint = endPointConfig[props.plan]
+    }
+
     const [load, setLoad] = useState(true);
     const [clients, setClients] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
@@ -28,12 +64,12 @@ const Clients = () => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+"/clients")
+        axios.get(endPoint.list)
             .then(response => {
                 setLoad(false);
-                setClients(response.data.data);
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.data.length / numberPerPage));
+                setClients(response.data);
+                setShowList(response.data.slice(0, numberPerPage));
+                setNumberPage(forceRound(response.data.length / numberPerPage));
 
             })
             .catch(error => {
@@ -104,7 +140,7 @@ const Clients = () => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/clients/${clientId}`)
+                    axios.delete(endPoint.destroy(clientId))
                         .then(response => {
                             console.log(response, "OK");
                             const newClient = [...clients];
@@ -148,54 +184,73 @@ const Clients = () => {
 
     const printBodyTable = (client, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd"
-                key={index} role="row" className="odd">
-                <td>{client.identite.lastname} &ensp; {client.identite.firstname }</td>
+            client.accounts ?
+                client.accounts.map((account, i) => (
+                    <tr key={i} className="d-flex justify-content-center align-content-center odd" role="row" className="odd">
 
-                <td>
+                        {
+                            i === 0 ?
+                                <td rowSpan={client.accounts.length}>{client.client.identite.lastname} &ensp; {client.client.identite.firstname}</td> : <td style={{display:"none"}}/>
+                        }
 
-                    {client.identite.telephone?
-                        client.identite.telephone.map((tel, index) => (
-                                index === client.identite.telephone.length - 1 ? tel
-                                : tel + ", "
-                        )):""
-                    }
-                </td>
-                <td>
-                    {client.account_number?
-                        client.account_number.map((account, index) => (
-                            index === client.account_number.length - 1 ? account : account + ", "
-                        )):""
-                    }
-                </td>
+                        <td>
+                            {account.number}
+                        </td>
+                        <td>
+                            {client.client.identite.telephone.length ?
+                                client.client.identite.telephone.map((tel, index) => (
+                                    index === client.client.identite.telephone.length - 1 ? tel : tel +" "+ "/ "+" "
+                                )) : ""
+                            }
+                        </td>
 
-                <td>
-                    {client.identite.email?
-                        client.identite.email.map((mail, index) => (
-                            index === client.identite.email.length - 1 ? mail : mail + ", "
-                        )):""
-                    }
-                </td>
+                        <td>
+                            {client.client.identite.email ?
+                                client.client.identite.email.map((mail, index) => (
+                                    index === client.client.identite.email.length - 1 ? mail : mail  +" "+ "/ "+" "
+                                )) : ""
+                            }
+                        </td>
 
-                <td>
-                    <Link to="/settings/clients/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
-                    <Link to={`/settings/clients/edit/${client.id}`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Modifier">
-                        <i className="la la-edit"/>
-                    </Link>
-                    <button
-                        onClick={(e) => deleteClient(client.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
-                </td>
-            </tr>
+                        <td>
+                            <Link to="/settings/clients/detail"
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Détail">
+                                <i className="la la-eye"/>
+                            </Link>
+                            {
+                                verifyPermission(props.userPermissions, "update-client-from-my-institution")?
+                                    <Link to={`/settings/clients/edit/${client.accounts[0].id}`}
+                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                          title="Modifier">
+                                        <i className="la la-edit"/>
+                                    </Link>
+                                    :  verifyPermission(props.userPermissions, "update-client-from-any-institution")?
+                                    <Link to={`/settings/any/clients/edit/${client.accounts[0].id}`}
+                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                          title="Modifier">
+                                        <i className="la la-edit"/>
+                                    </Link>
+                                    :""
+                            }
+
+                            {
+                                verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||
+                                verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?
+                                    <button
+                                        onClick={(e) => deleteClient(client.id, index)}
+                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                        title="Supprimer">
+                                        <i className="la la-trash"/>
+                                    </button>
+                                    : ""
+                            }
+
+                        </td>
+
+                    </tr>
+                )) : ""
+
         )
     };
 
@@ -209,7 +264,8 @@ const Clients = () => {
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                            <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                 Client
@@ -224,11 +280,26 @@ const Clients = () => {
                     information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
 
                 <div className="kt-portlet">
-                    <HeaderTablePage
-                        title={"Client"}
-                        addText={"Ajouter un Client"}
-                        addLink={"/settings/clients/add"}
-                    />
+                    {
+                        verifyPermission(props.userPermissions, "store-client-from-my-institution") ?
+                            (
+                                <HeaderTablePage
+                                    addPermission={"store-client-from-my-institution"}
+                                    title={"Client"}
+                                    addText={"Ajouter un Compte Client"}
+                                    addLink={"/settings/clients/add"}
+                                />
+                            ) : (
+                                verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
+                                    <HeaderTablePage
+                                        addPermission={"store-client-from-any-institution"}
+                                        title={"Client"}
+                                        addText={"Ajouter un Compte Client"}
+                                        addLink={"/settings/any/clients/add"}
+                                    /> : ""
+                            )
+                    }
+
 
                     {
                         load ? (
@@ -240,7 +311,6 @@ const Clients = () => {
                                         <div className="col-sm-6 text-left">
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
-                                                    Search:
                                                     Search:
                                                     <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)}
                                                            className="form-control form-control-sm" placeholder=""
@@ -260,30 +330,26 @@ const Clients = () => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "100.25px"}}
+                                                        colSpan="1" style={{width: "150.25px"}}
                                                         aria-label="Country: activate to sort column ascending">Nom
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Telephone
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
+                                                        style={{width: "100px"}}
                                                         aria-label="Ship Address: activate to sort column ascending">Account
                                                         Number
                                                     </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        style={{width: "100px"}}
+                                                        aria-label="Ship Address: activate to sort column ascending">Telephone
+                                                    </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
+                                                        style={{width: "100px"}}
                                                         aria-label="Ship Address: activate to sort column ascending">Email
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1" colSpan="1"
                                                         style={{width: "70.25px"}}
                                                         aria-label="Type: activate to sort column ascending">
                                                         Action
@@ -291,6 +357,7 @@ const Clients = () => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+
                                                 {
                                                     clients.length ? (
                                                         search ? (
@@ -313,7 +380,8 @@ const Clients = () => {
                                     <div className="row">
                                         <div className="col-sm-12 col-md-5">
                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {clients.length} données
+                                                 aria-live="polite">Affichage de 1
+                                                à {numberPerPage} sur {clients.length} données
                                             </div>
                                         </div>
                                         {
@@ -342,5 +410,11 @@ const Clients = () => {
         </div>
     );
 };
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
+    };
+};
 
-export default Clients;
+export default connect(mapStateToProps)(Clients);

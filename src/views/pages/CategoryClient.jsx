@@ -233,6 +233,7 @@ const CategoryClient = (props) => {
                     <div className="kt-portlet">
 
                         <HeaderTablePage
+                            addPermission={"store-category-client"}
                             title={"Catégorie Client"}
                             addText={"Ajouter une Catégorie Client"}
                             addLink={"/settings/clients/category/add"}

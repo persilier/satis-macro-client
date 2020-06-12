@@ -38,14 +38,16 @@ const Aside = (props) => {
                                         </span>
                                     </li>
 
-                                    <NavLink exact to="/settings/sms" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/sms" className="kt-menu__item "
+                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">SMS</span>
                                         </li>
                                     </NavLink>
 
-                                    <NavLink exact to="/settings/mail" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/mail" className="kt-menu__item "
+                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Mail</span>
@@ -65,44 +67,76 @@ const Aside = (props) => {
                                     }
                                     {
                                         verifyPermission(props.userPermissions, "update-my-institution") ?
-                                        <NavLink to="/settings/institution/edit" className="kt-menu__item "
-                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                            <li className="kt-menu__link ">
-                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                <span className="kt-menu__link-text">My Institution</span>
-                                            </li>
-                                        </NavLink>
-                                        : ""
+                                            <NavLink to="/settings/institution/edit" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">My Institution</span>
+                                                </li>
+                                            </NavLink>
+                                            : ""
                                     }
+
+                                    {
+                                        verifyPermission(props.userPermissions,"update-claim-object-requirement")?
+                                            <NavLink to="/settings/requirement" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Exigences</span>
+                                                </li>
+                                            </NavLink>
+                                            :""
+                                    }
+
                                     <NavLink to="/settings/faqs/list" className="kt-menu__item "
                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
-
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">FAQs</span>
                                         </li>
                                     </NavLink>
 
-                                    <NavLink exact to="/settings/faqs/add" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/faqs/add" className="kt-menu__item "
+                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Editer FAQs</span>
                                         </li>
                                     </NavLink>
 
-                                    <NavLink exact to="/settings/faqs/category" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/faqs/category" className="kt-menu__item "
+                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Catégorie FAQs</span>
                                         </li>
                                     </NavLink>
 
-                                    <NavLink exact to="/settings/clients" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Clients</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions, "list-client-from-any-institution") || verifyPermission(props.userPermissions, "list-client-from-my-institution")? (
+                                            <NavLink exact to="/settings/clients" className="kt-menu__item "
+                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <li className="kt-menu__link ">
+                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                <span className="kt-menu__link-text">Clients</span>
+                                            </li>
+                                        </NavLink>
+                                            ) :""
+                                    }
+
+                                    {
+                                        verifyPermission(props.userPermissions,"list-relationship")?
+                                            <NavLink exact to="/settings/relationship" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">RelationShip</span>
+                                                </li>
+                                            </NavLink>
+                                            :""
+                                    }
+
                                     {
                                         verifyPermission(props.userPermissions, 'update-category-client') ?
                                             <NavLink to="/settings/clients/category" className="kt-menu__item "
@@ -127,7 +161,8 @@ const Aside = (props) => {
                                             : ""
                                     }
 
-                                    <NavLink exact to="/settings/performance_indicator" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/performance_indicator" className="kt-menu__item "
+                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Indicateur de performance</span>
@@ -136,7 +171,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-unit-type') ? (
-                                            <NavLink exact to="/settings/unit_type" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/unit_type" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Type d'unité</span>
@@ -147,7 +183,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-any-unit') || verifyPermission(props.userPermissions, 'list-my-unit') || verifyPermission(props.userPermissions, 'list-without-link-unit') ? (
-                                            <NavLink exact to="/settings/unit" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/unit" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Unité</span>
@@ -158,7 +195,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-position') ? (
-                                            <NavLink exact to="/settings/positions" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/positions" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Position</span>
@@ -169,7 +207,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-claim-category') ? (
-                                            <NavLink exact to="/settings/claim_categories" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/claim_categories" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Catégorie de plainte</span>
@@ -180,7 +219,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-claim-object') ? (
-                                            <NavLink exact to="/settings/claim_objects" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/claim_objects" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Objet de plainte</span>
@@ -191,7 +231,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, "list-staff-from-any-unit") || verifyPermission(props.userPermissions, 'list-staff-from-my-unit') || verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
-                                            <NavLink exact to="/settings/staffs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/staffs" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Agent</span>
@@ -202,7 +243,8 @@ const Aside = (props) => {
 
                                     {
                                         verifyPermission(props.userPermissions, 'list-severity-level') ? (
-                                            <NavLink exact to="/settings/severities" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                            <NavLink exact to="/settings/severities" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                     <span className="kt-menu__link-text">Niveau de gravité</span>
@@ -211,7 +253,8 @@ const Aside = (props) => {
                                         ) : ""
                                     }
 
-                                    <NavLink exact to="/settings/users" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/users" className="kt-menu__item "
+                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Utilisateur</span>
