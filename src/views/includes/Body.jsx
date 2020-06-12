@@ -36,6 +36,10 @@ import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/Institutions/InstitutionForm";
 import FilialeInstitutionForm from "../../APP_MACRO/Filiale/FilialeInstitutionForm";
+import ConfigRequirements from "../pages/ConfigRequirements";
+import HoldingClientForm from "../../APP_MACRO/Holding/HoldingClientForm";
+import RelationShip from "../pages/RelationShip";
+import RelationShipForm from "../components/RelationShipForm";
 
 const Body = () => {
     return (
@@ -91,8 +95,27 @@ const Body = () => {
                 <Clients/>
             </Route>
 
+            <Route exact path="/settings/relationship">
+                <RelationShip/>
+            </Route>
+
+            <Route exact path="/settings/relationship/add">
+                <RelationShipForm/>
+            </Route>
+
+            <Route exact path="/settings/relationship/edit/:id">
+                <RelationShipForm/>
+            </Route>
+
             <Route exact path="/settings/clients/add">
                 <ClientForm/>
+            </Route>
+
+            <Route exact path="/settings/any/clients/add">
+                <HoldingClientForm/>
+            </Route>
+            <Route exact path="/settings/any/clients/edit/:id">
+                <HoldingClientForm/>
             </Route>
 
             <Route exact path="/settings/institution/add">
@@ -107,7 +130,7 @@ const Body = () => {
                 <InstitutionForm/>
             </Route>
 
-            <Route exact path="/settings/clients/edit/:editclientid">
+            <Route exact path="/settings/clients/edit/:id">
                 <ClientForm/>
             </Route>
 
@@ -126,7 +149,6 @@ const Body = () => {
             <Route exact path="/settings/clients/category/edit/:editcategoryid">
                 <CategoryClientForm/>
             </Route>
-
 
             <Route exact path="/settings/performance_indicator">
                 <PerformanceIndicator/>
@@ -236,9 +258,15 @@ const Body = () => {
                 <SeverityLevelForm/>
             </Route>
 
+
+            <Route exact path="/settings/requirement">
+                <ConfigRequirements/>
+            </Route>
+
             <Route path={"*"}>
                 <Redirect to={"/dashboard"}/>
             </Route>
+
         </Switch>
     );
 };
