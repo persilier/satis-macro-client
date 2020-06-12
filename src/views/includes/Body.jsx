@@ -258,7 +258,6 @@ const Body = () => {
                 <SeverityLevelForm/>
             </Route>
 
-
             <Route exact path="/settings/requirement">
                 <ConfigRequirements/>
             </Route>
