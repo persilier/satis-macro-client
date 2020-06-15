@@ -18,14 +18,98 @@ const Aside = (props) => {
                                 <span className="kt-menu__link-text">Dashboard</span>
                             </a>
                         </li>
+
+                        <li className="kt-menu__section ">
+                            <h4 className="kt-menu__section-text">Processus</h4>
+                            <i className="kt-menu__section-icon flaticon-more-v2"/>
+                        </li>
+
+                        <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
+                            <a href="#collecte" onClick={e => e.preventDefault()} className="kt-menu__link kt-menu__toggle">
+                                <i className="kt-menu__link-icon flaticon2-telegram-logo"/>
+                                <span className="kt-menu__link-text">Collecte</span>
+                                <i className="kt-menu__ver-arrow la la-angle-right"/></a>
+                            <div className="kt-menu__submenu ">
+                                <span className="kt-menu__arrow"/>
+                                <ul className="kt-menu__subnav">
+                                    <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                        <span className="kt-menu__link">
+                                            <span className="kt-menu__link-text">Collecte</span>
+                                        </span>
+                                    </li>
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") ? (
+                                            <NavLink exact to="/settings/claims/add" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Enregistrer réclamation</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
+
+                                    <NavLink exact to="/settings/Incomplete_claims" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Réclamation incomplète</span>
+                                        </li>
+                                    </NavLink>
+                                </ul>
+                            </div>
+                        </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         <li className="kt-menu__section ">
                             <h4 className="kt-menu__section-text">Paramètres</h4>
                             <i className="kt-menu__section-icon flaticon-more-v2"/>
                         </li>
                         <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                             data-ktmenu-submenu-toggle="hover">
-                            <a href="#parameter" onClick={e => e.preventDefault()}
-                               className="kt-menu__link kt-menu__toggle">
+                            <a href="#parameter" onClick={e => e.preventDefault()} className="kt-menu__link kt-menu__toggle">
                                 <i className="kt-menu__link-icon flaticon-settings"/>
                                 <span className="kt-menu__link-text">Paramètres</span>
                                 <i className="kt-menu__ver-arrow la la-angle-right"/>
@@ -263,6 +347,27 @@ const Aside = (props) => {
                                         ) : ""
                                     }
 
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-currency') ? (
+                                            <NavLink exact to="/settings/currencies" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Devise</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-channel') ? (
+                                            <NavLink exact to="/settings/channels" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Canaux</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
                                 </ul>
                             </div>
                         </li>

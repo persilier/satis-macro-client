@@ -36,6 +36,11 @@ import StaffForm from "../components/staff/StaffForm";
 import SeverityLevelForm from "../components/SeverityLevelForm";
 import InstitutionForm from "../components/Institutions/InstitutionForm";
 import FilialeInstitutionForm from "../../APP_MACRO/Filiale/FilialeInstitutionForm";
+import Currency from "../pages/Currency";
+import CurrencyForm from "../components/CurrencyForm";
+import Channel from "../pages/Channel";
+import ChannelForm from "../components/ChannelForm";
+import ClaimAdd from "../pages/ClaimAdd";
 import ConfigRequirements from "../pages/ConfigRequirements";
 import HoldingClientForm from "../../APP_MACRO/Holding/HoldingClientForm";
 import RelationShip from "../pages/RelationShip";
@@ -258,6 +263,34 @@ const Body = () => {
                 <SeverityLevelForm/>
             </Route>
 
+            <Route exact path="/settings/currencies">
+                <Currency/>
+            </Route>
+
+            <Route exact path="/settings/currencies/add">
+                <CurrencyForm/>
+            </Route>
+
+            <Route exact path="/settings/currencies/:id/edit">
+                <CurrencyForm/>
+            </Route>
+
+            <Route exact path="/settings/channels">
+                <Channel/>
+            </Route>
+
+            <Route exact path="/settings/channels/add">
+                <ChannelForm/>
+            </Route>
+
+            <Route exact path="/settings/channels/:id/edit">
+                <ChannelForm/>
+            </Route>
+
+            <Route exact path="/settings/claims/add">
+                <ClaimAdd/>
+            </Route>
+
             <Route exact path="/settings/requirement">
                 <ConfigRequirements/>
             </Route>
@@ -265,7 +298,6 @@ const Body = () => {
             <Route path={"*"}>
                 <Redirect to={"/dashboard"}/>
             </Route>
-
         </Switch>
     );
 };
