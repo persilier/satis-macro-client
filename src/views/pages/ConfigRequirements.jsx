@@ -191,9 +191,7 @@ const ConfigRequirements = (props) => {
                                 />
                             ) : ''
                             }
-
                         </td>
-
                     </tr>
                 )) : ""
         )
