@@ -16,13 +16,13 @@ import {connect} from "react-redux";
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
 
-const TypeClientForm = (props) => {
-    const {edittypeid} = useParams();
-    if (!edittypeid) {
-        if (!verifyPermission(props.userPermissions, 'store-type-client'))
+const RelationShipForm = (props) => {
+    const {id} = useParams();
+    if (!id) {
+        if (!verifyPermission(props.userPermissions, 'store-relationship'))
             window.location.href = ERROR_401;
     } else {
-        if (!verifyPermission(props.userPermissions, 'update-type-client'))
+        if (!verifyPermission(props.userPermissions, 'update-relationship'))
             window.location.href = ERROR_401;
     }
     const defaultData = {
@@ -38,8 +38,8 @@ const TypeClientForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (edittypeid) {
-            axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
+        if (id) {
+            axios.get(appConfig.apiDomaine + `/relationships/${id}`)
                 .then(response => {
                     console.log(response.data, 'DATA');
                     const newType = {
@@ -67,8 +67,8 @@ const TypeClientForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (edittypeid) {
-            axios.put(appConfig.apiDomaine + `/type-clients/${edittypeid}`, data)
+        if (id) {
+            axios.put(appConfig.apiDomaine + `/relationships/${id}`, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -82,7 +82,7 @@ const TypeClientForm = (props) => {
                 })
             ;
         } else {
-            axios.post(appConfig.apiDomaine + `/type-clients`, data)
+            axios.post(appConfig.apiDomaine + `/relationships`, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -118,7 +118,7 @@ const TypeClientForm = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        edittypeid ? "Modification" : "Ajout"
+                                        id ? "Modification" : "Ajout"
                                     }
                                 </a>
                             </div>
@@ -134,8 +134,8 @@ const TypeClientForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                edittypeid ?
-                                                    "Modification de Type Client" : " Ajout de Type Client"
+                                                id ?
+                                                    "Modification de RelationShip" : " Ajout de RelationShip"
                                             }
                                         </h3>
                                     </div>
@@ -220,12 +220,12 @@ const TypeClientForm = (props) => {
                                                                     }
                                                                     {
                                                                         !startRequest ? (
-                                                                            <Link to="/settings/clients/type"
+                                                                            <Link to="/settings/relationship"
                                                                                   className="btn btn-secondary mx-2">
                                                                                 Quitter
                                                                             </Link>
                                                                         ) : (
-                                                                            <Link to="/settings/clients/type"
+                                                                            <Link to="/settings/relationship"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
                                                                                 Quitter
@@ -250,11 +250,11 @@ const TypeClientForm = (props) => {
         );
     };
     return (
-        edittypeid ?
-            verifyPermission(props.userPermissions, 'update-type-client') ? (
+        id ?
+            verifyPermission(props.userPermissions, 'update-relationship') ? (
                 printJsx()
             ) : ""
-            : verifyPermission(props.userPermissions, 'store-type-client') ? (
+            : verifyPermission(props.userPermissions, 'store-relationship') ? (
                 printJsx()
             ) : ""
     );
@@ -267,4 +267,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(TypeClientForm);
+export default connect(mapStateToProps)(RelationShipForm);

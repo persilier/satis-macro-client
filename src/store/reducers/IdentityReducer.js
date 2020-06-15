@@ -8,9 +8,9 @@ const initialState = {
         ville: "",
         telephone: [],
         email: [],
-        id_card: [],
+        client_id:[],
+        institution_id: ""
     }
-
 };
 
 export default function identityReducer (state = initialState, actions) {
@@ -24,7 +24,8 @@ export default function identityReducer (state = initialState, actions) {
                 ville: data.ville,
                 telephone: data.telephone,
                 email:data.email,
-                id_card:data.id_card,
+                client_id:data.client_id,
+                institution_id:data. institution_id
             };
         default:
     }

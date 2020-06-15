@@ -41,6 +41,10 @@ import CurrencyForm from "../components/CurrencyForm";
 import Channel from "../pages/Channel";
 import ChannelForm from "../components/ChannelForm";
 import ClaimAdd from "../pages/ClaimAdd";
+import ConfigRequirements from "../pages/ConfigRequirements";
+import HoldingClientForm from "../../APP_MACRO/Holding/HoldingClientForm";
+import RelationShip from "../pages/RelationShip";
+import RelationShipForm from "../components/RelationShipForm";
 
 const Body = () => {
     return (
@@ -96,8 +100,27 @@ const Body = () => {
                 <Clients/>
             </Route>
 
+            <Route exact path="/settings/relationship">
+                <RelationShip/>
+            </Route>
+
+            <Route exact path="/settings/relationship/add">
+                <RelationShipForm/>
+            </Route>
+
+            <Route exact path="/settings/relationship/edit/:id">
+                <RelationShipForm/>
+            </Route>
+
             <Route exact path="/settings/clients/add">
                 <ClientForm/>
+            </Route>
+
+            <Route exact path="/settings/any/clients/add">
+                <HoldingClientForm/>
+            </Route>
+            <Route exact path="/settings/any/clients/edit/:id">
+                <HoldingClientForm/>
             </Route>
 
             <Route exact path="/settings/institution/add">
@@ -112,7 +135,7 @@ const Body = () => {
                 <InstitutionForm/>
             </Route>
 
-            <Route exact path="/settings/clients/edit/:editclientid">
+            <Route exact path="/settings/clients/edit/:id">
                 <ClientForm/>
             </Route>
 
@@ -131,7 +154,6 @@ const Body = () => {
             <Route exact path="/settings/clients/category/edit/:editcategoryid">
                 <CategoryClientForm/>
             </Route>
-
 
             <Route exact path="/settings/performance_indicator">
                 <PerformanceIndicator/>
@@ -267,6 +289,10 @@ const Body = () => {
 
             <Route exact path="/settings/claims/add">
                 <ClaimAdd/>
+            </Route>
+
+            <Route exact path="/settings/requirement">
+                <ConfigRequirements/>
             </Route>
 
             <Route path={"*"}>

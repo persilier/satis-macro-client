@@ -19,17 +19,16 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
-const Institution = (props) => {
-
-    if (!verifyPermission(props.userPermissions, "list-any-institution")) {
+const RelationShip = (props) => {
+    if (!verifyPermission(props.userPermissions, "list-relationship"))
         window.location.href = ERROR_401;
-    }
+
     const [load, setLoad] = useState(true);
-    const [institutions, setInstitution] = useState([]);
+    const [relation, setRelation] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
@@ -37,11 +36,10 @@ const Institution = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/any/institutions")
+        axios.get(appConfig.apiDomaine + "/relationships")
             .then(response => {
-                console.log(response.data)
                 setLoad(false);
-                setInstitution(response.data);
+                setRelation(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
                 setNumberPage(forceRound(response.data.length / numberPerPage));
             })
@@ -65,8 +63,8 @@ const Institution = (props) => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(institutions.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(institutions.length / parseInt(e.target.value)));
+        setShowList(relation.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(relation.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -80,7 +78,7 @@ const Institution = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(institutions.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(relation.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -88,7 +86,7 @@ const Institution = (props) => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                institutions.slice(
+                relation.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -102,7 +100,7 @@ const Institution = (props) => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                institutions.slice(
+                relation.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -110,25 +108,26 @@ const Institution = (props) => {
         }
     };
 
-    const deleteInstitution = (institutionId, index) => {
+    const deleteTypeClient = (relationId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/any/institutions/${institutionId}`)
+                    axios.delete(appConfig.apiDomaine + `/relationships/${relationId}`)
                         .then(response => {
-                            const newInstitution = [...institutions];
-                            newInstitution.splice(index, 1);
-                            setInstitution(newInstitution);
+                            console.log(response, "OK");
+                            const newType = [...relation];
+                            newType.splice(index, 1);
+                            setRelation(newType);
                             if (showList.length > 1) {
                                 setShowList(
-                                    newInstitution.slice(
+                                    newType.slice(
                                         getEndByPosition(activeNumberPage) - numberPerPage,
                                         getEndByPosition(activeNumberPage)
                                     )
                                 );
                             } else {
                                 setShowList(
-                                    newInstitution.slice(
+                                    newType.slice(
                                         getEndByPosition(activeNumberPage - 1) - numberPerPage,
                                         getEndByPosition(activeNumberPage - 1)
                                     )
@@ -155,41 +154,34 @@ const Institution = (props) => {
 
     const pages = arrayNumberPage();
 
-    const printBodyTable = (institution, index) => {
+    const printBodyTable = (typeRelation, index) => {
         return (
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row"
                 className="odd">
-                <td>{institution.institution_type?institution.institution_type.name:""}</td>
-                <td>{institution.name}</td>
-                <td>{institution.acronyme}</td>
-                <td>{institution.iso_code}</td>
-                <td>
-                    <Link to="/settings/institution/detail"
+                <td>{typeRelation.name.fr}</td>
+                <td>{typeRelation.description.fr}</td>
+                <td style={{textAlign:"center"}}>
+
+                    <Link to="/settings/relationship/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
 
                     {
-                        verifyPermission(props.userPermissions, "show-any-institution") ?
-                            <Link to={`/settings/institution/edit/${institution.id}`}
+                        verifyPermission(props.userPermissions, 'show-relationship')?
+                            <Link to={`/settings/relationship/edit/${typeRelation.id}`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                            : verifyPermission(props.userPermissions, "update-my-institution") ?
-                            <Link to={`/settings/institution/edit`}
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
-                                <i className="la la-edit"/>
-                            </Link>
-                            : ""
+                            :""
                     }
 
                     {
-                        verifyPermission(props.userPermissions, "destroy-any-institution") ?
+                        verifyPermission(props.userPermissions, 'destroy-relationship') ?
                             <button
-                                onClick={(e) => deleteInstitution(institution.id, index)}
+                                onClick={(e) => deleteTypeClient(typeRelation.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Supprimer">
                                 <i className="la la-trash"/>
@@ -203,7 +195,7 @@ const Institution = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-category-client") ? (
+        verifyPermission(props.userPermissions, "list-position") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -216,10 +208,10 @@ const Institution = (props) => {
                                 <a href="#" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Institution
+                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                    Relation
                                 </a>
+
                             </div>
                         </div>
                     </div>
@@ -231,10 +223,10 @@ const Institution = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-any-institution"}
-                            title={"Institution"}
-                            addText={"Ajouter une Institution"}
-                            addLink={"/settings/institution/add"}
+                            addPermission={"store-relationship"}
+                            title={"RelationShip"}
+                            addText={"Ajouter une RelationShip"}
+                            addLink={"/settings/relationship/add"}
                         />
 
                         {
@@ -250,8 +242,7 @@ const Institution = (props) => {
                                                         Search:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm"
-                                                               placeholder=""
+                                                               className="form-control form-control-sm" placeholder=""
                                                                aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
@@ -266,32 +257,18 @@ const Institution = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
+
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Country: activate to sort column ascending">Type
+                                                            colSpan="1" style={{width: "150px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Nom
                                                         </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Country: activate to sort column ascending">Nom
+                                                            colSpan="1" style={{width: "200px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Acronyme
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">Iso_Code
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
                                                             Action
@@ -300,14 +277,14 @@ const Institution = (props) => {
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        institutions.length ? (
+                                                        relation.length ? (
                                                             search ? (
-                                                                institutions.map((institution, index) => (
-                                                                printBodyTable(institution, index)
+                                                                relation.map((type, index) => (
+                                                                    printBodyTable(type, index)
                                                                 ))
                                                             ) : (
-                                                                showList.map((institution, index) => (
-                                                                    printBodyTable(institution, index)
+                                                                showList.map((type, index) => (
+                                                                    printBodyTable(type, index)
                                                                 ))
                                                             )
                                                         ) : (
@@ -316,9 +293,7 @@ const Institution = (props) => {
                                                     }
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-
-                                                    </tr>
+                                                    <tr></tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -326,8 +301,13 @@ const Institution = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {institutions.length} données
+                                                     aria-live="polite">
+                                                    {relation.length ?
+                                                        `Affichage de 1 à ${numberPerPage} sur ${relation.length} données`
+                                                        :
+                                                        "Affichage de 0 page"
+                                                    }
+
                                                 </div>
                                             </div>
                                             {
@@ -362,5 +342,4 @@ const mapStateToProps = (state) => {
         userPermissions: state.user.user.permissions
     };
 };
-
-export default connect(mapStateToProps)(Institution);
+export default connect(mapStateToProps)(RelationShip);
