@@ -169,8 +169,7 @@ const ConfigRequirements = (props) => {
 
             category.claim_objects ?
                 category.claim_objects.map((object, i) => (
-                    <tr className="d-flex justify-content-center align-content-center odd"
-                        key={i} role="row" className="odd">
+                    <tr key={i} role="row" className="odd">
 
                         {
                             i === 0 ?

@@ -1,31 +1,31 @@
 import {ADD_IDENTITY} from "../actions/IdentityAction";
 
 const initialState = {
-    identite:{
-        firstname:"",
+    identite: {
+        firstname: "",
         lastname: "",
         sexe: "",
         ville: "",
         telephone: [],
         email: [],
-        client_id:[],
-        institution_id: ""
+        client_id: [],
+        institution_id: []
     }
 };
 
-export default function identityReducer (state = initialState, actions) {
+export default function identityReducer(state = initialState, actions) {
     switch (actions.type) {
         case ADD_IDENTITY:
             const data = actions.data;
             return {
-                firstname:data.firstname,
+                firstname: data.firstname,
                 lastname: data.lastname,
-                sexe:data.sexe,
+                sexe: data.sexe,
                 ville: data.ville,
                 telephone: data.telephone,
-                email:data.email,
-                client_id:data.client_id,
-                institution_id:data. institution_id
+                email: data.email,
+                client_id: data.client_id,
+                institution_id: data.institution_id
             };
         default:
     }

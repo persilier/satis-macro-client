@@ -49,7 +49,7 @@ const CategoryClient = (props) => {
                 setLoad(false);
                 console.log("Something is wrong");
             })
-    }, []);
+    },[]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -156,9 +156,7 @@ const CategoryClient = (props) => {
 
     const printBodyTable = (category, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd"
-                key={index} role="row" className="odd">
-
+            <tr key={index} role="row" className="odd">
                 <td>{category.name.fr}</td>
                 <td>{category.description.fr}</td>
                 <td style={{textAlign:'center'}}>
@@ -204,19 +202,19 @@ const CategoryClient = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()}
+                                <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     Client
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                         className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="" onClick={e => e.preventDefault()}
+                                    <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
                                         Categorie Client
                                     </a>

@@ -146,7 +146,7 @@ const CategoryFAQs = () => {
 
     const printBodyTable = (category, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{category.name}</td>
                 <td >{category.slug}</td>
                 <td>

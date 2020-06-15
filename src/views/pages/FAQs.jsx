@@ -146,8 +146,7 @@ const FAQs = () => {
 
     const printBodyTable = (faq, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd"
-                key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{faq.category.name}</td>
                 <td>{faq.question}</td>
                 <td>{faq.answer}</td>
