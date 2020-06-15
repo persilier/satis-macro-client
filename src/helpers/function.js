@@ -1,3 +1,5 @@
+import {RECEPTION_CHANNEL, RESPONSE_CHANNEL} from "../constants/channel";
+
 export const existingScript = function (id) {
     return !!document.getElementById(id);
 };
@@ -74,13 +76,13 @@ export const loadScript = function(src) {
     }
 };
 
-export const formatSelectOption = function(options, key, translate) {
+export const formatSelectOption = function(options, labelKey, translate, valueKey = "id") {
     const newOptions = [];
     for (let i = 0; i < options.length; i++) {
         if (translate)
-            newOptions.push({value: options[i].id, label: ((options[i])[key])[translate]});
+            newOptions.push({value: (options[i])[valueKey], label: ((options[i])[labelKey])[translate]});
         else
-            newOptions.push({value: options[i].id, label: (options[i])[key]});
+            newOptions.push({value: (options[i])[valueKey], label: (options[i])[labelKey]});
     }
     return newOptions;
 };
@@ -110,4 +112,24 @@ export const filterDataTableBySearchValue = () => {
         }
     }
     myFunction();
+};
+
+export const filterChannel = (channels, typeFilter) => {
+    const newChannels = [];
+    for (let i = 0; i < channels.length; i++) {
+        if (typeFilter === RESPONSE_CHANNEL) {
+            if (channels[i].is_response === 1)
+                newChannels.push(channels[i]);
+        } else if (typeFilter === RECEPTION_CHANNEL) {
+            if (channels[i].is_response === 0)
+                newChannels.push(channels[i]);
+        } else {
+            return channels
+        }
+    }
+    return newChannels;
+};
+
+export const formatToTimeStamp = dateTime => {
+    return dateTime.split("T")[0]+" "+dateTime.split("T")[1]
 };

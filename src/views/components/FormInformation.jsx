@@ -12,6 +12,11 @@ const FormInformation = (props) => {
                         props.information
                     }
                 </div>
+                <div className="alert-close">
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i className="la la-close"/></span>
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -105,8 +105,7 @@ const HoldingUnitForm = (props) => {
     const formatLeads = (leadsOptions) => {
         const newLeads = [];
         for (let i=0; i<leadsOptions.length; i++) {
-            console.log({value: leadsOptions[i].id, label: `${leadsOptions.identite} ${leadsOptions.identite}`});
-            newLeads.push({value: leadsOptions[i].id, label: `${leadsOptions.identite.lastname} ${leadsOptions.identite.firstname}`})
+            newLeads.push({value: leadsOptions[i].id, label: `${leadsOptions[i].identite.lastname} ${leadsOptions[i].identite.firstname}`})
         }
         return newLeads;
     };
@@ -121,9 +120,13 @@ const HoldingUnitForm = (props) => {
                             description: response.data.unit.description["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
                             institution_id: response.data.unit.institution ? response.data.unit.institution_id ? response.data.unit.institution_id : "" : "",
-                            parent_id: response.data.unit.parent_id ? response.data.unit.parent_id : ""
+                            parent_id: response.data.unit.parent_id ? response.data.unit.parent_id : "",
+                            lead_id: response.data.unit.lead_id ? response.data.unit.lead_id : "",
                         };
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
+                        setLead(
+                            response.data.unit.lead ? {value: response.data.unit.lead.id, label: response.data.unit.lead.identite.lastname+" "+response.data.unit.lead.identite.lastname} : {value: "", label: ""}
+                        );
                         setUnitType({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
                         if (verifyPermission(props.userPermissions, 'update-any-unit')) {
@@ -187,6 +190,11 @@ const HoldingUnitForm = (props) => {
         setInstitution(selected);
         axios.get(endPoint.findUnitByInstitution(selected.value))
             .then(response => {
+                console.log(response.data);
+                setLead({value: "", label: ""});
+                newData.lead_id = "";
+                setData(newData);
+                setLeads(response.data.staffs.length ? formatLeads(response.data.staffs) : []);
                 setParent({value: "", label: ""});
                 setParents(formatSelectOption(response.data.units, "name", "fr"))
             })
@@ -310,26 +318,6 @@ const HoldingUnitForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Select
-                                                        value={lead}
-                                                        onChange={onChangeLead}
-                                                        options={leads}
-                                                    />
-                                                    {
-                                                        error.lead_id.length ? (
-                                                            error.lead_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit') ? (
                                                     <div className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
@@ -351,6 +339,32 @@ const HoldingUnitForm = (props) => {
                                                             }
                                                         </div>
                                                     </div>
+                                                ) : ""
+                                            }
+
+                                            {
+                                                id ? (
+                                                    verifyPermission(props.userPermissions, 'update-any-unit') ? (
+                                                        <div className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable</label>
+                                                            <div className="col-lg-9 col-xl-6">
+                                                                <Select
+                                                                    value={lead}
+                                                                    onChange={onChangeLead}
+                                                                    options={leads}
+                                                                />
+                                                                {
+                                                                    error.lead_id.length ? (
+                                                                        error.lead_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
                                                 ) : ""
                                             }
 
