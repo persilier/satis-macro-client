@@ -52,7 +52,7 @@ const CategoryClientForm = (props) => {
                 })
         }
 
-    });
+    },[]);
 
     const onChangeName = (e) => {
         const newData = {...data};

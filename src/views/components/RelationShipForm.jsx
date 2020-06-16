@@ -49,7 +49,7 @@ const RelationShipForm = (props) => {
                     setData(newType);
                 })
         }
-    });
+    },[]);
 
     const onChangeName = (e) => {
         const newData = {...data};

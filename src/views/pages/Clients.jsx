@@ -70,7 +70,6 @@ const Clients = (props) => {
                 setClients(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
                 setNumberPage(forceRound(response.data.length / numberPerPage));
-
             })
             .catch(error => {
                 setLoad(false);
@@ -186,7 +185,7 @@ const Clients = (props) => {
         return (
             client.accounts ?
                 client.accounts.map((account, i) => (
-                    <tr key={i} className="d-flex justify-content-center align-content-center odd" role="row" className="odd">
+                    <tr key={i} role="row" className="odd">
 
                         {
                             i === 0 ?

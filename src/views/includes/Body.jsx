@@ -45,6 +45,8 @@ import ConfigRequirements from "../pages/ConfigRequirements";
 import HoldingClientForm from "../../APP_MACRO/Holding/HoldingClientForm";
 import RelationShip from "../pages/RelationShip";
 import RelationShipForm from "../components/RelationShipForm";
+import IncompleteClaims from "../pages/IncompleteClaims";
+import IncompleteClaimsEdit from "../components/IncompleteClaimsEdit";
 
 const Body = () => {
     return (
@@ -289,6 +291,14 @@ const Body = () => {
 
             <Route exact path="/settings/claims/add">
                 <ClaimAdd/>
+            </Route>
+
+            <Route exact path="/settings/incomplete_claims">
+                <IncompleteClaims/>
+            </Route>
+
+            <Route exact path="/settings/incomplete_claims/edit/:id">
+                <IncompleteClaimsEdit/>
             </Route>
 
             <Route exact path="/settings/requirement">
