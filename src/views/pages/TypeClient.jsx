@@ -156,8 +156,7 @@ const TypeClient = (props) => {
 
     const printBodyTable = (type, index) => {
         return (
-            <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row"
-                className="odd">
+            <tr key={index} role="row" className="odd">
                 <td>{type.name.fr}</td>
                 <td>{type.description.fr}</td>
                 <td style={{textAlign:"center"}}>
@@ -205,7 +204,7 @@ const TypeClient = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
@@ -213,10 +212,10 @@ const TypeClient = (props) => {
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                         className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="" onClick={e => e.preventDefault()}
+                                    <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
                                         Type Client
                                     </a>
