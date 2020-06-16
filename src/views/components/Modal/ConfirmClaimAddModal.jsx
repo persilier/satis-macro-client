@@ -37,6 +37,7 @@ const ConfirmClaimAddModal = props => {
         claimer_id: props.claimer_id,
         event_occured_at: props.event_occured_at,
         is_revival: props.is_revival,
+        relationship_id: props.relationship_id
     };
     const defaultError = {
         firstname: [],
@@ -58,11 +59,14 @@ const ConfirmClaimAddModal = props => {
         claimer_id: [],
         event_occured_at: [],
         is_revival: [],
+        relationship_id: []
     };
 
     const option1 = 1;
     const option2 = 0;
 
+    const [relationship, setRelationship] = useState(props.relationship);
+    const [relationships, setRelationships] = useState(props.relationships);
     const [claimObject, setClaimObject] = useState(props.claimObject);
     const [claimObjects, setClaimObjects] = useState(props.claimObjects);
     const [claimCategory, setClaimCategory] = useState(props.claimCategory);
@@ -148,14 +152,16 @@ const ConfirmClaimAddModal = props => {
         setInstitution(selected);
         const newData = {...data};
         newData.institution_targeted_id = selected.value;
-        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
-            .then(response => {
-                setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
-                setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            });
+        if (!verifyPermission(props.userPermissions, "")) {
+            axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
+                .then(response => {
+                    setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
+                    setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                });
+        }
         setData(newData);
     };
 
@@ -264,6 +270,13 @@ const ConfirmClaimAddModal = props => {
         setData(newData);
     };
 
+    const onChangeRelationShip = selected => {
+        setRelationship(selected);
+        const newData = {...data};
+        newData.relationship_id = selected.value;
+        setData(newData);
+    };
+
     const onChangeEventOccuredAt = e => {
         const newData = {...data};
         newData.event_occured_at = e.target.value;
@@ -304,6 +317,7 @@ const ConfirmClaimAddModal = props => {
                 await setUnit({});
                 await setDisabledInput(false);
                 await setCustomer({});
+                await setRelationship({});
                 await setPossibleCustomers([]);
                 await setStartRequest(false);
                 await setError(defaultError);
@@ -359,7 +373,7 @@ const ConfirmClaimAddModal = props => {
                                 <div className="kt-section kt-section--first">
                                     <div className="kt-section__body">
                                         {
-                                            verifyPermission(props.userPermissions, 'store-claim-against-any-institution') ? (
+                                            verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée</label>
                                                     <div className="col-lg-9 col-xl-6">
@@ -389,27 +403,31 @@ const ConfirmClaimAddModal = props => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
 
-                                                <div className="form-group row">
-                                                    <div className={"col d-flex align-items-center mt-4"}>
-                                                        <label className="kt-checkbox">
-                                                            <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
-                                                            Client déjà enregistrer<span/>
-                                                        </label>
-                                                    </div>
+                                                {
+                                                    !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                        <div className="form-group row">
+                                                            <div className={"col d-flex align-items-center mt-4"}>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
+                                                                    Client déjà enregistrer<span/>
+                                                                </label>
+                                                            </div>
 
-                                                    <div className={"col"}>
-                                                        <label htmlFor="client">Selectionez le client</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            isDisabled={!disabledInput}
-                                                            placeholder={"Veillez selectioner le client"}
-                                                            value={customer}
-                                                            onChange={handleCustomerChange}
-                                                            options={possibleCustomers}
-                                                        />
-                                                    </div>
-                                                </div>
+                                                            <div className={"col"}>
+                                                                <label htmlFor="client">Selectionez le client</label>
+                                                                <Select
+                                                                    classNamePrefix="select"
+                                                                    className="basic-single"
+                                                                    isDisabled={!disabledInput}
+                                                                    placeholder={"Veillez selectioner le client"}
+                                                                    value={customer}
+                                                                    onChange={handleCustomerChange}
+                                                                    options={possibleCustomers}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
@@ -543,47 +561,53 @@ const ConfirmClaimAddModal = props => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
                                                 <div className="form-group row">
-                                                    <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="unit">Unité concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'unité"}
-                                                            value={unit}
-                                                            onChange={onChangeUnit}
-                                                            options={units}
-                                                        />
-                                                        {
-                                                            error.unit_targeted_id.length ? (
-                                                                error.unit_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
+                                                    {
+                                                        !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                            <div className="form-group row">
+                                                                <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="unit">Unité concèrner</label>
+                                                                    <Select
+                                                                        classNamePrefix="select"
+                                                                        className="basic-single"
+                                                                        placeholder={"Veillez selectioner l'unité"}
+                                                                        value={unit}
+                                                                        onChange={onChangeUnit}
+                                                                        options={units}
+                                                                    />
+                                                                    {
+                                                                        error.unit_targeted_id.length ? (
+                                                                            error.unit_targeted_id.map((error, index) => (
+                                                                                <div key={index} className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
 
-                                                    <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="account">Numéro de compte concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le numéro"}
-                                                            value={account}
-                                                            onChange={onChangeAccount}
-                                                            options={accounts}
-                                                        />
-                                                        {
-                                                            error.account_targeted_id.length ? (
-                                                                error.account_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
+                                                                <div className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="account">Numéro de compte concèrner</label>
+                                                                    <Select
+                                                                        classNamePrefix="select"
+                                                                        className="basic-single"
+                                                                        placeholder={"Veillez selectioner le numéro"}
+                                                                        value={account}
+                                                                        onChange={onChangeAccount}
+                                                                        options={accounts}
+                                                                    />
+                                                                    {
+                                                                        error.account_targeted_id.length ? (
+                                                                            error.account_targeted_id.map((error, index) => (
+                                                                                <div key={index} className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        ) : ""
+                                                    }
                                                 </div>
 
                                                 <div className="form-group row">
@@ -711,12 +735,12 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évènement </label>
+                                                        <label htmlFor="date">Date de l'évernement</label>
                                                         <input
-                                                            id="date"
                                                             type={"datetime-local"}
+                                                            id="date"
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la date de l'évènement"
+                                                            placeholder="Veillez entrer la date de l'evernement"
                                                             value={data.event_occured_at}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
@@ -730,6 +754,33 @@ const ConfirmClaimAddModal = props => {
                                                             ) : ""
                                                         }
                                                     </div>
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, "store-claim-without-client") ? (
+                                                            <div className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                                <Select
+                                                                    classNamePrefix="select"
+                                                                    className="basic-single"
+                                                                    placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
+                                                                    value={relationship}
+                                                                    onChange={onChangeRelationShip}
+                                                                    options={relationships}
+                                                                />
+                                                                {
+                                                                    error.relationship_id.length ? (
+                                                                        error.relationship_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        ) : ""
+                                                    }
+
+
                                                 </div>
 
                                                 <div className="form-group row">

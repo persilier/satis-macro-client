@@ -41,21 +41,21 @@ const endPointConfig = {
     },
     HUB: {
         plan: "HUB",
-        create: `${appConfig.apiDomaine}/any/claims/create`,
-        store: `${appConfig.apiDomaine}/any/claims`,
-        storeKnowingIdentity: id => `${appConfig.apiDomaine}/any/identites/${id}/claims`,
+        create: `${appConfig.apiDomaine}/without-client/claims/create`,
+        store: `${appConfig.apiDomaine}/without-client/claims`,
+        storeKnowingIdentity: id => `${appConfig.apiDomaine}/without-client/identites/${id}/claims`,
     }
 };
 
 const ClaimAdd = props => {
-    if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution")))
+    if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
         window.location.href = ERROR_401;
 
     let endPoint = "";
     if (props.plan === "MACRO") {
-        if (verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit'))
+        if (verifyPermission(props.userPermissions, 'store-claim-against-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'update-my-unit'))
+        else if (verifyPermission(props.userPermissions, 'store-claim-against-my-institution'))
             endPoint = endPointConfig[props.plan].filial
     } else
         endPoint = endPointConfig[props.plan];
@@ -69,6 +69,7 @@ const ClaimAdd = props => {
         unit_targeted_id: "",
         institution_targeted_id: "",
         account_targeted_id: "",
+        relationship_id: "",
         claim_object_id: "",
         request_channel_slug: "",
         response_channel_slug: "",
@@ -89,6 +90,7 @@ const ClaimAdd = props => {
         ville: [],
         unit_targeted_id: [],
         institution_targeted_id: [],
+        relationship_id: [],
         account_targeted_id: [],
         claim_object_id: [],
         request_channel_slug: [],
@@ -109,6 +111,8 @@ const ClaimAdd = props => {
     const [claimObjects, setClaimObjects] = useState([]);
     const [claimCategory, setClaimCategory] = useState({});
     const [claimCategories, setClaimCategories] = useState([]);
+    const [relationship, setRelationship] = useState({});
+    const [relationships, setRelationships] = useState([]);
     const [accounts, setAccounts] = useState([]);
     const [account, setAccount] = useState([]);
     const [units, setUnits] = useState([]);
@@ -133,11 +137,12 @@ const ClaimAdd = props => {
         async function fetchData() {
             await axios.get(endPoint.create)
                 .then(response => {
-                    console.log(response.data);
-                    if (verifyPermission(props.userPermissions, "store-claim-against-any-institution"))
+                    console.log(response.data, "Data");
+                    if (verifyPermission(props.userPermissions, "store-claim-without-client"))
+                        setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
+                    if (verifyPermission(props.userPermissions, "store-claim-against-any-institution") || verifyPermission(props.userPermissions, "store-claim-without-client"))
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
-                        console.log("coucoucou");
                         setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
                         setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
                     }
@@ -148,7 +153,7 @@ const ClaimAdd = props => {
                 })
                 .catch(error => {
                     console.log("Something is wrong");
-                })
+                });
         }
         fetchData();
     }, []);
@@ -214,14 +219,16 @@ const ClaimAdd = props => {
         setInstitution(selected);
         const newData = {...data};
         newData.institution_targeted_id = selected.value;
-        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
-            .then(response => {
-                setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
-                setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            });
+        if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
+            axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
+                .then(response => {
+                    setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
+                    setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                });
+        }
         setData(newData);
     };
 
@@ -330,6 +337,13 @@ const ClaimAdd = props => {
         setData(newData);
     };
 
+    const onChangeRelationShip = selected => {
+        setRelationship(selected);
+        const newData = {...data};
+        newData.relationship_id = selected.value;
+        setData(newData);
+    };
+
     const onChangeEventOccuredAt = e => {
         const newData = {...data};
         newData.event_occured_at = e.target.value;
@@ -359,6 +373,9 @@ const ClaimAdd = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
+            delete newData.relationship_id;
+        console.log(newData);
         axios.post(endPoint.store, newData)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
@@ -401,8 +418,10 @@ const ClaimAdd = props => {
                     await setCustomer({});
                     await setPossibleCustomers([]);
                     await setData(defaultData);
+                    await setRelationship({});
                     setStartRequest(false);
                 } else {
+                    console.log({...defaultData, ...error.response.data.error});
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);
@@ -412,7 +431,7 @@ const ClaimAdd = props => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") ? (
+        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -455,7 +474,7 @@ const ClaimAdd = props => {
                                         />
 
                                         {
-                                            verifyPermission(props.userPermissions, 'store-claim-against-any-institution') ? (
+                                            verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée</label>
                                                     <div className="col-lg-9 col-xl-6">
@@ -485,27 +504,31 @@ const ClaimAdd = props => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
 
-                                                <div className="form-group row">
-                                                    <div className={"col d-flex align-items-center mt-4"}>
-                                                        <label className="kt-checkbox">
-                                                            <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
-                                                            Client déjà enregistrer<span/>
-                                                        </label>
-                                                    </div>
+                                                {
+                                                    !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                        <div className="form-group row">
+                                                            <div className={"col d-flex align-items-center mt-4"}>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
+                                                                    Client déjà enregistrer<span/>
+                                                                </label>
+                                                            </div>
 
-                                                    <div className={"col"}>
-                                                        <label htmlFor="client">Selectionez le client</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            isDisabled={!disabledInput}
-                                                            placeholder={"Veillez selectioner le client"}
-                                                            value={customer}
-                                                            onChange={handleCustomerChange}
-                                                            options={possibleCustomers}
-                                                        />
-                                                    </div>
-                                                </div>
+                                                            <div className={"col"}>
+                                                                <label htmlFor="client">Selectionez le client</label>
+                                                                <Select
+                                                                    classNamePrefix="select"
+                                                                    className="basic-single"
+                                                                    isDisabled={!disabledInput}
+                                                                    placeholder={"Veillez selectioner le client"}
+                                                                    value={customer}
+                                                                    onChange={handleCustomerChange}
+                                                                    options={possibleCustomers}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
@@ -638,49 +661,53 @@ const ClaimAdd = props => {
                                         <div className="kt-section kt-section--first">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
-                                                <div className="form-group row">
-                                                    <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="unit">Unité concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'unité"}
-                                                            value={unit}
-                                                            onChange={onChangeUnit}
-                                                            options={units}
-                                                        />
-                                                        {
-                                                            error.unit_targeted_id.length ? (
-                                                                error.unit_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
+                                                {
+                                                    !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                        <div className="form-group row">
+                                                            <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="unit">Unité concèrner</label>
+                                                                <Select
+                                                                    classNamePrefix="select"
+                                                                    className="basic-single"
+                                                                    placeholder={"Veillez selectioner l'unité"}
+                                                                    value={unit}
+                                                                    onChange={onChangeUnit}
+                                                                    options={units}
+                                                                />
+                                                                {
+                                                                    error.unit_targeted_id.length ? (
+                                                                        error.unit_targeted_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
 
-                                                    <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="account">Numéro de compte concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le numéro"}
-                                                            value={account}
-                                                            onChange={onChangeAccount}
-                                                            options={accounts}
-                                                        />
-                                                        {
-                                                            error.account_targeted_id.length ? (
-                                                                error.account_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                </div>
+                                                            <div className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="account">Numéro de compte concèrner</label>
+                                                                <Select
+                                                                    classNamePrefix="select"
+                                                                    className="basic-single"
+                                                                    placeholder={"Veillez selectioner le numéro"}
+                                                                    value={account}
+                                                                    onChange={onChangeAccount}
+                                                                    options={accounts}
+                                                                />
+                                                                {
+                                                                    error.account_targeted_id.length ? (
+                                                                        error.account_targeted_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
@@ -807,12 +834,12 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évènement </label>
+                                                        <label htmlFor="date">Date de l'évernement</label>
                                                         <input
-                                                            id="date"
                                                             type={"datetime-local"}
+                                                            id="date"
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la date de l'évènement"
+                                                            placeholder="Veillez entrer la date de l'evernement"
                                                             value={data.event_occured_at}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
@@ -826,6 +853,33 @@ const ClaimAdd = props => {
                                                             ) : ""
                                                         }
                                                     </div>
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, "store-claim-without-client") ? (
+                                                            <div className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                                <Select
+                                                                    classNamePrefix="select"
+                                                                    className="basic-single"
+                                                                    placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
+                                                                    value={relationship}
+                                                                    onChange={onChangeRelationShip}
+                                                                    options={relationships}
+                                                                />
+                                                                {
+                                                                    error.relationship_id.length ? (
+                                                                        error.relationship_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        ) : ""
+                                                    }
+
+
                                                 </div>
 
                                                 <div className="form-group row">
@@ -934,6 +988,7 @@ const ClaimAdd = props => {
                                             amount_currency_slug={data.amount_currency_slug}
                                             amount_disputed={data.amount_disputed}
                                             claimer_id={data.claimer_id}
+                                            relationship_id={data.relationship_id}
                                             event_occured_at={data.event_occured_at}
                                             is_revival={data.is_revival}
                                             resetFoundData={resetFountData}
@@ -945,6 +1000,8 @@ const ClaimAdd = props => {
                                             account={account}
                                             units={units}
                                             unit={unit}
+                                            relationships={relationships}
+                                            relationship={relationship}
                                             responseChannels={responseChannels}
                                             channels={channels}
                                             responseChannel={responseChannel}

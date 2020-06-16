@@ -131,5 +131,8 @@ export const filterChannel = (channels, typeFilter) => {
 };
 
 export const formatToTimeStamp = dateTime => {
-    return dateTime.split("T")[0]+" "+dateTime.split("T")[1]
+    if (dateTime.length)
+        return dateTime.split("T")[0]+" "+dateTime.split("T")[1];
+    else
+        return "";
 };
