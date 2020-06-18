@@ -457,6 +457,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             isClearable
+                                                            isDisabled={true}
                                                             value={institution}
                                                             placeholder={"Veillez selectioner l'institution"}
                                                             onChange={onChangeInstitution}
@@ -476,7 +477,7 @@ const ConfirmClaimAddModal = props => {
                                             ) : ""
                                         }
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
 
@@ -485,7 +486,7 @@ const ConfirmClaimAddModal = props => {
                                                         <div className="form-group row">
                                                             <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
-                                                                    <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
+                                                                    <input disabled={true} type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
                                                                     Client déjà enregistrer<span/>
                                                                 </label>
                                                             </div>
@@ -494,7 +495,7 @@ const ConfirmClaimAddModal = props => {
                                                                 <label htmlFor="client">Selectionez le client</label>
                                                                 <Select
                                                                     isClearable
-                                                                    isDisabled={!disabledInput}
+                                                                    isDisabled={true}
                                                                     placeholder={"Veillez selectioner le client"}
                                                                     value={customer}
                                                                     onChange={handleCustomerChange}
@@ -509,7 +510,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
                                                         <label htmlFor="lastname">Votre nom de famille</label>
                                                         <input
-                                                            disabled={disabledInput}
+                                                            disabled={true}
                                                             id="lastname"
                                                             type="text"
                                                             className={error.lastname.length ? "form-control is-invalid" : "form-control"}
@@ -531,7 +532,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
                                                         <label htmlFor="firstname">Votre prénom</label>
                                                         <input
-                                                            disabled={disabledInput}
+                                                            disabled={true}
                                                             id="firstname"
                                                             type="text"
                                                             className={error.firstname.length ? "form-control is-invalid" : "form-control"}
@@ -555,7 +556,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
                                                         <label htmlFor="sexe">Votre sexe</label>
                                                         <select
-                                                            disabled={disabledInput}
+                                                            disabled={true}
                                                             id="sexe"
                                                             className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.sexe}
@@ -580,7 +581,7 @@ const ConfirmClaimAddModal = props => {
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
                                                         <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                        <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} />
+                                                        <TagsInput disabled={true} value={data.telephone} onChange={onChangeTelephone} />
                                                         {
                                                             error.telephone.length ? (
                                                                 error.telephone.map((error, index) => (
@@ -594,7 +595,7 @@ const ConfirmClaimAddModal = props => {
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
                                                         <label htmlFor="email">Votre Email(s)</label>
-                                                        <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} />
+                                                        <TagsInput disabled={true} value={data.email} onChange={onChangeEmail} />
                                                         {
                                                             error.email.length ? (
                                                                 error.email.map((error, index) => (
@@ -609,7 +610,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.ville.length ? "col validated" : "col"}>
                                                         <label htmlFor="ville">Votre ville</label>
                                                         <input
-                                                            disabled={disabledInput}
+                                                            disabled={true}
                                                             id="ville"
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
@@ -629,11 +630,11 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                         </div>
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
 
@@ -892,11 +893,11 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                         </div>
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Relance:</h3>
 
