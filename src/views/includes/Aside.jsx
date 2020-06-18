@@ -52,7 +52,9 @@ const Aside = (props) => {
                                         ) : ""
                                     }
                                     {
-                                        verifyPermission(props.userPermissions, 'list-claim-incomplete-against-any-institution') || verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ? (
+                                        verifyPermission(props.userPermissions, 'list-claim-incomplete-against-any-institution') ||
+                                        verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution")||
+                                        verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")? (
                                             <NavLink exact to="/settings/incomplete_claims" className="kt-menu__item "
                                                      activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
@@ -142,11 +144,20 @@ const Aside = (props) => {
                                                      activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                    <span className="kt-menu__link-text">Exigences</span>
+                                                    <span className="kt-menu__link-text">Configuration des Exigences</span>
                                                 </li>
                                             </NavLink>
                                             : ""
                                     }
+
+                                            <NavLink to="/settings/processing-circuit" className="kt-menu__item "
+                                                     activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Configuration des Circuits de Traitement</span>
+                                                </li>
+                                            </NavLink>
+
 
                                     <NavLink to="/settings/faqs/list" className="kt-menu__item "
                                              activeClassName="kt-menu__item--active" aria-haspopup="true">

@@ -41,14 +41,15 @@ const endPointConfig = {
     },
     HUB: {
         plan: "HUB",
-        list: `${appConfig.apiDomaine}/any/claims-incompletes`,
-        destroy: claimId => `${appConfig.apiDomaine}/any/claims-incompletes/${claimId}`,
+        list: `${appConfig.apiDomaine}/without-client/claims-incompletes `,
+        destroy: claimId => `${appConfig.apiDomaine}/without-client/claims-incompletes/${claimId}`,
     }
 };
 
 const IncompleteClaims = (props) => {
     if (!(verifyPermission(props.userPermissions, "list-claim-incomplete-against-any-institution") ||
-        verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution")))
+        verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ||
+        verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -69,6 +70,7 @@ const IncompleteClaims = (props) => {
         endPoint = endPointConfig[props.plan];
 
     useEffect(() => {
+        console.log("hello word");
         axios.get(endPoint.list)
             .then(response => {
                 console.log(response.data, 'Incomplete_Data');
@@ -142,40 +144,6 @@ const IncompleteClaims = (props) => {
         }
     };
 
-    const deleteCategoryClient = (claimId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
-            .then((result) => {
-                if (result.value) {
-                    axios.delete(endPoint.destroy(claimId))
-                        .then(response => {
-                            const newClaims = [...incompleteClaims];
-                            newClaims.splice(index, 1);
-                            setIncompleteClaims(newClaims);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newClaims.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newClaims.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
-                }
-            })
-        ;
-    };
     const arrayNumberPage = () => {
         const pages = [];
         for (let i = 0; i < numberPage; i++) {
@@ -201,7 +169,7 @@ const IncompleteClaims = (props) => {
                     </Link>
 
                     {
-                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ?
+                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') || verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ?
                             <Link
                                 to={`/settings/incomplete_claims/edit/${claim.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -211,22 +179,17 @@ const IncompleteClaims = (props) => {
                             : ""
                     }
 
-                    {verifyPermission(props.userPermissions, "destroy-category-client") ?
-                        <button
-                            onClick={(e) => deleteCategoryClient(claim.id, index)}
-                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Supprimer">
-                            <i className="la la-trash"/>
-                        </button>
-                        : ""
-                    }
                 </td>
             </tr>
         )
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-category-client") ? (
+        (
+            verifyPermission(props.userPermissions, "list-claim-incomplete-against-any-institution") ||
+            verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ||
+            verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")
+        ) ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">

@@ -20,7 +20,7 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ConfigRequirements = () => {
+const ConfigProcessingCircuit = () => {
     const defaultData = {
         objectData: {},
         requirements: [],
@@ -227,9 +227,9 @@ const ConfigRequirements = () => {
                 <div className="kt-portlet">
                     <HeaderTablePage
                         addPermission={""}
-                        title={"Exigences"}
-                        addText={"Ajouter une Exigence"}
-                        addLink={"/settings/requirement"}
+                        title={"Circuit de Traitement"}
+                        addText={"Ajouter un circuit de traitement"}
+                        addLink={"/settings/processing-circuit"}
                     />
 
                     {
@@ -371,4 +371,4 @@ const ConfigRequirements = () => {
 };
 
 
-export default ConfigRequirements;
+export default ConfigProcessingCircuit;
