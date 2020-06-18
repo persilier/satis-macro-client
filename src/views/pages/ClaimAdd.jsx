@@ -121,7 +121,7 @@ const ClaimAdd = props => {
     const [channels, setChannels] = useState([]);
     const [responseChannel, setResponseChannel] = useState(null);
     const [receptionChannel, setReceptionChannel] = useState(null);
-    const [currency, setCurrency] = useState({});
+    const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
     const [customer, setCustomer] = useState(null);
@@ -575,7 +575,7 @@ const ClaimAdd = props => {
                                             ) : ""
                                         }
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
 
@@ -728,11 +728,11 @@ const ClaimAdd = props => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                         </div>
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
                                                 {
@@ -806,6 +806,7 @@ const ClaimAdd = props => {
                                                         <label htmlFor="responseChannel">Canal de réponse</label>
                                                         <Select
                                                             isClearable
+                                                            placeholder={"Veillez selectionner le canal de réponse"}
                                                             value={responseChannel}
                                                             onChange={onChangeResponseChannel}
                                                             options={responseChannels}
@@ -827,6 +828,7 @@ const ClaimAdd = props => {
                                                         <label htmlFor="claimCtegory">Catégorie de plainte</label>
                                                         <Select
                                                             isClearable
+                                                            placeholder={"Veillez selectionner la catégorie de plainte"}
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
                                                             options={claimCategories}
@@ -837,6 +839,7 @@ const ClaimAdd = props => {
                                                         <label htmlFor="claimObject">Objet de plainte</label>
                                                         <Select
                                                             isClearable
+                                                            placeholder={"Veillez selectionner l'objet de plainte"}
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
                                                             options={claimObjects}
@@ -879,6 +882,7 @@ const ClaimAdd = props => {
                                                         <label htmlFor="currency">Devise du montant réclamé</label>
                                                         <Select
                                                             isClearable
+                                                            placeholder={"Veillez selectionner la devise du montant réclamé"}
                                                             value={currency}
                                                             onChange={onChangeAmountCurrency}
                                                             options={currencies}
@@ -986,11 +990,11 @@ const ClaimAdd = props => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                         </div>
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Relance:</h3>
 
