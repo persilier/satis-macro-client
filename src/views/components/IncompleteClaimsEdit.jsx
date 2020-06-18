@@ -78,6 +78,7 @@ const IncompleteClaimsEdit = props => {
         amount_currency_slug: "",
         amount_disputed: "",
         claimer_id: "",
+        relationship_id:"",
         event_occured_at: "",
         is_revival: 0,
     };
@@ -99,6 +100,7 @@ const IncompleteClaimsEdit = props => {
         amount_currency_slug: [],
         amount_disputed: [],
         claimer_id: [],
+        relationship_id: [],
         event_occured_at: [],
         is_revival: [],
     };
@@ -116,6 +118,8 @@ const IncompleteClaimsEdit = props => {
     const [unit, setUnit] = useState({});
     const [responseChannels, setResponseChannels] = useState([]);
     const [channels, setChannels] = useState([]);
+    const [relationships, setRelationships] = useState([]);
+    const [relationship, setRelationship] = useState({});
     const [responseChannel, setResponseChannel] = useState({});
     const [receptionChannel, setReceptionChannel] = useState({});
     const [currency, setCurrency] = useState({});
@@ -142,6 +146,7 @@ const IncompleteClaimsEdit = props => {
                         email: response.data.claim.claimer.email,
                         ville: response.data.claim.claimer.ville === null ? "" : response.data.claim.claimer.ville,
                         unit_targeted_id: response.data.claim.unit_targeted_id,
+                        relationship_id: response.data.claim.relationship_id,
                         account_targeted_id: response.data.claim.account_targeted_id,
                         institution_targeted_id: response.data.claim.institution_targeted_id,
                         claim_object_id: response.data.claim.claim_object_id,
@@ -155,6 +160,8 @@ const IncompleteClaimsEdit = props => {
                         is_revival: response.data.claim.is_revival
                     };
                     setData(newIncompleteClaim);
+                    if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
+                        setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution")||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
@@ -219,6 +226,18 @@ const IncompleteClaimsEdit = props => {
         fetchData();
 
     }, [endPoint, props.userPermissions, id]);
+
+    const onChangeRelationShip = selected => {
+        const newData = {...data};
+        if (selected) {
+            setRelationship(selected);
+            newData.relationship_id = selected.value;
+        } else {
+            setRelationship(null);
+            newData.relationship_id = "";
+        }
+        setData(newData);
+    };
 
     const onChangeFirstName = (e) => {
         const newData = {...data};
@@ -352,12 +371,15 @@ const IncompleteClaimsEdit = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
+            delete newData.relationship_id;
         axios.put(endPoint.update(`${id}`), newData)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 await setInstitution({});
                 await setClaimCategory({});
                 await setCurrency({});
+                await setRelationship({});
                 await setResponseChannel({});
                 await setReceptionChannel({});
                 await setClaimObject({});
@@ -456,7 +478,8 @@ const IncompleteClaimsEdit = props => {
                                             ) : ""
                                         }
                                         {
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")?(
+                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution")||
+                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution")?(
                                                 <div className="kt-section kt-section--first">
                                                     <div className="kt-section__body">
                                                         <h3 className="kt-section__title kt-section__title-lg">Informations
@@ -801,6 +824,29 @@ const IncompleteClaimsEdit = props => {
                                                             ) : ""
                                                         }
                                                     </div>
+                                                    {
+                                                        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
+                                                            <div className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                                <Select
+                                                                    isClearable
+                                                                    value={relationship}
+                                                                    placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
+                                                                    onChange={onChangeRelationShip}
+                                                                    options={relationships}
+                                                                />
+                                                                {
+                                                                    error.relationship_id.length ? (
+                                                                        error.relationship_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        ) : ""
+                                                    }
                                                 </div>
 
                                                 <div className="form-group row">
