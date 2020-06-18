@@ -80,6 +80,7 @@ const ClaimAdd = props => {
         claimer_id: "",
         event_occured_at: "",
         is_revival: 0,
+        file: []
     };
     const defaultError = {
         firstname: [],
@@ -102,6 +103,7 @@ const ClaimAdd = props => {
         claimer_id: [],
         event_occured_at: [],
         is_revival: [],
+        file: []
     };
 
     const option1 = 1;
@@ -190,6 +192,13 @@ const ClaimAdd = props => {
     const onChangeEmail = (mail) => {
         const newData = {...data};
         newData.email = mail;
+        setData(newData);
+    };
+
+    const onChangeFile = (e) => {
+        console.log(e.target);
+        const newData = {...data};
+        newData.file = Object.values(e.target.files);
         setData(newData);
     };
 
@@ -439,12 +448,37 @@ const ClaimAdd = props => {
         setError(defaultError)
     };
 
+    const formatFormData = (newData) => {
+        const formData = new FormData();
+        formData.append("_method", "post");
+        for (const key in newData) {
+            // console.log(`${key}:`, newData[key]);
+            if (key === "file") {
+                for (let i = 0; i < (newData.file).length; i++)
+                    formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
+            }
+            else if (key === "telephone") {
+                for (let i = 0; i < (newData.telephone).length; i++)
+                    formData.append("telephone[]", (newData[key])[i]);
+            }
+            else if (key === "email") {
+                for (let i = 0; i < (newData.email).length; i++)
+                    formData.append("email[]", (newData[key])[i]);
+            }
+            else
+                formData.set(key, newData[key]);
+        }
+        return formData;
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         const newData = {...data};
         newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
         setStartRequest(true);
-        if (!newData.response_channelf_slug)
+        if (!newData.file.length)
+            delete newData.file;
+        if (!newData.response_channel_slug)
             delete newData.response_channel_slug;
         if (!newData.unit_targeted_id)
             delete newData.unit_targeted_id;
@@ -452,8 +486,8 @@ const ClaimAdd = props => {
             delete newData.account_targeted_id;
         if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
             delete newData.relationship_id;
-        axios.post(endPoint.store, newData)
-            .then(async (response) => {
+        axios.post(endPoint.store, formatFormData(newData))
+            .then(async () => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 await setInstitution(null);
                 await setClaimCategory(null);
@@ -473,6 +507,7 @@ const ClaimAdd = props => {
                 await setStartRequest(false);
                 await setError(defaultError);
                 await setData(defaultData);
+                document.getElementById("customFile").value = "";
             })
             .catch(async (error) => {
                 if (error.response.data.code === 409) {
@@ -480,26 +515,34 @@ const ClaimAdd = props => {
                     setFoundData(error.response.data.error);
                     await document.getElementById("confirmSaveForm").click();
                     //Reset form
-                    await setInstitution({});
-                    await setClaimCategory({});
-                    await setCurrency({});
-                    await setResponseChannel({});
-                    await setReceptionChannel({});
-                    await setClaimObject({});
+                    await setInstitution(null);
+                    await setClaimCategory(null);
+                    await setCurrency(null);
+                    await setResponseChannel(null);
+                    await setReceptionChannel(null);
+                    await setClaimObject(null);
                     await setClaimObjects([]);
                     await setAccounts([]);
-                    await setAccount({});
+                    await setAccount(null);
                     await setUnits([]);
-                    await setUnit({});
+                    await setUnit(null);
                     await setDisabledInput(false);
-                    await setCustomer({});
+                    await setCustomer(null);
                     await setPossibleCustomers([]);
                     await setData(defaultData);
-                    await setRelationship({});
+                    await setRelationship(null);
                     setStartRequest(false);
                 } else {
                     setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
+                    let fileErrors = [];
+                    let i = 0;
+                    for (const key in error.response.data.error) {
+                        if (key === `file.${i}`) {
+                            fileErrors = [...fileErrors, ...error.response.data.error[`file.${i}`]];
+                            i++;
+                        }
+                    }
+                    setError({...defaultError, ...error.response.data.error, file: fileErrors});
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);
                 }
             })
@@ -945,7 +988,25 @@ const ClaimAdd = props => {
                                                         ) : ""
                                                     }
 
-
+                                                    <div className="col">
+                                                        <label htmlFor="file">Pièces jointes</label>
+                                                        <input
+                                                            onChange={onChangeFile}
+                                                            type="file"
+                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                            id="customFile"
+                                                            multiple={true}
+                                                        />
+                                                        {
+                                                            error.file.length ? (
+                                                                error.file.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
                                                 </div>
 
                                                 <div className="form-group row">
@@ -1057,6 +1118,7 @@ const ClaimAdd = props => {
                                             relationship_id={data.relationship_id}
                                             event_occured_at={data.event_occured_at}
                                             is_revival={data.is_revival}
+                                            file={data.file}
                                             resetFoundData={resetFountData}
                                             claimObject={claimObject}
                                             claimObjects={claimObjects}
@@ -1080,6 +1142,7 @@ const ClaimAdd = props => {
                                             institution={institution}
                                             institutions={institutions}
                                             endPoint={endPoint}
+                                            fileValue={document.getElementById("customFile").value}
                                         />
                                     ) : ""
                                 }

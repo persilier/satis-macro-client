@@ -250,7 +250,7 @@ const InstitutionForm = (props) => {
                                                                                    id="files"
                                                                                    data-toggle="kt-tooltip"
                                                                                    title="Change avatar">
-                                                                                <i className="fa fa-pen"></i>
+                                                                                <i className="fa fa-pen"/>
                                                                                 <input type="file"
                                                                                        id="file"
                                                                                        name="kt_user_add_user_avatar"
@@ -260,7 +260,7 @@ const InstitutionForm = (props) => {
                                                                             <span className="kt-avatar__cancel"
                                                                                   data-toggle="kt-tooltip"
                                                                                   title="Cancel avatar">
-                                                                            <i className="fa fa-times"></i>
+                                                                            <i className="fa fa-times"/>
                                                                         </span>
                                                                         </div>
                                                                     </div>

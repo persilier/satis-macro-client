@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import FormInformation from "../../components/FormInformation";
@@ -37,7 +37,8 @@ const ConfirmClaimAddModal = props => {
         claimer_id: props.claimer_id,
         event_occured_at: props.event_occured_at,
         is_revival: props.is_revival,
-        relationship_id: props.relationship_id
+        relationship_id: props.relationship_id,
+        file: props.file
     };
     const defaultError = {
         firstname: [],
@@ -59,7 +60,8 @@ const ConfirmClaimAddModal = props => {
         claimer_id: [],
         event_occured_at: [],
         is_revival: [],
-        relationship_id: []
+        relationship_id: [],
+        file: []
     };
 
     const option1 = 1;
@@ -123,6 +125,12 @@ const ConfirmClaimAddModal = props => {
     const onChangeEmail = (mail) => {
         const newData = {...data};
         newData.email = mail;
+        setData(newData);
+    };
+
+    const onChangeFile = (e) => {
+        const newData = {...data};
+        newData.file = Object.values(e.target.files);
         setData(newData);
     };
 
@@ -367,6 +375,29 @@ const ConfirmClaimAddModal = props => {
         setData(newData);
     };
 
+    const formatFormData = (newData) => {
+        const formData = new FormData();
+        formData.append("_method", "post");
+        for (const key in newData) {
+            // console.log(`${key}:`, newData[key]);
+            if (key === "file") {
+                for (let i = 0; i < (newData.file).length; i++)
+                    formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
+            }
+            else if (key === "telephone") {
+                for (let i = 0; i < (newData.telephone).length; i++)
+                    formData.append("telephone[]", (newData[key])[i]);
+            }
+            else if (key === "email") {
+                for (let i = 0; i < (newData.email).length; i++)
+                    formData.append("email[]", (newData[key])[i]);
+            }
+            else
+                formData.set(key, newData[key]);
+        }
+        return formData;
+    };
+
     const onSubmit = (e) => {
         const newData = {...data};
         newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
@@ -379,7 +410,9 @@ const ConfirmClaimAddModal = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
-        axios.post(props.endPoint.storeKnowingIdentity(props.id), newData)
+        if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
+            delete newData.relationship_id;
+        axios.post(props.endPoint.storeKnowingIdentity(props.id), formatFormData(newData))
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 await setInstitution(null);
@@ -400,6 +433,7 @@ const ConfirmClaimAddModal = props => {
                 await setStartRequest(false);
                 await setError(defaultError);
                 await setData(defaultData);
+                document.getElementById("customFile").value = "";
                 document.getElementById("closeConfirmSaveForm").click();
                 await props.resetFoundData();
             })
@@ -816,6 +850,26 @@ const ConfirmClaimAddModal = props => {
                                                         {
                                                             error.event_occured_at.length ? (
                                                                 error.event_occured_at.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+
+                                                    <div className="col">
+                                                        <label htmlFor="file">Pièces jointes</label>
+                                                        <input
+                                                            onChange={onChangeFile}
+                                                            type="file"
+                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                            id="customFileTwo"
+                                                            multiple={true}
+                                                        />
+                                                        {
+                                                            error.file.length ? (
+                                                                error.file.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
