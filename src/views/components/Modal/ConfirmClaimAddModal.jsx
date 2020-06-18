@@ -149,27 +149,28 @@ const ConfirmClaimAddModal = props => {
 
 
     const onChangeInstitution = (selected) => {
-        setInstitution(selected);
         const newData = {...data};
-        newData.institution_targeted_id = selected.value;
-        if (!verifyPermission(props.userPermissions, "")) {
-            axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
-                .then(response => {
-                    setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
-                    setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                });
+        if (selected) {
+            setInstitution(selected);
+            newData.institution_targeted_id = selected.value;
+            if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
+                axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
+                    .then(response => {
+                        setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
+                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    });
+            }
         }
-        setData(newData);
-    };
-
-    const handleDisabledInputChange = () => {
-        if (disabledInput) {
-            const newData = {...data};
-            setCustomer({});
-            setAccount({});
+        else {
+            setUnits([]);
+            setUnit(null);
+            setPossibleCustomers([]);
+            setCustomer(null);
+            setInstitution(null);
+            setAccount(null);
             setAccounts([]);
             newData.firstname = "";
             newData.lastname = "";
@@ -177,72 +178,139 @@ const ConfirmClaimAddModal = props => {
             newData.telephone = [];
             newData.email = [];
             newData.ville = "";
-            setData(newData);
+            newData.unit_targeted_id = "";
+            newData.claimer_id = "";
+            newData.account_targeted_id = "";
+            newData.institution_targeted_id = "";
         }
+        setData(newData);
+    };
+
+    const handleDisabledInputChange = () => {
+        const newData = {...data};
+        setCustomer(null);
+        setAccount(null);
+        setAccounts([]);
+        newData.firstname = "";
+        newData.lastname = "";
+        newData.sexe = "";
+        newData.telephone = [];
+        newData.email = [];
+        newData.ville = "";
+        newData.claimer_id = "";
+        newData.account_targeted_id = "";
+        setData(newData);
         setDisabledInput(!disabledInput);
     };
 
     const onChangeUnit = selected => {
-        setUnit(selected);
         const newData = {...data};
-        if (selected.value !== "other")
+        if (selected) {
+            setUnit(selected);
             newData.unit_targeted_id = selected.value;
-        else
+        } else {
             newData.unit_targeted_id = "";
+            setUnit(null)
+        }
         setData(newData);
     };
 
     const handleCustomerChange = (selected) => {
-        setCustomer(selected);
         const newData = {...data};
-        setAccount({});
-        setAccounts(formatSelectOption(selected.accounts, "number", false));
-        newData.firstname = selected.firstname;
-        newData.lastname = selected.lastname;
-        newData.sexe = selected.sexe;
-        newData.telephone = selected.telephone;
-        newData.email = selected.email;
-        newData.ville = selected.ville;
-        newData.claimer_id = selected.claimer_id;
+        if (selected) {
+            setCustomer(selected);
+            setAccount(null);
+            newData.account_targeted_id = "";
+            setAccounts(formatSelectOption(selected.accounts, "number", false));
+            newData.firstname = selected.firstname;
+            newData.lastname = selected.lastname;
+            newData.sexe = selected.sexe;
+            newData.telephone = selected.telephone;
+            newData.email = selected.email;
+            newData.ville = selected.ville;
+            newData.claimer_id = selected.claimer_id;
+        } else {
+            newData.firstname = "";
+            newData.lastname = "";
+            newData.sexe = "";
+            newData.telephone = [];
+            newData.email = [];
+            newData.ville = "";
+            setCustomer(null);
+            setAccount(null);
+            setAccounts([]);
+            newData.claimer_id = "";
+            newData.account_targeted_id = "";
+        }
         setData(newData);
     };
 
     const onChangeAccount = selected => {
-        setAccount(selected);
         const newData = {...data};
-        newData.account_targeted_id = selected.value;
+        if (selected) {
+            setAccount(selected);
+            newData.account_targeted_id = selected.value;
+        } else {
+            setAccount(null);
+            newData.account_targeted_id = ""
+        }
         setData(newData);
     };
 
     const onChangeClaimObject = selected => {
-        setClaimObject(selected);
         const newData = {...data};
-        newData.claim_object_id = selected.value;
+        if (selected) {
+            setClaimObject(selected);
+            newData.claim_object_id = selected.value;
+        } else {
+            setClaimObject(null);
+            newData.claim_object_id = "";
+        }
         setData(newData);
     };
 
     const onChangeReceptionChannel = selected => {
-        setReceptionChannel(selected);
         const newData = {...data};
-        newData.request_channel_slug = selected.value;
+        if (selected) {
+            setReceptionChannel(selected);
+            newData.request_channel_slug = selected.value;
+        } else {
+            setReceptionChannel(null);
+            newData.request_channel_slug = ""
+        }
         setData(newData);
     };
 
     const onChangeResponseChannel = selected => {
-        setResponseChannel(selected);
         const newData = {...data};
-        newData.response_channel_slug = selected.value;
+        if (selected) {
+            setResponseChannel(selected);
+            newData.response_channel_slug = selected.value;
+        } else {
+            setResponseChannel(null);
+            newData.response_channel_slug = "";
+        }
         setData(newData);
     };
 
     const onChangeClaimCategory = selected => {
-        setClaimCategory(selected);
-        axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
-            .then(response => {
-                setClaimObject({});
-                setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
-            })
-            .catch(error => console.log("Something is wrong"))
+        const newData = {...data};
+        if (selected) {
+            setClaimCategory(selected);
+            axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
+                .then(response => {
+                    newData.claim_object_id = "";
+                    setClaimObject(null);
+                    setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
+                })
+                .catch(error => console.log("Something is wrong"))
+        } else {
+            setClaimObjects([]);
+            setClaimObject(null);
+            setClaimCategory(null);
+            newData.claim_object_id = "";
+        }
+        setData(newData)
     };
 
     const onChangeClaimerExpectation = e => {
@@ -264,16 +332,26 @@ const ConfirmClaimAddModal = props => {
     };
 
     const onChangeAmountCurrency = selected => {
-        setCurrency(selected);
         const newData = {...data};
-        newData.amount_currency_slug = selected.value;
+        if (selected) {
+            setCurrency(selected);
+            newData.amount_currency_slug = selected.value;
+        } else {
+            setCurrency(null);
+            newData.amount_currency_slug = "";
+        }
         setData(newData);
     };
 
     const onChangeRelationShip = selected => {
-        setRelationship(selected);
         const newData = {...data};
-        newData.relationship_id = selected.value;
+        if (selected) {
+            setRelationship(selected);
+            newData.relationship_id = selected.value;
+        } else {
+            setRelationship(null);
+            newData.relationship_id = "";
+        }
         setData(newData);
     };
 
@@ -304,20 +382,20 @@ const ConfirmClaimAddModal = props => {
         axios.post(props.endPoint.storeKnowingIdentity(props.id), newData)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                await setInstitution({});
-                await setClaimCategory({});
-                await setCurrency({});
-                await setResponseChannel({});
-                await setReceptionChannel({});
-                await setClaimObject({});
+                await setInstitution(null);
+                await setClaimCategory(null);
+                await setCurrency(null);
+                await setResponseChannel(null);
+                await setReceptionChannel(null);
+                await setClaimObject(null);
                 await setClaimObjects([]);
                 await setAccounts([]);
-                await setAccount({});
+                await setAccount(null);
                 await setUnits([]);
-                await setUnit({});
+                await setUnit(null);
                 await setDisabledInput(false);
-                await setCustomer({});
-                await setRelationship({});
+                await setCustomer(null);
+                await setRelationship(null);
                 await setPossibleCustomers([]);
                 await setStartRequest(false);
                 await setError(defaultError);
@@ -378,10 +456,9 @@ const ConfirmClaimAddModal = props => {
                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée</label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'institution"}
+                                                            isClearable
                                                             value={institution}
+                                                            placeholder={"Veillez selectioner l'institution"}
                                                             onChange={onChangeInstitution}
                                                             options={institutions}
                                                         />
@@ -416,8 +493,7 @@ const ConfirmClaimAddModal = props => {
                                                             <div className={"col"}>
                                                                 <label htmlFor="client">Selectionez le client</label>
                                                                 <Select
-                                                                    classNamePrefix="select"
-                                                                    className="basic-single"
+                                                                    isClearable
                                                                     isDisabled={!disabledInput}
                                                                     placeholder={"Veillez selectioner le client"}
                                                                     value={customer}
@@ -560,62 +636,58 @@ const ConfirmClaimAddModal = props => {
                                         <div className="kt-section kt-section--first">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
-                                                <div className="form-group row">
-                                                    {
-                                                        !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
-                                                            <div className="form-group row">
-                                                                <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">Unité concèrner</label>
-                                                                    <Select
-                                                                        classNamePrefix="select"
-                                                                        className="basic-single"
-                                                                        placeholder={"Veillez selectioner l'unité"}
-                                                                        value={unit}
-                                                                        onChange={onChangeUnit}
-                                                                        options={units}
-                                                                    />
-                                                                    {
-                                                                        error.unit_targeted_id.length ? (
-                                                                            error.unit_targeted_id.map((error, index) => (
-                                                                                <div key={index} className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
-                                                                </div>
 
-                                                                <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="account">Numéro de compte concèrner</label>
-                                                                    <Select
-                                                                        classNamePrefix="select"
-                                                                        className="basic-single"
-                                                                        placeholder={"Veillez selectioner le numéro"}
-                                                                        value={account}
-                                                                        onChange={onChangeAccount}
-                                                                        options={accounts}
-                                                                    />
-                                                                    {
-                                                                        error.account_targeted_id.length ? (
-                                                                            error.account_targeted_id.map((error, index) => (
-                                                                                <div key={index} className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
-                                                                </div>
+                                                {
+                                                    !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                        <div className="form-group row">
+                                                            <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="unit">Unité concèrner</label>
+                                                                <Select
+                                                                    isClearable
+                                                                    placeholder={"Veillez selectioner l'unité"}
+                                                                    value={unit}
+                                                                    onChange={onChangeUnit}
+                                                                    options={units}
+                                                                />
+                                                                {
+                                                                    error.unit_targeted_id.length ? (
+                                                                        error.unit_targeted_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
                                                             </div>
-                                                        ) : ""
-                                                    }
-                                                </div>
+
+                                                            <div className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="account">Numéro de compte concèrner</label>
+                                                                <Select
+                                                                    isClearable
+                                                                    placeholder={"Veillez selectioner le numéro"}
+                                                                    value={account}
+                                                                    onChange={onChangeAccount}
+                                                                    options={accounts}
+                                                                />
+                                                                {
+                                                                    error.account_targeted_id.length ? (
+                                                                        error.account_targeted_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="receptionChannel">Canal de réception</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
+                                                            isClearable
                                                             placeholder={"Veillez selectioner le canal de réception"}
                                                             value={receptionChannel}
                                                             onChange={onChangeReceptionChannel}
@@ -635,8 +707,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.response_channel_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="responseChannel">Canal de réponse</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
+                                                            isClearable
                                                             placeholder={"Veillez selectioner le canal de réponse"}
                                                             value={responseChannel}
                                                             onChange={onChangeResponseChannel}
@@ -658,8 +729,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={"col"}>
                                                         <label htmlFor="claimCtegory">Catégorie de plainte</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
+                                                            isClearable
                                                             placeholder={"Veillez selectioner la catégorie de plainte"}
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
@@ -670,8 +740,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
                                                         <label htmlFor="claimObject">Objet de plainte</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
+                                                            isClearable
                                                             placeholder={"Veillez selectioner l'objet de plainte"}
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
@@ -714,8 +783,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.amount_currency_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="currency">Devise du montant réclamé</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
+                                                            isClearable
                                                             placeholder={"Veillez selectioner la devise du montant réclamé"}
                                                             value={currency}
                                                             onChange={onChangeAmountCurrency}
@@ -760,8 +828,7 @@ const ConfirmClaimAddModal = props => {
                                                             <div className={error.relationship_id.length ? "col validated" : "col"}>
                                                                 <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
                                                                 <Select
-                                                                    classNamePrefix="select"
-                                                                    className="basic-single"
+                                                                    isClearable
                                                                     placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
                                                                     value={relationship}
                                                                     onChange={onChangeRelationShip}
