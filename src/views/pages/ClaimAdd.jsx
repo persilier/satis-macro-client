@@ -41,21 +41,21 @@ const endPointConfig = {
     },
     HUB: {
         plan: "HUB",
-        create: `${appConfig.apiDomaine}/any/claims/create`,
-        store: `${appConfig.apiDomaine}/any/claims`,
-        storeKnowingIdentity: id => `${appConfig.apiDomaine}/any/identites/${id}/claims`,
+        create: `${appConfig.apiDomaine}/without-client/claims/create`,
+        store: `${appConfig.apiDomaine}/without-client/claims`,
+        storeKnowingIdentity: id => `${appConfig.apiDomaine}/without-client/identites/${id}/claims`,
     }
 };
 
 const ClaimAdd = props => {
-    if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution")))
+    if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
         window.location.href = ERROR_401;
 
     let endPoint = "";
     if (props.plan === "MACRO") {
-        if (verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit'))
+        if (verifyPermission(props.userPermissions, 'store-claim-against-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'update-my-unit'))
+        else if (verifyPermission(props.userPermissions, 'store-claim-against-my-institution'))
             endPoint = endPointConfig[props.plan].filial
     } else
         endPoint = endPointConfig[props.plan];
@@ -69,6 +69,7 @@ const ClaimAdd = props => {
         unit_targeted_id: "",
         institution_targeted_id: "",
         account_targeted_id: "",
+        relationship_id: "",
         claim_object_id: "",
         request_channel_slug: "",
         response_channel_slug: "",
@@ -89,6 +90,7 @@ const ClaimAdd = props => {
         ville: [],
         unit_targeted_id: [],
         institution_targeted_id: [],
+        relationship_id: [],
         account_targeted_id: [],
         claim_object_id: [],
         request_channel_slug: [],
@@ -105,24 +107,26 @@ const ClaimAdd = props => {
     const option1 = 1;
     const option2 = 0;
 
-    const [claimObject, setClaimObject] = useState({});
+    const [claimObject, setClaimObject] = useState(null);
     const [claimObjects, setClaimObjects] = useState([]);
-    const [claimCategory, setClaimCategory] = useState({});
+    const [claimCategory, setClaimCategory] = useState(null);
     const [claimCategories, setClaimCategories] = useState([]);
+    const [relationship, setRelationship] = useState({});
+    const [relationships, setRelationships] = useState([]);
     const [accounts, setAccounts] = useState([]);
-    const [account, setAccount] = useState([]);
+    const [account, setAccount] = useState(null);
     const [units, setUnits] = useState([]);
-    const [unit, setUnit] = useState({});
+    const [unit, setUnit] = useState(null);
     const [responseChannels, setResponseChannels] = useState([]);
     const [channels, setChannels] = useState([]);
-    const [responseChannel, setResponseChannel] = useState({});
-    const [receptionChannel, setReceptionChannel] = useState({});
+    const [responseChannel, setResponseChannel] = useState(null);
+    const [receptionChannel, setReceptionChannel] = useState(null);
     const [currency, setCurrency] = useState({});
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
-    const [customer, setCustomer] = useState({});
+    const [customer, setCustomer] = useState(null);
     const [possibleCustomers, setPossibleCustomers] = useState([]);
-    const [institution, setInstitution] = useState({});
+    const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -133,13 +137,13 @@ const ClaimAdd = props => {
         async function fetchData() {
             await axios.get(endPoint.create)
                 .then(response => {
-                    console.log(response.data);
-                    if (verifyPermission(props.userPermissions, "store-claim-against-any-institution"))
+                    if (verifyPermission(props.userPermissions, "store-claim-without-client"))
+                        setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
+                    if (verifyPermission(props.userPermissions, "store-claim-against-any-institution") || verifyPermission(props.userPermissions, "store-claim-without-client"))
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
-                        console.log("coucoucou");
                         setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
-                        setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
+                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
                     }
                     setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
                     setCurrencies(formatSelectOption(response.data.currencies, "name", "fr", "slug"));
@@ -148,7 +152,7 @@ const ClaimAdd = props => {
                 })
                 .catch(error => {
                     console.log("Something is wrong");
-                })
+                });
         }
         fetchData();
     }, []);
@@ -211,25 +215,28 @@ const ClaimAdd = props => {
     };
 
     const onChangeInstitution = (selected) => {
-        setInstitution(selected);
         const newData = {...data};
-        newData.institution_targeted_id = selected.value;
-        axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
-            .then(response => {
-                setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
-                setUnits([{value: "other", label: "Pas d'unité concèrner"}, ...formatSelectOption(response.data.units, "name", "fr")])
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            });
-        setData(newData);
-    };
-
-    const handleDisabledInputChange = () => {
-        if (disabledInput) {
-            const newData = {...data};
-            setCustomer({});
-            setAccount({});
+        if (selected) {
+            setInstitution(selected);
+            newData.institution_targeted_id = selected.value;
+            if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
+                axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
+                    .then(response => {
+                        setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
+                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    });
+            }
+        }
+        else {
+            setUnits([]);
+            setUnit(null);
+            setPossibleCustomers([]);
+            setCustomer(null);
+            setInstitution(null);
+            setAccount(null);
             setAccounts([]);
             newData.firstname = "";
             newData.lastname = "";
@@ -237,72 +244,139 @@ const ClaimAdd = props => {
             newData.telephone = [];
             newData.email = [];
             newData.ville = "";
-            setData(newData);
+            newData.unit_targeted_id = "";
+            newData.claimer_id = "";
+            newData.account_targeted_id = "";
+            newData.institution_targeted_id = "";
         }
+        setData(newData);
+    };
+
+    const handleDisabledInputChange = () => {
+        const newData = {...data};
+        setCustomer(null);
+        setAccount(null);
+        setAccounts([]);
+        newData.firstname = "";
+        newData.lastname = "";
+        newData.sexe = "";
+        newData.telephone = [];
+        newData.email = [];
+        newData.ville = "";
+        newData.claimer_id = "";
+        newData.account_targeted_id = "";
+        setData(newData);
         setDisabledInput(!disabledInput);
     };
 
     const onChangeUnit = selected => {
-        setUnit(selected);
         const newData = {...data};
-        if (selected.value !== "other")
+        if (selected) {
+            setUnit(selected);
             newData.unit_targeted_id = selected.value;
-        else
+        } else {
             newData.unit_targeted_id = "";
+            setUnit(null)
+        }
         setData(newData);
     };
 
     const handleCustomerChange = (selected) => {
-        setCustomer(selected);
         const newData = {...data};
-        setAccount({});
-        setAccounts(formatSelectOption(selected.accounts, "number", false));
-        newData.firstname = selected.firstname;
-        newData.lastname = selected.lastname;
-        newData.sexe = selected.sexe;
-        newData.telephone = selected.telephone;
-        newData.email = selected.email;
-        newData.ville = selected.ville;
-        newData.claimer_id = selected.claimer_id;
+        if (selected) {
+            setCustomer(selected);
+            setAccount(null);
+            newData.account_targeted_id = "";
+            setAccounts(formatSelectOption(selected.accounts, "number", false));
+            newData.firstname = selected.firstname;
+            newData.lastname = selected.lastname;
+            newData.sexe = selected.sexe;
+            newData.telephone = selected.telephone;
+            newData.email = selected.email;
+            newData.ville = selected.ville;
+            newData.claimer_id = selected.claimer_id;
+        } else {
+            newData.firstname = "";
+            newData.lastname = "";
+            newData.sexe = "";
+            newData.telephone = [];
+            newData.email = [];
+            newData.ville = "";
+            setCustomer(null);
+            setAccount(null);
+            setAccounts([]);
+            newData.claimer_id = "";
+            newData.account_targeted_id = "";
+        }
         setData(newData);
     };
 
     const onChangeAccount = selected => {
-        setAccount(selected);
         const newData = {...data};
-        newData.account_targeted_id = selected.value;
+        if (selected) {
+            setAccount(selected);
+            newData.account_targeted_id = selected.value;
+        } else {
+           setAccount(null);
+           newData.account_targeted_id = ""
+        }
         setData(newData);
     };
 
     const onChangeClaimObject = selected => {
-        setClaimObject(selected);
         const newData = {...data};
-        newData.claim_object_id = selected.value;
+        if (selected) {
+            setClaimObject(selected);
+            newData.claim_object_id = selected.value;
+        } else {
+            setClaimObject(null);
+            newData.claim_object_id = "";
+        }
         setData(newData);
     };
 
     const onChangeReceptionChannel = selected => {
-        setReceptionChannel(selected);
         const newData = {...data};
-        newData.request_channel_slug = selected.value;
+        if (selected) {
+            setReceptionChannel(selected);
+            newData.request_channel_slug = selected.value;
+        } else {
+            setReceptionChannel(null);
+            newData.request_channel_slug = ""
+        }
         setData(newData);
     };
 
     const onChangeResponseChannel = selected => {
-        setResponseChannel(selected);
         const newData = {...data};
-        newData.response_channel_slug = selected.value;
+        if (selected) {
+            setResponseChannel(selected);
+            newData.response_channel_slug = selected.value;
+        } else {
+            setResponseChannel(null);
+            newData.response_channel_slug = "";
+        }
         setData(newData);
     };
 
     const onChangeClaimCategory = selected => {
-        setClaimCategory(selected);
-        axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
-            .then(response => {
-                setClaimObject({});
-                setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
-            })
-            .catch(error => console.log("Something is wrong"))
+        const newData = {...data};
+        if (selected) {
+            setClaimCategory(selected);
+            axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
+                .then(response => {
+                    newData.claim_object_id = "";
+                    setClaimObject(null);
+                    setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
+                })
+                .catch(error => console.log("Something is wrong"))
+        } else {
+            setClaimObjects([]);
+            setClaimObject(null);
+            setClaimCategory(null);
+            newData.claim_object_id = "";
+        }
+        setData(newData)
     };
 
     const onChangeClaimerExpectation = e => {
@@ -324,9 +398,26 @@ const ClaimAdd = props => {
     };
 
     const onChangeAmountCurrency = selected => {
-        setCurrency(selected);
         const newData = {...data};
-        newData.amount_currency_slug = selected.value;
+        if (selected) {
+            setCurrency(selected);
+            newData.amount_currency_slug = selected.value;
+        } else {
+            setCurrency(null);
+            newData.amount_currency_slug = "";
+        }
+        setData(newData);
+    };
+
+    const onChangeRelationShip = selected => {
+        const newData = {...data};
+        if (selected) {
+            setRelationship(selected);
+            newData.relationship_id = selected.value;
+        } else {
+            setRelationship(null);
+            newData.relationship_id = "";
+        }
         setData(newData);
     };
 
@@ -349,9 +440,9 @@ const ClaimAdd = props => {
     };
 
     const onSubmit = (e) => {
+        e.preventDefault();
         const newData = {...data};
         newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
-        e.preventDefault();
         setStartRequest(true);
         if (!newData.response_channelf_slug)
             delete newData.response_channel_slug;
@@ -359,22 +450,25 @@ const ClaimAdd = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
+            delete newData.relationship_id;
         axios.post(endPoint.store, newData)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                await setInstitution({});
-                await setClaimCategory({});
-                await setCurrency({});
-                await setResponseChannel({});
-                await setReceptionChannel({});
-                await setClaimObject({});
+                await setInstitution(null);
+                await setClaimCategory(null);
+                await setCurrency(null);
+                await setResponseChannel(null);
+                await setReceptionChannel(null);
+                await setClaimObject(null);
                 await setClaimObjects([]);
                 await setAccounts([]);
-                await setAccount({});
+                await setAccount(null);
                 await setUnits([]);
-                await setUnit({});
+                await setUnit(null);
                 await setDisabledInput(false);
-                await setCustomer({});
+                await setCustomer(null);
+                await setRelationship(null);
                 await setPossibleCustomers([]);
                 await setStartRequest(false);
                 await setError(defaultError);
@@ -401,6 +495,7 @@ const ClaimAdd = props => {
                     await setCustomer({});
                     await setPossibleCustomers([]);
                     await setData(defaultData);
+                    await setRelationship({});
                     setStartRequest(false);
                 } else {
                     setStartRequest(false);
@@ -412,7 +507,7 @@ const ClaimAdd = props => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") ? (
+        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -455,15 +550,14 @@ const ClaimAdd = props => {
                                         />
 
                                         {
-                                            verifyPermission(props.userPermissions, 'store-claim-against-any-institution') ? (
+                                            verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée</label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'institution"}
+                                                            isClearable
                                                             value={institution}
+                                                            placeholder={"Veuillez sélectionner l'institution"}
                                                             onChange={onChangeInstitution}
                                                             options={institutions}
                                                         />
@@ -485,27 +579,30 @@ const ClaimAdd = props => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
 
-                                                <div className="form-group row">
-                                                    <div className={"col d-flex align-items-center mt-4"}>
-                                                        <label className="kt-checkbox">
-                                                            <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
-                                                            Client déjà enregistrer<span/>
-                                                        </label>
-                                                    </div>
+                                                {
+                                                    !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                        <div className="form-group row">
+                                                            <div className={"col d-flex align-items-center mt-4"}>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
+                                                                    Client déjà enregistrer<span/>
+                                                                </label>
+                                                            </div>
 
-                                                    <div className={"col"}>
-                                                        <label htmlFor="client">Selectionez le client</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            isDisabled={!disabledInput}
-                                                            placeholder={"Veillez selectioner le client"}
-                                                            value={customer}
-                                                            onChange={handleCustomerChange}
-                                                            options={possibleCustomers}
-                                                        />
-                                                    </div>
-                                                </div>
+                                                            <div className={"col"}>
+                                                                <label htmlFor="client">Selectionez le client</label>
+                                                                <Select
+                                                                    isClearable
+                                                                    isDisabled={!disabledInput}
+                                                                    placeholder={"Veuillez sélectionner le client"}
+                                                                    value={customer}
+                                                                    onChange={handleCustomerChange}
+                                                                    options={possibleCustomers}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
@@ -638,58 +735,59 @@ const ClaimAdd = props => {
                                         <div className="kt-section kt-section--first">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
-                                                <div className="form-group row">
-                                                    <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="unit">Unité concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'unité"}
-                                                            value={unit}
-                                                            onChange={onChangeUnit}
-                                                            options={units}
-                                                        />
-                                                        {
-                                                            error.unit_targeted_id.length ? (
-                                                                error.unit_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
+                                                {
+                                                    !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
+                                                        <div className="form-group row">
+                                                            <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="unit">Unité concèrner</label>
+                                                                <Select
+                                                                    value={unit}
+                                                                    isClearable
+                                                                    placeholder={"Veuillez sélectionner l'unité concèrner"}
+                                                                    onChange={onChangeUnit}
+                                                                    options={units}
+                                                                />
+                                                                {
+                                                                    error.unit_targeted_id.length ? (
+                                                                        error.unit_targeted_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
 
-                                                    <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="account">Numéro de compte concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le numéro"}
-                                                            value={account}
-                                                            onChange={onChangeAccount}
-                                                            options={accounts}
-                                                        />
-                                                        {
-                                                            error.account_targeted_id.length ? (
-                                                                error.account_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                </div>
+                                                            <div className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="account">Numéro de compte concèrner</label>
+                                                                <Select
+                                                                    isClearable
+                                                                    value={account}
+                                                                    placeholder={"Veuillez sélectionner le compte concèrner"}
+                                                                    onChange={onChangeAccount}
+                                                                    options={accounts}
+                                                                />
+                                                                {
+                                                                    error.account_targeted_id.length ? (
+                                                                        error.account_targeted_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    ) : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="receptionChannel">Canal de réception</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le canal de réception"}
+                                                            isClearable
                                                             value={receptionChannel}
+                                                            placeholder={"Veuillez sélectionner le canal de réceoption"}
                                                             onChange={onChangeReceptionChannel}
                                                             options={channels}
                                                         />
@@ -707,9 +805,7 @@ const ClaimAdd = props => {
                                                     <div className={error.response_channel_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="responseChannel">Canal de réponse</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le canal de réponse"}
+                                                            isClearable
                                                             value={responseChannel}
                                                             onChange={onChangeResponseChannel}
                                                             options={responseChannels}
@@ -730,9 +826,7 @@ const ClaimAdd = props => {
                                                     <div className={"col"}>
                                                         <label htmlFor="claimCtegory">Catégorie de plainte</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner la catégorie de plainte"}
+                                                            isClearable
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
                                                             options={claimCategories}
@@ -742,9 +836,7 @@ const ClaimAdd = props => {
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
                                                         <label htmlFor="claimObject">Objet de plainte</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'objet de plainte"}
+                                                            isClearable
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
                                                             options={claimObjects}
@@ -786,9 +878,7 @@ const ClaimAdd = props => {
                                                     <div className={error.amount_currency_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="currency">Devise du montant réclamé</label>
                                                         <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner la devise du montant réclamé"}
+                                                            isClearable
                                                             value={currency}
                                                             onChange={onChangeAmountCurrency}
                                                             options={currencies}
@@ -807,12 +897,12 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évènement </label>
+                                                        <label htmlFor="date">Date de l'évernement</label>
                                                         <input
-                                                            id="date"
                                                             type={"datetime-local"}
+                                                            id="date"
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la date de l'évènement"
+                                                            placeholder="Veillez entrer la date de l'evernement"
                                                             value={data.event_occured_at}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
@@ -826,6 +916,32 @@ const ClaimAdd = props => {
                                                             ) : ""
                                                         }
                                                     </div>
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, "store-claim-without-client") ? (
+                                                            <div className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                                <Select
+                                                                    isClearable
+                                                                    value={relationship}
+                                                                    placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
+                                                                    onChange={onChangeRelationShip}
+                                                                    options={relationships}
+                                                                />
+                                                                {
+                                                                    error.relationship_id.length ? (
+                                                                        error.relationship_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                        ) : ""
+                                                    }
+
+
                                                 </div>
 
                                                 <div className="form-group row">
@@ -934,6 +1050,7 @@ const ClaimAdd = props => {
                                             amount_currency_slug={data.amount_currency_slug}
                                             amount_disputed={data.amount_disputed}
                                             claimer_id={data.claimer_id}
+                                            relationship_id={data.relationship_id}
                                             event_occured_at={data.event_occured_at}
                                             is_revival={data.is_revival}
                                             resetFoundData={resetFountData}
@@ -945,6 +1062,8 @@ const ClaimAdd = props => {
                                             account={account}
                                             units={units}
                                             unit={unit}
+                                            relationships={relationships}
+                                            relationship={relationship}
                                             responseChannels={responseChannels}
                                             channels={channels}
                                             responseChannel={responseChannel}
