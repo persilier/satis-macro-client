@@ -145,6 +145,9 @@ const EditClients = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
+                        setType({});
+                        setCategory({});
+                        setIdentity({});
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch((errorRequest) => {
@@ -159,6 +162,9 @@ const EditClients = (props) => {
                     setStartRequest(false);
                     setError(defaultError);
                     setData(defaultData);
+                    setType({});
+                    setCategory({});
+                    setIdentity({});
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(async (errorRequest) => {

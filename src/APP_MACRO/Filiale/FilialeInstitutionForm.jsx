@@ -82,8 +82,8 @@ const FilialeInstitutionForm = (props) => {
             console.log(image, 'image');
             image.src = e.target.result;
         };
-        if(newData.logo){
-        reader.readAsDataURL(newData.logo);
+        if (newData.logo) {
+            reader.readAsDataURL(newData.logo);
         }
     };
 
@@ -130,7 +130,8 @@ const FilialeInstitutionForm = (props) => {
                                     Institution
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link">
                                     {
                                         "Modification"
                                     }
@@ -297,7 +298,7 @@ const FilialeInstitutionForm = (props) => {
                                                                     }
 
                                                                     <Link to={'/setting/dashboard'}
-                                                                        className="btn btn-secondary mx-2">
+                                                                          className="btn btn-secondary mx-2">
                                                                         Quitter
                                                                     </Link>
 

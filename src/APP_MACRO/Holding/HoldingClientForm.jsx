@@ -147,6 +147,9 @@ const HoldingClientForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
+                        setType({});
+                        setCategory({});
+                        setIdentity({});
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch((errorRequest) => {
@@ -161,6 +164,9 @@ const HoldingClientForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
+                        setType({});
+                        setCategory({});
+                        setIdentity({});
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(async (errorRequest) => {
@@ -173,6 +179,9 @@ const HoldingClientForm = (props) => {
                                     setStartRequest(false);
                                     setError(defaultError);
                                     setData(defaultData);
+                                    setType({});
+                                    setCategory({});
+                                    setIdentity({});
                                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                                 })
                         } else if (errorRequest.response.data.client) {

@@ -46,7 +46,7 @@ const IndentiteForm = (props) => {
         telephone: [],
         email: [],
         client_id: [],
-        institution_id: ""
+        institution_id: []
     };
     const defaultError = {
         firstname: [],
@@ -69,7 +69,7 @@ const IndentiteForm = (props) => {
         axios.get(endPoint.list)
             .then(response => {
                 const options = [
-                    response.data.length ? response.data.map((client) => ({
+                    response.data? response.data.map((client) => ({
                         value: client.client_id,
                         label: client.client.identite.firstname + ' ' + client.client.identite.lastname
                     })) : ""
@@ -207,7 +207,6 @@ const IndentiteForm = (props) => {
                             <div
                                 className={error.client_id.length ? "col validated" : "col"}>
                                 <label htmlFor="exampleSelect1"> Client</label>
-
                                 {nameClient ? (
                                     <Select
                                         value={client}
