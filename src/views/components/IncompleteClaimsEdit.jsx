@@ -40,7 +40,7 @@ const endPointConfig = {
     },
     HUB: {
         plan: "HUB",
-        edit: id => `${appConfig.apiDomaine}/without-client/claims-incompletes /${id}/edit`,
+        edit: id => `${appConfig.apiDomaine}/without-client/claims-incompletes/${id}/edit`,
         update: id => `${appConfig.apiDomaine}/without-client/claims-incompletes/${id}`,
     }
 };
@@ -60,6 +60,7 @@ const IncompleteClaimsEdit = props => {
             endPoint = endPointConfig[props.plan].filial
     } else
         endPoint = endPointConfig[props.plan];
+
     const defaultData = {
         firstname: "",
         lastname: "",

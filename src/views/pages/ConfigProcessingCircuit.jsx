@@ -16,51 +16,90 @@ import {
 } from "../../config/toastConfig";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {verifyPermission} from "../../helpers/permission";
+import {connect} from "react-redux";
+import {ERROR_401} from "../../config/errorPage";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ConfigProcessingCircuit = () => {
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/my/processing-circuits`,
+    },
+    MACRO: {
+        holding: {
+            list: `${appConfig.apiDomaine}/any/processing-circuits`,
+        },
+        filial: {
+            list: `${appConfig.apiDomaine}/my/processing-circuits`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        list: `${appConfig.apiDomaine}/without-client/processing-circuits`,
+    }
+};
+
+
+const ConfigProcessingCircuit = (props) => {
+
+    if (!(verifyPermission(props.userPermissions, 'update-processing-circuit-my-institution') ||
+        verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ||
+        verifyPermission(props.userPermissions, "update-processing-circuit-without-client")))
+        window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'update-processing-circuit-my-institution'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
+
     const defaultData = {
-        objectData: {},
-        requirements: [],
         institution_id: []
     };
+
     const [load, setLoad] = useState(true);
-    const [requirement, setRequirement] = useState([]);
+    const [units, setUnits] = useState([]);
     const [claimObject, setClaimObject] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
-    const [data, setData] = useState(defaultData);
+    const [data, setData] = useState(undefined);
+    const [institutionId, setInstitutionId] = useState(undefined);
+    const [error] = useState(defaultData);
     const [startRequest, setStartRequest] = useState(false);
-    const [client, setClient] = useState([]);
     const [institutionData, setInstitutionData] = useState(undefined);
     const [institution, setInstitution] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/any/clients/create`)
-            .then(response => {
-                const options = [
-                    response.data.institutions.length ? response.data.institutions.map((institution) => ({
-                        value: institution.id,
-                        label: institution.name
-                    })) : ""
-                ];
-                setInstitutionData(options);
-            });
-        
-        axios.get(appConfig.apiDomaine + "/claim-object-requirements")
+        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution')) {
+            axios.get(endPoint.list)
+                .then(response => {
+                    const options = [
+                        response.data.institutions.length ? response.data.institutions.map((institution) => ({
+                            value: institution.id,
+                            label: institution.name
+                        })) : ""
+                    ];
+                    setInstitutionData(options);
+                });
+        }
+
+        axios.get(endPoint.list)
             .then(response => {
                 console.log(response.data, 'RESPONSE1');
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
                     claimCategory.claim_objects.map((claimObject) => (
-                        newObjectData[claimObject.id] = claimObject.requirements.map(requirement => (
-                            {value: requirement.id, label: requirement.name})
+                        newObjectData[claimObject.id] = claimObject.units.map(unit => (
+                            {value: unit.id, label: unit.name.fr})
                         )
                     ))
                 ));
@@ -68,7 +107,8 @@ const ConfigProcessingCircuit = () => {
                 setData(newObjectData);
                 setLoad(false);
                 setClaimObject(response.data.claimCategories);
-                setRequirement(response.data.requirements);
+                setUnits(response.data.units);
+                setInstitutionId(response.data.institution_id);
                 setShowList(response.data.claimCategories.slice(0, numberPerPage));
                 setNumberPage(forceRound(response.data.claimCategories.length / numberPerPage));
             })
@@ -148,7 +188,7 @@ const ConfigProcessingCircuit = () => {
 
     const pages = arrayNumberPage();
 
-    const onChangeExigence = (e, object_id) => {
+    const onChangeProcessing = (e, object_id) => {
         let newData = {...data};
         newData[object_id] = e.map(sel => ({value: sel.value, label: sel.label}));
         setData(newData);
@@ -160,16 +200,21 @@ const ConfigProcessingCircuit = () => {
         let values = {};
 
         for (const claim_object_id in claimObjects) {
-            let requirements = claimObjects[claim_object_id];
-            console.log(requirements, 'requirement_for_' + claim_object_id);
+            let processings = claimObjects[claim_object_id];
 
-            values[claim_object_id] = requirements.map(requirement => (requirement.value));
+            values[claim_object_id] = processings.map(requirement => (requirement.value));
+        }
+        let newEndPoint='';
+        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution')) {
+           newEndPoint=endPoint.list+`/${institutionId}`
+        }else{
+            newEndPoint=endPoint.list
         }
 
-        console.log(values, 'values');
+        console.log(newEndPoint,"News")
 
-        axios.put(appConfig.apiDomaine + `/claim-object-requirements`, values)
-            .then(response => {
+        axios.put(newEndPoint, values)
+    .then(response => {
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
             })
@@ -181,24 +226,23 @@ const ConfigProcessingCircuit = () => {
     };
 
     const onChangeInstitution = (selected) => {
-        const newData = {...data};
-        newData.institution_id = selected.value;
+        setInstitutionId(selected.value);
         setInstitution(selected);
-        props.addIdentite(selected);
-        axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
+        axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
             .then(response => {
-                console.log(response.data, "CLIENT D'UNE INSTITUTION");
-                const options = [
-                    response.data ? response.data.map((client) => ({
-                        value: client.client_id,
-                        label: client.client.identite.firstname + ' ' + client.client.identite.lastname
-                    })) : ""
-                ];
-                setNameClient(options);
+                console.log(response.data, "UNITS D'UNE INSTITUTION");
+                setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
+                let newObjectData=[];
+                response.data.claimCategories.map((claimCategory) => (
+                    claimCategory.claim_objects.map((claimObject) => (
+                        newObjectData[claimObject.id] = claimObject.units.map(unit => (
+                            {value: unit.id, label: unit.name.fr})
+                        )
+                    ))
+                ));
+                setData(newObjectData)
             });
-        setData(newData);
     };
-
 
     const printBodyTable = (category, index) => {
         return (
@@ -210,17 +254,17 @@ const ConfigProcessingCircuit = () => {
                         {
                             i === 0 ?
                                 <td rowSpan={category.claim_objects.length}>{category.name.fr}</td>
-                                : <td style={{display:"none"}}/>
+                                : <td style={{display: "none"}}/>
                         }
                         <td>
                             {object.name.fr}
                         </td>
                         <td>
-                            {requirement ? (
+                            {units ? (
                                 <Select
                                     value={data[object.id]}
-                                    onChange={(e) => onChangeExigence(e, object.id)}
-                                    options={formatSelectOption(requirement, 'name', false)}
+                                    onChange={(e) => onChangeProcessing(e, object.id)}
+                                    options={formatSelectOption(units, 'name', "fr")}
                                     isMulti
                                     key={object.id}
                                 />
@@ -291,38 +335,46 @@ const ConfigProcessingCircuit = () => {
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">
-                                            <div className="form-group row">
-                                                {
-                                                    verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
-                                                        <div
-                                                            className={error.institution_id.length ? "col validated" : "col"}>
-                                                            <label htmlFor="exampleSelect1"> Institution</label>
-                                                            {institutionData ? (
-                                                                <Select
-                                                                    value={institution}
-                                                                    onChange={onChangeInstitution}
-                                                                    options={institutionData.length ? institutionData[0].map(name => name) : ''}
-                                                                />
-                                                            ) : (<select name="category"
-                                                                         className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
-                                                                         id="category">
-                                                                <option value=""></option>
-                                                            </select>)
-                                                            }
-
+                                            <br/>
+                                            <br/>
+                                            {
+                                                verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ?
+                                                    <div
+                                                        className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label"
+                                                               htmlFor="exampleSelect1">Sélectionnez une
+                                                            Institution </label>
+                                                        <div className="col-lg-9 col-xl-6">
                                                             {
-                                                                error.institution_id.length ? (
-                                                                    error.institution_id.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : ""
+                                                                institutionData ? (
+                                                                    <Select
+                                                                        value={institution}
+                                                                        onChange={onChangeInstitution}
+                                                                        options={institutionData.length ? institutionData[0].map(name => name) : ''}
+                                                                    />
+
+                                                                ) : (<select name="category"
+                                                                             className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                                             id="category">
+                                                                    <option value=""></option>
+                                                                </select>)
                                                             }
                                                         </div>
-                                                        : ""
-                                                }
-                                            </div>
+                                                        {
+                                                            error.institution_id.length ? (
+                                                                error.institution_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+
+
+                                                    </div>
+                                                    : ""
+                                            }
+
 
                                             <table
                                                 className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
@@ -349,7 +401,8 @@ const ConfigProcessingCircuit = () => {
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "170px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Exigences
+                                                        aria-label="Ship City: activate to sort column ascending">Circuits
+                                                        de traitement
                                                     </th>
 
                                                 </tr>
@@ -440,4 +493,11 @@ const ConfigProcessingCircuit = () => {
 };
 
 
-export default ConfigProcessingCircuit;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
+    };
+};
+
+export default connect(mapStateToProps)(ConfigProcessingCircuit);
