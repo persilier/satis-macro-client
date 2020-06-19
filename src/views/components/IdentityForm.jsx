@@ -46,7 +46,7 @@ const IndentiteForm = (props) => {
         telephone: [],
         email: [],
         client_id: [],
-        institution_id: ""
+        institution_id: []
     };
     const defaultError = {
         firstname: [],

@@ -15,6 +15,7 @@ import {
     toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
 import HeaderTablePage from "../components/HeaderTablePage";
+import {verifyPermission} from "../../helpers/permission";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -24,6 +25,7 @@ const ConfigProcessingCircuit = () => {
     const defaultData = {
         objectData: {},
         requirements: [],
+        institution_id: []
     };
     const [load, setLoad] = useState(true);
     const [requirement, setRequirement] = useState([]);
@@ -35,8 +37,22 @@ const ConfigProcessingCircuit = () => {
     const [search, setSearch] = useState(false);
     const [data, setData] = useState(defaultData);
     const [startRequest, setStartRequest] = useState(false);
+    const [client, setClient] = useState([]);
+    const [institutionData, setInstitutionData] = useState(undefined);
+    const [institution, setInstitution] = useState([]);
 
     useEffect(() => {
+        axios.get(appConfig.apiDomaine + `/any/clients/create`)
+            .then(response => {
+                const options = [
+                    response.data.institutions.length ? response.data.institutions.map((institution) => ({
+                        value: institution.id,
+                        label: institution.name
+                    })) : ""
+                ];
+                setInstitutionData(options);
+            });
+        
         axios.get(appConfig.apiDomaine + "/claim-object-requirements")
             .then(response => {
                 console.log(response.data, 'RESPONSE1');
@@ -164,6 +180,26 @@ const ConfigProcessingCircuit = () => {
         ;
     };
 
+    const onChangeInstitution = (selected) => {
+        const newData = {...data};
+        newData.institution_id = selected.value;
+        setInstitution(selected);
+        props.addIdentite(selected);
+        axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
+            .then(response => {
+                console.log(response.data, "CLIENT D'UNE INSTITUTION");
+                const options = [
+                    response.data ? response.data.map((client) => ({
+                        value: client.client_id,
+                        label: client.client.identite.firstname + ' ' + client.client.identite.lastname
+                    })) : ""
+                ];
+                setNameClient(options);
+            });
+        setData(newData);
+    };
+
+
     const printBodyTable = (category, index) => {
         return (
 
@@ -255,6 +291,39 @@ const ConfigProcessingCircuit = () => {
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">
+                                            <div className="form-group row">
+                                                {
+                                                    verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
+                                                        <div
+                                                            className={error.institution_id.length ? "col validated" : "col"}>
+                                                            <label htmlFor="exampleSelect1"> Institution</label>
+                                                            {institutionData ? (
+                                                                <Select
+                                                                    value={institution}
+                                                                    onChange={onChangeInstitution}
+                                                                    options={institutionData.length ? institutionData[0].map(name => name) : ''}
+                                                                />
+                                                            ) : (<select name="category"
+                                                                         className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                                         id="category">
+                                                                <option value=""></option>
+                                                            </select>)
+                                                            }
+
+                                                            {
+                                                                error.institution_id.length ? (
+                                                                    error.institution_id.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : ""
+                                                            }
+                                                        </div>
+                                                        : ""
+                                                }
+                                            </div>
+
                                             <table
                                                 className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
