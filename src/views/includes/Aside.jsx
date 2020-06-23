@@ -65,6 +65,30 @@ const Aside = (props) => {
                                         ) : ""
                                     }
 
+                                    {
+                                        verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") ? (
+                                            <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Plainte à affecter</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
+
+                                    <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Liste des plaintes</span>
+                                        </li>
+                                    </NavLink>
+
+                                    <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                        <li className="kt-menu__link ">
+                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                            <span className="kt-menu__link-text">Plaintes à traiter</span>
+                                        </li>
+                                    </NavLink>
                                 </ul>
                             </div>
                         </li>

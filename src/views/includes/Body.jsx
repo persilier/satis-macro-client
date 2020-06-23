@@ -48,6 +48,8 @@ import RelationShipForm from "../components/RelationShipForm";
 import IncompleteClaims from "../pages/IncompleteClaims";
 import IncompleteClaimsEdit from "../components/IncompleteClaimsEdit";
 import ConfigProcessingCircuit from "../pages/ConfigProcessingCircuit";
+import ClaimAssign from "../pages/ClaimAssign";
+import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 
 const Body = () => {
     return (
@@ -308,6 +310,14 @@ const Body = () => {
 
             <Route exact path="/settings/processing-circuit">
                 <ConfigProcessingCircuit/>
+            </Route>
+
+            <Route exact path="/settings/claim-assign">
+                <ClaimAssign/>
+            </Route>
+
+            <Route exact path="/settings/claim-assign/:id/detail">
+                <ClaimAssignDetail/>
             </Route>
 
             <Route path={"*"}>
