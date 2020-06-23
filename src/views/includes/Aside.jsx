@@ -41,7 +41,7 @@ const Aside = (props) => {
                                     </li>
 
                                     {
-                                        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") ? (
+                                        verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
                                             <NavLink exact to="/settings/claims/add" className="kt-menu__item "
                                                      activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
