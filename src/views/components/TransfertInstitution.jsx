@@ -1,35 +1,55 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios'
 import apiConfig from "../../config/apiConfig";
+import Select from "react-select";
+import appConfig from "../../config/appConfig";
+import {formatSelectOption} from "../../helpers/function";
 
-const TransfertInstitution = () => {
-
-    const [startRequest, setStartRequest] = useState(false);
-    const onSubmit = (e) => {
-        e.preventDefault();
-        setStartRequest(true);
-        axios.post(apiConfig.apiDomaine + `/any/affect`)
-            .then(response => {
-                console.log(response.data)
-            })
+const TransfertInstitution = (props) => {
+    const defaultData = {
+        institution_targeted_id: []
     };
-    return (
-        <div className="alert alert-light" style={{width: '250px'}} role="alert">
+    const [startRequest, setStartRequest] = useState(false);
+    const [error, setError] = useState(defaultData);
+    const [institution, setInstitution] = useState({});
+    const institutions = props.getInstitution;
 
-            <div className="form-group row">
-                <h5> Transfert à l'institution </h5>
-                <div>
+    const onChangeInstitution = (selected) => {
+        setInstitution(selected);
+        props.getInstitutionId(selected)
+    };
+
+    return (
+        <div>
+            <div className="kt-wizard-v2__review-title">
+                Transferer à une institution
+            </div>
+            <div className="kt-wizard-v2__review-content">
+                <div className={error.institution_targeted_id.length ? "form-group validated" : "form-group"}>
+                    <label htmlFor="exampleSelect1"> Institution</label>
+                    {institutions? (
+                        <Select
+                            value={institution}
+                            onChange={onChangeInstitution}
+                            options={formatSelectOption(institutions, 'name', false)}
+                        />
+                    ) : (
+                        <select name="institution"
+                                className={error.institution_targeted_id.length ? "form-control is-invalid" : "form-control"}
+                                id="institution">
+                            <option value=""></option>
+                        </select>
+                    )
+                    }
+
                     {
-                        !startRequest ? (
-                            <button type="submit" onClick={(e) => onSubmit(e)}
-                                    className="btn btn-primary">Transférer</button>
-                        ) : (
-                            <button
-                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                type="button" disabled>
-                                Chargement...
-                            </button>
-                        )
+                        error.institution_targeted_id.length ? (
+                            error.institution_targeted_id.map((error, index) => (
+                                <div key={index} className="invalid-feedback">
+                                    {error}
+                                </div>
+                            ))
+                        ) : ""
                     }
                 </div>
             </div>

@@ -204,7 +204,7 @@ const ConfigProcessingCircuit = (props) => {
 
             values[claim_object_id] = processings.map(requirement => (requirement.value));
         }
-        
+
         let newEndPoint = '';
         if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution') ||
             verifyPermission(props.userPermissions, 'update-processing-circuit-without-institution')) {
