@@ -408,7 +408,7 @@ const ConfigProcessingCircuit = (props) => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {console.log(data, 'data')}
+                                                {/*{console.log(data, 'data')}*/}
                                                 {
                                                     claimObject ? (
                                                         search ? (

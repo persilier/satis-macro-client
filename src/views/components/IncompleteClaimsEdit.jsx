@@ -82,6 +82,7 @@ const IncompleteClaimsEdit = props => {
         relationship_id:"",
         event_occured_at: "",
         is_revival: 0,
+        file: []
     };
     const defaultError = {
         firstname: [],
@@ -104,6 +105,7 @@ const IncompleteClaimsEdit = props => {
         relationship_id: [],
         event_occured_at: [],
         is_revival: [],
+        file: []
     };
 
     const option1 = 1;
@@ -361,11 +363,44 @@ const IncompleteClaimsEdit = props => {
         setData(newData);
     };
 
+    const onChangeFile = (e) => {
+        console.log(e.target);
+        const newData = {...data};
+        newData.file = Object.values(e.target.files);
+        setData(newData);
+    };
+
+    const formatFormData = (newData) => {
+        const formData = new FormData();
+        formData.append("_method", "put");
+        for (const key in newData) {
+            // console.log(`${key}:`, newData[key]);
+            if (key === "file") {
+                for (let i = 0; i < (newData.file).length; i++)
+                    formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
+            }
+            else if (key === "telephone") {
+                for (let i = 0; i < (newData.telephone).length; i++)
+                    formData.append("telephone[]", (newData[key])[i]);
+            }
+            else if (key === "email") {
+                for (let i = 0; i < (newData.email).length; i++)
+                    formData.append("email[]", (newData[key])[i]);
+            }
+            else
+                formData.set(key, newData[key]);
+        }
+        return formData;
+
+    };
+
     const onSubmit = (e) => {
         const newData = {...data};
         newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
         e.preventDefault();
         setStartRequest(true);
+        if (!newData.file.length)
+            delete newData.file;
         if (!newData.response_channel_slug)
             delete newData.response_channel_slug;
         if (!newData.unit_targeted_id)
@@ -374,7 +409,8 @@ const IncompleteClaimsEdit = props => {
             delete newData.account_targeted_id;
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
-        axios.put(endPoint.update(`${id}`), newData)
+        console.log( formatFormData(newData), "DATA_UPDATE");
+        axios.post(endPoint.update(`${id}`), formatFormData(newData))
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 await setInstitution({});
@@ -397,7 +433,7 @@ const IncompleteClaimsEdit = props => {
             .catch(async (error) => {
                 setStartRequest(false);
                 setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.claimer_id[0]));
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
             })
         ;
     };
@@ -648,7 +684,7 @@ const IncompleteClaimsEdit = props => {
                                                         }
                                                     </div>
                                                     {
-                                                        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")?(
+                                                        !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")?(
                                                             <div
                                                                 className={error.account_targeted_id.length ? "col validated" : "col"}>
                                                                 <label htmlFor="account">Numéro de compte concèrner</label>
@@ -672,7 +708,6 @@ const IncompleteClaimsEdit = props => {
                                                             </div>
                                                         ):""
                                                     }
-
                                                 </div>
 
                                                 <div className="form-group row">
@@ -848,6 +883,26 @@ const IncompleteClaimsEdit = props => {
                                                             </div>
                                                         ) : ""
                                                     }
+
+                                                    <div className="col">
+                                                        <label htmlFor="file">Pièces jointes</label>
+                                                        <input
+                                                            onChange={onChangeFile}
+                                                            type="file"
+                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                            id="customFile"
+                                                            multiple={true}
+                                                        />
+                                                        {
+                                                            error.file.length ? (
+                                                                error.file.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
                                                 </div>
 
                                                 <div className="form-group row">
