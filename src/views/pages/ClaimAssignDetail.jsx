@@ -12,6 +12,7 @@ import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import Loader from "../components/Loader";
 import FusionClaim from "../components/FusionClaim";
+import ReasonModal from "../components/ReasonModal";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -24,6 +25,7 @@ const ClaimAssignDetail = (props) => {
 
     const [claim, setClaim] = useState(null);
     const [copyClaim, setCopyClaim] = useState(null);
+    const [showReason, setShowReason] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -41,10 +43,13 @@ const ClaimAssignDetail = (props) => {
         document.getElementById(`modal-button`).click();
     };
 
-    const updateState = (newClaim) => {
-        setCopyClaim(null);
-        console.log("newClaim:", newClaim);
-        setClaim(newClaim)
+    const showReasonInput = async () => {
+        await setShowReason(true);
+        document.getElementById("reason-modal").click();
+    };
+
+    const sendData = data => {
+        console.log(data);
     };
 
     return (
@@ -95,6 +100,7 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon">
@@ -110,6 +116,7 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className="kt-wizard-v2__nav-item" href="#" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon">
@@ -130,6 +137,7 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon">
@@ -150,6 +158,7 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon">
@@ -165,12 +174,38 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                <div className="kt-wizard-v2__nav-body">
+                                                    <div className="kt-wizard-v2__nav-icon">
+                                                        <i className="flaticon-paper-plane"/>
+                                                    </div>
+                                                    <div className="kt-wizard-v2__nav-label">
+                                                        <div className="kt-wizard-v2__nav-label-title">
+                                                            Affectation de la plainte
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label-desc">
+                                                            Affectez la plainte à un agent
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
+                                        <div className="d-flex justify-content-end">
+                                            <button className="btn btn-primary btn-sm mx-2">S'affecter la plainte</button>
+                                            <button
+                                                className="btn btn-secondary btn-sm"
+                                                onClick={() => showReasonInput()}>
+                                                Rejeter la plainte
+                                            </button>
+                                            <button id={"reason-modal"} style={{display: "none"}} type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4_2"/>
+                                        </div>
+
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
                                             <div className="kt-heading kt-heading--md">Passez en revue les détails du client</div>
                                             <div className="kt-form__section kt-form__section--first">
@@ -196,6 +231,7 @@ const ClaimAssignDetail = (props) => {
                                                                     </div>
                                                                 </div>
                                                             </div>
+
                                                             <div className="kt-widget__body">
                                                                 {
                                                                     !claim ? "" : (
@@ -446,18 +482,54 @@ const ClaimAssignDetail = (props) => {
                                             </div>
                                         </div>
 
+                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                                            <div className="kt-heading kt-heading--md">Affectation de la plainte</div>
+                                            <div className="kt-form__section kt-form__section--first">
+                                                <div className="kt-wizard-v2__review">
+
+                                                    <div className="kt-wizard-v2__review-item">
+                                                        <div className="kt-wizard-v2__review-content">
+                                                            <div className="form-group">
+                                                                <label>Choisir l'agent</label>
+                                                                <select className="form-control">
+                                                                    <option value="">Agent 1</option>
+                                                                    <option value="overnight" selected>Agent 2</option>
+                                                                    <option value="express">Agent 3</option>
+                                                                    <option value="basic">Agent 4</option>
+                                                                </select>
+                                                            </div>
+                                                            <div className="form-group d-flex justify-content-between">
+                                                                <button className="btn btn-primary">Affecter la plainte</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div className="kt-form__actions">
                                             <button className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-prev">
                                                 PRÉCÉDENT
                                             </button>
-                                            <button className="btn btn-success btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-submit">
+                                            {/*<button className="btn btn-success btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-submit">
                                                 TRANSFÉRER
-                                            </button>
+                                            </button>*/}
                                             <button className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
-                                                ÉTAPE SUIVANTE
+                                                SUIVANTE
                                             </button>
                                         </div>
                                     </form>
+
+                                    {
+                                        showReason ? (
+                                            <ReasonModal
+                                                reasonTitle={"Motif de rejet"}
+                                                reasonLabel={"Le motif"}
+                                                onClose={() => setShowReason(false)}
+                                                onGetData={(data) => sendData(data)}
+                                            />
+                                        ) : ""
+                                    }
 
                                     {
                                         verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
@@ -468,7 +540,6 @@ const ClaimAssignDetail = (props) => {
                                                         <FusionClaim
                                                             claim={claim}
                                                             copyClaim={copyClaim}
-                                                            onUpdateState={(newClaim) => updateState(newClaim)}
                                                             onCloseModal={() => setCopyClaim(null)}
                                                         />
                                                     ) : ""
