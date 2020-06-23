@@ -156,7 +156,7 @@ const HoldingUnitForm = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [endPoint, id, props.userPermissions]);
 
     const onChangeName = (e) => {
         const newData = {...data};

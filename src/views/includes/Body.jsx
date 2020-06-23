@@ -45,6 +45,8 @@ import ConfigRequirements from "../pages/ConfigRequirements";
 import HoldingClientForm from "../../APP_MACRO/Holding/HoldingClientForm";
 import RelationShip from "../pages/RelationShip";
 import RelationShipForm from "../components/RelationShipForm";
+import ClaimAssign from "../pages/ClaimAssign";
+import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 
 const Body = () => {
     return (
@@ -293,6 +295,14 @@ const Body = () => {
 
             <Route exact path="/settings/requirement">
                 <ConfigRequirements/>
+            </Route>
+
+            <Route exact path="/settings/claim-assign">
+                <ClaimAssign/>
+            </Route>
+
+            <Route exact path="/settings/claim-assign/:id/detail">
+                <ClaimAssignDetail/>
             </Route>
 
             <Route path={"*"}>
