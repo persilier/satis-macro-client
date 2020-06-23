@@ -148,7 +148,7 @@ const IndentiteForm = (props) => {
     const onChangeClient = (selected) => {
         const newData = {...data};
         newData.client_id = selected.value;
-        setClient(selected)
+        setClient(selected);
         setData(newData);
         props.addIdentite(selected);
         axios.get(endPoint.list + `/${newData.client_id}`)
