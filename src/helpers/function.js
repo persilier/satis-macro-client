@@ -38,6 +38,10 @@ export const loadCss = function (linkStylsheet) {
             if (!exitingStyleSheet("style-choice-nature-page"))
                 document.getElementsByTagName("head")[0].append(tag);
             break;
+        case "/assets/css/pages/wizard/wizard-2.css":
+            tag.id = "style-wizard-2";
+            if (!exitingStyleSheet("style-style-wizard-2"))
+                document.getElementsByTagName("head")[0].append(tag);
         default:
                 break;
     }
@@ -65,11 +69,18 @@ export const loadScript = function(src) {
             break;
         case "/assets/plugins/global/plugins.bundle.js":
             tag.id = "script-global-one";
-            document.getElementsByTagName('body')[0].appendChild(tag);
+            if (!existingScript("script-global-one"))
+                document.getElementsByTagName('body')[0].appendChild(tag);
             break;
         case "/assets/js/scripts.bundle.js":
             tag.id = "script-global-two";
-            document.getElementsByTagName('body')[0].appendChild(tag);
+            if (!existingScript("script-global-two"))
+                document.getElementsByTagName('body')[0].appendChild(tag);
+            break;
+        case "/assets/js/pages/custom/wizard/wizard-2.js":
+            tag.id = "script-wizard-2";
+            if (!existingScript("script-wizard-2"))
+                document.getElementsByTagName('body')[0].appendChild(tag);
             break;
         default:
             break;
