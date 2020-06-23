@@ -204,17 +204,17 @@ const ConfigProcessingCircuit = (props) => {
 
             values[claim_object_id] = processings.map(requirement => (requirement.value));
         }
-        let newEndPoint='';
-        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution')) {
-           newEndPoint=endPoint.list+`/${institutionId}`
-        }else{
-            newEndPoint=endPoint.list
+        
+        let newEndPoint = '';
+        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution') ||
+            verifyPermission(props.userPermissions, 'update-processing-circuit-without-institution')) {
+            newEndPoint = endPoint.list + `/${institutionId}`
+        } else {
+            newEndPoint = endPoint.list
         }
 
-        console.log(newEndPoint,"News")
-
         axios.put(newEndPoint, values)
-    .then(response => {
+            .then(response => {
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
             })
@@ -232,7 +232,7 @@ const ConfigProcessingCircuit = (props) => {
             .then(response => {
                 console.log(response.data, "UNITS D'UNE INSTITUTION");
                 setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
-                let newObjectData=[];
+                let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
                     claimCategory.claim_objects.map((claimObject) => (
                         newObjectData[claimObject.id] = claimObject.units.map(unit => (
