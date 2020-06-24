@@ -12,70 +12,106 @@ import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import Loader from "../components/Loader";
 import FusionClaim from "../components/FusionClaim";
-import TransfertInstitution from "../components/TransfertInstitution";
-import apiConfig from "../../config/apiConfig";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import Select from "react-select";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        edit: id =>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+        update:id => `${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+    },
+    MACRO: {
+        plan:"MACRO",
+            edit: id=>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+            update: id=>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+
+    },
+    HUB: {
+        plan: "HUB",
+        edit: id =>`${appConfig.apiDomaine}/transfer-claim-to-unit/${id}`,
+        update: id => `${appConfig.apiDomaine}/transfer-claim-to-unit/${id}`,
+    }
+};
+
+
 const ClaimAssignDetail = (props) => {
     const {id} = useParams();
     if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
         window.location.href = ERROR_401;
 
+    let endPoint = endPointConfig[props.plan];
+
+    const defaultData = {
+        unit_id: []
+    };
+
     const [claim, setClaim] = useState(null);
     const [copyClaim, setCopyClaim] = useState(null);
     const [dataId, setDataId] = useState("");
-    const [visibledForm, setVisibledForm] = useState(false);
-    const [visibledForm2, setVisibledForm2] = useState(false);
+    const [data, setData] = useState(defaultData);
     const [unitsData, setUnitsData] = useState({});
     const [unit, setUnit] = useState({});
-
-
-    const defaultData = {
-        institution_targeted_id: []
-    };
 
     useEffect(() => {
         async function fetchData() {
             await axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
                 .then(response => {
-                    // console.log(response.data, "CLAIMS")
+                    console.log(response.data, "CLAIMS")
                     setClaim(response.data);
                     setDataId(response.data.institution_targeted.name)
                 })
                 .catch(error => console.log("Something is wrong"));
 
+            await axios.get(endPoint.edit(`${id}`))
+                .then(response => {
+                    let newUnit = Object.values(response.data.units);
+                    console.log(newUnit, "UNITS_DATA")
+                    setUnitsData(formatSelectOption(newUnit, "name", "fr"))
+                })
+                .catch(error => console.log("Something is wrong"));
         }
 
         fetchData();
 
     }, []);
 
-    const onVisibledInputChecked = (e) => {
-        setVisibledForm(!visibledForm)
-    //    Récupérer la liste des unités de l'institution concernée
-    };
+    const onClickToTranfertInstitution = (e) => {
+        async function fetchData() {
+            await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
+                .then(response => {
+                    console.log(response);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error =>   ToastBottomEnd.fire(toastAddErrorMessageConfig));
+        }
 
-    const onVisibledInputChecked2 = (e) => {
-        setVisibledForm2(!visibledForm2)
+        fetchData()
     };
 
     const onClickToTranfert = (e) => {
-        axios.put(appConfig.apiDomaine + `/transfer-claim-to-targeted-institution/${claim.id}`)
-            .then(response => {
-                console.log(response);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
+        async function fetchData() {
+            await axios.put(endPoint.update(`${id}`), data)
+                .then(response => {
+                    console.log(response);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error =>   ToastBottomEnd.fire(toastAddErrorMessageConfig));
+        }
+
+        fetchData()
+
     };
     const onChangeUnits = (selected) => {
-        const newData = {...defaultData};
-        newData.unit_targeted_id = selected.value;
+        const newData = {...data};
+        newData.unit_id = selected.value;
         setUnit(selected);
+        setData(newData)
     };
     const onClickFusionButton = async (newClaim) => {
         await setCopyClaim(newClaim);
@@ -503,32 +539,28 @@ const ClaimAssignDetail = (props) => {
                                             <div className="kt-heading kt-heading--md">Transfert de la plainte</div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
-
-                                                    <div className="form-group">
-                                                        <label>Choix du transfert</label>
-                                                        <div className="kt-checkbox-inline">
-                                                            {
-                                                                verifyPermission(props.userPermissions,"transfer-claim-to-targeted-institution")?
-                                                                    <label className="kt-checkbox">
-                                                                        <input type="checkbox"
-                                                                               name="check2"
-                                                                               value={visibledForm}
-                                                                               onChange={onVisibledInputChecked2}
-                                                                        /> Transferer à une institution <span/>
-                                                                    </label>
-                                                                    :""
-                                                            }
-                                                            <label className="kt-checkbox">
-                                                                <input type="checkbox"
-                                                                       name="check1"
-                                                                       onChange={onVisibledInputChecked}
-                                                                /> Tranferer à une unité <span/>
-                                                            </label>
-
-                                                        </div>
-                                                    </div>
                                                     {
-                                                        visibledForm ?
+                                                        verifyPermission(props.userPermissions, "transfer-claim-to-targeted-institution") ?
+                                                            <div className="kt-wizard-v2__review-item">
+                                                                <div className="kt-wizard-v2__review-content"
+                                                                     style={{fontSize: "15px"}}>
+                                                                    <label className="col-xl-6 col-lg-6 col-form-label">Institution
+                                                                        concernée</label>
+                                                                    <span className="kt-widget__data">{dataId}</span>
+                                                                </div>
+                                                                <div className="modal-footer">
+                                                                    <button
+                                                                        className="btn btn-success btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u "
+                                                                        onClick={onClickToTranfertInstitution}>
+                                                                        TRANSFÉRER A L'INSTITUTION
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            : ""
+                                                    }
+                                                    {
+                                                        verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") ||
+                                                        verifyPermission(props.userPermissions, "transfer-claim-to-unit")  ?
                                                             <div className="kt-wizard-v2__review-item">
                                                                 <div className="kt-wizard-v2__review-title">
                                                                     Tranferer à une unité
@@ -536,39 +568,12 @@ const ClaimAssignDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     <div className="form-group">
                                                                         <label>Unité</label>
-                                                                        {unitsData? (
-                                                                            <Select
-                                                                                value={unit}
-                                                                                onChange={onChangeUnits}
-                                                                                options={formatSelectOption(unitsData, 'name', false)}
-                                                                            />
-                                                                        ) : (
-                                                                            <select name="institution" id="institution">
-                                                                                <option value=""></option>
-                                                                            </select>
-                                                                        )
-                                                                        }
+                                                                        <Select
+                                                                            value={unit}
+                                                                            onChange={onChangeUnits}
+                                                                            options={unitsData}
+                                                                        />
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            : ""
-                                                    }
-
-                                                    {
-                                                       visibledForm2 && verifyPermission(props.userPermissions, "transfer-claim-to-targeted-institution") ?
-                                                            <div className="kt-wizard-v2__review-item">
-                                                                <div className="kt-wizard-v2__review-title">
-                                                                    Transferer à une institution
-                                                                </div>
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <label className="col-xl-6 col-lg-6 col-form-label"
-                                                                           htmlFor="institution">Institution
-                                                                        concernée</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        disabled={true}
-                                                                        value={dataId}
-                                                                    />
                                                                 </div>
                                                             </div>
                                                             : ""
@@ -595,6 +600,7 @@ const ClaimAssignDetail = (props) => {
                                                 data-ktwizard-type="action-next">
                                                 ÉTAPE SUIVANTE
                                             </button>
+
                                         </div>
                                     </form>
 
@@ -630,6 +636,7 @@ const ClaimAssignDetail = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
     };
 };
 

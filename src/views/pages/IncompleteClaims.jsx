@@ -169,7 +169,9 @@ const IncompleteClaims = (props) => {
                     </Link>
 
                     {
-                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') || verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ?
+                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
+                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ||
+                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client")?
                             <Link
                                 to={`/settings/incomplete_claims/edit/${claim.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"

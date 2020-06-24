@@ -38,7 +38,7 @@ const endPointConfig = {
     },
     HUB: {
         plan: "HUB",
-        list: `${appConfig.apiDomaine}/without-client/processing-circuits`,
+        list: `${appConfig.apiDomaine}/without-institution/processing-circuits`,
     }
 };
 
@@ -47,7 +47,7 @@ const ConfigProcessingCircuit = (props) => {
 
     if (!(verifyPermission(props.userPermissions, 'update-processing-circuit-my-institution') ||
         verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ||
-        verifyPermission(props.userPermissions, "update-processing-circuit-without-client")))
+        verifyPermission(props.userPermissions, "update-processing-circuit-without-institution")))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -206,8 +206,7 @@ const ConfigProcessingCircuit = (props) => {
         }
 
         let newEndPoint = '';
-        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution') ||
-            verifyPermission(props.userPermissions, 'update-processing-circuit-without-institution')) {
+        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution')){
             newEndPoint = endPoint.list + `/${institutionId}`
         } else {
             newEndPoint = endPoint.list
