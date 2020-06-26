@@ -20,6 +20,7 @@ import ReasonModal from "../components/ReasonModal";
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
+loadScript("/assets/js/pages/custom/chat/chat.js");
 
 const endPointConfig = {
     PRO: {
@@ -62,7 +63,14 @@ const ClaimAssignDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
+            let endpoint = "";
+            if (!localStorage.getItem("page"))
+                endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`;
+            else if(localStorage.getItem("page") === "ClaimListPage")
+                endpoint = `${appConfig.apiDomaine}/claim-awaiting-treatment/${id}`;
+            else
+                endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`;
+            await axios.get(endpoint)
                 .then(response => {
                     console.log(response.data, "CLAIMS");
                     setClaim(response.data);
@@ -218,23 +226,43 @@ const ClaimAssignDetail = (props) => {
                                                 </div>
                                             </div>
 
+                                            {
+                                                !localStorage.getItem('page') ? (
+                                                    <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                        <div className="kt-wizard-v2__nav-body">
+                                                            <div className="kt-wizard-v2__nav-icon">
+                                                                <i className="flaticon2-copy"/>
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label">
+                                                                <div className="kt-wizard-v2__nav-label-title">
+                                                                    Les doublons
+                                                                    {
+                                                                        !claim ? "" : (
+                                                                            <span
+                                                                                className="mx-lg-4 kt-badge kt-badge--success  kt-badge--inline kt-badge--pill">{claim.duplicates.length}</span>
+                                                                        )
+                                                                    }
+                                                                </div>
+                                                                <div className="kt-wizard-v2__nav-label-desc">
+                                                                    Voir les doublons
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : ""
+                                            }
+
                                             <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon2-copy"/>
+                                                        <i className="flaticon2-chat-2"/>
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Les doublons
-                                                            {
-                                                                !claim ? "" : (
-                                                                    <span
-                                                                        className="mx-lg-4 kt-badge kt-badge--success  kt-badge--inline kt-badge--pill">{claim.duplicates.length}</span>
-                                                                )
-                                                            }
+                                                            Commentaire
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Voir les doublons
+                                                            Voire ou ajouter un commentaire
                                                         </div>
                                                     </div>
                                                 </div>
@@ -467,103 +495,229 @@ const ClaimAssignDetail = (props) => {
                                             </div>
                                         </div>
 
-                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Les doublons possibles pour la
-                                                plainte
-                                            </div>
-                                            <div className="kt-form__section kt-form__section--first">
-                                                <div className="kt-wizard-v2__review">
-                                                    {
-                                                        !claim ? "" : (
-                                                            claim.duplicates.length ? (
-                                                                claim.duplicates.map((newClaim, index) => (
-                                                                    <div className="kt-wizard-v2__review-item"
-                                                                         key={index}>
-                                                                        <div className="kt-wizard-v2__review-content">
-                                                                            <div
-                                                                                className="kt-widget kt-widget--user-profile-3">
-                                                                                <div className="kt-widget__top">
-                                                                                    <div className="kt-widget__content"
-                                                                                         style={{paddingLeft: "0px"}}>
-                                                                                        <div
-                                                                                            className="kt-widget__head">
-                                                                                            <div
-                                                                                                className="kt-wizard-v2__review-title">Doublon
-                                                                                                Nº{index + 1}</div>
-                                                                                            {
-                                                                                                verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
+                                        {
+                                            !localStorage.getItem('page') ? (
+                                                <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                                                    <div className="kt-heading kt-heading--md">Les doublons possibles pour la
+                                                        plainte
+                                                    </div>
+                                                    <div className="kt-form__section kt-form__section--first">
+                                                        <div className="kt-wizard-v2__review">
+                                                            {
+                                                                !claim ? "" : (
+                                                                    claim.duplicates.length ? (
+                                                                        claim.duplicates.map((newClaim, index) => (
+                                                                            <div className="kt-wizard-v2__review-item"
+                                                                                 key={index}>
+                                                                                <div className="kt-wizard-v2__review-content">
+                                                                                    <div
+                                                                                        className="kt-widget kt-widget--user-profile-3">
+                                                                                        <div className="kt-widget__top">
+                                                                                            <div className="kt-widget__content"
+                                                                                                 style={{paddingLeft: "0px"}}>
+                                                                                                <div
+                                                                                                    className="kt-widget__head">
                                                                                                     <div
-                                                                                                        className="kt-widget__action">
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            className="btn btn-brand btn-sm btn-upper"
-                                                                                                            onClick={() => onClickFusionButton(newClaim)}>Fusioner
-                                                                                                        </button>
+                                                                                                        className="kt-wizard-v2__review-title">Doublon
+                                                                                                        Nº{index + 1}</div>
+                                                                                                    {
+                                                                                                        verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
+                                                                                                            <div
+                                                                                                                className="kt-widget__action">
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    className="btn btn-brand btn-sm btn-upper"
+                                                                                                                    onClick={() => onClickFusionButton(newClaim)}>Fusioner
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                        ) : ""
+                                                                                                    }
+                                                                                                </div>
+
+                                                                                                <div
+                                                                                                    className="kt-widget__subhead">
+                                                                                                    <a href="#fullname"
+                                                                                                       onClick={e => e.preventDefault()}><i
+                                                                                                        className="flaticon2-calendar-3"/>{`${newClaim.claimer.lastname} ${newClaim.claimer.firstname}`}
+                                                                                                    </a>
+                                                                                                    <a href="#datetime"
+                                                                                                       onClick={e => e.preventDefault()}><i
+                                                                                                        className="flaticon2-time"/>{newClaim.created_at}
+                                                                                                    </a>
+                                                                                                </div>
+
+                                                                                                <div
+                                                                                                    className="kt-widget__info">
+                                                                                                    <div
+                                                                                                        className="kt-widget__desc">
+                                                                                                        {newClaim.description}
                                                                                                     </div>
-                                                                                                ) : ""
-                                                                                            }
-                                                                                        </div>
-
-                                                                                        <div
-                                                                                            className="kt-widget__subhead">
-                                                                                            <a href="#fullname"
-                                                                                               onClick={e => e.preventDefault()}><i
-                                                                                                className="flaticon2-calendar-3"/>{`${newClaim.claimer.lastname} ${newClaim.claimer.firstname}`}
-                                                                                            </a>
-                                                                                            <a href="#datetime"
-                                                                                               onClick={e => e.preventDefault()}><i
-                                                                                                className="flaticon2-time"/>{newClaim.created_at}
-                                                                                            </a>
-                                                                                        </div>
-
-                                                                                        <div
-                                                                                            className="kt-widget__info">
-                                                                                            <div
-                                                                                                className="kt-widget__desc">
-                                                                                                {newClaim.description}
-                                                                                            </div>
-                                                                                            <div
-                                                                                                className="kt-widget__progress">
-                                                                                                <div
-                                                                                                    className="kt-widget__text">
-                                                                                                    Pourcentage
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    className="progress"
-                                                                                                    style={{
-                                                                                                        height: "5px",
-                                                                                                        width: newClaim.duplicate_percent + "%"
-                                                                                                    }}>
                                                                                                     <div
-                                                                                                        className="progress-bar kt-bg-danger"
-                                                                                                        role="progressbar"
-                                                                                                        style={{width: "46%"}}
-                                                                                                        aria-valuenow="35"
-                                                                                                        aria-valuemin="0"
-                                                                                                        aria-valuemax="100"/>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    className="kt-widget__stats">
-                                                                                                    {newClaim.duplicate_percent}%
+                                                                                                        className="kt-widget__progress">
+                                                                                                        <div
+                                                                                                            className="kt-widget__text">
+                                                                                                            Pourcentage
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            className="progress"
+                                                                                                            style={{
+                                                                                                                height: "5px",
+                                                                                                                width: newClaim.duplicate_percent + "%"
+                                                                                                            }}>
+                                                                                                            <div
+                                                                                                                className="progress-bar kt-bg-danger"
+                                                                                                                role="progressbar"
+                                                                                                                style={{width: "46%"}}
+                                                                                                                aria-valuenow="35"
+                                                                                                                aria-valuemin="0"
+                                                                                                                aria-valuemax="100"/>
+                                                                                                        </div>
+                                                                                                        <div
+                                                                                                            className="kt-widget__stats">
+                                                                                                            {newClaim.duplicate_percent}%
+                                                                                                        </div>
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                        ))
+                                                                    ) : (
+                                                                        <div className="kt-wizard-v2__review-item">
+                                                                            <div className="kt-wizard-v2__review-title">
+                                                                                Pas de doublon
+                                                                            </div>
                                                                         </div>
+                                                                    )
+                                                                )
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : ""
+                                        }
+
+                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                                            <div className="kt-heading kt-heading--md">Les commentaires</div>
+                                            <div className="kt-grid__item kt-grid__item--fluid kt-app__content" id="kt_chat_content">
+                                                <div className="kt-chat">
+                                                    <div className="kt-portlet__body" style={{padding: "0"}}>
+                                                        <div className="kt-scroll kt-scroll--pull" data-mobile-height="300">
+                                                            <div className="kt-chat__messages">
+                                                                <div className="kt-chat__message">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/assets/media/users/100_12.jpg" alt="image"/>
+                                                                        </span>
+                                                                        <span className="kt-chat__username">Jason Muller</span>
+                                                                        <span className="kt-chat__datetime">2 Hours</span>
                                                                     </div>
-                                                                ))
-                                                            ) : (
-                                                                <div className="kt-wizard-v2__review-item">
-                                                                    <div className="kt-wizard-v2__review-title">
-                                                                        Pas de doublon
+                                                                    <div className="kt-chat__text kt-bg-light-success">
+                                                                        How likely are you to recommend our company <br/>to your friends and family?
                                                                     </div>
                                                                 </div>
-                                                            )
-                                                        )
-                                                    }
-
+                                                                <div className="kt-chat__message kt-chat__message--right">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-chat__datetime">30 Seconds</span>
+                                                                        <span className="kt-chat__username">You</span>
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/personal/img/default-avatar.png" alt="image"/>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-brand">
+                                                                        Hey there, we’re just writing to let you know <br/>that you’ve been subscribed to a repository on GitHub.
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-chat__message">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/assets/media/users/100_12.jpg" alt="image"/>
+                                                                        </span>
+                                                                        <span className="kt-chat__username">Jason Muller</span>
+                                                                        <span className="kt-chat__datetime">30 Seconds</span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-success">
+                                                                        Ok, Understood!
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-chat__message kt-chat__message--right">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-chat__datetime">Just Now</span>
+                                                                        <span className="kt-chat__username">You</span>
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/personal/img/default-avatar.png" alt="image"/>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-brand">
+                                                                        You’ll receive notifications for all issues, pull requests!
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-chat__message">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/assets/media/users/100_12.jpg" alt="image"/>
+                                                                        </span>
+                                                                        <span className="kt-chat__username">Jason Muller</span>
+                                                                        <span className="kt-chat__datetime">2 Hours</span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-success">
+                                                                        You were automatically <b className="kt-font-brand">subscribed</b> <br/>because you’ve been given access to the repository
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-chat__message kt-chat__message--right">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-chat__datetime">30 Seconds</span>
+                                                                        <span className="kt-chat__username">You</span>
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/personal/img/default-avatar.png" alt="image"/>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-brand">
+                                                                        You can unwatch this repository immediately <br/>by clicking here: <a href="#" className="kt-font-bold kt-link">https://github.com</a>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-chat__message">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/assets/media/users/100_12.jpg" alt="image"/>
+                                                                        </span>
+                                                                        <span className="kt-chat__username">Jason Muller</span>
+                                                                        <span className="kt-chat__datetime">30 Seconds</span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-success">
+                                                                        Discover what students who viewed Learn Figma - UI/UX Design <br/>Essential Training also viewed
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-chat__message kt-chat__message--right">
+                                                                    <div className="kt-chat__user">
+                                                                        <span className="kt-chat__datetime">Just Now</span>
+                                                                        <span className="kt-chat__username">You</span>
+                                                                        <span className="kt-media kt-media--circle kt-media--sm">
+                                                                            <img src="/personal/img/default-avatar.png" alt="image"/>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="kt-chat__text kt-bg-light-brand">
+                                                                        Most purchased Business courses during this sale!
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="kt-portlet__foot" style={{padding: "0"}}>
+                                                        <div className="kt-chat__input">
+                                                            <div className="kt-chat__editor">
+                                                                <textarea style={{height: "50px"}} placeholder="Votre commentaire..."/>
+                                                            </div>
+                                                            <div className="kt-chat__toolbar">
+                                                                <div className="kt_chat__actions">
+                                                                    <button type="button" className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply">Ajouter un commentaire</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
