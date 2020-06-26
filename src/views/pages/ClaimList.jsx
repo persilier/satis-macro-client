@@ -16,8 +16,8 @@ import {AUTH_TOKEN} from "../../constants/token";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const ClaimAssign = (props) => {
-    if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
+const ClaimList = (props) => {
+    if (!verifyPermission(props.userPermissions, "list-claim-awaiting-treatment"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -30,7 +30,8 @@ const ClaimAssign = (props) => {
 
     useEffect(() => {
         async function fetchData () {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
+            localStorage.setItem('page', 'ClaimListPage');
+            axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
@@ -127,8 +128,8 @@ const ClaimAssign = (props) => {
                 <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
                 <td>
                     <a href={`/settings/claim-assign/${claim.id}/detail`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
+                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                       title="Détail">
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -137,7 +138,7 @@ const ClaimAssign = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') ? (
+        verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -295,4 +296,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssign);
+export default connect(mapStateToProps)(ClaimList);

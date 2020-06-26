@@ -50,6 +50,7 @@ import IncompleteClaimsEdit from "../components/IncompleteClaimsEdit";
 import ConfigProcessingCircuit from "../pages/ConfigProcessingCircuit";
 import ClaimAssign from "../pages/ClaimAssign";
 import ClaimAssignDetail from "../pages/ClaimAssignDetail";
+import ClaimList from "../pages/ClaimList";
 
 const Body = () => {
     return (
@@ -318,6 +319,10 @@ const Body = () => {
 
             <Route exact path="/settings/claim-assign/:id/detail">
                 <ClaimAssignDetail/>
+            </Route>
+
+            <Route exact path="/settings/unit-claims">
+                <ClaimList/>
             </Route>
 
             <Route path={"*"}>

@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {loadCss, loadScript} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
-import * as authActions from "../../../../store/actions/authActions";
 import {connect} from 'react-redux';
 import {ToastBottomEnd} from "../../../../views/components/Toast";
 import {
