@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import FormInformation from "../../components/FormInformation";
@@ -68,7 +68,7 @@ const ConfirmClaimAddModal = props => {
     const option2 = 0;
 
     const [relationship, setRelationship] = useState(props.relationship);
-    const [relationships, setRelationships] = useState(props.relationships);
+    const relationships = props.relationships;
     const [claimObject, setClaimObject] = useState(props.claimObject);
     const [claimObjects, setClaimObjects] = useState(props.claimObjects);
     const [claimCategory, setClaimCategory] = useState(props.claimCategory);

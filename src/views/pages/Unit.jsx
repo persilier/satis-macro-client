@@ -196,7 +196,13 @@ const Unit = (props) => {
                 <td style={{ textOverflow: "ellipsis", width: "250px" }}>{unit.description["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.parent ? unit.parent.name["fr"] : ""}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.unit_type.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.lead ? unit.lead.identite.lastname+" "+unit.lead.identite.firstname : "Pas de responsable"}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}>
+                    {
+                        unit.lead ?
+                            unit.lead.identite ? unit.lead.identite.lastname+" "+unit.lead.identite.firstname : "Pas d'identité"
+                            : "Pas de responsable"
+                    }
+                </td>
                 {
                     verifyPermission(props.userPermissions, 'list-any-unit') ? (
                         <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : ""}</td>

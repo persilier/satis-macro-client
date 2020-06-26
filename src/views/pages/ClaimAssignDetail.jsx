@@ -29,8 +29,8 @@ const endPointConfig = {
     },
     MACRO: {
         plan:"MACRO",
-            edit: id=>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
-            update: id=>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+        edit: id=>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
+        update: id=>`${appConfig.apiDomaine}/transfer-claim-to-circuit-unit/${id}`,
 
     },
     HUB: {
@@ -647,7 +647,7 @@ const ClaimAssignDetail = (props) => {
                                                 data-ktwizard-type="action-prev">
                                                 PRÉCÉDENT
                                             </button>
-                                            
+
                                             <button className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
                                                 SUIVANTE
                                             </button>

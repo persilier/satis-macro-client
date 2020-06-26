@@ -76,14 +76,18 @@ const Aside = (props) => {
                                         ) : ""
                                     }
 
-                                    <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Liste des plaintes</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
+                                            <NavLink exact to="/settings/unit-claims" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Liste des plaintes</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : ""
+                                    }
 
-                                    <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                    <NavLink exact to="/settings/claim-to-treat" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                         <li className="kt-menu__link ">
                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                             <span className="kt-menu__link-text">Plaintes à traiter</span>

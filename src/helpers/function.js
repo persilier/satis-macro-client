@@ -82,6 +82,11 @@ export const loadScript = function(src) {
             if (!existingScript("script-wizard-2"))
                 document.getElementsByTagName('body')[0].appendChild(tag);
             break;
+        case "/assets/js/pages/custom/chat/chat.js":
+            tag.id = "script-chat-2";
+            if (!existingScript("script-chat-2"))
+                document.getElementsByTagName('body')[0].appendChild(tag);
+            break;
         default:
             break;
     }
@@ -146,4 +151,8 @@ export const formatToTimeStamp = dateTime => {
         return dateTime.split("T")[0]+" "+dateTime.split("T")[1];
     else
         return "";
+};
+
+export const returnStringIfExist = () => {
+
 };
