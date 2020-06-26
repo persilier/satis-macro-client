@@ -129,5 +129,5 @@ export const toastErrorMessageWithParameterConfig = (message) => {
 export const toastMergeSuccessMessageConfig = {
     background: "#3c3e40",
     icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succes de la fusion</strong>"
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte susionée avec succes</strong>"
 };
