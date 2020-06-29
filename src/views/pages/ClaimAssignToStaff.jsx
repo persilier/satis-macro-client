@@ -11,29 +11,37 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmDeleteConfig} from "../../config/confirmConfig";
+import {ToastBottomEnd} from "../components/Toast";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const ClaimAssign = (props) => {
-    if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
+const ClaimAssignToStaff = (props) => {
+    if (!verifyPermission(props.userPermissions, "list-claim-assignment-to-staff"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
     const [claims, setClaims] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        async function fetchData () {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
+        async function fetchData() {
+            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
                 .then(response => {
-                    console.log(response.data,"DATA")
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    console.log(response.data, "DATA")
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
                     setLoad(false);
@@ -44,6 +52,7 @@ const ClaimAssign = (props) => {
                 })
             ;
         }
+
         fetchData();
     }, []);
 
@@ -62,13 +71,13 @@ const ClaimAssign = (props) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claims.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(claims.length/parseInt(e.target.value)));
+        setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i<position; i++) {
-            end = end+numberPerPage;
+        for (let i = 0; i < position; i++) {
+            end = end + numberPerPage;
         }
         return end;
     };
@@ -106,6 +115,44 @@ const ClaimAssign = (props) => {
         }
     };
 
+    const deleteUnitType = (claimId, index) => {
+        DeleteConfirmation.fire(confirmDeleteConfig)
+            .then((result) => {
+                if (result.value) {
+                    axios.delete(`${appConfig.apiDomaine}/unit-types/${claimId}`)
+                        .then(response => {
+                            const newUnitTypes = [...claims];
+                            newUnitTypes.splice(index, 1);
+                            setClaims(newUnitTypes);
+                            if (showList.length > 1) {
+                                setShowList(
+                                    newUnitTypes.slice(
+                                        getEndByPosition(activeNumberPage) - numberPerPage,
+                                        getEndByPosition(activeNumberPage)
+                                    )
+                                );
+                            } else {
+                                setShowList(
+                                    newUnitTypes.slice(
+                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                        getEndByPosition(activeNumberPage - 1)
+                                    )
+                                );
+                            }
+                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                        })
+                        .catch(error => {
+                            if (error.response.data.error)
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                            else
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                        })
+                    ;
+                }
+            })
+        ;
+    };
+
     const arrayNumberPage = () => {
         const pages = [];
         for (let i = 0; i < numberPage; i++) {
@@ -125,20 +172,21 @@ const ClaimAssign = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
+                <td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : ""}</td>
                 <td>
-                    <a href={`/settings/claim-assign/${claim.id}/detail`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
+                    <a href={`/settings/claim-assign/to-staff/${claim.id}/detail`}
+                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                       title="Détail">
                         <i className="la la-eye"/>
                     </a>
+
                 </td>
             </tr>
         );
     };
 
     return (
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') ? (
+        verifyPermission(props.userPermissions, 'list-claim-assignment-to-staff') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -148,10 +196,12 @@ const ClaimAssign = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Réclamation à affecter
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link">
+                                    Réclamation à traiter
                                 </a>
                             </div>
                         </div>
@@ -159,11 +209,12 @@ const ClaimAssign = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable
+                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamation à affecter"}
+                            title={"Réclamation à traiter"}
                         />
 
                         {
@@ -177,7 +228,10 @@ const ClaimAssign = (props) => {
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         Search:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control form-control-sm" placeholder=""
+                                                               aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
                                             </div>
@@ -188,38 +242,49 @@ const ClaimAssign = (props) => {
                                                 <table
                                                     className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
+                                                    style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Référence
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Réclamant
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de plainte
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Date
+                                                            de plainte
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de plainte
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Objet
+                                                            de plainte
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Agent
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Institution
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Unité
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
+                                                            aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
                                                     </tr>
@@ -259,7 +324,8 @@ const ClaimAssign = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {claims.length} données
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {claims.length} données
                                                 </div>
                                             </div>
                                             {
@@ -296,4 +362,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssign);
+export default connect(mapStateToProps)(ClaimAssignToStaff);

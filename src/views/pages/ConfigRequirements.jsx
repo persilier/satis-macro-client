@@ -30,7 +30,7 @@ const ConfigRequirements = () => {
     const [claimObject, setClaimObject] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [data, setData] = useState(defaultData);

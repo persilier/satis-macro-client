@@ -17,7 +17,7 @@ import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddSuccessMessageConfig,
-    toastEditErrorMessageConfig, toastErrorMessageWithParameterConfig,
+    toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -48,7 +48,7 @@ const endPointConfig = {
 const IncompleteClaimsEdit = props => {
     const {id} = useParams();
     if (!(verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
-        verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution")||
+        verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")))
         window.location.href = ERROR_401;
 
@@ -79,7 +79,7 @@ const IncompleteClaimsEdit = props => {
         amount_currency_slug: "",
         amount_disputed: "",
         claimer_id: "",
-        relationship_id:"",
+        relationship_id: "",
         event_occured_at: "",
         is_revival: 0,
         file: []
@@ -166,7 +166,7 @@ const IncompleteClaimsEdit = props => {
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
 
-                    if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution")||
+                    if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
 
@@ -378,16 +378,13 @@ const IncompleteClaimsEdit = props => {
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
-            }
-            else if (key === "telephone") {
+            } else if (key === "telephone") {
                 for (let i = 0; i < (newData.telephone).length; i++)
                     formData.append("telephone[]", (newData[key])[i]);
-            }
-            else if (key === "email") {
+            } else if (key === "email") {
                 for (let i = 0; i < (newData.email).length; i++)
                     formData.append("email[]", (newData[key])[i]);
-            }
-            else
+            } else
                 formData.set(key, newData[key]);
         }
         return formData;
@@ -409,7 +406,7 @@ const IncompleteClaimsEdit = props => {
             delete newData.account_targeted_id;
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
-        console.log( formatFormData(newData), "DATA_UPDATE");
+        console.log(formatFormData(newData), "DATA_UPDATE");
         axios.post(endPoint.update(`${id}`), formatFormData(newData))
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
@@ -441,7 +438,7 @@ const IncompleteClaimsEdit = props => {
     return (
         verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
         || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
-        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")? (
+        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -486,8 +483,8 @@ const IncompleteClaimsEdit = props => {
                                         />
 
                                         {
-                                            verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')||
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")? (
+                                            verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
+                                            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
                                                 <div
                                                     className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                     <label className="col-xl-3 col-lg-3 col-form-label"
@@ -515,15 +512,16 @@ const IncompleteClaimsEdit = props => {
                                             ) : ""
                                         }
                                         {
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution")||
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution")?(
+                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
+                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ? (
                                                 <div className="kt-section kt-section--first">
                                                     <div className="kt-section__body">
                                                         <h3 className="kt-section__title kt-section__title-lg">Informations
                                                             Client:</h3>
 
                                                         <div className="form-group row">
-                                                            <div className={error.lastname.length ? "col validated" : "col"}>
+                                                            <div
+                                                                className={error.lastname.length ? "col validated" : "col"}>
                                                                 <label htmlFor="lastname">Votre nom de famille</label>
                                                                 <input
                                                                     disabled={!disabledInput}
@@ -537,7 +535,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.lastname.length ? (
                                                                         error.lastname.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -545,7 +544,8 @@ const IncompleteClaimsEdit = props => {
                                                                 }
                                                             </div>
 
-                                                            <div className={error.firstname.length ? "col validated" : "col"}>
+                                                            <div
+                                                                className={error.firstname.length ? "col validated" : "col"}>
                                                                 <label htmlFor="firstname">Votre prénom</label>
                                                                 <input
                                                                     disabled={!disabledInput}
@@ -559,7 +559,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.firstname.length ? (
                                                                         error.firstname.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -579,7 +580,8 @@ const IncompleteClaimsEdit = props => {
                                                                     value={data.sexe}
                                                                     onChange={(e) => onChangeSexe(e)}
                                                                 >
-                                                                    <option value="" disabled={true}>Veillez choisir le Sexe
+                                                                    <option value="" disabled={true}>Veillez choisir le
+                                                                        Sexe
                                                                     </option>
                                                                     <option value="F">Féminin</option>
                                                                     <option value="M">Masculin</option>
@@ -587,7 +589,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.sexe.length ? (
                                                                         error.sexe.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -597,14 +600,17 @@ const IncompleteClaimsEdit = props => {
                                                         </div>
 
                                                         <div className="form-group row">
-                                                            <div className={error.telephone.length ? "col validated" : "col"}>
+                                                            <div
+                                                                className={error.telephone.length ? "col validated" : "col"}>
                                                                 <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                                <TagsInput disabled={!disabledInput} value={data.telephone}
+                                                                <TagsInput disabled={!disabledInput}
+                                                                           value={data.telephone}
                                                                            onChange={onChangeTelephone}/>
                                                                 {
                                                                     error.telephone.length ? (
                                                                         error.telephone.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -612,14 +618,16 @@ const IncompleteClaimsEdit = props => {
                                                                 }
                                                             </div>
 
-                                                            <div className={error.email.length ? "col validated" : "col"}>
+                                                            <div
+                                                                className={error.email.length ? "col validated" : "col"}>
                                                                 <label htmlFor="email">Votre Email(s)</label>
                                                                 <TagsInput disabled={!disabledInput} value={data.email}
                                                                            onChange={onChangeEmail}/>
                                                                 {
                                                                     error.email.length ? (
                                                                         error.email.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -627,7 +635,8 @@ const IncompleteClaimsEdit = props => {
                                                                 }
                                                             </div>
 
-                                                            <div className={error.ville.length ? "col validated" : "col"}>
+                                                            <div
+                                                                className={error.ville.length ? "col validated" : "col"}>
                                                                 <label htmlFor="ville">Votre ville</label>
                                                                 <input
                                                                     disabled={!disabledInput}
@@ -641,7 +650,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.ville.length ? (
                                                                         error.ville.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -653,7 +663,7 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                                 </div>
-                                        ):""
+                                            ) : ""
                                         }
 
 
@@ -661,54 +671,59 @@ const IncompleteClaimsEdit = props => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations
                                                     Réclamation:</h3>
-                                                <div className="form-group row">
-                                                    <div
-                                                        className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="unit">Unité concèrner</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'unité"}
-                                                            value={unit}
-                                                            onChange={onChangeUnit}
-                                                            options={units}
-                                                        />
-                                                        {
-                                                            error.unit_targeted_id.length ? (
-                                                                error.unit_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                    {
-                                                        !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")?(
-                                                            <div
-                                                                className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="account">Numéro de compte concèrner</label>
-                                                                <Select
-                                                                    classNamePrefix="select"
-                                                                    className="basic-single"
-                                                                    placeholder={"Veillez selectioner le numéro"}
-                                                                    value={account}
-                                                                    onChange={onChangeAccount}
-                                                                    options={accounts}
-                                                                />
-                                                                {
-                                                                    error.account_targeted_id.length ? (
-                                                                        error.account_targeted_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : ""
-                                                                }
+                                                {
+                                                    !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ?
+                                                        (
+                                                            <div className="form-group row">
+                                                                <div
+                                                                    className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="unit">Unité concèrner</label>
+                                                                    <Select
+                                                                        classNamePrefix="select"
+                                                                        className="basic-single"
+                                                                        placeholder={"Veillez selectioner l'unité"}
+                                                                        value={unit}
+                                                                        onChange={onChangeUnit}
+                                                                        options={units}
+                                                                    />
+                                                                    {
+                                                                        error.unit_targeted_id.length ? (
+                                                                            error.unit_targeted_id.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
+                                                                <div
+                                                                    className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="account">Numéro de compte
+                                                                        concèrner</label>
+                                                                    <Select
+                                                                        classNamePrefix="select"
+                                                                        className="basic-single"
+                                                                        placeholder={"Veillez selectioner le numéro"}
+                                                                        value={account}
+                                                                        onChange={onChangeAccount}
+                                                                        options={accounts}
+                                                                    />
+                                                                    {
+                                                                        error.account_targeted_id.length ? (
+                                                                            error.account_targeted_id.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : ""
+                                                                    }
+                                                                </div>
                                                             </div>
-                                                        ):""
-                                                    }
-                                                </div>
+                                                        )
+                                                        : ""
+                                                }
 
                                                 <div className="form-group row">
                                                     <div
@@ -862,8 +877,10 @@ const IncompleteClaimsEdit = props => {
                                                     </div>
                                                     {
                                                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
-                                                            <div className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                            <div
+                                                                className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="relationship">Relation du reclamant avec
+                                                                    l'institution</label>
                                                                 <Select
                                                                     isClearable
                                                                     value={relationship}
@@ -874,7 +891,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.relationship_id.length ? (
                                                                         error.relationship_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))

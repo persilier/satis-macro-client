@@ -117,6 +117,7 @@ const ClaimAssignDetail = (props) => {
         fetchData()
 
     };
+
     const onChangeUnits = (selected) => {
         const newData = {...data};
         newData.unit_id = selected.value;
@@ -737,7 +738,7 @@ const ClaimAssignDetail = (props) => {
                                                                 </div>
                                                                 <div className="modal-footer">
                                                                     <button
-                                                                        className="btn btn-success btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u "
+                                                                        className="btn btn-outline-success"
                                                                         onClick={onClickToTranfertInstitution}>
                                                                         TRANSFÉRER A L'INSTITUTION
                                                                     </button>
@@ -761,6 +762,13 @@ const ClaimAssignDetail = (props) => {
                                                                             options={unitsData}
                                                                         />
                                                                     </div>
+                                                                </div>
+                                                                <div className="modal-footer">
+                                                                    <button
+                                                                        className="btn btn-outline-success"
+                                                                        onClick={onClickToTranfert}>
+                                                                        TRANSFÉRER A UNE UNITÉ
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                             : ""
