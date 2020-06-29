@@ -51,6 +51,7 @@ const Aside = (props) => {
                                             </NavLink>
                                         ) : ""
                                     }
+
                                     {
                                         verifyPermission(props.userPermissions, 'list-claim-incomplete-against-any-institution') ||
                                         verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution")||
@@ -83,12 +84,17 @@ const Aside = (props) => {
                                         </li>
                                     </NavLink>
 
-                                    <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                        <li className="kt-menu__link ">
-                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                            <span className="kt-menu__link-text">Plaintes à traiter</span>
-                                        </li>
-                                    </NavLink>
+                                    {
+                                        verifyPermission(props.userPermissions,"list-claim-assignment-to-staff")?
+                                            <NavLink exact to="/settings/claim-assign/to-staff" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                    <span className="kt-menu__link-text">Mes Plaintes à traiter</span>
+                                                </li>
+                                            </NavLink>
+                                            :""
+                                    }
+
                                 </ul>
                             </div>
                         </li>

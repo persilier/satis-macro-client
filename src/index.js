@@ -8,13 +8,15 @@ import languageReducer from "./store/reducers/languageReducer";
 import identityReducer from "./store/reducers/IdentityReducer";
 import authReducer from "./store/reducers/authReducer";
 import planReducer from "./store/reducers/planReducer";
+import treatmentReducer from "./store/reducers/treatmentReducer";
 import AppContainer from "./AppContainer";
 
 const rootReducer = combineReducers({
     identity: identityReducer,
     language: languageReducer,
     user: authReducer,
-    plan: planReducer
+    plan: planReducer,
+    treatment:treatmentReducer
 });
 
 

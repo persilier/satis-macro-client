@@ -32,7 +32,7 @@ const CategoryClient = (props) => {
     const [categoryClient, setCategoryClient] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
 
@@ -157,8 +157,8 @@ const CategoryClient = (props) => {
     const printBodyTable = (category, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{category.name.fr}</td>
-                <td>{category.description.fr}</td>
+                <td>{category.name.fr===null?"":category.name.fr}</td>
+                <td>{category.description.fr===null?"":category.description.fr}</td>
                 <td style={{textAlign:'center'}}>
                     <Link to="/settings/clients/category/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"

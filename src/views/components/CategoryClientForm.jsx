@@ -184,7 +184,7 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="description">La Description'</label>
+                                                                       htmlFor="description">La Description</label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="description"

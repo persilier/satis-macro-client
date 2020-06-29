@@ -68,7 +68,7 @@ const ConfigProcessingCircuit = (props) => {
     const [claimObject, setClaimObject] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [data, setData] = useState(undefined);
@@ -117,7 +117,7 @@ const ConfigProcessingCircuit = (props) => {
                 console.log("Something is wrong");
             });
 
-    }, []);
+    }, [endPoint.list,numberPerPage, props.userPermissions]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -286,10 +286,10 @@ const ConfigProcessingCircuit = (props) => {
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()}
+                                <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     Configuration des Exigences
                                 </a>
