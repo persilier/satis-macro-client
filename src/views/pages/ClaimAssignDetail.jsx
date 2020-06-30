@@ -123,11 +123,15 @@ const ClaimAssignDetail = (props) => {
     }, []);
 
     const onClickToTranfertInstitution = (e) => {
+        e.preventDefault();
+        setStartRequest(true);
         async function fetchData() {
             await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
                 .then(response => {
                     console.log(response);
+                    setStartRequest(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/settings/claim-assign";
                 })
                 .catch(error =>   ToastBottomEnd.fire(toastAddErrorMessageConfig));
         }
@@ -136,11 +140,15 @@ const ClaimAssignDetail = (props) => {
     };
 
     const onClickToTranfert = (e) => {
+        e.preventDefault();
+        setStartRequestToUnit(true);
         async function fetchData() {
             await axios.put(endPoint.update(`${id}`), data)
                 .then(response => {
                     console.log(response);
+                    setStartRequestToUnit(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/settings/claim-assign";
                 })
                 .catch(error =>   ToastBottomEnd.fire(toastAddErrorMessageConfig));
         }
@@ -946,41 +954,44 @@ const ClaimAssignDetail = (props) => {
 
                                         {
                                             localStorage.getItem('page') === "ClaimListPage" && verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
-                                                <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                                    <div className="kt-heading kt-heading--md">Affectation de la plainte</div>
+                                                <div className="kt-wizard-v2__content"
+                                                     data-ktwizard-type="step-content">
+                                                    <div className="kt-heading kt-heading--md">Affectation de la
+                                                        plainte
+                                                    </div>
                                                     <div className="kt-form__section kt-form__section--first">
                                                         <div className="kt-wizard-v2__review">
-
-                                                            <div className="kt-wizard-v2__review-item">
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <div className={errors.length ? "form-group validated" : "form-group"}>
-                                                                        <label>Agent</label>
-                                                                        <Select
-                                                                            isClearable
-                                                                            placeholder={"Veillez selectioner l'agent"}
-                                                                            value={staff}
-                                                                            onChange={onChangeStaff}
-                                                                            options={staffs}
-                                                                        />
-                                                                        {
-                                                                            errors.map((error, index) => (
-                                                                                <div key={index} className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        }
-                                                                    </div>
-                                                                    <div className="form-group d-flex justify-content-between">
-                                                                        {
-                                                                            !startRequest ? (
-                                                                                <button className="btn btn-primary" onClick={assignClaim}>Affecter la plainte</button>
-                                                                            ) : (
-                                                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                                                    Chargement...
-                                                                                </button>
-                                                                            )
-                                                                        }
-                                                                    </div>
+                                                            <div className="kt-wizard-v2__review-content">
+                                                                <div
+                                                                    className={errors.length ? "form-group validated" : "form-group"}>
+                                                                    <label>Agent</label>
+                                                                    <Select
+                                                                        isClearable
+                                                                        placeholder={"Veillez selectioner l'agent"}
+                                                                        value={staff}
+                                                                        onChange={onChangeStaff}
+                                                                        options={staffs}
+                                                                    />
+                                                                    {
+                                                                        errors.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    }
+                                                                </div>
+                                                                <div
+                                                                    className="form-group d-flex justify-content-between">
+                                                                    {
+                                                                        !startRequest ? (
+                                                                            <button className="btn btn-primary" onClick={assignClaim}>Affecter la plainte</button>
+                                                                        ) : (
+                                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                                                Chargement...
+                                                                            </button>
+                                                                        )
+                                                                    }
                                                                 </div>
                                                             </div>
                                                         </div>

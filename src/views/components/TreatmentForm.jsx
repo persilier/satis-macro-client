@@ -61,7 +61,7 @@ const TreatmentForm=(props)=>{
                                         id="amount"
                                         type="text"
                                         className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
-                                        placeholder="Veillez entrer le nom"
+                                        placeholder="Veillez entrer le montant à retourner"
                                         value={data.amount_returned}
                                         onChange={(e) => onChangeAmount(e)}
                                     />
@@ -86,7 +86,7 @@ const TreatmentForm=(props)=>{
                                                                 <textarea
                                                                     id="solution"
                                                                     className={error.solution.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la description"
+                                                                    placeholder="Veillez entrer la solution"
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.solution}
@@ -112,7 +112,7 @@ const TreatmentForm=(props)=>{
                                                                 <textarea
                                                                     id="comments"
                                                                     className={error.comments.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la description"
+                                                                    placeholder="Veillez entrer un commentaire"
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.comments}
@@ -138,7 +138,7 @@ const TreatmentForm=(props)=>{
                                                                 <textarea
                                                                     id="measures"
                                                                     className={error.preventive_measures.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la description"
+                                                                    placeholder="Veillez entrer la mesure préventive"
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.preventive_measures}
