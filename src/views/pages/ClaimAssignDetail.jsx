@@ -60,6 +60,8 @@ const ClaimAssignDetail = (props) => {
     const [unitsData, setUnitsData] = useState({});
     const [unit, setUnit] = useState({});
     const [showReason, setShowReason] = useState(false);
+    const [startRequest, setStartRequest] = useState(false);
+    const [startRequestToUnit, setStartRequestToUnit] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -92,11 +94,15 @@ const ClaimAssignDetail = (props) => {
     }, []);
 
     const onClickToTranfertInstitution = (e) => {
+        e.preventDefault();
+        setStartRequest(true);
         async function fetchData() {
             await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
                 .then(response => {
                     console.log(response);
+                    setStartRequest(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/settings/claim-assign";
                 })
                 .catch(error =>   ToastBottomEnd.fire(toastAddErrorMessageConfig));
         }
@@ -105,11 +111,15 @@ const ClaimAssignDetail = (props) => {
     };
 
     const onClickToTranfert = (e) => {
+        e.preventDefault();
+        setStartRequestToUnit(true);
         async function fetchData() {
             await axios.put(endPoint.update(`${id}`), data)
                 .then(response => {
                     console.log(response);
+                    setStartRequestToUnit(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/settings/claim-assign";
                 })
                 .catch(error =>   ToastBottomEnd.fire(toastAddErrorMessageConfig));
         }
@@ -737,11 +747,22 @@ const ClaimAssignDetail = (props) => {
                                                                     <span className="kt-widget__data">{dataId}</span>
                                                                 </div>
                                                                 <div className="modal-footer">
-                                                                    <button
-                                                                        className="btn btn-outline-success"
-                                                                        onClick={onClickToTranfertInstitution}>
-                                                                        TRANSFÉRER A L'INSTITUTION
-                                                                    </button>
+                                                                    {
+                                                                        !startRequest ? (
+                                                                            <button
+                                                                                className="btn btn-outline-success"
+                                                                                onClick={onClickToTranfertInstitution}>
+                                                                                TRANSFÉRER A L'INSTITUTION
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button
+                                                                                className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                                type="button" disabled>
+                                                                                Loading...
+                                                                            </button>
+                                                                        )
+                                                                    }
+
                                                                 </div>
                                                             </div>
                                                             : ""
@@ -764,11 +785,22 @@ const ClaimAssignDetail = (props) => {
                                                                     </div>
                                                                 </div>
                                                                 <div className="modal-footer">
-                                                                    <button
-                                                                        className="btn btn-outline-success"
-                                                                        onClick={onClickToTranfert}>
-                                                                        TRANSFÉRER A UNE UNITÉ
-                                                                    </button>
+                                                                    {
+                                                                        !startRequestToUnit ? (
+                                                                            <button
+                                                                                className="btn btn-outline-success"
+                                                                                onClick={onClickToTranfert}>
+                                                                                TRANSFÉRER A UNE UNITÉ
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button
+                                                                                className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                                type="button" disabled>
+                                                                                Loading...
+                                                                            </button>
+                                                                        )
+                                                                    }
+
                                                                 </div>
                                                             </div>
                                                             : ""
