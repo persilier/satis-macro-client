@@ -129,5 +129,29 @@ export const toastErrorMessageWithParameterConfig = (message) => {
 export const toastMergeSuccessMessageConfig = {
     background: "#3c3e40",
     icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte susionée avec succes</strong>"
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte fusionée avec succes</strong>"
+};
+
+export const toastRejectClaimSuccessMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte rejetée avec succès</strong>"
+};
+
+export const toastAssignClaimSuccessMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte affectée avec succès</strong>"
+};
+
+export const toastRejectTreatmentClaimSuccessMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Rejeter avec succès</strong>"
+};
+
+export const toastValidateTreatmentClaimSuccessMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succès de la validation</strong>"
 };

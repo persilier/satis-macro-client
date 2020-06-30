@@ -17,6 +17,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssign = (props) => {
+    localStorage.setItem('page', 'claimAssign');
     if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
         window.location.href = ERROR_401;
 

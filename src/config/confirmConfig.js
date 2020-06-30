@@ -9,6 +9,17 @@ export const confirmDeleteConfig =  {
     cancelButtonText: "Quitter"
 };
 
+export const confirmAssignConfig =  {
+    title: 'Attention!',
+    text: "Cette plainte vous sera affectée!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Oui, confirmer!',
+    cancelButtonText: "Quitter"
+};
+
 export const toastDeleteErrorMessageConfig = {
     background: "#3c3e40",
     icon: 'error',

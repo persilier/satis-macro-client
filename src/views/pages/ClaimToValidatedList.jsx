@@ -16,9 +16,9 @@ import {AUTH_TOKEN} from "../../constants/token";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const ClaimList = (props) => {
-    localStorage.setItem('page', 'ClaimListPage');
-    if (!verifyPermission(props.userPermissions, "list-claim-awaiting-treatment"))
+const ClaimToValidatedList = (props) => {
+    localStorage.setItem('page', 'ClaimToValidatedListPage');
+    if (!(verifyPermission(props.userPermissions, "list-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution')))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -30,12 +30,17 @@ const ClaimList = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
+        let endpoint = "";
+        if (props.plan === "MACRO" || props.plan === "PRO")
+            endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution`;
+        else
+            endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
         async function fetchData () {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment`)
+            axios.get(endpoint)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
-                    setClaims(response.data);
+                    setNumberPage(forceRound((Object.values(response.data)).length/numberPerPage));
+                    setShowList((Object.values(response.data)).slice(0, numberPerPage));
+                    setClaims(Object.values(response.data));
                     setLoad(false);
                 })
                 .catch(error => {
@@ -127,7 +132,7 @@ const ClaimList = (props) => {
                 <td>{claim.institution_targeted.name}</td>
                 <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
                 {
-                    verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
+                    verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
                             <a href={`/settings/claim-detail/${claim.id}/edit`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -142,7 +147,7 @@ const ClaimList = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
+        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -296,8 +301,9 @@ const ClaimList = (props) => {
 
 const mapStateToProps = state => {
     return {
+        plan: state.plan.plan,
         userPermissions: state.user.user.permissions
     };
 };
 
-export default connect(mapStateToProps)(ClaimList);
+export default connect(mapStateToProps)(ClaimToValidatedList);

@@ -51,6 +51,7 @@ import ConfigProcessingCircuit from "../pages/ConfigProcessingCircuit";
 import ClaimAssign from "../pages/ClaimAssign";
 import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 import ClaimList from "../pages/ClaimList";
+import ClaimToValidatedList from "../pages/ClaimToValidatedList";
 
 const Body = () => {
     return (
@@ -323,6 +324,14 @@ const Body = () => {
 
             <Route exact path="/settings/unit-claims">
                 <ClaimList/>
+            </Route>
+
+            <Route exact path="/settings/claim-detail/:id/edit">
+                <ClaimAssignDetail/>
+            </Route>
+
+            <Route exact path="/settings/claim-to-validated">
+                <ClaimToValidatedList/>
             </Route>
 
             <Route path={"*"}>
