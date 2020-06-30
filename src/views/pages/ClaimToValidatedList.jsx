@@ -16,9 +16,9 @@ import {AUTH_TOKEN} from "../../constants/token";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const ClaimAssign = (props) => {
-    localStorage.setItem('page', 'claimAssign');
-    if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
+const ClaimToValidatedList = (props) => {
+    localStorage.setItem('page', 'ClaimToValidatedListPage');
+    if (!(verifyPermission(props.userPermissions, "list-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution')))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -30,13 +30,17 @@ const ClaimAssign = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
+        let endpoint = "";
+        if (props.plan === "MACRO" || props.plan === "PRO")
+            endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution`;
+        else
+            endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
         async function fetchData () {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
+            axios.get(endpoint)
                 .then(response => {
-                    console.log(response.data,"DATA")
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
-                    setClaims(response.data);
+                    setNumberPage(forceRound((Object.values(response.data)).length/numberPerPage));
+                    setShowList((Object.values(response.data)).slice(0, numberPerPage));
+                    setClaims(Object.values(response.data));
                     setLoad(false);
                 })
                 .catch(error => {
@@ -127,19 +131,23 @@ const ClaimAssign = (props) => {
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
                 <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
-                <td>
-                    <a href={`/settings/claim-assign/${claim.id}/detail`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </a>
-                </td>
+                {
+                    verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
+                        <td>
+                            <a href={`/settings/claim-detail/${claim.id}/edit`}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title="Détail">
+                                <i className="la la-eye"/>
+                            </a>
+                        </td>
+                    ) : <td/>
+                }
             </tr>
         );
     };
 
     return (
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') ? (
+        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -152,7 +160,7 @@ const ClaimAssign = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Réclamation à affecter
+                                    Liste des réclamation
                                 </a>
                             </div>
                         </div>
@@ -164,7 +172,7 @@ const ClaimAssign = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamation à affecter"}
+                            title={"Liste des réclamation"}
                         />
 
                         {
@@ -293,8 +301,9 @@ const ClaimAssign = (props) => {
 
 const mapStateToProps = state => {
     return {
+        plan: state.plan.plan,
         userPermissions: state.user.user.permissions
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssign);
+export default connect(mapStateToProps)(ClaimToValidatedList);

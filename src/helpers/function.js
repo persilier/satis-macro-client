@@ -1,4 +1,6 @@
 import {RECEPTION_CHANNEL, RESPONSE_CHANNEL} from "../constants/channel";
+import {verifyPermission} from "./permission";
+import appConfig from "../config/appConfig";
 
 export const existingScript = function (id) {
     return !!document.getElementById(id);
@@ -153,6 +155,77 @@ export const formatToTimeStamp = dateTime => {
         return "";
 };
 
-export const returnStringIfExist = () => {
+export const seeParameters = (userPermissions) => {
+    return (verifyPermission(userPermissions, "update-sms-parameters")
+        || verifyPermission(userPermissions, 'update-mail-parameters')
+        || verifyPermission(userPermissions, "list-any-institution")
+        || verifyPermission(userPermissions, "update-my-institution")
+        || verifyPermission(userPermissions, "update-claim-object-requirement")
+        || verifyPermission(userPermissions, 'update-processing-circuit-my-institution')
+        || verifyPermission(userPermissions, "update-processing-circuit-any-institution")
+        || verifyPermission(userPermissions, "update-processing-circuit-without-institution")
+        || verifyPermission(userPermissions, "list-client-from-any-institution")
+        || verifyPermission(userPermissions, "list-client-from-my-institution")
+        || verifyPermission(userPermissions, "list-relationship")
+        || verifyPermission(userPermissions, 'update-category-client')
+        || verifyPermission(userPermissions, "list-type-client")
+        || verifyPermission(userPermissions, "list-performance-indicator")
+        || verifyPermission(userPermissions, 'list-unit-type')
+        || verifyPermission(userPermissions, 'list-any-unit')
+        || verifyPermission(userPermissions, 'list-position')
+        || verifyPermission(userPermissions, 'list-claim-category')
+        || verifyPermission(userPermissions, 'list-claim-object')
+        || verifyPermission(userPermissions, "list-staff-from-any-unit")
+        || verifyPermission(userPermissions, 'list-staff-from-my-unit')
+        || verifyPermission(userPermissions, 'list-staff-from-maybe-no-unit')
+        || verifyPermission(userPermissions, 'list-severity-level')
+        || verifyPermission(userPermissions, 'list-currency')
+        || verifyPermission(userPermissions, 'list-channel'))
+    ;
+};
 
+export const seeCollect = (userPermissions) => {
+    return (
+        verifyPermission(userPermissions, 'store-claim-against-any-institution')
+        || verifyPermission(userPermissions, "store-claim-against-my-institution")
+        || verifyPermission(userPermissions, "store-claim-without-client")
+        || verifyPermission(userPermissions, 'list-claim-incomplete-against-any-institution')
+        || verifyPermission(userPermissions, "list-claim-incomplete-against-my-institution")
+        || verifyPermission(userPermissions, "list-claim-incomplete-without-client")
+    );
+};
+
+export const seeTreatment = (userPermissions) => {
+    return (verifyPermission(userPermissions, "show-claim-awaiting-assignment")
+        || verifyPermission(userPermissions, 'list-claim-awaiting-treatment')
+        || verifyPermission(userPermissions, 'list-claim-awaiting-validation-my-institution')
+        || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
+        || verifyPermission(userPermissions, 'list-claim-assignment-to-staff')
+    );
+};
+
+export const validatedClaimRule = (id) => {
+    return {
+        MACRO: {
+            endpoint: {
+                validate: `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}/validate`,
+                invalidate: `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}/invalidate`,
+            },
+            permission: "validate-treatment-my-institution",
+        },
+        PRO: {
+            endpoint: {
+                validate: `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}/validate`,
+                invalidate: `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}/invalidate`,
+            },
+            permission: "validate-treatment-my-institution"
+        },
+        HUB: {
+            endpoint: {
+                validate: `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${id}/validate`,
+                invalidate: `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${id}/invalidate`,
+            },
+            permission: "validate-treatment-any-institution"
+        }
+    }
 };

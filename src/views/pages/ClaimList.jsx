@@ -17,6 +17,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimList = (props) => {
+    localStorage.setItem('page', 'ClaimListPage');
     if (!verifyPermission(props.userPermissions, "list-claim-awaiting-treatment"))
         window.location.href = ERROR_401;
 
@@ -30,7 +31,6 @@ const ClaimList = (props) => {
 
     useEffect(() => {
         async function fetchData () {
-            localStorage.setItem('page', 'ClaimListPage');
             axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/numberPerPage));
@@ -126,13 +126,17 @@ const ClaimList = (props) => {
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
                 <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
-                <td>
-                    <a href={`/settings/claim-assign/${claim.id}/detail`}
-                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                       title="Détail">
-                        <i className="la la-eye"/>
-                    </a>
-                </td>
+                {
+                    verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
+                        <td>
+                            <a href={`/settings/claim-detail/${claim.id}/edit`}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title="Détail">
+                                <i className="la la-eye"/>
+                            </a>
+                        </td>
+                    ) : <td/>
+                }
             </tr>
         );
     };
@@ -151,7 +155,7 @@ const ClaimList = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Réclamation à affecter
+                                    Liste des réclamation
                                 </a>
                             </div>
                         </div>
@@ -163,7 +167,7 @@ const ClaimList = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamation à affecter"}
+                            title={"Liste des réclamation"}
                         />
 
                         {
