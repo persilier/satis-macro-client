@@ -162,7 +162,7 @@ const IncompleteClaimsEdit = props => {
                         amount_disputed: response.data.claim.amount_disputed,
                         event_occured_at: response.data.claim.event_occured_at,
                         is_revival: response.data.claim.is_revival,
-                        file:response.data.claim.files?response.data.claim.files.map(file=>file.title):""
+                        file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : ""
                     };
                     setData(newIncompleteClaim);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
@@ -371,8 +371,8 @@ const IncompleteClaimsEdit = props => {
         newData.file = Object.values(e.target.files);
         setData(newData);
     };
-    const onClickToEdit=(e)=>{
-       setIsModified(true)
+    const onClickToEdit = (e) => {
+        setIsModified(true)
     };
 
     const formatFormData = (newData) => {
@@ -906,54 +906,26 @@ const IncompleteClaimsEdit = props => {
                                                             </div>
                                                         ) : ""
                                                     }
-                                                    {
-                                                        !isModified?
-                                                            <div className="col-5">
-                                                                <label htmlFor="file">Pièces jointes</label>
-                                                                <TagsInput
-                                                                    value={data.file}
-                                                                    id="customFile"
-                                                                    type="file"
-                                                                    onChange={onChangeFile}
-                                                                    disabled= {true}
-                                                                />
-                                                            </div>
-                                                            :
-                                                            <div className="col">
-                                                                <label htmlFor="file">Pièces jointes</label>
-                                                                <input
-                                                                    onChange={onChangeFile}
-                                                                    type="file"
-                                                                    className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                                    id="customFile"
-                                                                    multiple={true}
-                                                                />
-                                                                {
-                                                                    error.file.length ? (
-                                                                        error.file.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : ""
-                                                                }
-                                                            </div>
-                                                    }
 
-                                                    {
-                                                        !isModified?
-                                                            <div className="col-1" style={{marginBottom:"-10px"}}>
-                                                                <label htmlFor="file" disabled={true}> Adds</label>
-                                                                <button
-                                                                    className="btn btn-sm btn-clean btn-icon btn-icon-md col"
-                                                                    title="Détail"
-                                                                onClick={(e)=>onClickToEdit(e)}>
-                                                                    <i className="la la-edit"/>
-                                                                </button>
-
-                                                            </div>
-                                                            :""
-                                                    }
+                                                    <div className="col">
+                                                        <label htmlFor="file">Pièces jointes</label>
+                                                        <input
+                                                            onChange={onChangeFile}
+                                                            type="file"
+                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                            id="customFile"
+                                                            multiple={true}
+                                                        />
+                                                        {
+                                                            error.file.length ? (
+                                                                error.file.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
 
                                                 </div>
 

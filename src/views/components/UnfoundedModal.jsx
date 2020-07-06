@@ -6,7 +6,6 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
-import {Link} from "react-router-dom";
 
 const UnfoundedModal = (props) => {
 
@@ -35,6 +34,7 @@ const UnfoundedModal = (props) => {
                 setError(defaultError);
                 setData(defaultData);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                window.location.href="/settings/claim-assign/to-staff"
             })
             .catch(error => {
                 setStartRequest(false);
