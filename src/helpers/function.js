@@ -45,11 +45,11 @@ export const loadCss = function (linkStylsheet) {
             if (!exitingStyleSheet("style-style-wizard-2"))
                 document.getElementsByTagName("head")[0].append(tag);
         default:
-                break;
+            break;
     }
 };
 
-export const loadScript = function(src) {
+export const loadScript = function (src) {
     var tag = document.createElement('script');
     tag.src = src;
 
@@ -94,7 +94,7 @@ export const loadScript = function(src) {
     }
 };
 
-export const formatSelectOption = function(options, labelKey, translate, valueKey = "id") {
+export const formatSelectOption = function (options, labelKey, translate, valueKey = "id") {
     const newOptions = [];
     for (let i = 0; i < options.length; i++) {
         if (translate)
@@ -107,7 +107,7 @@ export const formatSelectOption = function(options, labelKey, translate, valueKe
 
 
 export const forceRound = (decimalNumber) => {
-    return ((""+decimalNumber).split('.'))[1] ? Math.trunc(decimalNumber) + 1 : Math.trunc(decimalNumber);
+    return (("" + decimalNumber).split('.'))[1] ? Math.trunc(decimalNumber) + 1 : Math.trunc(decimalNumber);
 };
 
 export const filterDataTableBySearchValue = () => {
@@ -129,6 +129,7 @@ export const filterDataTableBySearchValue = () => {
             }
         }
     }
+
     myFunction();
 };
 
@@ -148,9 +149,13 @@ export const filterChannel = (channels, typeFilter) => {
     return newChannels;
 };
 
+export const percentageData = (data, total) => {
+    return Math.round((data * 100) / total)+"%"
+};
+
 export const formatToTimeStamp = dateTime => {
     if (dateTime.length)
-        return dateTime.split("T")[0]+" "+dateTime.split("T")[1];
+        return dateTime.split("T")[0] + " " + dateTime.split("T")[1];
     else
         return "";
 };
@@ -181,7 +186,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-severity-level')
         || verifyPermission(userPermissions, 'list-currency')
         || verifyPermission(userPermissions, 'list-channel'))
-    ;
+        ;
 };
 
 export const seeCollect = (userPermissions) => {

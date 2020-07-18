@@ -116,43 +116,6 @@ const ClaimAssignToStaff = (props) => {
         }
     };
 
-    const deleteUnitType = (claimId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
-            .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/unit-types/${claimId}`)
-                        .then(response => {
-                            const newUnitTypes = [...claims];
-                            newUnitTypes.splice(index, 1);
-                            setClaims(newUnitTypes);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newUnitTypes.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newUnitTypes.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
-                }
-            })
-        ;
-    };
 
     const arrayNumberPage = () => {
         const pages = [];

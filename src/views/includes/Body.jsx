@@ -53,6 +53,9 @@ import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 import ClaimList from "../pages/ClaimList";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
+import Dashboards from "../pages/Dashboards";
+import SatisfactionMeasure from "../pages/SatisfactionMeasure";
+import ClaimsArchived from "../pages/ClaimsArchived";
 
 const Body = () => {
     return (
@@ -339,8 +342,19 @@ const Body = () => {
                 <ClaimToValidatedList/>
             </Route>
 
-            <Route path={"*"}>
-                <Redirect to={"/dashboard"}/>
+            <Route exact path="/settings/claim_measure">
+                <SatisfactionMeasure/>
+            </Route>
+
+            <Route exact path="/settings/claim_archived">
+                <ClaimsArchived/>
+            </Route>
+
+            {/*<Route path={"*"}>*/}
+            {/*    <Redirect to={"/dashboard"}/>*/}
+            {/*</Route>*/}
+            <Route exact path={"*"}>
+                <Dashboards/>
             </Route>
         </Switch>
     );

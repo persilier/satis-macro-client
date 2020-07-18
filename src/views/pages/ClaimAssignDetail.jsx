@@ -23,6 +23,7 @@ import {AssignClaimConfirmation} from "../components/ConfirmationAlert";
 import {confirmAssignConfig} from "../../config/confirmConfig";
 import UnfoundedModal from "../components/UnfoundedModal";
 import TreatmentForm from "../components/TreatmentForm";
+import ReasonSatisfaction from "../components/ReasonSatisfaction";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -53,7 +54,10 @@ const ClaimAssignDetail = (props) => {
     const {id} = useParams();
     const validation = validatedClaimRule(id);
 
-    if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") || verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment')))
+    if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") ||
+        verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') ||
+        verifyPermission(props.userPermissions, ' show-claim-archived') ||
+        verifyPermission(props.userPermissions, 'update-claim-satisfaction-measured')))
         window.location.href = ERROR_401;
 
     let endPoint = endPointConfig[props.plan];
@@ -92,14 +96,18 @@ const ClaimAssignDetail = (props) => {
                 endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`;
             else if (localStorage.getItem("page") === "ClaimListPage")
                 endpoint = `${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/edit`;
-             else if (localStorage.getItem("page") === "ClaimToStaffPage")
+            else if (localStorage.getItem("page") === "ClaimToStaffPage")
                 endpoint = `${appConfig.apiDomaine}/claim-assignment-staff/${id}`;
+            else if (localStorage.getItem("page") === "SatisfactionMeasure")
+                endpoint = `${appConfig.apiDomaine}/claim-satisfaction-measured/${id}`;
+            else if (localStorage.getItem("page") === "ClaimsArchived")
+                endpoint = `${appConfig.apiDomaine}/claim-archived/${id}`;
             else if (localStorage.getItem("page") === "ClaimToValidatedListPage") {
                 if (verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-my-institution'))
                     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}`;
                 else if (verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-any-institution'))
                     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${id}`;
-             } else
+            } else
                 endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`;
             await axios.get(endpoint)
                 .then(response => {
@@ -112,6 +120,14 @@ const ClaimAssignDetail = (props) => {
                         setClaim(response.data);
                     }
 
+                    if (localStorage.getItem("page") === "SatisfactionMeasure") {
+                        setClaim(response.data);
+                    }
+
+                    if (localStorage.getItem("page") === "ClaimsArchived") {
+                        setClaim(response.data);
+                    }
+
                     if (localStorage.getItem("page") === "claimAssign" || localStorage.getItem("page") === "ClaimToValidatedListPage") {
                         setClaim(response.data);
                         setDataId(response.data.institution_targeted.name)
@@ -119,13 +135,17 @@ const ClaimAssignDetail = (props) => {
                 })
                 .catch(error => console.log("Something is wrong"));
 
-            await axios.get(endPoint.edit(`${id}`))
-                .then(response => {
-                    let newUnit = Object.values(response.data.units);
-                    console.log(newUnit,"UNIT")
-                    setUnitsData(formatSelectOption(newUnit, "name", "fr"))
-                })
-                .catch(error => console.log("Something is wrong"));
+            if (localStorage.getItem("page") === "claimAssign" && (verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") ||
+                verifyPermission(props.userPermissions, "transfer-claim-to-unit"))) {
+                await axios.get(endPoint.edit(`${id}`))
+                    .then(response => {
+                        let newUnit = Object.values(response.data.units);
+                        console.log(newUnit, "UNIT");
+                        setUnitsData(formatSelectOption(newUnit, "name", "fr"))
+                    })
+                    .catch(error => console.log("Something is wrong"));
+            }
+
         }
 
         fetchData();
@@ -235,7 +255,8 @@ const ClaimAssignDetail = (props) => {
     return (
         verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") ||
         verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') ||
-        verifyPermission(props.userPermissions, "show-claim-assignment-to-staff")? (
+        verifyPermission(props.userPermissions, 'update-claim-satisfaction-measured') ||
+        verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -268,6 +289,13 @@ const ClaimAssignDetail = (props) => {
                                     localStorage.getItem('page') === "ClaimToStaffPage" ? (
                                         <Link to="/settings/claim-assign/to-staff" className="kt-subheader__title">
                                             Plaintes à traitrer
+                                        </Link>
+                                    ) : ""
+                                }
+                                {
+                                    localStorage.getItem('page') === "SatisfactionMeasure" ? (
+                                        <Link to="/settings/claim_measure" className="kt-subheader__title">
+                                            Mesure de Satisfaction
                                         </Link>
                                     ) : ""
                                 }
@@ -469,6 +497,45 @@ const ClaimAssignDetail = (props) => {
                                                                 </div>
                                                                 <div className="kt-wizard-v2__nav-label-desc">
                                                                     Valider le retour de l'agent sur la plainte
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : ""
+                                            }
+                                            {
+                                                (localStorage.getItem("page") === "SatisfactionMeasure" && verifyPermission(props.userPermissions, "update-claim-satisfaction-measured")) ||
+                                                (localStorage.getItem("page") === "ClaimsArchived" && verifyPermission(props.userPermissions, "show-claim-archived")) ? (
+                                                    <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                        <div className="kt-wizard-v2__nav-body">
+                                                            <div className="kt-wizard-v2__nav-icon">
+                                                                <i className="flaticon-list"/>
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label">
+                                                                <div className="kt-wizard-v2__nav-label-title">
+                                                                    Traitement Effectué
+                                                                </div>
+                                                                <div className="kt-wizard-v2__nav-label-desc">
+                                                                    Détails du traitement effectué
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : ""
+                                            }
+                                            {
+                                                localStorage.getItem("page") === "SatisfactionMeasure" && verifyPermission(props.userPermissions, "update-claim-satisfaction-measured") ? (
+                                                    <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                        <div className="kt-wizard-v2__nav-body">
+                                                            <div className="kt-wizard-v2__nav-icon">
+                                                                <i className="flaticon-list"/>
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label">
+                                                                <div className="kt-wizard-v2__nav-label-title">
+                                                                    Mesure de Satisfaction
+                                                                </div>
+                                                                <div className="kt-wizard-v2__nav-label-desc">
+                                                                    Mesurer la satisfaction du client
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -814,6 +881,100 @@ const ClaimAssignDetail = (props) => {
                                         }
 
                                         {
+                                            (localStorage.getItem("page") === "SatisfactionMeasure" && verifyPermission(props.userPermissions, "update-claim-satisfaction-measured")) ||
+                                            (localStorage.getItem("page") === "ClaimsArchived" && verifyPermission(props.userPermissions, "show-claim-archived")) ? (
+
+                                                <div className="kt-wizard-v2__content"
+                                                     data-ktwizard-type="step-content">
+                                                    <div className="kt-heading kt-heading--md">Information sur la
+                                                        Traitement Effectué
+                                                    </div>
+                                                    <div className="kt-form__section kt-form__section--first">
+                                                        <div className="kt-wizard-v2__review">
+                                                            <div className="kt-wizard-v2__review-item">
+                                                                <div className="kt-wizard-v2__review-title">
+                                                                    Le Staff
+                                                                </div>
+                                                                {
+                                                                    !claim ? "" : (
+                                                                        <div className="kt-wizard-v2__review-content">
+                                                                            Nom du traitant: <span
+                                                                            className="mx-2">{claim.completed_by ? claim.completed_by.identite.lastname + "" + claim.completed_by.identite.firstname : "Pas de traitant"}</span><br/>
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            <div className="kt-wizard-v2__review-item">
+                                                                <div className="kt-wizard-v2__review-title">
+                                                                    Unité du traitant
+                                                                </div>
+                                                                {
+                                                                    !claim ? "" : (
+                                                                        <div className="kt-wizard-v2__review-content">
+                                                                            Nom de l'unité: <span
+                                                                            className="mx-2">{claim.completed_by.unit.name["fr"]}</span><br/>
+                                                                            Description de l'unité: <span
+                                                                            className="mx-2">{claim.completed_by.unit.description["fr"]}</span><br/>
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            <div className="kt-wizard-v2__review-item">
+                                                                <div className="kt-wizard-v2__review-title">
+                                                                    Solution Communiquée
+                                                                </div>
+                                                                {
+                                                                    !claim ? "" : (
+                                                                        <div className="kt-wizard-v2__review-content">
+                                                                            <strong>Description:</strong> <span
+                                                                            className="mx-2">{claim.active_treatment.solution_communicated}</span><br/>
+                                                                            <br/>
+
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            {
+                                                                (localStorage.getItem("page") === "ClaimsArchived" && verifyPermission(props.userPermissions, "show-claim-archived")) ? (
+                                                                    <div className="kt-wizard-v2__review-item">
+                                                                        <div className="kt-wizard-v2__review-title">
+                                                                            Mesure de Satisfaction
+                                                                        </div>
+                                                                        {
+                                                                            !claim ? "" : (
+                                                                                <div
+                                                                                    className="kt-wizard-v2__review-content">
+                                                                                    {
+                                                                                        claim.active_treatment.is_claimer_satisfied === 1 ?
+                                                                                            <span className="mx-2">
+                                                                                                Le Client <strong>est satisfait</strong> de la soltion communiquée
+                                                                                            </span>
+                                                                                            :
+                                                                                            <span className="mx-2">
+                                                                                                Le Client <strong>n'est pas satisfait</strong>  de la soltion communiquée
+                                                                                            </span>
+                                                                                    }
+                                                                                    <br/>
+                                                                                </div>
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                ) : ""
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="kt-wizard-v2__review-item">
+                                                    <div className="kt-wizard-v2__review-title">
+                                                        Traitement en cours...
+                                                    </div>
+                                                </div>)
+
+                                        }
+
+                                        {
                                             localStorage.getItem('page') === "ClaimListPage" ? (
                                                 <div className="kt-wizard-v2__content"
                                                      data-ktwizard-type="step-content">
@@ -1098,6 +1259,28 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 )
                                                 : ""
+                                        }
+
+                                        {
+                                            localStorage.getItem("page") === "SatisfactionMeasure" && verifyPermission(props.userPermissions, "update-claim-satisfaction-measured") ? (
+                                                <div className="kt-wizard-v2__content"
+                                                     data-ktwizard-type="step-content">
+                                                    <div className="kt-heading kt-heading--md">Mesure de Satisfaction
+                                                    </div>
+                                                    <div className="kt-form__section kt-form__section--first">
+                                                        <div className="kt-wizard-v2__review">
+                                                            <div className="kt-wizard-v2__review-content">
+
+                                                                <ReasonSatisfaction
+                                                                    getId={`${id}`}
+                                                                />
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            ) : ""
                                         }
 
                                         {
