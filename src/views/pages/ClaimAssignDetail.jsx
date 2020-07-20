@@ -965,13 +965,7 @@ const ClaimAssignDetail = (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                            ) : (
-                                                <div className="kt-wizard-v2__review-item">
-                                                    <div className="kt-wizard-v2__review-title">
-                                                        Traitement en cours...
-                                                    </div>
-                                                </div>)
-
+                                            ) : ""
                                         }
 
                                         {
