@@ -10,7 +10,7 @@ const LoadingTable = () => {
                         <div
                             className="blockUI blockOverlay"
                             style={{
-                                zIndex: "10",
+                                zIndex: "1",
                                 border: "none",
                                 margin: "0px",
                                 padding: "0px",
@@ -26,7 +26,7 @@ const LoadingTable = () => {
 
                         />
 
-                        <div className="blockUI blockMsg blockElement" style={{ zIndex: "1011", position: "absolute", padding: "0px", margin: "0px", width: "169px", top: "0px", left: "417.5px", textAlign: "center", color: "rgb(0, 0, 0)", border: "0px", cursor: "wait" }}>
+                        <div className="blockUI blockMsg blockElement" style={{ zIndex: "1", position: "absolute", padding: "0px", margin: "0px", width: "169px", top: "0px", left: "417.5px", textAlign: "center", color: "rgb(0, 0, 0)", border: "0px", cursor: "wait" }}>
                             <div className="blockui ">
                                 <span>
                                     Please wait...

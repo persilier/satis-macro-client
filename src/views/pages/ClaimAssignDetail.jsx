@@ -5,6 +5,8 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
+import moment from "moment";
+import Select from "react-select";
 import {formatSelectOption, loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
@@ -17,7 +19,6 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig, toastAssignClaimSuccessMessageConfig
 } from "../../config/toastConfig";
-import Select from "react-select";
 import ReasonModal from "../components/ReasonModal";
 import {AssignClaimConfirmation} from "../components/ConfirmationAlert";
 import {confirmAssignConfig} from "../../config/confirmConfig";
@@ -145,7 +146,6 @@ const ClaimAssignDetail = (props) => {
         async function fetchData() {
             await axios.put(endPoint.update(`${id}`), data)
                 .then(response => {
-                    console.log(response);
                     setStartRequestToUnit(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     window.location.href="/settings/claim-assign";
@@ -179,8 +179,7 @@ const ClaimAssignDetail = (props) => {
                     axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/self-assignment`, {})
                         .then(response => {
                             ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                            window.location.href = "http://localhost:3000";
-                            console.log(response.data);
+                            window.location.href = "http://localhost:3000/settings/unit-claims";
                         })
                         .catch(error => console.log("Something is wrong"))
                 }
@@ -199,7 +198,6 @@ const ClaimAssignDetail = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-                console.log(error.response.data);
                 setErrors(error.response.data.error.staff_id)
             })
         ;
@@ -397,7 +395,7 @@ const ClaimAssignDetail = (props) => {
                                             }
 
                                             {
-                                                localStorage.getItem('page') === "ClaimListPage" && verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
+                                                props.lead ? (
                                                     <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                         <div className="kt-wizard-v2__nav-body">
                                                             <div className="kt-wizard-v2__nav-icon">
@@ -413,7 +411,7 @@ const ClaimAssignDetail = (props) => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
 
                                             {
@@ -953,7 +951,7 @@ const ClaimAssignDetail = (props) => {
                                         }
 
                                         {
-                                            localStorage.getItem('page') === "ClaimListPage" && verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
+                                            props.lead ? (
                                                 <div className="kt-wizard-v2__content"
                                                      data-ktwizard-type="step-content">
                                                     <div className="kt-heading kt-heading--md">Affectation de la
@@ -997,7 +995,7 @@ const ClaimAssignDetail = (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
 
                                         {
@@ -1009,9 +1007,6 @@ const ClaimAssignDetail = (props) => {
                                                             {
                                                                 claim !== null ? (
                                                                     <div className="kt-wizard-v2__review-item">
-                                                                        {
-                                                                            console.log("active treatment:", claim.active_treatment)
-                                                                        }
                                                                         {
                                                                             claim.active_treatment.solved_at !== null ? (
                                                                                 <>
@@ -1031,7 +1026,7 @@ const ClaimAssignDetail = (props) => {
                                                                                                 <div className="kt-widget__content">
                                                                                                     <div className="kt-widget__head">
                                                                                                         <span className="kt-widget__username">
-                                                                                                            Traiter par {claim.active_treatment.assigned_to_staff_by.identite.lastname+" "+claim.active_treatment.assigned_to_staff_by.identite.firstname}
+                                                                                                            Traiter par {claim.active_treatment.responsible_staff.identite.lastname+" "+claim.active_treatment.responsible_staff.identite.firstname}
                                                                                                             <i className="flaticon2-correct"/>
                                                                                                         </span>
                                                                                                         <div className="kt-widget__action">
@@ -1048,8 +1043,8 @@ const ClaimAssignDetail = (props) => {
                                                                                                         <a href={"#info"} onClick={(e) => e.preventDefault()} style={{cursor: "text"}}>
                                                                                                             <i className="flaticon2-new-email"/>
                                                                                                             {
-                                                                                                                claim.active_treatment.assigned_to_staff_by.identite.email.map(
-                                                                                                                    (mail, index) => index !== claim.active_treatment.assigned_to_staff_by.identite.email.length - 1
+                                                                                                                claim.active_treatment.responsible_staff.identite.email.map(
+                                                                                                                    (mail, index) => index !== claim.active_treatment.responsible_staff.identite.email.length - 1
                                                                                                                         ? mail+"/"
                                                                                                                         : mail+""
                                                                                                                 )
@@ -1103,15 +1098,15 @@ const ClaimAssignDetail = (props) => {
                                                                                                 <div className="kt-widget__content">
                                                                                                     <div className="kt-widget__head">
                                                                                                         <span className="kt-widget__username">
-                                                                                                            Traiter par {claim.active_treatment.assigned_to_staff_by.identite.lastname+" "+claim.active_treatment.assigned_to_staff_by.identite.firstname}
+                                                                                                            Traiter par {claim.active_treatment.responsible_staff.identite.lastname+" "+claim.active_treatment.responsible_staff.identite.firstname}
                                                                                                             <i className="flaticon2-correct"/>
                                                                                                         </span>
                                                                                                         <div className="kt-widget__action">
-                                                                                                            <button type="button" className="btn btn-label-success btn-sm btn-upper">
+                                                                                                            <button type="button" className="btn btn-label-success btn-sm btn-upper" onClick={() => showReasonInput("validateReject")}>
                                                                                                                 Rejeter
                                                                                                             </button>
                                                                                                             &nbsp;
-                                                                                                            <button type="button" className="btn btn-brand btn-sm btn-upper">
+                                                                                                            <button type="button" className="btn btn-brand btn-sm btn-upper" onClick={() => showReasonInput("validateSolution")}>
                                                                                                                 Valider
                                                                                                             </button>
                                                                                                         </div>
@@ -1120,8 +1115,8 @@ const ClaimAssignDetail = (props) => {
                                                                                                         <a href={"#info"} onClick={(e) => e.preventDefault()} style={{cursor: "text"}}>
                                                                                                             <i className="flaticon2-new-email"/>
                                                                                                             {
-                                                                                                                claim.active_treatment.assigned_to_staff_by.identite.email.map(
-                                                                                                                    (mail, index) => index !== claim.active_treatment.assigned_to_staff_by.identite.email.length - 1
+                                                                                                                claim.active_treatment.responsible_staff.identite.email.map(
+                                                                                                                    (mail, index) => index !== claim.active_treatment.responsible_staff.identite.email.length - 1
                                                                                                                         ? mail+"/"
                                                                                                                         : mail+""
                                                                                                                 )
@@ -1129,7 +1124,7 @@ const ClaimAssignDetail = (props) => {
                                                                                                         </a>
                                                                                                         <a href={"#info"} onClick={(e) => e.preventDefault()} style={{cursor: "text"}}>
                                                                                                             <i className="flaticon2-calendar-2"/>
-                                                                                                            Rejeter le {claim.active_treatment.declared_unfounded_at}
+                                                                                                            Rejeter le {moment(claim.active_treatment.declared_unfounded_at).format('DD MMMM YYYY')} à {moment(claim.active_treatment.declared_unfounded_at).format('HH')}h{moment(claim.active_treatment.declared_unfounded_at).format('mm')}min
                                                                                                         </a>
                                                                                                     </div>
                                                                                                     <div className="kt-widget__info">
@@ -1212,6 +1207,7 @@ const ClaimAssignDetail = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
+        lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
     };
 };

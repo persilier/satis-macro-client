@@ -54,6 +54,8 @@ import ClaimList from "../pages/ClaimList";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
 import ClaimAssignStaffDetail from "../components/ClaimAssignStaffDetail";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
+import ClaimMonitoring from "../pages/ClaimMonitoring";
+import ClaimReporting from "../pages/ClaimReporting";
 
 const Body = () => {
     return (
@@ -341,6 +343,14 @@ const Body = () => {
 
             <Route exact path="/settings/claim-to-validated">
                 <ClaimToValidatedList/>
+            </Route>
+
+            <Route exact path="/settings/claims/monitoring">
+                <ClaimMonitoring/>
+            </Route>
+
+            <Route exact path="/settings/claims/reporting">
+                <ClaimReporting/>
             </Route>
 
             <Route path={"*"}>

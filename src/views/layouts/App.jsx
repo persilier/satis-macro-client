@@ -23,7 +23,7 @@ function App() {
 
                     <div className="kt-grid kt-grid--hor kt-grid--root">
                         <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
-                            <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
+                            <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper" style={{paddingTop: "0"}}>
                                 <Nav/>
 
                                 <div className="kt-body kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch" id="kt_body">

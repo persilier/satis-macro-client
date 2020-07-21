@@ -4,7 +4,7 @@ export const toastBottomEndConfig =  {
     toast: true,
     position: 'bottom-end',
     showConfirmButton: false,
-    timer: 3000,
+    timer: 5000,
     timerProgressBar: true,
     onOpen: (toast) => {
         toast.addEventListener('mouseenter', Swal.stopTimer);
@@ -154,4 +154,16 @@ export const toastValidateTreatmentClaimSuccessMessageConfig = {
     background: "#3c3e40",
     icon: 'success',
     title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succès de la validation</strong>"
+};
+
+export const toastInvalidPeriodMessageConfig = {
+    background: "#3c3e40",
+    icon: 'error',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Période invalide</strong>"
+};
+
+export const toastValidPeriodMessageConfig = {
+    background: "#3c3e40",
+    icon: 'success',
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Période valide</strong>"
 };

@@ -196,7 +196,6 @@ const ClaimAdd = props => {
     };
 
     const onChangeFile = (e) => {
-        console.log(e.target);
         const newData = {...data};
         newData.file = Object.values(e.target.files);
         setData(newData);
@@ -452,7 +451,6 @@ const ClaimAdd = props => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);

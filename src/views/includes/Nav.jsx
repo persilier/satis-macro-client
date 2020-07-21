@@ -14,7 +14,7 @@ const Nav = (props) => {
     };
 
     return (
-        <div id="kt_header" className="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on">
+        <div id="kt_header" className="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on" style={{position: "sticky", top: 0, zIndex: 2}}>
             <div className="kt-container  kt-container--fluid ">
                 <div className="kt-header__brand " id="kt_header_brand">
                     <div className="kt-header__brand-logo">

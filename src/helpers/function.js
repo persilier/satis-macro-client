@@ -44,6 +44,12 @@ export const loadCss = function (linkStylsheet) {
             tag.id = "style-wizard-2";
             if (!exitingStyleSheet("style-style-wizard-2"))
                 document.getElementsByTagName("head")[0].append(tag);
+            break;
+        case "/assets/plugins/custom/kanban/kanban.bundle.css":
+            tag.id = "style-kanban-bord";
+            if (!exitingStyleSheet("style-kanban-bord"))
+                document.getElementsByTagName("head")[0].append(tag);
+            break;
         default:
                 break;
     }
@@ -204,6 +210,14 @@ export const seeTreatment = (userPermissions) => {
     );
 };
 
+export const seeMonitoring = (userPermissions) => {
+    return (verifyPermission(userPermissions, "list-monitoring-claim-any-institution")
+        || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
+        || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
+        || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
+    );
+};
+
 export const validatedClaimRule = (id) => {
     return {
         MACRO: {
@@ -228,4 +242,10 @@ export const validatedClaimRule = (id) => {
             permission: "validate-treatment-any-institution"
         }
     }
+};
+
+export const formatDate = (date) => {
+    date = date.split("/");
+    date = date[2]+"-"+date[1]+"-"+date[0];
+    return new Date(date);
 };

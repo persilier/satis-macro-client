@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import {verifyPermission} from "../../helpers/permission";
-import {seeCollect, seeParameters, seeTreatment} from "../../helpers/function";
+import {seeCollect, seeMonitoring, seeParameters, seeTreatment} from "../../helpers/function";
 
 const Aside = (props) => {
     return (
@@ -26,7 +26,7 @@ const Aside = (props) => {
                         </li>
 
                         {
-                            !seeCollect(props.userPermissions) ? "" : (
+                            !seeCollect(props.userPermissions) ? null : (
                                 <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                                     data-ktmenu-submenu-toggle="hover">
                                     <a href="#collecte" onClick={e => e.preventDefault()}
@@ -53,7 +53,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Enregistrer réclamation</span>
                                                         </li>
                                                     </NavLink>
-                                                ) : ""
+                                                ) : null
                                             }
                                             {
                                                 verifyPermission(props.userPermissions, 'list-claim-incomplete-against-any-institution') ||
@@ -66,7 +66,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Réclamation incomplète</span>
                                                         </li>
                                                     </NavLink>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </ul>
                                     </div>
@@ -75,7 +75,7 @@ const Aside = (props) => {
                         }
 
                         {
-                            !seeTreatment(props.userPermissions) ? "" : (
+                            !seeTreatment(props.userPermissions) ? null : (
                                 <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
                                     <a href="#treatement" onClick={e => e.preventDefault()}
                                        className="kt-menu__link kt-menu__toggle">
@@ -100,7 +100,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Plainte à affecter</span>
                                                         </li>
                                                     </NavLink>
-                                                ) : ""
+                                                ) : null
                                             }
 
                                             {
@@ -111,7 +111,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Liste des plaintes</span>
                                                         </li>
                                                     </NavLink>
-                                                ) : ""
+                                                ) : null
                                             }
 
                                             {
@@ -133,7 +133,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Plaintes à valider</span>
                                                         </li>
                                                     </NavLink>
-                                                ) : ""
+                                                ) : null
                                             }
 
                                         </ul>
@@ -143,7 +143,40 @@ const Aside = (props) => {
                         }
 
                         {
-                            !seeParameters(props.userPermissions) ? "" : (
+                            !seeMonitoring(props.userPermissions) ? null : (
+                                <>
+                                    <li className="kt-menu__section ">
+                                        <h4 className="kt-menu__section-text">Monitoring</h4>
+                                        <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                    </li>
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission('list-monitoring-claim-my-institution') ? (
+                                            <NavLink exact to="/settings/claims/monitoring" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                    <span className="kt-menu__link-text">Suivi des plaintes</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : null
+                                    }
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                            <NavLink exact to="/settings/claims/reporting" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                    <span className="kt-menu__link-text">Reporting</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : null
+                                    }
+                                </>
+                            )
+                        }
+
+                        {
+                            !seeParameters(props.userPermissions) ? null : (
                                 <>
                                     <li className="kt-menu__section ">
                                         <h4 className="kt-menu__section-text">Paramètres</h4>
@@ -174,7 +207,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">SMS</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -186,7 +219,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Mail</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -198,7 +231,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Institution</span>
                                                             </li>
                                                         </NavLink>
-                                                        : ""
+                                                        : null
                                                 }
                                                 {
                                                     verifyPermission(props.userPermissions, "update-my-institution") ?
@@ -209,7 +242,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">My Institution</span>
                                                             </li>
                                                         </NavLink>
-                                                        : ""
+                                                        : null
                                                 }
 
                                                 {
@@ -221,7 +254,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Configuration des Exigences</span>
                                                             </li>
                                                         </NavLink>
-                                                        : ""
+                                                        : null
                                                 }
 
                                                 {
@@ -273,7 +306,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Clients</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -285,7 +318,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">RelationShip</span>
                                                             </li>
                                                         </NavLink>
-                                                        : ""
+                                                        : null
                                                 }
 
                                                 {
@@ -297,7 +330,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Catégorie Clients </span>
                                                             </li>
                                                         </NavLink>
-                                                        : ""
+                                                        : null
                                                 }
 
                                                 {
@@ -309,7 +342,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Type Clients </span>
                                                             </li>
                                                         </NavLink>
-                                                        : ""
+                                                        : null
                                                 }
 
                                                 {
@@ -323,7 +356,7 @@ const Aside = (props) => {
                                                                     className="kt-menu__link-text">Indicateur de performance</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -335,7 +368,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Type d'unité</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -347,7 +380,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Unité</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -359,7 +392,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Position</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -371,7 +404,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Catégorie de plainte</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -383,7 +416,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Objet de plainte</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -395,7 +428,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Agent</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -407,7 +440,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Niveau de gravité</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -419,7 +452,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Devise</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 {
@@ -431,7 +464,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Canaux</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </ul>
                                         </div>
