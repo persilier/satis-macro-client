@@ -25,6 +25,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssignToStaff = (props) => {
+    localStorage.setItem('page', 'ClaimToStaffPage');
     if (!verifyPermission(props.userPermissions, "list-claim-assignment-to-staff"))
         window.location.href = ERROR_401;
 
@@ -115,43 +116,6 @@ const ClaimAssignToStaff = (props) => {
         }
     };
 
-    const deleteUnitType = (claimId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
-            .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/unit-types/${claimId}`)
-                        .then(response => {
-                            const newUnitTypes = [...claims];
-                            newUnitTypes.splice(index, 1);
-                            setClaims(newUnitTypes);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newUnitTypes.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newUnitTypes.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
-                }
-            })
-        ;
-    };
 
     const arrayNumberPage = () => {
         const pages = [];
@@ -174,7 +138,7 @@ const ClaimAssignToStaff = (props) => {
                 <td>{claim.institution_targeted.name}</td>
                 <td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : ""}</td>
                 <td>
-                    <a href={`/settings/claim-assign/to-staff/${claim.id}/detail`}
+                    <a href={`/settings/claim-assign/${claim.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
                        title="Détail">
                         <i className="la la-eye"/>

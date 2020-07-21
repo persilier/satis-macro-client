@@ -94,7 +94,6 @@ const ConfigProcessingCircuit = (props) => {
 
         axios.get(endPoint.list)
             .then(response => {
-                console.log(response.data, 'RESPONSE1');
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
                     claimCategory.claim_objects.map((claimObject) => (
@@ -190,7 +189,7 @@ const ConfigProcessingCircuit = (props) => {
 
     const onChangeProcessing = (e, object_id) => {
         let newData = {...data};
-        newData[object_id] = e.map(sel => ({value: sel.value, label: sel.label}));
+        newData[object_id] = e?e.map(sel => ({value: sel.value, label: sel.label})):"";
         setData(newData);
     };
     const onSubmit = (e) => {
@@ -211,6 +210,7 @@ const ConfigProcessingCircuit = (props) => {
         } else {
             newEndPoint = endPoint.list
         }
+        {console.log(values, 'values to registered')}
 
         axios.put(newEndPoint, values)
             .then(response => {
@@ -229,7 +229,7 @@ const ConfigProcessingCircuit = (props) => {
         setInstitution(selected);
         axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
             .then(response => {
-                console.log(response.data, "UNITS D'UNE INSTITUTION");
+                // console.log(response.data, "UNITS D'UNE INSTITUTION");
                 setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
@@ -407,7 +407,7 @@ const ConfigProcessingCircuit = (props) => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {/*{console.log(data, 'data')}*/}
+                                                {console.log(data,'data')}
                                                 {
                                                     claimObject ? (
                                                         search ? (

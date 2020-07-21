@@ -14,10 +14,10 @@ const Aside = (props) => {
                 <div id="kt_aside_menu" className="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1">
                     <ul className="kt-menu__nav ">
                         <li className="kt-menu__item " aria-haspopup="true">
-                            <a href="/" className="kt-menu__link ">
+                            <NavLink exact to="/" className="kt-menu__link ">
                                 <i className="kt-menu__link-icon flaticon2-architecture-and-city"/>
                                 <span className="kt-menu__link-text">Dashboard</span>
-                            </a>
+                            </NavLink>
                         </li>
 
                         <li className="kt-menu__section ">
@@ -68,6 +68,7 @@ const Aside = (props) => {
                                                     </NavLink>
                                                 ) : null
                                             }
+
                                         </ul>
                                     </div>
                                 </li>
@@ -97,7 +98,7 @@ const Aside = (props) => {
                                                     <NavLink exact to="/settings/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Plainte à affecter</span>
+                                                            <span className="kt-menu__link-text">Plainte à tranférer</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -134,6 +135,28 @@ const Aside = (props) => {
                                                         </li>
                                                     </NavLink>
                                                 ) : null
+                                            }
+                                            {
+                                                verifyPermission(props.userPermissions, 'list-claim-satisfaction-measured')?(
+                                                    <NavLink exact to="/settings/claim_measure" className="kt-menu__item "
+                                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        <li className="kt-menu__link ">
+                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                            <span className="kt-menu__link-text">Mesure Satisfaction</span>
+                                                        </li>
+                                                    </NavLink>
+                                                ) :""
+                                            }
+                                            {
+                                                verifyPermission(props.userPermissions, 'list-claim-archived')?(
+                                                    <NavLink exact to="/settings/claim_archived" className="kt-menu__item "
+                                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        <li className="kt-menu__link ">
+                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                            <span className="kt-menu__link-text">Archivage</span>
+                                                        </li>
+                                                    </NavLink>
+                                                ) :""
                                             }
 
                                         </ul>

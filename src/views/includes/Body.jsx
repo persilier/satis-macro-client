@@ -52,10 +52,12 @@ import ClaimAssign from "../pages/ClaimAssign";
 import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 import ClaimList from "../pages/ClaimList";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
-import ClaimAssignStaffDetail from "../components/ClaimAssignStaffDetail";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
 import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
+import Dashboards from "../pages/Dashboards";
+import SatisfactionMeasure from "../pages/SatisfactionMeasure";
+import ClaimsArchived from "../pages/ClaimsArchived";
 
 const Body = () => {
     return (
@@ -329,9 +331,6 @@ const Body = () => {
             <Route exact path="/settings/claim-assign/:id/detail">
                 <ClaimAssignDetail/>
             </Route>
-            <Route exact path="/settings/claim-assign/to-staff/:id/detail">
-                <ClaimAssignStaffDetail/>
-            </Route>
 
             <Route exact path="/settings/unit-claims">
                 <ClaimList/>
@@ -351,6 +350,18 @@ const Body = () => {
 
             <Route exact path="/settings/claims/reporting">
                 <ClaimReporting/>
+            </Route>
+
+            <Route exact path="/settings/claim_measure">
+                <SatisfactionMeasure/>
+            </Route>
+
+            <Route exact path="/settings/claim_archived">
+                <ClaimsArchived/>
+            </Route>
+
+            <Route exact path="/dashboard">
+                <Dashboards/>
             </Route>
 
             <Route path={"*"}>
