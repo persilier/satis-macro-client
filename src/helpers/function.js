@@ -210,6 +210,8 @@ export const seeTreatment = (userPermissions) => {
     return (verifyPermission(userPermissions, "show-claim-awaiting-assignment")
         || verifyPermission(userPermissions, 'list-claim-awaiting-treatment')
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-my-institution')
+        || verifyPermission(userPermissions, 'list-claim-satisfaction-measured')
+        || verifyPermission(userPermissions, 'list-claim-archived')
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
         || verifyPermission(userPermissions, 'list-claim-assignment-to-staff')
     );
