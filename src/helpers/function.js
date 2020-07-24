@@ -127,11 +127,10 @@ export const filterDataTableBySearchValue = () => {
             td = tr[i].getElementsByTagName("td")[0];
             if (td) {
                 txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                if (txtValue.toUpperCase().indexOf(filter) > -1)
                     tr[i].style.display = "";
-                } else {
+                else
                     tr[i].style.display = "none";
-                }
             }
         }
     }
@@ -148,9 +147,8 @@ export const filterChannel = (channels, typeFilter) => {
         } else if (typeFilter === RECEPTION_CHANNEL) {
             if (channels[i].is_response === 0)
                 newChannels.push(channels[i]);
-        } else {
+        } else
             return channels
-        }
     }
     return newChannels;
 };

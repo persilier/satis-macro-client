@@ -83,7 +83,7 @@ const FourModel = ({data, type}) => {
     return (
         <div id="chart">
             <div className="row d-flex justify-content-center">
-                <div className="col-10">
+                <div id="graphTwo" className="col-10">
                     <ReactApexChart options={options} series={series} type="area" height={350} />
                 </div>
             </div>

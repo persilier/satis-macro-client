@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
+import Select from "react-select";
+import svgToImg from "save-svg-as-png";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import FourModel from "../components/charts/FourModel";
@@ -15,7 +17,6 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
 
 const ClaimReporting = props => {
@@ -40,6 +41,7 @@ const ClaimReporting = props => {
     const [endDate, setEndDate] = useState("");
     const [typeFilter, setTypeFilter] = useState("months");
     const [startFilter, setStartFilter] = useState(false);
+    const [startExportation, setStartExportation] = useState(false);
     const [possibleFilter, setPossibleFilter] = useState(
         {
             months: true,
@@ -186,6 +188,100 @@ const ClaimReporting = props => {
         }
     };
 
+    const formatPngToFileObject = (dataUrl, filename) => {
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        var n = bstr.length;
+        const u8arr = new Uint8Array(n);
+
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    };
+
+    const transformChartToPng = async () => {
+        const files = {};
+        var graphOne = document.getElementById("graphOne").cloneNode(true);
+        graphOne.children[0].children[0].children[0].children[0].remove();
+        await svgToImg.svgAsPngUri(graphOne.children[0].children[0].children[0], "graphOne.png")
+            .then(data => {
+                files.graphOne = data;
+            })
+            .catch(error => console.log("error:", error))
+        ;
+
+        var graphTwo = document.getElementById("graphTwo").cloneNode(true);
+        graphTwo.children[0].children[0].children[0].children[0].remove();
+        await svgToImg.svgAsPngUri(graphTwo.children[0].children[0].children[0], "graphTwo.png")
+            .then(data => {
+                files.graphTwo = data;
+            })
+            .catch(error => console.log("error:", error))
+        ;
+        return files;
+    };
+
+    const exportToPdf = () => {
+        if (fetchData) {
+            setStartExportation(true);
+            const pictures = transformChartToPng();
+            pictures
+                .then(result => {
+                    result.graphOne = formatPngToFileObject(result.graphOne, "graphOne");
+                    result.graphTwo = formatPngToFileObject(result.graphTwo, "graphTwo");
+                    console.log('pictures:', result);
+                    console.log("graphOne:", result.graphOne);
+                    console.log("graphTwo:", result.graphTwo);
+                    const sendData = {
+                        filter: {
+                            institution: institution.value,
+                            startDate: startDate,
+                            endDate: endDate
+                        },
+                        statistiqueObject: {
+                            data: fetchData.statistiqueObject,
+                            total: {
+                                totalCollect: totalCollect,
+                                totalIncomplete: totalIncomplete,
+                                totalToAssignUnit: totalToAssignUnit,
+                                totalToAssignStaff: totalToAssignStaff,
+                                totalAwaitingTreatment: totalAwaitingTreatment,
+                                totalToValidate: totalToValidate,
+                                totalToMeasureSatisfaction: totalToMeasureSatisfaction,
+                                totalPercentage: totalPercentage,
+                            }
+                        },
+                        statistiqueQualificationPeriod: fetchData.statistiqueQualificationPeriod,
+                        statistiqueTreatmentPeriod: fetchData.statistiqueTreatmentPeriod,
+                        statistiqueChannel: fetchData.statistiqueChannel,
+                        chanelGraph: {
+                            legend: {
+                                SMS: "#008FFB",
+                                TELEPHONE: "#00E396",
+                                EMAIL: "#FEB019",
+                                ENTRETIEN: "#FF4560",
+                                SATELITE: "#775DD0",
+                            },
+                            image: result.graphOne
+                        },
+                        evolutionClaim: {
+                            legend: {
+                                claims_received: "#008FFB",
+                                claims_resolved: "#00E396"
+                            },
+                            image: result.graphTwo
+                        }
+                    };
+                    console.log("sendData:", sendData);
+                })
+                .catch(() => ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de génération de pdf")));
+        } else {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Donné indisponible pour l'exportation"));
+        }
+    };
+
     return (
         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -212,9 +308,17 @@ const ClaimReporting = props => {
 
                     <div className="alert alert-light alert-elevate" role="alert">
                         <div className="alert-icon">
-                            <button className="btn btn-info btn-circle">
-                                <i className="fa fa-file-export" style={{color: "white"}}/> Exportez
-                            </button>
+                            {
+                                startExportation ? (
+                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light">
+                                        Chargement...
+                                    </button>
+                                ) : (
+                                    <button className="btn btn-info btn-circle" onClick={() => exportToPdf()}>
+                                        <i className="fa fa-file-export" style={{color: "white"}}/> Exportez
+                                    </button>
+                                )
+                            }
                         </div>
 
                         <div className="alert-text align-items-center">
