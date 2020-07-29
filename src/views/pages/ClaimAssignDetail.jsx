@@ -443,7 +443,7 @@ const ClaimAssignDetail = (props) => {
                                             }
 
                                             {
-                                                props.lead ? (
+                                                props.lead && localStorage.getItem('page') === "ClaimListPage" ? (
                                                     <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                         <div className="kt-wizard-v2__nav-body">
                                                             <div className="kt-wizard-v2__nav-icon">
@@ -1230,53 +1230,7 @@ const ClaimAssignDetail = (props) => {
                                         }
 
                                         {
-                                            localStorage.getItem('page') === "ClaimToStaffPage" && verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") ? (
-                                                    <div className="kt-wizard-v2__content"
-                                                         data-ktwizard-type="step-content">
-                                                        <div className="kt-heading kt-heading--md">Traitement de la
-                                                            plainte
-                                                        </div>
-                                                        <div className="kt-form__section kt-form__section--first">
-                                                            <div className="kt-wizard-v2__review">
-                                                                <div className="kt-wizard-v2__review-content">
-
-                                                                    <TreatmentForm
-                                                                        getId={`${id}`}
-                                                                    />
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                )
-                                                : ""
-                                        }
-
-                                        {
-                                            localStorage.getItem("page") === "SatisfactionMeasure" && verifyPermission(props.userPermissions, "update-claim-satisfaction-measured") ? (
-                                                <div className="kt-wizard-v2__content"
-                                                     data-ktwizard-type="step-content">
-                                                    <div className="kt-heading kt-heading--md">Mesure de Satisfaction
-                                                    </div>
-                                                    <div className="kt-form__section kt-form__section--first">
-                                                        <div className="kt-wizard-v2__review">
-                                                            <div className="kt-wizard-v2__review-content">
-
-                                                                <ReasonSatisfaction
-                                                                    getId={`${id}`}
-                                                                />
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            ) : ""
-                                        }
-
-                                        {
-                                            props.lead ? (
+                                            props.lead && localStorage.getItem('page') === "ClaimListPage" ? (
                                                 <div className="kt-wizard-v2__content"
                                                      data-ktwizard-type="step-content">
                                                     <div className="kt-heading kt-heading--md">Affectation de la
@@ -1325,6 +1279,52 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                 </div>
                                             ) : null
+                                        }
+
+                                        {
+                                            localStorage.getItem('page') === "ClaimToStaffPage" && verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") ? (
+                                                    <div className="kt-wizard-v2__content"
+                                                         data-ktwizard-type="step-content">
+                                                        <div className="kt-heading kt-heading--md">Traitement de la
+                                                            plainte
+                                                        </div>
+                                                        <div className="kt-form__section kt-form__section--first">
+                                                            <div className="kt-wizard-v2__review">
+                                                                <div className="kt-wizard-v2__review-content">
+
+                                                                    <TreatmentForm
+                                                                        getId={`${id}`}
+                                                                    />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                )
+                                                : ""
+                                        }
+
+                                        {
+                                            localStorage.getItem("page") === "SatisfactionMeasure" && verifyPermission(props.userPermissions, "update-claim-satisfaction-measured") ? (
+                                                <div className="kt-wizard-v2__content"
+                                                     data-ktwizard-type="step-content">
+                                                    <div className="kt-heading kt-heading--md">Mesure de Satisfaction
+                                                    </div>
+                                                    <div className="kt-form__section kt-form__section--first">
+                                                        <div className="kt-wizard-v2__review">
+                                                            <div className="kt-wizard-v2__review-content">
+
+                                                                <ReasonSatisfaction
+                                                                    getId={`${id}`}
+                                                                />
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            ) : ""
                                         }
 
                                         {

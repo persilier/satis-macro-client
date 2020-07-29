@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
+import Select from "react-select";
+import svgToImg from "save-svg-as-png";
+import FileSaver from "file-saver";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import FourModel from "../components/charts/FourModel";
@@ -15,8 +18,10 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
+import {AUTH_TOKEN} from "../../constants/token";
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReporting = props => {
     if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, "list-reporting-claim-my-institution")))
@@ -40,6 +45,8 @@ const ClaimReporting = props => {
     const [endDate, setEndDate] = useState("");
     const [typeFilter, setTypeFilter] = useState("months");
     const [startFilter, setStartFilter] = useState(false);
+    const [startExportation, setStartExportation] = useState(false);
+    const [pdfTitle, setPdfTitle] = useState(`reporting_${new Date().getFullYear()}`);
     const [possibleFilter, setPossibleFilter] = useState(
         {
             months: true,
@@ -97,11 +104,11 @@ const ClaimReporting = props => {
         fetchData();
     }, []);
 
-    const handleChangeTypeFilter = (e) => {
+    const handleTypeFilterChange = (e) => {
         setTypeFilter(e.target.value);
     };
 
-    const handleChangeStartDate = e => {
+    const handleStartDateChange = e => {
         if (endDate && e.target.value) {
             if (!(new Date(endDate) > new Date(e.target.value)))
                 ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
@@ -111,7 +118,7 @@ const ClaimReporting = props => {
         setStartDate(e.target.value);
     };
 
-    const handleChangeEndDate = e => {
+    const handleEndDateChange = e => {
         if (startDate && e.target.value) {
             if (!(new Date(startDate) < new Date(e.target.value)))
                 ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
@@ -121,7 +128,7 @@ const ClaimReporting = props => {
         setEndDate(e.target.value);
     };
 
-    const handleChangeInstitution = selected => {
+    const handleInstitutionChange = selected => {
         setInstitution(selected)
     };
 
@@ -146,6 +153,7 @@ const ClaimReporting = props => {
             parameter = `?date_start=${startDate}&date_end=${endDate}`;
         axios.get(`${endpoint}${parameter}`)
             .then(response => {
+                setPdfTitle(formatPdfTitle());
                 setStartFilter(false);
                 applyPossibleFilter(response.data.statistiqueGraphePeriod);
                 setFetchData(response.data);
@@ -186,6 +194,126 @@ const ClaimReporting = props => {
         }
     };
 
+    const formatPngToFileObject = (dataUrl, filename) => {
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        var n = bstr.length;
+        const u8arr = new Uint8Array(n);
+
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    };
+
+    const transformChartToPng = async () => {
+        const files = {};
+        var graphOne = document.getElementById("graphOne").cloneNode(true);
+        graphOne.children[0].children[0].children[0].children[0].remove();
+        await svgToImg.svgAsPngUri(graphOne.children[0].children[0].children[0], "graphOne.png")
+            .then(data => {
+                files.graphOne = data;
+            })
+            .catch(error => console.log("error:", error))
+        ;
+
+        var graphTwo = document.getElementById("graphTwo").cloneNode(true);
+        graphTwo.children[0].children[0].children[0].children[0].remove();
+        await svgToImg.svgAsPngUri(graphTwo.children[0].children[0].children[0], "graphTwo.png")
+            .then(data => {
+                files.graphTwo = data;
+            })
+            .catch(error => console.log("error:", error))
+        ;
+        return files;
+    };
+
+    const formatPdfTitle = () => {
+        let newStartDate = startDate;
+        let newEndDate = endDate;
+        while (newStartDate.includes("-") && newEndDate.includes("-")) {
+            newStartDate = newStartDate.replace("-", "_");
+            newEndDate = newEndDate.replace("-", "_");
+        }
+        if (institution && (newStartDate && newEndDate))
+            return `reporting_${institution.label}_${newStartDate}_at_${newEndDate}`;
+        else if(institution && !(newStartDate && newEndDate))
+            return `reporting_${institution.label}`;
+        else if(!institution && (newStartDate && newEndDate))
+            return `reporting_${newStartDate}_at_${newEndDate}`;
+        else
+            return `reporting_${new Date().getFullYear()}`;
+    };
+
+    const exportToPdf = async () => {
+        if (fetchData) {
+            setStartExportation(true);
+            const pictures = await transformChartToPng();
+            const sendData = {
+                filter: {
+                    institution: institution ? institution.value : "",
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                statistiqueObject: {
+                    data: fetchData.statistiqueObject,
+                    total: {
+                        totalCollect: totalCollect,
+                        totalIncomplete: totalIncomplete,
+                        totalToAssignUnit: totalToAssignUnit,
+                        totalToAssignStaff: totalToAssignStaff,
+                        totalAwaitingTreatment: totalAwaitingTreatment,
+                        totalToValidate: totalToValidate,
+                        totalToMeasureSatisfaction: totalToMeasureSatisfaction,
+                        totalPercentage: totalPercentage,
+                    }
+                },
+                statistiqueQualificationPeriod: fetchData.statistiqueQualificationPeriod,
+                statistiqueTreatmentPeriod: fetchData.statistiqueTreatmentPeriod,
+                statistiqueChannel: fetchData.statistiqueChannel,
+                chanelGraph: {
+                    legend: {
+                        SMS: "#008FFB",
+                        TELEPHONE: "#00E396",
+                        EMAIL: "#FEB019",
+                        ENTRETIEN: "#FF4560",
+                        SATELITE: "#775DD0",
+                    },
+                    image: pictures.graphOne
+                },
+                evolutionClaim: {
+                    legend: {
+                        claims_received: "#008FFB",
+                        claims_resolved: "#00E396"
+                    },
+                    image: pictures.graphTwo,
+                    filter: typeFilter
+                },
+                headeBackground: "#7F9CF5",
+            };
+            // console.log("data_export:", {data_export: sendData});
+
+            axios({
+                method: 'post',
+                url: `${appConfig.apiDomaine}/any/reporting-claim/export-pdf`,
+                responseType: 'blob',
+                data: {data_export: sendData}
+            })
+                .then(({data}) => {
+                    setStartExportation(false);
+                    FileSaver.saveAs(data, `${pdfTitle}.pdf`);
+                })
+                .catch(({response}) => {
+                    setStartExportation(false);
+                    console.log(response.data.error);
+                })
+            ;
+        } else {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Donné indisponible pour l'exportation"));
+        }
+    };
+
     return (
         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -212,9 +340,17 @@ const ClaimReporting = props => {
 
                     <div className="alert alert-light alert-elevate" role="alert">
                         <div className="alert-icon">
-                            <button className="btn btn-info btn-circle">
-                                <i className="fa fa-file-export" style={{color: "white"}}/> Exportez
-                            </button>
+                            {
+                                startExportation ? (
+                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light">
+                                        Chargement...
+                                    </button>
+                                ) : (
+                                    <button className="btn btn-info btn-circle" onClick={() => exportToPdf()}>
+                                        <i className="fa fa-file-export" style={{color: "white"}}/> Exportez
+                                    </button>
+                                )
+                            }
                         </div>
 
                         <div className="alert-text align-items-center">
@@ -227,7 +363,7 @@ const ClaimReporting = props => {
                                             <Select
                                                 isClearable
                                                 value={institution}
-                                                onChange={handleChangeInstitution}
+                                                onChange={handleInstitutionChange}
                                                 options={formatSelectOption(fetchData ? fetchData.institutions : [], 'name', false)}
                                             />
                                         </div>
@@ -241,7 +377,7 @@ const ClaimReporting = props => {
                                         type="date"
                                         className="form-control"
                                         value={startDate}
-                                        onChange={handleChangeStartDate}
+                                        onChange={handleStartDateChange}
                                     />
                                 </div>
                                 <div className="form-group col-3">
@@ -251,7 +387,7 @@ const ClaimReporting = props => {
                                         type="date"
                                         className="form-control"
                                         value={endDate}
-                                        onChange={handleChangeEndDate}
+                                        onChange={handleEndDateChange}
                                     />
                                 </div>
                                 <div className="form-group col-3">
@@ -292,46 +428,46 @@ const ClaimReporting = props => {
                                             <div className="col-sm-12">
                                                 <strong>Légende: <br/>R </strong>{"<===>"} Réclamtions
                                                 <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
-                                                    <thead>
+                                                    <thead style={{backgroundColor: "#7F9CF5"}}>
                                                     <tr role="row">
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending">Catégorie de <strong>R</strong>
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending">Objets de <strong>R</strong>
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> collectées
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> incomplète
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à une unité
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à un agent
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> à traiter
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> à valider
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending"><strong>R</strong> à mesurer satisfaction
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
                                                             aria-label="Country: activate to sort column ascending">Pourcentage de Résolues
                                                         </th>
                                                     </tr>
@@ -413,52 +549,52 @@ const ClaimReporting = props => {
                                                     className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
-                                                    <thead>
+                                                    <thead style={{backgroundColor: "#7F9CF5", borderLeft: "none", borderRight: "none"}}>
                                                     <tr role="row">
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">Délai de qualification (en jour)
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">0-2 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">2-4 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">4-6 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">6-10 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">Plus de 10 jours
                                                         </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr>
-                                                        <td>Nombre</td>
-                                                        <td>{fetchData.statistiqueQualificationPeriod["0-2"].total}</td>
-                                                        <td>{fetchData.statistiqueQualificationPeriod["2-4"].total}</td>
-                                                        <td>{fetchData.statistiqueQualificationPeriod["4-6"].total}</td>
-                                                        <td>{fetchData.statistiqueQualificationPeriod["6-10"].total}</td>
-                                                        <td>{fetchData.statistiqueQualificationPeriod["+10"].total}</td>
+                                                        <td style={{borderRight: "none", borderLeft: "none"}}>Nombre</td>
+                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["0-2"].total}</td>
+                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["2-4"].total}</td>
+                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["4-6"].total}</td>
+                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["6-10"].total}</td>
+                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["+10"].total}</td>
                                                     </tr>
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Taux (%)</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueQualificationPeriod["0-2"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueQualificationPeriod["2-4"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueQualificationPeriod["4-6"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueQualificationPeriod["6-10"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueQualificationPeriod["+10"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>Taux (%)</th>
+                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["0-2"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["2-4"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["4-6"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["6-10"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["+10"].pourcentage}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -485,52 +621,52 @@ const ClaimReporting = props => {
                                                     className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
-                                                    <thead>
+                                                    <thead style={{backgroundColor: "#7F9CF5"}}>
                                                     <tr role="row">
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">Délai de Traitement (en jour)
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">0-2 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">2-4 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">4-6 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">6-10 jours
                                                         </th>
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">Plus de 10 jours
                                                         </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr>
-                                                        <td>Nombre</td>
-                                                        <td>{fetchData.statistiqueTreatmentPeriod["0-2"].total}</td>
-                                                        <td>{fetchData.statistiqueTreatmentPeriod["2-4"].total}</td>
-                                                        <td>{fetchData.statistiqueTreatmentPeriod["4-6"].total}</td>
-                                                        <td>{fetchData.statistiqueTreatmentPeriod["6-10"].total}</td>
-                                                        <td>{fetchData.statistiqueTreatmentPeriod["+10"].total}</td>
+                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>Nombre</td>
+                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["0-2"].total}</td>
+                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["2-4"].total}</td>
+                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["4-6"].total}</td>
+                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["6-10"].total}</td>
+                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["+10"].total}</td>
                                                     </tr>
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Taux</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueTreatmentPeriod["0-2"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueTreatmentPeriod["2-4"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueTreatmentPeriod["4-6"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueTreatmentPeriod["6-10"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1">{fetchData.statistiqueTreatmentPeriod["+10"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>Taux</th>
+                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["0-2"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["2-4"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["4-6"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["6-10"].pourcentage}</th>
+                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["+10"].pourcentage}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -557,24 +693,29 @@ const ClaimReporting = props => {
                                                     className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        {
-                                                            fetchData.statistiqueChannel.map((channel, index) => (
-                                                                <th key={index} tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                    colSpan="1" style={{ width: "70.25px" }}
-                                                                    aria-label="Country: activate to sort column ascending">{channel.name["fr"]}
-                                                                </th>
-                                                            ))
-                                                        }
-                                                    </tr>
+                                                    <thead style={{ backgroundColor: "#7F9CF5" }}>
+                                                        <tr role="row">
+                                                            {
+                                                                fetchData.statistiqueChannel.map((channel, index) => (
+                                                                    <th
+                                                                        key={index}
+                                                                        tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {channel.name["fr"]}
+                                                                    </th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </thead>
                                                     <tbody/>
                                                     <tfoot>
                                                     <tr>
                                                         {
                                                             fetchData.statistiqueChannel.map((channel, index) => (
-                                                                <th key={index} rowSpan="1" colSpan="1">{channel.total_claim}</th>
+                                                                <th key={index} rowSpan="1" colSpan="1" style={{borderLeft: "none", borderRight: "none"}}>{channel.total_claim}</th>
                                                             ))
                                                         }
                                                     </tr>
@@ -606,7 +747,7 @@ const ClaimReporting = props => {
                                             id="filter"
                                             className="form-control"
                                             value={typeFilter}
-                                            onChange={(e) => handleChangeTypeFilter(e)}
+                                            onChange={(e) => handleTypeFilterChange(e)}
                                         >
                                             <option value="" disabled={true}>Veillez choisir le filtre</option>
                                             {

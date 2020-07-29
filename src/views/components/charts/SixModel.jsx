@@ -34,7 +34,7 @@ const SixModel = ({data})  => {
 
     return (
         <div className="mt-4">
-            <div className="d-flex justify-content-center">
+            <div id="graphOne" className="d-flex justify-content-center">
                 <ReactApexChart series={series} options={options} type="pie" width={380}/>
             </div>
             <h5 className="text-center">Pourcentage d'utilisation des canneaux</h5>

@@ -489,6 +489,14 @@ const Aside = (props) => {
                                                         </NavLink>
                                                     ) : null
                                                 }
+
+                                                <NavLink exact to="/settings/notification" className="kt-menu__item "
+                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                        <span className="kt-menu__link-text">Notification</span>
+                                                    </li>
+                                                </NavLink>
                                             </ul>
                                         </div>
                                     </li>

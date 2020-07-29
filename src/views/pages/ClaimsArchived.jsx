@@ -281,7 +281,6 @@ const ClaimsArchived = (props) => {
                 </div>
             </div>
         </div>
-
     )
 };
 const mapStateToProps = (state) => {

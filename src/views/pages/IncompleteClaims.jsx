@@ -5,10 +5,6 @@ import {
 } from "react-router-dom";
 import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
-import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
-import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
@@ -162,11 +158,11 @@ const IncompleteClaims = (props) => {
                 <td>{claim.claim_object.name.fr}</td>
                 <td>{claim.description}</td>
                 <td style={{textAlign: 'center'}}>
-                    <Link to="/settings/clients/claim/detail"
+                    {/*<Link to="/settings/clients/claim/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
-                    </Link>
+                    </Link>*/}
 
                     {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
