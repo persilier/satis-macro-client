@@ -58,6 +58,7 @@ import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
 import ClaimsArchived from "../pages/ClaimsArchived";
+import ConfigNotification from "../pages/ConfigNotification";
 
 const Body = () => {
     return (
@@ -358,6 +359,10 @@ const Body = () => {
 
             <Route exact path="/settings/claim_archived">
                 <ClaimsArchived/>
+            </Route>
+
+            <Route exact path="/settings/notification">
+                <ConfigNotification/>
             </Route>
 
             <Route exact path="/dashboard">

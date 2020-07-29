@@ -126,6 +126,14 @@ export const toastErrorMessageWithParameterConfig = (message) => {
     }
 };
 
+export const toastSuccessMessageWithParameterConfig = (message) => {
+    return {
+        background: "#3c3e40",
+        icon: 'success',
+        title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>"+message+"</strong>"
+    }
+};
+
 export const toastMergeSuccessMessageConfig = {
     background: "#3c3e40",
     icon: 'success',
