@@ -217,7 +217,7 @@ const ClaimMonitoring = (props) => {
             else
                 ToastBottomEnd.fire(toastValidPeriodMessageConfig);
         }
-       setStartDate(e.target.value)
+        setStartDate(e.target.value)
     };
 
     const onChangeEndDate = e => {
