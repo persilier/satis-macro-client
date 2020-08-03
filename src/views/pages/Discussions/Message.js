@@ -1,0 +1,176 @@
+import React, {useState} from 'react';
+import moment from 'moment';
+import './Message.css';
+import appConfig from "../../../config/appConfig";
+
+
+export default function Message(props) {
+
+    const {
+        data,
+        isMine,
+        startsSequence,
+        endsSequence,
+        showTimestamp,
+    } = props;
+
+    const friendlyTimestamp = moment(data.created_at).format('LL');
+    const chatTimestamp = moment(data.created_at).format('LT');
+
+    const deletedProps = (key) => {
+        props.deleted(key)
+    };
+
+    const responseItemProps = (key, text) => {
+        props.responseItem(key, text);
+
+    };
+
+   const  ouvrirFermerSpoiler=(id)=> {
+        if(document.getElementById(id).style.visibility === "hidden")
+            document.getElementById(id).style.display = "block";
+       console.log(document.getElementById(id).style.display,"DISPLAY")
+
+       // else
+        //     document.getElementById(id).style.display = "none";
+    };
+
+    const fermerDiv=(id)=>{
+            document.getElementById(id).style.visibility = "hidden";
+        console.log(document.getElementById(id).style.display,"DISPLAY_2")
+
+    };
+
+    function downloadFile(data, fileName, type = "text/plain") {
+        const a = document.createElement("a");
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.href = window.URL.createObjectURL(
+            new Blob([data], {type})
+        );
+        console.log(a.href, "A");
+        a.setAttribute("download", fileName);
+        a.click();
+        window.URL.revokeObjectURL(a.href);
+        document.body.removeChild(a);
+    }
+
+    return (
+
+        <div className={[
+            'message',
+            `${isMine ? 'mine' : ''}`,
+            `${startsSequence ? 'start' : ''}`,
+            `${endsSequence ? 'end' : ''}`
+        ].join(' ')}>
+
+            {
+                showTimestamp &&
+                <div className="timestamp">
+                    {friendlyTimestamp}
+                </div>
+            }
+            <div className="author">
+
+                {
+                    !isMine && startsSequence && data.posted_by.identite_id ?
+                        <div>
+                        <span
+                            className="kt-media kt-media--circle kt-media--sm"><img
+                            src="/assets/media/users/default.jpg"
+                            alt="image"/>
+                        </span>
+                            {data.posted_by.identite.lastname + " " + data.posted_by.identite.firstname}
+                        </div> : ""
+                }
+
+            </div>
+            <div className="bubble-container">
+                {
+                    data.files.length ?
+                        data.files.map((file, index) => (
+                            <div className="bubble-media" key={index}>
+                                <div>
+                                    <img src={appConfig.apiDomaine + file.url} alt="" style={{
+                                        maxWidth: "115px",
+                                        maxHeight: "115px",
+                                        textAlign: 'center'
+                                    }}/>
+                                </div>
+
+                                {index === file.length - 1 ? file.title : file.title + " "}
+                                <br/>
+                                <a href={appConfig.apiDomaine + file.base64}
+                                   download={file.title}><strong>Télécharger</strong></a>
+                                <hr/>
+                                <div className="">
+                                    {data.text}
+                                    <div className="time">
+                                        {chatTimestamp}
+                                    </div>
+                                </div>
+                            </div>
+                        )) :
+                        <div className="bubble">
+
+                            {
+                                data.parent_id && data.parent ?
+                                    <div>
+                                        <div><i className="la la-tags"></i></div>
+                                        <em> {data.parent.text} </em>
+                                        <div style={{fontSize: '12px'}}>
+                                            {"By:" + " " + data.posted_by.identite.lastname + ' ' + data.posted_by.identite.firstname}
+                                        </div>
+                                        <hr/>
+                                        {data.text}
+                                    </div> :
+                                    data.text
+                            }
+
+                            <div className="time">
+                                {chatTimestamp}
+                            </div>
+                        </div>
+                }
+
+                <div className="dropdown dropdown-inline" id="dropdown"
+                     style={{cursor: "pointer"}}>
+                    <div
+                        id="menu1"
+                        // style={{display:"none"}}
+                        style={{visibility:"hidden"}}
+                        // onMouseOver={()=>fermerDiv("menu1")}
+                        onClick={()=>ouvrirFermerSpoiler("menu1")}
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        <i className="flaticon-more-v5"></i>
+                    </div>
+
+                    <div
+                        className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md w-auto">
+
+                        <ul className="kt-nav">
+                            <li className="kt-nav__head">
+                               <span
+                                   className="kt-nav__link-text">Citer
+                               </span>
+                                <a href={"#"} onClick={() => responseItemProps(data.id, data.text)}>
+                                    <i className="kt-nav__link-icon flaticon-reply"></i>
+                                </a>
+                            </li>
+                            <li className="kt-nav__head">
+                               <span
+                                   className="kt-nav__link-text">Supprimer
+                               </span>
+                                <a href={"#"} onClick={(e) => deletedProps(data.id)}>
+                                    <i className="kt-nav__link-icon flaticon2-trash"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

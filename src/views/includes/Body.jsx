@@ -56,6 +56,12 @@ import ClaimToValidatedList from "../pages/ClaimToValidatedList";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
 import ClaimsArchived from "../pages/ClaimsArchived";
+import Chats from "../pages/Discussions/Chats";
+import AddChatsForm from "../pages/Discussions/AddChatsForm";
+import AddMemberForm from "../pages/Discussions/AddMemberForm";
+import Participants from "../pages/Discussions/Participants";
+import RemoveChats from "../pages/Discussions/RemoveChats";
+
 
 const Body = () => {
     return (
@@ -350,9 +356,26 @@ const Body = () => {
                 <ClaimsArchived/>
             </Route>
 
-            {/*<Route path={"*"}>*/}
-            {/*    <Redirect to={"/dashboard"}/>*/}
-            {/*</Route>*/}
+            <Route exact path="/chat">
+                <Chats/>
+            </Route>
+
+            <Route exact path="/treatment/chat/add">
+                <AddChatsForm/>
+            </Route>
+
+            <Route exact path="/treatment/chat/contributor/:id">
+                <Participants/>
+            </Route>
+
+            <Route exact path="/treatment/chat/remove_chat">
+                <RemoveChats/>
+            </Route>
+
+            <Route exact path="/treatment/chat/add_user/:id">
+                <AddMemberForm/>
+            </Route>
+
             <Route exact path={"*"}>
                 <Dashboards/>
             </Route>

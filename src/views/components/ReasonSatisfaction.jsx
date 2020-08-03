@@ -44,6 +44,7 @@ const ReasonSatisfaction = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
+                console.log(error.response.data.error,"ERROR");
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;

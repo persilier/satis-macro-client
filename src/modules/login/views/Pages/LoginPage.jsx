@@ -41,6 +41,7 @@ const LoginPage = (props) => {
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     const user = response.data;
                     localStorage.setItem("userData", JSON.stringify(response.data));
+                    localStorage.setItem("staffData", response.data.staff.identite_id);
                     localStorage.setItem('token', token);
                     window.location.href = "/dashboard";
                 });
@@ -108,13 +109,11 @@ const LoginPage = (props) => {
                                                 <h3>Connexion</h3>
                                             </div>
 
-                                            <form className="kt-form" action="" noValidate="novalidate"
-                                                  id="kt_login_form"
-                                                  style={{marginBottom: '142px'}}>
+                                            <form className="kt-form" id="kt_login_form" style={{marginBottom: '142px'}}>
                                                 <div className="form-group">
                                                     <input className="form-control" type="email"
                                                            placeholder="Votre Email"
-                                                           name="username" autoComplete="off"
+                                                           name="username"
                                                            onChange={(e) => onChangeUserName(e)}
 														   value={username}
                                                     />
@@ -122,7 +121,7 @@ const LoginPage = (props) => {
                                                 <div className="form-group">
                                                     <input className="form-control" type="password"
                                                            placeholder="Votre Mot de Passe"
-                                                           name="password" autoComplete="off"
+                                                           name="password"
                                                            onChange={(e) => onChangePassword(e)}
 														   value={password}
                                                     />

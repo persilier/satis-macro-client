@@ -17,6 +17,7 @@ export default function (state = initialState, action) {
         case UPDATE_USER:
             newState={
                 user: JSON.parse(localStorage.getItem('userData')),
+                staff: localStorage.getItem('staffData'),
                 isLogin:localStorage.getItem('isLogin'),
                 token:localStorage.getItem('token')
             };
