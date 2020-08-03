@@ -694,21 +694,21 @@ const ClaimReporting = props => {
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead style={{ backgroundColor: "#7F9CF5" }}>
-                                                        <tr role="row">
-                                                            {
-                                                                fetchData.statistiqueChannel.map((channel, index) => (
-                                                                    <th
-                                                                        key={index}
-                                                                        tabIndex="0"
-                                                                        aria-controls="kt_table_1"
-                                                                        rowSpan="1"
-                                                                        colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                                        aria-label="Country: activate to sort column ascending">
-                                                                        {channel.name["fr"]}
-                                                                    </th>
-                                                                ))
-                                                            }
-                                                        </tr>
+                                                    <tr role="row">
+                                                        {
+                                                            fetchData.statistiqueChannel.map((channel, index) => (
+                                                                <th
+                                                                    key={index}
+                                                                    tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                    aria-label="Country: activate to sort column ascending">
+                                                                    {channel.name["fr"]}
+                                                                </th>
+                                                            ))
+                                                        }
+                                                    </tr>
                                                     </thead>
                                                     <tbody/>
                                                     <tfoot>
