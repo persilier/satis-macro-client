@@ -210,7 +210,7 @@ const ConfigProcessingCircuit = (props) => {
         } else {
             newEndPoint = endPoint.list
         }
-        {console.log(values, 'values to registered')}
+        {console.log(values, 'valeur à enregistrer')}
 
         axios.put(newEndPoint, values)
             .then(response => {
@@ -229,7 +229,6 @@ const ConfigProcessingCircuit = (props) => {
         setInstitution(selected);
         axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
             .then(response => {
-                // console.log(response.data, "UNITS D'UNE INSTITUTION");
                 setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
@@ -368,7 +367,6 @@ const ConfigProcessingCircuit = (props) => {
                                                                 ))
                                                             ) : ""
                                                         }
-
 
                                                     </div>
                                                     : ""

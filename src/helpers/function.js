@@ -212,6 +212,8 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-archived')
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
         || verifyPermission(userPermissions, 'list-claim-assignment-to-staff')
+        || verifyPermission(userPermissions, 'list-claim-satisfaction-measured')
+        || verifyPermission(userPermissions, 'list-claim-archived')
     );
 };
 

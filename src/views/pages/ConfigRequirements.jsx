@@ -39,7 +39,6 @@ const ConfigRequirements = () => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/claim-object-requirements")
             .then(response => {
-                console.log(response.data, 'RESPONSE1');
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
                     claimCategory.claim_objects.map((claimObject) => (
@@ -134,7 +133,7 @@ const ConfigRequirements = () => {
 
     const onChangeExigence = (e, object_id) => {
         let newData = {...data};
-        newData[object_id] = e.map(sel => ({value: sel.value, label: sel.label}));
+        newData[object_id] = e?e.map(sel => ({value: sel.value, label: sel.label})):"";
         setData(newData);
     };
     const onSubmit = (e) => {
@@ -145,12 +144,10 @@ const ConfigRequirements = () => {
 
         for (const claim_object_id in claimObjects) {
             let requirements = claimObjects[claim_object_id];
-            console.log(requirements, 'requirement_for_' + claim_object_id);
-
+            // console.log(requirements, 'requirement_for_' + claim_object_id);
             values[claim_object_id] = requirements.map(requirement => (requirement.value));
         }
-
-        console.log(values, 'values');
+        // console.log(values, 'values');
 
         axios.put(appConfig.apiDomaine + `/claim-object-requirements`, values)
             .then(response => {
@@ -286,7 +283,7 @@ const ConfigRequirements = () => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {console.log(data, 'data')}
+
                                                 {
                                                     claimObject ? (
                                                         search ? (

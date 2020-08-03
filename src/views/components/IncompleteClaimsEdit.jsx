@@ -366,7 +366,6 @@ const IncompleteClaimsEdit = props => {
     };
 
     const onChangeFile = (e) => {
-        console.log(e.target);
         const newData = {...data};
         newData.file = Object.values(e.target.files);
         setData(newData);
