@@ -231,7 +231,7 @@ const Chats = (props) => {
                                         <div className="kt-widget kt-widget--users kt-mt-20">
                                             <div className="kt-scroll kt-scroll--pull ps ps--active-y"
                                                  data-mobile-height="300"
-                                                 style={{height: '157px', overflow: 'hidden'}}>
+                                                 style={{height: '250px', overflow: 'hidden'}}>
                                                 <div className="kt-widget__items">
                                                     {
                                                         listChat.map((chat, i) => (
@@ -352,7 +352,7 @@ const Chats = (props) => {
                                 </div>
                                 <div className="kt-portlet__body">
                                     <div className="kt-scroll kt-scroll--pull ps ps--active-y"
-                                         data-mobile-height="300" style={{height: '250px', overflow: 'hidden'}}>
+                                         data-mobile-height="350" style={{height: '250px', overflow: 'hidden'}}>
                                         <div className="message-list">
 
                                             {/*{console.log(listChatMessages, "Message")}*/}
@@ -397,6 +397,10 @@ const Chats = (props) => {
                                                         <div className="message_target" key={i}>
                                                             <i className="d-flex justify-content-end flaticon-close"
                                                                onClick={(e) => closeTag(e)}></i>
+                                                            <img src="/assets/media/users/file-icon.png" alt=""
+                                                                 style={{
+                                                                     maxWidth: "55px",
+                                                                     maxHeight: "55px",}}/>
                                                             {
                                                                 file.name
                                                             }

@@ -133,12 +133,12 @@ export default function Message(props) {
                         </div>
                 }
 
-                <div className="dropdown dropdown-inline" id="dropdown"
+                <div className="dropdown dropdown-inline"
                      style={{cursor: "pointer"}}>
                     <div
                         id="menu1"
                         // style={{display:"none"}}
-                        style={{visibility:"hidden"}}
+                        // style={{visibility:"hidden"}}
                         // onMouseOver={()=>fermerDiv("menu1")}
                         onClick={()=>ouvrirFermerSpoiler("menu1")}
                         data-toggle="dropdown"
