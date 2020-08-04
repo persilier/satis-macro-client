@@ -4,7 +4,6 @@ import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
-import ExportButton from "../components/ExportButton";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
@@ -125,11 +124,11 @@ const ClaimList = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
+                <td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>
                 {
                     verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
                         <td>
-                            <a href={`/settings/claim-detail/${claim.id}/edit`}
+                            <a href={`/process/claim-detail/${claim.id}/edit`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                title="Détail">
                                 <i className="la la-eye"/>
@@ -148,14 +147,21 @@ const ClaimList = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Processus
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Liste des réclamation
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    Traitement
+                                </a>
+                            </div>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    Liste des plaintes
                                 </a>
                             </div>
                         </div>
@@ -163,11 +169,11 @@ const ClaimList = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Liste des plaintes"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Liste des réclamation"}
+                            title={"Liste des plaintes"}
                         />
 
                         {
@@ -180,12 +186,11 @@ const ClaimList = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        Recherche:
                                                         <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

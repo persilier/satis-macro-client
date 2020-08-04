@@ -16,7 +16,6 @@ import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
@@ -186,7 +185,9 @@ const SeverityLevel = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{severityLevel.name["fr"]}</td>
-                <td><div className="p-2" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>{severityLevel.color} {severityLevel.color === "#ffffff" ? " Blanc" : ""}</div></td>
+                <td>
+                    <div className="p-2" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>{console.log("color:", severityLevel.color)} {severityLevel.color ? `${severityLevel.color} ${severityLevel.color === "#ffffff" ? " Blanc" : ""}` : "-"}</div>
+                </td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description["fr"]}</td>
                 <td>
                     <Link to="/settings/severities/detail"
@@ -201,7 +202,7 @@ const SeverityLevel = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-severity-level') ? (
@@ -211,7 +212,7 @@ const SeverityLevel = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -240,7 +241,7 @@ const SeverityLevel = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Liste des niveaux de gravité"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -260,12 +261,11 @@ const SeverityLevel = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        Recherche:
                                                         <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

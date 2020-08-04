@@ -108,7 +108,7 @@ const ReasonSatisfaction = (props) => {
                         className="btn btn-success"
                         onClick={(e) => onClick(e)}
                     >
-                        ENVOYER
+                        Enregistrer
                     </button>
                 ) : (
                     <button

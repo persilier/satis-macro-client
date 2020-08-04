@@ -12,7 +12,6 @@ import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
@@ -25,6 +24,7 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const CategoryClient = (props) => {
+    document.title = "Satis client - Paramètre categorie client";
     if (!verifyPermission(props.userPermissions, "list-category-client"))
         window.location.href = ERROR_401;
 
@@ -226,7 +226,7 @@ const CategoryClient = (props) => {
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                        information={"Liste des catégories client"}/>
 
                     <div className="kt-portlet">
 
@@ -246,7 +246,7 @@ const CategoryClient = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        Recherche:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
@@ -255,7 +255,6 @@ const CategoryClient = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

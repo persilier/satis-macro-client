@@ -26,6 +26,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 
 const ClaimMonitoring = (props) => {
+    document.title = "Satis client - Monitoring";
     if (!(verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission(props.userPermissions, "list-monitoring-claim-my-institution")))
         window.location.href = ERROR_401;
 

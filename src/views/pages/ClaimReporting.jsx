@@ -24,6 +24,7 @@ import {AUTH_TOKEN} from "../../constants/token";
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReporting = props => {
+    document.title = "Satis client - Reporting";
     if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, "list-reporting-claim-my-institution")))
         window.location.href = ERROR_401;
 
@@ -321,14 +322,14 @@ const ClaimReporting = props => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Reporting
+                                Monitoring
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    claim reporting
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                    Reporting
                                 </a>
                             </div>
                         </div>
@@ -336,7 +337,7 @@ const ClaimReporting = props => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Page de reporting"}/>
 
                     <div className="alert alert-light alert-elevate" role="alert">
                         <div className="alert-icon">
@@ -363,6 +364,7 @@ const ClaimReporting = props => {
                                             <Select
                                                 isClearable
                                                 value={institution}
+                                                placeholder={"Choix institution"}
                                                 onChange={handleInstitutionChange}
                                                 options={formatSelectOption(fetchData ? fetchData.institutions : [], 'name', false)}
                                             />

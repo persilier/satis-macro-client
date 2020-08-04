@@ -12,6 +12,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 
 const Mail = (props) => {
+    document.title = "Satis client - Paramètre Mail";
     if (!verifyPermission(props.userPermissions, 'update-mail-parameters'))
         window.location.href = ERROR_401;
 
@@ -329,7 +330,7 @@ const Mail = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...

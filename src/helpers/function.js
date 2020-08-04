@@ -189,6 +189,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-staff-from-maybe-no-unit')
         || verifyPermission(userPermissions, 'list-severity-level')
         || verifyPermission(userPermissions, 'list-currency')
+        || verifyPermission(userPermissions, 'update-notifications')
         || verifyPermission(userPermissions, 'list-channel'))
         ;
 };
@@ -213,6 +214,8 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
         || verifyPermission(userPermissions, 'list-claim-assignment-to-staff')
         || verifyPermission(userPermissions, 'list-claim-satisfaction-measured')
+        || verifyPermission(userPermissions, 'list-my-discussions')
+        || verifyPermission(userPermissions, 'contribute-discussion')
         || verifyPermission(userPermissions, 'list-claim-archived')
     );
 };

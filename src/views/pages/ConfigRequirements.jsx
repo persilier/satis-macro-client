@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import Select from "react-select";
+import {Link} from "react-router-dom";
 import {loadCss, filterDataTableBySearchValue, forceRound, formatSelectOption} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import InfirmationTable from "../components/InfirmationTable";
-import Select from "react-select";
-import {Link} from "react-router-dom";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
@@ -21,6 +20,7 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ConfigRequirements = () => {
+    document.title = "Satis client - Paramètre Exigence";
     const defaultData = {
         objectData: {},
         requirements: [],
@@ -239,7 +239,7 @@ const ConfigRequirements = () => {
                                         <div className="col-sm-6 text-left">
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
-                                                    Search:
+                                                    Recherche:
                                                     <input id="myInput" type="text"
                                                            onKeyUp={(e) => searchElement(e)}
                                                            className="form-control form-control-sm"
@@ -248,7 +248,6 @@ const ConfigRequirements = () => {
                                                 </label>
                                             </div>
                                         </div>
-                                        <ExportButton/>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">

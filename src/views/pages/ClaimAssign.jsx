@@ -128,7 +128,7 @@ const ClaimAssign = (props) => {
                 <td>{claim.institution_targeted.name}</td>
                 <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
                 <td>
-                    <a href={`/settings/claim-assign/${claim.id}/detail`}
+                    <a href={`/process/claim-assign/${claim.id}/detail`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>

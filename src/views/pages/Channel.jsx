@@ -5,7 +5,6 @@ import {Link} from "react-router-dom";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
-import ExportButton from "../components/ExportButton";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import appConfig from "../../config/appConfig";
@@ -220,7 +219,7 @@ const Channel = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Liste des canaux"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -240,12 +239,11 @@ const Channel = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        Recherche:
                                                         <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
