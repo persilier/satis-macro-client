@@ -3,6 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
+import {connect} from "react-redux";
 import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
@@ -12,12 +13,10 @@ import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {connect} from "react-redux";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -42,6 +41,7 @@ const endPointConfig = {
 };
 
 const Clients = (props) => {
+    document.title = "Satis client - Paramètre Client";
     if (!(verifyPermission(props.userPermissions, "list-client-from-my-institution") || verifyPermission(props.userPermissions, "list-client-from-any-institution"))) {
         window.location.href = ERROR_401;
     }
@@ -276,7 +276,7 @@ const Clients = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    information={"Liste des client"}/>
 
                 <div className="kt-portlet">
                     {
@@ -310,14 +310,13 @@ const Clients = (props) => {
                                         <div className="col-sm-6 text-left">
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
-                                                    Search:
+                                                    Recherche:
                                                     <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)}
                                                            className="form-control form-control-sm" placeholder=""
                                                            aria-controls="kt_table_1"/>
                                                 </label>
                                             </div>
                                         </div>
-                                        <ExportButton/>
                                     </div>
                                     <div className="row table-responsive">
                                         <div className="col-sm-12 ">

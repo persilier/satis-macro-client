@@ -269,15 +269,16 @@ const HoldingClientForm = (props) => {
                                                     <label htmlFor="exampleSelect1">Type de Compte</label>
                                                     {accountType ? (
                                                         <Select
+                                                            placeholder={"Veillez selectionner le type de compte"}
                                                             value={type}
                                                             onChange={onChangeAccountType}
                                                             options={formatSelectOption(accountType, 'name', 'fr')}
                                                         />
-                                                    ) : (<select name="typeClient"
-                                                                 className={error.account_type_id.length ? "form-control is-invalid" : "form-control"}
-                                                                 id="typeClient">
-                                                        <option value=""></option>
-                                                    </select>)
+                                                    ) : (
+                                                        <select name="typeClient" className={error.account_type_id.length ? "form-control is-invalid" : "form-control"} id="typeClient">
+                                                            <option value=""/>
+                                                        </select>
+                                                    )
                                                     }
 
                                                     {
@@ -290,21 +291,21 @@ const HoldingClientForm = (props) => {
                                                         ) : ""
                                                     }
                                                 </div>
-                                                <div
-                                                    className={error.category_client_id.length ? "col validated" : "col"}>
+                                                <div className={error.category_client_id.length ? "col validated" : "col"}>
                                                     <label htmlFor="exampleSelect1">Catégorie Client</label>
 
                                                     {categoryClient ? (
                                                         <Select
+                                                            placeholder={"Veillez selectionner la catégorie client"}
                                                             value={category}
                                                             onChange={onChangeCategoryClient}
                                                             options={formatSelectOption(categoryClient, 'name', 'fr')}
                                                         />
-                                                    ) : (<select name="category"
-                                                                 className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
-                                                                 id="category">
-                                                        <option value=""></option>
-                                                    </select>)
+                                                    ) : (
+                                                        <select name="category" className={error.category_client_id.length ? "form-control is-invalid" : "form-control"} id="category">
+                                                            <option value=""/>
+                                                        </select>
+                                                    )
                                                     }
 
                                                     {

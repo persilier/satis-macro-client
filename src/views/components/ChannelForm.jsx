@@ -151,7 +151,7 @@ const ChannelForms = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
+                                            <FormInformation information={id ? "Formulaire de modification d'un canal" : "Formulaire d'ajout d'un canal"}/>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du Canal</label>

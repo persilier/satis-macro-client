@@ -1,22 +1,22 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {connect} from "react-redux";
 import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {connect} from "react-redux";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 
 const ClaimsArchived = (props) => {
+    document.title = "Satis client - Liste plaintes archivées";
     localStorage.setItem('page', 'ClaimsArchived');
     if (!verifyPermission(props.userPermissions, "list-claim-archived"))
         window.location.href = ERROR_401;
@@ -115,12 +115,12 @@ const ClaimsArchived = (props) => {
     const printBodyTable = (archived, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{archived.reference === null ? "" : archived.reference}</td>
+                <td>{archived.reference === null ? "-" : archived.reference}</td>
                 <td>{`${archived.claimer.lastname} ${archived.claimer.firstname}`}</td>
-                <td>{archived.description === null ? "" : archived.description}</td>
-                <td>{archived.active_treatment.solution === null ? "" : archived.active_treatment.solution}</td>
+                <td>{archived.description === null ? "-" : archived.description}</td>
+                <td>{archived.active_treatment.solution === null ? "-" : archived.active_treatment.solution}</td>
                 <td style={{textAlign: 'center'}}>
-                    <a href={`/settings/claim-assign/${archived.id}/detail`}
+                    <a href={`/process/claim-assign/${archived.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
                        title="Détail">
                         <i className="la la-eye"/>
@@ -138,7 +138,7 @@ const ClaimsArchived = (props) => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Paramètres
+                            Processus
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
@@ -146,9 +146,20 @@ const ClaimsArchived = (props) => {
                                 className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="#button" onClick={e => e.preventDefault()}
-                               className="kt-subheader__breadcrumbs-link">
-                                Archivage
+                               className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                Traitement
                             </a>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#" className="kt-subheader__breadcrumbs-home">
+                                    <i className="flaticon2-shelter"/>
+                                </a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
+                                   className="kt-subheader__breadcrumbs-link">
+                                    Archivage
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,12 +167,12 @@ const ClaimsArchived = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    information={"Liste des plaintes archivées"}/>
 
                 <div className="kt-portlet">
 
                     <HeaderTablePage
-                        title={"Réclamations Archivées"}
+                        title={"Plaintes Archivées"}
                     />
                     {
                         load ? (
@@ -173,7 +184,7 @@ const ClaimsArchived = (props) => {
                                         <div className="col-sm-6 text-left">
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
-                                                    Search:
+                                                    Rechercher:
                                                     <input id="myInput" type="text"
                                                            onKeyUp={(e) => searchElement(e)}
                                                            className="form-control form-control-sm"
@@ -182,7 +193,6 @@ const ClaimsArchived = (props) => {
                                                 </label>
                                             </div>
                                         </div>
-                                        <ExportButton/>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {connect} from "react-redux";
 import {
     Link
 } from "react-router-dom";
@@ -12,18 +13,17 @@ import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {connect} from "react-redux";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Institution = (props) => {
+    document.title = "Satis client - Paramètre Institution";
 
     if (!verifyPermission(props.userPermissions, "list-any-institution")) {
         window.location.href = ERROR_401;
@@ -226,7 +226,7 @@ const Institution = (props) => {
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                        information={"Liste des institutions"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -246,7 +246,7 @@ const Institution = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        Recherche:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
@@ -255,7 +255,6 @@ const Institution = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {connect} from "react-redux";
+import Select from "react-select";
+import {Link} from "react-router-dom";
 import {loadCss, filterDataTableBySearchValue, forceRound, formatSelectOption} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import InfirmationTable from "../components/InfirmationTable";
-import Select from "react-select";
-import {Link} from "react-router-dom";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
@@ -16,7 +16,6 @@ import {
 } from "../../config/toastConfig";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {verifyPermission} from "../../helpers/permission";
-import {connect} from "react-redux";
 import {ERROR_401} from "../../config/errorPage";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -44,6 +43,7 @@ const endPointConfig = {
 
 
 const ConfigProcessingCircuit = (props) => {
+    document.title = "Satis client - Paramètre Cirtuit de traitement";
 
     if (!(verifyPermission(props.userPermissions, 'update-processing-circuit-my-institution') ||
         verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ||
@@ -265,6 +265,7 @@ const ConfigProcessingCircuit = (props) => {
                                     onChange={(e) => onChangeProcessing(e, object.id)}
                                     options={formatSelectOption(units, 'name', "fr")}
                                     isMulti
+                                    placeholder={"Veillez selectionez le circuit"}
                                     key={object.id}
                                 />
                             ) : ''
@@ -291,7 +292,7 @@ const ConfigProcessingCircuit = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Configuration des Exigences
+                                    Configuration circuit de traitement
                                 </a>
                             </div>
                         </div>
@@ -301,7 +302,7 @@ const ConfigProcessingCircuit = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    information={"Paramètre de configuration des circuits de traitement"}/>
 
                 <div className="kt-portlet">
                     <HeaderTablePage
@@ -321,7 +322,7 @@ const ConfigProcessingCircuit = (props) => {
                                         <div className="col-sm-6 text-left">
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
-                                                    Search:
+                                                    Recherche:
                                                     <input id="myInput" type="text"
                                                            onKeyUp={(e) => searchElement(e)}
                                                            className="form-control form-control-sm"
@@ -330,7 +331,6 @@ const ConfigProcessingCircuit = (props) => {
                                                 </label>
                                             </div>
                                         </div>
-                                        <ExportButton/>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">
@@ -340,13 +340,12 @@ const ConfigProcessingCircuit = (props) => {
                                                 verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ?
                                                     <div
                                                         className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label"
-                                                               htmlFor="exampleSelect1">Sélectionnez une
-                                                            Institution </label>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="exampleSelect1">Sélectionnez une Institution</label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             {
                                                                 institutionData ? (
                                                                     <Select
+                                                                        placeholder={"Veillez selectionner l'institution"}
                                                                         value={institution}
                                                                         onChange={onChangeInstitution}
                                                                         options={institutionData.length ? institutionData[0].map(name => name) : ''}

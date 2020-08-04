@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import { connect } from "react-redux";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
@@ -10,8 +11,15 @@ import {
     toastEditErrorMessageConfig,
     toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
+import {AUTH_TOKEN} from "../../constants/token";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
 
-const ConfigNotification = () => {
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
+const ConfigNotification = (props) => {
+    if (!verifyPermission(props.userPermissions, "update-notifications"))
+        window.location.href = ERROR_401;
     const [data, setData] = useState([]);
     const [error, setError] = useState({
         "notifications.acknowledgment-of-receipt": [],
@@ -83,105 +91,113 @@ const ConfigNotification = () => {
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
-                            <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                Notification
-                            </a>
+        verifyPermission(props.userPermissions, "update-notifications") ? (
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                Paramètres
+                            </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                    Notification
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <InfirmationTable information={"Configuration de la notification"}/>
 
-                <div className="kt-portlet">
-                    <HeaderTablePage
-                        title={"Configuration notification"}
-                    />
+                    <div className="kt-portlet">
+                        <HeaderTablePage
+                            title={"Configuration notification"}
+                        />
 
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
-                            <div className="kt-portlet__body">
-                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                    <div>
-                                        <strong>
-                                            Légende: <br/> <br/>
-                                        </strong>
-                                        <div className="row">
-                                            <div className="col-6">{"{claim_reference}"} {"<===>"} Référence de la reclamation</div>
-                                            <div className="col-6">{"{claim_object}"} {"<===>"} Objet de la reclamtion</div>
-                                            <br/> <br/>
-                                            <div className="col-6">{"{claim_status}"} {"<===>"} Status de la réclamaion</div>
-                                            <div className="col-6">{"{responsible_staff}"} {"<===>"} Staff en charge du traitement</div>
-                                            <br/> <br/>
-                                            <div className="col-6">{"{solution_communicated}"} {"<===>"} Solution à communiquer</div>
-                                            <div className="col-6">{"{created_by}"} {"<===>"} Celui qui à enregister la réclamation</div>
-                                            <br/> <br/>
-                                            <div className="col-6">{"{discussion_name}"} {"<===>"} Nom de la discussion</div>
-                                            <div className="col-6">{"{posted_by}"} {"<===>"} Celui qui à poster la réclamation</div>
+                        {
+                            load ? (
+                                <LoadingTable/>
+                            ) : (
+                                <div className="kt-portlet__body">
+                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                        <div>
+                                            <strong>
+                                                Légende: <br/> <br/>
+                                            </strong>
+                                            <div className="row">
+                                                <div className="col-6">{"{claim_reference}"} {"<===>"} Référence de la reclamation</div>
+                                                <div className="col-6">{"{claim_object}"} {"<===>"} Objet de la reclamtion</div>
+                                                <br/> <br/>
+                                                <div className="col-6">{"{claim_status}"} {"<===>"} Status de la réclamaion</div>
+                                                <div className="col-6">{"{responsible_staff}"} {"<===>"} Staff en charge du traitement</div>
+                                                <br/> <br/>
+                                                <div className="col-6">{"{solution_communicated}"} {"<===>"} Solution à communiquer</div>
+                                                <div className="col-6">{"{created_by}"} {"<===>"} Celui qui à enregister la réclamation</div>
+                                                <br/> <br/>
+                                                <div className="col-6">{"{discussion_name}"} {"<===>"} Nom de la discussion</div>
+                                                <div className="col-6">{"{posted_by}"} {"<===>"} Celui qui à poster la réclamation</div>
+                                            </div>
+                                            <br/><br/>
                                         </div>
-                                        <br/><br/>
-                                    </div>
-                                    <div className="row">
-                                        {
-                                            data.map((el, index) => (
-                                                <div key={index} className={error[`notifications.${el.event}`].length ? "col-6 form-group validated" : "col-6 form-group"}>
-                                                    <label htmlFor={el.event}>{notificationConfig[el.event]}</label>
-                                                    <textarea
-                                                        id={el.event}
-                                                        cols="30"
-                                                        rows="3"
-                                                        className={ error[`notifications.${el.event}`].length ? "form-control is-invalid" :  "form-control"}
-                                                        value={el.text}
-                                                        onChange={e => handleTextChange(e, index)}
-                                                    />
-
-                                                    {
-                                                        error[`notifications.${el.event}`].length ? (
-                                                            error[`notifications.${el.event}`].map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            ))
-                                        }
-
-                                        <div className="col-12 form-group text-center">
+                                        <div className="row">
                                             {
-                                                !startUpdate ? (
-                                                    <button onClick={updateConfig} className="btn btn-primary">Enregistrer</button>
-                                                ) : (
-                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                        Chargement...
-                                                    </button>
-                                                )
+                                                data.map((el, index) => (
+                                                    <div key={index} className={error[`notifications.${el.event}`].length ? "col-6 form-group validated" : "col-6 form-group"}>
+                                                        <label htmlFor={el.event}>{notificationConfig[el.event]}</label>
+                                                        <textarea
+                                                            id={el.event}
+                                                            cols="30"
+                                                            rows="3"
+                                                            className={ error[`notifications.${el.event}`].length ? "form-control is-invalid" :  "form-control"}
+                                                            value={el.text}
+                                                            onChange={e => handleTextChange(e, index)}
+                                                        />
+
+                                                        {
+                                                            error[`notifications.${el.event}`].length ? (
+                                                                error[`notifications.${el.event}`].map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                ))
                                             }
+
+                                            <div className="col-12 form-group text-center">
+                                                {
+                                                    !startUpdate ? (
+                                                        <button onClick={updateConfig} className="btn btn-primary">Enregistrer</button>
+                                                    ) : (
+                                                        <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                            Chargement...
+                                                        </button>
+                                                    )
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    }
+                            )
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        ) : null
     );
 };
 
-export default ConfigNotification;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
+
+export default connect(mapStateToProps)(ConfigNotification);

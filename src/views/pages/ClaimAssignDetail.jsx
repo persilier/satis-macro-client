@@ -52,6 +52,7 @@ const endPointConfig = {
 
 
 const ClaimAssignDetail = (props) => {
+    document.title = "Satis client - Détail plainte";
     const {id} = useParams();
     const validation = validatedClaimRule(id);
 
@@ -162,7 +163,7 @@ const ClaimAssignDetail = (props) => {
                     console.log(response);
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    window.location.href = "/settings/claim-assign";
+                    window.location.href = "/process/claim-assign";
                 })
                 .catch(error => ToastBottomEnd.fire(toastAddErrorMessageConfig));
         }
@@ -179,7 +180,7 @@ const ClaimAssignDetail = (props) => {
                 .then(response => {
                     setStartRequestToUnit(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    window.location.href = "/settings/claim-assign";
+                    window.location.href = "/process/claim-assign";
                 })
                 .catch(error => ToastBottomEnd.fire(toastAddErrorMessageConfig));
         }
@@ -210,7 +211,7 @@ const ClaimAssignDetail = (props) => {
                     axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/self-assignment`, {})
                         .then(response => {
                             ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                            window.location.href = "http://localhost:3000/settings/unit-claims";
+                            window.location.href = "/process/unit-claims";
                         })
                         .catch(error => console.log("Something is wrong"))
                 }
@@ -225,7 +226,7 @@ const ClaimAssignDetail = (props) => {
                 setStartRequest(false);
                 setStaff(null);
                 setErrors([]);
-                window.location.href = "http://localhost:3000/settings/unit-claims";
+                window.location.href = "/process/unit-claims";
             })
             .catch(error => {
                 setStartRequest(false);
@@ -260,44 +261,67 @@ const ClaimAssignDetail = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                {
-                                    localStorage.getItem('page') === "claimAssign" ? (
-                                        <Link to="/settings/claim-assign" className="kt-subheader__title">
-                                            Plaintes à affectées
-                                        </Link>
-                                    ) : ""
-                                }
-
-                                {
-                                    localStorage.getItem('page') === "ClaimListPage" ? (
-                                        <Link to="/settings/unit-claims" className="kt-subheader__title">
-                                            Liste des plaintes
-                                        </Link>
-                                    ) : ""
-                                }
-
-                                {
-                                    localStorage.getItem('page') === "ClaimToValidatedListPage" ? (
-                                        <Link to="/settings/claim-to-validated" className="kt-subheader__title">
-                                            Plaintes à valider
-                                        </Link>
-                                    ) : ""
-                                }
-                                {
-                                    localStorage.getItem('page') === "ClaimToStaffPage" ? (
-                                        <Link to="/settings/claim-assign/to-staff" className="kt-subheader__title">
-                                            Plaintes à traitrer
-                                        </Link>
-                                    ) : ""
-                                }
-                                {
-                                    localStorage.getItem('page') === "SatisfactionMeasure" ? (
-                                        <Link to="/settings/claim_measure" className="kt-subheader__title">
-                                            Mesure de Satisfaction
-                                        </Link>
-                                    ) : ""
-                                }
+                                Processus
                             </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                    Traitement
+                                </a>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    {
+                                        localStorage.getItem('page') === "claimAssign" ? (
+                                            <Link to="/process/claim-assign" className="kt-subheader__breadcrumbs-link">
+                                                Plaintes à affectées
+                                            </Link>
+                                        ) : ""
+                                    }
+
+                                    {
+                                        localStorage.getItem('page') === "ClaimListPage" ? (
+                                            <Link to="/process/unit-claims" className="kt-subheader__breadcrumbs-link">
+                                                Liste des plaintes
+                                            </Link>
+                                        ) : ""
+                                    }
+
+                                    {
+                                        localStorage.getItem('page') === "ClaimToValidatedListPage" ? (
+                                            <Link to="/process/claim-to-validated" className="kt-subheader__breadcrumbs-link">
+                                                Plaintes à valider
+                                            </Link>
+                                        ) : ""
+                                    }
+                                    {
+                                        localStorage.getItem('page') === "ClaimToStaffPage" ? (
+                                            <Link to="/process/claim-assign/to-staff" className="kt-subheader__breadcrumbs-link">
+                                                Plaintes à traitrer
+                                            </Link>
+                                        ) : ""
+                                    }
+                                    {
+                                        localStorage.getItem('page') === "SatisfactionMeasure" ? (
+                                            <Link to="/process/claim_measure" className="kt-subheader__breadcrumbs-link">
+                                                Mesure de Satisfaction
+                                            </Link>
+                                        ) : ""
+                                    }
+                                    {
+                                        localStorage.getItem('page') === "ClaimsArchived" ? (
+                                            <Link to="/process/claim_archived" className="kt-subheader__breadcrumbs-link">
+                                                Archivage
+                                            </Link>
+                                        ) : ""
+                                    }
+                                </div>
+                            </div>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#" className="kt-subheader__breadcrumbs-home">
@@ -306,7 +330,7 @@ const ClaimAssignDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail
+                                    Détail plainte
                                 </a>
                             </div>
                         </div>

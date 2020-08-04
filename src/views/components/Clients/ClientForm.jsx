@@ -268,6 +268,7 @@ const EditClients = (props) => {
                                                         <Select
                                                             value={type}
                                                             onChange={onChangeAccountType}
+                                                            placeholder={"Veillez selectionner le type de compte"}
                                                             options={formatSelectOption(accountType, 'name', 'fr')}
                                                         />
                                                     ) : (<select name="typeClient"
@@ -295,6 +296,7 @@ const EditClients = (props) => {
                                                         <Select
                                                             value={category}
                                                             onChange={onChangeCategoryClient}
+                                                            placeholder={"Veillez selectionner la catégorie client"}
                                                             options={formatSelectOption(categoryClient, 'name', 'fr')}
                                                         />
                                                     ) : (<select name="category"

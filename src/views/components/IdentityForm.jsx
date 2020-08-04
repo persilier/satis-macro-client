@@ -167,6 +167,7 @@ const IndentiteForm = (props) => {
 
             });
     };
+
     return (
         <div>
             <div className="kt-portlet__body">
@@ -182,14 +183,17 @@ const IndentiteForm = (props) => {
                                         {institutionData ? (
                                             <Select
                                                 value={institution}
+                                                placeholder={"Veillez selectionner l'institution"}
                                                 onChange={onChangeInstitution}
                                                 options={institutionData.length ? institutionData[0].map(name => name) : ''}
                                             />
-                                        ) : (<select name="category"
-                                                     className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
-                                                     id="category">
-                                            <option value=""></option>
-                                        </select>)
+                                        ) : (
+                                            <select name="category"
+                                                    className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                    id="category">
+                                                <option value=""/>
+                                            </select>
+                                        )
                                         }
 
                                         {
@@ -209,6 +213,7 @@ const IndentiteForm = (props) => {
                                 <label htmlFor="exampleSelect1"> Client</label>
                                 {nameClient ? (
                                     <Select
+                                        placeholder={"Veillez selectionner le client"}
                                         value={client}
                                         onChange={onChangeClient}
                                         options={nameClient.length ? nameClient[0].map(name => name) : ''}
@@ -216,7 +221,7 @@ const IndentiteForm = (props) => {
                                 ) : (<select name="category"
                                              className={error.client_id.length ? "form-control is-invalid" : "form-control"}
                                              id="category">
-                                    <option value=""></option>
+                                    <option value=""/>
                                 </select>)
                                 }
 
@@ -334,6 +339,7 @@ const IndentiteForm = (props) => {
                                 value={data.telephone}
                                 onChange={onChangeTelephone}
                                 disabled={props.getDisable ? props.getDisable : false}
+                                inputProps={{className: "react-tagsinput-input", placeholder: "Numéro(s)"}}
                             />
                             {
                                 error.telephone.length ? (
@@ -352,6 +358,7 @@ const IndentiteForm = (props) => {
                                 value={data.email}
                                 onChange={onChangeEmail}
                                 disabled={props.getDisable ? props.getDisable : false}
+                                inputProps={{className: "react-tagsinput-input", placeholder: "Email(s)"}}
                             />
                             {
                                 error.email.length ? (

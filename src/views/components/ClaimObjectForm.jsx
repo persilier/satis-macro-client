@@ -201,7 +201,7 @@ const ClaimObjectForm = (props) => {
                             <form method="POST" className="kt-form">
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
-                                        <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
+                                        <FormInformation information={id ? "Formulaire de modification de reclamation" : "Formulaire d'ajout de reclamation"}/>
 
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'objet de plainte</label>
@@ -317,7 +317,7 @@ const ClaimObjectForm = (props) => {
                                         <div className="kt-form__actions text-right">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                         Chargement...

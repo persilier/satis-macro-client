@@ -11,14 +11,6 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
-import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmDeleteConfig} from "../../config/confirmConfig";
-import {ToastBottomEnd} from "../components/Toast";
-import {
-    toastDeleteErrorMessageConfig,
-    toastDeleteSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig
-} from "../../config/toastConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -41,7 +33,7 @@ const ClaimAssignToStaff = (props) => {
         async function fetchData() {
             axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
                 .then(response => {
-                    console.log(response.data, "DATA")
+                    console.log(response.data, "DATA");
                     setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
@@ -136,9 +128,9 @@ const ClaimAssignToStaff = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : ""}</td>
+                <td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : "-"}</td>
                 <td>
-                    <a href={`/settings/claim-assign/${claim.id}/detail`}
+                    <a href={`/process/claim-assign/${claim.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
                        title="Détail">
                         <i className="la la-eye"/>
@@ -156,16 +148,23 @@ const ClaimAssignToStaff = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Processus
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    Traitement
+                                </a>
+                            </div>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Réclamation à traiter
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    Plaintes à traiter
                                 </a>
                             </div>
                         </div>
@@ -173,12 +172,11 @@ const ClaimAssignToStaff = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Liste des plaintes qui vos sons assignés"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamation à traiter"}
+                            title={"Plainte à traiter"}
                         />
 
                         {
@@ -191,15 +189,11 @@ const ClaimAssignToStaff = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm" placeholder=""
-                                                               aria-controls="kt_table_1"/>
+                                                        Recherche:
+                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

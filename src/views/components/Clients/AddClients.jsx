@@ -263,12 +263,13 @@ const AddClients = (props) => {
                                                             <Select
                                                                 value={institution}
                                                                 onChange={onChangeInstitution}
+                                                                placeholder={"Veillez selectionnez l'institution"}
                                                                 options={formatSelectOption(institutionData, "name", false)}
                                                             />
                                                         ) : (<select name="institution"
                                                                      className={error.institutions_id.length ? "form-control is-invalid" : "form-control"}
                                                                      id="institution">
-                                                            <option value=""></option>
+                                                            <option value=""/>
                                                         </select>)
                                                     }
                                                     {
@@ -287,6 +288,7 @@ const AddClients = (props) => {
                                                         <Select
                                                             value={unit}
                                                             onChange={onChangeUnite}
+                                                            placeholder={"Veillez selectionner l'institution"}
                                                             options={formatSelectOption(unitData, 'name', 'fr')}
                                                         />
                                                     ) : (<select name="unit"
@@ -315,6 +317,7 @@ const AddClients = (props) => {
                                                         <Select
                                                             value={type}
                                                             onChange={onChangeTypeClient}
+                                                            placeholder={"Veillez seletionner le type de client"}
                                                             options={formatSelectOption(typeClient, 'name', 'fr')}
                                                         />
                                                     ) : (<select name="unit"
@@ -343,6 +346,7 @@ const AddClients = (props) => {
                                                         <Select
                                                             value={category}
                                                             onChange={onChangeCategoryClient}
+                                                            placeholder={"Veillez seletionner la categorie client"}
                                                             options={formatSelectOption(categoryClient, 'name', 'fr')}
                                                         />
                                                     ) : (<select name="unit"
@@ -369,7 +373,9 @@ const AddClients = (props) => {
                                                 <label htmlFor="account">Numero de compte</label>
                                                 <TagsInput
                                                     value={data.account_number}
-                                                    onChange={onChangeAccount}/>
+                                                    onChange={onChangeAccount}
+                                                    inputProps={{className: "react-tagsinput-input", placeholder: "Numéro(s)"}}
+                                                />
                                                 {
                                                     error.account_number.length ? (
                                                         error.account_number.map((error, index) => (

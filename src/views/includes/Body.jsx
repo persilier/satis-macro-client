@@ -59,6 +59,7 @@ import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
 import ClaimsArchived from "../pages/ClaimsArchived";
 import ConfigNotification from "../pages/ConfigNotification";
+import MessageApi from "../pages/MessageApi";
 
 const Body = () => {
     return (
@@ -301,15 +302,15 @@ const Body = () => {
                 <ChannelForm/>
             </Route>
 
-            <Route exact path="/settings/claims/add">
+            <Route exact path="/process/claims/add">
                 <ClaimAdd/>
             </Route>
 
-            <Route exact path="/settings/incomplete_claims">
+            <Route exact path="/process/incomplete_claims">
                 <IncompleteClaims/>
             </Route>
 
-            <Route exact path="/settings/incomplete_claims/edit/:id">
+            <Route exact path="/process/incomplete_claims/edit/:id">
                 <IncompleteClaimsEdit/>
             </Route>
 
@@ -321,48 +322,52 @@ const Body = () => {
                 <ConfigProcessingCircuit/>
             </Route>
 
-            <Route exact path="/settings/claim-assign">
+            <Route exact path="/process/claim-assign">
                 <ClaimAssign/>
             </Route>
 
-            <Route exact path="/settings/claim-assign/to-staff">
+            <Route exact path="/process/claim-assign/to-staff">
                 <ClaimAssignToStaff/>
             </Route>
 
-            <Route exact path="/settings/claim-assign/:id/detail">
+            <Route exact path="/process/claim-assign/:id/detail">
                 <ClaimAssignDetail/>
             </Route>
 
-            <Route exact path="/settings/unit-claims">
+            <Route exact path="/process/unit-claims">
                 <ClaimList/>
             </Route>
 
-            <Route exact path="/settings/claim-detail/:id/edit">
+            <Route exact path="/process/claim-detail/:id/edit">
                 <ClaimAssignDetail/>
             </Route>
 
-            <Route exact path="/settings/claim-to-validated">
+            <Route exact path="/process/claim-to-validated">
                 <ClaimToValidatedList/>
             </Route>
 
-            <Route exact path="/settings/claims/monitoring">
+            <Route exact path="/monitoring/claims/monitoring">
                 <ClaimMonitoring/>
             </Route>
 
-            <Route exact path="/settings/claims/reporting">
+            <Route exact path="/monitoring/claims/reporting">
                 <ClaimReporting/>
             </Route>
 
-            <Route exact path="/settings/claim_measure">
+            <Route exact path="/process/claim_measure">
                 <SatisfactionMeasure/>
             </Route>
 
-            <Route exact path="/settings/claim_archived">
+            <Route exact path="/process/claim_archived">
                 <ClaimsArchived/>
             </Route>
 
             <Route exact path="/settings/notification">
                 <ConfigNotification/>
+            </Route>
+
+            <Route exact path="/settings/message-api">
+                <MessageApi/>
             </Route>
 
             <Route exact path="/dashboard">

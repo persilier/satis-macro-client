@@ -15,6 +15,7 @@ import {ERROR_401} from "../../config/errorPage";
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const SMS = (props) => {
+    document.title = "Satis client - Paramètre SMS";
     if (!verifyPermission(props.userPermissions, 'update-sms-parameters'))
         window.location.href = ERROR_401;
 
@@ -263,7 +264,7 @@ const SMS = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...
