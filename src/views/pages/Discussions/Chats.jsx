@@ -435,7 +435,7 @@ const Chats = (props) => {
                                                     !startRequest ? (
                                                         <button type="button"
                                                                 onClick={(e) => addItem(e)}
-                                                                className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply ">reply
+                                                                className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply ">Répondre
                                                         </button>
                                                     ) : (
                                                         <button

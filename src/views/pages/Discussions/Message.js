@@ -16,7 +16,7 @@ export default function Message(props) {
 
     const friendlyTimestamp = moment(data.created_at).format('LL');
     const chatTimestamp = moment(data.created_at).format('LT');
-
+const [touchOption,setTouchOption]=useState(false)
     const deletedProps = (key) => {
         props.deleted(key)
     };
@@ -27,16 +27,16 @@ export default function Message(props) {
     };
 
    const  ouvrirFermerSpoiler=(id)=> {
-        if(document.getElementById(id).style.visibility === "hidden")
+        if(document.getElementById(id).style.display === "none")
             document.getElementById(id).style.display = "block";
+       else
+            document.getElementById(id).style.display = "none";
        console.log(document.getElementById(id).style.display,"DISPLAY")
-
-       // else
-        //     document.getElementById(id).style.display = "none";
     };
 
     const fermerDiv=(id)=>{
-            document.getElementById(id).style.visibility = "hidden";
+        setTouchOption(false)
+        document.getElementById(id).style.display = "none";
         console.log(document.getElementById(id).style.display,"DISPLAY_2")
 
     };
@@ -57,7 +57,8 @@ export default function Message(props) {
 
     return (
 
-        <div className={[
+        <div
+            className={[
             'message',
             `${isMine ? 'mine' : ''}`,
             `${startsSequence ? 'start' : ''}`,
@@ -85,7 +86,8 @@ export default function Message(props) {
                 }
 
             </div>
-            <div className="bubble-container">
+            <div className="bubble-container" onMouseEnter={() => ouvrirFermerSpoiler(data.id)}>
+
                 {
                     data.files.length ?
                         data.files.map((file, index) => (
@@ -112,7 +114,6 @@ export default function Message(props) {
                             </div>
                         )) :
                         <div className="bubble">
-
                             {
                                 data.parent_id && data.parent ?
                                     <div>
@@ -132,15 +133,11 @@ export default function Message(props) {
                             </div>
                         </div>
                 }
-
                 <div className="dropdown dropdown-inline"
                      style={{cursor: "pointer"}}>
                     <div
-                        id="menu1"
-                        // style={{display:"none"}}
-                        // style={{visibility:"hidden"}}
-                        // onMouseOver={()=>fermerDiv("menu1")}
-                        onClick={()=>ouvrirFermerSpoiler("menu1")}
+                        id={data.id}
+                        style={{display:"none"}}
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false">

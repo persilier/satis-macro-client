@@ -29,21 +29,27 @@
   display: flex;
 }
 
+.message .bubble-container .container_message {
+  cursor: pointer;
+  display: flex;
+  width: auto;
+}
+
 .message.mine .bubble-container {
   justify-content: flex-end;
 }
 
-.message.start .bubble-container .bubble {
+.message.start .bubble-container  .bubble {
   /* margin-top: 10px; */
   border-top-left-radius: 20px;
 }
 
-.message.end .bubble-container .bubble {
+.message.end .bubble-container  .bubble {
   border-bottom-left-radius: 20px;
   /* margin-bottom: 10px; */
 }
 
-.message.mine.start .bubble-container .bubble {
+.message.mine.start .bubble-container  .bubble {
   margin-top: 10px;
   border-top-right-radius: 20px;
 }
@@ -65,7 +71,7 @@
   border-bottom-right-radius: 20px;
 }
 
-.message .bubble-container .bubble-media {
+.message .bubble-container  .bubble-media {
   margin: 1px 0px;
   background: #f7f7f7;
   padding: 10px 15px;
