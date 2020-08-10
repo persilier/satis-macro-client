@@ -65,6 +65,8 @@ import AddMemberForm from "../pages/Discussions/AddMemberForm";
 import Participants from "../pages/Discussions/Participants";
 import RemoveChats from "../pages/Discussions/RemoveChats";
 import MessageApi from "../pages/MessageApi";
+import MessageAPIForm from "../components/MessageAPIForm";
+import InstitutionMessageApi from "../pages/InstitutionMessageApi";
 
 const Body = () => {
     return (
@@ -390,8 +392,24 @@ const Body = () => {
             <Route exact path="/treatment/chat/add_user/:id">
                 <AddMemberForm/>
             </Route>
-            <Route exact path="/settings/message-api">
+            <Route exact path="/settings/message-apis">
                 <MessageApi/>
+            </Route>
+
+            <Route exact path="/settings/message-apis/add">
+                <MessageAPIForm/>
+            </Route>
+
+            <Route exact path="/settings/message-apis/:id/edit">
+                <MessageAPIForm/>
+            </Route>
+
+            <Route exact path="/settings/institutions/:id/message-apis">
+                <InstitutionMessageApi/>
+            </Route>
+
+            <Route exact path="/settings/institution-message-apis">
+                <InstitutionMessageApi/>
             </Route>
 
             <Route exact path="/dashboard">

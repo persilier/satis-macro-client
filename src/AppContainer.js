@@ -1,8 +1,28 @@
 import React, {Component} from "react";
 import NatureAppChoice from "./NatureAppChoice";
-import {connect} from "react-redux"
+import {connect} from "react-redux";
+import Echo from "laravel-echo";
 import RouteApp from "./routeApp";
 import {loadPlan} from "./store/actions/planAction";
+import appConfig from "./config/appConfig";
+import {AUTH_TOKEN} from "./constants/token";
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'e0acb5bac6ddb3b710f4',
+    cluster: 'mt1',
+    forceTLS: false,
+    wsHost: "satis-macro.local",
+    wsPort: 6001,
+    disableStats: true,
+    authEndpoint: appConfig.apiDomaine+'/api/broadcasting/auth',
+    auth: {
+        headers: {
+            Authorization: AUTH_TOKEN
+        }
+    }
+});
 
 class AppContainer extends Component{
     constructor(props) {

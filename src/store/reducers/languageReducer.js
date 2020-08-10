@@ -3,7 +3,7 @@ import {CHANGE_LANGUAGE} from "../actions/languageAction";
 const initialState = {
     languageSelected: "fr",
     countryLanguageImage: {
-        "fr": "/personal/img/flag-fr.png",
+        "fr": "/personal/img/france.svg",
         "en": "/assets/media/flags/226-united-states.svg",
         "sp": "/assets/media/flags/128-spain.svg",
         "gm": "/assets/media/flags/162-germany.svg",

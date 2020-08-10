@@ -14,3 +14,45 @@ export const notificationConfig = {
     "add-contributor-to-discussion": "Ajouter contributeur à la discussion",
     "post-discussion-message": "Message post discussion",
 };
+
+export const EventNotification = [
+    "AcknowledgmentOfReceipt",
+    "AddContributorToDiscussion",
+    "AssignedToStaff",
+    "CommunicateTheSolution",
+    "CompleteAClaim",
+    "InvalidateATreatment",
+    "PostDiscussionMessage",
+    "RegisterAClaim",
+    "RejectAClaim",
+    "TransferredToTargetedInstitution",
+    "TransferredToUnit",
+    "TreatAClaim",
+    "ValidateATreatment",
+];
+
+export const EventNotificationPath = {
+    AcknowledgmentOfReceipt: "",
+    AddContributorToDiscussion: "",
+    AssignedToStaff: id => `/process/claim-assign/${id}/detail`,
+    CommunicateTheSolution: "",
+    CompleteAClaim: "",
+    InvalidateATreatment: "",
+    PostDiscussionMessage: "",
+    RegisterAClaim: "",
+    RejectAClaim: "",
+    TransferredToTargetedInstitution: "",
+    TransferredToUnit: "",
+    TreatAClaim: "",
+    ValidateATreatment: "",
+};
+
+export const RelaunchNotification = [
+    "ReminderBeforeDeadline",
+    "ReminderAfterDeadline"
+];
+
+export const RelaunchNotificationPath = {
+    ReminderBeforeDeadline: "",
+    ReminderAfterDeadline: ""
+};

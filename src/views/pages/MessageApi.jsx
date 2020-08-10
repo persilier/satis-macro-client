@@ -19,6 +19,9 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
+import {AUTH_TOKEN} from "../../constants/token";
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const MessageApi = props => {
     if (!verifyPermission(props.userPermissions, "list-message-apis"))
@@ -36,7 +39,6 @@ const MessageApi = props => {
         async function fetchData () {
             axios.get(`${appConfig.apiDomaine}/message-apis`)
                 .then(response => {
-                    console.log("data:", response.data);
                     setNumberPage(forceRound(response.data.length/numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setMessageAPIs(response.data);
@@ -161,7 +163,7 @@ const MessageApi = props => {
     const printBodyTable = (messageAPI, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{messageAPI.name["fr"]}</td>
+                <td>{messageAPI.name}</td>
                 <td>{messageAPI.method}</td>
                 <td>
                     <Link to="/settings/message-apis/detail"
@@ -170,23 +172,23 @@ const MessageApi = props => {
                         <i className="la la-eye"/>
                     </Link>
                     {
-                        verifyPermission(props.userPermissions, 'update-message-apis') && messageAPI.is_editable ? (
+                        verifyPermission(props.userPermissions, 'update-message-apis') ? (
                             <Link to={`/settings/message-apis/${messageAPI.id}/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
-                        verifyPermission(props.userPermissions, 'destroy-message-apis') && messageAPI.is_editable ? (
+                        verifyPermission(props.userPermissions, 'destroy-message-apis') ? (
                             <button
                                 onClick={(e) => deleteMessageAPI(messageAPI.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>

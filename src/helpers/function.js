@@ -259,3 +259,62 @@ export const formatDate = (date) => {
     date = date[2]+"-"+date[1]+"-"+date[0];
     return new Date(date);
 };
+
+export const debug = (variable, label = null) => {
+    console.log(`${label ? label+":" : "debug:"}`, variable);
+};
+
+/*
+*
+*
+*
+* [
+  {
+    "text": "Le délai de traitement de la réclamation : Reference: 202008-233923. Objet : Braulio Brekke a expiré depuis 2h",
+    "claim": {
+      "id": "0155686b-55d9-4ebe-ada1-79191e1b9b82",
+      "reference": "202008-233923",
+      "description": "Nihil mollitia itaque quia optio placeat esse vel. Tenetur omnis quia hic earum nobis voluptatem.",
+      "claim_object_id": "6001cdcd-0b8d-44b3-8717-b56d3977d6e5",
+      "claimer_id": "e5f1b088-90de-4b4e-ba3c-5b1de1d59381",
+      "relationship_id": null,
+      "account_targeted_id": null,
+      "institution_targeted_id": "7405fe1b-5ac5-44c5-a253-430f417d01b9",
+      "unit_targeted_id": null,
+      "request_channel_slug": "web",
+      "response_channel_slug": "email",
+      "event_occured_at": "2001-11-09T00:06:06.000000Z",
+      "claimer_expectation": "Quia quia minima et non delectus autem quia. Alias dolore porro sit nesciunt. Nam veritatis dolorem nostrum quo hic ut.",
+      "amount_disputed": 700997,
+      "amount_currency_slug": "franc-cfa-uemoa",
+      "is_revival": 1,
+      "created_by": "d6e144fc-493d-4685-91c0-27650bcd6921",
+      "completed_by": "d6e144fc-493d-4685-91c0-27650bcd6921",
+      "completed_at": "2020-08-06T16:53:12.000000Z",
+      "active_treatment_id": "8e96d8fd-cd9d-4de5-857c-b24ab162ea92",
+      "archived_at": null,
+      "status": "assigned_to_staff",
+      "created_at": "2020-08-06T16:53:12.000000Z",
+      "updated_at": "2020-08-07T09:36:22.000000Z",
+      "deleted_at": null,
+      "claim_object": {
+        "id": "6001cdcd-0b8d-44b3-8717-b56d3977d6e5",
+        "name": {
+          "fr": "Braulio Brekke"
+        },
+        "time_limit": 2,
+        "severity_levels_id": "714aa211-6e56-4e8c-a4a8-ec5006e5136e",
+        "description": {
+          "fr": "Animi officia reprehenderit culpa dolore quia. Dolor optio porro impedit sed non repudiandae beatae. Veritatis sed illo mollitia rerum. Illo exercitationem ut voluptatibus aliquid quia."
+        },
+        "claim_category_id": "63d62710-1047-468f-8dd8-a6032f3a5cb1",
+        "others": null,
+        "created_at": "2020-06-26T15:53:36.000000Z",
+        "updated_at": "2020-06-26T15:53:36.000000Z",
+        "deleted_at": null
+      }
+    },
+    "id": "d4dd86a5-f389-4e6c-84fd-94c197c35b9e",
+    "type": "Satis2020\\ServicePackage\\Notifications\\ReminderAfterDeadline"
+  }
+]*/

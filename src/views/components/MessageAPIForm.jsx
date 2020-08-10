@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
-import {
-    useParams,
-    Link
-} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import axios from "axios";
+import {connect} from "react-redux";
 import Select from "react-select";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {
@@ -15,50 +14,68 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import FormInformation from "./FormInformation";
-import {ERROR_401, redirectError401Page} from "../../config/errorPage";
-import {verifyPermission} from "../../helpers/permission";
-import currencies from "../../constants/currencyContry";
 import {AUTH_TOKEN} from "../../constants/token";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const CurrencyForm = (props) => {
+const MessageAPIForm = props => {
     const {id} = useParams();
     if (id) {
-        if (!verifyPermission(["update-currency"], 'update-currency'))
+        if (!verifyPermission(props.userPermissions, 'update-message-apis'))
             window.location.href = ERROR_401;
     } else {
-        if (!verifyPermission(["store-currency"], 'store-currency'))
+        if (!verifyPermission(props.userPermissions, 'store-message-apis'))
             window.location.href = ERROR_401;
     }
 
-    const listCurrency = currencies;
-    const [currency, setCurrency] = useState({value: "", label: ""});
-
     const defaultData = {
         name: "",
-        iso_code: "",
     };
     const defaultError = {
         name: [],
-        iso_code: [],
+        method: [],
     };
+
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+    const [method, setMethod] = useState(null);
+    const [methods, setMethods] = useState([]);
+
+    const formatMethodOptions = ({methods}) => {
+        const methodOptions = [];
+        methods.map((method, index) => methodOptions.push({value: index, label: method}) );
+        return methodOptions;
+    };
+
+    const formatSelectMethod = (methods, option) => {
+        let formatOption = {};
+        formatOption = methods.filter(el => el.label === option);
+        return formatOption[0];
+    };
 
     useEffect(() => {
         async function fetchData () {
             if (id) {
-                await axios.get(`${appConfig.apiDomaine}/currencies/${id}`)
+                await axios.get(`${appConfig.apiDomaine}/message-apis/${id}/edit`)
                     .then(response => {
                         const newData = {
-                            name: response.data.name["fr"],
-                            iso_code: response.data.iso_code
+                            name: response.data.messageApi.name,
                         };
                         setData(newData);
+                        setMethod(formatSelectMethod(formatMethodOptions(response.data), response.data.messageApi.method));
+                        setMethods(formatMethodOptions(response.data));
                     })
                     .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            } else {
+                await axios.get(`${appConfig.apiDomaine}/message-apis/create`)
+                    .then(({data}) => {
+                        setMethods(formatMethodOptions(data));
+                    })
+                    .catch(({response}) => {
                         console.log("Something is wrong");
                     })
                 ;
@@ -67,22 +84,24 @@ const CurrencyForm = (props) => {
         fetchData();
     }, []);
 
-    const onChangeCurrency = (selected) => {
-        setCurrency(selected);
+    const onChangeName = (e) => {
         const newData = {...data};
-        newData.iso_code = selected.iso_code;
-        newData.name = selected.label;
+        newData.name = e.target.value;
         setData(newData);
+    };
+
+    const handleMethodChange = (selected) => {
+        setMethod(selected);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
+        const submitData = {name: data.name, method: method ? method.label : ""};
         if (id) {
-            axios.put(`${appConfig.apiDomaine}/currencies/${id}`, data)
+            axios.put(`${appConfig.apiDomaine}/message-apis/${id}`, submitData)
                 .then(response => {
                     setStartRequest(false);
-                    setCurrency({value: "", label: ""});
                     setError(defaultError);
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
@@ -93,9 +112,14 @@ const CurrencyForm = (props) => {
                 })
             ;
         } else {
-            axios.post(`${appConfig.apiDomaine}/currencies`, data)
+            axios.post(`${appConfig.apiDomaine}/message-apis`, submitData)
                 .then(response => {
                     setStartRequest(false);
+                    const oldMethod = method;
+                    let newMethods = [...methods];
+                    newMethods = newMethods.filter(el => el.label !== oldMethod.label );
+                    setMethod(null);
+                    setMethods(newMethods);
                     setError(defaultError);
                     setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
@@ -123,8 +147,8 @@ const CurrencyForm = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/unit_type" className="kt-subheader__breadcrumbs-link">
-                                    Type d'unité
+                                <Link to="/settings/message-apis" className="kt-subheader__breadcrumbs-link">
+                                    Message API
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
@@ -145,7 +169,7 @@ const CurrencyForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de la devise" : "Ajout de la devise"
+                                                id ? "Modification d'un méssage API" : "Ajout d'un méssage API"
                                             }
                                         </h3>
                                     </div>
@@ -154,29 +178,18 @@ const CurrencyForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
+                                            <FormInformation information={id ? "Formulaire de modification d'un méssage API" : "Formulaire d'ajout d'un méssage API"}/>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Selectionnez la {id ? "nouvelle" : ""} devise</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Select
-                                                        value={currency}
-                                                        onChange={onChangeCurrency}
-                                                        options={listCurrency}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de la devise</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du Méssage API</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
-                                                        disabled={true}
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrez le nom de la devise"
+                                                        placeholder="Veillez entrer le nom du Méssage API"
                                                         value={data.name}
+                                                        onChange={(e) => onChangeName(e)}
                                                     />
                                                     {
                                                         error.name.length ? (
@@ -190,20 +203,19 @@ const CurrencyForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="iso_code">ISO code de la devise</label>
+                                            <div className={error.method.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méthode</label>
                                                 <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        disabled={true}
-                                                        id="iso_code"
-                                                        type="text"
-                                                        className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer l'iso code"
-                                                        value={data.iso_code}
+                                                    <Select
+                                                        isClearable
+                                                        value={method}
+                                                        placeholder="Veillez selectionner la méthod"
+                                                        onChange={handleMethodChange}
+                                                        options={methods}
                                                     />
                                                     {
-                                                        error.iso_code.length ? (
-                                                            error.iso_code.map((error, index) => (
+                                                        error.method.length ? (
+                                                            error.method.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -217,7 +229,7 @@ const CurrencyForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...
@@ -226,11 +238,11 @@ const CurrencyForm = (props) => {
                                                 }
                                                 {
                                                     !startRequest ? (
-                                                        <Link to="/settings/currencies" className="btn btn-secondary mx-2">
+                                                        <Link to="/settings/message-apis" className="btn btn-secondary mx-2">
                                                             Quitter
                                                         </Link>
                                                     ) : (
-                                                        <Link to="/settings/currencies" className="btn btn-secondary mx-2" disabled>
+                                                        <Link to="/settings/message-apis" className="btn btn-secondary mx-2" disabled>
                                                             Quitter
                                                         </Link>
                                                     )
@@ -249,10 +261,10 @@ const CurrencyForm = (props) => {
 
     return (
         id ?
-            verifyPermission(["update-currency"], 'update-currency') ? (
+            verifyPermission(props.userPermissions, 'update-message-apis') ? (
                 printJsx()
             ) : ""
-            : verifyPermission(["store-currency"], 'store-currency') ? (
+            : verifyPermission(props.userPermissions, 'store-message-apis') ? (
                 printJsx()
             ) : ""
     );
@@ -264,4 +276,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(CurrencyForm);
+export default connect(mapStateToProps)(MessageAPIForm);

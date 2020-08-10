@@ -16,6 +16,9 @@ import {
 import FormInformation from "./FormInformation";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {AUTH_TOKEN} from "../../constants/token";
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ChannelForms = (props) => {
     const {id} = useParams();
@@ -176,7 +179,7 @@ const ChannelForms = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                            <div className={error.is_response.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Canal de réponse</label>
                                                 <div className="col-lg-9 col-xl-6 kt-radio-inline">
                                                     <label className="kt-radio">
@@ -201,7 +204,7 @@ const ChannelForms = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...

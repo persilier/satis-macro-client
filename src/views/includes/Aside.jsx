@@ -516,12 +516,27 @@ const Aside = (props) => {
                                                     ) : null
                                                 }
 
-                                                <NavLink exact to="/settings/message-api" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Message API</span>
-                                                    </li>
-                                                </NavLink>
+                                                {
+                                                    verifyPermission(props.userPermissions, "list-message-apis") ? (
+                                                        <NavLink exact to="/settings/message-apis" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Message API</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "update-my-institution-message-api") ? (
+                                                        <NavLink exact to="/settings/institution-message-apis" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Institution Message API</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
                                             </ul>
                                         </div>
                                     </li>

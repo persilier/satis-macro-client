@@ -163,11 +163,15 @@ const Institution = (props) => {
                 <td>{institution.acronyme}</td>
                 <td>{institution.iso_code}</td>
                 <td>
-                    <Link to="/settings/institution/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
+                    {
+                        verifyPermission(props.userPermissions, "update-institution-message-api") ? (
+                            <Link to={`/settings/institutions/${institution.id}/message-apis`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title="Parametrer message API">
+                                <i className="la la-eye"/>
+                            </Link>
+                        ) : null
+                    }
 
                     {
                         verifyPermission(props.userPermissions, "show-any-institution") ?
