@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import InfirmationTable from "./InfirmationTable";
 import HeaderTablePage from "./HeaderTablePage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {Link} from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import LoadingTable from "./LoadingTable";
 
 const StaffChannels = () => {
     const defaultData = {
@@ -15,6 +15,7 @@ const StaffChannels = () => {
     const [data, setData] = useState(defaultData);
     const [listChannels, setListChannels] = useState("");
     const [startRequest, setStartRequest] = useState(false);
+    const [load, setLoad] = useState(true);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/feedback-channels")
@@ -24,9 +25,11 @@ const StaffChannels = () => {
                      newChannel.feedback_preferred_channels=response.data.staff.feedback_preferred_channels;
                      setData(newChannel);
                  }
-                setListChannels(response.data)
+                setListChannels(response.data);
+                setLoad(false)
             })
             .catch(error => {
+                setLoad(false);
                 console.log("Something is wrong");
             });
     }, []);
@@ -36,7 +39,7 @@ const StaffChannels = () => {
         console.log(e.target.checked, "OPTION");
         if (e.target.checked === true) {
             newData.feedback_preferred_channels.push(channel)
-        } else newData.feedback_preferred_channels = newData.feedback_preferred_channels.filter(item => item !== channel)
+        } else newData.feedback_preferred_channels = newData.feedback_preferred_channels.filter(item => item !== channel);
         setData(newData);
     };
 
@@ -88,8 +91,11 @@ const StaffChannels = () => {
 
                         <div className="kt-portlet__body">
                             <form className="kt-form">
-                                {console.log(data, "DATA")}
+                                {/*{console.log(data, "DATA")}*/}
                                 {
+                                    load ? (
+                                        <LoadingTable/>
+                                    ) : (
                                     listChannels.channels ?
                                         listChannels.channels.map((channel, index) => (
                                             <div className="form-group row" key={index}>
@@ -131,6 +137,7 @@ const StaffChannels = () => {
                                                 </div>
                                             </div>
                                         )) : ""
+                                    )
                                 }
                                 <div className="kt-portlet__foot">
                                     <div className="kt-form__actions text-right">

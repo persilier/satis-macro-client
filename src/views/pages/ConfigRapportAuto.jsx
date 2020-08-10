@@ -10,6 +10,7 @@ import Select from "react-select";
 import HeaderTablePage from "../components/HeaderTablePage";
 import TagsInput from "react-tagsinput";
 import {verifyPermission} from "../../helpers/permission";
+import {Link} from "react-router-dom";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -42,6 +43,7 @@ const ConfigRapportAuto = () => {
     const [disabledInput, setDisabledInput] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
+    const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + `/any/clients/create`)
@@ -58,7 +60,7 @@ const ConfigRapportAuto = () => {
 
     const onChangeEmail = (id,mail) => {
         const newData = {...data};
-        newData.periodeData.email=mail
+        newData.periodeData.email=mail;
     console.log(mail,"MAIL")
     console.log(id,"id")
         // for (var i=0; i<newData.periodeData.length;i++){
@@ -81,6 +83,11 @@ console.log(newData,"NEW")
             setInstitution(selected);
         } else setInstitution(null);
         setData(newData);
+    };
+
+    const onSubmit=(e)=>{
+        e.preventDefault(e);
+        setStartRequest(true);
     };
 
     return (
@@ -178,6 +185,33 @@ console.log(newData,"NEW")
                     </div>
                     {/*    )*/}
                     {/*}*/}
+                    <div className="kt-portlet__foot">
+                        <div className="kt-form__actions text-right">
+                            {
+                                !startRequest ? (
+                                    <button type="submit" onClick={(e) => onSubmit(e)}
+                                            className="btn btn-primary">Enregistrer</button>
+                                ) : (
+                                    <button
+                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                        type="button" disabled>
+                                        Chargement...
+                                    </button>
+                                )
+                            }
+                            {
+                                !startRequest ? (
+                                    <Link to="/dashbord" className="btn btn-secondary mx-2">
+                                        Quitter
+                                    </Link>
+                                ) : (
+                                    <Link to="/dashbord" className="btn btn-secondary mx-2" disabled>
+                                        Quitter
+                                    </Link>
+                                )
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

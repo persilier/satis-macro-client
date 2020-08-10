@@ -268,7 +268,7 @@ const Chats = (props) => {
                                                                         listChat.map((chat, i) => (
 
                                                                             <div className="kt-widget__item" key={i}>
-                                                                                <i className="fa-2x flaticon-chat-1"></i>
+                                                                                <i className="fa-2x flaticon2-chat-2"></i>
                                                                                 <div className="kt-widget__info">
                                                                                     <div className="kt-widget__section">
                                                                                         <a href={"#message-chat"}
@@ -329,10 +329,10 @@ const Chats = (props) => {
 
                                                     <ul className="kt-nav">
                                                         <li className="kt-nav__head">
-                                                            Messaging
+                                                            Messagerie
                                                             <Link
                                                                 to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}>
-                                                                <i className="kt-nav__link-icon flaticon-eye"></i>
+                                                                <i className="kt-nav__link-icon flaticon-information"></i>
                                                             </Link>
                                                         </li>
                                                         <li className="kt-nav__separator"></li>
