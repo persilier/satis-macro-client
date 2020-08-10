@@ -64,6 +64,8 @@ import AddChatsForm from "../pages/Discussions/AddChatsForm";
 import AddMemberForm from "../pages/Discussions/AddMemberForm";
 import Participants from "../pages/Discussions/Participants";
 import RemoveChats from "../pages/Discussions/RemoveChats";
+import StaffChannels from "../components/StaffChannels";
+import ConfigRapportAuto from "../pages/ConfigRapportAuto";
 
 
 const Body = () => {
@@ -393,6 +395,14 @@ const Body = () => {
 
             <Route exact path="/dashboard">
                 <Dashboards/>
+            </Route>
+
+            <Route exact path="/feedback-channels">
+                <StaffChannels/>
+            </Route>
+
+            <Route exact path="/settings/rapport-auto">
+                <ConfigRapportAuto/>
             </Route>
 
             <Route path={"*"}>

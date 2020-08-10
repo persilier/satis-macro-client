@@ -4,11 +4,13 @@ import {verifyPermission} from "../../../helpers/permission";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {connect} from "react-redux";
+import LoadingTable from "../LoadingTable";
 
 
 const DashboardStatClaim = (props) => {
 
     const [satisfactionData, setSatisfactionData] = useState("");
+    const [load, setLoad] = useState(true);
 
     const tooltipHoverFormatter = (val, opts) => {
         return val + ' : ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
@@ -107,9 +109,11 @@ const DashboardStatClaim = (props) => {
                             newSatisfaction.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
                         }
                         setSatisfactionData(newSatisfaction);
+                        setLoad(false)
                     }
                 })
                 .catch(error => {
+                    setLoad(false);
                     console.log("Something is wrong");
                 });
         }
@@ -130,12 +134,16 @@ const DashboardStatClaim = (props) => {
                     </div>
                 </div>
                 {
+                    load ? (
+                        <LoadingTable/>
+                    ) : (
                     satisfactionData ?
                         <div id="chart" className="kt-portlet__body">
                             <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
                                    height={350}/>
                         </div>
                         : ""
+                    )
                 }
             </div>
             : ""

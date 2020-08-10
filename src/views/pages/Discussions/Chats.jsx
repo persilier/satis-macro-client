@@ -3,7 +3,6 @@ import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {Link} from "react-router-dom";
 import moment from "moment";
-import Error401 from "../Error401";
 import MessageList from "./MessageList";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
@@ -13,9 +12,18 @@ import {
 } from "../../../config/toastConfig";
 import {DeleteConfirmation} from "../../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../../config/confirmConfig";
+import {filterDiscussionBySearchValue} from "../../../helpers/function";
+import {verifyPermission} from "../../../helpers/permission";
+import {ERROR_401} from "../../../config/errorPage";
+import {connect} from "react-redux";
+import LoadingTable from "../../components/LoadingTable";
 
 
 const Chats = (props) => {
+
+    if (!verifyPermission(props.userPermissions, "list-my-discussions"))
+        window.location.href = ERROR_401;
+
     const defaultData = {
         text: '',
         files: [],
@@ -33,16 +41,31 @@ const Chats = (props) => {
     const [idChat, setIdChat] = useState(null);
     const [startRequest, setStartRequest] = useState(false);
     const [messageTarget, setMessageTarget] = useState('');
+    const [search, setSearch] = useState(false);
+    const [load, setLoad] = useState(true);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/discussions")
             .then(response => {
-                setListChat(response.data)
+                setListChat(response.data);
+                setLoad(false)
             })
             .catch(error => {
+                setLoad(false);
                 console.log("Something is wrong");
             });
     }, []);
+
+    const searchElement = async (e) => {
+        if (e.target.value) {
+            await setSearch(true);
+            filterDiscussionBySearchValue(e);
+        } else {
+            await setSearch(true);
+            filterDiscussionBySearchValue(e);
+            setSearch(false);
+        }
+    };
 
     const onChangeText = (e) => {
         const newData = {...data};
@@ -76,9 +99,10 @@ const Chats = (props) => {
             await axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
                 .then(response => {
                     setListChatUsers(response.data);
-                    setIdChat(response.data[0].pivot.discussion_id)
+                    setIdChat(response.data[0].pivot.discussion_id);
                 })
                 .catch(error => {
+                    setLoad(false);
                     console.log("Something is wrong");
                 });
             await getListMessage(id)
@@ -105,7 +129,7 @@ const Chats = (props) => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            console.log(`${key}:`, newData[key]);
+            // console.log(`${key}:`, newData[key]);
             if (key === "files") {
                 for (let i = 0; i < (newData.files).length; i++)
                     formData.append("files[]", (newData[key])[i], ((newData[key])[i]).name);
@@ -127,7 +151,6 @@ const Chats = (props) => {
             setStartRequest(true);
             axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
                 .then(response => {
-                    console.log(response.data)
                     getListMessage(idChat);
                     const newItems = [...listChatMessages, response.data];
                     setListChatMessage(newItems);
@@ -147,7 +170,6 @@ const Chats = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    console.log(idChat, `listChatMessages${idChat}`)
                     axios.delete(appConfig.apiDomaine + `/discussions/${idChat}/messages/${key}`)
                         .then(response => {
                             getListMessage(idChat);
@@ -185,22 +207,26 @@ const Chats = (props) => {
                     </div>
                 </div>
             </div>
+
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 
                 <div className="kt-grid kt-grid--desktop kt-grid--ver kt-grid--ver-desktop kt-app">
+                    {
+                        load ? (
+                            <LoadingTable/>
+                        ) : (
+                            <div
+                                className="kt-grid__item kt-app__toggle kt-app__aside kt-app__aside--lg kt-app__aside--fit"
+                                id="kt_chat_aside">
 
-                    <div
-                        className="kt-grid__item kt-app__toggle kt-app__aside kt-app__aside--lg kt-app__aside--fit"
-                        id="kt_chat_aside">
+                                {
+                                    listChat ?
+                                        <div className="kt-portlet kt-portlet--last">
 
-                        {
-                            listChat ?
-                                <div className="kt-portlet kt-portlet--last">
-
-                                    <div className="kt-portlet__body">
-                                        <div className="kt-searchbar">
-                                            <div className="input-group">
-                                                <div className="input-group-prepend">
+                                            <div className="kt-portlet__body">
+                                                <div className="kt-searchbar">
+                                                    <div className="input-group">
+                                                        <div className="input-group-prepend">
                                             <span className="input-group-text"
                                                   id="basic-addon1">
                                             <svg
@@ -222,55 +248,64 @@ const Chats = (props) => {
 																		</g>
 																	</svg>
                                             </span>
+                                                        </div>
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control"
+                                                               placeholder="Search"
+                                                               aria-controls="basic-addon1"/>
+                                                    </div>
                                                 </div>
-                                                <input type="text" className="form-control" placeholder="Search"
-                                                       aria-describedby="basic-addon1"/>
-                                            </div>
-                                        </div>
 
-                                        <div className="kt-widget kt-widget--users kt-mt-20">
-                                            <div className="kt-scroll kt-scroll--pull ps ps--active-y"
-                                                 data-mobile-height="300"
-                                                 style={{height: '250px', overflow: 'hidden'}}>
-                                                <div className="kt-widget__items">
-                                                    {
-                                                        listChat.map((chat, i) => (
+                                                <div className="kt-widget kt-widget--users kt-mt-20">
+                                                    <div className="kt-scroll kt-scroll--pull ps ps--active-y"
+                                                         data-mobile-height="300"
+                                                         style={{height: '250px', overflow: 'hidden'}}>
+                                                        <ul id="myUL">
+                                                            <li>
+                                                                <div className="kt-widget__items">
+                                                                    {
+                                                                        listChat.map((chat, i) => (
 
-                                                            <div className="kt-widget__item" key={i}>
-                                                                <i className="fa-2x flaticon-chat-1"></i>
-                                                                <div className="kt-widget__info">
-                                                                    <div className="kt-widget__section">
-                                                                        <a href={"#kt-chat"}
-                                                                           onClick={(e) => onChangeDiscussion(chat.id)}
-                                                                           className="kt-widget__username">{chat.name}
-                                                                        </a>
-                                                                        <span
-                                                                            className="kt-badge kt-badge--success kt-badge--dot"></span>
-                                                                    </div>
+                                                                            <div className="kt-widget__item" key={i}>
+                                                                                <i className="fa-2x flaticon-chat-1"></i>
+                                                                                <div className="kt-widget__info">
+                                                                                    <div className="kt-widget__section">
+                                                                                        <a href={"#message-chat"}
+                                                                                           onClick={(e) => onChangeDiscussion(chat.id)}
+                                                                                           className="kt-widget__username">{chat.name}
+                                                                                        </a>
+                                                                                        <span
+                                                                                            className="kt-badge kt-badge--success kt-badge--dot"></span>
+                                                                                    </div>
 
-                                                                    <span className="kt-widget__desc">
+                                                                                    <span className="kt-widget__desc">
 																			{chat.claim.reference}
 																		</span>
-                                                                </div>
-                                                                <div className="kt-widget__action">
+                                                                                </div>
+                                                                                <div className="kt-widget__action">
                                                                 <span
                                                                     className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
-                                                                    <span
-                                                                        className="kt-badge kt-badge--success kt-font-bold">{listChat.length}</span>
-                                                                </div>
-                                                            </div>
-                                                        ))
-                                                    }
+                                                                                    <span
+                                                                                        className="kt-badge kt-badge--success kt-font-bold">{listChat.length}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))
+                                                                    }
 
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                : ""
-                        }
-                    </div>
-                    <div className="kt-grid__item kt-grid__item--fluid kt-app__content" id="kt_chat_content">
+                                        : ""
+                                }
+                            </div>
+                        )}
+
+                    <div className="kt-grid__item kt-grid__item--fluid kt-app__content" id="message-chat">
                         <div className="kt-chat" id="kt-chat">
                             <div className="kt-portlet kt-portlet--head-lg- kt-portlet--last">
                                 <div className="kt-portlet__head">
@@ -280,7 +315,6 @@ const Chats = (props) => {
                                         <div className="kt-chat__center">
                                             <h5>Discussions</h5>
                                         </div>
-
 
                                         <div className="kt-chat__right">
                                             <div className="dropdown dropdown-inline">
@@ -307,7 +341,7 @@ const Chats = (props) => {
                                                                   className="kt-nav__link">
                                                                 <i className="kt-nav__link-icon flaticon-chat-1"></i>
                                                                 <span
-                                                                    className="kt-nav__link-text">New Chat</span>
+                                                                    className="kt-nav__link-text">Créer un Chat</span>
                                                             </Link>
                                                         </li>
 
@@ -316,7 +350,7 @@ const Chats = (props) => {
                                                                   className="kt-nav__link">
                                                                 <i className="kt-nav__link-icon flaticon-delete"></i>
                                                                 <span
-                                                                    className="kt-nav__link-text">Remove Chat</span>
+                                                                    className="kt-nav__link-text">Supprimer un Chat</span>
                                                             </Link>
                                                         </li>
 
@@ -328,7 +362,7 @@ const Chats = (props) => {
                                                                 className="kt-nav__link">
                                                                 <i className="kt-nav__link-icon flaticon2-group"></i>
                                                                 <span
-                                                                    className="kt-nav__link-text">Add Member</span>
+                                                                    className="kt-nav__link-text">Ajouter un Membre</span>
                                                                 <span className="kt-nav__link-badge">
                                                                 <span
                                                                     className="kt-badge kt-badge--brand  kt-badge--rounded-">{listChatUsers.length}</span>
@@ -340,19 +374,19 @@ const Chats = (props) => {
                                                                 to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}
                                                                 className="kt-nav__link">
                                                                 <i className="kt-nav__link-icon flaticon-delete"></i>
-                                                                <span className="kt-nav__link-text">Remove Member</span>
+                                                                <span
+                                                                    className="kt-nav__link-text">Retirer un Membre</span>
                                                             </Link>
                                                         </li>
                                                     </ul>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="kt-portlet__body">
-                                    <div className="kt-scroll kt-scroll--pull ps ps--active-y"
-                                         data-mobile-height="350" style={{height: '250px', overflow: 'hidden'}}>
+                                    <div className="kt-scroll kt-scroll--pull ps ps--active-y overflow-auto"
+                                         data-mobile-height="350" style={{height: '250px', overflow: 'auto'}}>
                                         <div className="message-list">
 
                                             {/*{console.log(listChatMessages, "Message")}*/}
@@ -360,6 +394,7 @@ const Chats = (props) => {
                                             {
                                                 listChatUsers ?
                                                     <MessageList
+                                                        load={load}
                                                         getList={listChatUsers}
                                                         getMessage={listChatMessages.reverse()}
                                                         deletedItem={deletedItem}
@@ -389,8 +424,8 @@ const Chats = (props) => {
                                                         <br/>
                                                         <em>{messageTarget}</em>
                                                     </div> : ""
-                                                // <div style={{display: "none"}}></div>
                                             }
+
                                             {
                                                 data.files ?
                                                     data.files.map((file, i) => (
@@ -400,7 +435,8 @@ const Chats = (props) => {
                                                             <img src="/assets/media/users/file-icon.png" alt=""
                                                                  style={{
                                                                      maxWidth: "55px",
-                                                                     maxHeight: "55px",}}/>
+                                                                     maxHeight: "55px",
+                                                                 }}/>
                                                             {
                                                                 file.name
                                                             }
@@ -454,8 +490,14 @@ const Chats = (props) => {
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
 
-export default Chats;
+export default connect(mapStateToProps)(Chats);

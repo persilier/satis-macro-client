@@ -308,7 +308,13 @@ const Aside = (props) => {
                                                         ):""
 
                                                 }
-
+                                                <NavLink to="/settings/rapport-auto" className="kt-menu__item "
+                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                        <span className="kt-menu__link-text">Configuration Rapport Automatique</span>
+                                                    </li>
+                                                </NavLink>
 
                                                 <NavLink to="/settings/faqs/list" className="kt-menu__item "
                                                          activeClassName="kt-menu__item--active" aria-haspopup="true">

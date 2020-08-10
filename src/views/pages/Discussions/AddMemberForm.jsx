@@ -63,7 +63,6 @@ const {id}=useParams();
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-console.log(data, "staff")
         axios.post(appConfig.apiDomaine + `/discussions/${id}/staff`, data)
             .then(response => {
                 setStartRequest(false);

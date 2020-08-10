@@ -16,7 +16,7 @@ export default function Message(props) {
 
     const friendlyTimestamp = moment(data.created_at).format('LL');
     const chatTimestamp = moment(data.created_at).format('LT');
-const [touchOption,setTouchOption]=useState(false)
+
     const deletedProps = (key) => {
         props.deleted(key)
     };
@@ -31,15 +31,8 @@ const [touchOption,setTouchOption]=useState(false)
             document.getElementById(id).style.display = "block";
        else
             document.getElementById(id).style.display = "none";
-       console.log(document.getElementById(id).style.display,"DISPLAY")
     };
 
-    const fermerDiv=(id)=>{
-        setTouchOption(false)
-        document.getElementById(id).style.display = "none";
-        console.log(document.getElementById(id).style.display,"DISPLAY_2")
-
-    };
 
     function downloadFile(data, fileName, type = "text/plain") {
         const a = document.createElement("a");
@@ -102,7 +95,7 @@ const [touchOption,setTouchOption]=useState(false)
 
                                 {index === file.length - 1 ? file.title : file.title + " "}
                                 <br/>
-                                <a href={appConfig.apiDomaine + file.base64}
+                                <a href={appConfig.apiDomaine + '/download/'+file.id}
                                    download={file.title}><strong>Télécharger</strong></a>
                                 <hr/>
                                 <div className="">
@@ -114,6 +107,7 @@ const [touchOption,setTouchOption]=useState(false)
                             </div>
                         )) :
                         <div className="bubble">
+
                             {
                                 data.parent_id && data.parent ?
                                     <div>

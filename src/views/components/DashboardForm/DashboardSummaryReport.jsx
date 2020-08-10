@@ -3,8 +3,10 @@ import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
+import LoadingTable from "../LoadingTable";
 
 const DashboardSummaryReport = (props) => {
+    const [load, setLoad] = useState(true);
 
     const reportColor = [
         {
@@ -63,9 +65,11 @@ const DashboardSummaryReport = (props) => {
                             return newData.indexOf(event) < 5
                         });
                         setData(result);
+                        setLoad(false)
                     }
                 })
                 .catch(error => {
+                    setLoad(false);
                     console.log("Something is wrong");
                 })
         }
@@ -87,35 +91,42 @@ const DashboardSummaryReport = (props) => {
                             </h3>
                         </div>
                     </div>
-                    <div className="kt-portlet__body">
-                        <table className="table">
-                            <thead>
-                            <tr>
-                                <th>Objets de Réclamations</th>
-                                <th>Total</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+                    {
+                        load ? (
+                            <LoadingTable/>
+                        ) : (
+                            <div className="kt-portlet__body">
+                                <table className="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Objets de Réclamations</th>
+                                        <th>Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
 
-                            {data ?
-                                data.map((report, i) => (
-                                    reportColor.map((color, j) => (
-                                        i === j ?
-                                            <tr className={color.rowColor} key={i}>
-                                                <td>{report.canal}</td>
+                                    {data ?
+                                        data.map((report, i) => (
+                                            reportColor.map((color, j) => (
+                                                i === j ?
+                                                    <tr className={color.rowColor} key={i}>
+                                                        <td>{report.canal}</td>
 
-                                                <td>{report.label}</td>
-                                            </tr>
-                                            : <tr key={j} style={{display: 'none'}}></tr>
-                                    ))
-                                ))
-                                : <tr style={{display: 'none'}}></tr>
-                            }
+                                                        <td>{report.label}</td>
+                                                    </tr>
+                                                    : <tr key={j} style={{display: 'none'}}></tr>
+                                            ))
+                                        ))
+                                        : <tr style={{display: 'none'}}></tr>
+                                    }
 
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
 
-                    </div>
+                            </div>
+                        )
+                    }
+
                 </div>
             </div>
             : ""

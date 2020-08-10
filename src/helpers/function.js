@@ -138,6 +138,27 @@ export const filterDataTableBySearchValue = () => {
     myFunction();
 };
 
+export const filterDiscussionBySearchValue = () => {
+    function myFunction() {
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+    myFunction();
+};
+
 export const filterChannel = (channels, typeFilter) => {
     const newChannels = [];
     for (let i = 0; i < channels.length; i++) {
@@ -214,6 +235,8 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-assignment-to-staff')
         || verifyPermission(userPermissions, 'list-claim-satisfaction-measured')
         || verifyPermission(userPermissions, 'list-claim-archived')
+        || verifyPermission(userPermissions, 'list-my-discussions')
+        || verifyPermission(userPermissions, 'contribute-discussion')
     );
 };
 
