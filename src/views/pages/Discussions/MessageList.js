@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
+import LoadingTable from "../../components/LoadingTable";
 
 
 export default function MessageList(props) {
@@ -75,7 +76,6 @@ const responseMessage=(key, text)=>{
     };
 
     return (
-
         <div className="message-list">
             <div className="message-list-container">{renderMessages()}</div>
         </div>

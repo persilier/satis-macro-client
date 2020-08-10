@@ -4,12 +4,14 @@ import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
+import LoadingTable from "../LoadingTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const GraphChannel = (props) => {
 
     const [channelData, setChannelData] = useState("");
+    const [load, setLoad] = useState(true);
 
     const defaultData = {
 
@@ -55,6 +57,7 @@ const GraphChannel = (props) => {
 
     useEffect(() => {
         let isCancelled = false;
+
         async function fetchData() {
             axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
@@ -71,9 +74,11 @@ const GraphChannel = (props) => {
                             newChannels.series[0].data = Object.values(response.data.channelsUse).map(serie => serie.myInstitution)
                         }
                         setChannelData(newChannels);
+                        setLoad(false)
                     }
                 })
                 .catch(error => {
+                    setLoad(false);
                     console.log("Something is wrong");
                 })
         }
@@ -93,11 +98,16 @@ const GraphChannel = (props) => {
                     </div>
                 </div>
                 {
-                    channelData ?
-                        <div id="chart" className="kt-portlet__body">
-                            <Chart options={channelData.options} series={channelData.series} type="bar" height={350}/>
-                        </div>
-                        : ""
+                    load ? (
+                        <LoadingTable/>
+                    ) : (
+                        channelData ?
+                            <div id="chart" className="kt-portlet__body">
+                                <Chart options={channelData.options} series={channelData.series} type="bar"
+                                       height={350}/>
+                            </div>
+                            : ""
+                    )
                 }
 
             </div>

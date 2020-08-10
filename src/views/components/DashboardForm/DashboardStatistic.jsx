@@ -4,10 +4,11 @@ import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
-import {pushChartData} from "../../../helpers/function";
+import LoadingTable from "../LoadingTable";
 
 const DashboardStatistic = (props) => {
     const [data, setProcessData] = useState("");
+    const [load, setLoad] = useState(true);
 
     const tooltipHoverFormatter = (val, opts) => {
         return val + ' : ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
@@ -130,9 +131,11 @@ const DashboardStatistic = (props) => {
                             newProcess.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
                         }
                         setProcessData(newProcess);
+                        setLoad(false)
                     }
                 })
                 .catch(error => {
+                    setLoad(false)
                     console.log("Something is wrong");
                 })
         }
@@ -154,11 +157,15 @@ const DashboardStatistic = (props) => {
                 </div>
 
                 {
+                    load ? (
+                        <LoadingTable/>
+                    ) : (
                     data ?
                         <div id="chart" className="kt-portlet__body">
                             <Chart options={data.options} series={data.series} type="area" height={350}/>
                         </div>
                         : ""
+                    )
                 }
             </div>
             : ""

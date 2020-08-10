@@ -142,7 +142,7 @@ const Nav = (props) => {
                                     <div className="tab-pane active show" id="topbar_notifications_notifications" role="tabpanel">
                                         {
                                             eventNotification.length ? (
-                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200">
+                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" style={eventNotification.length >= 4 ? {height: "380px", overflowY: "auto"} : {}}>
                                                     {
                                                         eventNotification.map((n, index) => (
                                                             <a href={n.type.substr(39, n.length) === "AssignedToStaff" ? EventNotificationPath[n.type.substr(39, n.length)](n.data.claim.id) : ""} key={index} className="kt-notification__item">
@@ -169,7 +169,7 @@ const Nav = (props) => {
                                     <div className="tab-pane" id="topbar_notifications_events" role="tabpanel">
                                         {
                                             relaunchNotification.length ? (
-                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200">
+                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" style={relaunchNotification.length >= 4 ? {height: "380px", overflowY: "auto"} : {}}>
                                                     {
                                                         relaunchNotification.map(((n, index) => (
                                                             <a key={index} href="#link" className="kt-notification__item">
