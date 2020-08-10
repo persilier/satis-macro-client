@@ -12,13 +12,13 @@ import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const CategoryFAQs = () => {
+    document.title = "Satis client - Paramètre Categorie FAQs";
     const [load, setLoad] = useState(true);
     const [categoryFaqs, setCategoryFaqs] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
@@ -201,7 +201,7 @@ const CategoryFAQs = () => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    information={"Liste des catégorie de FAQs"}/>
 
                 <div className="kt-portlet">
 
@@ -221,14 +221,13 @@ const CategoryFAQs = () => {
                                         <div className="col-sm-6 text-left">
                                             <div id="kt_table_1_filter" className="dataTables_filter">
                                                 <label>
-                                                    Search:
+                                                    Recherche:
                                                     <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)}
                                                            className="form-control form-control-sm" placeholder=""
                                                            aria-controls="kt_table_1"/>
                                                 </label>
                                             </div>
                                         </div>
-                                        <ExportButton/>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-12">

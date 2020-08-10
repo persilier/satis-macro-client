@@ -134,7 +134,7 @@ const ClaimToValidatedList = (props) => {
                 {
                     verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
-                            <a href={`/settings/claim-detail/${claim.id}/edit`}
+                            <a href={`/process/claim-detail/${claim.id}/edit`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                title="Détail">
                                 <i className="la la-eye"/>

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
-import {Link} from "react-router-dom";
 import FormInformation from "../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
@@ -48,6 +47,7 @@ const endPointConfig = {
 };
 
 const ClaimAdd = props => {
+    document.title = "Satis client - Enrégistrement de réclamation";
     if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
         window.location.href = ERROR_401;
 
@@ -554,19 +554,27 @@ const ClaimAdd = props => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Processus
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
-                                    Réclamation
-                                </Link>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Enregistrement
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                    Collecte
                                 </a>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                        Enrégistrement réclamation
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -720,7 +728,7 @@ const ClaimAdd = props => {
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
                                                         <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                        <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} />
+                                                        <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (
                                                                 error.telephone.map((error, index) => (
@@ -734,7 +742,7 @@ const ClaimAdd = props => {
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
                                                         <label htmlFor="email">Votre Email(s)</label>
-                                                        <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} />
+                                                        <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
                                                             error.email.length ? (
                                                                 error.email.map((error, index) => (
@@ -1078,7 +1086,7 @@ const ClaimAdd = props => {
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                         Chargement...

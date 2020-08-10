@@ -82,9 +82,9 @@ const StaffForm = (props) => {
     const [positions, setPositions] = useState([]);
     const [institutions, setInstitutions] = useState([]);
     const [foundData, setFoundData] = useState({});
-    const [institution, setInstitution] = useState({});
-    const [unit, setUnit] = useState({});
-    const [position, setPosition] = useState({});
+    const [institution, setInstitution] = useState(null);
+    const [unit, setUnit] = useState(null);
+    const [position, setPosition] = useState(null);
 
     const defaultData = {
         firstname: "",
@@ -350,7 +350,7 @@ const StaffForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
                                         <FormInformation
-                                            information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}
+                                            information={id ? "Formulaire de modification d'un agent" : "Formulaire d'ajout d'un agent"}
                                         />
 
                                         <div className="kt-section kt-section--first">
@@ -428,7 +428,7 @@ const StaffForm = (props) => {
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
                                                         <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                        <TagsInput value={data.telephone} onChange={onChangeTelephone} />
+                                                        <TagsInput value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (
                                                                 error.telephone.map((error, index) => (
@@ -442,7 +442,7 @@ const StaffForm = (props) => {
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
                                                         <label htmlFor="email">Votre Email(s)</label>
-                                                        <TagsInput value={data.email} onChange={onChangeEmail} />
+                                                        <TagsInput value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
                                                             error.email.length ? (
                                                                 error.email.map((error, index) => (
@@ -486,6 +486,7 @@ const StaffForm = (props) => {
                                                         <label htmlFor="position">Position</label>
                                                         <Select
                                                             value={position}
+                                                            placeholder={"Veillez selectionner la position"}
                                                             onChange={onChangePosition}
                                                             options={formatSelectOption(positions, "name", "fr")}
                                                         />
@@ -508,6 +509,7 @@ const StaffForm = (props) => {
                                                                 <label htmlFor="institution">Institution</label>
                                                                 <Select
                                                                     value={institution}
+                                                                    placeholder={"Veillez selectionner"}
                                                                     onChange={onChangeInstitution}
                                                                     options={formatSelectOption(formatInstitutions(institutions), "name", false)}
                                                                 />
@@ -528,6 +530,7 @@ const StaffForm = (props) => {
                                                         <label htmlFor="unit">Unité</label>
                                                         <Select
                                                             value={unit}
+                                                            placeholder={"Veillez selectionner l'unité"}
                                                             onChange={onChangeUnit}
                                                             options={formatSelectOption(units, "name", "fr")}
                                                         />
@@ -550,7 +553,7 @@ const StaffForm = (props) => {
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                         Chargement...

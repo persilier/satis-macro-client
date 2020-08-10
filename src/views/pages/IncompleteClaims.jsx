@@ -8,7 +8,6 @@ import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
-import ExportButton from "../components/ExportButton";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
@@ -43,6 +42,7 @@ const endPointConfig = {
 };
 
 const IncompleteClaims = (props) => {
+    document.title = "Satis client - Liste plaintes incomplètes";
     if (!(verifyPermission(props.userPermissions, "list-claim-incomplete-against-any-institution") ||
         verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ||
         verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")))
@@ -169,7 +169,7 @@ const IncompleteClaims = (props) => {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ||
                         verifyPermission(props.userPermissions, "show-claim-incomplete-without-client")?
                             <Link
-                                to={`/settings/incomplete_claims/edit/${claim.id}`}
+                                to={`/process/incomplete_claims/edit/${claim.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Modifier">
                                 <i className="la la-edit"/>
@@ -189,11 +189,11 @@ const IncompleteClaims = (props) => {
             verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")
         ) ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
+                <div className="kt-subheader  kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Processus
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -201,8 +201,8 @@ const IncompleteClaims = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Collectes
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                    Collecte
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -210,8 +210,8 @@ const IncompleteClaims = (props) => {
                                         className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link">
-                                        Réclamations Incomplètes
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                        Plaintes Incomplètes
                                     </a>
                                 </div>
                             </div>
@@ -219,9 +219,9 @@ const IncompleteClaims = (props) => {
                     </div>
                 </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div className="kt-container  kt-container--fluid kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                        information={"Liste des réclamations imcomplètes"}/>
 
                     <div className="kt-portlet">
 
@@ -238,10 +238,10 @@ const IncompleteClaims = (props) => {
                                 <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
-                                            <div className="col-sm-6 text-left">
+                                            <div className="text-left col-sm-6">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        Rechercher:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
@@ -250,7 +250,6 @@ const IncompleteClaims = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

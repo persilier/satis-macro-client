@@ -1,53 +1,54 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import axios from "axios";
-import {
-    Link
-} from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
-import LoadingTable from "../components/LoadingTable";
-import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
-import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmDeleteConfig} from "../../config/confirmConfig";
-import appConfig from "../../config/appConfig";
-import Pagination from "../components/Pagination";
-import EmptyTable from "../components/EmptyTable";
-import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import axios from "axios";
+import appConfig from "../../config/appConfig";
+import {filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmDeleteConfig} from "../../config/confirmConfig";
+import {ToastBottomEnd} from "../components/Toast";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
+import {Link} from "react-router-dom";
+import InfirmationTable from "../components/InfirmationTable";
+import HeaderTablePage from "../components/HeaderTablePage";
+import LoadingTable from "../components/LoadingTable";
+import EmptyTable from "../components/EmptyTable";
+import Pagination from "../components/Pagination";
 
-loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-
-const PerformanceIndicator = (props) => {
-    if (!verifyPermission(props.userPermissions, "list-performance-indicator"))
+const MessageApi = props => {
+    if (!verifyPermission(props.userPermissions, "list-message-apis"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
-    const [performances, setPerformances] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [messageAPIs, setMessageAPIs] = useState([]);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-       async function fetchData () {
-           await axios.get(`${appConfig.apiDomaine}/performance-indicators`)
-               .then(response => {
-                   setNumberPage(forceRound(response.data.length/numberPerPage));
-                   setShowList(response.data.slice(0, numberPerPage));
-                   setPerformances(response.data);
-                   setLoad(false);
-               })
-               .catch(error => {
-                   setLoad(false);
-                   console.log("Something is wrong");
-               })
-           ;
-       }
-       fetchData();
+        async function fetchData () {
+            axios.get(`${appConfig.apiDomaine}/message-apis`)
+                .then(response => {
+                    console.log("data:", response.data);
+                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setMessageAPIs(response.data);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+        fetchData();
     }, []);
 
     const searchElement = async (e) => {
@@ -64,8 +65,8 @@ const PerformanceIndicator = (props) => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(performances.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(performances.length/parseInt(e.target.value)));
+        setShowList(messageAPIs.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(messageAPIs.length/parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -79,7 +80,7 @@ const PerformanceIndicator = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(performances.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(messageAPIs.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -87,7 +88,7 @@ const PerformanceIndicator = (props) => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                performances.slice(
+                messageAPIs.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -101,7 +102,7 @@ const PerformanceIndicator = (props) => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                performances.slice(
+                messageAPIs.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -109,25 +110,25 @@ const PerformanceIndicator = (props) => {
         }
     };
 
-    const deletePerformanceIndicator = (performanceId, index) => {
+    const deleteMessageAPI = (messageAPIid, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/performance-indicators/${performanceId}`)
+                    axios.delete(`${appConfig.apiDomaine}/message-apis/${messageAPIid}`)
                         .then(response => {
-                            const newPerformances = [...performances];
-                            newPerformances.splice(index, 1);
-                            setPerformances(newPerformances);
+                            const newMessageAPIs = [...messageAPIs];
+                            newMessageAPIs.splice(index, 1);
+                            setMessageAPIs(newMessageAPIs);
                             if (showList.length > 1) {
                                 setShowList(
-                                    newPerformances.slice(
+                                    newMessageAPIs.slice(
                                         getEndByPosition(activeNumberPage) - numberPerPage,
                                         getEndByPosition(activeNumberPage)
                                     )
                                 );
                             } else {
                                 setShowList(
-                                    newPerformances.slice(
+                                    newMessageAPIs.slice(
                                         getEndByPosition(activeNumberPage - 1) - numberPerPage,
                                         getEndByPosition(activeNumberPage - 1)
                                     )
@@ -136,7 +137,10 @@ const PerformanceIndicator = (props) => {
                             ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
                         })
                         .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            if (error.response.data.error)
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                            else
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
                         })
                     ;
                 }
@@ -154,22 +158,20 @@ const PerformanceIndicator = (props) => {
 
     const pages = arrayNumberPage();
 
-    const printBodyTable = (performance, index) => {
+    const printBodyTable = (messageAPI, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{performance.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{performance.description["fr"]}</td>
-                <td>{performance.value}</td>
-                <td>{performance.mesure_unit}</td>
+                <td>{messageAPI.name["fr"]}</td>
+                <td>{messageAPI.method}</td>
                 <td>
-                    <Link to="/settings/performance_indicator/detail"
+                    <Link to="/settings/message-apis/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>
                     </Link>
                     {
-                        verifyPermission(props.userPermissions, "update-performance-indicator") ? (
-                            <Link to={`/settings/performance_indicator/${performance.id}/edit`}
+                        verifyPermission(props.userPermissions, 'update-message-apis') && messageAPI.is_editable ? (
+                            <Link to={`/settings/message-apis/${messageAPI.id}/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                   title="Modifier">
                                 <i className="la la-edit"/>
@@ -177,9 +179,9 @@ const PerformanceIndicator = (props) => {
                         ) : ""
                     }
                     {
-                        verifyPermission(props.userPermissions, "destroy-performance-indicator") ? (
+                        verifyPermission(props.userPermissions, 'destroy-message-apis') && messageAPI.is_editable ? (
                             <button
-                                onClick={(e) => deletePerformanceIndicator(performance.id, index)}
+                                onClick={(e) => deleteMessageAPI(messageAPI.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Supprimer">
                                 <i className="la la-trash"/>
@@ -192,7 +194,7 @@ const PerformanceIndicator = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-performance-indicator") ? (
+        verifyPermission(props.userPermissions, 'list-message-apis') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -202,10 +204,10 @@ const PerformanceIndicator = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#/icon" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#indicatorPerformance" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Indicateur de performance
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    Message API
                                 </a>
                             </div>
                         </div>
@@ -213,14 +215,14 @@ const PerformanceIndicator = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des indicateurs de performance"}/>
+                    <InfirmationTable information={"Liste des Message API"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-performance-indicator"}
-                            title={"Indicateur de performance"}
-                            addText={"Ajouter un indicateur"}
-                            addLink={"/settings/performance_indicator/add"}
+                            addPermission={"store-message-apis"}
+                            title={"Message API"}
+                            addText={"Ajouter un message API"}
+                            addLink={"/settings/message-apis/add"}
                         />
 
                         {
@@ -252,16 +254,8 @@ const PerformanceIndicator = (props) => {
                                                             aria-label="Country: activate to sort column ascending">Nom
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "300px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "20px" }}
-                                                            aria-label="Ship Address: activate to sort column ascending">Value
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "15px" }}
-                                                            aria-label="Company Agent: activate to sort column ascending">Unité de mésure
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Méthode
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
@@ -270,14 +264,14 @@ const PerformanceIndicator = (props) => {
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        performances.length ? (
+                                                        messageAPIs.length ? (
                                                             search ? (
-                                                                performances.map((performance, index) => (
-                                                                    printBodyTable(performance, index)
+                                                                messageAPIs.map((messageAPI, index) => (
+                                                                    printBodyTable(messageAPI, index)
                                                                 ))
                                                             ) : (
-                                                                showList.map((performance, index) => (
-                                                                    printBodyTable(performance, index)
+                                                                showList.map((messageAPI, index) => (
+                                                                    printBodyTable(messageAPI, index)
                                                                 ))
                                                             )
                                                         ) : (
@@ -288,9 +282,7 @@ const PerformanceIndicator = (props) => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Valeur</th>
-                                                        <th rowSpan="1" colSpan="1">Unité de mésure</th>
+                                                        <th rowSpan="1" colSpan="1">Méthode</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
@@ -300,7 +292,7 @@ const PerformanceIndicator = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {performances.length} données
+                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {messageAPIs.length} données
                                                 </div>
                                             </div>
                                             {
@@ -337,4 +329,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(PerformanceIndicator);
+export default connect(mapStateToProps)(MessageApi);

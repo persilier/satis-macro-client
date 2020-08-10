@@ -46,6 +46,7 @@ const endPointConfig = {
 };
 
 const IncompleteClaimsEdit = props => {
+    document.title = "Satis client - Complétion plaintes incomplètes";
     const {id} = useParams();
     if (!(verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
         verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
@@ -448,21 +449,36 @@ const IncompleteClaimsEdit = props => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Processus
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
-                                    Réclamation
-                                </Link>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Enregistrement
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                    Collecte
                                 </a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <Link to="/process/incomplete_claims" className="kt-subheader__breadcrumbs-link">
+                                        Plaintes imcomplete
+                                    </Link>
+                                </div>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                        Réclamations Incomplètes
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -483,7 +499,7 @@ const IncompleteClaimsEdit = props => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
                                         <FormInformation
-                                            information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour enregistrer les réclamations de vos clients."}
+                                            information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
                                         />
 
                                         {
@@ -608,8 +624,10 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.telephone.length ? "col validated" : "col"}>
                                                                 <label htmlFor="telephone">Votre Téléphone(s)</label>
                                                                 <TagsInput disabled={!disabledInput}
-                                                                           value={data.telephone}
-                                                                           onChange={onChangeTelephone}/>
+                                                                   value={data.telephone}
+                                                                   onChange={onChangeTelephone}
+                                                                   inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}}
+                                                                />
                                                                 {
                                                                     error.telephone.length ? (
                                                                         error.telephone.map((error, index) => (
@@ -625,8 +643,7 @@ const IncompleteClaimsEdit = props => {
                                                             <div
                                                                 className={error.email.length ? "col validated" : "col"}>
                                                                 <label htmlFor="email">Votre Email(s)</label>
-                                                                <TagsInput disabled={!disabledInput} value={data.email}
-                                                                           onChange={onChangeEmail}/>
+                                                                <TagsInput disabled={!disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                                 {
                                                                     error.email.length ? (
                                                                         error.email.map((error, index) => (
@@ -1006,7 +1023,7 @@ const IncompleteClaimsEdit = props => {
                                             {
                                                 !startRequest ? (
                                                     <button type="submit" onClick={(e) => onSubmit(e)}
-                                                            className="btn btn-primary">Envoyer</button>
+                                                            className="btn btn-primary">Modifier</button>
                                                 ) : (
                                                     <button
                                                         className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -1017,12 +1034,12 @@ const IncompleteClaimsEdit = props => {
                                             }
                                             {
                                                 !startRequest ? (
-                                                    <Link to="/settings/incomplete_claims"
+                                                    <Link to="/process/incomplete_claims"
                                                           className="btn btn-secondary mx-2">
                                                         Quitter
                                                     </Link>
                                                 ) : (
-                                                    <Link to="/settings/incomplete_claims"
+                                                    <Link to="/process/incomplete_claims"
                                                           className="btn btn-secondary mx-2"
                                                           disabled>
                                                         Quitter

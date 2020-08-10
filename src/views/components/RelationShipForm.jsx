@@ -113,7 +113,7 @@ const RelationShipForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/clients/type" className="kt-subheader__breadcrumbs-link">
-                                    Type Client
+                                    Type relation
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">

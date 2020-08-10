@@ -9,8 +9,8 @@ const Footer = () => {
                         {new Date().getFullYear()}&nbsp;&copy;&nbsp;<a href="http://www.dmdconsult.com/" target="_blank" className="kt-link">DMD SARL</a>
                     </div>
                     <div className="kt-footer__menu">
-                        <a href="/" target="_blank" className="kt-link">About</a>
-                        <a href="/" target="_blank" className="kt-link">Team</a>
+                        <a href="/" target="_blank" className="kt-link">A propos</a>
+                        <a href="/" target="_blank" className="kt-link">Equipe</a>
                         <a href="/" target="_blank" className="kt-link">Contact</a>
                     </div>
                 </div>
