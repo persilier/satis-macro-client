@@ -120,7 +120,7 @@ const ClaimsArchived = (props) => {
                 <td>{archived.description === null ? "-" : archived.description}</td>
                 <td>{archived.active_treatment.solution === null ? "-" : archived.active_treatment.solution}</td>
                 <td style={{textAlign: 'center'}}>
-                    <a href={`/process/claim-assign/${archived.id}/detail`}
+                    <a href={`/process/claim_archived/${archived.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
                        title="Détail">
                         <i className="la la-eye"/>

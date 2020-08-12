@@ -17,7 +17,6 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const SatisfactionMeasure = (props) => {
     document.title = "Satis client - Mésure satisfaction";
-    localStorage.setItem('page', 'SatisfactionMeasure');
     if (!verifyPermission(props.userPermissions, "list-claim-satisfaction-measured"))
         window.location.href = ERROR_401;
 
@@ -120,7 +119,7 @@ const SatisfactionMeasure = (props) => {
                 <td>{measure.description === null ? "" : measure.description}</td>
                 <td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>
                 <td style={{textAlign: 'center'}}>
-                    <a href={`/process/claim-assign/${measure.id}/detail`}
+                    <a href={`/process/claim_measure/${measure.id}/detail`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Détail">
                         <i className="la la-eye"/>

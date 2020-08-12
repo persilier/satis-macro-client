@@ -32,27 +32,23 @@ export const EventNotification = [
 ];
 
 export const EventNotificationPath = {
-    AcknowledgmentOfReceipt: "",
-    AddContributorToDiscussion: "",
+    AddContributorToDiscussion: id => `/chat#message-chat`,
     AssignedToStaff: id => `/process/claim-assign/${id}/detail`,
-    CommunicateTheSolution: "",
-    CompleteAClaim: "",
-    InvalidateATreatment: "",
-    PostDiscussionMessage: "",
-    RegisterAClaim: "",
-    RejectAClaim: "",
-    TransferredToTargetedInstitution: "",
-    TransferredToUnit: "",
-    TreatAClaim: "",
-    ValidateATreatment: "",
+    CompleteAClaim: id => `/process/claim-assign/${id}/detail`,
+    InvalidateATreatment: id => `/process/claim-assign/to-staff/${id}/detail`,
+    PostDiscussionMessage: id => `/message-receved`,
+    RegisterAClaim: {
+        "full": id => `/process/claim-assign/${id}/detail`,
+        "inComplete": id => `/process/incomplete_claims/edit/${id}`
+    },
+    RejectAClaim: id => `/process/claim-assign/${id}/detail`,
+    TransferredToTargetedInstitution: id => `/process/claim-assign/${id}/detail`,
+    TransferredToUnit: id => `/process/claim-list-detail/${id}/detail`,
+    TreatAClaim: id => `/process/claim-to-validated/${id}/detail`,
+    ValidateATreatment: id =>`/process/claim_measure/${id}/detail` ,
 };
 
 export const RelaunchNotification = [
     "ReminderBeforeDeadline",
     "ReminderAfterDeadline"
 ];
-
-export const RelaunchNotificationPath = {
-    ReminderBeforeDeadline: "",
-    ReminderAfterDeadline: ""
-};

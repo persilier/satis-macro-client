@@ -12,8 +12,8 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
+    toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastEditErrorMessageConfig,
 } from "../../config/toastConfig";
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
 
@@ -541,7 +541,7 @@ const ClaimAdd = props => {
                         }
                     }
                     setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 }
             })
         ;

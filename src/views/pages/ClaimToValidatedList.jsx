@@ -17,7 +17,6 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimToValidatedList = (props) => {
-    localStorage.setItem('page', 'ClaimToValidatedListPage');
     if (!(verifyPermission(props.userPermissions, "list-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution')))
         window.location.href = ERROR_401;
 
@@ -134,7 +133,7 @@ const ClaimToValidatedList = (props) => {
                 {
                     verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
-                            <a href={`/process/claim-detail/${claim.id}/edit`}
+                            <a href={`/process/claim-to-validated/${claim.id}/detail`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                title="Détail">
                                 <i className="la la-eye"/>

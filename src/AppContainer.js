@@ -6,6 +6,8 @@ import RouteApp from "./routeApp";
 import {loadPlan} from "./store/actions/planAction";
 import appConfig from "./config/appConfig";
 import {AUTH_TOKEN} from "./constants/token";
+import {debug} from "./helpers/function";
+import axios from "axios";
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
@@ -29,6 +31,19 @@ class AppContainer extends Component{
         super(props);
         if (localStorage.getItem("plan"))
             this.props.loadPlan(localStorage.getItem("plan"))
+    }
+
+    componentDidMount(): void {
+        const readNotification = async () => {
+            if (localStorage.getItem("notification")) {
+                await axios.put(`${appConfig.apiDomaine}/unread-notifications`, JSON.parse(localStorage.getItem("notification")))
+                    .then(({data}) => {
+                        localStorage.removeItem("notification");
+                    })
+                    .catch(({response}) => {console.log("Something is wrong")})
+            }
+        };
+        readNotification();
     }
 
     render() {
