@@ -10,8 +10,7 @@ import EmptyTable from "../components/EmptyTable";
 import InfirmationTable from "../components/InfirmationTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+     toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import HeaderTablePage from "../components/HeaderTablePage";
 
@@ -30,7 +29,7 @@ const ConfigRequirements = () => {
     const [claimObject, setClaimObject] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(5);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [data, setData] = useState(defaultData);
@@ -136,6 +135,7 @@ const ConfigRequirements = () => {
         newData[object_id] = e?e.map(sel => ({value: sel.value, label: sel.label})):"";
         setData(newData);
     };
+
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
@@ -152,11 +152,11 @@ const ConfigRequirements = () => {
         axios.put(appConfig.apiDomaine + `/claim-object-requirements`, values)
             .then(response => {
                 setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
             })
             .catch(error => {
                 setStartRequest(false);
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastEditErrorMessageConfig);
             })
         ;
     };
@@ -219,7 +219,7 @@ const ConfigRequirements = () => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    information={"Configuration des Exigences "}/>
 
                 <div className="kt-portlet">
                     <HeaderTablePage
@@ -307,7 +307,7 @@ const ConfigRequirements = () => {
                                                         !startRequest ? (
                                                             <button type="submit"
                                                                     onClick={(e) => onSubmit(e)}
-                                                                    className="btn btn-primary">Envoyer</button>
+                                                                    className="btn btn-primary">Enregistrer</button>
                                                         ) : (
                                                             <button
                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"

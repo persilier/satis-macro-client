@@ -288,7 +288,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configuration des Exigences</span>
+                                                                <span className="kt-menu__link-text"> Exigences</span>
                                                             </li>
                                                         </NavLink>
                                                         : null
@@ -302,7 +302,7 @@ const Aside = (props) => {
                                                             <NavLink to="/settings/processing-circuit" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">Configuration des Circuits de Traitement</span>
+                                                                    <span className="kt-menu__link-text"> Entités de Traitement</span>
                                                                 </li>
                                                             </NavLink>
                                                         ):""
@@ -312,7 +312,7 @@ const Aside = (props) => {
                                                          activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Configuration Rapport Automatique</span>
+                                                        <span className="kt-menu__link-text"> Rapport Automatique</span>
                                                     </li>
                                                 </NavLink>
 

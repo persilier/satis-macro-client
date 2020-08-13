@@ -14,8 +14,14 @@ loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
 
 const LoginPage = (props) => {
+
+    const defaultError = {
+        username: [],
+        password: [],
+    };
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(defaultError);
     const onChangeUserName = (e) => {
         setUserName(e.target.value)
     };
@@ -38,6 +44,7 @@ const LoginPage = (props) => {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
+                    setError(defaultError);
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     const user = response.data;
                     localStorage.setItem("userData", JSON.stringify(response.data));
@@ -48,6 +55,7 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
+                setError(defaultError);
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;
@@ -110,21 +118,47 @@ const LoginPage = (props) => {
                                             </div>
 
                                             <form className="kt-form" id="kt_login_form" style={{marginBottom: '142px'}}>
-                                                <div className="form-group">
-                                                    <input className="form-control" type="email"
+                                                <div className={error.username.length ? "form-group row validated" : "form-group row"}>
+
+                                                    <input
+                                                        className={error.username.length ? "form-control is-invalid" : "form-control"}
+                                                        type="email"
                                                            placeholder="Votre Email"
                                                            name="username"
                                                            onChange={(e) => onChangeUserName(e)}
 														   value={username}
                                                     />
+                                                    {
+                                                        error.username.length ? (
+                                                            error.username.map((error, index) => (
+                                                                <div key={index}
+                                                                     className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
                                                 </div>
-                                                <div className="form-group">
-                                                    <input className="form-control" type="password"
+                                                <div className={error.password.length ? "form-group row validated" : "form-group row"}>
+
+                                                <input
+                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
+                                                       type="password"
                                                            placeholder="Votre Mot de Passe"
                                                            name="password"
                                                            onChange={(e) => onChangePassword(e)}
 														   value={password}
                                                     />
+                                                    {
+                                                        error.password.length ? (
+                                                            error.password.map((error, index) => (
+                                                                <div key={index}
+                                                                     className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
                                                 </div>
 
                                                 <div className="kt-login__actions">

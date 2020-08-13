@@ -5,11 +5,11 @@ import moment from "moment";
 import 'moment/locale/fr';
 import * as LanguageAction from "../../store/actions/languageAction";
 import * as authActions from "../../store/actions/authActions";
-import {debug} from "../../helpers/function";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import {EventNotification, EventNotificationPath, RelaunchNotification} from "../../constants/notification";
 import EmptyNotification from "../components/EmptyNotification";
+import {Link} from "react-router-dom";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -271,19 +271,19 @@ const Nav = (props) => {
                                         </div>
                                     </div>
                                 </a>
-                                <a href="custom/apps/user/profile-3.html" className="kt-notification__item">
+                                <Link  to={"/chat"} className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-mail kt-font-warning"></i>
                                     </div>
                                     <div className="kt-notification__item-details">
                                         <div className="kt-notification__item-title kt-font-bold">
-                                            My Messages
+                                            Mes Messages
                                         </div>
                                         <div className="kt-notification__item-time">
-                                            Inbox and tasks
+                                            Entrez dans mes messageries
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                                 <a href="custom/apps/user/profile-2.html" className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-rocket-1 kt-font-danger"></i>
@@ -297,19 +297,19 @@ const Nav = (props) => {
                                         </div>
                                     </div>
                                 </a>
-                                <a href="custom/apps/user/profile-3.html" className="kt-notification__item">
+                                <Link to={"/feedback-channels"} className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-hourglass kt-font-brand"></i>
                                     </div>
                                     <div className="kt-notification__item-details">
                                         <div className="kt-notification__item-title kt-font-bold">
-                                            My Tasks
+                                            Mes Canaux
                                         </div>
                                         <div className="kt-notification__item-time">
-                                            latest tasks and projects
+                                           Les canaux du personnel
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                                 <a href="custom/apps/user/profile-1/overview.html" className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-cardiogram kt-font-warning"></i>

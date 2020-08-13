@@ -7,24 +7,26 @@ import {
 import {ToastBottomEnd} from "../../views/components/Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import '../../views/components/staff/react-tagsinput.css'
-import IdentityForm from "../../views/components/IdentityForm";
 import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
 import {connect} from "react-redux";
-import {addIdentity} from "../../store/actions/IdentityAction";
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import TagsInput from "react-tagsinput";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
+
 const HoldingClientForm = (props) => {
+
     const {id} = useParams();
+
     if (!id) {
         if (!verifyPermission(props.userPermissions, 'store-client-from-any-institution'))
             window.location.href = ERROR_401;
@@ -32,30 +34,58 @@ const HoldingClientForm = (props) => {
         if (!verifyPermission(props.userPermissions, 'update-client-from-any-institution'))
             window.location.href = ERROR_401;
     }
-    const defaultData = {
-        account_type_id: "",
-        number: "",
-        category_client_id: "",
-        client_id: [],
 
+    const defaultData = {
+        firstname: "",
+        lastname: "",
+        sexe: "",
+        ville: "",
+        telephone: [],
+        email: [],
+        client_id: [],
+        institution_id: [],
+        account_type_id: "",
+        number: [],
+        category_client_id: "",
     };
+
     const defaultError = {
+        firstname: [],
+        lastname: [],
+        sexe: [],
+        ville: [],
+        telephone: [],
+        email: [],
+        client_id: [],
+        institution_id: [],
         account_type_id: [],
         number: [],
         category_client_id: [],
-        client_id: [],
-
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [identity, setIdentity] = useState(undefined);
     const [accountType, setAccountTypes] = useState(undefined);
     const [categoryClient, setCategoryClient] = useState(undefined);
     const [type, setType] = useState([]);
     const [category, setCategory] = useState([]);
+    const [nameClient, setNameClient] = useState([]);
+    const [client, setClient] = useState([]);
+    const [institutionData, setInstitutionData] = useState(undefined);
+    const [institution, setInstitution] = useState([]);
+    const [disableInput,setDisableInput]=useState(true);
 
     useEffect(() => {
+
+        axios.get(appConfig.apiDomaine + `/any/clients/create`)
+            .then(response => {
+                const options =
+                    response.data.institutions.length ? response.data.institutions.map((institution) => ({
+                        value: institution.id,
+                        label: institution.name
+                    })) : "";
+                setInstitutionData(options);
+            });
         axios.get(appConfig.apiDomaine + '/any/clients/create')
             .then(response => {
                 setAccountTypes(response.data.accountTypes);
@@ -67,12 +97,6 @@ const HoldingClientForm = (props) => {
                 .then(response => {
                     console.log(response.data, 'UPDATE_DATA')
                     const newClient = {
-                        number: response.data.client_institution.accounts[0].number,
-                        account_type_id: response.data.client_institution.accounts[0].account_type_id,
-                        category_client_id: response.data.client_institution.category_client_id,
-                    };
-                    setData(newClient);
-                    const newIdentity = {
                         firstname: response.data.client_institution.client.identite.firstname,
                         lastname: response.data.client_institution.client.identite.lastname,
                         sexe: response.data.client_institution.client.identite.sexe,
@@ -80,9 +104,12 @@ const HoldingClientForm = (props) => {
                         email: response.data.client_institution.client.identite.email,
                         institution_id: response.data.client_institution.institution_id,
                         ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
+
+                        number: response.data.client_institution.accounts[0].number,
+                        account_type_id: response.data.client_institution.accounts[0].account_type_id,
+                        category_client_id: response.data.client_institution.category_client_id,
                     };
-                    setIdentity(newIdentity);
-                    props.addIdentite(newIdentity);
+                    setData(newClient);
                     setType({
                         value: response.data.client_institution.accounts[0].account_type.id,
                         label: response.data.client_institution.accounts[0].account_type.name.fr
@@ -106,7 +133,6 @@ const HoldingClientForm = (props) => {
         const newData = {...data};
         newData.number = e.target.value;
         setData(newData);
-
     };
 
     const onChangeCategoryClient = (selected) => {
@@ -116,40 +142,116 @@ const HoldingClientForm = (props) => {
         setData(newData);
     };
 
+    const onChangeFirstName = (e) => {
+        const newData = {...data};
+        newData.firstname = e.target.value;
+        setData(newData);
+    };
+    const onChangeLastName = (e) => {
+        const newData = {...data};
+        newData.lastname = e.target.value;
+        setData(newData);
+    };
+    const onChangeTelephone = (tel) => {
+        const newData = {...data};
+        newData.telephone = tel;
+        setData(newData);
+    };
+    const onChangeSexe = (e) => {
+        const newData = {...data};
+        newData.sexe = e.target.value;
+        setData(newData);
+    };
+    const onChangeEmail = (mail) => {
+        const newData = {...data};
+        newData.email = mail;
+        setData(newData);
+    };
+    const onChangeVille = (e) => {
+        const newData = {...data};
+        newData.ville = e.target.value;
+        setData(newData);
+    };
+    const onChangeInstitution = (selected) => {
+        const newData = {...data};
+        newData.institution_id = selected.value;
+        setInstitution(selected);
+        axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
+            .then(response => {
+                console.log(response.data, "CLIENT D'UNE INSTITUTION");
+                const options =
+                    response.data ? response.data.map((client) => ({
+                        value: client.client_id,
+                        label: client.client.identite.firstname + ' ' + client.client.identite.lastname
+                    })) : "";
+                setNameClient(options);
+            });
+        setData(newData);
+        setDisableInput(false)
+    };
+    const onChangeClient = (selected) => {
+        const newData = {...data};
+        newData.client_id = selected.value;
+        setClient(selected);
+        // setData(newData);
+       if (newData.client_id){
+           axios.get(`${appConfig.apiDomaine}/any/clients` + `/${newData.client_id}`)
+               .then(response => {
+                   console.log(response.data,"IDENTITE")
+                   const newIdentity = {
+                       firstname: response.data.client.identite.firstname,
+                       lastname: response.data.client.identite.lastname,
+                       sexe: response.data.client.identite.sexe,
+                       telephone: response.data.client.identite.telephone,
+                       email: response.data.client.identite.email,
+                       ville: response.data.client.identite.ville === null ? "" : response.data.client.identite.ville,
+                       client_id: response.data.client_id,
+                       institution_id:response.data.institution_id,
+                       category_client_id:response.data.category_client_id
+                   };
+                   setData(newIdentity);
+                   setCategory({
+                       value: response.data.category_client?response.data.category_client.id:"",
+                       label: response.data.category_client?response.data.category_client.name.fr:""
+                   });
+               });
+       }
+
+    };
 
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        console.log(props.identite, "store_DATA");
-
-        const formData = {...props.identite,...data};
-
-        console.log(formData, "FORM_DATA");
+        // console.log(props.identite, "store_DATA");
+        //
+        // const formData = {...props.identite,...data};
+        //
+        // console.log(formData, "FORM_DATA");
         if (id) {
-            axios.put(appConfig.apiDomaine + `/any/clients/${id}`, formData)
+            axios.put(appConfig.apiDomaine + `/any/clients/${id}`, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
                     setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
                 .catch((errorRequest) => {
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
                 })
             ;
         } else {
-            console.log(props.identite.client_id, "CLIENT_ID")
-            if (props.identite.client_id==="") {
-                axios.post(appConfig.apiDomaine + `/any/accounts/${props.identite.client_id}/clients`, formData)
+            // console.log(props.identite.client_id, "CLIENT_ID")
+            console.log(data.client_id, "CLIENT_ID")
+            if (data.client_id!=="") {
+                axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, data)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
                         setType({});
                         setCategory({});
-                        setIdentity({});
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch((errorRequest) => {
@@ -159,14 +261,13 @@ const HoldingClientForm = (props) => {
                     })
                 ;
             } else {
-                axios.post(appConfig.apiDomaine + `/any/clients`, formData)
+                axios.post(appConfig.apiDomaine + `/any/clients`, data)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
                         setType({});
                         setCategory({});
-                        setIdentity({});
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(async (errorRequest) => {
@@ -174,14 +275,13 @@ const HoldingClientForm = (props) => {
                         console.log(errorRequest.response.data.identite, 'ERROR');
 
                         if (errorRequest.response.data.identite) {
-                            await axios.post(appConfig.apiDomaine + `/any/identites/${errorRequest.response.data.identite.id}/client`, formData)
+                            await axios.post(appConfig.apiDomaine + `/any/identites/${errorRequest.response.data.identite.id}/client`, data)
                                 .then(response => {
                                     setStartRequest(false);
                                     setError(defaultError);
                                     setData(defaultData);
                                     setType({});
                                     setCategory({});
-                                    setIdentity({});
                                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                                 })
                         } else if (errorRequest.response.data.client) {
@@ -245,19 +345,213 @@ const HoldingClientForm = (props) => {
                             <form method="POST" className="kt-form">
 
                                 <div className="kt-portlet">
-                                    {
 
-                                        !id ? (
-                                            <IdentityForm/>
+                                    <div className="kt-portlet__body">
+                                        <div className="kt-section kt-section--first">
+                                            <h5 className="kt-section__title kt-section__title-lg">Identité:</h5>
+                                            {!id ?
+                                                <div className="form-group row">
+                                                    {
+                                                        verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
+                                                            <div
+                                                                className={error.institution_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="exampleSelect1"> Institution</label>
+                                                                {console.log(nameClient,"NAME_CLIENT")}
+                                                                {institutionData ? (
+                                                                    <Select
+                                                                        value={institution}
+                                                                        placeholder={"Veillez selectionner l'institution"}
+                                                                        onChange={onChangeInstitution}
+                                                                        options={institutionData ? institutionData.map(name => name) : ''}
+                                                                    />
+                                                                ) : (
+                                                                    <select name="institution"
+                                                                            className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                                            id="institution">
+                                                                        <option value=""/>
+                                                                    </select>
+                                                                )
+                                                                }
 
-                                        ) : (
-                                            identity ?
-                                                <IdentityForm
-                                                    getIdentite={identity}
-                                                    getLoading={true}
-                                                />
-                                                : "")
-                                    }
+                                                                {
+                                                                    error.institution_id.length ? (
+                                                                        error.institution_id.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                            : ""
+                                                    }
+                                                    <div
+                                                        className={error.client_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="exampleSelect1"> Client</label>
+                                                        {nameClient ? (
+                                                            <Select
+                                                                isDisabled={disableInput}
+                                                                placeholder={"Veillez selectionner le client"}
+                                                                value={client}
+                                                                onChange={onChangeClient}
+                                                                options={nameClient ? nameClient.map(name => name) : ''}
+                                                            />
+                                                        ) : (<select name="client"
+                                                                     className={error.client_id.length ? "form-control is-invalid" : "form-control"}
+                                                                     id="client">
+                                                            <option value=""/>
+                                                        </select>)
+                                                        }
+
+                                                        {
+                                                            error.client_id.length ? (
+                                                                error.client_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+                                                : ""
+                                            }
+                                            <div className="form-group row">
+                                                <div className={error.lastname.length ? "col validated" : "col"}>
+                                                    <label htmlFor="lastname">Votre nom de famille</label>
+                                                    <input
+                                                        id="lastname"
+                                                        type="text"
+                                                        className={error.lastname.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer le nom de famille"
+                                                        value={data.lastname}
+                                                        onChange={(e) => onChangeLastName(e)}
+                                                        disabled={props.getDisable ? props.getDisable : false}
+                                                    />
+                                                    {
+                                                        error.lastname.length ? (
+                                                            error.lastname.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+
+                                                <div className={error.firstname.length ? "col validated" : "col"}>
+                                                    <label htmlFor="firstname">Votre prénom</label>
+                                                    <input
+                                                        id="firstname"
+                                                        type="text"
+                                                        className={error.firstname.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer le prénom"
+                                                        value={data.firstname}
+                                                        onChange={(e) => onChangeFirstName(e)}
+                                                        disabled={props.getDisable ? props.getDisable : false}
+                                                    />
+                                                    {
+                                                        error.firstname.length ? (
+                                                            error.firstname.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <div className={error.sexe.length ? " col validated" : "col"}>
+                                                    <label htmlFor="sexe">Votre sexe</label>
+                                                    <select
+                                                        id="sexe"
+                                                        className={error.sexe.length ? "form-control is-invalid" : "form-control"}
+                                                        value={data.sexe}
+                                                        onChange={(e) => onChangeSexe(e)}
+                                                        disabled={props.getDisable ? props.getDisable : false}
+                                                    >
+                                                        <option value="" disabled={true}>Veillez choisir le Sexe
+                                                        </option>
+                                                        <option value="F">Féminin</option>
+                                                        <option value="M">Masculin</option>
+                                                    </select>
+                                                    {
+                                                        error.sexe.length ? (
+                                                            error.sexe.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                                <div className={error.ville.length ? "col validated" : "col"}>
+                                                    <label htmlFor="ville">Votre ville</label>
+                                                    <input
+                                                        id="ville"
+                                                        type="text"
+                                                        className={error.ville.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder="Veillez entrer votre ville"
+                                                        value={data.ville}
+                                                        onChange={(e) => onChangeVille(e)}
+                                                        disabled={props.getDisable ? props.getDisable : false}
+                                                    />
+                                                    {
+                                                        error.ville.length ? (
+                                                            error.ville.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <div className={error.telephone.length ? "col validated" : "col"}>
+                                                    <label htmlFor="telephone">Votre Téléphone(s)</label>
+                                                    <TagsInput
+                                                        value={data.telephone}
+                                                        onChange={onChangeTelephone}
+                                                        disabled={props.getDisable ? props.getDisable : false}
+                                                        inputProps={{className: "react-tagsinput-input", placeholder: "Numéro(s)"}}
+                                                    />
+                                                    {
+                                                        error.telephone.length ? (
+                                                            error.telephone.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+
+                                                <div className={error.email.length ? "col validated" : "col"}>
+                                                    <label htmlFor="email">Votre Email(s)</label>
+                                                    <TagsInput
+                                                        value={data.email}
+                                                        onChange={onChangeEmail}
+                                                        disabled={props.getDisable ? props.getDisable : false}
+                                                        inputProps={{className: "react-tagsinput-input", placeholder: "Email(s)"}}
+                                                    />
+                                                    {
+                                                        error.email.length ? (
+                                                            error.email.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
 
                                     <div className="kt-portlet__body">
                                         <div className="kt-section kt-section--first">
@@ -321,7 +615,6 @@ const HoldingClientForm = (props) => {
                                             </div>
 
                                             <div className="form-group row">
-
                                                 <div className={error.number.length ? "col validated" : "col"}>
                                                     <label htmlFor="number">Numero de Compte</label>
                                                     <input
@@ -353,7 +646,7 @@ const HoldingClientForm = (props) => {
                                         {
                                             !startRequest ? (
                                                 <button type="submit" onClick={(e) => onSubmit(e)}
-                                                        className="btn btn-primary">Envoyer</button>
+                                                        className="btn btn-primary">Enregistrer</button>
                                             ) : (
                                                 <button
                                                     className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -391,4 +684,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, {addIdentite: addIdentity})(HoldingClientForm);
+export default connect(mapStateToProps)(HoldingClientForm);

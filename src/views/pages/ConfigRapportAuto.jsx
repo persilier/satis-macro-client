@@ -1,222 +1,379 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {loadCss, filterDataTableBySearchValue, forceRound, formatSelectOption} from "../../helpers/function";
+import {
+    Link
+} from "react-router-dom";
+import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
-
-import InfirmationTable from "../components/InfirmationTable";
-import Select from "react-select";
-
+import Pagination from "../components/Pagination";
+import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import TagsInput from "react-tagsinput";
+import InfirmationTable from "../components/InfirmationTable";
+import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {Link} from "react-router-dom";
+import {connect} from "react-redux";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ConfigRapportAuto = () => {
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/my/reporting-claim/config`,
+    },
+    MACRO: {
+        holding: {
+            list: `${appConfig.apiDomaine}/any/reporting-claim/config`,
+        },
+        filial: {
+            list: `${appConfig.apiDomaine}/my/reporting-claim/config`,
+        }
+    },
+};
 
-    const periodeData = [
-        {
-            label:"Jour",
-            email: []
-        },
-        {
-            label:"Semaine",
-            email: []
-        },
-        {
-            label:"Mois",
-            email: []
-        },
-    ];
+const ConfigRapportAuto = (props) => {
+    document.title = "Satis rapport - Paramètre Configuration Rapport Automatique";
+    if (!verifyPermission(props.userPermissions, "list-reporting-claim-any-institution"))
+        window.location.href = ERROR_401;
 
-    const defaultData = {
-        periodeData:periodeData,
-        institutions_id: ""
-    };
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+            endPoint = endPointConfig[props.plan].filial
+    } else {
+        endPoint = endPointConfig[props.plan]
+    }
 
     const [load, setLoad] = useState(true);
-    const [data, setData] = useState(defaultData);
-    const [disabledInput, setDisabledInput] = useState(false);
-    const [institution, setInstitution] = useState(null);
-    const [institutions, setInstitutions] = useState([]);
-    const [startRequest, setStartRequest] = useState(false);
+    const [rapportAuto, setRapportAuto] = useState([]);
+    const [numberPage, setNumberPage] = useState(0);
+    const [showList, setShowList] = useState([]);
+    const [numberPerPage, setNumberPerPage] = useState(5);
+    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/any/clients/create`)
+        axios.get(endPoint.list)
             .then(response => {
-                const options = [
-                    response.data.institutions ? response.data.institutions.map((institution) => ({
-                        value: institution.id,
-                        label: institution.name
-                    })) : ""
-                ];
-                setInstitutions(options);
-            });
-    }, []);
+                console.log(response.data,"DATA")
+                setLoad(false);
+                setRapportAuto(response.data);
+                setShowList(response.data.slice(0, numberPerPage));
+                setNumberPage(forceRound(response.data.length / numberPerPage));
+            })
+            .catch(error => {
+                setLoad(false);
+                console.log("Something is wrong");
+            })
+    },[]);
 
-    const onChangeEmail = (id,mail) => {
-        const newData = {...data};
-        newData.periodeData.email=mail;
-    console.log(mail,"MAIL")
-    console.log(id,"id")
-        // for (var i=0; i<newData.periodeData.length;i++){
-        //     console.log(newData.periodeData[i].label, "ID")
-        //     if (newData.periodeData[i].label===id){
-        //         newData.periodeData[i].email=mail
-        //     }
-        // }
-console.log(newData,"NEW")
-        setData(newData);
+    const searchElement = async (e) => {
+        if (e.target.value) {
+            await setSearch(true);
+            filterDataTableBySearchValue(e);
+        } else {
+            await setSearch(true);
+            filterDataTableBySearchValue(e);
+            setSearch(false);
+        }
     };
 
-    const handleDisabledInputChange = () => {
-        setDisabledInput(!disabledInput);
-    };
-    const onChangeInstitution = (selected) => {
-        const newData = {...data};
-        if (selected) {
-            newData.institutions_id = selected.value;
-            setInstitution(selected);
-        } else setInstitution(null);
-        setData(newData);
+    const onChangeNumberPerPage = (e) => {
+        setActiveNumberPage(0);
+        setNumberPerPage(parseInt(e.target.value));
+        setShowList(rapportAuto.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(rapportAuto.length / parseInt(e.target.value)));
     };
 
-    const onSubmit=(e)=>{
-        e.preventDefault(e);
-        setStartRequest(true);
+    const getEndByPosition = (position) => {
+        let end = numberPerPage;
+        for (let i = 0; i < position; i++) {
+            end = end + numberPerPage;
+        }
+        return end;
+    };
+
+    const onClickPage = (e, page) => {
+        e.preventDefault();
+        setActiveNumberPage(page);
+        setShowList(rapportAuto.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+    };
+
+    const onClickNextPage = (e) => {
+        e.preventDefault();
+        if (activeNumberPage <= numberPage) {
+            setActiveNumberPage(activeNumberPage + 1);
+            setShowList(
+                rapportAuto.slice(
+                    getEndByPosition(
+                        activeNumberPage + 1) - numberPerPage,
+                    getEndByPosition(activeNumberPage + 1)
+                )
+            );
+        }
+    };
+
+    const onClickPreviousPage = (e) => {
+        e.preventDefault();
+        if (activeNumberPage >= 1) {
+            setActiveNumberPage(activeNumberPage - 1);
+            setShowList(
+                rapportAuto.slice(
+                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                    getEndByPosition(activeNumberPage - 1)
+                )
+            );
+        }
+    };
+
+    const deleteCategoryClient = (rapportAutoId, index) => {
+        DeleteConfirmation.fire(confirmDeleteConfig)
+            .then((result) => {
+                if (result.value) {
+                    axios.delete(endPoint.list + `/${rapportAutoId}`)
+                        .then(response => {
+                            const newRapport = [...rapportAuto];
+                            newRapport.splice(index, 1);
+                            setRapportAuto(newRapport);
+                            if (showList.length > 1) {
+                                setShowList(
+                                    newRapport.slice(
+                                        getEndByPosition(activeNumberPage) - numberPerPage,
+                                        getEndByPosition(activeNumberPage)
+                                    )
+                                );
+                            } else {
+                                setShowList(
+                                    newRapport.slice(
+                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                        getEndByPosition(activeNumberPage - 1)
+                                    )
+                                );
+                            }
+                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                        })
+                        .catch(error => {
+                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                        })
+                    ;
+                }
+            })
+        ;
+    };
+    const arrayNumberPage = () => {
+        const pages = [];
+        for (let i = 0; i < numberPage; i++) {
+            pages[i] = i;
+        }
+        return pages
+    };
+
+    const pages = arrayNumberPage();
+
+    const printBodyTable = (rapport, index) => {
+        return (
+            <tr key={index} role="row" className="odd">
+                <td>{rapport.institution_targeted?rapport.institution_targeted.name:""}</td>
+                <td>{rapport.period===null?"":rapport.period_tag.label}</td>
+                <td>
+                    {rapport.email ?
+                        rapport.email.map((mail, index) => (
+                            index === rapport.email.length - 1 ? mail : mail  +" "+ "/" +" "
+                        )) : ""
+                    }
+                </td>
+                {/*<td>{rapport.email===null?"":rapport.email}</td>*/}
+                <td style={{textAlign:'center'}}>
+
+                    {
+                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ?
+                            <Link
+                                to={`/settings/rapport/edit/${rapport.id}`}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                            : ""
+                    }
+
+                    {verifyPermission(props.userPermissions, "list-reporting-claim-any-institution") ?
+                        <button
+                            onClick={(e) => deleteCategoryClient(rapport.id, index)}
+                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                            title="Supprimer">
+                            <i className="la la-trash"/>
+                        </button>
+                        : ""
+                    }
+                </td>
+            </tr>
+        )
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
+
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                Paramètres
+                            </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()}
+                                <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Configuration des Exigences
+                                    Rapport automatique
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable
-                    information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <InfirmationTable
+                        information={"Liste des rapports automatiques"}/>
 
-                <div className="kt-portlet">
-                    <HeaderTablePage
-                        addPermission={""}
-                        title={"Configuration des Rapports Automatiques"}
-                    />
+                    <div className="kt-portlet">
 
-                    {/*{*/}
-                    {/*    load ? (*/}
-                    {/*        <LoadingTable/>*/}
-                    {/*    ) : (*/}
-                    <div className="kt-portlet__body">
-                        <div className="kt-section">
-                            <div className="kt-section__content">
+                        <HeaderTablePage
+                            addPermission={"list-reporting-claim-any-institution"}
+                            title={"Rapport Automatique"}
+                            addText={"Ajouter une configuration"}
+                            addLink={"/settings/rapport/add"}
+                        />
+                        {
+                            load ? (
+                                <LoadingTable/>
+                            ) : (
+                                <div className="kt-portlet__body">
+                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                        <div className="row">
+                                            <div className="col-sm-6 text-left">
+                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                                    <label>
+                                                        Recherche:
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control form-control-sm"
+                                                               placeholder=""
+                                                               aria-controls="kt_table_1"/>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12">
+                                                <table
+                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                    style={{width: "952px"}}>
+                                                    <thead>
+                                                    <tr role="row" style={{textAlign:"center"}}>
 
-                                <div className="form-group row">
-                                    <div className={"col d-flex align-items-center mt-4"}>
-                                        <label className="kt-checkbox">
-                                            <input type="checkbox" value={disabledInput}
-                                                   onChange={handleDisabledInputChange}/>
-                                            Toutes les institutions<span/>
-                                        </label>
-                                    </div>
-
-                                    <div className={"col"}>
-                                        <label htmlFor="client">Selectionez le client</label>
-                                        <Select
-                                            isClearable
-                                            isDisabled={disabledInput}
-                                            placeholder={"Veuillez sélectionner l'institution"}
-                                            value={institution}
-                                            onChange={onChangeInstitution}
-                                            options={institutions[0]}
-                                        />
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "100px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Institutions
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "100px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Périodes
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "150px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Emails
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Type: activate to sort column ascending">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {
+                                                        rapportAuto.length ? (
+                                                            search ? (
+                                                                rapportAuto.map((rapport, index) => (
+                                                                    printBodyTable(rapport, index)
+                                                                ))
+                                                            ) : (
+                                                                showList.map((rapport, index) => (
+                                                                    printBodyTable(rapport, index)
+                                                                ))
+                                                            )
+                                                        ) : (
+                                                            <EmptyTable/>
+                                                        )
+                                                    }
+                                                    </tbody>
+                                                    <tfoot>
+                                                    <tr style={{textAlign:"center"}}>
+                                                        <th rowSpan="1" colSpan="1">Institutions</th>
+                                                        <th rowSpan="1" colSpan="1">Périodes</th>
+                                                        <th rowSpan="1" colSpan="1">Emails</th>
+                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                    </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-5">
+                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {rapportAuto.length} données
+                                                </div>
+                                            </div>
+                                            {
+                                                !search ? (
+                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                        <Pagination
+                                                            numberPerPage={numberPerPage}
+                                                            onChangeNumberPerPage={onChangeNumberPerPage}
+                                                            activeNumberPage={activeNumberPage}
+                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                            pages={pages}
+                                                            onClickPage={(e, number) => onClickPage(e, number)}
+                                                            numberPage={numberPage}
+                                                            onClickNextPage={e => onClickNextPage(e)}
+                                                        />
+                                                    </div>
+                                                ) : ""
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-
-                                <table className="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Périodes</th>
-                                        <th>Email(s)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {console.log(data,"DATA")}
-                                    {
-                                        data.periodeData.map((periode, i) => (
-                                            <tr key={i}>
-                                                <td>{periode.label}</td>
-                                                <td>
-                                                    <TagsInput
-                                                        id={periode.label}
-                                                        value={periode.email}
-                                                        onChange={()=>onChangeEmail(periode.label)}
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))}
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>
-                    {/*    )*/}
-                    {/*}*/}
-                    <div className="kt-portlet__foot">
-                        <div className="kt-form__actions text-right">
-                            {
-                                !startRequest ? (
-                                    <button type="submit" onClick={(e) => onSubmit(e)}
-                                            className="btn btn-primary">Enregistrer</button>
-                                ) : (
-                                    <button
-                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                        type="button" disabled>
-                                        Chargement...
-                                    </button>
-                                )
-                            }
-                            {
-                                !startRequest ? (
-                                    <Link to="/dashbord" className="btn btn-secondary mx-2">
-                                        Quitter
-                                    </Link>
-                                ) : (
-                                    <Link to="/dashbord" className="btn btn-secondary mx-2" disabled>
-                                        Quitter
-                                    </Link>
-                                )
-                            }
-                        </div>
+                            )
+                        }
                     </div>
                 </div>
             </div>
-        </div>
     );
 };
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
+    };
+};
 
-
-export default ConfigRapportAuto;
+export default connect(mapStateToProps)(ConfigRapportAuto);

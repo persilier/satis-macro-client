@@ -36,14 +36,14 @@ const EditClients = (props) => {
         account_type_id: "",
         number: "",
         category_client_id: "",
-        client_id: "",
+
 
     };
     const defaultError = {
         account_type_id: [],
         number: [],
         category_client_id: [],
-        client_id: [],
+
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -120,7 +120,7 @@ const EditClients = (props) => {
         setStartRequest(true);
 
         const formData = {...props.identite,...data};
-
+console.log(formData,"FORM_DATA")
         if (id) {
             axios.put(appConfig.apiDomaine + `/my/clients/${id}`, formData)
                 .then(response => {
@@ -191,9 +191,7 @@ const EditClients = (props) => {
                     }
                 });
             }
-
         }
-
     };
 
     return (

@@ -69,6 +69,7 @@ import ConfigRapportAuto from "../pages/ConfigRapportAuto";
 import MessageApi from "../pages/MessageApi";
 import MessageAPIForm from "../components/MessageAPIForm";
 import InstitutionMessageApi from "../pages/InstitutionMessageApi";
+import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 
 const Body = () => {
     return (
@@ -424,6 +425,14 @@ const Body = () => {
 
             <Route exact path="/settings/rapport-auto">
                 <ConfigRapportAuto/>
+            </Route>
+
+            <Route exact path="/settings/rapport/add">
+                <ConfigRapportAutoForm/>
+            </Route>
+
+            <Route exact path="/settings/rapport/edit/:id">
+                <ConfigRapportAutoForm/>
             </Route>
 
             <Route path={"*"}>

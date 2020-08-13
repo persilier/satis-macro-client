@@ -64,8 +64,10 @@ const IndentiteForm = (props) => {
     const [client, setClient] = useState([]);
     const [institutionData, setInstitutionData] = useState(undefined);
     const [institution, setInstitution] = useState([]);
+    const [disableInput,setDisableInput]=useState(true);
 
     useEffect(() => {
+        if(verifyPermission(props.userPermissions,'store-client-from-my-institution')){
         axios.get(endPoint.list)
             .then(response => {
                 const options = [
@@ -76,6 +78,7 @@ const IndentiteForm = (props) => {
                 ];
                 setNameClient(options);
             });
+        }
         axios.get(appConfig.apiDomaine + `/any/clients/create`)
             .then(response => {
                 const options = [
@@ -143,6 +146,7 @@ const IndentiteForm = (props) => {
                     setNameClient(options);
             });
         setData(newData);
+        setDisableInput(false)
     };
 
     const onChangeClient = (selected) => {
@@ -153,6 +157,7 @@ const IndentiteForm = (props) => {
         props.addIdentite(selected);
         axios.get(endPoint.list + `/${newData.client_id}`)
             .then(response => {
+                console.log(response.data,"IDENTITE")
                 const newIdentity = {
                     firstname: response.data.client.identite.firstname,
                     lastname: response.data.client.identite.lastname,
@@ -160,7 +165,8 @@ const IndentiteForm = (props) => {
                     telephone: response.data.client.identite.telephone,
                     email: response.data.client.identite.email,
                     ville: response.data.client.identite.ville === null ? "" : response.data.client.identite.ville,
-                    client_id: response.data.client_id
+                    client_id: response.data.client_id,
+                    institution_id:response.data.institution_id
                 };
                 setData(newIdentity);
                 props.addIdentite(newIdentity);

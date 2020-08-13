@@ -157,7 +157,12 @@ const Institution = (props) => {
 
     const printBodyTable = (institution, index) => {
         return (
-            <tr  key={index} role="row" className="odd">
+            <tr key={index} role="row" className="odd">
+                <td style={{textAlign: 'center'}}>
+                    {institution.logo?(
+                        <img id="Image1" src={institution.logo} alt="logo" style={{maxWidth: "35px", maxHeight: "35px", textAlign: 'center'}}/>)
+                        :""}
+                </td>
                 <td>{institution.institution_type?institution.institution_type.name:""}</td>
                 <td>{institution.name}</td>
                 <td>{institution.acronyme}</td>
@@ -268,6 +273,12 @@ const Institution = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "40px"}}
+                                                            aria-label="Country: activate to sort column ascending">Logo
+                                                        </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"

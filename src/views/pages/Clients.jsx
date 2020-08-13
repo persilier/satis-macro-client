@@ -191,7 +191,6 @@ const Clients = (props) => {
                             i === 0 ?
                                 <td rowSpan={client.accounts.length}>{client.client.identite.lastname} &ensp; {client.client.identite.firstname}</td> : <td style={{display:"none"}}/>
                         }
-
                         <td>
                             {account.number}
                         </td>
@@ -244,12 +243,9 @@ const Clients = (props) => {
                                     </button>
                                     : ""
                             }
-
                         </td>
-
                     </tr>
                 )) : ""
-
         )
     };
 
@@ -276,7 +272,7 @@ const Clients = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"Liste des client"}/>
+                    information={"Liste des clients"}/>
 
                 <div className="kt-portlet">
                     {
@@ -328,23 +324,22 @@ const Clients = (props) => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "150.25px"}}
+                                                        colSpan="1" style={{width: "80.25px"}}
                                                         aria-label="Country: activate to sort column ascending">Nom
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Account
-                                                        Number
+                                                        aria-label="Ship Address: activate to sort column ascending">Numero de Compte
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Telephone
+                                                        aria-label="Ship Address: activate to sort column ascending">Téléphone
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Email
+                                                        aria-label="Ship Address: activate to sort column ascending">Email(s)
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"

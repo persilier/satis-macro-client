@@ -7,7 +7,7 @@ import {
 import {ToastBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
@@ -34,14 +34,14 @@ const InstitutionForm = (props) => {
         name: "",
         acronyme: "",
         iso_code: "",
-        logo: ""
+        logo: "/assets/media/users/Icon.png"
     };
     const defaultError = {
         institution_type_id: [],
         name: [],
         acronyme: [],
         iso_code: [],
-        logo: [],
+        logo: "/assets/media/users/Icon.png",
     };
     const [data, setData] = useState(defaultData);
     const [logo, setLogo] = useState(undefined);
@@ -137,7 +137,7 @@ const InstitutionForm = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
                 .catch(error => {
                     setStartRequest(false);
@@ -148,15 +148,15 @@ const InstitutionForm = (props) => {
         } else {
             axios.post(appConfig.apiDomaine + `/any/institutions`, formData)
                 .then(response => {
-                    setStartRequest(false);
                     setError(defaultError);
+                    setStartRequest(false);
                     setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(error => {
+                    setError({...defaultError, ...error.response.data.error});
                     setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Saissisez tous les champs"));
                 })
             ;
         }
@@ -220,8 +220,7 @@ const InstitutionForm = (props) => {
                                                                              id="kt_user_add_avatar">
                                                                             <div className="kt-avatar__holder"
                                                                                  style={{textAlign: 'center'}}>
-                                                                                {
-                                                                                    id ? (
+
                                                                                         <img
                                                                                             id="Image1"
                                                                                             src={data.logo}
@@ -232,18 +231,6 @@ const InstitutionForm = (props) => {
                                                                                                 textAlign: 'center'
                                                                                             }}
                                                                                         />
-                                                                                    ) : (
-                                                                                        <img
-                                                                                            id="Image1"
-                                                                                            src="/assets/media/users/Icon.png"
-                                                                                            alt="logo"
-                                                                                            style={{
-                                                                                                maxWidth: "115px",
-                                                                                                maxHeight: "115px"
-                                                                                            }}
-                                                                                        />
-                                                                                    )
-                                                                                }
 
                                                                             </div>
                                                                             <label className="kt-avatar__upload"
@@ -280,7 +267,6 @@ const InstitutionForm = (props) => {
                                                                         ) : ''
                                                                         }
 
-
                                                                         {
                                                                             error.institution_type_id.length ? (
                                                                                 error.institution_type_id.map((error, index) => (
@@ -297,13 +283,13 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">le Nom</label>
+                                                                           htmlFor="name">Nom</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom"
+                                                                            placeholder="Ex:  Satis"
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -323,12 +309,12 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="Acronyme">L'acronyme</label>
+                                                                           htmlFor="Acronyme">Acronyme</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
                                                                             className={error.acronyme.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer l'acronyme"
+                                                                            placeholder="Ex:  Satis Acronyme"
                                                                             type="text"
                                                                             value={data.acronyme}
                                                                             onChange={(e) => onChangeAcronyme(e)}
@@ -355,7 +341,7 @@ const InstitutionForm = (props) => {
                                                                             id="value"
                                                                             type="text"
                                                                             className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le code ISO"
+                                                                            placeholder="Ex:  0000-Satis"
                                                                             value={data.iso_code}
                                                                             onChange={(e) => onChangeIsoCode(e)}
                                                                         />
@@ -379,7 +365,7 @@ const InstitutionForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Envoyer</button>
+                                                                                    className="btn btn-primary">Enregistrer</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"

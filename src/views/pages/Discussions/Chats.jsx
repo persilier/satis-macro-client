@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {Link} from "react-router-dom";
@@ -17,6 +17,7 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
+import {EventNotification} from "../../../constants/notification";
 
 
 const Chats = (props) => {
@@ -47,6 +48,7 @@ const Chats = (props) => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/discussions")
             .then(response => {
+                console.log(response.data, "LIST")
                 setListChat(response.data);
                 setLoad(false)
             })
@@ -54,7 +56,12 @@ const Chats = (props) => {
                 setLoad(false);
                 console.log("Something is wrong");
             });
+        window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${localStorage.getItem("staffData")}`)
+            .notification((notification) => {
+                console.log(notification, "TEMPS_REEL")
+            });
     }, []);
+
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -133,7 +140,6 @@ const Chats = (props) => {
             if (key === "files") {
                 for (let i = 0; i < (newData.files).length; i++)
                     formData.append("files[]", (newData[key])[i], ((newData[key])[i]).name);
-
             } else
                 formData.set(key, newData[key]);
         }
@@ -151,7 +157,7 @@ const Chats = (props) => {
             setStartRequest(true);
             axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
                 .then(response => {
-                    getListMessage(idChat);
+                    // getListMessage(idChat);
                     const newItems = [...listChatMessages, response.data];
                     setListChatMessage(newItems);
                     setData(defaultError);
@@ -218,7 +224,6 @@ const Chats = (props) => {
                             <div
                                 className="kt-grid__item kt-app__toggle kt-app__aside kt-app__aside--lg kt-app__aside--fit"
                                 id="kt_chat_aside">
-
                                 {
                                     listChat ?
                                         <div className="kt-portlet kt-portlet--last">
@@ -262,12 +267,14 @@ const Chats = (props) => {
                                                          data-mobile-height="300"
                                                          style={{height: '250px', overflow: 'hidden'}}>
                                                         <ul id="myUL">
-                                                            <li>
-                                                                <div className="kt-widget__items">
-                                                                    {
-                                                                        listChat.map((chat, i) => (
+                                                            {
+                                                                listChat.map((chat, i) => (
+                                                                    <li key={i}>
 
-                                                                            <div className="kt-widget__item" key={i}>
+                                                                        <div className="kt-widget__items">
+
+
+                                                                            <div className="kt-widget__item">
                                                                                 <i className="fa-2x flaticon2-chat-2"></i>
                                                                                 <div className="kt-widget__info">
                                                                                     <div className="kt-widget__section">
@@ -290,11 +297,12 @@ const Chats = (props) => {
                                                                                         className="kt-badge kt-badge--success kt-font-bold">{listChat.length}</span>
                                                                                 </div>
                                                                             </div>
-                                                                        ))
-                                                                    }
 
-                                                                </div>
-                                                            </li>
+                                                                        </div>
+                                                                    </li>
+                                                                ))
+                                                            }
+
                                                         </ul>
                                                     </div>
                                                 </div>
