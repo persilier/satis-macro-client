@@ -83,14 +83,14 @@ const DashboardClaimsActivity = (props) => {
                                                     <span className="kt-widget24__desc">
 									</span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-success">
+                                                <span className="kt-widget24__stats kt-font-danger">
 									{data.totalIncomplete ? data.totalIncomplete.myActivity : ""}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalIncomplete ?
-                                                        <div className="progress-bar kt-bg-success" role="progressbar"
+                                                        <div className="progress-bar kt-bg-danger" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalIncomplete.myActivity), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalIncomplete.myActivity), totalData)}}>
@@ -126,14 +126,14 @@ const DashboardClaimsActivity = (props) => {
                                                     <span className="kt-widget24__desc">
 									</span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-danger">
+                                                <span className="kt-widget24__stats kt-font-success">
 									{data.totalComplete ? data.totalComplete.myActivity : ""}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalComplete ?
-                                                        <div className="progress-bar kt-bg-danger" role="progressbar"
+                                                        <div className="progress-bar kt-bg-success" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalComplete.myActivity), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalComplete.myActivity), totalData)}}>

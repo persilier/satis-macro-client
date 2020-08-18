@@ -42,7 +42,7 @@ const ConfigRequirements = () => {
                 response.data.claimCategories.map((claimCategory) => (
                     claimCategory.claim_objects.map((claimObject) => (
                         newObjectData[claimObject.id] = claimObject.requirements.map(requirement => (
-                            {value: requirement.id, label: requirement.name})
+                            {value: requirement.id, label: requirement.description.fr})
                         )
                     ))
                 ));
@@ -181,7 +181,7 @@ const ConfigRequirements = () => {
                                 <Select
                                     value={data[object.id]}
                                     onChange={(e) => onChangeExigence(e, object.id)}
-                                    options={formatSelectOption(requirement, 'name', false)}
+                                    options={formatSelectOption(requirement, 'description', "fr")}
                                     isMulti
                                     key={object.id}
                                 />

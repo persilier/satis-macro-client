@@ -58,7 +58,7 @@ const UnfoundedModal = (props) => {
                         <div className="modal-body">
                             <div
                                 className={error.unfounded_reason.length ? "form-group validated" : "form-group"}>
-                                <label htmlFor="description">La Description du motif</label>
+                                <label htmlFor="description">Description du motif <span style={{color:"red"}}>*</span></label>
                                 <textarea
                                     id="description"
                                     className={error.unfounded_reason.length ? "form-control is-invalid" : "form-control"}
@@ -87,12 +87,12 @@ const UnfoundedModal = (props) => {
                                 !startRequest ? (
                                     <button type="submit"
                                             onClick={(e) => onSubmit(e)}
-                                            className="btn btn-primary">Envoyer</button>
+                                            className="btn btn-primary">Enregistrer</button>
                                 ) : (
                                     <button
                                         className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                         type="button" disabled>
-                                        Loading...
+                                        Chargement...
                                     </button>
                                 )
                             }

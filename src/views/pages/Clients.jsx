@@ -367,6 +367,15 @@ const Clients = (props) => {
                                                     )
                                                 }
                                                 </tbody>
+                                                <tfoot>
+                                                <tr style={{textAlign:"center"}}>
+                                                    <th rowSpan="1" colSpan="1">Nom</th>
+                                                    <th rowSpan="1" colSpan="1">Numero de Compte</th>
+                                                    <th rowSpan="1" colSpan="1">Téléphone</th>
+                                                    <th rowSpan="1" colSpan="1">Emails</th>
+                                                    <th rowSpan="1" colSpan="1">Action</th>
+                                                </tr>
+                                                </tfoot>
                                             </table>
                                         </div>
                                     </div>

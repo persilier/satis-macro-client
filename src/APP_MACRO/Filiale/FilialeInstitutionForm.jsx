@@ -205,7 +205,7 @@ const FilialeInstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">le Nom</label>
+                                                                           htmlFor="name"> Nom <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
@@ -231,7 +231,7 @@ const FilialeInstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="Acronyme">L'acronyme</label>
+                                                                           htmlFor="Acronyme">Acronyme <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
@@ -257,7 +257,7 @@ const FilialeInstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="value">Le Code Iso</label>
+                                                                           htmlFor="value">Code Iso <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="value"

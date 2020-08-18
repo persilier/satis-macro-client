@@ -55,7 +55,7 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
-                setError(defaultError);
+                setError({...defaultError, ...error.response.data.error});
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;
@@ -117,7 +117,7 @@ const LoginPage = (props) => {
                                                 <h3>Connexion</h3>
                                             </div>
 
-                                            <form className="kt-form" id="kt_login_form" style={{marginBottom: '142px'}}>
+                                            <form className="kt-form"  id="kt_login__form" style={{marginBottom: '142px'}}>
                                                 <div className={error.username.length ? "form-group row validated" : "form-group row"}>
 
                                                     <input

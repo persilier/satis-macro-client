@@ -167,7 +167,7 @@ const Institution = (props) => {
                 <td>{institution.name}</td>
                 <td>{institution.acronyme}</td>
                 <td>{institution.iso_code}</td>
-                <td>
+                <td style={{textAlign:"center"}}>
                     {
                         verifyPermission(props.userPermissions, "update-institution-message-api") ? (
                             <Link to={`/settings/institutions/${institution.id}/message-apis`}
@@ -194,16 +194,16 @@ const Institution = (props) => {
                             : ""
                     }
 
-                    {
-                        verifyPermission(props.userPermissions, "destroy-any-institution") ?
-                            <button
-                                onClick={(e) => deleteInstitution(institution.id, index)}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
-                                <i className="la la-trash"/>
-                            </button>
-                            : ""
-                    }
+                    {/*{*/}
+                    {/*    verifyPermission(props.userPermissions, "destroy-any-institution") ?*/}
+                    {/*        <button*/}
+                    {/*            onClick={(e) => deleteInstitution(institution.id, index)}*/}
+                    {/*            className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
+                    {/*            title="Supprimer">*/}
+                    {/*            <i className="la la-trash"/>*/}
+                    {/*        </button>*/}
+                    {/*        : ""*/}
+                    {/*}*/}
 
                 </td>
             </tr>
@@ -268,7 +268,7 @@ const Institution = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{width: "952px"}}>
                                                     <thead>
@@ -329,8 +329,13 @@ const Institution = (props) => {
                                                     }
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-
+                                                    <tr style={{textAlign:"center"}}>
+                                                        <th rowSpan="1" colSpan="1">Logo</th>
+                                                        <th rowSpan="1" colSpan="1">Type</th>
+                                                        <th rowSpan="1" colSpan="1">Nom</th>
+                                                        <th rowSpan="1" colSpan="1">Acronyme</th>
+                                                        <th rowSpan="1" colSpan="1">Iso_Code</th>
+                                                        <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>

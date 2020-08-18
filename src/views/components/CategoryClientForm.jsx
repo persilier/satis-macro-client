@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {
+    toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
@@ -66,7 +67,6 @@ const CategoryClientForm = (props) => {
         setData(newData);
     };
 
-
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
@@ -81,9 +81,8 @@ const CategoryClientForm = (props) => {
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    setError({...defaultError});
-                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    setError({...defaultError,...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
         } else {
@@ -96,13 +95,11 @@ const CategoryClientForm = (props) => {
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    setError({...defaultError});
-                    // ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    setError({...defaultError,...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
         }
-
     };
     const printJsx = () => {
         return (
@@ -158,7 +155,7 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="name">Le Nom</label>
+                                                                       htmlFor="name">Libelé</label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <input
                                                                         id="name"
@@ -184,7 +181,7 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="description">La Description</label>
+                                                                       htmlFor="description">Description</label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="description"
@@ -214,7 +211,7 @@ const CategoryClientForm = (props) => {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Envoyer</button>
+                                                                                className="btn btn-primary">Enregistrer</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"

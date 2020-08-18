@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
-import {Link} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import moment from "moment";
 import MessageList from "./MessageList";
 import {ToastBottomEnd} from "../../components/Toast";
@@ -17,7 +17,6 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
-import {EventNotification} from "../../../constants/notification";
 
 
 const Chats = (props) => {
@@ -44,11 +43,12 @@ const Chats = (props) => {
     const [messageTarget, setMessageTarget] = useState('');
     const [search, setSearch] = useState(false);
     const [load, setLoad] = useState(true);
+    const [activeChat, setActiveChat] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/discussions")
             .then(response => {
-                console.log(response.data, "LIST")
+                // console.log(response.data, "LIST")
                 setListChat(response.data);
                 setLoad(false)
             })
@@ -102,13 +102,16 @@ const Chats = (props) => {
     };
 
     const onChangeDiscussion = (id) => {
+
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
                 .then(response => {
+                    setActiveChat(true);
                     setListChatUsers(response.data);
                     setIdChat(response.data[0].pivot.discussion_id);
                 })
                 .catch(error => {
+                    setActiveChat(false);
                     setLoad(false);
                     console.log("Something is wrong");
                 });
@@ -123,6 +126,7 @@ const Chats = (props) => {
             await axios.get(appConfig.apiDomaine + `/discussions/${id}/messages`)
                 .then(response => {
                     setListChatMessage(response.data);
+                    document.getElementById('kt-scroll').scrollTo(0, 10000);
                 })
                 .catch(error => {
                     console.log("Something is wrong");
@@ -279,11 +283,17 @@ const Chats = (props) => {
                                                                                 <div className="kt-widget__info">
                                                                                     <div className="kt-widget__section">
                                                                                         <a href={"#message-chat"}
+                                                                                           activeClassName="kt-menu__item--active"
+                                                                                           aria-haspopup="true"
                                                                                            onClick={(e) => onChangeDiscussion(chat.id)}
                                                                                            className="kt-widget__username">{chat.name}
                                                                                         </a>
-                                                                                        <span
-                                                                                            className="kt-badge kt-badge--success kt-badge--dot"></span>
+                                                                                        {
+                                                                                            activeChat && idChat===chat.id ?
+                                                                                                <span
+                                                                                                    className="kt-badge kt-badge--success kt-badge--dot"></span>
+                                                                                                : ""
+                                                                                        }
                                                                                     </div>
 
                                                                                     <span className="kt-widget__desc">
@@ -293,8 +303,9 @@ const Chats = (props) => {
                                                                                 <div className="kt-widget__action">
                                                                 <span
                                                                     className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
+                                                                                    {idChat===chat.id}
                                                                                     <span
-                                                                                        className="kt-badge kt-badge--success kt-font-bold">{listChat.length}</span>
+                                                                                        className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>
                                                                                 </div>
                                                                             </div>
 
@@ -315,7 +326,7 @@ const Chats = (props) => {
 
                     <div className="kt-grid__item kt-grid__item--fluid kt-app__content" id="message-chat">
                         <div className="kt-chat" id="kt-chat">
-                            <div className="kt-portlet kt-portlet--head-lg- kt-portlet--last">
+                            <div className="kt-portlet kt-portlet--head-lg- ">
                                 <div className="kt-portlet__head">
                                     <div className="kt-chat__head ">
 
@@ -394,10 +405,11 @@ const Chats = (props) => {
                                 </div>
                                 <div className="kt-portlet__body">
                                     <div className="kt-scroll kt-scroll--pull ps ps--active-y overflow-auto"
-                                         data-mobile-height="350" style={{height: '250px', overflow: 'auto'}}>
+                                         id="kt-scroll" data-mobile-height="350"
+                                         style={{height: '250px', overflow: 'auto'}}>
                                         <div className="message-list">
 
-                                            {/*{console.log(listChatMessages, "Message")}*/}
+                                            {console.log(listChatMessages, "Message")}
 
                                             {
                                                 listChatUsers ?
@@ -412,7 +424,6 @@ const Chats = (props) => {
                                     </div>
                                 </div>
                                 <div className="kt-portlet__foot">
-
                                     <div className="kt-chat__input">
 
                                         <input style={{display: "none"}}

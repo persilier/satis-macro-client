@@ -26,7 +26,7 @@ const Dashboards = () => {
             </div>
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable information={"Tableau de bord de l'application"}/>
+                <InfirmationTable information={"Représentation graphique des statiques des collectes et traitements des réclamations sur les 30 derniers jours"} />
                 <div>
                     <div className="kt-portlet">
                         <DashboardClaimsAll/>

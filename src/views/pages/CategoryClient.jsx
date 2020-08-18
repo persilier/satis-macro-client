@@ -160,11 +160,11 @@ const CategoryClient = (props) => {
                 <td>{category.name.fr===null?"":category.name.fr}</td>
                 <td>{category.description.fr===null?"":category.description.fr}</td>
                 <td style={{textAlign:'center'}}>
-                    <Link to="/settings/clients/category/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
+                    {/*<Link to="/settings/clients/category/detail"*/}
+                    {/*      className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
+                    {/*      title="Détail">*/}
+                    {/*    <i className="la la-eye"/>*/}
+                    {/*</Link>*/}
 
                     {
                         verifyPermission(props.userPermissions, 'show-category-client') ?
@@ -177,15 +177,15 @@ const CategoryClient = (props) => {
                             : ""
                     }
 
-                    {verifyPermission(props.userPermissions, "destroy-category-client") ?
-                        <button
-                            onClick={(e) => deleteCategoryClient(category.id, index)}
-                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Supprimer">
-                            <i className="la la-trash"/>
-                        </button>
-                        : ""
-                    }
+                    {/*{verifyPermission(props.userPermissions, "destroy-category-client") ?*/}
+                    {/*    <button*/}
+                    {/*        onClick={(e) => deleteCategoryClient(category.id, index)}*/}
+                    {/*        className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
+                    {/*        title="Supprimer">*/}
+                    {/*        <i className="la la-trash"/>*/}
+                    {/*    </button>*/}
+                    {/*    : ""*/}
+                    {/*}*/}
                 </td>
             </tr>
         )
@@ -259,7 +259,7 @@ const CategoryClient = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{width: "952px"}}>
                                                     <thead>

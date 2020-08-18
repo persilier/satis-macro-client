@@ -244,7 +244,7 @@ const HoldingClientForm = (props) => {
         } else {
             // console.log(props.identite.client_id, "CLIENT_ID")
             console.log(data.client_id, "CLIENT_ID")
-            if (data.client_id!=="") {
+            if (data.client_id==="") {
                 axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, data)
                     .then(response => {
                         setStartRequest(false);
@@ -355,7 +355,7 @@ const HoldingClientForm = (props) => {
                                                         verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
                                                             <div
                                                                 className={error.institution_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="exampleSelect1"> Institution</label>
+                                                                <label htmlFor="exampleSelect1"> Institution <span style={{color:"red"}}>*</span></label>
                                                                 {console.log(nameClient,"NAME_CLIENT")}
                                                                 {institutionData ? (
                                                                     <Select
@@ -418,7 +418,7 @@ const HoldingClientForm = (props) => {
                                             }
                                             <div className="form-group row">
                                                 <div className={error.lastname.length ? "col validated" : "col"}>
-                                                    <label htmlFor="lastname">Votre nom de famille</label>
+                                                    <label htmlFor="lastname">Nom<span style={{color:"red"}}>*</span> </label>
                                                     <input
                                                         id="lastname"
                                                         type="text"
@@ -440,7 +440,7 @@ const HoldingClientForm = (props) => {
                                                 </div>
 
                                                 <div className={error.firstname.length ? "col validated" : "col"}>
-                                                    <label htmlFor="firstname">Votre prénom</label>
+                                                    <label htmlFor="firstname">Prénom(s) <span style={{color:"red"}}>*</span></label>
                                                     <input
                                                         id="firstname"
                                                         type="text"
@@ -448,7 +448,6 @@ const HoldingClientForm = (props) => {
                                                         placeholder="Veillez entrer le prénom"
                                                         value={data.firstname}
                                                         onChange={(e) => onChangeFirstName(e)}
-                                                        disabled={props.getDisable ? props.getDisable : false}
                                                     />
                                                     {
                                                         error.firstname.length ? (
@@ -464,18 +463,18 @@ const HoldingClientForm = (props) => {
 
                                             <div className="form-group row">
                                                 <div className={error.sexe.length ? " col validated" : "col"}>
-                                                    <label htmlFor="sexe">Votre sexe</label>
+                                                    <label htmlFor="sexe">Sexe <span style={{color:"red"}}>*</span></label>
                                                     <select
                                                         id="sexe"
                                                         className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                         value={data.sexe}
                                                         onChange={(e) => onChangeSexe(e)}
-                                                        disabled={props.getDisable ? props.getDisable : false}
                                                     >
                                                         <option value="" disabled={true}>Veillez choisir le Sexe
                                                         </option>
                                                         <option value="F">Féminin</option>
                                                         <option value="M">Masculin</option>
+                                                        <option value="M">Autres</option>
                                                     </select>
                                                     {
                                                         error.sexe.length ? (
@@ -488,7 +487,7 @@ const HoldingClientForm = (props) => {
                                                     }
                                                 </div>
                                                 <div className={error.ville.length ? "col validated" : "col"}>
-                                                    <label htmlFor="ville">Votre ville</label>
+                                                    <label htmlFor="ville">Ville</label>
                                                     <input
                                                         id="ville"
                                                         type="text"
@@ -512,7 +511,7 @@ const HoldingClientForm = (props) => {
 
                                             <div className="form-group row">
                                                 <div className={error.telephone.length ? "col validated" : "col"}>
-                                                    <label htmlFor="telephone">Votre Téléphone(s)</label>
+                                                    <label htmlFor="telephone">Téléphone(s)<span style={{color:"red"}}>*</span></label>
                                                     <TagsInput
                                                         value={data.telephone}
                                                         onChange={onChangeTelephone}

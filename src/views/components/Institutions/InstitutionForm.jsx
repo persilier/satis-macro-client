@@ -47,7 +47,7 @@ const InstitutionForm = (props) => {
     const [logo, setLogo] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [typeInstitution, setTypeInstitution] = useState([]);
+    const [typeInstitution, setTypeInstitution] = useState(null);
     const [typeInstitutionData, setTypeInstitutionData] = useState([]);
 
     useEffect(() => {
@@ -156,7 +156,7 @@ const InstitutionForm = (props) => {
                 .catch(error => {
                     setError({...defaultError, ...error.response.data.error});
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Saissisez tous les champs"));
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
         }
@@ -179,7 +179,8 @@ const InstitutionForm = (props) => {
                                     Institution
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link">
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -221,16 +222,16 @@ const InstitutionForm = (props) => {
                                                                             <div className="kt-avatar__holder"
                                                                                  style={{textAlign: 'center'}}>
 
-                                                                                        <img
-                                                                                            id="Image1"
-                                                                                            src={data.logo}
-                                                                                            alt="logo"
-                                                                                            style={{
-                                                                                                maxWidth: "115px",
-                                                                                                maxHeight: "115px",
-                                                                                                textAlign: 'center'
-                                                                                            }}
-                                                                                        />
+                                                                                <img
+                                                                                    id="Image1"
+                                                                                    src={data.logo}
+                                                                                    alt="logo"
+                                                                                    style={{
+                                                                                        maxWidth: "115px",
+                                                                                        maxHeight: "115px",
+                                                                                        textAlign: 'center'
+                                                                                    }}
+                                                                                />
 
                                                                             </div>
                                                                             <label className="kt-avatar__upload"
@@ -252,38 +253,37 @@ const InstitutionForm = (props) => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                {/*{typeInstitutionData ? (*/}
+                                                                {/*    <div*/}
+                                                                {/*        className={error.institution_type_id.length ? "form-group row validated" : "form-group row"}>*/}
+                                                                {/*        <label*/}
+                                                                {/*            className="col-xl-3 col-lg-3 col-form-label"*/}
+                                                                {/*            htmlFor="exampleSelect1">Type</label>*/}
+                                                                {/*        <div className="col-lg-9 col-xl-6">*/}
 
-                                                                <div
-                                                                    className={error.institution_type_id.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Type</label>
-                                                                    <div className="col-lg-9 col-xl-6">
-                                                                        {typeInstitutionData ? (
-                                                                            <Select
-                                                                                value={typeInstitution}
-                                                                                onChange={onChangeTypeInstituion}
-                                                                                options={formatSelectOption(typeInstitutionData, 'name', false)}
-                                                                            />
-                                                                        ) : ''
-                                                                        }
-
-                                                                        {
-                                                                            error.institution_type_id.length ? (
-                                                                                error.institution_type_id.map((error, index) => (
-                                                                                    <div key={index}
-                                                                                         className="invalid-feedback">
-                                                                                        {error}
-                                                                                    </div>
-                                                                                ))
-                                                                            ) : ""
-                                                                        }
-                                                                    </div>
-                                                                </div>
-
+                                                                {/*            <Select*/}
+                                                                {/*                value={typeInstitution}*/}
+                                                                {/*                onChange={onChangeTypeInstituion}*/}
+                                                                {/*                options={formatSelectOption(typeInstitutionData, 'name', false)}*/}
+                                                                {/*            />*/}
+                                                                {/*            {*/}
+                                                                {/*                error.institution_type_id.length ? (*/}
+                                                                {/*                    error.institution_type_id.map((error, index) => (*/}
+                                                                {/*                        <div key={index}*/}
+                                                                {/*                             className="invalid-feedback">*/}
+                                                                {/*                            {error}*/}
+                                                                {/*                        </div>*/}
+                                                                {/*                    ))*/}
+                                                                {/*                ) : ""*/}
+                                                                {/*            }*/}
+                                                                {/*        </div>*/}
+                                                                {/*    </div>*/}
+                                                                {/*) : ''*/}
+                                                                {/*}*/}
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Nom</label>
+                                                                           htmlFor="name">Nom <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
@@ -309,7 +309,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="Acronyme">Acronyme</label>
+                                                                           htmlFor="Acronyme">Acronyme <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
@@ -335,13 +335,13 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="value">Le Code Iso</label>
+                                                                           htmlFor="value">Code Iso <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="value"
                                                                             type="text"
                                                                             className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Ex:  0000-Satis"
+                                                                            placeholder="Ex: 0000-Satis"
                                                                             value={data.iso_code}
                                                                             onChange={(e) => onChangeIsoCode(e)}
                                                                         />
