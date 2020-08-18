@@ -34,7 +34,7 @@ const UnfoundedModal = (props) => {
                 setError(defaultError);
                 setData(defaultData);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href="/settings/claim-assign/to-staff"
+                window.location.href="/process/claim-assign/to-staff"
             })
             .catch(error => {
                 setStartRequest(false);
@@ -42,7 +42,7 @@ const UnfoundedModal = (props) => {
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
-    }
+    };
     return (
         <div>
             <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog"

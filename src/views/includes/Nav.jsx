@@ -284,19 +284,7 @@ const Nav = (props) => {
                                         </div>
                                     </div>
                                 </Link>
-                                <a href="custom/apps/user/profile-2.html" className="kt-notification__item">
-                                    <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-rocket-1 kt-font-danger"></i>
-                                    </div>
-                                    <div className="kt-notification__item-details">
-                                        <div className="kt-notification__item-title kt-font-bold">
-                                            My Activities
-                                        </div>
-                                        <div className="kt-notification__item-time">
-                                            Logs and notifications
-                                        </div>
-                                    </div>
-                                </a>
+
                                 <Link to={"/feedback-channels"} className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-hourglass kt-font-brand"></i>
@@ -310,19 +298,7 @@ const Nav = (props) => {
                                         </div>
                                     </div>
                                 </Link>
-                                <a href="custom/apps/user/profile-1/overview.html" className="kt-notification__item">
-                                    <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-cardiogram kt-font-warning"></i>
-                                    </div>
-                                    <div className="kt-notification__item-details">
-                                        <div className="kt-notification__item-title kt-font-bold">
-                                            Billing
-                                        </div>
-                                        <div className="kt-notification__item-time">
-                                            billing & statements <span className="kt-badge kt-badge--danger kt-badge--inline kt-badge--pill kt-badge--rounded">2 pending</span>
-                                        </div>
-                                    </div>
-                                </a>
+
                                 <div className="kt-notification__custom kt-space-between">
                                     <a href="/logout" onClick={ onClickLogoutLink } target="_blank" className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
                                     <a href="custom/user/login-v2.html" target="_blank" className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>

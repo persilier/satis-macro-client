@@ -55,7 +55,7 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
-                setError({...defaultError, ...error.response.data.error});
+                // setError({...defaultError, ...error.response.data.error});
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;

@@ -10,15 +10,22 @@ import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import {filterChannel, formatSelectOption, formatToTimeStamp} from "../../helpers/function";
+import {
+    filterChannel,
+    formatSelectOption,
+    formatToTime,
+    formatToTimeStamp,
+    formatToTimeStampUpdate
+} from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditErrorMessageConfig,
     toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
+import moment from "moment";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -134,7 +141,7 @@ const IncompleteClaimsEdit = props => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [isModified, setIsModified] = useState(false);
+    // const [isModified, setIsModified] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -161,7 +168,7 @@ const IncompleteClaimsEdit = props => {
                         description: response.data.claim.description,
                         amount_currency_slug: response.data.claim.amount_currency_slug,
                         amount_disputed: response.data.claim.amount_disputed,
-                        event_occured_at: response.data.claim.event_occured_at,
+                        event_occured_at: formatToTime(response.data.claim.event_occured_at),
                         is_revival: response.data.claim.is_revival,
                         file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : ""
                     };
@@ -371,9 +378,9 @@ const IncompleteClaimsEdit = props => {
         newData.file = Object.values(e.target.files);
         setData(newData);
     };
-    const onClickToEdit = (e) => {
-        setIsModified(true)
-    };
+    // const onClickToEdit = (e) => {
+    //     setIsModified(true)
+    // };
 
     const formatFormData = (newData) => {
         const formData = new FormData();
@@ -398,9 +405,10 @@ const IncompleteClaimsEdit = props => {
 
     const onSubmit = (e) => {
         const newData = {...data};
-        newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
         e.preventDefault();
         setStartRequest(true);
+        newData.event_occured_at = formatToTimeStampUpdate(data.event_occured_at);
+
         if (!newData.file.length)
             delete newData.file;
         if (!newData.response_channel_slug)
@@ -411,31 +419,15 @@ const IncompleteClaimsEdit = props => {
             delete newData.account_targeted_id;
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
-        console.log(formatFormData(newData), "DATA_UPDATE");
+
         axios.post(endPoint.update(`${id}`), formatFormData(newData))
             .then(async (response) => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                await setInstitution({});
-                await setClaimCategory({});
-                await setCurrency({});
-                await setRelationship({});
-                await setResponseChannel({});
-                await setReceptionChannel({});
-                await setClaimObject({});
-                await setClaimObjects([]);
-                await setAccounts([]);
-                await setAccount({});
-                await setUnits([]);
-                await setUnit({});
-                await setDisabledInput(false);
-                await setStartRequest(false);
-                await setError(defaultError);
-                await setData(defaultData);
             })
             .catch(async (error) => {
                 setStartRequest(false);
                 setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                ToastBottomEnd.fire(toastEditErrorMessageConfig);
             })
         ;
     };
@@ -589,7 +581,7 @@ const IncompleteClaimsEdit = props => {
                                                             </div>
                                                         </div>
 
-                                                        <div className="row">
+                                                        <div className="form-group row">
                                                             <div
                                                                 className={error.firstname.length ? "form-group col validated" : "form-group col"}>
                                                                 <label htmlFor="sexe">Votre sexe</label>
@@ -605,10 +597,34 @@ const IncompleteClaimsEdit = props => {
                                                                     </option>
                                                                     <option value="F">Féminin</option>
                                                                     <option value="M">Masculin</option>
+                                                                    <option value="M">Autres</option>
                                                                 </select>
                                                                 {
                                                                     error.sexe.length ? (
                                                                         error.sexe.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : ""
+                                                                }
+                                                            </div>
+                                                            <div
+                                                                className={error.ville.length ? "col validated" : "col"}>
+                                                                <label htmlFor="ville">Votre ville</label>
+                                                                <input
+                                                                    disabled={!disabledInput}
+                                                                    id="ville"
+                                                                    type="text"
+                                                                    className={error.ville.length ? "form-control is-invalid" : "form-control"}
+                                                                    placeholder="Veillez entrer votre ville"
+                                                                    value={data.ville}
+                                                                    onChange={(e) => onChangeVille(e)}
+                                                                />
+                                                                {
+                                                                    error.ville.length ? (
+                                                                        error.ville.map((error, index) => (
                                                                             <div key={index}
                                                                                  className="invalid-feedback">
                                                                                 {error}
@@ -656,29 +672,6 @@ const IncompleteClaimsEdit = props => {
                                                                 }
                                                             </div>
 
-                                                            <div
-                                                                className={error.ville.length ? "col validated" : "col"}>
-                                                                <label htmlFor="ville">Votre ville</label>
-                                                                <input
-                                                                    disabled={!disabledInput}
-                                                                    id="ville"
-                                                                    type="text"
-                                                                    className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer votre ville"
-                                                                    value={data.ville}
-                                                                    onChange={(e) => onChangeVille(e)}
-                                                                />
-                                                                {
-                                                                    error.ville.length ? (
-                                                                        error.ville.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : ""
-                                                                }
-                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -834,6 +827,7 @@ const IncompleteClaimsEdit = props => {
                                                         <label htmlFor="amount_claim">Montant réclamé</label>
                                                         <input
                                                             type={"number"}
+                                                            min="0"
                                                             id="amount_claim"
                                                             className={error.amount_disputed.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer le Montant réclamé"
@@ -884,6 +878,7 @@ const IncompleteClaimsEdit = props => {
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la date de l'évènement"
                                                             value={data.event_occured_at}
+                                                            // value={formatToTime(data.event_occured_at)}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
                                                         {

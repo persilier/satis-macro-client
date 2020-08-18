@@ -184,6 +184,19 @@ export const formatToTimeStamp = dateTime => {
     else
         return "";
 };
+export const formatToTimeStampUpdate = dateTime => {
+    if (dateTime.length)
+        return dateTime.split("T")[0] + " " + dateTime.split("T")[1].substring(0, 5);
+    else
+        return "";
+};
+
+export const formatToTime = dateTime => {
+    if (dateTime.length)
+        return dateTime.split("T")[0] + "T" + dateTime.split("T")[1].split(".")[0];
+    else
+        return "";
+};
 
 export const seeParameters = (userPermissions) => {
     return (verifyPermission(userPermissions, "update-sms-parameters")

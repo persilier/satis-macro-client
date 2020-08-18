@@ -717,7 +717,7 @@ const ClaimAssignDetail = (props) => {
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Institution concèrné: <span
+                                                                    Institution concernée: <span
                                                                     className="mx-2">{claim.institution_targeted.name} 1</span><br/>
                                                                     Unité concèrné: <span
                                                                     className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "Pas d'institution ciblé"}</span><br/>
@@ -935,8 +935,10 @@ const ClaimAssignDetail = (props) => {
                                                                         <div className="kt-wizard-v2__review-content">
                                                                             Nom de l'unité: <span
                                                                             className="mx-2">{claim.completed_by.unit.name["fr"]}</span><br/>
-                                                                            Description de l'unité: <span
-                                                                            className="mx-2">{claim.completed_by.unit.description["fr"]}</span><br/>
+                                                                            Solution Proposée:
+
+                                                                            {/*Description de l'unité: <span*/}
+                                                                            {/*className="mx-2">{claim.completed_by.unit.description["fr"]}</span><br/>*/}
                                                                         </div>
                                                                     )
                                                                 }
@@ -948,10 +950,10 @@ const ClaimAssignDetail = (props) => {
                                                                 {
                                                                     !claim ? "" : (
                                                                         <div className="kt-wizard-v2__review-content">
-                                                                            <strong>Description:</strong> <span
-                                                                            className="mx-2">{claim.active_treatment.solution_communicated}</span><br/>
-                                                                            <br/>
-
+                                                                            {/*<strong>Description:</strong>*/}
+                                                                            <span className="mx-2">
+                                                                                {claim.active_treatment.solution_communicated}
+                                                                            </span><br/>
                                                                         </div>
                                                                     )
                                                                 }
@@ -1199,7 +1201,7 @@ const ClaimAssignDetail = (props) => {
                                                                                     <button
                                                                                         className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                         type="button" disabled>
-                                                                                        Loading...
+                                                                                        Chargement...
                                                                                     </button>
                                                                                 )
                                                                             }
@@ -1237,16 +1239,14 @@ const ClaimAssignDetail = (props) => {
                                                                                     <button
                                                                                         className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                         type="button" disabled>
-                                                                                        Loading...
+                                                                                        Chargement...
                                                                                     </button>
                                                                                 )
                                                                             }
-
                                                                         </div>
                                                                     </div>
                                                                     : ""
                                                             }
-
                                                         </div>
                                                     </div>
                                                 </div>

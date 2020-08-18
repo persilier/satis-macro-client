@@ -90,7 +90,7 @@ export const toastConnectSuccessMessageConfig = {
 };
 export const toastConnectErrorMessageConfig = {
     background: "#3c3e40",
-    icon: 'success',
+    icon: 'error',
     title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Connexion échouée</strong>"
 };
 

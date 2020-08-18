@@ -19,6 +19,7 @@ import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
 
 
+
 const Chats = (props) => {
 
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))
@@ -351,8 +352,10 @@ const Chats = (props) => {
                                                             Messagerie
                                                             <Link
                                                                 to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}>
-                                                                <i className="kt-nav__link-icon flaticon-information"></i>
+                                                                <i className="kt-nav__link-icon flaticon-eye"></i>
                                                             </Link>
+
+
                                                         </li>
                                                         <li className="kt-nav__separator"></li>
                                                         <li className="kt-nav__item">

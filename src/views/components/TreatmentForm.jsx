@@ -57,8 +57,9 @@ const TreatmentForm = (props) => {
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
+                setData(defaultData);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href="/settings/claim-assign/to-staff";
+                window.location.href="/process/claim-assign/to-staff";
             })
             .catch(error => {
                 setStartRequest(false);
@@ -76,6 +77,7 @@ const TreatmentForm = (props) => {
                     <input
                         id="amount"
                         type="number"
+                        min="0"
                         className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
                         placeholder="Veillez entrer le montant à retourner"
                         value={data.amount_returned}
@@ -185,7 +187,7 @@ const TreatmentForm = (props) => {
                     <button
                         className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                         type="button" disabled>
-                        Loading...
+                        Chargement...
                     </button>
                 )
             }

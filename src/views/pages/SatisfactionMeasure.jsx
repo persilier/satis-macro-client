@@ -223,7 +223,7 @@ const SatisfactionMeasure = (props) => {
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Solution
+                                                        aria-label="Ship City: activate to sort column ascending">Solutions proposées
                                                     </th>
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"

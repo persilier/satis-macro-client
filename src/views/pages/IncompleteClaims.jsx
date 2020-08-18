@@ -66,7 +66,7 @@ const IncompleteClaims = (props) => {
         endPoint = endPointConfig[props.plan];
 
     useEffect(() => {
-        console.log("hello word");
+
         axios.get(endPoint.list)
             .then(response => {
                 console.log(response.data, 'Incomplete_Data');
