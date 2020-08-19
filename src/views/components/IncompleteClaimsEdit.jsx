@@ -501,7 +501,7 @@ const IncompleteClaimsEdit = props => {
                                                 <div
                                                     className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                           htmlFor="institution">Institution concernée</label>
+                                                           htmlFor="institution">Institution concernée <span style={{color:"red"}}>*</span></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             classNamePrefix="select"
@@ -529,7 +529,7 @@ const IncompleteClaimsEdit = props => {
                                             verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ? (
                                                 <div className="kt-section kt-section--first">
                                                     <div className="kt-section__body">
-                                                        <h3 className="kt-section__title kt-section__title-lg">Informations
+                                                        <h3 className="kt-section__title kt-section__title-lg">
                                                             Client:</h3>
 
                                                         <div className="form-group row">
@@ -659,7 +659,7 @@ const IncompleteClaimsEdit = props => {
 
                                                             <div
                                                                 className={error.email.length ? "col validated" : "col"}>
-                                                                <label htmlFor="email">Email(s)</label>
+                                                                <label htmlFor="email">Email(s) <span style={{color:"red"}}>*</span></label>
                                                                 <TagsInput disabled={!disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                                 {
                                                                     error.email.length ? (
@@ -675,17 +675,15 @@ const IncompleteClaimsEdit = props => {
 
                                                         </div>
                                                     </div>
-
-                                                    <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                                 </div>
                                             ) : ""
                                         }
 
+                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations
-                                                    Réclamation:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg"> Réclamation:</h3>
                                                 {
                                                     !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ?
                                                         (
@@ -743,7 +741,7 @@ const IncompleteClaimsEdit = props => {
                                                 <div className="form-group row">
                                                     <div
                                                         className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception</label>
+                                                        <label htmlFor="receptionChannel">Canal de réception <span style={{color:"red"}}>*</span></label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
@@ -788,11 +786,11 @@ const IncompleteClaimsEdit = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">Catégorie de plainte</label>
+                                                        <label htmlFor="claimCtegory">Catégorie de réclamation</label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
-                                                            placeholder={"Veillez selectioner la catégorie de plainte"}
+                                                            placeholder={"Veillez selectioner la catégorie de réclamation"}
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
                                                             options={claimCategories}
@@ -801,11 +799,11 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de plainte</label>
+                                                        <label htmlFor="claimObject">Objet de réclamation <span style={{color:"red"}}>*</span></label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
-                                                            placeholder={"Veillez selectioner l'objet de plainte"}
+                                                            placeholder={"Veillez selectioner l'objet de réclamation"}
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
                                                             options={claimObjects}
@@ -879,7 +877,6 @@ const IncompleteClaimsEdit = props => {
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la date de l'évènement"
                                                             value={data.event_occured_at}
-                                                            // value={formatToTime(data.event_occured_at)}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
                                                         {
@@ -986,13 +983,12 @@ const IncompleteClaimsEdit = props => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div className="m-3" style={{borderTop: "1px solid #A0AEC0"}}/>
                                         </div>
 
-                                        <div className="kt-section kt-section--first">
+                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                        <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <span style={{color:"red"}}>*</span></h3>
 
                                                 <div className="form-group row">
                                                     <label className="col-3 col-form-label">Est-ce une relance ?</label>
