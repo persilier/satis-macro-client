@@ -233,7 +233,7 @@ const CategoryClient = (props) => {
                         <HeaderTablePage
                             addPermission={"store-category-client"}
                             title={"Catégorie Client"}
-                            addText={"Ajouter une Catégorie Client"}
+                            addText={"Ajouter"}
                             addLink={"/settings/clients/category/add"}
                         />
                         {

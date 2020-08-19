@@ -289,7 +289,7 @@ const Clients = (props) => {
                                     <HeaderTablePage
                                         addPermission={"store-client-from-any-institution"}
                                         title={"Client"}
-                                        addText={"Ajouter un Compte Client"}
+                                        addText={"Ajouter"}
                                         addLink={"/settings/any/clients/add"}
                                     /> : ""
                             )
