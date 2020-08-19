@@ -5,7 +5,7 @@ const FormInformation = (props) => {
         <div className="form-group form-group-last">
             <div className="alert alert-secondary" role="alert">
                 <div className="alert-icon">
-                    <i className="flaticon-warning kt-font-brand"/>
+                    <i className="flaticon-information kt-font-brand"/>
                 </div>
                 <div className="alert-text">
                     {

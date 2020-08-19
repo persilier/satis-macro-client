@@ -581,7 +581,11 @@ const ClaimAdd = props => {
                     </div>
                 </div>
 
+
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <FormInformation
+                        information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour enregistrer les réclamations de vos clients."}
+                    />
                     <div className="row">
                         <div className="col">
                             <div className="kt-portlet">
@@ -595,9 +599,6 @@ const ClaimAdd = props => {
 
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
-                                        <FormInformation
-                                            information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour enregistrer les réclamations de vos clients."}
-                                        />
 
                                         {
                                             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
@@ -627,7 +628,7 @@ const ClaimAdd = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg"> Client:</h3>
 
                                                 {
                                                     !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
@@ -656,7 +657,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Votre nom de famille</label>
+                                                        <label htmlFor="lastname">Nom <span style={{color:"red"}}>*</span></label>
                                                         <input
                                                             disabled={disabledInput}
                                                             id="lastname"
@@ -678,7 +679,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Votre prénom</label>
+                                                        <label htmlFor="firstname">Prénom (s) <span style={{color:"red"}}>*</span></label>
                                                         <input
                                                             disabled={disabledInput}
                                                             id="firstname"
@@ -700,9 +701,9 @@ const ClaimAdd = props => {
                                                     </div>
                                                 </div>
 
-                                                <div className="row">
+                                                <div className="form-group row">
                                                     <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Votre sexe</label>
+                                                        <label htmlFor="sexe">Sexe <span style={{color:"red"}}>*</span></label>
                                                         <select
                                                             disabled={disabledInput}
                                                             id="sexe"
@@ -713,6 +714,7 @@ const ClaimAdd = props => {
                                                             <option value="" disabled={true}>Veillez choisir le Sexe</option>
                                                             <option value="F">Féminin</option>
                                                             <option value="M">Masculin</option>
+                                                            <option value="M">Autres</option>
                                                         </select>
                                                         {
                                                             error.sexe.length ? (
@@ -724,39 +726,8 @@ const ClaimAdd = props => {
                                                             ) : ""
                                                         }
                                                     </div>
-                                                </div>
-
-                                                <div className="form-group row">
-                                                    <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                        <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
-                                                        {
-                                                            error.telephone.length ? (
-                                                                error.telephone.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-
-                                                    <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email">Votre Email(s)</label>
-                                                        <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
-                                                        {
-                                                            error.email.length ? (
-                                                                error.email.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-
                                                     <div className={error.ville.length ? "col validated" : "col"}>
-                                                        <label htmlFor="ville">Votre ville</label>
+                                                        <label htmlFor="ville">Ville</label>
                                                         <input
                                                             disabled={disabledInput}
                                                             id="ville"
@@ -777,6 +748,38 @@ const ClaimAdd = props => {
                                                         }
                                                     </div>
                                                 </div>
+
+                                                <div className="form-group row">
+                                                    <div className={error.telephone.length ? "col validated" : "col"}>
+                                                        <label htmlFor="telephone">Téléphone(s) <span style={{color:"red"}}>*</span></label>
+                                                        <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
+                                                        {
+                                                            error.telephone.length ? (
+                                                                error.telephone.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+
+                                                    <div className={error.email.length ? "col validated" : "col"}>
+                                                        <label htmlFor="email"> Email(s)</label>
+                                                        <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
+                                                        {
+                                                            error.email.length ? (
+                                                                error.email.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+
+
+                                                </div>
                                             </div>
                                         </div>
 
@@ -784,16 +787,16 @@ const ClaimAdd = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg"> Réclamation:</h3>
                                                 {
                                                     !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                         <div className="form-group row">
                                                             <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="unit">Unité concèrner</label>
+                                                                <label htmlFor="unit">Unité concernée</label>
                                                                 <Select
                                                                     value={unit}
                                                                     isClearable
-                                                                    placeholder={"Veuillez sélectionner l'unité concèrner"}
+                                                                    placeholder={"Veuillez sélectionner l'unité concernée"}
                                                                     onChange={onChangeUnit}
                                                                     options={units}
                                                                 />
@@ -809,11 +812,11 @@ const ClaimAdd = props => {
                                                             </div>
 
                                                             <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="account">Numéro de compte concèrner</label>
+                                                                <label htmlFor="account">Numéro de compte concerné</label>
                                                                 <Select
                                                                     isClearable
                                                                     value={account}
-                                                                    placeholder={"Veuillez sélectionner le compte concèrner"}
+                                                                    placeholder={"Veuillez sélectionner le compte concerné"}
                                                                     onChange={onChangeAccount}
                                                                     options={accounts}
                                                                 />
@@ -833,7 +836,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception</label>
+                                                        <label htmlFor="receptionChannel">Canal de réception <span style={{color:"red"}}>*</span></label>
                                                         <Select
                                                             isClearable
                                                             value={receptionChannel}
@@ -875,7 +878,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">Catégorie de plainte</label>
+                                                        <label htmlFor="claimCtegory">Catégorie de plainte </label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectionner la catégorie de plainte"}
@@ -886,7 +889,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de plainte</label>
+                                                        <label htmlFor="claimObject">Objet de plainte <span style={{color:"red"}}>*</span></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectionner l'objet de plainte"}
@@ -912,6 +915,7 @@ const ClaimAdd = props => {
                                                         <input
                                                             type={"number"}
                                                             id="amount_claim"
+                                                            min="0"
                                                             className={error.amount_disputed.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer le Montant réclamé"
                                                             value={data.amount_disputed}
@@ -951,7 +955,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évernement</label>
+                                                        <label htmlFor="date">Date de l'évernement <span style={{color:"red"}}>*</span></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
@@ -1018,7 +1022,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description</label>
+                                                        <label htmlFor="description">Description <span style={{color:"red"}}>*</span></label>
                                                         <textarea
                                                             id="description"
                                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
