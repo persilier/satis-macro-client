@@ -140,7 +140,6 @@ const ClaimAdd = props => {
         async function fetchData() {
             await axios.get(endPoint.create)
                 .then(response => {
-                    console.log(response.data, "Data")
                     if (verifyPermission(props.userPermissions, "store-claim-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
                     if (verifyPermission(props.userPermissions, "store-claim-against-any-institution") || verifyPermission(props.userPermissions, "store-claim-without-client"))
