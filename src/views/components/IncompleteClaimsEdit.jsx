@@ -690,7 +690,7 @@ const IncompleteClaimsEdit = props => {
                                                             <div className="form-group row">
                                                                 <div
                                                                     className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">Unité concèrner</label>
+                                                                    <label htmlFor="unit">Unité concernée</label>
                                                                     <Select
                                                                         classNamePrefix="select"
                                                                         className="basic-single"
@@ -713,7 +713,7 @@ const IncompleteClaimsEdit = props => {
                                                                 <div
                                                                     className={error.account_targeted_id.length ? "col validated" : "col"}>
                                                                     <label htmlFor="account">Numéro de compte
-                                                                        concèrner</label>
+                                                                        concerné</label>
                                                                     <Select
                                                                         classNamePrefix="select"
                                                                         className="basic-single"
@@ -870,7 +870,7 @@ const IncompleteClaimsEdit = props => {
                                                 <div className="form-group row">
                                                     <div
                                                         className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évènement </label>
+                                                        <label htmlFor="date">Date de l'évènement  <span style={{color:"red"}}>*</span> </label>
                                                         <input
                                                             id="date"
                                                             type={"datetime-local"}
