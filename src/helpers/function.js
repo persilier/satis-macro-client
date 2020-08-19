@@ -156,6 +156,7 @@ export const filterDiscussionBySearchValue = () => {
             }
         }
     }
+
     myFunction();
 };
 
@@ -175,7 +176,11 @@ export const filterChannel = (channels, typeFilter) => {
 };
 
 export const percentageData = (data, total) => {
-    return Math.round((data * 100) / total)+"%"
+
+    if (total !== 0)
+        Math.round((data * 100) / total)+"%"
+    else return 0+"%"
+
 };
 
 export const formatToTimeStamp = dateTime => {
@@ -292,12 +297,12 @@ export const validatedClaimRule = (id) => {
 
 export const formatDate = (date) => {
     date = date.split("/");
-    date = date[2]+"-"+date[1]+"-"+date[0];
+    date = date[2] + "-" + date[1] + "-" + date[0];
     return new Date(date);
 };
 
 export const debug = (variable, label = null) => {
-    console.log(`${label ? label+":" : "debug:"}`, variable);
+    console.log(`${label ? label + ":" : "debug:"}`, variable);
 };
 
 /*
