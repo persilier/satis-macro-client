@@ -475,6 +475,10 @@ const IncompleteClaimsEdit = props => {
                         </div>
                     </div>
                 </div>
+                
+                <FormInformation
+                    information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
+                />
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="row">
@@ -487,10 +491,6 @@ const IncompleteClaimsEdit = props => {
                                         </h3>
                                     </div>
                                 </div>
-
-                                <FormInformation
-                                    information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
-                                />
 
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
