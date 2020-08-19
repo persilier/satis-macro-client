@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import Select from "react-select";
-import {formatSelectOption, loadCss, loadScript} from "../../helpers/function";
+import {formatSelectOption, formatToTimeStampUpdate, loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -142,23 +142,16 @@ const ClaimAssignDetail = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Processus
+                                Traitement
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    Traitement
-                                </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim-assign" className="kt-subheader__breadcrumbs-link">
-                                        Plaintes à affectées
+                                        Réclamation à Transférer
                                     </Link>
                                 </div>
                             </div>
@@ -170,7 +163,7 @@ const ClaimAssignDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail plainte
+                                    Détail
                                 </a>
                             </div>
                         </div>
@@ -193,10 +186,10 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Information client
+                                                            Client
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Voir les détails du compte client
+                                                            Acceder aux détails du client
                                                         </div>
                                                     </div>
                                                 </div>
@@ -209,10 +202,10 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Information Plainte
+                                                            Réclamation
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Voir les détails de la plainte
+                                                            Acceder aux détails de la réclamation
                                                         </div>
                                                     </div>
                                                 </div>
@@ -225,7 +218,7 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Pièces jointe plainte
+                                                            Pièces jointe
                                                             {
                                                                 !claim ? "" : (
                                                                     <span
@@ -234,7 +227,7 @@ const ClaimAssignDetail = (props) => {
                                                             }
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Voir les pièces jointes de la plainte
+                                                            Acceder à la liste des pièces jointes
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,7 +240,7 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Les doublons
+                                                            Doublons
                                                             {
                                                                 !claim ? "" : (
                                                                     <span
@@ -256,7 +249,7 @@ const ClaimAssignDetail = (props) => {
                                                             }
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Voir les doublons
+                                                            Acceder à la liste des doublons
                                                         </div>
                                                     </div>
                                                 </div>
@@ -269,10 +262,10 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Transfert de la plainte
+                                                            Transfert
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Transferez la plainte au destinateur
+                                                            Transferer la réclamation
                                                         </div>
                                                     </div>
                                                 </div>
@@ -286,9 +279,7 @@ const ClaimAssignDetail = (props) => {
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content"
                                              data-ktwizard-state="current">
-                                            <div className="kt-heading kt-heading--md">Passez en revue les détails du
-                                                client
-                                            </div>
+                                            <div className="kt-heading kt-heading--md">Détails du client</div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-item">
@@ -366,19 +357,19 @@ const ClaimAssignDetail = (props) => {
                                         </div>
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Information sur la plainte</div>
+                                            <div className="kt-heading kt-heading--md"><strong>Détails de la réclamation</strong></div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                            Canal
+                                                           <h5><strong>Canaux</strong></h5>
                                                         </div>
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Canal de réception: <span
+                                                                    <strong>Canal de réception:</strong> <span
                                                                     className="mx-2">{claim.request_channel ? claim.request_channel.name["fr"] : "Pas de canal de réception"}</span><br/>
-                                                                    Canal de réponse: <span
+                                                                    <strong>Canal de réponse préférentiel:</strong> <span
                                                                     className="mx-2">{claim.response_channel ? claim.response_channel.name["fr"] : "Pas de canal de réponse"}</span><br/>
                                                                 </div>
                                                             )
@@ -386,14 +377,14 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                            Cible
+                                                            <h5><strong>Cible</strong></h5>
                                                         </div>
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Institution concèrné: <span
+                                                                    <strong>Institution</strong>: <span
                                                                     className="mx-2">{claim.institution_targeted.name} 1</span><br/>
-                                                                    Unité concèrné: <span
+                                                                    <strong>Unité</strong>: <span
                                                                     className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "Pas d'institution ciblé"}</span><br/>
                                                                 </div>
                                                             )
@@ -401,22 +392,22 @@ const ClaimAssignDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                            Spécification plainte
+                                                            <h5><strong>Spécifications</strong></h5>
                                                         </div>
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Objet de plainte: <span
+                                                                    <strong>Objet</strong>: <span
                                                                     className="mx-2">{claim.claim_object.name["fr"]}</span><br/>
                                                                     <br/>
-                                                                    Numéro de compte concèrné: <span
+                                                                    <strong>Numéro de compte </strong>: <span
                                                                     className="mx-2">{claim.account_targeted ? claim.account_targeted.number : "Pas de compte cible"}</span><br/>
                                                                     <br/>
-                                                                    Montant réclamé: <span
+                                                                    <strong>Montant réclamé</strong>: <span
                                                                     className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "Pas de montant"}</span><br/>
                                                                     <br/>
-                                                                    Date de l'évernement: <span
-                                                                    className="mx-2">{claim.created_at}</span><br/>
+                                                                    <strong>Date de l'évernement</strong>: <span
+                                                                    className="mx-2">{formatToTimeStampUpdate(claim.created_at)}</span><br/>
                                                                     <br/>
                                                                     <strong>Description:</strong> <span
                                                                     className="mx-2">{claim.description}</span><br/>

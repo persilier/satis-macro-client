@@ -345,7 +345,7 @@ const Nav = (props) => {
                                                         Mes Disccussions
                                                     </div>
                                                     <div className="kt-notification__item-time">
-                                                        Entrez dans mes discussions
+                                                        Acceder à la liste
                                                     </div>
                                                 </div>
                                             </Link>
