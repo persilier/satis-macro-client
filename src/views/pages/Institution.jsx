@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss, loadScript} from "../../helpers/function";
+import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -14,7 +14,6 @@ import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 
@@ -173,7 +172,7 @@ const Institution = (props) => {
                             <Link to={`/settings/institutions/${institution.id}/message-apis`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                   title="Parametrer message API">
-                                <i className="la la-eye"/>
+                                <i className="la flaticon-multimedia-2"/>
                             </Link>
                         ) : null
                     }
@@ -234,14 +233,11 @@ const Institution = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Liste des institutions"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-any-institution"}
                             title={"Institution"}
-                            addText={"Ajouter une Institution"}
+                            addText={"Ajouter"}
                             addLink={"/settings/institution/add"}
                         />
 

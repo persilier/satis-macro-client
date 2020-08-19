@@ -14,6 +14,8 @@ import {
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import {debug} from "../../helpers/function";
+import InputRequire from "../components/InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -36,6 +38,8 @@ const ConfigNotification = (props) => {
         "notifications.communicate-the-solution-unfounded": [],
         "notifications.add-contributor-to-discussion": [],
         "notifications.post-discussion-message": [],
+        "notifications.reminder-before-deadline": [],
+        "notifications.reminder-after-deadline": [],
     });
     const [load, setLoad] = useState(true);
     const [startUpdate, setStartUpdate] = useState(false);
@@ -46,7 +50,6 @@ const ConfigNotification = (props) => {
                 .then(response => {
                     setData(response.data);
                     setLoad(false);
-                    console.log("response:", response.data)
                 })
                 .catch(error => {
                     setLoad(false);
@@ -55,7 +58,7 @@ const ConfigNotification = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine]);
 
     const handleTextChange = (e, index) => {
         const newData = [...data];
@@ -103,7 +106,7 @@ const ConfigNotification = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Notification
                                 </a>
                             </div>
@@ -112,8 +115,6 @@ const ConfigNotification = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Configuration de la notification"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             title={"Configuration notification"}
@@ -148,7 +149,7 @@ const ConfigNotification = (props) => {
                                             {
                                                 data.map((el, index) => (
                                                     <div key={index} className={error[`notifications.${el.event}`].length ? "col-6 form-group validated" : "col-6 form-group"}>
-                                                        <label htmlFor={el.event}>{notificationConfig[el.event]}</label>
+                                                        <label htmlFor={el.event}>{notificationConfig[el.event]} <InputRequire/></label>
                                                         <textarea
                                                             id={el.event}
                                                             cols="30"
@@ -174,7 +175,7 @@ const ConfigNotification = (props) => {
                                             <div className="col-12 form-group text-center">
                                                 {
                                                     !startUpdate ? (
-                                                        <button onClick={updateConfig} className="btn btn-primary">Enregistrer</button>
+                                                        <button onClick={updateConfig} className="btn btn-primary">Modifier</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...

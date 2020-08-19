@@ -14,7 +14,6 @@ import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastEditErrorMessageConfig,
 } from "../../config/toastConfig";
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
 
@@ -158,7 +157,7 @@ const ClaimAdd = props => {
                 });
         }
         fetchData();
-    }, []);
+    }, [endPoint.create, props.userPermissions]);
 
     const onChangeFirstName = (e) => {
         const newData = {...data};

@@ -17,14 +17,16 @@ import {
 import {ToastBottomEnd} from "../Toast";
 import {formatUnits} from "../../../helpers/unit";
 import './react-tagsinput.css';
-import {formatSelectOption} from "../../../helpers/function";
+import {debug, formatSelectOption} from "../../../helpers/function";
 import {formatInstitutions} from "../../../helpers/institution";
 import appConfig from "../../../config/appConfig";
 import ConfirmSaveForm from "./ConfirmSaveForm";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {AUTH_TOKEN} from "../../../constants/token";
-import FormInformation from "../FormInformation";
+import InputRequire from "../InputRequire";
+import {confirmLeadConfig} from "../../../config/confirmConfig";
+import {ConfirmLead} from "../ConfirmationAlert";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -78,6 +80,8 @@ const StaffForm = (props) => {
     } else
         endPoint = endPointConfig[props.plan];
 
+    const optionOne = 1;
+    const optionTwo = 0;
     const [units, setUnits] = useState([]);
     const [positions, setPositions] = useState([]);
     const [institutions, setInstitutions] = useState([]);
@@ -96,9 +100,9 @@ const StaffForm = (props) => {
         unit_id: "",
         institution_id: "",
         position_id: "",
+        is_lead: 0,
     };
     const defaultError = {
-        name: [],
         firstname: [],
         lastname: [],
         sexe: [],
@@ -108,6 +112,7 @@ const StaffForm = (props) => {
         unit_id: [],
         institution_id: [],
         position_id: [],
+        is_lead: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -165,6 +170,17 @@ const StaffForm = (props) => {
         }
     }, [endPoint, id, props.userPermissions]);
 
+    const formatUnitSelectOption = (options, labelKey, translate, valueKey = "id") => {
+        const newOptions = [];
+        for (let i = 0; i < options.length; i++) {
+            if (translate)
+                newOptions.push({value: (options[i])[valueKey], label: ((options[i])[labelKey])[translate], lead: (options[i])["lead"]});
+            else
+                newOptions.push({value: (options[i])[valueKey], label: (options[i])[labelKey], lead: (options[i])["lead"]});
+        }
+        return newOptions;
+    };
+
     const onChangeFirstName = (e) => {
         const newData = {...data};
         newData.firstname = e.target.value;
@@ -203,37 +219,71 @@ const StaffForm = (props) => {
 
     const onChangeUnit = (selected) => {
         const newData = {...data};
-        newData.unit_id = selected.value;
+        if (selected) {
+            newData.is_lead = 0;
+            setData(newData);
+        }
+        newData.unit_id = selected ? selected.value : null;
+        if (selected === null)
+            newData.is_lead = 0;
         setUnit(selected);
         setData(newData);
     };
 
     const onChangePosition = (selected) => {
         const newData = {...data};
-        newData.position_id = selected.value;
+        newData.position_id = selected ? selected.value : null;
         setPosition(selected);
         setData(newData);
     };
 
     const onChangeInstitution = (selected) => {
         const newData = {...data};
-        newData.institution_id = selected.value;
+        newData.institution_id = selected ? selected.value : null;
         setInstitution(selected);
 
-        if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit')) {
-            axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/units`)
-                .then(response => {
-                    newData.unit_id = "";
-                    setUnit({});
-                    setUnits(formatUnits(response.data.units));
-                })
-                .catch(errorRequest => {
-                    console.log(errorRequest.response.data);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
-                })
-            ;
+        if (selected) {
+            if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit')) {
+                axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/units`)
+                    .then(response => {
+                        newData.unit_id = "";
+                        setUnit(null);
+                        setUnits(formatUnits(response.data.units));
+                    })
+                    .catch(errorRequest => {
+                        console.log(errorRequest.response.data);
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
+                    })
+                ;
+            }
         }
+
         setData(newData);
+    };
+
+    const changeOption = (value) => {
+        const newData = {...data};
+        newData.is_lead = value;
+        setData(newData);
+    };
+
+    const handleOptionChange = (e) => {
+        const value = parseInt(e.target.value);
+        if (parseInt(e.target.value) === 1) {
+            if (!!Object.keys(unit.lead).length) {
+                ConfirmLead.fire(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`))
+                    .then(result => {
+                        if (result.value) {
+                            changeOption(value);
+                        }
+                    })
+                ;
+            } else {
+                changeOption(parseInt(e.target.value));
+            }
+        } else {
+            changeOption(parseInt(e.target.value));
+        }
     };
 
     const onSubmit = (e) => {
@@ -268,24 +318,23 @@ const StaffForm = (props) => {
             axios.post(endPoint.store, newData)
                 .then(response => {
                     setStartRequest(false);
-                    setInstitution({});
-                    setUnit({});
-                    setPosition({});
+                    setInstitution(null);
+                    setUnit(null);
+                    setPosition(null);
                     setError(defaultError);
                     setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(async (errorRequest) => {
-                    console.log(errorRequest.response.data);
                     if (errorRequest.response.data.error.identite)
                     {
                         // Existing entity
                         console.log("Found data");
                         await setFoundData(errorRequest.response.data.error);
                         await document.getElementById("confirmSaveForm").click();
-                        await setInstitution({});
-                        await setUnit({});
-                        await setPosition({});
+                        await setInstitution(null);
+                        await setUnit(null);
+                        await setPosition(null);
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
@@ -297,6 +346,7 @@ const StaffForm = (props) => {
                         );
                     } else {
                         // Validation errors
+                        debug({...defaultError, ...errorRequest.response.data.error}, "error");
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
@@ -349,21 +399,17 @@ const StaffForm = (props) => {
 
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
-                                        <FormInformation
-                                            information={id ? "Formulaire de modification d'un agent" : "Formulaire d'ajout d'un agent"}
-                                        />
-
                                         <div className="kt-section kt-section--first">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations personnelles:</h3>
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Votre nom de famille</label>
+                                                        <label htmlFor="lastname">Nom <InputRequire/></label>
                                                         <input
                                                             id="lastname"
                                                             type="text"
                                                             className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le nom de famille"
+                                                            placeholder="Veillez entrer le nom"
                                                             value={data.lastname}
                                                             onChange={(e) => onChangeLastName(e)}
                                                         />
@@ -374,12 +420,12 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Votre prénom</label>
+                                                        <label htmlFor="firstname">Prénom <InputRequire/></label>
                                                         <input
                                                             id="firstname"
                                                             type="text"
@@ -395,14 +441,14 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
 
                                                 <div className="row">
                                                     <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Votre sexe</label>
+                                                        <label htmlFor="sexe">Sexe <InputRequire/></label>
                                                         <select
                                                             id="sexe"
                                                             className={error.sexe.length ? "form-control is-invalid" : "form-control"}
@@ -420,14 +466,14 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Votre Téléphone(s)</label>
+                                                        <label htmlFor="telephone">Téléphone(s) <InputRequire/></label>
                                                         <TagsInput value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (
@@ -436,12 +482,12 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email">Votre Email(s)</label>
+                                                        <label htmlFor="email">Email(s) <InputRequire/></label>
                                                         <TagsInput value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
                                                             error.email.length ? (
@@ -450,12 +496,12 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
                                                     <div className={error.ville.length ? "col validated" : "col"}>
-                                                        <label htmlFor="ville">Votre ville</label>
+                                                        <label htmlFor="ville">Ville <InputRequire/></label>
                                                         <input
                                                             id="ville"
                                                             type="text"
@@ -471,7 +517,7 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -481,12 +527,13 @@ const StaffForm = (props) => {
                                         <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations professionnelles:</h3>
-                                                <div className={"form-group"}>
-                                                    <div className={"form-group"}>
-                                                        <label htmlFor="position">Position</label>
+                                                <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
+                                                    <div className="col">
+                                                        <label htmlFor="position">Poste <InputRequire/></label>
                                                         <Select
+                                                            isClearable
                                                             value={position}
-                                                            placeholder={"Veillez selectionner la position"}
+                                                            placeholder={"Veillez selectionner le poste"}
                                                             onChange={onChangePosition}
                                                             options={formatSelectOption(positions, "name", "fr")}
                                                         />
@@ -497,19 +544,18 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
-                                                </div>
 
-                                                <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
                                                     {
                                                         verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
                                                             <div className="col">
-                                                                <label htmlFor="institution">Institution</label>
+                                                                <label htmlFor="institution">Institution <InputRequire/></label>
                                                                 <Select
+                                                                    isClearable
                                                                     value={institution}
-                                                                    placeholder={"Veillez selectionner"}
+                                                                    placeholder={"Veillez selectionner l'institution"}
                                                                     onChange={onChangeInstitution}
                                                                     options={formatSelectOption(formatInstitutions(institutions), "name", false)}
                                                                 />
@@ -520,19 +566,22 @@ const StaffForm = (props) => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
-                                                        ) : ""
+                                                        ) : null
                                                     }
+                                                </div>
 
-                                                    <div className="col">
-                                                        <label htmlFor="unit">Unité</label>
+                                                <div className="form-group row">
+                                                    <div  className={error.unit_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="unit">Unité <InputRequire/></label>
                                                         <Select
+                                                            isClearable
                                                             value={unit}
                                                             placeholder={"Veillez selectionner l'unité"}
                                                             onChange={onChangeUnit}
-                                                            options={formatSelectOption(units, "name", "fr")}
+                                                            options={formatUnitSelectOption(units, "name", "fr")}
                                                         />
                                                         {
                                                             error.unit_id.length ? (
@@ -541,9 +590,25 @@ const StaffForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
+
+                                                    {
+                                                        unit ? (
+                                                            <div  className={error.unit_id.length ? "row col validated" : "row col"}>
+                                                                <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">Responsable de l'unité <InputRequire/></label>
+                                                                <div className="col-lg-6 col-xl-6 kt-radio-inline">
+                                                                    <label className="kt-radio mt-4">
+                                                                        <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> Oui<span/>
+                                                                    </label>
+                                                                    <label className="kt-radio">
+                                                                        <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> Non<span/>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        ) : null
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -594,7 +659,7 @@ const StaffForm = (props) => {
                                             position_id={data.position_id}
                                             resetFoundData={() => setFoundData({})}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
                             </div>
                         </div>
@@ -608,11 +673,11 @@ const StaffForm = (props) => {
         id ? (
             verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
                 printJsx()
-            ) : ""
+            ) : null
         ) : (
             verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-my-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') ? (
                 printJsx()
-            ) : ""
+            ) : null
         )
     );
 };

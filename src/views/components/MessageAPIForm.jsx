@@ -13,8 +13,8 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import FormInformation from "./FormInformation";
 import {AUTH_TOKEN} from "../../constants/token";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -49,7 +49,7 @@ const MessageAPIForm = props => {
     };
 
     const formatSelectMethod = (methods, option) => {
-        let formatOption = {};
+        let formatOption;
         formatOption = methods.filter(el => el.label === option);
         return formatOption[0];
     };
@@ -82,7 +82,7 @@ const MessageAPIForm = props => {
             }
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -151,7 +151,7 @@ const MessageAPIForm = props => {
                                     Message API
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -178,10 +178,8 @@ const MessageAPIForm = props => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification d'un méssage API" : "Formulaire d'ajout d'un méssage API"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du Méssage API</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méssage API <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -204,7 +202,7 @@ const MessageAPIForm = props => {
                                             </div>
 
                                             <div className={error.method.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méthode</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méthode <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable

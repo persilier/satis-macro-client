@@ -29,7 +29,7 @@ const LoadingTable = () => {
                         <div className="blockUI blockMsg blockElement" style={{ zIndex: "1", position: "absolute", padding: "0px", margin: "0px", width: "169px", top: "0px", left: "417.5px", textAlign: "center", color: "rgb(0, 0, 0)", border: "0px", cursor: "wait" }}>
                             <div className="blockui ">
                                 <span>
-                                    Please wait...
+                                    Chargement...
                                 </span>
 
                                 <span>

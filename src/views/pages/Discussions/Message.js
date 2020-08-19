@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import moment from 'moment';
 import './Message.css';
 import appConfig from "../../../config/appConfig";

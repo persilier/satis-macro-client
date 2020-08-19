@@ -11,6 +11,8 @@ import {EventNotification, EventNotificationPath, RelaunchNotification} from "..
 import EmptyNotification from "../components/EmptyNotification";
 import {Link} from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -20,28 +22,29 @@ const Nav = (props) => {
 
     const filterEventNotification = useCallback((notification) => {
         return notification.filter(
-            n => EventNotification.includes(n.type.substr(39, n.length))
+            n => EventNotification.includes(n.type.substr(39, n.type.length))
         );
     }, [EventNotification]);
 
     const filterRelaunchNotification = useCallback((notification) => {
         return notification.filter(
-            n => RelaunchNotification.includes(n.type.substr(39, n.length))
+            n => RelaunchNotification.includes(n.type.substr(39, n.type.length))
         );
     }, [RelaunchNotification]);
 
+    const fetchData = async () => {
+        await axios.get(`${appConfig.apiDomaine}/unread-notifications`)
+            .then(response => {
+                setEventNotification(filterEventNotification(response.data));
+                setRelaunchNotification(filterRelaunchNotification(response.data));
+            })
+            .catch(error => {
+                console.log("Something is wrong");
+            })
+        ;
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            await axios.get(`${appConfig.apiDomaine}/unread-notifications`)
-                .then(response => {
-                    setEventNotification(filterEventNotification(response.data));
-                    setRelaunchNotification(filterRelaunchNotification(response.data));
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
-        };
         fetchData();
     }, []);
 
@@ -49,19 +52,11 @@ const Nav = (props) => {
         if (props.user) {
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props.user.identite_id}`)
                 .notification((notification) => {
-                    const formatNotification = {
-                        isEventNotification: EventNotification.includes(notification.type.substr(39, notification.type.length)),
-                        type: notification.type,
-                        data: {
-                            text: notification.text,
-                            claim: notification.claim,
-                        },
-                        create_at: new Date().toString(),
-                    };
-                    if (formatNotification.isEventNotification)
-                        setEventNotification(n => [formatNotification, ...n]);
-                    else
-                        setRelaunchNotification(n => [formatNotification, ...n]);
+                    if (notification.type === "PostDiscussionMessage") {
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(notification.text));
+                    } else {
+                        fetchData();
+                    }
                 })
             ;
         }
@@ -76,6 +71,32 @@ const Nav = (props) => {
         e.preventDefault();
         props.logoutUser();
     }, [props.logoutUser]);
+
+    const getNotificationLink = useCallback((type, data) => {
+        return type !== "RegisterAClaim"
+            ? EventNotificationPath[type](data.claim.id)
+            : EventNotificationPath[type][data.claim.status](data.claim.id);
+    });
+
+    const showDetailNotification = useCallback((e, path, idNotification, relaunchNotification = false, notification = null) => {
+        e.preventDefault();
+        const readNotification = {
+            "notifications": [
+                idNotification
+            ]
+        };
+        localStorage.setItem("notification", JSON.stringify(readNotification));
+        if (path === "/chat#message-chat") {
+            localStorage.setItem("discussion_id", notification.data.discussion.id);
+        }
+        if (!relaunchNotification) {
+            window.location.href = path;
+        } else {
+            setRelaunchNotification(notifications => {
+                return notifications.filter(n => n.id !== idNotification)
+            });
+        }
+    });
 
     const notificationCount = eventNotification.length + relaunchNotification.length;
 
@@ -160,8 +181,12 @@ const Nav = (props) => {
                                                      } : {}}>
                                                     {
                                                         eventNotification.map((n, index) => (
-                                                            <a href={n.type.substr(39, n.length) === "AssignedToStaff" ? EventNotificationPath[n.type.substr(39, n.length)](n.data.claim.id) : ""}
-                                                               key={index} className="kt-notification__item">
+                                                            <a
+                                                                href={ getNotificationLink(n.type.substr(39, n.type.length), n.data)}
+                                                                key={index}
+                                                                className="kt-notification__item"
+                                                                onClick={e => showDetailNotification(e, getNotificationLink(n.type.substr(39, n.type.length), n.data), n.id, false, n)}
+                                                            >
                                                                 <div className="kt-notification__item-icon">
                                                                     <i className="flaticon2-line-chart kt-font-success"/>
                                                                 </div>
@@ -194,8 +219,12 @@ const Nav = (props) => {
                                                      } : {}}>
                                                     {
                                                         relaunchNotification.map(((n, index) => (
-                                                            <a key={index} href="#link"
-                                                               className="kt-notification__item">
+                                                            <a
+                                                                key={index}
+                                                                href={`/read-notification-${index}`}
+                                                                onClick={e => showDetailNotification(e, `/read-notification-${index}`, n.id, true)}
+                                                                className="kt-notification__item"
+                                                            >
                                                                 <div className="kt-notification__item-icon">
                                                                     <i className="flaticon2-line-chart kt-font-success"/>
                                                                 </div>

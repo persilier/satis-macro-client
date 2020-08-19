@@ -9,6 +9,19 @@ export const confirmDeleteConfig =  {
     cancelButtonText: "Quitter"
 };
 
+export const confirmLeadConfig = (lead) =>  {
+    return {
+        title: 'Confirmation',
+        text: `Cette unité à déjà un responsable: ${lead}. Êtes-vous sûr de vouloire continuer?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, Confirmer!',
+        cancelButtonText: "Quitter"
+    }
+};
+
 export const confirmAssignConfig =  {
     title: 'Attention!',
     text: "Cette plainte vous sera affectée!",

@@ -102,7 +102,7 @@ const ClaimMonitoring = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [props.plan, props.userPermissions]);
 
     const formatFilterStaff = staff => {
         const newFilterStaffs = [];

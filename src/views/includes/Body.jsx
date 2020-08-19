@@ -4,7 +4,6 @@ import {
     Route,
     Redirect
 } from "react-router-dom";
-import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
 import UnitType from "../pages/UnitType";
@@ -70,13 +69,18 @@ import MessageApi from "../pages/MessageApi";
 import MessageAPIForm from "../components/MessageAPIForm";
 import InstitutionMessageApi from "../pages/InstitutionMessageApi";
 import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
+import ClaimListDetail from "../pages/ClaimListDetail";
+import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
+import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
+import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
+import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
 
 const Body = () => {
     return (
         <Switch>
-            <Route exact path="/settings/sms">
+            {/*<Route exact path="/settings/sms">
                 <SMS/>
-            </Route>
+            </Route>*/}
 
             <Route exact path="/settings/clients/category">
                 <CategoryClient/>
@@ -109,6 +113,7 @@ const Body = () => {
             <Route exact path="/settings/faqs/category">
                 <CategoryFAQs/>
             </Route>
+
             <Route exact path="/settings/faqs/category/add">
                 <CategoryFaqsForm/>
             </Route>
@@ -144,6 +149,7 @@ const Body = () => {
             <Route exact path="/settings/any/clients/add">
                 <HoldingClientForm/>
             </Route>
+
             <Route exact path="/settings/any/clients/edit/:id">
                 <HoldingClientForm/>
             </Route>
@@ -340,6 +346,10 @@ const Body = () => {
                 <ClaimAssignToStaff/>
             </Route>
 
+            <Route exact path="/process/claim-assign/to-staff/:id/detail">
+                <ClaimAssignToStaffDetail/>
+            </Route>
+
             <Route exact path="/process/claim-assign/:id/detail">
                 <ClaimAssignDetail/>
             </Route>
@@ -348,12 +358,16 @@ const Body = () => {
                 <ClaimList/>
             </Route>
 
-            <Route exact path="/process/claim-detail/:id/edit">
-                <ClaimAssignDetail/>
+            <Route exact path="/process/claim-list-detail/:id/detail">
+                <ClaimListDetail/>
             </Route>
 
             <Route exact path="/process/claim-to-validated">
                 <ClaimToValidatedList/>
+            </Route>
+
+            <Route exact path="/process/claim-to-validated/:id/detail">
+                <ClaimToValidatedListDetail/>
             </Route>
 
             <Route exact path="/monitoring/claims/monitoring">
@@ -368,8 +382,16 @@ const Body = () => {
                 <SatisfactionMeasure/>
             </Route>
 
+            <Route exact path="/process/claim_measure/:id/detail">
+                <SatisfactionMeasureDetail/>
+            </Route>
+
             <Route exact path="/process/claim_archived">
                 <ClaimsArchived/>
+            </Route>
+
+            <Route exact path="/process/claim_archived/:id/detail">
+                <ClaimsArchivedDetail/>
             </Route>
 
             <Route exact path="/settings/notification">
@@ -395,6 +417,7 @@ const Body = () => {
             <Route exact path="/treatment/chat/add_user/:id">
                 <AddMemberForm/>
             </Route>
+
             <Route exact path="/settings/message-apis">
                 <MessageApi/>
             </Route>

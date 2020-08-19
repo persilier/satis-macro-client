@@ -293,7 +293,6 @@ const ClaimReporting = props => {
                 },
                 headeBackground: "#7F9CF5",
             };
-            // console.log("data_export:", {data_export: sendData});
 
             axios({
                 method: 'post',

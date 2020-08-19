@@ -31,17 +31,12 @@ const UnitTypeForm = (props) => {
         if (!verifyPermission(props.userPermissions, 'store-unit-type'))
             window.location.href = ERROR_401;
     }
-
-    const [parents, setParents] = useState([]);
-    const [parent, setParent] = useState({});
     const defaultData = {
         name: "",
-        parent_id: "",
         description: "",
     };
     const defaultError = {
         name: [],
-        parent_id: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
@@ -57,22 +52,12 @@ const UnitTypeForm = (props) => {
                             name: response.data.unitType.name.fr,
                             description: response.data.unitType.description.fr,
                         };
-                        setParent(response.data.unitType.parent ? {id: response.data.unitType.parent.id, label: response.data.unitType.parent.name.fr} : {});
-                        setParents(response.data.unitTypes);
                         setData(newData);
                     })
                     .catch(error => {
                         console.log("Something is wrong");
                     })
                 ;
-            } else {
-                axios.get(`${appConfig.apiDomaine}/unit-types`)
-                    .then(response => {
-                        setParents(response.data);
-                    })
-                    .catch(error => {
-                        console.log("Something is wrong")
-                    })
             }
         }
         fetchData();
@@ -81,13 +66,6 @@ const UnitTypeForm = (props) => {
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeParent = (selected) => {
-        const newData = {...data};
-        newData.parent_id = selected.value;
-        setParent(selected);
         setData(newData);
     };
 
@@ -148,7 +126,7 @@ const UnitTypeForm = (props) => {
                                     Type d'unité
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -175,10 +153,8 @@ const UnitTypeForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification de type d'unité" : "Formulaire d'ajout de type d'unité"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du type d'unité</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité(<strong className="text-danger">*</strong>)</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -200,28 +176,8 @@ const UnitTypeForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.parent_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Type Unité Parent</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Select
-                                                        value={parent}
-                                                        onChange={onChangeParent}
-                                                        options={formatSelectOption(parents, "name", "fr")}
-                                                    />
-                                                    {
-                                                        error.parent_id.length ? (
-                                                            error.parent_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description(<strong className="text-danger">*</strong>)</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"

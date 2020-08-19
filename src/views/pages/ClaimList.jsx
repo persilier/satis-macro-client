@@ -16,7 +16,6 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimList = (props) => {
-    localStorage.setItem('page', 'ClaimListPage');
     if (!verifyPermission(props.userPermissions, "list-claim-awaiting-treatment"))
         window.location.href = ERROR_401;
 
@@ -128,7 +127,7 @@ const ClaimList = (props) => {
                 {
                     verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
                         <td>
-                            <a href={`/process/claim-detail/${claim.id}/edit`}
+                            <a href={`/process/claim-list-detail/${claim.id}/detail`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                title="Détail">
                                 <i className="la la-eye"/>

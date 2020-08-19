@@ -37,7 +37,7 @@ const DashboardClaimsActivity = (props) => {
         return () => {
             isCancelled = true;
         }
-    }, []);
+    }, [appConfig.apiDomaine]);
 
     return (
         verifyPermission(props.userPermissions, "show-dashboard-data-my-activity") ?

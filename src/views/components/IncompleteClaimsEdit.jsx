@@ -378,6 +378,7 @@ const IncompleteClaimsEdit = props => {
         newData.file = Object.values(e.target.files);
         setData(newData);
     };
+
     // const onClickToEdit = (e) => {
     //     setIsModified(true)
     // };
@@ -475,7 +476,7 @@ const IncompleteClaimsEdit = props => {
                         </div>
                     </div>
                 </div>
-                
+
                 <FormInformation
                     information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
                 />

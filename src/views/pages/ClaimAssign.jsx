@@ -17,7 +17,6 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssign = (props) => {
-    localStorage.setItem('page', 'claimAssign');
     if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
         window.location.href = ERROR_401;
 
@@ -33,7 +32,6 @@ const ClaimAssign = (props) => {
         async function fetchData () {
             axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
                 .then(response => {
-                    console.log(response.data,"DATA")
                     setNumberPage(forceRound(response.data.length/numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
@@ -126,7 +124,7 @@ const ClaimAssign = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
+                <td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>
                 <td>
                     <a href={`/process/claim-assign/${claim.id}/detail`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"

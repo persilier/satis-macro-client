@@ -4,7 +4,6 @@ import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
-import ExportButton from "../components/ExportButton";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
@@ -17,7 +16,6 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssignToStaff = (props) => {
-    localStorage.setItem('page', 'ClaimToStaffPage');
     if (!verifyPermission(props.userPermissions, "list-claim-assignment-to-staff"))
         window.location.href = ERROR_401;
 
@@ -130,12 +128,11 @@ const ClaimAssignToStaff = (props) => {
                 <td>{claim.institution_targeted.name}</td>
                 <td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : "-"}</td>
                 <td>
-                    <a href={`/process/claim-assign/${claim.id}/detail`}
+                    <a href={`/process/claim-assign/to-staff/${claim.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
                        title="Détail">
                         <i className="la la-eye"/>
                     </a>
-
                 </td>
             </tr>
         );
