@@ -10,6 +10,7 @@ import {AUTH_TOKEN} from "../../constants/token";
 import {EventNotification, EventNotificationPath, RelaunchNotification} from "../../constants/notification";
 import EmptyNotification from "../components/EmptyNotification";
 import {Link} from "react-router-dom";
+import {verifyPermission} from "../../helpers/permission";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -79,12 +80,13 @@ const Nav = (props) => {
     const notificationCount = eventNotification.length + relaunchNotification.length;
 
     return (
-        <div id="kt_header" className="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on" style={{position: "sticky", top: 0, zIndex: 2}}>
+        <div id="kt_header" className="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on"
+             style={{position: "sticky", top: 0, zIndex: 2}}>
             <div className="kt-container  kt-container--fluid ">
                 <div className="kt-header__brand " id="kt_header_brand">
                     <div className="kt-header__brand-logo">
                         <a href="index.html">
-                            <img alt="Logo" src="/assets/images/satisLogo.png" width={"100"} height={"34"} />
+                            <img alt="Logo" src="/assets/images/satisLogo.png" width={"100"} height={"34"}/>
                             <span className="mx-2 text-white font-weight-bolder">{props.plan}</span>
                         </a>
                     </div>
@@ -120,38 +122,53 @@ const Nav = (props) => {
                             </span>
                             <span className="kt-hidden kt-badge kt-badge--danger"/>
                         </div>
-                        <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+                        <div
+                            className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
                             <form>
                                 <div className="kt-head kt-head--skin-light kt-head--fit-x kt-head--fit-b">
                                     <h3 className="kt-head__title">
                                         Notifications
                                         &nbsp;
-                                        <span className="btn btn-label-primary btn-sm btn-bold btn-font-md">{notificationCount} nouveau</span>
+                                        <span
+                                            className="btn btn-label-primary btn-sm btn-bold btn-font-md">{notificationCount} nouveau</span>
                                     </h3>
-                                    <ul className="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand  kt-notification-item-padding-x" role="tablist">
+                                    <ul className="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand  kt-notification-item-padding-x"
+                                        role="tablist">
                                         <li className="nav-item">
-                                            <a className="nav-link active show" data-toggle="tab" href="#topbar_notifications_notifications" role="tab" aria-selected="true">Alertes</a>
+                                            <a className="nav-link active show" data-toggle="tab"
+                                               href="#topbar_notifications_notifications" role="tab"
+                                               aria-selected="true">Alertes</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" data-toggle="tab" href="#topbar_notifications_events" role="tab" aria-selected="false">Relances</a>
+                                            <a className="nav-link" data-toggle="tab"
+                                               href="#topbar_notifications_events" role="tab"
+                                               aria-selected="false">Relances</a>
                                         </li>
                                     </ul>
                                 </div>
 
                                 <div className="tab-content">
-                                    <div className="tab-pane active show" id="topbar_notifications_notifications" role="tabpanel">
+                                    <div className="tab-pane active show" id="topbar_notifications_notifications"
+                                         role="tabpanel">
                                         {
                                             eventNotification.length ? (
-                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" style={eventNotification.length >= 4 ? {height: "380px", overflowY: "auto"} : {}}>
+                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll"
+                                                     data-scroll="true" data-height="300" data-mobile-height="200"
+                                                     style={eventNotification.length >= 4 ? {
+                                                         height: "380px",
+                                                         overflowY: "auto"
+                                                     } : {}}>
                                                     {
                                                         eventNotification.map((n, index) => (
-                                                            <a href={n.type.substr(39, n.length) === "AssignedToStaff" ? EventNotificationPath[n.type.substr(39, n.length)](n.data.claim.id) : ""} key={index} className="kt-notification__item">
+                                                            <a href={n.type.substr(39, n.length) === "AssignedToStaff" ? EventNotificationPath[n.type.substr(39, n.length)](n.data.claim.id) : ""}
+                                                               key={index} className="kt-notification__item">
                                                                 <div className="kt-notification__item-icon">
                                                                     <i className="flaticon2-line-chart kt-font-success"/>
                                                                 </div>
                                                                 <div className="kt-notification__item-details">
-                                                                    <div className="kt-notification__item-title" style={{textOverflow: "ellipsis"}}>
-                                                                        {n.data.text.length >= 87 ? n.data.text.substring(0, 88)+"..." : n.data.text.substring(0, 86)}
+                                                                    <div className="kt-notification__item-title"
+                                                                         style={{textOverflow: "ellipsis"}}>
+                                                                        {n.data.text.length >= 87 ? n.data.text.substring(0, 88) + "..." : n.data.text.substring(0, 86)}
                                                                     </div>
                                                                     <div className="kt-notification__item-time">
                                                                         {moment(new Date(n.created_at)).fromNow()}
@@ -169,16 +186,23 @@ const Nav = (props) => {
                                     <div className="tab-pane" id="topbar_notifications_events" role="tabpanel">
                                         {
                                             relaunchNotification.length ? (
-                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" style={relaunchNotification.length >= 4 ? {height: "380px", overflowY: "auto"} : {}}>
+                                                <div className="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll"
+                                                     data-scroll="true" data-height="300" data-mobile-height="200"
+                                                     style={relaunchNotification.length >= 4 ? {
+                                                         height: "380px",
+                                                         overflowY: "auto"
+                                                     } : {}}>
                                                     {
                                                         relaunchNotification.map(((n, index) => (
-                                                            <a key={index} href="#link" className="kt-notification__item">
+                                                            <a key={index} href="#link"
+                                                               className="kt-notification__item">
                                                                 <div className="kt-notification__item-icon">
                                                                     <i className="flaticon2-line-chart kt-font-success"/>
                                                                 </div>
                                                                 <div className="kt-notification__item-details">
-                                                                    <div className="kt-notification__item-title" style={{textOverflow: "ellipsis"}}>
-                                                                        {n.data.text.length >= 87 ? n.data.text.substring(0, 85)+"..." : n.data.text.substring(0, 86)}
+                                                                    <div className="kt-notification__item-title"
+                                                                         style={{textOverflow: "ellipsis"}}>
+                                                                        {n.data.text.length >= 87 ? n.data.text.substring(0, 85) + "..." : n.data.text.substring(0, 86)}
                                                                     </div>
                                                                     <div className="kt-notification__item-time">
                                                                         {moment(new Date(n.created_at)).fromNow()}
@@ -202,33 +226,37 @@ const Nav = (props) => {
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                         <span className="kt-header__topbar-icon">
-                            <img className="" src={props.language.countryLanguageImage[props.language.languageSelected]} alt="" />
+                            <img className="" src={props.language.countryLanguageImage[props.language.languageSelected]}
+                                 alt=""/>
                         </span>
                         </div>
                         <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                             <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
                                 <li className="kt-nav__item kt-nav__item--active">
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "en")}  className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/226-united-states.svg" alt="" /></span>
+                                    <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
+                                        <span className="kt-nav__link-icon"><img
+                                            src="/assets/media/flags/226-united-states.svg" alt=""/></span>
                                         <span className="kt-nav__link-text">English</span>
                                     </a>
                                 </li>
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "sp")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/128-spain.svg" alt="" /></span>
+                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/128-spain.svg"
+                                                                                 alt=""/></span>
                                         <span className="kt-nav__link-text">Spanish</span>
                                     </a>
                                 </li>
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "gm")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/162-germany.svg" alt="" /></span>
+                                        <span className="kt-nav__link-icon"><img
+                                            src="/assets/media/flags/162-germany.svg" alt=""/></span>
                                         <span className="kt-nav__link-text">German</span>
                                     </a>
                                 </li>
 
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/personal/img/france.svg" alt="" /></span>
+                                        <span className="kt-nav__link-icon"><img src="/personal/img/france.svg" alt=""/></span>
                                         <span className="kt-nav__link-text">Francais</span>
                                     </a>
                                 </li>
@@ -239,81 +267,95 @@ const Nav = (props) => {
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                             <span className="kt-header__topbar-welcome kt-visible-desktop">Salut,</span>
-                            <span className="kt-header__topbar-username kt-visible-desktop">{props.user.firstName}</span>
-                            <img alt="Pic" src="/assets/media/users/300_21.jpg" />
+                            <span
+                                className="kt-header__topbar-username kt-visible-desktop">{props.user.firstName}</span>
+                            <img alt="Pic" src="/assets/media/users/default.jpg"/>
                             <span className="kt-header__topbar-icon kt-bg-brand kt-hidden"><b>S</b></span>
                         </div>
-                        <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+                        <div
+                            className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
                             <div className="kt-user-card kt-user-card--skin-light kt-notification-item-padding-x">
                                 <div className="kt-user-card__avatar">
-                                    <img className="kt-hidden-" alt="Pic" src="/assets/media/users/300_25.jpg" />
-                                    <span className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold kt-hidden">S</span>
+                                    <img className="kt-hidden-" alt="Pic" src="/assets/media/users/default.jpg"/>
+                                    <span
+                                        className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold kt-hidden">S</span>
                                 </div>
                                 <div className="kt-user-card__name">
-                                    {props.user.lastName+" "+props.user.firstName}
+                                    {props.user.lastName + " " + props.user.firstName}
                                 </div>
-                                <div className="kt-user-card__badge">
-                                    <span className="btn btn-label-primary btn-sm btn-bold btn-font-md">23 messages</span>
-                                </div>
+                                {/*<div className="kt-user-card__badge">*/}
+                                {/*    <span*/}
+                                {/*        className="btn btn-label-primary btn-sm btn-bold btn-font-md">23 messages</span>*/}
+                                {/*</div>*/}
                             </div>
 
-                            <div className="kt-notification">
-                                <a href="custom/apps/user/profile-1/personal-information.html" className="kt-notification__item">
-                                    <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-calendar-3 kt-font-success"></i>
-                                    </div>
-                                    <div className="kt-notification__item-details">
-                                        <div className="kt-notification__item-title kt-font-bold">
-                                            My Profile
-                                        </div>
-                                        <div className="kt-notification__item-time">
-                                            Account settings and more
-                                        </div>
-                                    </div>
-                                </a>
-                                <Link  to={"/chat"} className="kt-notification__item">
-                                    <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-mail kt-font-warning"></i>
-                                    </div>
-                                    <div className="kt-notification__item-details">
-                                        <div className="kt-notification__item-title kt-font-bold">
-                                            Mes Messages
-                                        </div>
-                                        <div className="kt-notification__item-time">
-                                            Entrez dans mes messageries
-                                        </div>
-                                    </div>
-                                </Link>
+                            {/*<div className="kt-notification">*/}
+                            {/*    <a href="custom/apps/user/profile-1/personal-information.html" className="kt-notification__item">*/}
+                            {/*        <div className="kt-notification__item-icon">*/}
+                            {/*            <i className="flaticon2-calendar-3 kt-font-success"></i>*/}
+                            {/*        </div>*/}
+                            {/*        <div className="kt-notification__item-details">*/}
+                            {/*            <div className="kt-notification__item-title kt-font-bold">*/}
+                            {/*                My Profile*/}
+                            {/*            </div>*/}
+                            {/*            <div className="kt-notification__item-time">*/}
+                            {/*                Account settings and more*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*    </a>*/}
 
-                                <Link to={"/feedback-channels"} className="kt-notification__item">
-                                    <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-hourglass kt-font-brand"></i>
-                                    </div>
-                                    <div className="kt-notification__item-details">
-                                        <div className="kt-notification__item-title kt-font-bold">
-                                            Mes Canaux
-                                        </div>
-                                        <div className="kt-notification__item-time">
-                                           Les canaux du personnel
-                                        </div>
-                                    </div>
-                                </Link>
+                            {
+                                verifyPermission(props.userPermissions, 'list-my-discussions') ||
+                                verifyPermission(props.userPermissions, 'contribute-discussion') ? (
+                                        <Link to={"/chat"} className="kt-notification__item">
+                                            <div className="kt-notification__item-icon">
+                                                <i className="flaticon2-mail kt-font-warning"></i>
+                                            </div>
+                                            <div className="kt-notification__item-details">
+                                                <div className="kt-notification__item-title kt-font-bold">
+                                                    Mes Messages
+                                                </div>
+                                                <div className="kt-notification__item-time">
+                                                    Entrez dans mes messageries
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    )
+                                    : ""
+                            }
 
-                                <div className="kt-notification__custom kt-space-between">
-                                    <a href="/logout" onClick={ onClickLogoutLink } target="_blank" className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
-                                    <a href="custom/user/login-v2.html" target="_blank" className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>
-                                </div>
+                            {/*<Link to={"/feedback-channels"} className="kt-notification__item">*/}
+                            {/*    <div className="kt-notification__item-icon">*/}
+                            {/*        <i className="flaticon2-hourglass kt-font-brand"></i>*/}
+                            {/*    </div>*/}
+                            {/*    <div className="kt-notification__item-details">*/}
+                            {/*        <div className="kt-notification__item-title kt-font-bold">*/}
+                            {/*            Mes Canaux*/}
+                            {/*        </div>*/}
+                            {/*        <div className="kt-notification__item-time">*/}
+                            {/*           Les canaux du personnel*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*</Link>*/}
+
+                            <div className="kt-notification__custom kt-space-between">
+                                <a href="/logout" onClick={onClickLogoutLink} target="_blank"
+                                   className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
+                                {/*<a href="custom/user/login-v2.html" target="_blank"*/}
+                                {/*   className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>*/}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        // < /div>
     );
 };
 
 const mapStateToProps = (state) => {
     return {
+        userPermissions: state.user.user.permissions,
         language: state.language,
         plan: state.plan.plan,
         user: {
@@ -329,7 +371,8 @@ const mapDispatchToProps = (dispatch) => {
         changeLanguage: (language) => {
             dispatch(LanguageAction.changeLanguage(language))
         },
-        logoutUser: () => dispatch( authActions.logoutUser()),
+        logoutUser: () => dispatch(authActions.logoutUser()),
+
     }
 };
 
