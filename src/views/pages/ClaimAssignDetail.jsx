@@ -18,6 +18,7 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig
 } from "../../config/toastConfig";
+import moment from "moment";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -504,7 +505,7 @@ const ClaimAssignDetail = (props) => {
                                                                                             </a>
                                                                                             <a href="#datetime"
                                                                                                onClick={e => e.preventDefault()}><i
-                                                                                                className="flaticon2-time"/>{newClaim.created_at}
+                                                                                                className="flaticon2-time"/>{moment(formatToTimeStampUpdate(newClaim.created_at)).format('L')}
                                                                                             </a>
                                                                                         </div>
 
@@ -529,8 +530,8 @@ const ClaimAssignDetail = (props) => {
                                                                                                     <div
                                                                                                         className="progress-bar kt-bg-danger"
                                                                                                         role="progressbar"
-                                                                                                        style={{width: "46%"}}
-                                                                                                        aria-valuenow="35"
+                                                                                                        style={{width: newClaim.duplicate_percent+"%"}}
+                                                                                                        aria-valuenow={newClaim.duplicate_percent}
                                                                                                         aria-valuemin="0"
                                                                                                         aria-valuemax="100"/>
                                                                                                 </div>
