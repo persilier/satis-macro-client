@@ -45,7 +45,7 @@ const endPointConfig = {
 
 
 const ClaimAssignDetail = (props) => {
-    document.title = "Satis client - Détail plainte";
+    document.title = "Satis client - Détail réclamation";
     const {id} = useParams();
 
     if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
@@ -357,7 +357,7 @@ const ClaimAssignDetail = (props) => {
                                         </div>
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md"><strong>Détails de la réclamation</strong></div>
+                                            <div className="kt-heading kt-heading--md">Détails de la réclamation</div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-item">
@@ -423,8 +423,7 @@ const ClaimAssignDetail = (props) => {
                                         </div>
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Les pièces jointes de la
-                                                plainte
+                                            <div className="kt-heading kt-heading--md">Liste de pièces jointes
                                             </div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
@@ -434,9 +433,9 @@ const ClaimAssignDetail = (props) => {
                                                                 claim.files.map((file, index) => (
                                                                     <div className="kt-wizard-v2__review-item"
                                                                          key={index}>
-                                                                        <div className="kt-wizard-v2__review-title">
-                                                                            Pièce jointe Nº{index + 1}
-                                                                        </div>
+                                                                        {/*<div className="kt-wizard-v2__review-title">*/}
+                                                                        {/*    Pièce jointe Nº{index + 1}*/}
+                                                                        {/*</div>*/}
                                                                         <div className="kt-wizard-v2__review-content">
                                                                             <a href={`${appConfig.apiDomaine}${file.url}`}
                                                                                download={true} target={"_blank"}>
@@ -460,9 +459,7 @@ const ClaimAssignDetail = (props) => {
 
                                         <div className="kt-wizard-v2__content"
                                              data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Les doublons possibles
-                                                pour la
-                                                plainte
+                                            <div className="kt-heading kt-heading--md">Liste des doublons
                                             </div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
@@ -565,7 +562,7 @@ const ClaimAssignDetail = (props) => {
 
                                         <div className="kt-wizard-v2__content"
                                              data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Transfert de la plainte
+                                            <div className="kt-heading kt-heading--md">Transfert de la réclamation
                                             </div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
@@ -575,8 +572,8 @@ const ClaimAssignDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-content"
                                                                      style={{fontSize: "15px"}}>
                                                                     <label
-                                                                        className="col-xl-6 col-lg-6 col-form-label">Institution
-                                                                        concernée</label>
+                                                                        className="col-xl-6 col-lg-6 col-form-label"><strong>Institution
+                                                                        concernée</strong></label>
                                                                     <span
                                                                         className="kt-widget__data">{dataId}</span>
                                                                 </div>
@@ -592,7 +589,7 @@ const ClaimAssignDetail = (props) => {
                                                                             <button
                                                                                 className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                Chargement...
                                                                             </button>
                                                                         )
                                                                     }
@@ -616,6 +613,7 @@ const ClaimAssignDetail = (props) => {
                                                                             value={unit}
                                                                             onChange={onChangeUnits}
                                                                             options={unitsData}
+                                                                            placeholder={"Veuillez sélectionner l'unité de traitement"}
                                                                         />
                                                                     </div>
                                                                 </div>
