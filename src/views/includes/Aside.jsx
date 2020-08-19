@@ -16,7 +16,7 @@ const Aside = (props) => {
                         <li className="kt-menu__item " aria-haspopup="true">
                             <NavLink exact to="/dashboard" className="kt-menu__link" activeClassName="kt-menu__item--active">
                                 <i className="kt-menu__link-icon flaticon2-architecture-and-city"/>
-                                <span className="kt-menu__link-text">Dashboard</span>
+                                <span className="kt-menu__link-text">Tableau de bord</span>
                             </NavLink>
                         </li>
 
