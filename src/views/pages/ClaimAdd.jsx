@@ -12,6 +12,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
+    toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
 } from "../../config/toastConfig";
@@ -542,7 +543,7 @@ const ClaimAdd = props => {
                         }
                     }
                     setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 }
             })
         ;
@@ -603,7 +604,7 @@ const ClaimAdd = props => {
                                         {
                                             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée</label>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée <span style={{color:"red"}}>*</span></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             isClearable
@@ -878,10 +879,10 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">Catégorie de plainte </label>
+                                                        <label htmlFor="claimCtegory">Catégorie de réclamation </label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectionner la catégorie de plainte"}
+                                                            placeholder={"Veillez selectionner la catégorie de réclamation"}
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
                                                             options={claimCategories}
@@ -889,10 +890,10 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de plainte <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="claimObject">Objet de réclamation <span style={{color:"red"}}>*</span></label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectionner l'objet de plainte"}
+                                                            placeholder={"Veillez selectionner l'objet de réclamation"}
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
                                                             options={claimObjects}
@@ -1070,7 +1071,7 @@ const ClaimAdd = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <span style={{color:"red"}}>*</span></h3>
 
                                                 <div className="form-group row">
                                                     <label className="col-3 col-form-label">Est-ce une relance ?</label>
