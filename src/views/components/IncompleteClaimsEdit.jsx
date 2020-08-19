@@ -558,7 +558,7 @@ const IncompleteClaimsEdit = props => {
 
                                                             <div
                                                                 className={error.firstname.length ? "col validated" : "col"}>
-                                                                <label htmlFor="firstname">Votre prénom</label>
+                                                                <label htmlFor="firstname">Prénom (s) <span style={{color:"red"}}>*</span></label>
                                                                 <input
                                                                     disabled={!disabledInput}
                                                                     id="firstname"
@@ -584,7 +584,7 @@ const IncompleteClaimsEdit = props => {
                                                         <div className="form-group row">
                                                             <div
                                                                 className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                                <label htmlFor="sexe">Votre sexe</label>
+                                                                <label htmlFor="sexe">Sexe <span style={{color:"red"}}>*</span></label>
                                                                 <select
                                                                     disabled={!disabledInput}
                                                                     id="sexe"
@@ -612,7 +612,7 @@ const IncompleteClaimsEdit = props => {
                                                             </div>
                                                             <div
                                                                 className={error.ville.length ? "col validated" : "col"}>
-                                                                <label htmlFor="ville">Votre ville</label>
+                                                                <label htmlFor="ville">Ville</label>
                                                                 <input
                                                                     disabled={!disabledInput}
                                                                     id="ville"
@@ -638,7 +638,7 @@ const IncompleteClaimsEdit = props => {
                                                         <div className="form-group row">
                                                             <div
                                                                 className={error.telephone.length ? "col validated" : "col"}>
-                                                                <label htmlFor="telephone">Votre Téléphone(s)</label>
+                                                                <label htmlFor="telephone"> Téléphone(s) <span style={{color:"red"}}>*</span></label>
                                                                 <TagsInput disabled={!disabledInput}
                                                                    value={data.telephone}
                                                                    onChange={onChangeTelephone}
@@ -658,7 +658,7 @@ const IncompleteClaimsEdit = props => {
 
                                                             <div
                                                                 className={error.email.length ? "col validated" : "col"}>
-                                                                <label htmlFor="email">Votre Email(s)</label>
+                                                                <label htmlFor="email">Email(s)</label>
                                                                 <TagsInput disabled={!disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                                 {
                                                                     error.email.length ? (
@@ -942,8 +942,9 @@ const IncompleteClaimsEdit = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description</label>
+                                                        <label htmlFor="description">Description <span style={{color:"red"}}>*</span></label>
                                                         <textarea
+                                                            rows="7"
                                                             id="description"
                                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la description"
@@ -963,9 +964,9 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimer_expectation">Attente du
-                                                            réclamant</label>
+                                                        <label htmlFor="claimer_expectation">Attente </label>
                                                         <textarea
+                                                            rows="7"
                                                             id="claimer_expectation"
                                                             className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer l'attente du réclamant"

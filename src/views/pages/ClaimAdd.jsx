@@ -765,7 +765,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email"> Email(s)</label>
+                                                        <label htmlFor="email"> Email(s) <span style={{color:"red"}}>*</span></label>
                                                         <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
                                                             error.email.length ? (
@@ -1024,6 +1024,7 @@ const ClaimAdd = props => {
                                                     <div className={error.description.length ? "col validated" : "col"}>
                                                         <label htmlFor="description">Description <span style={{color:"red"}}>*</span></label>
                                                         <textarea
+                                                            rows="7"
                                                             id="description"
                                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la description"
@@ -1042,8 +1043,9 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimer_expectation">Attente du réclamant</label>
+                                                        <label htmlFor="claimer_expectation">Attente</label>
                                                         <textarea
+                                                            rows="7"
                                                             id="claimer_expectation"
                                                             className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer l'attente du réclamant"
