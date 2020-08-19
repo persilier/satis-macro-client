@@ -16,6 +16,7 @@ import {
     toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
+import InputRequire from "../components/InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -603,7 +604,7 @@ const ClaimAdd = props => {
                                         {
                                             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée <span style={{color:"red"}}>*</span></label>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée <InputRequire/></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             isClearable
@@ -657,7 +658,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Nom <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="lastname">Nom <InputRequire/></label>
                                                         <input
                                                             disabled={disabledInput}
                                                             id="lastname"
@@ -679,7 +680,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Prénom (s) <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="firstname">Prénom (s) <InputRequire/></label>
                                                         <input
                                                             disabled={disabledInput}
                                                             id="firstname"
@@ -703,7 +704,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Sexe <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="sexe">Sexe <InputRequire/></label>
                                                         <select
                                                             disabled={disabledInput}
                                                             id="sexe"
@@ -751,7 +752,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s) <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="telephone">Téléphone(s) <InputRequire/></label>
                                                         <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (
@@ -765,7 +766,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email"> Email(s) <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="email"> Email(s) <InputRequire/></label>
                                                         <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
                                                             error.email.length ? (
@@ -836,7 +837,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="receptionChannel">Canal de réception <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             value={receptionChannel}
@@ -889,7 +890,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de réclamation <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="claimObject">Objet de réclamation <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectionner l'objet de réclamation"}
@@ -955,7 +956,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évernement <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="date">Date de l'évernement <InputRequire/></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
@@ -1022,7 +1023,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description <span style={{color:"red"}}>*</span></label>
+                                                        <label htmlFor="description">Description <InputRequire/></label>
                                                         <textarea
                                                             rows="7"
                                                             id="description"
@@ -1070,7 +1071,7 @@ const ClaimAdd = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <span style={{color:"red"}}>*</span></h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <InputRequire/></h3>
 
                                                 <div className="form-group row">
                                                     <label className="col-3 col-form-label">Est-ce une relance ?</label>

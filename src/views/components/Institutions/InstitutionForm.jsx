@@ -16,6 +16,7 @@ import {formatSelectOption} from "../../../helpers/function";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
+import InputRequire from "../InputRequire";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -283,7 +284,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Nom <span style={{color:"red"}}>*</span></label>
+                                                                           htmlFor="name">Nom <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
@@ -309,7 +310,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="Acronyme">Acronyme <span style={{color:"red"}}>*</span></label>
+                                                                           htmlFor="Acronyme">Acronyme <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
@@ -335,7 +336,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="value">Code Iso <span style={{color:"red"}}>*</span></label>
+                                                                           htmlFor="value">Code Iso <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="value"
