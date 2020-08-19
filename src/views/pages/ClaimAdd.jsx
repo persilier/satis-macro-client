@@ -857,7 +857,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="responseChannel">Canal de réponse</label>
+                                                        <label htmlFor="responseChannel">Canal de réponse <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectionner le canal de réponse"}

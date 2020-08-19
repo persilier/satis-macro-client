@@ -13,6 +13,7 @@ import {
     toastEditErrorMessageConfig,
 } from "../../../config/toastConfig";
 import {verifyPermission} from "../../../helpers/permission";
+import InputRequire from "../InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -379,7 +380,6 @@ const ConfirmClaimAddModal = props => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
@@ -402,12 +402,8 @@ const ConfirmClaimAddModal = props => {
         const newData = {...data};
         newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
         e.preventDefault();
-        console.log(newData);
         setStartRequest(true);
-        if (!newData.response_channelf_slug)
-            delete newData.response_channel_slug;
-        if (!newData.unit_targeted_id)
-            delete newData.unit_targeted_id;
+
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
         if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
@@ -487,7 +483,7 @@ const ConfirmClaimAddModal = props => {
                                         {
                                             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée</label>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée <InputRequire/></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             isClearable
@@ -542,7 +538,7 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Votre nom de famille</label>
+                                                        <label htmlFor="lastname">Nom <InputRequire/></label>
                                                         <input
                                                             disabled={true}
                                                             id="lastname"
@@ -564,7 +560,7 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Votre prénom</label>
+                                                        <label htmlFor="firstname">Prénom(s) <InputRequire/></label>
                                                         <input
                                                             disabled={true}
                                                             id="firstname"
@@ -586,9 +582,9 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
                                                 </div>
 
-                                                <div className="row">
+                                                <div className="form-group row">
                                                     <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Votre sexe</label>
+                                                        <label htmlFor="sexe">Sexe <InputRequire/></label>
                                                         <select
                                                             disabled={true}
                                                             id="sexe"
@@ -603,36 +599,6 @@ const ConfirmClaimAddModal = props => {
                                                         {
                                                             error.sexe.length ? (
                                                                 error.sexe.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className="form-group row">
-                                                    <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                        <TagsInput disabled={true} value={data.telephone} onChange={onChangeTelephone} />
-                                                        {
-                                                            error.telephone.length ? (
-                                                                error.telephone.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-
-                                                    <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email">Votre Email(s)</label>
-                                                        <TagsInput disabled={true} value={data.email} onChange={onChangeEmail} />
-                                                        {
-                                                            error.email.length ? (
-                                                                error.email.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -655,6 +621,36 @@ const ConfirmClaimAddModal = props => {
                                                         {
                                                             error.ville.length ? (
                                                                 error.ville.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <div className="form-group row">
+                                                    <div className={error.telephone.length ? "col validated" : "col"}>
+                                                        <label htmlFor="telephone">Téléphone(s) <InputRequire/></label>
+                                                        <TagsInput disabled={true} value={data.telephone} onChange={onChangeTelephone} />
+                                                        {
+                                                            error.telephone.length ? (
+                                                                error.telephone.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+
+                                                    <div className={error.email.length ? "col validated" : "col"}>
+                                                        <label htmlFor="email">Email(s) <InputRequire/></label>
+                                                        <TagsInput disabled={true} value={data.email} onChange={onChangeEmail} />
+                                                        {
+                                                            error.email.length ? (
+                                                                error.email.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -720,7 +716,7 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception</label>
+                                                        <label htmlFor="receptionChannel">Canal de réception <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectioner le canal de réception"}
@@ -740,7 +736,7 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="responseChannel">Canal de réponse</label>
+                                                        <label htmlFor="responseChannel">Canal de réponse <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectioner le canal de réponse"}
@@ -762,10 +758,10 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">Catégorie de plainte</label>
+                                                        <label htmlFor="claimCtegory">Catégorie de réclamation</label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner la catégorie de plainte"}
+                                                            placeholder={"Veillez selectioner la catégorie de réclamation"}
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
                                                             options={claimCategories}
@@ -773,10 +769,10 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de plainte</label>
+                                                        <label htmlFor="claimObject">Objet de réclammation</label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner l'objet de plainte"}
+                                                            placeholder={"Veillez selectioner l'objet de réclamation"}
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
                                                             options={claimObjects}
@@ -838,7 +834,7 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évernement</label>
+                                                        <label htmlFor="date">Date de l'évernement <InputRequire/></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
@@ -907,8 +903,9 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description</label>
+                                                        <label htmlFor="description">Description <InputRequire/></label>
                                                         <textarea
+                                                            rows="7"
                                                             id="description"
                                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la description"
@@ -929,6 +926,7 @@ const ConfirmClaimAddModal = props => {
                                                     <div className={error.claimer_expectation.length ? "col validated" : "col"}>
                                                         <label htmlFor="claimer_expectation">Attente du réclamant</label>
                                                         <textarea
+                                                            rows="7"
                                                             id="claimer_expectation"
                                                             className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer l'attente du réclamant"
@@ -978,7 +976,7 @@ const ConfirmClaimAddModal = props => {
                     <div className="modal-footer">
                         {
                             !startRequest ? (
-                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                             ) : (
                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                     Loading...
