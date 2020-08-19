@@ -18,9 +18,9 @@ const LoginPage = (props) => {
     const defaultError = {
         username: [],
         password: [],
-        grant_type:[],
-        client_id: [],
-        client_secret:[]
+        // grant_type:[],
+        // client_id: [],
+        // client_secret:[]
     };
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
@@ -63,7 +63,7 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
-                console.log(defaultError, error.response.data.error,"ERROR")
+                console.log(defaultError, error.response.data.error,"ERROR");
                 // setError({...defaultError, ...error.response.data.error});
                 setStartRequest(false);
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);

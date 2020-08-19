@@ -166,7 +166,7 @@ const ClaimAssign = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamation à affecter"}
+                            title={"Réclamation à transférer"}
                         />
 
                         {

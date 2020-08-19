@@ -342,10 +342,10 @@ const Nav = (props) => {
                                                 </div>
                                                 <div className="kt-notification__item-details">
                                                     <div className="kt-notification__item-title kt-font-bold">
-                                                        Mes Messages
+                                                        Mes Disccussions
                                                     </div>
                                                     <div className="kt-notification__item-time">
-                                                        Entrez dans mes messageries
+                                                        Entrez dans mes discussions
                                                     </div>
                                                 </div>
                                             </Link>
