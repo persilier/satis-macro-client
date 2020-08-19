@@ -488,12 +488,12 @@ const IncompleteClaimsEdit = props => {
                                     </div>
                                 </div>
 
+                                <FormInformation
+                                    information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
+                                />
+
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
-                                        <FormInformation
-                                            information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
-                                        />
-
                                         {
                                             verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
                                             verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
@@ -534,7 +534,7 @@ const IncompleteClaimsEdit = props => {
                                                         <div className="form-group row">
                                                             <div
                                                                 className={error.lastname.length ? "col validated" : "col"}>
-                                                                <label htmlFor="lastname">Votre nom de famille</label>
+                                                                <label htmlFor="lastname">Nom <span style={{color:"red"}}>*</span></label>
                                                                 <input
                                                                     disabled={!disabledInput}
                                                                     id="lastname"
