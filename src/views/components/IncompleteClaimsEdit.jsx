@@ -987,7 +987,7 @@ const IncompleteClaimsEdit = props => {
                                         <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance:<span style={{color:"red"}}>*</span> <span style={{color:"red"}}>*</span></h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <span style={{color:"red"}}>*</span></h3>
 
                                                 <div className="form-group row">
                                                     <label className="col-3 col-form-label">Est-ce une relance ?</label>
