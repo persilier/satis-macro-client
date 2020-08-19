@@ -22,7 +22,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastAddSuccessMessageConfig, toastEditErrorMessageConfig,
+    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
@@ -424,7 +424,9 @@ const IncompleteClaimsEdit = props => {
 
         axios.post(endPoint.update(`${id}`), formatFormData(newData))
             .then(async (response) => {
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                setStartRequest(false);
+                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
+                window.location.href="/process/incomplete_claims"
             })
             .catch(async (error) => {
                 setStartRequest(false);
@@ -443,7 +445,7 @@ const IncompleteClaimsEdit = props => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Processus
+                                Collecte
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -452,17 +454,8 @@ const IncompleteClaimsEdit = props => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    Collecte
+                                    Réclamations Incomplètes
                                 </a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
-                                    <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <Link to="/process/incomplete_claims" className="kt-subheader__breadcrumbs-link">
-                                        Plaintes imcomplete
-                                    </Link>
-                                </div>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
@@ -470,7 +463,7 @@ const IncompleteClaimsEdit = props => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        Réclamations Incomplètes
+                                        Complétion
                                     </a>
                                 </div>
                             </div>
@@ -489,7 +482,7 @@ const IncompleteClaimsEdit = props => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Complèter l'enregistrement de réclamation
+                                            Complétion de réclamation
                                         </h3>
                                     </div>
                                 </div>

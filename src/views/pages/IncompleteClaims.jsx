@@ -193,17 +193,10 @@ const IncompleteClaims = (props) => {
                     <div className="kt-container  kt-container--fluid">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Processus
+                                Collecte
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    Collecte
-                                </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
@@ -211,7 +204,7 @@ const IncompleteClaims = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        Plaintes Incomplètes
+                                        Réclamations Incomplètes
                                     </a>
                                 </div>
                             </div>
