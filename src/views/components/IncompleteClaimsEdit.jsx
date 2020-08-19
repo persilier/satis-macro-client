@@ -170,7 +170,7 @@ const IncompleteClaimsEdit = props => {
                         amount_disputed: response.data.claim.amount_disputed,
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
                         is_revival: response.data.claim.is_revival,
-                        file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : ""
+                        // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : ""
                     };
                     setData(newIncompleteClaim);
                     setIsRequire(response.data.requirements);
@@ -388,7 +388,7 @@ const IncompleteClaimsEdit = props => {
         const formData = new FormData();
         formData.append("_method", "put");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
+            console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
@@ -411,8 +411,8 @@ const IncompleteClaimsEdit = props => {
         setStartRequest(true);
         newData.event_occured_at = formatToTimeStampUpdate(data.event_occured_at);
 
-        if (!newData.file.length)
-            delete newData.file;
+        // if (!newData.file.length)
+        //     delete newData.file;
         if (!newData.response_channel_slug)
             delete newData.response_channel_slug;
         if (!newData.unit_targeted_id)
