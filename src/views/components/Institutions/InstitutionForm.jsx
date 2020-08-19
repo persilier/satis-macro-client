@@ -154,7 +154,7 @@ const InstitutionForm = (props) => {
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(error => {
-                    setError({...defaultError, ...error.response.data.error});
+                    setError({defaultError, ...error.response.data.error});
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })

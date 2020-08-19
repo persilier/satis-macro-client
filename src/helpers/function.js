@@ -197,7 +197,7 @@ export const formatToTimeStampUpdate = dateTime => {
 };
 
 export const formatToTime = dateTime => {
-    if (dateTime.length)
+    if (dateTime!==null)
         return dateTime.split("T")[0] + "T" + dateTime.split("T")[1].split(".")[0];
     else
         return "";

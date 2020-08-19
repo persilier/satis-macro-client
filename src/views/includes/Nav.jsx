@@ -337,7 +337,6 @@ const Nav = (props) => {
                             {/*        </div>*/}
                             {/*    </div>*/}
                             {/*</Link>*/}
-
                             <div className="kt-notification__custom kt-space-between">
                                 <a href="/logout" onClick={onClickLogoutLink} target="_blank"
                                    className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>

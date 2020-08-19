@@ -15,8 +15,16 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 const LoginPage = (props) => {
 
+    const defaultError = {
+        username: [],
+        password: [],
+        grant_type:[],
+        client_id: [],
+        client_secret:[]
+    };
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     const onChangeUserName = (e) => {
@@ -26,7 +34,7 @@ const LoginPage = (props) => {
         setPassword(e.target.value)
     };
     const onClickConnectButton = (e) => {
-        e.preventDefault(e);
+        e.preventDefault(e)
         setStartRequest(true);
         const formData = {
             grant_type: listConnectData[props.plan].grant_type,
@@ -43,6 +51,7 @@ const LoginPage = (props) => {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
+                    setError(defaultError);
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     const user = response.data;
@@ -54,6 +63,8 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
+                console.log(defaultError, error.response.data.error,"ERROR")
+                // setError({...defaultError, ...error.response.data.error});
                 setStartRequest(false);
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
@@ -117,29 +128,47 @@ const LoginPage = (props) => {
                                             </div>
 
                                             <form className="kt-form"  id="kt_login__form" style={{marginBottom: '142px'}}>
-                                                <div className="form-group row">
+                                                <div className={error.username.length ? "form-group row validated" : "form-group row"}>
 
                                                     <input
-                                                        className="form-control"
+                                                        className={error.username.length ? "form-control is-invalid" : "form-control"}
                                                         type="email"
                                                            placeholder="Votre Email"
                                                            name="username"
                                                            onChange={(e) => onChangeUserName(e)}
 														   value={username}
                                                     />
-
+                                                    {
+                                                        error.username.length ? (
+                                                            error.username.map((error, index) => (
+                                                                <div key={index}
+                                                                     className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
                                                 </div>
-                                                <div className= "form-group row">
+                                                <div className={error.password.length ? "form-group row validated" : "form-group row"}>
 
                                                 <input
-                                                    className= "form-control"
+                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
                                                        type="password"
                                                            placeholder="Votre Mot de Passe"
                                                            name="password"
                                                            onChange={(e) => onChangePassword(e)}
 														   value={password}
                                                     />
-
+                                                    {
+                                                        error.password.length ? (
+                                                            error.password.map((error, index) => (
+                                                                <div key={index}
+                                                                     className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
                                                 </div>
 
                                                 <div className="kt-login__actions">
@@ -148,12 +177,10 @@ const LoginPage = (props) => {
                                                     </a>
                                                     {
                                                         !startRequest ? (
-                                                            <button
-                                                                id="kt_login_signin_submit"
-                                                                type="submit"
-                                                                    onClick={(e) => onClickConnectButton(e)}
-                                                                className="btn btn-primary btn-elevate kt-login__btn-primary">
-                                                                Se connecter</button>
+                                                            <button type="submit"
+                                                                    id="kt_login_signin_submit"
+                                                                    className="btn btn-primary btn-elevate kt-login__btn-primary"
+                                                                    onClick={onClickConnectButton}> Se connecter</button>
                                                         ) : (
                                                             <button
                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
