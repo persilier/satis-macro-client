@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
-import FormInformation from "../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
@@ -16,6 +15,7 @@ import {
     toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
+import InfirmationTable from "../components/InfirmationTable";
 import InputRequire from "../components/InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -584,7 +584,7 @@ const ClaimAdd = props => {
 
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <FormInformation
+                    <InfirmationTable
                         information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour enregistrer les réclamations de vos clients."}
                     />
                     <div className="row">

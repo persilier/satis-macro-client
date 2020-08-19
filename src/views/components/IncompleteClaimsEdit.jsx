@@ -869,8 +869,10 @@ const IncompleteClaimsEdit = props => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évernement <InputRequire/></label>
+
+                                                    <div
+                                                        className={error.event_occured_at.length ? "col validated" : "col"}>
+                                                        <label htmlFor="date">Date de l'évènement  <InputRequire/></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
