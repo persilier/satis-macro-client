@@ -513,7 +513,7 @@ const ClaimAssignDetail = (props) => {
                                                                                             className="kt-widget__info">
                                                                                             <div
                                                                                                 className="kt-widget__desc">
-                                                                                                {newClaim.description}
+                                                                                               <i className="flaticon-notes"> </i>{newClaim.description}
                                                                                             </div>
                                                                                             <div
                                                                                                 className="kt-widget__progress">
