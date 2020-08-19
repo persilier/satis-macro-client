@@ -98,7 +98,7 @@ const Aside = (props) => {
                                                     <NavLink exact to="/process/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Plainte à tranférer</span>
+                                                            <span className="kt-menu__link-text">Réclamation à tranférer</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -109,7 +109,7 @@ const Aside = (props) => {
                                                     <NavLink exact to="/process/unit-claims" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Liste des plaintes</span>
+                                                            <span className="kt-menu__link-text">Liste des réclamations</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -120,7 +120,7 @@ const Aside = (props) => {
                                                     <NavLink exact to="/process/claim-assign/to-staff" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Plaintes à traiter</span>
+                                                            <span className="kt-menu__link-text">Réclamations à traiter</span>
                                                         </li>
                                                     </NavLink>
                                                 ) :""
@@ -131,7 +131,7 @@ const Aside = (props) => {
                                                     <NavLink exact to="/process/claim-to-validated" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Plaintes à valider</span>
+                                                            <span className="kt-menu__link-text">Réclamations à valider</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null

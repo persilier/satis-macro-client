@@ -23,9 +23,7 @@ import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddSuccessMessageConfig, toastEditErrorMessageConfig,
-    toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
-import moment from "moment";
 import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -142,7 +140,7 @@ const IncompleteClaimsEdit = props => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    // const [isModified, setIsModified] = useState(false);
+     const [isRequire, setIsRequire] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -174,6 +172,7 @@ const IncompleteClaimsEdit = props => {
                         file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : ""
                     };
                     setData(newIncompleteClaim);
+                    setIsRequire(response.data.requirements);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
 
@@ -941,6 +940,7 @@ const IncompleteClaimsEdit = props => {
                                                 </div>
 
                                                 <div className="form-group row">
+                                                    {/*{console.log(isRequire,"LIST_REQUIRE")}*/}
                                                     <div className={error.description.length ? "col validated" : "col"}>
                                                         <label htmlFor="description">Description <InputRequire/></label>
                                                         <textarea
