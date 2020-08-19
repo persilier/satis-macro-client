@@ -4,13 +4,17 @@ import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
-import ExportButton from "../components/ExportButton";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {
+    filterDataTableBySearchValue,
+    forceRound,
+    formatToTimeStampUpdate,
+    loadCss
+} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -120,11 +124,11 @@ const ClaimAssign = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
-                <td>{claim.created_at}</td>
+                <td>{formatToTimeStampUpdate(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
+                {/*<td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>*/}
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>
+                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>*/}
                 <td>
                     <a href={`/process/claim-assign/${claim.id}/detail`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -143,14 +147,14 @@ const ClaimAssign = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Traitement
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Réclamation à affecter
+                                    Réclamation à transférer
                                 </a>
                             </div>
                         </div>
@@ -158,7 +162,7 @@ const ClaimAssign = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Cette page vous présente  la liste des réclamations complètes et qui sont en attente d'être transféré."}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -180,7 +184,7 @@ const ClaimAssign = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
+                                            {/*<ExportButton/>*/}
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -200,24 +204,24 @@ const ClaimAssign = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de plainte
+                                                            aria-label="Country: activate to sort column ascending">Date de réception
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de plainte
+                                                            aria-label="Country: activate to sort column ascending">Objet
                                                         </th>
+                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
+                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
+                                                        {/*    aria-label="Country: activate to sort column ascending">Agent*/}
+                                                        {/*</th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Agent
+                                                            aria-label="Country: activate to sort column ascending">Institution ciblée
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institution
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Unité
-                                                        </th>
+                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
+                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
+                                                        {/*    aria-label="Country: activate to sort column ascending">Unité*/}
+                                                        {/*</th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -244,11 +248,11 @@ const ClaimAssign = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">Date de l'opération</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de plainte</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de plainte</th>
-                                                        <th rowSpan="1" colSpan="1">Agent</th>
-                                                        <th rowSpan="1" colSpan="1">Unité</th>
+                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                        <th rowSpan="1" colSpan="1">Objet </th>
+                                                        {/*<th rowSpan="1" colSpan="1">Agent</th>*/}
+                                                        <th rowSpan="1" colSpan="1">Institution ciblée</th>
+                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>

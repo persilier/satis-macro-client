@@ -182,7 +182,7 @@ const Nav = (props) => {
                                                     {
                                                         eventNotification.map((n, index) => (
                                                             <a
-                                                                href={ getNotificationLink(n.type.substr(39, n.type.length), n.data)}
+                                                                href={getNotificationLink(n.type.substr(39, n.type.length), n.data)}
                                                                 key={index}
                                                                 className="kt-notification__item"
                                                                 onClick={e => showDetailNotification(e, getNotificationLink(n.type.substr(39, n.type.length), n.data), n.id, false, n)}
@@ -318,66 +318,66 @@ const Nav = (props) => {
                                 {/*</div>*/}
                             </div>
 
-                            {/*<div className="kt-notification">*/}
-                            {/*    <a href="custom/apps/user/profile-1/personal-information.html" className="kt-notification__item">*/}
-                            {/*        <div className="kt-notification__item-icon">*/}
-                            {/*            <i className="flaticon2-calendar-3 kt-font-success"></i>*/}
-                            {/*        </div>*/}
-                            {/*        <div className="kt-notification__item-details">*/}
-                            {/*            <div className="kt-notification__item-title kt-font-bold">*/}
-                            {/*                My Profile*/}
-                            {/*            </div>*/}
-                            {/*            <div className="kt-notification__item-time">*/}
-                            {/*                Account settings and more*/}
-                            {/*            </div>*/}
-                            {/*        </div>*/}
-                            {/*    </a>*/}
+                            <div className="kt-notification">
+                                {/*    <a href="custom/apps/user/profile-1/personal-information.html" className="kt-notification__item">*/}
+                                {/*        <div className="kt-notification__item-icon">*/}
+                                {/*            <i className="flaticon2-calendar-3 kt-font-success"></i>*/}
+                                {/*        </div>*/}
+                                {/*        <div className="kt-notification__item-details">*/}
+                                {/*            <div className="kt-notification__item-title kt-font-bold">*/}
+                                {/*                My Profile*/}
+                                {/*            </div>*/}
+                                {/*            <div className="kt-notification__item-time">*/}
+                                {/*                Account settings and more*/}
+                                {/*            </div>*/}
+                                {/*        </div>*/}
+                                {/*    </a>*/}
 
-                            {
-                                verifyPermission(props.userPermissions, 'list-my-discussions') ||
-                                verifyPermission(props.userPermissions, 'contribute-discussion') ? (
-                                        <Link to={"/chat"} className="kt-notification__item">
-                                            <div className="kt-notification__item-icon">
-                                                <i className="flaticon2-mail kt-font-warning"></i>
-                                            </div>
-                                            <div className="kt-notification__item-details">
-                                                <div className="kt-notification__item-title kt-font-bold">
-                                                    Mes Messages
+                                {
+                                    verifyPermission(props.userPermissions, 'list-my-discussions') ||
+                                    verifyPermission(props.userPermissions, 'contribute-discussion') ? (
+                                            <Link to={"/chat"} className="kt-notification__item">
+                                                <div className="kt-notification__item-icon">
+                                                    <i className="flaticon2-mail kt-font-warning"></i>
                                                 </div>
-                                                <div className="kt-notification__item-time">
-                                                    Entrez dans mes messageries
+                                                <div className="kt-notification__item-details">
+                                                    <div className="kt-notification__item-title kt-font-bold">
+                                                        Mes Messages
+                                                    </div>
+                                                    <div className="kt-notification__item-time">
+                                                        Entrez dans mes messageries
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    )
-                                    : ""
-                            }
+                                            </Link>
+                                        )
+                                        : ""
+                                }
 
-                            {/*<Link to={"/feedback-channels"} className="kt-notification__item">*/}
-                            {/*    <div className="kt-notification__item-icon">*/}
-                            {/*        <i className="flaticon2-hourglass kt-font-brand"></i>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="kt-notification__item-details">*/}
-                            {/*        <div className="kt-notification__item-title kt-font-bold">*/}
-                            {/*            Mes Canaux*/}
-                            {/*        </div>*/}
-                            {/*        <div className="kt-notification__item-time">*/}
-                            {/*           Les canaux du personnel*/}
-                            {/*        </div>*/}
-                            {/*    </div>*/}
-                            {/*</Link>*/}
-                            <div className="kt-notification__custom kt-space-between">
-                                <a href="/logout" onClick={onClickLogoutLink} target="_blank"
-                                   className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
-                                {/*<a href="custom/user/login-v2.html" target="_blank"*/}
-                                {/*   className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>*/}
+                                {/*<Link to={"/feedback-channels"} className="kt-notification__item">*/}
+                                {/*    <div className="kt-notification__item-icon">*/}
+                                {/*        <i className="flaticon2-hourglass kt-font-brand"></i>*/}
+                                {/*    </div>*/}
+                                {/*    <div className="kt-notification__item-details">*/}
+                                {/*        <div className="kt-notification__item-title kt-font-bold">*/}
+                                {/*            Mes Canaux*/}
+                                {/*        </div>*/}
+                                {/*        <div className="kt-notification__item-time">*/}
+                                {/*           Les canaux du personnel*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*</Link>*/}
+                                <div className="kt-notification__custom kt-space-between">
+                                    <a href="/logout" onClick={onClickLogoutLink} target="_blank"
+                                       className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
+                                    {/*<a href="custom/user/login-v2.html" target="_blank"*/}
+                                    {/*   className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>*/}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        // < /div>
     );
 };
 

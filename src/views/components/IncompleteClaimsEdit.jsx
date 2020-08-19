@@ -25,6 +25,7 @@ import {
     toastAddSuccessMessageConfig, toastEditErrorMessageConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
+import InfirmationTable from "./InfirmationTable";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -477,11 +478,11 @@ const IncompleteClaimsEdit = props => {
                     </div>
                 </div>
 
-                <FormInformation
-                    information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
-                />
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <InfirmationTable
+                        information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
+                    />
                     <div className="row">
                         <div className="col">
                             <div className="kt-portlet">
