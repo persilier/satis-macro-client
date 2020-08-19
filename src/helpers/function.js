@@ -178,7 +178,7 @@ export const filterChannel = (channels, typeFilter) => {
 export const percentageData = (data, total) => {
 
     if (total !== 0)
-        Math.round((data * 100) / total)+"%"
+        Math.round((data * 100) / total)+"%";
     else return 0+"%"
 
 };
