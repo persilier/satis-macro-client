@@ -14,15 +14,15 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import FormInformation from "./FormInformation";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import currencies from "../../constants/currencyContry";
 import {AUTH_TOKEN} from "../../constants/token";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const CurrencyForm = (props) => {
+const CurrencyForm = () => {
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(["update-currency"], 'update-currency'))
@@ -32,8 +32,8 @@ const CurrencyForm = (props) => {
             window.location.href = ERROR_401;
     }
 
-    const listCurrency = currencies;
-    const [currency, setCurrency] = useState({value: "", label: ""});
+    const [listCurrency, setListCurrency] = useState(currencies);
+    const [currency, setCurrency] = useState(null);
 
     const defaultData = {
         name: "",
@@ -49,6 +49,7 @@ const CurrencyForm = (props) => {
 
     useEffect(() => {
         async function fetchData () {
+            setListCurrency(filterCurrency([]));
             if (id) {
                 await axios.get(`${appConfig.apiDomaine}/currencies/${id}`)
                     .then(response => {
@@ -65,13 +66,58 @@ const CurrencyForm = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, id]);
+
+    const filterCurrency = (removeElement) => {
+        removeElement = [
+            {
+                value: 0,
+                label: "dinar algérien",
+                iso_code: "DZD"
+            },
+            {
+                value: 1,
+                label: "livre égyptienne",
+                iso_code: "EGP"
+            },
+            {
+                value: 2,
+                label: "dinar libyen",
+                iso_code: "LYD"
+            },
+            {
+                value: 14,
+                label: "leone",
+                iso_code: "SLL"
+            },
+            {
+                value: 16,
+                label: "franc congolais",
+                iso_code: "CDF"
+            },
+            {
+                value: 17,
+                label: "dobra",
+                iso_code: "STD"
+            }
+        ];
+
+        let newCurrencyList = [...listCurrency];
+
+        for (let i = 0; i < removeElement.length; i++) {
+            newCurrencyList = newCurrencyList.filter(e => e.iso_code !== removeElement[i].iso_code);
+        }
+
+        return newCurrencyList;
+    };
 
     const onChangeCurrency = (selected) => {
-        setCurrency(selected);
+        if (error.iso_code.length || error.name.length)
+            setError(defaultError);
         const newData = {...data};
-        newData.iso_code = selected.iso_code;
-        newData.name = selected.label;
+        newData.iso_code = selected ? selected.iso_code : "";
+        newData.name = selected ? selected.label : "";
+        setCurrency(selected);
         setData(newData);
     };
 
@@ -82,7 +128,7 @@ const CurrencyForm = (props) => {
             axios.put(`${appConfig.apiDomaine}/currencies/${id}`, data)
                 .then(response => {
                     setStartRequest(false);
-                    setCurrency({value: "", label: ""});
+                    setCurrency(null);
                     setError(defaultError);
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
@@ -98,6 +144,7 @@ const CurrencyForm = (props) => {
                     setStartRequest(false);
                     setError(defaultError);
                     setData(defaultData);
+                    setCurrency(null);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(errorRequest => {
@@ -124,10 +171,10 @@ const CurrencyForm = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/unit_type" className="kt-subheader__breadcrumbs-link">
-                                    Type d'unité
+                                    Devise
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -154,13 +201,13 @@ const CurrencyForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Selectionnez la {id ? "nouvelle" : ""} devise</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Devise <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
+                                                        isClearable
                                                         value={currency}
+                                                        placeholder={"Veillez selectioner la devise"}
                                                         onChange={onChangeCurrency}
                                                         options={listCurrency}
                                                     />
@@ -168,14 +215,14 @@ const CurrencyForm = (props) => {
                                             </div>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de la devise</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         disabled={true}
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrez le nom de la devise"
+                                                        placeholder=""
                                                         value={data.name}
                                                     />
                                                     {
@@ -191,14 +238,14 @@ const CurrencyForm = (props) => {
                                             </div>
 
                                             <div className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="iso_code">ISO code de la devise</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="iso_code">ISO code <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         disabled={true}
                                                         id="iso_code"
                                                         type="text"
                                                         className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer l'iso code"
+                                                        placeholder=""
                                                         value={data.iso_code}
                                                     />
                                                     {

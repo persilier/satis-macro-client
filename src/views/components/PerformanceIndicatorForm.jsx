@@ -13,9 +13,9 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import FormInformation from "./FormInformation";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import InputRequire from "./InputRequire";
 
 const PerformanceIndicatorForm = (props) => {
     const {id} = useParams();
@@ -63,7 +63,7 @@ const PerformanceIndicatorForm = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [id]);
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -139,7 +139,7 @@ const PerformanceIndicatorForm = (props) => {
                                     Indicateur de performance
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -166,10 +166,8 @@ const PerformanceIndicatorForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification des indicateurs de performance" : "Formulaire d'ajout des indicateurs de performance"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'indicateur</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Indicateur <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -191,32 +189,8 @@ const PerformanceIndicatorForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                <textarea
-                                                    id="description"
-                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
-                                                    cols="30"
-                                                    rows="5"
-                                                    value={data.description}
-                                                    onChange={(e) => onChangeDescription(e)}
-                                                />
-                                                    {
-                                                        error.description.length ? (
-                                                            error.description.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
                                             <div className={error.value.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">La valeur</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">Valeur <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="value"
@@ -239,7 +213,7 @@ const PerformanceIndicatorForm = (props) => {
                                             </div>
 
                                             <div className={error.mesure_unit.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="mesure_unit">L'unité de mésure</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="mesure_unit">Unité de mésure <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="mesure_unit"
@@ -252,6 +226,30 @@ const PerformanceIndicatorForm = (props) => {
                                                     {
                                                         error.mesure_unit.length ? (
                                                             error.mesure_unit.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : ""
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description <InputRequire/></label>
+                                                <div className="col-lg-9 col-xl-6">
+                                                <textarea
+                                                    id="description"
+                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer la description"
+                                                    cols="30"
+                                                    rows="5"
+                                                    value={data.description}
+                                                    onChange={(e) => onChangeDescription(e)}
+                                                />
+                                                    {
+                                                        error.description.length ? (
+                                                            error.description.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>

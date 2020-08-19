@@ -15,9 +15,9 @@ import {ToastBottomEnd} from "./Toast";
 import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
 import appConfig from "../../config/appConfig";
-import FormInformation from "./FormInformation";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import InputRequire from "./InputRequire";
 
 const ClaimObjectForm = (props) => {
     const {id} = useParams();
@@ -30,9 +30,9 @@ const ClaimObjectForm = (props) => {
     }
 
     const [claimCategories, setClaimCategories] = useState([]);
-    const [claimCategory, setClaimCategory] = useState({});
+    const [claimCategory, setClaimCategory] = useState(null);
     const [severityLevels, setSeverityLevels] = useState([]);
-    const [severityLevel, setSeverityLevel] = useState({});
+    const [severityLevel, setSeverityLevel] = useState(null);
 
     const defaultData = {
         name: "",
@@ -105,7 +105,7 @@ const ClaimObjectForm = (props) => {
 
     const onChangeClaimCategory = (selected) => {
         const newData = {...data};
-        newData.claim_category_id = selected.value;
+        newData.claim_category_id = selected ? selected.value : "";
         setClaimCategory(selected);
         setData(newData);
     };
@@ -118,7 +118,7 @@ const ClaimObjectForm = (props) => {
 
     const onChangeSeverityLevel = (selected) => {
         const newData = {...data};
-        newData.severity_levels_id = selected.value;
+        newData.severity_levels_id = selected ? selected.value : "";
         setSeverityLevel(selected);
         setData(newData);
     };
@@ -174,7 +174,7 @@ const ClaimObjectForm = (props) => {
                                 Objet de plainte
                             </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                            <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                 {
                                     id ? "Modification" : "Ajout"
                                 }
@@ -201,10 +201,8 @@ const ClaimObjectForm = (props) => {
                             <form method="POST" className="kt-form">
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
-                                        <FormInformation information={id ? "Formulaire de modification de reclamation" : "Formulaire d'ajout de reclamation"}/>
-
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'objet de plainte</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Objet de plainte <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="name"
@@ -227,10 +225,12 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.claim_category_id.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Catégorie de l'objet de plainte</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Catégorie de l'objet <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <Select
+                                                    isClearable
                                                     value={claimCategory}
+                                                    placeholder={"Veillez entrer la catégorie de l'objet de plainte"}
                                                     onChange={onChangeClaimCategory}
                                                     options={claimCategories}
                                                 />
@@ -247,7 +247,7 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Limitation de temps</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Délai de traitement <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="timeLimite"
@@ -270,10 +270,12 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.severity_levels_id.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Niveau de gravité</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Niveau de gravité <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <Select
+                                                    isClearable
                                                     value={severityLevel}
+                                                    placeholder={"Veillez selectioner le niveau de gravité"}
                                                     onChange={onChangeSeverityLevel}
                                                     options={severityLevels}
                                                 />
@@ -290,7 +292,7 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"

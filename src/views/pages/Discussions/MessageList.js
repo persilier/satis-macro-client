@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
-import LoadingTable from "../../components/LoadingTable";
 
 
 export default function MessageList(props) {

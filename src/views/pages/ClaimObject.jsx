@@ -14,9 +14,9 @@ import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -26,7 +26,7 @@ const ClaimObject = (props) => {
 
     const [load, setLoad] = useState(true);
     const [claimObjects, setClaimObjects] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -36,8 +36,8 @@ const ClaimObject = (props) => {
         async function fetchData () {
             await axios.get(`${appConfig.apiDomaine}/claim-objects`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setClaimObjects(response.data);
                     setLoad(false);
                 })
@@ -48,7 +48,7 @@ const ClaimObject = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -158,24 +158,26 @@ const ClaimObject = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claimObject.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{claimObject.description["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "200px" }}>{claimObject.description["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name[props.language]}</td>
-                <td>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
+                <td style={{ textOverflow: "ellipsis", width: "50px" }}>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
                 <td>
                     {
                         claimObject.severity_level ? (
-                            <div className="p-2" style={{backgroundColor: claimObject.severity_level.color, color: claimObject.severity_level.color === "#ffffff" ? "black" : "white"}}>
-                                {claimObject.severity_level.name[props.language]} {claimObject.severity_level.color === "#ffffff" ? " Blanc" : "" }
+                            <div className="p-2 text-center" style={{backgroundColor: claimObject.severity_level.color, color: claimObject.severity_level.color === "#ffffff" ? "black" : "white"}}>
+                                {
+                                    claimObject.severity_level.color ? (
+                                            `${claimObject.severity_level.color} ${claimObject.severity_level.color === "#ffffff" ? " Blanc" : ""}`
+                                        )
+                                        : (
+                                            <strong style={{color: "black"}}>-</strong>
+                                        )
+                                }
                             </div>
                         ) : ""
                     }
                 </td>
                 <td>
-                    <Link to="/settings/claim_objects/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, 'update-claim-category') ? (
                             <Link to={`/settings/claim_objects/${claimObject.id}/edit`}
@@ -213,7 +215,7 @@ const ClaimObject = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Objet de plainte
                                 </a>
                             </div>
@@ -222,13 +224,11 @@ const ClaimObject = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des objets de plainte"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-claim-object"}
                             title={"Objet de plainte"}
-                            addText={"Ajouter un objet de plainte"}
+                            addText={"Ajouter"}
                             addLink={"/settings/claim_objects/add"}
                         />
 
@@ -250,7 +250,7 @@ const ClaimObject = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>

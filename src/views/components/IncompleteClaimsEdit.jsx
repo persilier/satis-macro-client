@@ -134,7 +134,6 @@ const IncompleteClaimsEdit = props => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [isModified, setIsModified] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -370,9 +369,6 @@ const IncompleteClaimsEdit = props => {
         const newData = {...data};
         newData.file = Object.values(e.target.files);
         setData(newData);
-    };
-    const onClickToEdit = (e) => {
-        setIsModified(true)
     };
 
     const formatFormData = (newData) => {

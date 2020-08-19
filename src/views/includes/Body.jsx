@@ -4,7 +4,6 @@ import {
     Route,
     Redirect
 } from "react-router-dom";
-import SMS from "../pages/SMS";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
 import UnitType from "../pages/UnitType";
@@ -78,9 +77,9 @@ import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
 const Body = () => {
     return (
         <Switch>
-            <Route exact path="/settings/sms">
+            {/*<Route exact path="/settings/sms">
                 <SMS/>
-            </Route>
+            </Route>*/}
 
             <Route exact path="/settings/clients/category">
                 <CategoryClient/>

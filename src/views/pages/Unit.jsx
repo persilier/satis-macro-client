@@ -18,6 +18,8 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import apiConfig from "../../config/apiConfig";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -60,7 +62,7 @@ const Unit = (props) => {
     }
     const [load, setLoad] = useState(true);
     const [units, setUnits] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -70,8 +72,8 @@ const Unit = (props) => {
         async function fetchData () {
             await axios.get(endPoint.list)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setUnits(response.data);
                     setLoad(false);
                 })
@@ -82,7 +84,7 @@ const Unit = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -192,8 +194,6 @@ const Unit = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{unit.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "250px" }}>{unit.description["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.parent ? unit.parent.name["fr"] : ""}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.unit_type.name["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>
                     {
@@ -208,11 +208,6 @@ const Unit = (props) => {
                     ) : <td style={{display: "none"}}/>
                 }
                 <td>
-                    <Link to="/settings/unit/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, 'update-any-unit') || verifyPermission(props.userPermissions, 'update-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
                             <Link to={`/settings/unit/${unit.id}/edit`}
@@ -250,7 +245,7 @@ const Unit = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Unité
                                 </a>
                             </div>
@@ -259,13 +254,13 @@ const Unit = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des unités"}/>
+                    <InfirmationTable information={"Liste des services, agences, etc..."}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={['store-any-unit', 'store-my-unit', 'store-without-link-unit']}
                             title={"Unité"}
-                            addText={"Ajouter un unité"}
+                            addText={"Ajouter"}
                             addLink={"/settings/unit/add"}
                         />
 
@@ -287,7 +282,7 @@ const Unit = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>
@@ -295,14 +290,6 @@ const Unit = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Nom Unité
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "250px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Unité Parent
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70px" }}
@@ -345,8 +332,6 @@ const Unit = (props) => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom Unité</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Unité Parent</th>
                                                         <th rowSpan="1" colSpan="1">Type Unité</th>
                                                         <th rowSpan="1" colSpan="1">Responsable</th>
                                                         {

@@ -17,9 +17,9 @@ import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -49,7 +49,7 @@ const SeverityLevel = (props) => {
 
     const [load, setLoad] = useState(true);
     const [severityLevels, setSeverityLevels] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -59,8 +59,8 @@ const SeverityLevel = (props) => {
         async function fetchData () {
             await axios.get(endPoint.list)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setSeverityLevels(response.data);
                     setLoad(false);
                 })
@@ -71,7 +71,7 @@ const SeverityLevel = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -186,15 +186,12 @@ const SeverityLevel = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{severityLevel.name["fr"]}</td>
                 <td>
-                    <div className="p-2" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>{console.log("color:", severityLevel.color)} {severityLevel.color ? `${severityLevel.color} ${severityLevel.color === "#ffffff" ? " Blanc" : ""}` : "-"}</div>
+                    <div className="p-2 text-center" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>
+                        {severityLevel.color ? `${severityLevel.color} ${severityLevel.color === "#ffffff" ? " Blanc" : ""}` : <strong style={{color: "black"}}>-</strong>}
+                    </div>
                 </td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description["fr"]}</td>
                 <td>
-                    <Link to="/settings/severities/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, 'update-severity-level') ? (
                             <Link to={`/settings/severities/${severityLevel.id}/edit`}
@@ -232,7 +229,7 @@ const SeverityLevel = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Niveau de gravité
                                 </a>
                             </div>
@@ -241,13 +238,11 @@ const SeverityLevel = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des niveaux de gravité"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-severity-level"}
                             title={"Niveau de gravité"}
-                            addText={"Ajouter un niveau de gravité"}
+                            addText={"Ajouter"}
                             addLink={"/settings/severities/add"}
                         />
 
@@ -270,7 +265,7 @@ const SeverityLevel = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>

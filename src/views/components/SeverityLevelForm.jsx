@@ -13,9 +13,9 @@ import {
     toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import FormInformation from "./FormInformation";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import InputRequire from "./InputRequire";
 
 const endPointConfig = {
     PRO: {
@@ -87,7 +87,7 @@ const SeverityLevelForm = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -163,7 +163,7 @@ const SeverityLevelForm = (props) => {
                                     Niveau de gravité
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -190,10 +190,8 @@ const SeverityLevelForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification d'un niveau de gravité" : "Formulaire d'ajout d'un niveau de gravité"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de la gravité</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Niveau de gravité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -216,7 +214,7 @@ const SeverityLevelForm = (props) => {
                                             </div>
 
                                             <div className={error.color.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="color">Couleur du niveau de gravité</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="color">Couleur <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="color"
@@ -239,7 +237,7 @@ const SeverityLevelForm = (props) => {
                                             </div>
 
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"

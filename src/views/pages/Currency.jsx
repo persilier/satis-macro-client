@@ -2,10 +2,8 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {Link} from "react-router-dom";
 import axios from "axios";
-import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
-import ExportButton from "../components/ExportButton";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import appConfig from "../../config/appConfig";
@@ -21,6 +19,7 @@ import {
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {ERROR_401} from "../../config/errorPage";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -31,7 +30,7 @@ const Currency = (props) => {
 
     const [load, setLoad] = useState(true);
     const [currencies, setCurrencies] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -41,8 +40,8 @@ const Currency = (props) => {
         async function fetchData () {
             await axios.get(`${appConfig.apiDomaine}/currencies`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setCurrencies(response.data);
                     setLoad(false);
                 })
@@ -53,7 +52,7 @@ const Currency = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -168,11 +167,6 @@ const Currency = (props) => {
                 <td>{currency.name["fr"]}</td>
                 <td>{currency.iso_code}</td>
                 <td>
-                    <Link to="/settings/currencies/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, 'update-currency') ? (
                             <Link to={`/settings/currencies/${currency.id}/edit`}
@@ -210,8 +204,8 @@ const Currency = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Type d'unité
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    Devise
                                 </a>
                             </div>
                         </div>
@@ -219,13 +213,11 @@ const Currency = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-currency"}
                             title={"Devise"}
-                            addText={"Ajouter d'une devise"}
+                            addText={"Ajouter"}
                             addLink={"/settings/currencies/add"}
                         />
 
@@ -244,12 +236,11 @@ const Currency = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>
@@ -260,7 +251,7 @@ const Currency = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">ISO code
+                                                            aria-label="Country: activate to sort column ascending">ISO
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action

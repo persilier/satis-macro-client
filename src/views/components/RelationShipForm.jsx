@@ -12,6 +12,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -49,7 +50,7 @@ const RelationShipForm = (props) => {
                     setData(newType);
                 })
         }
-    },[]);
+    },[appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -89,9 +90,9 @@ const RelationShipForm = (props) => {
                     setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
-                .catch(error => {
+                .catch(({response}) => {
                     setStartRequest(false);
-                    setError({...defaultError});
+                    setError({...defaultError, ...response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
@@ -112,8 +113,8 @@ const RelationShipForm = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/clients/type" className="kt-subheader__breadcrumbs-link">
-                                    Type relation
+                                <Link to="/settings/relationship" className="kt-subheader__breadcrumbs-link">
+                                    Relation client
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
@@ -135,7 +136,7 @@ const RelationShipForm = (props) => {
                                         <h3 className="kt-portlet__head-title">
                                             {
                                                 id ?
-                                                    "Modification de RelationShip" : " Ajout de RelationShip"
+                                                    "Modification d'un type de relation client" : " Ajout de relation client"
                                             }
                                         </h3>
                                     </div>
@@ -152,14 +153,13 @@ const RelationShipForm = (props) => {
 
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Le Nom</label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Relation <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom"
+                                                                            placeholder="Veillez entrer le nom de la relation"
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -178,18 +178,17 @@ const RelationShipForm = (props) => {
 
                                                                 <div
                                                                     className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="description">La Description</label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
-                                        <textarea
-                                            id="description"
-                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la description"
-                                            cols="30"
-                                            rows="5"
-                                            value={data.description}
-                                            onChange={(e) => onChangeDescription(e)}
-                                        />
+                                                                        <textarea
+                                                                            id="description"
+                                                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                                            placeholder="Veillez entrer la description"
+                                                                            cols="30"
+                                                                            rows="5"
+                                                                            value={data.description}
+                                                                            onChange={(e) => onChangeDescription(e)}
+                                                                        />
                                                                         {
                                                                             error.description.length ? (
                                                                                 error.description.map((error, index) => (

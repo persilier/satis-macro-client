@@ -11,7 +11,6 @@ import {
 } from "../../config/toastConfig";
 import {Link, useParams} from "react-router-dom";
 import {AUTH_TOKEN} from "../../constants/token";
-import FormInformation from "../components/FormInformation";
 import Select from "react-select";
 import {debug} from "../../helpers/function";
 
@@ -165,7 +164,7 @@ const InstitutionMessageApi = props => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Institution Message API
+                                    Fournisseur SMS
                                 </a>
                             </div>
                         </div>
@@ -179,7 +178,7 @@ const InstitutionMessageApi = props => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Modification Institution Message API
+                                            Modification Fournisseur SMS
                                         </h3>
                                     </div>
                                 </div>
@@ -187,15 +186,14 @@ const InstitutionMessageApi = props => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information="Formulaire de modification Institution message API"/>
 
                                             <div className={"form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méssage API</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Fournisseur SMS(<strong className="text-danger">*</strong>)</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
                                                         value={messageApi}
-                                                        placeholder="Veillez selectionner le message API"
+                                                        placeholder="oceanique"
                                                         onChange={handleMessageApiChange}
                                                         options={messageApis}
                                                     />
@@ -206,7 +204,7 @@ const InstitutionMessageApi = props => {
                                                 Object.keys(error).length ? (
                                                     Object.keys(data).map((param, index) => (
                                                         <div key={index} className={ error[Object.keys(error)[index]].length ? "form-group row validated" : "form-group row"}>
-                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={Object.keys(data)[index]}>{Object.keys(data)[index]}</label>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={Object.keys(data)[index]}>{Object.keys(data)[index]}(<strong className="text-danger">*</strong>)</label>
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <input
                                                                     id={Object.keys(data)[index]}

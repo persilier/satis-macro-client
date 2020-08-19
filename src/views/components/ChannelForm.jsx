@@ -13,10 +13,10 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import FormInformation from "./FormInformation";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -38,8 +38,7 @@ const ChannelForms = (props) => {
         name: [],
         is_response: [],
     };
-    const option1 = 1;
-    const option2 = 0;
+
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -62,17 +61,11 @@ const ChannelForms = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
-        setData(newData);
-    };
-
-    const handleOptionChange = (e) => {
-        const newData = {...data};
-        newData.is_response = parseInt(e.target.value);
         setData(newData);
     };
 
@@ -124,10 +117,10 @@ const ChannelForms = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/channels" className="kt-subheader__breadcrumbs-link">
-                                    Type d'unité
+                                    Canal
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -154,10 +147,8 @@ const ChannelForms = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification d'un canal" : "Formulaire d'ajout d'un canal"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du Canal</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Canal <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -170,27 +161,6 @@ const ChannelForms = (props) => {
                                                     {
                                                         error.name.length ? (
                                                             error.name.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
-                                            <div className={error.is_response.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Canal de réponse</label>
-                                                <div className="col-lg-9 col-xl-6 kt-radio-inline">
-                                                    <label className="kt-radio">
-                                                        <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_response}/> Oui<span/>
-                                                    </label>
-                                                    <label className="kt-radio">
-                                                        <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_response}/> Non<span/>
-                                                    </label>
-                                                    {
-                                                        error.is_response.length ? (
-                                                            error.is_response.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>

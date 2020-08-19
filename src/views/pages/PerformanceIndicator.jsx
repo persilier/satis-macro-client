@@ -14,9 +14,9 @@ import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -26,7 +26,7 @@ const PerformanceIndicator = (props) => {
 
     const [load, setLoad] = useState(true);
     const [performances, setPerformances] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(2);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -36,8 +36,8 @@ const PerformanceIndicator = (props) => {
        async function fetchData () {
            await axios.get(`${appConfig.apiDomaine}/performance-indicators`)
                .then(response => {
-                   setNumberPage(forceRound(response.data.length/numberPerPage));
-                   setShowList(response.data.slice(0, numberPerPage));
+                   setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                   setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                    setPerformances(response.data);
                    setLoad(false);
                })
@@ -48,7 +48,7 @@ const PerformanceIndicator = (props) => {
            ;
        }
        fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -162,11 +162,6 @@ const PerformanceIndicator = (props) => {
                 <td>{performance.value}</td>
                 <td>{performance.mesure_unit}</td>
                 <td>
-                    <Link to="/settings/performance_indicator/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, "update-performance-indicator") ? (
                             <Link to={`/settings/performance_indicator/${performance.id}/edit`}
@@ -204,7 +199,7 @@ const PerformanceIndicator = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#/icon" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#indicatorPerformance" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#indicatorPerformance" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Indicateur de performance
                                 </a>
                             </div>
@@ -213,13 +208,11 @@ const PerformanceIndicator = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des indicateurs de performance"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-performance-indicator"}
                             title={"Indicateur de performance"}
-                            addText={"Ajouter un indicateur"}
+                            addText={"Ajouter"}
                             addLink={"/settings/performance_indicator/add"}
                         />
 
@@ -242,7 +235,7 @@ const PerformanceIndicator = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>
@@ -252,7 +245,7 @@ const PerformanceIndicator = (props) => {
                                                             aria-label="Country: activate to sort column ascending">Nom
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "300px" }}
+                                                            colSpan="1" style={{ width: "250px" }}
                                                             aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"

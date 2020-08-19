@@ -7,12 +7,12 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import FormInformation from "../components/FormInformation";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import InputRequire from "../components/InputRequire";
 
 const Mail = (props) => {
-    document.title = "Satis client - Paramètre Mail";
+    document.title = "Satis client - Paramètre Envoie de mail";
     if (!verifyPermission(props.userPermissions, 'update-mail-parameters'))
         window.location.href = ERROR_401;
 
@@ -140,7 +140,7 @@ const Mail = (props) => {
                                 </a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#link" className="kt-subheader__breadcrumbs-link">
-                                    MAIL
+                                    Envoie de mail
                                 </a>
                             </div>
                         </div>
@@ -154,7 +154,7 @@ const Mail = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Mail
+                                            Envoie de mail
                                         </h3>
                                     </div>
                                 </div>
@@ -162,16 +162,14 @@ const Mail = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={"The example form below demonstrates common HTML form elements that receive updated styles from Bootstrap with additional classes."}/>
-
                                             <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Nom Expéditeur<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="senderID"
                                                         type="text"
                                                         className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer l'identifiant de l'utilisateur"
+                                                        placeholder="dmd"
                                                         value={data.senderID}
                                                         onChange={(e) => onChangeSenderID(e)}
                                                     />
@@ -182,19 +180,19 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
 
                                             <div className={error.username.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"username"}>Votre nom</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"username"}>Identifiant SMTP<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="username"
                                                         type="text"
                                                         className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrez votre nom"
+                                                        placeholder="dmdconsult"
                                                         value={data.username}
                                                         onChange={(e) => onChangeUsername(e)}
                                                     />
@@ -205,19 +203,19 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
 
                                             <div className={error.password.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Votre mot de passe</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe SMTP<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="password"
                                                         type="password"
                                                         className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer votre mot de passe"
+                                                        placeholder="************"
                                                         value={data.password}
                                                         onChange={(e) => onChangePassword(e)}
                                                     />
@@ -234,13 +232,13 @@ const Mail = (props) => {
                                             </div>
 
                                             <div className={error["from"].length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="from">Email de l'expéditeur</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="from">Email de l'expéditeur<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="from"
                                                         type="text"
                                                         className={error["from"].length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer l'adresse email de l'expéditeur"
+                                                        placeholder="agent@dmdconsult.com"
                                                         value={data["from"]}
                                                         onChange={(e) => onChangeFrom(e)}
                                                     />
@@ -257,13 +255,13 @@ const Mail = (props) => {
                                             </div>
 
                                             <div className={error.server.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="server">Le Serveur</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="server">Serveur<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="server"
                                                         type="text"
                                                         className={error.server.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le serveur"
+                                                        placeholder="www.mailtrap.io"
                                                         value={data.server}
                                                         onChange={(e) => onChangeServer(e)}
                                                     />
@@ -280,13 +278,13 @@ const Mail = (props) => {
                                             </div>
 
                                             <div className={error.port.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Le Port</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="port"
                                                         type="number"
                                                         className={error.port.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le port"
+                                                        placeholder="2525"
                                                         value={data.port}
                                                         onChange={(e) => onChangePort(e)}
                                                     />
@@ -303,7 +301,7 @@ const Mail = (props) => {
                                             </div>
 
                                             <div className={error.security.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="security">Le Serveur</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="security">Sécurité<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <select
                                                         id="security"

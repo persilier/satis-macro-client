@@ -14,12 +14,12 @@ import {
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {Link} from "react-router-dom";
-import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {AUTH_TOKEN} from "../../constants/token";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -29,7 +29,7 @@ const MessageApi = props => {
 
     const [load, setLoad] = useState(true);
     const [messageAPIs, setMessageAPIs] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -39,8 +39,8 @@ const MessageApi = props => {
         async function fetchData () {
             axios.get(`${appConfig.apiDomaine}/message-apis`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setMessageAPIs(response.data);
                     setLoad(false);
                 })
@@ -51,7 +51,7 @@ const MessageApi = props => {
             ;
         }
         fetchData();
-    }, []);
+    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -166,11 +166,6 @@ const MessageApi = props => {
                 <td>{messageAPI.name}</td>
                 <td>{messageAPI.method}</td>
                 <td>
-                    <Link to="/settings/message-apis/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, 'update-message-apis') ? (
                             <Link to={`/settings/message-apis/${messageAPI.id}/edit`}
@@ -217,13 +212,11 @@ const MessageApi = props => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des Message API"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-message-apis"}
                             title={"Message API"}
-                            addText={"Ajouter un message API"}
+                            addText={"Ajouter"}
                             addLink={"/settings/message-apis/add"}
                         />
 
@@ -246,7 +239,7 @@ const MessageApi = props => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>

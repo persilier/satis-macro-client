@@ -232,7 +232,7 @@ const FAQs = () => {
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{width: "952px"}}>
                                                 <thead>

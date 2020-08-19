@@ -18,6 +18,7 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -61,7 +62,7 @@ const   Staff = (props) => {
 
     const [load, setLoad] = useState(true);
     const [staffs, setStaffs] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
@@ -71,8 +72,8 @@ const   Staff = (props) => {
         async function fetchData() {
             await axios.get(endPoint.list)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setStaffs(response.data);
                     setLoad(false);
                 })
@@ -82,7 +83,7 @@ const   Staff = (props) => {
                 });
         }
         fetchData();
-    }, []);
+    }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -191,7 +192,7 @@ const   Staff = (props) => {
     const printBodyTable = (staff, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{staff.identite.lastname+" "+staff.identite.firstname}</td>
+                <td>{staff.is_lead ? (<span className="kt-badge kt-badge--success kt-badge--inline">L</span>) : null} {staff.identite.lastname+" "+staff.identite.firstname}</td>
                 <td>
                     {
                         staff.identite.telephone.map((tel, index) => (
@@ -223,11 +224,6 @@ const   Staff = (props) => {
                 }
                 <td>{staff.position.name["fr"]}</td>
                 <td>
-                    <Link to="/settings/staffs/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
                     {
                         verifyPermission(props.userPermissions, "update-staff-from-any-unit") || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
                             <Link to={`/settings/staffs/${staff.id}/edit`}
@@ -265,7 +261,7 @@ const   Staff = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Agent
                                 </a>
                             </div>
@@ -274,13 +270,13 @@ const   Staff = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des agents"}/>
+                    <InfirmationTable information={(<><span className="kt-badge kt-badge--success kt-badge--inline">L</span> : Responsable d'unité</>)}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={["store-staff-from-any-unit", "store-staff-from-my-unit", 'list-staff-from-maybe-no-unit']}
                             title={"Agent"}
-                            addText={"Ajouter un agent"}
+                            addText={"Ajouter"}
                             addLink={"/settings/staffs/add"}
                         />
 
@@ -303,7 +299,7 @@ const   Staff = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>

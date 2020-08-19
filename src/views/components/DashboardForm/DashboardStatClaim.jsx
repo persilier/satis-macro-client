@@ -105,7 +105,7 @@ const DashboardStatClaim = (props) => {
                         }
 
                         let newSatisfaction = {...defaultData};
-                        for (var i = 0; i <= satisfiedData.length - 1; i++) {
+                        for (let i = 0; i <= satisfiedData.length - 1; i++) {
                             newSatisfaction.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
                         }
                         setSatisfactionData(newSatisfaction);
@@ -122,7 +122,7 @@ const DashboardStatClaim = (props) => {
         return () => {
             isCancelled = true;
         }
-    }, []);
+    }, [props.userPermissions, defaultData]);
 
     return (
         (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||

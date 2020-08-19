@@ -10,7 +10,7 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {debug, filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");

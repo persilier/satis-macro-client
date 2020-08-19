@@ -157,7 +157,7 @@ const ClaimAdd = props => {
                 });
         }
         fetchData();
-    }, []);
+    }, [endPoint.create, props.userPermissions]);
 
     const onChangeFirstName = (e) => {
         const newData = {...data};

@@ -75,11 +75,6 @@ const currencies =  [
         iso_code: "SLL"
     },
     {
-        value: 15,
-        label: "Franc CFA (CEMAC)",
-        iso_code: "XAF"
-    },
-    {
         value: 16,
         label: "franc congolais",
         iso_code: "CDF"

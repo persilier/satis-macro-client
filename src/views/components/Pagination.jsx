@@ -8,8 +8,8 @@ const Pagination = (props) => {
                     Afficher
                     <select value={props.numberPerPage} onChange={(e) => props.onChangeNumberPerPage(e)} name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
                         <option value="10">10</option>
-                        <option value="5">20</option>
-                        <option value="3">30</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
                     </select>

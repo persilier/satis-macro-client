@@ -13,12 +13,12 @@ import {
 } from "../../config/toastConfig";
 import {ToastBottomEnd} from "../../views/components/Toast";
 import Select from "react-select";
-import {formatSelectOption} from "../../helpers/function";
+import {debug, formatSelectOption} from "../../helpers/function";
 import appConfig from "../../config/appConfig";
-import FormInformation from "../../views/components/FormInformation";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {AUTH_TOKEN} from "../../constants/token";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -75,26 +75,20 @@ const HoldingUnitForm = (props) => {
 
     const [unitTypes, setUnitTypes] = useState([]);
     const [institutions, setInstitutions] = useState([]);
-    const [unitType, setUnitType] = useState({});
-    const [institution, setInstitution] = useState({});
-    const [parents, setParents] = useState([]);
-    const [parent, setParent] = useState({});
+    const [unitType, setUnitType] = useState(null);
+    const [institution, setInstitution] = useState(null);
     const [leads, setLeads] = useState([]);
-    const [lead, setLead] = useState({});
+    const [lead, setLead] = useState(null);
 
     const defaultData = {
         name: "",
-        description: "",
         unit_type_id: unitTypes.length ? unitTypes[0].id : "",
         lead_id: "",
         institution_id: institutions.length ? institutions[0].id : "",
-        parent_id: parents.length ? parents[0].id : ""
     };
     const defaultError = {
         name: [],
-        description: [],
         unit_type_id: [],
-        parent_id: [],
         lead_id: [],
         institution_id: []
     };
@@ -117,11 +111,8 @@ const HoldingUnitForm = (props) => {
                     .then(response => {
                         const newData = {
                             name: response.data.unit.name["fr"],
-                            description: response.data.unit.description["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
                             institution_id: response.data.unit.institution ? response.data.unit.institution_id ? response.data.unit.institution_id : "" : "",
-                            parent_id: response.data.unit.parent_id ? response.data.unit.parent_id : "",
-                            lead_id: response.data.unit.lead_id ? response.data.unit.lead_id : "",
                         };
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
@@ -133,8 +124,6 @@ const HoldingUnitForm = (props) => {
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                             setInstitution(response.data.unit.institution ? {value: response.data.unit.institution.id, label: response.data.unit.institution.name} : {value: "", label: ""});
                         }
-                        setParents(formatSelectOption(response.data.units, "name", "fr"));
-                        setParent(response.data.unit.parent_id ? {value: response.data.unit.parent_id, label: response.data.unit.parent.name["fr"]} : "");
                         setData(newData);
                     })
                     .catch(error => {
@@ -145,7 +134,6 @@ const HoldingUnitForm = (props) => {
                 await axios.get(endPoint.create)
                     .then(response => {
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
-                        setParents(response.data.parents ? formatSelectOption(response.data.parents, 'name', "fr") : []);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     })
@@ -164,55 +152,42 @@ const HoldingUnitForm = (props) => {
         setData(newData);
     };
 
-    const onChangeDescription = (e) => {
-        const newData = {...data};
-        newData.description = e.target.value;
-        setData(newData);
-    };
-
     const onChangeUnitType = (selected) => {
         const newData = {...data};
-        newData.unit_type_id = selected.value;
+        newData.unit_type_id = selected ? selected.value : "";
         setUnitType(selected);
         setData(newData);
     };
 
     const onChangeLead = (selected) => {
         const newData = {...data};
-        newData.lead_id = selected.value;
+        newData.lead_id = selected ? selected.value : "";
         setLead(selected);
         setData(newData);
     };
 
     const onChangeInstitution = (selected) => {
         const newData = {...data};
-        newData.institution_id = selected.value;
-        setInstitution(selected);
-        axios.get(endPoint.findUnitByInstitution(selected.value))
-            .then(response => {
-                console.log(response.data);
-                setLead({value: "", label: ""});
-                newData.lead_id = "";
-                setData(newData);
-                setLeads(response.data.staffs.length ? formatLeads(response.data.staffs) : []);
-                setParent({value: "", label: ""});
-                setParents(formatSelectOption(response.data.units, "name", "fr"))
-            })
-            .catch(error => console.log("Somthing is wrong"));
-        setData(newData);
-    };
-
-    const onChangeParent= (selected) => {
-        const newData = {...data};
-        newData.parent_id = selected.value;
-        setParent(selected);
+        newData.institution_id = selected ? selected.value : "";
+        setInstitution(selected ? selected : null);
+        if (selected) {
+            axios.get(endPoint.findUnitByInstitution(selected.value))
+                .then(response => {
+                    setLead(null);
+                    newData.lead_id = "";
+                    setData(newData);
+                    setLeads(response.data.staffs.length ? formatLeads(response.data.staffs) : []);
+                })
+                .catch(error => console.log("Somthing is wrong"))
+            ;
+        }
         setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        let newData = data;
+        let newData = {...data};
         if(!(verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit')))
             delete newData.institution_id;
         if (id) {
@@ -223,6 +198,7 @@ const HoldingUnitForm = (props) => {
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
                 .catch(errorRequest => {
+                    debug({...defaultError, ...errorRequest.response.data.error}, "error");
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);
@@ -235,7 +211,6 @@ const HoldingUnitForm = (props) => {
                     if (verifyPermission(props.userPermissions, 'store-any-unit'))
                         setInstitution({});
                     setUnitType({});
-                    setParent({});
                     setError(defaultError);
                     setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
@@ -266,7 +241,7 @@ const HoldingUnitForm = (props) => {
                                     Unité
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -293,16 +268,14 @@ const HoldingUnitForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification d'une unité" : "Formulaire d'ajout d'une unité"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom de l'unité</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom de l'unité"
+                                                        placeholder="dmd"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -321,10 +294,12 @@ const HoldingUnitForm = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit') ? (
                                                     <div className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution</label>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             <Select
+                                                                isClearable
                                                                 value={institution}
+                                                                placeholder="ALIDE"
                                                                 onChange={onChangeInstitution}
                                                                 options={institutions}
                                                             />
@@ -346,10 +321,12 @@ const HoldingUnitForm = (props) => {
                                                 id ? (
                                                     verifyPermission(props.userPermissions, 'update-any-unit') ? (
                                                         <div className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
-                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable</label>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable <InputRequire/></label>
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <Select
+                                                                    isClearable
                                                                     value={lead}
+                                                                    placeholder="HOUNSSOU Romaric"
                                                                     onChange={onChangeLead}
                                                                     options={leads}
                                                                 />
@@ -368,61 +345,19 @@ const HoldingUnitForm = (props) => {
                                                 ) : ""
                                             }
 
-                                            <div className={error.parent_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Unité Parent</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Select
-                                                        value={parent}
-                                                        onChange={onChangeParent}
-                                                        options={parents}
-                                                    />
-                                                    {
-                                                        error.parent_id.length ? (
-                                                            error.parent_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
                                             <div className={error.unit_type_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'unité</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'unité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
+                                                        isClearable
                                                         value={unitType}
+                                                        placeholder={"Guichet"}
                                                         onChange={onChangeUnitType}
                                                         options={unitTypes}
                                                     />
                                                     {
                                                         error.unit_type_id.length ? (
                                                             error.unit_type_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-
-                                            <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                <textarea
-                                                    id="description"
-                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
-                                                    cols="30"
-                                                    rows="5"
-                                                    value={data.description}
-                                                    onChange={(e) => onChangeDescription(e)}
-                                                />
-                                                    {
-                                                        error.description.length ? (
-                                                            error.description.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>

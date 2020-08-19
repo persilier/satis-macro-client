@@ -13,10 +13,10 @@ import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -31,7 +31,7 @@ const RelationShip = (props) => {
     const [relation, setRelation] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
 
@@ -40,14 +40,14 @@ const RelationShip = (props) => {
             .then(response => {
                 setLoad(false);
                 setRelation(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
+                setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                setNumberPage(forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE));
             })
             .catch(error => {
                 setLoad(false);
                 console.log("Something is wrong");
             })
-    }, []);
+    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -161,13 +161,6 @@ const RelationShip = (props) => {
                 <td>{typeRelation.name.fr}</td>
                 <td>{typeRelation.description.fr}</td>
                 <td style={{textAlign:"center"}}>
-
-                    <Link to="/settings/relationship/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
-
                     {
                         verifyPermission(props.userPermissions, 'show-relationship')?
                             <Link to={`/settings/relationship/edit/${typeRelation.id}`}
@@ -209,7 +202,7 @@ const RelationShip = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Relation
+                                    Relation client
                                 </a>
 
                             </div>
@@ -218,14 +211,11 @@ const RelationShip = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Liste des relations client"}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-relationship"}
                             title={"Type de relation client"}
-                            addText={"Ajouter un type de relation"}
+                            addText={"Ajouter"}
                             addLink={"/settings/relationship/add"}
                         />
 
@@ -251,7 +241,7 @@ const RelationShip = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{width: "952px"}}>
                                                     <thead>

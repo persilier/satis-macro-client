@@ -13,7 +13,6 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import FormInformation from "./FormInformation";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
@@ -32,11 +31,9 @@ const PositionForm = (props) => {
 
     const defaultData = {
         name: "",
-        description: "",
     };
     const defaultError = {
         name: [],
-        description: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -49,7 +46,6 @@ const PositionForm = (props) => {
                     .then(response => {
                         const newData = {
                             name: response.data.name.fr,
-                            description: response.data.description.fr,
                         };
                         setData(newData);
                     })
@@ -60,17 +56,11 @@ const PositionForm = (props) => {
             }
         }
         fetchData();
-    }, []);
+    }, [id]);
 
     const onChangeName = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeDescription = (e) => {
-        const newData = {...data};
-        newData.description = e.target.value;
         setData(newData);
     };
 
@@ -118,13 +108,13 @@ const PositionForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#postes" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/positions" className="kt-subheader__breadcrumbs-link">
                                     Postes
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#ajout" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? "Modification" : "Ajout"
                                     }
@@ -142,7 +132,7 @@ const PositionForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de la position" : "Ajout de la position"
+                                                id ? "Modification de la poste" : "Ajout de la post"
                                             }
                                         </h3>
                                     </div>
@@ -151,45 +141,20 @@ const PositionForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <FormInformation information={id ? "Formulaire de modification de position" : "Formulaire d'ajout de position"}/>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom du poste</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Libellé(<strong className="text-danger">*</strong>)</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom du poste"
+                                                        placeholder="Développeur"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
                                                     {
                                                         error.name.length ? (
                                                             error.name.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">La description</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <textarea
-                                                        id="description"
-                                                        className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer la description"
-                                                        cols="30"
-                                                        rows="5"
-                                                        value={data.description}
-                                                        onChange={(e) => onChangeDescription(e)}
-                                                    />
-                                                    {
-                                                        error.description.length ? (
-                                                            error.description.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>

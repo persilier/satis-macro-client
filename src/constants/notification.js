@@ -13,6 +13,8 @@ export const notificationConfig = {
     "communicate-the-solution-unfounded": "Communiquer la solution sans fondement",
     "add-contributor-to-discussion": "Ajouter contributeur à la discussion",
     "post-discussion-message": "Message post discussion",
+    "reminder-before-deadline": "Relance automatique avant échéance",
+    "reminder-after-deadline": "Relance automatique après échéance"
 };
 
 export const EventNotification = [
@@ -39,7 +41,7 @@ export const EventNotificationPath = {
     PostDiscussionMessage: id => `/message-receved`,
     RegisterAClaim: {
         "full": id => `/process/claim-assign/${id}/detail`,
-        "inComplete": id => `/process/incomplete_claims/edit/${id}`
+        "incomplete": id => `/process/incomplete_claims/edit/${id}`
     },
     RejectAClaim: id => `/process/claim-assign/${id}/detail`,
     TransferredToTargetedInstitution: id => `/process/claim-assign/${id}/detail`,
