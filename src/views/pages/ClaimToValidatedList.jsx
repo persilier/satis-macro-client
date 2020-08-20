@@ -159,7 +159,7 @@ const ClaimToValidatedList = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Liste des réclamation
+                                    Liste des réclamations
                                 </a>
                             </div>
                         </div>
@@ -171,7 +171,7 @@ const ClaimToValidatedList = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Liste des réclamation"}
+                            title={"Liste des réclamations"}
                         />
 
                         {
@@ -189,7 +189,7 @@ const ClaimToValidatedList = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
+                                            {/*<ExportButton/>*/}
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
