@@ -215,9 +215,15 @@ const ClaimAssignDetail = (props) => {
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
 
-                                        {/*<div className="d-flex justify-content-end">
-                                            <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
-                                        </div>*/}
+                                        {
+                                            claim ? (
+                                                claim.active_treatment ? (
+                                                    <div className="d-flex justify-content-end">
+                                                        <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
+                                                    </div>
+                                                ) : null
+                                            ) : null
+                                        }
 
                                         <ClientButtonDetail claim={claim}/>
 
