@@ -1,5 +1,9 @@
 import React from "react";
 import moment from "moment";
+import {verifyPermission} from "../../../helpers/permission";
+import {ToastBottomEnd} from "../Toast";
+import {toastErrorMessageWithParameterConfig} from "../../../config/toastConfig";
+import appConfig from "../../../config/appConfig";
 
 const ColToComplete = (props) => {
     var currentFilterData = props.claims;
@@ -35,6 +39,16 @@ const ColToComplete = (props) => {
     if (props.filterPeriod)
         filterByPeriod();
 
+    const completeClaim = (claim) => {
+        if (verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
+            verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
+            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) {
+            document.location.href = `/process/incomplete_claims/edit/${claim.id}`;
+        } else {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("vous n'avez pas l'autorisation de faire cette action"))
+        }
+    };
+
     return (
         <div data-id="_backlog" data-order="1" className="kanban-board" style={{ width: "250px", marginLeft: "0px", marginRight: "0px" }}>
             <header className="kanban-board-header" style={{backgroundColor: props.backgroundHeader}}>
@@ -45,7 +59,7 @@ const ColToComplete = (props) => {
             <main className="kanban-drag" style={{height: "679px", overflowY: "scroll"}}>
                 {
                     currentFilterData.map((claim, index) => (
-                        <div className="kt-portlet" key={index} style={{cursor: "pointer"}} onClick={() => props.onShowDetail(claim)}>
+                        <div className="kt-portlet" key={index} style={{cursor: "pointer"}} onClick={() => completeClaim(claim)}>
                             <div className="kt-portlet__head kt-portlet__head--right kt-portlet__head--noborder  kt-ribbon kt-ribbon--clip kt-ribbon--left kt-ribbon--info">
                                 {
                                     claim.time_expire ? (

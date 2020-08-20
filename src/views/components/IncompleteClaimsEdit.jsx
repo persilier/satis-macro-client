@@ -5,7 +5,6 @@ import {
     Link,
     useParams
 } from "react-router-dom";
-import FormInformation from "../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
@@ -14,7 +13,6 @@ import {
     filterChannel,
     formatSelectOption,
     formatToTime,
-    formatToTimeStamp,
     formatToTimeStampUpdate
 } from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
@@ -22,7 +20,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastSuccessMessageWithParameterConfig,
+    toastEditErrorMessageConfig, toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";

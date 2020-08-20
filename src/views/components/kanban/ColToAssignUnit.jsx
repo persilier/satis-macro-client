@@ -1,5 +1,8 @@
 import React from "react";
 import moment from "moment";
+import {verifyPermission} from "../../../helpers/permission";
+import {ToastBottomEnd} from "../Toast";
+import {toastErrorMessageWithParameterConfig} from "../../../config/toastConfig";
 
 const ColToAssignUnit = (props) => {
     var currentFilterData = props.claims;
@@ -43,6 +46,14 @@ const ColToAssignUnit = (props) => {
     if (props.filterPeriod)
         filterByPeriod();
 
+    const assignToUnit = (claim) => {
+        if (verifyPermission(props.userPermissions, "show-claim-awaiting-assignment")) {
+            document.location.href = `/process/claim-assign/${claim.id}/detail`;
+        } else {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("vous n'avez pas l'autorisation de faire cette action"))
+        }
+    };
+
     return (
         <div data-id="_backlog" data-order="1" className="kanban-board" style={{ width: "250px", marginLeft: "0px", marginRight: "0px" }}>
             <header className="kanban-board-header" style={{backgroundColor: props.backgroundHeader}}>
@@ -53,7 +64,7 @@ const ColToAssignUnit = (props) => {
             <main className="kanban-drag" style={{height: "679px", overflowY: "scroll"}}>
                 {
                     currentFilterData.map((claim, index) => (
-                        <div className="kt-portlet" key={index} style={{cursor: "pointer"}} onClick={() => props.onShowDetail(claim)}>
+                        <div className="kt-portlet" key={index} style={{cursor: "pointer"}} onClick={() => assignToUnit(claim)}>
                             <div className="kt-portlet__head kt-portlet__head--right kt-portlet__head--noborder  kt-ribbon kt-ribbon--clip kt-ribbon--left kt-ribbon--info">
                                 {
                                     claim.time_expire ? (

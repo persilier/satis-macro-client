@@ -251,7 +251,7 @@ const ClaimMonitoring = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Suivi des plaintes
+                                    Suivi des réclamations
                                 </a>
                             </div>
                         </div>
@@ -263,7 +263,7 @@ const ClaimMonitoring = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Suivi des plaintes"}
+                            title={"Suivi des réclamations"}
                         />
 
 
@@ -378,6 +378,7 @@ const ClaimMonitoring = (props) => {
                                 {
                                     toComplete ? (
                                         <ColToComplete
+                                            userPermissions={props.userPermissions}
                                             onShowDetail={claim => showClaimDetail(claim, "toComplete")}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
@@ -394,6 +395,7 @@ const ClaimMonitoring = (props) => {
                                 {
                                     toAssignUnit ? (
                                         <ColToAssignUnit
+                                            userPermissions={props.userPermissions}
                                             onShowDetail={claim => showClaimDetail(claim, "toAssignUnit")}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
@@ -447,6 +449,7 @@ const ClaimMonitoring = (props) => {
                                 {
                                     toValidate ? (
                                         <ColToValidate
+                                            userPermissions={props.userPermissions}
                                             onShowDetail={claim => showClaimDetail(claim, "toValidate")}
                                             plan={props.plan}
                                             backgroundHeader="#CBD5E0"
@@ -467,6 +470,7 @@ const ClaimMonitoring = (props) => {
                                 {
                                     toMeasure ? (
                                         <ColToMeasure
+                                            userPermissions={props.userPermissions}
                                             onShowDetail={claim => showClaimDetail(claim, "toMeasure")}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
