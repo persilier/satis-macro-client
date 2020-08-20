@@ -15,7 +15,7 @@ const FusionClaim = props => {
                 ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
                 setStartRequest(false);
                 document.getElementById("close-button").click();
-                window.location.href = `/settings/claim-assign/${response.data.id}/detail`;
+                window.location.href = `/process/claim-assign/${response.data.id}/detail`;
             })
             .catch(error => {
                 setStartRequest(false);
