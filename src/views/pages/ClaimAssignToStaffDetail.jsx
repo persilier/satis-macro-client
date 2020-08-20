@@ -70,7 +70,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim-assign/to-staff" className="kt-subheader__breadcrumbs-link">
-                                        Plaintes à traitrer
+                                        Réclamations à traitrer
                                     </Link>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail réclamation
+                                    {claim?claim.reference: 'Detail'}
                                 </a>
                             </div>
                         </div>
