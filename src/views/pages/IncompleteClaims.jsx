@@ -257,8 +257,7 @@ const IncompleteClaims = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "85px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Nom
-                                                            du réclamant
+                                                            aria-label="Ship City: activate to sort column ascending">Réclamant
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
@@ -271,8 +270,8 @@ const IncompleteClaims = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "85px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Obje
-                                                            de plainte
+                                                            aria-label="Ship City: activate to sort column ascending">
+                                                            Objet
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"

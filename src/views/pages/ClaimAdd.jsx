@@ -565,7 +565,7 @@ const ClaimAdd = props => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Collecte
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
@@ -574,7 +574,7 @@ const ClaimAdd = props => {
                                         className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                         Enrégistrement réclamation
                                     </a>
                                 </div>
