@@ -18,6 +18,14 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig
 } from "../../config/toastConfig";
+import ClientButton from "../components/ClientButton";
+import ClaimButton from "../components/ClaimButton";
+import AttachmentsButton from "../components/AttachmentsButton";
+import DoubleButton from "../components/DoubleButton";
+import ClientButtonDetail from "../components/ClientButtonDetail";
+import ClaimButtonDetail from "../components/ClaimButtonDetail";
+import DoubleButtonDetail from "../components/DoubleButtonDetail";
+import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -178,82 +186,13 @@ const ClaimAssignDetail = (props) => {
                                 <div className="kt-grid__item kt-wizard-v2__aside">
                                     <div className="kt-wizard-v2__nav">
                                         <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
-                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step"
-                                                 data-ktwizard-state="current">
-                                                <div className="kt-wizard-v2__nav-body">
-                                                    <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon-user-settings"/>
-                                                    </div>
-                                                    <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">
-                                                            Client
-                                                        </div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">
-                                                            Acceder aux détails du client
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <ClientButton/>
 
-                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
-                                                <div className="kt-wizard-v2__nav-body">
-                                                    <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon-book"/>
-                                                    </div>
-                                                    <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">
-                                                            Réclamation
-                                                        </div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">
-                                                            Acceder aux détails de la réclamation
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <ClaimButton/>
 
-                                            <div className="kt-wizard-v2__nav-item" href="#" data-ktwizard-type="step">
-                                                <div className="kt-wizard-v2__nav-body">
-                                                    <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon-file-2"/>
-                                                    </div>
-                                                    <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">
-                                                            Pièces jointe
-                                                            {
-                                                                !claim ? "" : (
-                                                                    <span
-                                                                        className="mx-lg-4 kt-badge kt-badge--success  kt-badge--inline kt-badge--pill">{claim.files.length}</span>
-                                                                )
-                                                            }
-                                                        </div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">
-                                                            Acceder à la liste des pièces jointes
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <AttachmentsButton claim={claim}/>
 
-                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
-                                                <div className="kt-wizard-v2__nav-body">
-                                                    <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon2-copy"/>
-                                                    </div>
-                                                    <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">
-                                                            Doublons
-                                                            {
-                                                                !claim ? "" : (
-                                                                    <span
-                                                                        className="mx-lg-4 kt-badge kt-badge--success  kt-badge--inline kt-badge--pill">{claim.duplicates.length}</span>
-                                                                )
-                                                            }
-                                                        </div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">
-                                                            Acceder à la liste des doublons
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <DoubleButton claim={claim}/>
 
                                             <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
@@ -277,288 +216,17 @@ const ClaimAssignDetail = (props) => {
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
 
-                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content"
-                                             data-ktwizard-state="current">
-                                            <div className="kt-heading kt-heading--md">Détails du client</div>
-                                            <div className="kt-form__section kt-form__section--first">
-                                                <div className="kt-wizard-v2__review">
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-widget kt-widget--user-profile-1">
-                                                            <div className="kt-widget__head">
-                                                                <div className="kt-widget__media">
-                                                                    <img src="/personal/img/default-avatar.png"
-                                                                         alt="image"/>
-                                                                </div>
-                                                                <div className="kt-widget__content"
-                                                                     style={{marginTop: "auto", marginBottom: "auto"}}>
-                                                                    <div className="kt-widget__section">
-                                                                        {
-                                                                            !claim ? (
-                                                                                <Loader/>
-                                                                            ) : (
-                                                                                <a href="#"
-                                                                                   className="kt-widget__username">
-                                                                                    {`${claim.claimer.lastname} ${claim.claimer.firstname}`}
-                                                                                    <i className="flaticon2-correct kt-font-success"/>
-                                                                                </a>
-                                                                            )
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                        <ClientButtonDetail claim={claim}/>
 
-                                                            <div className="kt-widget__body">
-                                                                {
-                                                                    !claim ? "" : (
-                                                                        <div className="kt-widget__content">
-                                                                            <div className="kt-widget__info">
-                                                                                <span className="fa fa-venus-mars"
-                                                                                      style={{fontSize: "1.5rem"}}/>
-                                                                                <span
-                                                                                    className="kt-widget__data">{claim.claimer.sexe === 'F' ? "Féminin" : "Masculin"}</span>
-                                                                            </div>
-                                                                            <div className="kt-widget__info">
-                                                                                <span className="fa fa-envelope"
-                                                                                      style={{fontSize: "1.5rem"}}/>
-                                                                                <span className="kt-widget__data">
-                                                                                {
-                                                                                    claim.claimer.email.map((mail, index) => (
-                                                                                        index === claim.claimer.email.length - 1 ? mail : mail + "/ "
-                                                                                    ))
-                                                                                }
-                                                                            </span>
-                                                                            </div>
-                                                                            <div className="kt-widget__info">
-                                                                                <span className="fa fa-phone-alt"
-                                                                                      style={{fontSize: "1.5rem"}}/>
-                                                                                <span className="kt-widget__data">
-                                                                                {
-                                                                                    claim.claimer.telephone.map((telephone, index) => (
-                                                                                        index === claim.claimer.telephone.length - 1 ? telephone : telephone + "/ "
-                                                                                    ))
-                                                                                }
-                                                                            </span>
-                                                                            </div>
-                                                                            <div className="kt-widget__info">
-                                                                                <span className="fa fa-location-arrow"
-                                                                                      style={{fontSize: "1.5rem"}}/>
-                                                                                <span className="kt-widget__data">
-                                                                                {claim.claimer.ville ? claim.claimer.ville : "Pas d'information sur la ville"}
-                                                                            </span>
-                                                                            </div>
-                                                                        </div>
-                                                                    )
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <ClaimButtonDetail claim={claim}/>
 
-                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Détails de la réclamation</div>
-                                            <div className="kt-form__section kt-form__section--first">
-                                                <div className="kt-wizard-v2__review">
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                           <h5><strong>Canaux</strong></h5>
-                                                        </div>
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Canal de réception:</strong> <span
-                                                                    className="mx-2">{claim.request_channel ? claim.request_channel.name["fr"] : "Pas de canal de réception"}</span><br/>
-                                                                    <strong>Canal de réponse préférentiel:</strong> <span
-                                                                    className="mx-2">{claim.response_channel ? claim.response_channel.name["fr"] : "Pas de canal de réponse"}</span><br/>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                            <h5><strong>Cible</strong></h5>
-                                                        </div>
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Institution</strong>: <span
-                                                                    className="mx-2">{claim.institution_targeted.name} 1</span><br/>
-                                                                    <strong>Unité</strong>: <span
-                                                                    className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "Pas d'institution ciblé"}</span><br/>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                            <h5><strong>Spécifications</strong></h5>
-                                                        </div>
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Objet</strong>: <span
-                                                                    className="mx-2">{claim.claim_object.name["fr"]}</span><br/>
-                                                                    <br/>
-                                                                    <strong>Numéro de compte </strong>: <span
-                                                                    className="mx-2">{claim.account_targeted ? claim.account_targeted.number : "Pas de compte cible"}</span><br/>
-                                                                    <br/>
-                                                                    <strong>Montant réclamé</strong>: <span
-                                                                    className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "Pas de montant"}</span><br/>
-                                                                    <br/>
-                                                                    <strong>Date de l'évernement</strong>: <span
-                                                                    className="mx-2">{formatToTimeStampUpdate(claim.created_at)}</span><br/>
-                                                                    <br/>
-                                                                    <strong>Description:</strong> <span
-                                                                    className="mx-2">{claim.description}</span><br/>
-                                                                    <br/>
-                                                                    <strong>Attente:</strong> <span
-                                                                    className="mx-2">{claim.claimer_expectation}</span><br/>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <AttachmentsButtonDetail claim={claim}/>
 
-                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Liste de pièces jointes
-                                            </div>
-                                            <div className="kt-form__section kt-form__section--first">
-                                                <div className="kt-wizard-v2__review">
-                                                    {
-                                                        !claim ? "" : (
-                                                            claim.files.length ? (
-                                                                claim.files.map((file, index) => (
-                                                                    <div className="kt-wizard-v2__review-item"
-                                                                         key={index}>
-                                                                        {/*<div className="kt-wizard-v2__review-title">*/}
-                                                                        {/*    Pièce jointe Nº{index + 1}*/}
-                                                                        {/*</div>*/}
-                                                                        <div className="kt-wizard-v2__review-content">
-                                                                            <a href={`${appConfig.apiDomaine}${file.url}`}
-                                                                               download={true} target={"_blank"}>
-                                                                                {file.title}
-                                                                            </a>
-                                                                        </div>
-                                                                    </div>
-                                                                ))
-                                                            ) : (
-                                                                <div className="kt-wizard-v2__review-item">
-                                                                    <div className="kt-wizard-v2__review-title">
-                                                                        Pas de pièce jointe
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        )
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="kt-wizard-v2__content"
-                                             data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Liste des doublons
-                                            </div>
-                                            <div className="kt-form__section kt-form__section--first">
-                                                <div className="kt-wizard-v2__review">
-                                                    {
-                                                        !claim ? "" : (
-                                                            claim.duplicates.length ? (
-                                                                claim.duplicates.map((newClaim, index) => (
-                                                                    <div className="kt-wizard-v2__review-item"
-                                                                         key={index}>
-                                                                        <div
-                                                                            className="kt-wizard-v2__review-content">
-                                                                            <div
-                                                                                className="kt-widget kt-widget--user-profile-3">
-                                                                                <div className="kt-widget__top">
-                                                                                    <div
-                                                                                        className="kt-widget__content"
-                                                                                        style={{paddingLeft: "0px"}}>
-                                                                                        <div
-                                                                                            className="kt-widget__head">
-                                                                                            <div
-                                                                                                className="kt-wizard-v2__review-title">Doublon
-                                                                                                Nº{index + 1}</div>
-                                                                                            {
-                                                                                                verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
-                                                                                                    <div
-                                                                                                        className="kt-widget__action">
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            className="btn btn-brand btn-sm btn-upper"
-                                                                                                            onClick={() => onClickFusionButton(newClaim)}>Fusioner
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                ) : ""
-                                                                                            }
-                                                                                        </div>
-
-                                                                                        <div
-                                                                                            className="kt-widget__subhead">
-                                                                                            <a href="#fullname"
-                                                                                               onClick={e => e.preventDefault()}><i
-                                                                                                className="flaticon2-calendar-3"/>{`${newClaim.claimer.lastname} ${newClaim.claimer.firstname}`}
-                                                                                            </a>
-                                                                                            <a href="#datetime"
-                                                                                               onClick={e => e.preventDefault()}><i
-                                                                                                className="flaticon2-time"/>{newClaim.created_at}
-                                                                                            </a>
-                                                                                        </div>
-
-                                                                                        <div
-                                                                                            className="kt-widget__info">
-                                                                                            <div
-                                                                                                className="kt-widget__desc">
-                                                                                                {newClaim.description}
-                                                                                            </div>
-                                                                                            <div
-                                                                                                className="kt-widget__progress">
-                                                                                                <div
-                                                                                                    className="kt-widget__text">
-                                                                                                    Pourcentage
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    className="progress"
-                                                                                                    style={{
-                                                                                                        height: "5px",
-                                                                                                        width: newClaim.duplicate_percent + "%"
-                                                                                                    }}>
-                                                                                                    <div
-                                                                                                        className="progress-bar kt-bg-danger"
-                                                                                                        role="progressbar"
-                                                                                                        style={{width: "46%"}}
-                                                                                                        aria-valuenow="35"
-                                                                                                        aria-valuemin="0"
-                                                                                                        aria-valuemax="100"/>
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    className="kt-widget__stats">
-                                                                                                    {newClaim.duplicate_percent}%
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                ))
-                                                            ) : (
-                                                                <div className="kt-wizard-v2__review-item">
-                                                                    <div className="kt-wizard-v2__review-title">
-                                                                        Pas de doublon
-                                                                    </div>
-                                                                </div>
-                                                            )
-                                                        )
-                                                    }
-
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <DoubleButtonDetail
+                                            claim={claim}
+                                            onClickFusionButton={onClickFusionButton}
+                                            userPermissions={props.userPermissions}
+                                        />
 
                                         <div className="kt-wizard-v2__content"
                                              data-ktwizard-type="step-content">

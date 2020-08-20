@@ -19,7 +19,7 @@ const ReasonModal = props => {
                 .then(response => {
                 setStartRequest(false);
                     ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                    document.location.href = `http://localhost:3000/settings/unit-claims`
+                    document.location.href = `${appConfig.apiDomaine}/process/unit-claims`
                 })
                 .catch(error => {
                     setStartRequest(false);
@@ -36,7 +36,7 @@ const ReasonModal = props => {
                 .then(response => {
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastRejectTreatmentClaimSuccessMessageConfig);
-                    document.location.href = `http://localhost:3000/settings/claim-to-validated`
+                    document.location.href = `${appConfig.apiDomaine}/process/claim-to-validated`
                 })
                 .catch(error => {
                     setStartRequest(false);
@@ -53,7 +53,7 @@ const ReasonModal = props => {
                 .then(response => {
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastValidateTreatmentClaimSuccessMessageConfig);
-                    document.location.href = `http://localhost:3000/settings/claim-to-validated`
+                    document.location.href = `${appConfig.apiDomaine}/process/claim-to-validated`
                 })
                 .catch(error => {
                     setStartRequest(false);
