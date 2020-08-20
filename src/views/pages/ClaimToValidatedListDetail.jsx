@@ -190,7 +190,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                 <strong>Statut</strong>: <span className="mx-2">Traité</span><br/>
                                                                                                 <strong>Montant retourné</strong>: <span className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Pas de montant"}</span><br/>
                                                                                                 <strong>Solution</strong>: <span className="mx-2">{claim.active_treatment.solution ? claim.active_treatment.solution : "Pas de solution"}</span><br/>
-                                                                                                <strong>Commentaires</strong>: <span className="mx-2">{claim.active_treatment.comment ? claim.active_treatment.comment : "Pas de commentaire"}</span><br/>
+                                                                                                <strong>Commentaires</strong>: <span className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "Pas de commentaire"}</span><br/>
                                                                                                 <strong>Mésures préventives</strong>: <span className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Pas de mésures préventives"}</span><br/>
                                                                                             </div>
                                                                                         </div>

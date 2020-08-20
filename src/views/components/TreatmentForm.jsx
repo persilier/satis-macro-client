@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {addTreatment} from "../../store/actions/treatmentAction";
 import axios from "axios";
@@ -6,6 +6,7 @@ import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
+import {debug} from "../../helpers/function";
 
 const TreatmentForm = (props) => {
     const defaultData = {
@@ -23,6 +24,17 @@ const TreatmentForm = (props) => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+
+    useEffect(() => {
+        if (props.activeTreatment) {
+            setData({
+                amount_returned: props.activeTreatment.amount_returned ? props.activeTreatment.amount_returned : "",
+                solution: props.activeTreatment.solution ? props.activeTreatment.solution : "",
+                comments: props.activeTreatment.comments ? props.activeTreatment.comments : "",
+                preventive_measures: props.activeTreatment.preventive_measures ? props.activeTreatment.preventive_measures : "",
+            });
+        }
+    }, [props.activeTreatment]);
 
     const onChangeAmount = (e) => {
         const newData = {...data};

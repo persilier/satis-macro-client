@@ -5,7 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {loadCss, loadScript} from "../../helpers/function";
+import {debug, formatDateToTimeStampte, loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -146,14 +146,42 @@ const ClaimAssignToStaffDetail = (props) => {
                                             <div className="kt-heading kt-heading--md">Traitement de la
                                                 plainte
                                             </div>
+                                            {
+                                                claim ? (
+                                                    claim.active_treatment ? (
+                                                        claim.active_treatment.validated_at && claim.active_treatment.invalidated_reason ? (
+                                                            <div className="kt-wizard-v2__review-item mb-4">
+                                                                <div className="kt-wizard-v2__review-title">
+                                                                    <h5><strong className="text-danger">Rejet du traitement</strong></h5>
+                                                                </div>
+                                                                <div className="kt-wizard-v2__review-content">
+                                                                    <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.invalidated_reason ? claim.active_treatment.invalidated_reason : "Pas de raison"}</span><br/>
+                                                                    <hr/>
+                                                                </div>
+                                                            </div>
+                                                        ) : null
+                                                    ) : null
+                                                ) : null
+                                            }
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-content">
-
-                                                        <TreatmentForm
-                                                            getId={`${id}`}
-                                                        />
-
+                                                        {
+                                                            claim ? (
+                                                                <TreatmentForm
+                                                                    activeTreatment={
+                                                                        claim.active_treatment ? (
+                                                                            claim.active_treatment
+                                                                        ) : null
+                                                                    }
+                                                                    getId={`${id}`}
+                                                                />
+                                                            ) : (
+                                                                <TreatmentForm
+                                                                    getId={`${id}`}
+                                                                />
+                                                            )
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
