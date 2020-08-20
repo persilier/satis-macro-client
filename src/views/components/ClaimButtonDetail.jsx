@@ -8,11 +8,20 @@ const ClaimButtonDetail = ({claim}) => {
             <div className="kt-form__section kt-form__section--first">
                 <div className="kt-wizard-v2__review">
                     <div className="kt-wizard-v2__review-item">
+                        {
+                            !claim ? null : (
+                                <div className="kt-wizard-v2__review-content">
+                                    <strong>Référence:</strong> <span className="mx-2">{claim.reference ? claim.reference : "Pas de canal de référence"}</span>
+                                    <br/>
+                                    <br/>
+                                </div>
+                            )
+                        }
                         <div className="kt-wizard-v2__review-title">
                             <h5><strong>Canaux</strong></h5>
                         </div>
                         {
-                            !claim ? "" : (
+                            !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Canal de réception:</strong> <span
                                     className="mx-2">{claim.request_channel ? claim.request_channel.name["fr"] : "Pas de canal de réception"}</span><br/>
@@ -27,7 +36,7 @@ const ClaimButtonDetail = ({claim}) => {
                             <h5><strong>Cible</strong></h5>
                         </div>
                         {
-                            !claim ? "" : (
+                            !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Institution</strong>: <span
                                     className="mx-2">{claim.institution_targeted.name} 1</span><br/>
@@ -42,7 +51,7 @@ const ClaimButtonDetail = ({claim}) => {
                             <h5><strong>Spécifications</strong></h5>
                         </div>
                         {
-                            !claim ? "" : (
+                            !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Objet</strong>: <span
                                     className="mx-2">{claim.claim_object.name["fr"]}</span><br/>
