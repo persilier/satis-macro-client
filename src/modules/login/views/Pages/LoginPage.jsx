@@ -177,9 +177,6 @@ const LoginPage = (props) => {
                                                 </div>
 
                                                 <div className="kt-login__actions">
-                                                    <a href="#" className="kt-link kt-login__link-forgot">
-                                                        Mot de passe oublié ?
-                                                    </a>
                                                     {
                                                         !startRequest ? (
                                                             <button type="submit"
