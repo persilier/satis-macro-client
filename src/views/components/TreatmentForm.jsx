@@ -5,6 +5,7 @@ import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import InputRequire from "./InputRequire";
 
 const TreatmentForm = (props) => {
     const defaultData = {
@@ -63,6 +64,7 @@ const TreatmentForm = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
+                setError({...defaultError,... error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
@@ -72,7 +74,7 @@ const TreatmentForm = (props) => {
             <div
                 className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="name">Le Montant retourné</label>
+                       htmlFor="name">Montant retourné</label>
                 <div className="col-lg-9 col-xl-6">
                     <input
                         id="amount"
@@ -99,7 +101,7 @@ const TreatmentForm = (props) => {
             <div
                 className={error.solution.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="description">La Solution</label>
+                       htmlFor="description">Solution <InputRequire/></label>
                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="solution"
@@ -125,7 +127,7 @@ const TreatmentForm = (props) => {
             <div
                 className={error.comments.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="description">Le commentaire</label>
+                       htmlFor="description">Commentaires</label>
                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="comments"
@@ -151,7 +153,7 @@ const TreatmentForm = (props) => {
             <div
                 className={error.preventive_measures.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="description">Mesure préventive</label>
+                       htmlFor="description">Mesures préventives</label>
                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="measures"
