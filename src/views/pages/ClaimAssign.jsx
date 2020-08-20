@@ -10,6 +10,7 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {
+    debug,
     filterDataTableBySearchValue,
     forceRound,
     formatToTimeStampUpdate,
@@ -122,7 +123,7 @@ const ClaimAssign = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference}</td>
+                <td>{claim.reference} {claim.is_rejected ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
                 <td>{formatToTimeStampUpdate(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
@@ -174,7 +175,13 @@ const ClaimAssign = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Cette page vous présente  la liste des réclamations complètes et qui sont en attente d'être transféré."}/>
+                    <InfirmationTable information={(
+                        <div>
+                            Cette page vous présente  la liste des réclamations complètes et qui sont en attente d'être transféré.
+                            <br/>
+                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les réclamations réjetées
+                        </div>
+                    )}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage

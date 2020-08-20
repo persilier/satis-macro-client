@@ -199,7 +199,7 @@ const ClaimListDetail = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, "self-assignment-claim-awaiting-treatment") ? (
                                                     <button className="btn btn-primary btn-sm mx-2"
-                                                            onClick={selfAssign}>S'affecter la réclamation</button>
+                                                            onClick={selfAssign}>Auto-affectation</button>
                                                 ) : ""
                                             }
                                             {
@@ -207,7 +207,7 @@ const ClaimListDetail = (props) => {
                                                     <button
                                                         className="btn btn-secondary btn-sm"
                                                         onClick={() => showReasonInput("reject")}>
-                                                        Rejeter la réclamation
+                                                        Rejet
                                                     </button>
                                                 ) : ""
                                             }
