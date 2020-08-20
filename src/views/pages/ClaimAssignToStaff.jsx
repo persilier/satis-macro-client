@@ -9,7 +9,7 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {filterDataTableBySearchValue, forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -122,11 +122,11 @@ const ClaimAssignToStaff = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
-                <td>{claim.created_at}</td>
+                <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : "-"}</td>
+                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : "-"}</td>*/}
                 <td>
                     <a href={`/process/claim-assign/to-staff/${claim.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -161,7 +161,7 @@ const ClaimAssignToStaff = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Plaintes à traiter
+                                    Réclamations à traiter
                                 </a>
                             </div>
                         </div>
@@ -173,7 +173,7 @@ const ClaimAssignToStaff = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Plainte à traiter"}
+                            title={"Réclamations à traiter"}
                         />
 
                         {
@@ -213,14 +213,12 @@ const ClaimAssignToStaff = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Date
-                                                            de plainte
+                                                            aria-label="Country: activate to sort column ascending">Date de réception
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Objet
-                                                            de plainte
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
@@ -230,13 +228,13 @@ const ClaimAssignToStaff = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Institution
+                                                            aria-label="Country: activate to sort column ascending">Institution concernée
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Unité
-                                                        </th>
+                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1"*/}
+                                                        {/*    rowSpan="1"*/}
+                                                        {/*    colSpan="1" style={{width: "70.25px"}}*/}
+                                                        {/*    aria-label="Country: activate to sort column ascending">Unité*/}
+                                                        {/*</th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "40.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
@@ -265,11 +263,11 @@ const ClaimAssignToStaff = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">Date de l'opération</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de plainte</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de plainte</th>
+                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                        <th rowSpan="1" colSpan="1">Objet</th>
                                                         <th rowSpan="1" colSpan="1">Agent</th>
-                                                        <th rowSpan="1" colSpan="1">Unité</th>
+                                                        <th rowSpan="1" colSpan="1">Institution concernée</th>
+                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
