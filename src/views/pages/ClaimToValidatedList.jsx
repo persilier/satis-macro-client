@@ -129,7 +129,7 @@ const ClaimToValidatedList = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
-                <td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>
+                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>*/}
                 {
                     verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
@@ -152,14 +152,22 @@ const ClaimToValidatedList = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                               Processus
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Liste des réclamations
+                                   Traitement
+                                </a>
+                            </div>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                    Réclamations à valider
                                 </a>
                             </div>
                         </div>
@@ -209,11 +217,11 @@ const ClaimToValidatedList = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de réclamation
+                                                            aria-label="Country: activate to sort column ascending">Date de réception
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de réclamation
+                                                            aria-label="Country: activate to sort column ascending">Objets
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
@@ -221,12 +229,12 @@ const ClaimToValidatedList = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institution
+                                                            aria-label="Country: activate to sort column ascending">Institution concernée
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Unité
-                                                        </th>
+                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
+                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
+                                                        {/*    aria-label="Country: activate to sort column ascending">Unité*/}
+                                                        {/*</th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -253,11 +261,11 @@ const ClaimToValidatedList = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">Date de l'opération</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                        <th rowSpan="1" colSpan="1">Objet</th>
                                                         <th rowSpan="1" colSpan="1">Agent</th>
-                                                        <th rowSpan="1" colSpan="1">Unité</th>
+                                                        <th rowSpan="1" colSpan="1">Institution concernée</th>
+                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
