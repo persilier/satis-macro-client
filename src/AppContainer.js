@@ -6,7 +6,6 @@ import RouteApp from "./routeApp";
 import {loadPlan} from "./store/actions/planAction";
 import appConfig from "./config/appConfig";
 import {AUTH_TOKEN} from "./constants/token";
-import {debug} from "./helpers/function";
 import axios from "axios";
 window.Pusher = require('pusher-js');
 

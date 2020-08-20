@@ -19,7 +19,6 @@ import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
 
 
-
 const Chats = (props) => {
 
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))

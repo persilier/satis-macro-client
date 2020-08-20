@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import axios from "axios";
-import {loadCss, loadScript} from "../../../helpers/function";
+import {formatDateToTimeStampte, loadCss, loadScript} from "../../../helpers/function";
 import {AUTH_TOKEN} from "../../../constants/token";
 import appConfig from "../../../config/appConfig";
 
@@ -252,7 +252,7 @@ const ClaimDetails = (props) => {
                                             className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "Pas de montant"}</span><br/>
                                             <br/>
                                             Date de l'évernement: <span
-                                            className="mx-2">{claim.created_at}</span><br/>
+                                            className="mx-2">{formatDateToTimeStampte(claim.created_at)}</span><br/>
                                             <br/>
                                             <strong>Description:</strong> <span
                                             className="mx-2">{claim.description}</span><br/>

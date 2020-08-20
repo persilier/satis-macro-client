@@ -1,7 +1,8 @@
 import {RECEPTION_CHANNEL, RESPONSE_CHANNEL} from "../constants/channel";
 import {verifyPermission} from "./permission";
 import appConfig from "../config/appConfig";
-
+import moment from "moment";
+moment.locale();
 export const existingScript = function (id) {
     return !!document.getElementById(id);
 };
@@ -194,6 +195,10 @@ export const formatToTimeStampUpdate = dateTime => {
         return dateTime.split("T")[0] + " " + dateTime.split("T")[1].substring(0, 5);
     else
         return "";
+};
+
+export const formatDateToTimeStampte = dateTime => {
+    return moment(dateTime).format('LLLL')
 };
 
 export const formatToTime = dateTime => {

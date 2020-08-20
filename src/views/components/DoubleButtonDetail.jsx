@@ -1,5 +1,6 @@
 import React from "react";
 import {verifyPermission} from "../../helpers/permission";
+import {formatDateToTimeStampte} from "../../helpers/function";
 
 const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
     return (
@@ -50,7 +51,7 @@ const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
                                                             </a>
                                                             <a href="#datetime"
                                                                onClick={e => e.preventDefault()}><i
-                                                                className="flaticon2-time"/>{newClaim.created_at}
+                                                                className="flaticon2-time"/>{formatDateToTimeStampte(newClaim.created_at)}
                                                             </a>
                                                         </div>
 

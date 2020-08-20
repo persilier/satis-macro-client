@@ -10,7 +10,6 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import Loader from "../components/Loader";
 import ReasonSatisfaction from "../components/ReasonSatisfaction";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";

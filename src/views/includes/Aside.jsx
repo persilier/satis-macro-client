@@ -99,7 +99,7 @@ const Aside = (props) => {
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                             <span className="kt-menu__link-text">Réclamation à tranférer</span>
-                                                        </li>
+                                                        </li>9+
                                                     </NavLink>
                                                 ) : null
                                             }

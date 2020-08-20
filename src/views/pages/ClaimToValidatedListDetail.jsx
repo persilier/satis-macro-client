@@ -5,13 +5,11 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import moment from "moment";
-import {debug, loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
+import {formatDateToTimeStampte, loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import Loader from "../components/Loader";
 import ReasonModal from "../components/ReasonModal";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";
@@ -259,7 +257,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                                style={{cursor: "text"}}>
                                                                                                                 <i className="flaticon2-calendar-2"/>
                                                                                                                 Traiter
-                                                                                                                le {claim.active_treatment.solved_at}
+                                                                                                                le {formatDateToTimeStampte(claim.active_treatment.solved_at)}
                                                                                                             </a>
                                                                                                         </div>
                                                                                                         <div
@@ -350,7 +348,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                                onClick={(e) => e.preventDefault()}
                                                                                                                style={{cursor: "text"}}>
                                                                                                                 <i className="flaticon2-calendar-2"/>
-                                                                                                                Rejeter le {moment(claim.active_treatment.declared_unfounded_at).format('DD MMMM YYYY')} à {moment(claim.active_treatment.declared_unfounded_at).format('HH')}h{moment(claim.active_treatment.declared_unfounded_at).format('mm')}min
+                                                                                                                Rejeter le {formatDateToTimeStampte(claim.active_treatment.declared_unfounded_at)}
                                                                                                             </a>
                                                                                                         </div>
                                                                                                         <div

@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {
-    toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
