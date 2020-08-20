@@ -9,7 +9,7 @@ const AttachmentsButton = props => {
                 </div>
                 <div className="kt-wizard-v2__nav-label">
                     <div className="kt-wizard-v2__nav-label-title">
-                        Pièces jointe
+                        Pièces jointes
                         {
                             !props.claim ? "" : (
                                 <span

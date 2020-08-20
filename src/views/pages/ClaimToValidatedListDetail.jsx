@@ -27,7 +27,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 
 const ClaimToValidatedListDetail = (props) => {
-    document.title = "Satis client - Détail plainte";
+    document.title = "Satis client - Détail réclamation";
     const {id} = useParams();
     const validation = validatedClaimRule(id);
 
@@ -103,7 +103,7 @@ const ClaimToValidatedListDetail = (props) => {
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim-to-validated" className="kt-subheader__breadcrumbs-link">
-                                        Plaintes à valider
+                                        Réclamations à valider
                                     </Link>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@ const ClaimToValidatedListDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail plainte
+                                    Détail réclamation
                                 </a>
                             </div>
                         </div>
@@ -145,10 +145,10 @@ const ClaimToValidatedListDetail = (props) => {
                                                             </div>
                                                             <div className="kt-wizard-v2__nav-label">
                                                                 <div className="kt-wizard-v2__nav-label-title">
-                                                                    Validation de la plainte
+                                                                    Validation de la réclamation
                                                                 </div>
                                                                 <div className="kt-wizard-v2__nav-label-desc">
-                                                                    Valider le retour de l'agent sur la plainte
+                                                                    Valider le retour de l'agent sur la réclamation
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -172,7 +172,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                 <div className="kt-wizard-v2__content"
                                                      data-ktwizard-type="step-content">
                                                     <div className="kt-heading kt-heading--md">Validation de la
-                                                        plainte
+                                                        réclamation
                                                     </div>
                                                     <div className="kt-form__section kt-form__section--first">
                                                         <div className="kt-wizard-v2__review">
@@ -183,107 +183,45 @@ const ClaimToValidatedListDetail = (props) => {
                                                                             {
                                                                                 claim.active_treatment.solved_at !== null ? (
                                                                                     <>
-                                                                                        <div
-                                                                                            className="kt-wizard-v2__review-title">
-                                                                                            Traitement
+                                                                                        <div className="kt-wizard-v2__review-item">
+                                                                                            <div className="kt-wizard-v2__review-title">
+                                                                                                <h5><strong>Traitement</strong></h5>
+                                                                                            </div>
+                                                                                            <div className="kt-wizard-v2__review-content">
+                                                                                                <strong>Statut</strong>: <span className="mx-2">Traité</span><br/>
+                                                                                                <strong>Montant retourné</strong>: <span className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Pas de montant"}</span><br/>
+                                                                                                <strong>Solution</strong>: <span className="mx-2">{claim.active_treatment.solution ? claim.active_treatment.solution : "Pas de solution"}</span><br/>
+                                                                                                <strong>Commentaires</strong>: <span className="mx-2">{claim.active_treatment.comment ? claim.active_treatment.comment : "Pas de commentaire"}</span><br/>
+                                                                                                <strong>Mésures préventives</strong>: <span className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Pas de mésures préventives"}</span><br/>
+                                                                                            </div>
                                                                                         </div>
                                                                                         <div
-                                                                                            className="kt-wizard-2__veriew-content">
-                                                                                            <div
-                                                                                                className="kt-widget kt-widget--user-profile-3">
-                                                                                                <div
-                                                                                                    className="kt-widget__top">
-                                                                                                    <div
-                                                                                                        className="kt-widget__media kt-hidden-">
-                                                                                                        <img src="/personal/img/default-avatar.png" alt="image"/>
-                                                                                                    </div>
-                                                                                                    <div
-                                                                                                        className="kt-widget__pic kt-widget__pic--danger kt-font-danger kt-font-boldest kt-font-light kt-hidden">
-                                                                                                        JM
-                                                                                                    </div>
-                                                                                                    <div className="kt-widget__content">
-                                                                                                        <div className="kt-widget__head">
-                                                                                                        <span className="kt-widget__username">
-                                                                                                            Traiter par {claim.active_treatment.responsible_staff.identite.lastname+" "+claim.active_treatment.responsible_staff.identite.firstname}
-                                                                                                            <i className="flaticon2-correct"/>
-                                                                                                        </span>
-                                                                                                            <div
-                                                                                                                className="kt-widget__action">
-                                                                                                                {
-                                                                                                                    verifyPermission(props.userPermissions, "validate-treatment-my-institution") ||
-                                                                                                                    verifyPermission(props.userPermissions, "validate-treatment-any-institution") ? (
-                                                                                                                        <button
-                                                                                                                            type="button"
-                                                                                                                            className="btn btn-label-success btn-sm btn-upper"
-                                                                                                                            onClick={() => showReasonInput("validateReject")}>
-                                                                                                                            Rejeter
-                                                                                                                        </button>
-                                                                                                                    ) : null
-                                                                                                                }
+                                                                                            className="kt-widget__action">
+                                                                                            {
+                                                                                                verifyPermission(props.userPermissions, "validate-treatment-my-institution") ||
+                                                                                                verifyPermission(props.userPermissions, "validate-treatment-any-institution") ? (
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        className="btn btn-label-danger btn-sm btn-upper"
+                                                                                                        onClick={() => showReasonInput("validateReject")}>
+                                                                                                        Rejeter
+                                                                                                    </button>
+                                                                                                ) : null
+                                                                                            }
 
-                                                                                                                &nbsp;
-                                                                                                                {
-                                                                                                                    verifyPermission(props.userPermissions, "validate-treatment-my-institution") ||
-                                                                                                                    verifyPermission(props.userPermissions, "validate-treatment-any-institution") ? (
-                                                                                                                        <button
-                                                                                                                            type="button"
-                                                                                                                            className="btn btn-brand btn-sm btn-upper"
-                                                                                                                            onClick={() => showReasonInput("validateSolution")}>
-                                                                                                                            Valider
-                                                                                                                        </button>
-                                                                                                                    ) : null
-                                                                                                                }
+                                                                                            &nbsp;
+                                                                                            {
+                                                                                                verifyPermission(props.userPermissions, "validate-treatment-my-institution") ||
+                                                                                                verifyPermission(props.userPermissions, "validate-treatment-any-institution") ? (
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        className="btn btn-brand btn-sm btn-upper"
+                                                                                                        onClick={() => showReasonInput("validateSolution")}>
+                                                                                                        Valider
+                                                                                                    </button>
+                                                                                                ) : null
+                                                                                            }
 
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            className="kt-widget__subhead">
-                                                                                                            <a href={"#info"}
-                                                                                                               onClick={(e) => e.preventDefault()}
-                                                                                                               style={{cursor: "text"}}>
-                                                                                                                <i className="flaticon2-new-email"/>
-                                                                                                                {
-                                                                                                                    claim.active_treatment.responsible_staff.identite.email.map(
-                                                                                                                        (mail, index) => index !== claim.active_treatment.responsible_staff.identite.email.length - 1
-                                                                                                                            ? mail+"/"
-                                                                                                                            : mail+""
-                                                                                                                    )
-                                                                                                                }
-                                                                                                            </a>
-                                                                                                            <a href={"#info"}
-                                                                                                               onClick={(e) => e.preventDefault()}
-                                                                                                               style={{cursor: "text"}}>
-                                                                                                                <i className="flaticon2-calendar-2"/>
-                                                                                                                Traiter
-                                                                                                                le {formatDateToTimeStampte(claim.active_treatment.solved_at)}
-                                                                                                            </a>
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            className="kt-widget__info">
-                                                                                                            <div
-                                                                                                                className="kt-widget__desc">
-                                                                                                                <strong
-                                                                                                                    className="mr-2">Solution: </strong>
-                                                                                                                {claim.active_treatment.solution}
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        {
-                                                                                                            claim.active_treatment.preventive_measures ? (
-                                                                                                                <div
-                                                                                                                    className="kt-widget__info">
-                                                                                                                    <div
-                                                                                                                        className="kt-widget__desc">
-                                                                                                                        <strong
-                                                                                                                            className="mr-2">Mésures
-                                                                                                                            préventive: </strong>
-                                                                                                                        {claim.active_treatment.preventive_measures}
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                            ) : ""
-                                                                                                        }
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
                                                                                         </div>
                                                                                     </>
                                                                                 ) : ""
@@ -292,75 +230,23 @@ const ClaimToValidatedListDetail = (props) => {
                                                                             {
                                                                                 claim.active_treatment.declared_unfounded_at !== null ? (
                                                                                     <>
-                                                                                        <div
-                                                                                            className="kt-wizard-v2__review-title">
-                                                                                            Non fondée
-                                                                                        </div>
-                                                                                        <div
-                                                                                            className="kt-wizard-2__veriew-content">
-                                                                                            <div
-                                                                                                className="kt-widget kt-widget--user-profile-3">
-                                                                                                <div
-                                                                                                    className="kt-widget__top">
-                                                                                                    <div
-                                                                                                        className="kt-widget__media kt-hidden-">
-                                                                                                        <img
-                                                                                                            src="/assets/media/users/100_13.jpg"
-                                                                                                            alt="image"/>
-                                                                                                    </div>
-                                                                                                    <div
-                                                                                                        className="kt-widget__pic kt-widget__pic--danger kt-font-danger kt-font-boldest kt-font-light kt-hidden">
-                                                                                                        JM
-                                                                                                    </div>
-                                                                                                    <div className="kt-widget__content">
-                                                                                                        <div className="kt-widget__head">
-                                                                                                        <span className="kt-widget__username">
-                                                                                                            Traiter par {claim.active_treatment.responsible_staff.identite.lastname+" "+claim.active_treatment.responsible_staff.identite.firstname}
-                                                                                                            <i className="flaticon2-correct"/>
-                                                                                                        </span>
-                                                                                                            <div className="kt-widget__action">
-                                                                                                                <button type="button" className="btn btn-label-success btn-sm btn-upper" onClick={() => showReasonInput("validateReject")}>
-                                                                                                                    Rejeter
-                                                                                                                </button>
-                                                                                                                &nbsp;
-                                                                                                                <button type="button" className="btn btn-brand btn-sm btn-upper" onClick={() => showReasonInput("validateSolution")}>
-                                                                                                                    Valider
-                                                                                                                </button>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            className="kt-widget__subhead">
-                                                                                                            <a href={"#info"}
-                                                                                                               onClick={(e) => e.preventDefault()}
-                                                                                                               style={{cursor: "text"}}>
-                                                                                                                <i className="flaticon2-new-email"/>
-                                                                                                                {
-                                                                                                                    claim.active_treatment.responsible_staff.identite.email.map(
-                                                                                                                        (mail, index) => index !== claim.active_treatment.responsible_staff.identite.email.length - 1
-                                                                                                                            ? mail+"/"
-                                                                                                                            : mail+""
-                                                                                                                    )
-                                                                                                                }
-                                                                                                            </a>
-                                                                                                            <a href={"#info"}
-                                                                                                               onClick={(e) => e.preventDefault()}
-                                                                                                               style={{cursor: "text"}}>
-                                                                                                                <i className="flaticon2-calendar-2"/>
-                                                                                                                Rejeter le {formatDateToTimeStampte(claim.active_treatment.declared_unfounded_at)}
-                                                                                                            </a>
-                                                                                                        </div>
-                                                                                                        <div
-                                                                                                            className="kt-widget__info">
-                                                                                                            <div
-                                                                                                                className="kt-widget__desc">
-                                                                                                                <strong
-                                                                                                                    className="mr-2">Raison: </strong>
-                                                                                                                {claim.active_treatment.unfounded_reason}
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
+                                                                                        <div className="kt-wizard-v2__review-item">
+                                                                                            <div className="kt-wizard-v2__review-title">
+                                                                                                <h5><strong>Traitement</strong></h5>
                                                                                             </div>
+                                                                                            <div className="kt-wizard-v2__review-content">
+                                                                                                <strong>Statut</strong>: <span className="mx-2">Non fondé</span><br/>
+                                                                                                <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.unfounded_reason ? claim.active_treatment.unfounded_reason : "Pas de motif"}</span><br/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div className="kt-widget__action">
+                                                                                            <button type="button" className="btn btn-label-danger btn-sm btn-upper" onClick={() => showReasonInput("validateReject")}>
+                                                                                                Rejeter
+                                                                                            </button>
+                                                                                            &nbsp;
+                                                                                            <button type="button" className="btn btn-brand btn-sm btn-upper" onClick={() => showReasonInput("validateSolution")}>
+                                                                                                Valider
+                                                                                            </button>
                                                                                         </div>
                                                                                     </>
                                                                                 ) : ""
