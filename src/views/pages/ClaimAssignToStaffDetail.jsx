@@ -82,7 +82,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail plainte
+                                    Détail réclamation
                                 </a>
                             </div>
                         </div>
@@ -110,10 +110,10 @@ const ClaimAssignToStaffDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Traitement de la plainte
+                                                            Traitement de la réclamtion
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
-                                                            Procédez au traitement de la plainte
+                                                            Procédez au traitement de la réclamation
                                                         </div>
                                                     </div>
                                                 </div>

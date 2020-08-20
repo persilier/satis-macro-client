@@ -135,7 +135,7 @@ const ClaimListDetail = (props) => {
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/unit-claims" className="kt-subheader__breadcrumbs-link">
-                                        Liste des plaintes
+                                        Liste des réclamations
                                     </Link>
                                 </div>
                             </div>
@@ -147,7 +147,7 @@ const ClaimListDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail plainte
+                                    Détail réclamation
                                 </a>
                             </div>
                         </div>
@@ -177,10 +177,10 @@ const ClaimListDetail = (props) => {
                                                             </div>
                                                             <div className="kt-wizard-v2__nav-label">
                                                                 <div className="kt-wizard-v2__nav-label-title">
-                                                                    Affectation de la plainte
+                                                                    Affectation de la réclamation
                                                                 </div>
                                                                 <div className="kt-wizard-v2__nav-label-desc">
-                                                                    Affectez la plainte à un agent
+                                                                    Affectez la réclamation à un agent
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -197,7 +197,7 @@ const ClaimListDetail = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, "self-assignment-claim-awaiting-treatment") ? (
                                                     <button className="btn btn-primary btn-sm mx-2"
-                                                            onClick={selfAssign}>S'affecter la plainte</button>
+                                                            onClick={selfAssign}>S'affecter la réclamation</button>
                                                 ) : ""
                                             }
                                             {
@@ -205,7 +205,7 @@ const ClaimListDetail = (props) => {
                                                     <button
                                                         className="btn btn-secondary btn-sm"
                                                         onClick={() => showReasonInput("reject")}>
-                                                        Rejeter la plainte
+                                                        Rejeter la réclamation
                                                     </button>
                                                 ) : ""
                                             }
@@ -255,7 +255,7 @@ const ClaimListDetail = (props) => {
                                                                         !startRequest ? (
                                                                             <button className="btn btn-primary"
                                                                                     onClick={assignClaim}>Affecter la
-                                                                                plainte</button>
+                                                                                réclamation</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
