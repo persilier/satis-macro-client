@@ -127,17 +127,22 @@ const LoginPage = (props) => {
                                                 <h3>Connexion</h3>
                                             </div>
 
-                                            <form className="kt-form"  id="kt_login__form" style={{marginBottom: '142px'}}>
+                                            <form className="kt-form" noValidate={"novalidate"} id="kt_login__form" style={{marginBottom: '142px'}}>
                                                 <div className={error.username.length ? "form-group row validated" : "form-group row"}>
 
                                                     <input
                                                         className={error.username.length ? "form-control is-invalid" : "form-control"}
+
+                                                        aria-describedby={'username-error'}
                                                         type="email"
                                                            placeholder="Votre Email"
                                                            name="username"
                                                            onChange={(e) => onChangeUserName(e)}
 														   value={username}
                                                     />
+                                                    {/*<div id="username-error" className="error invalid-feedback">This*/}
+                                                    {/*    field is required.*/}
+                                                    {/*</div>*/}
                                                     {
                                                         error.username.length ? (
                                                             error.username.map((error, index) => (
