@@ -19,7 +19,7 @@ const ReasonModal = props => {
                 .then(response => {
                 setStartRequest(false);
                     ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                    document.location.href = `${appConfig.apiDomaine}/process/unit-claims`
+                    windows.location.href = `/process/unit-claims`
                 })
                 .catch(error => {
                     setStartRequest(false);
