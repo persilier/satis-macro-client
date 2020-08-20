@@ -335,7 +335,7 @@ const Chats = (props) => {
                                             <h5>Discussions</h5>
                                         </div>
                                         {
-                                            verifyPermission(props.userPermissions,"store new discussion")?
+                                            verifyPermission(props.userPermissions,"store-discussion")?
                                         <div className="kt-chat__right">
                                             <div className="dropdown dropdown-inline">
                                                 <button type="button"
