@@ -168,7 +168,7 @@ const ClaimList = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Cette page représente la liste des réclamations transférées à votre unité et qui sont en attente d'affectetion"}/>
+                    <InfirmationTable information={"Cette page vous présente la liste des réclamations transférées à votre unité et qui sont en attente d'affectetion"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
