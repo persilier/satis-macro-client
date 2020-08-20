@@ -169,7 +169,7 @@ const ClaimAssignToStaff = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des plaintes qui vos sons assignés"}/>
+                    <InfirmationTable information={"Liste des réclamations qui vous sont assignés"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
