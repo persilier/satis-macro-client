@@ -343,64 +343,69 @@ const Chats = (props) => {
                                                         aria-expanded="false">
                                                     <i className="flaticon2-add-1"></i>
                                                 </button>
-                                                <div
-                                                    className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
+                                                {
+                                                    verifyPermission(props.userPermissions,"store new discussion")?
+                                                    <div
+                                                        className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
 
-                                                    <ul className="kt-nav">
-                                                        <li className="kt-nav__head">
-                                                            Messagerie
-                                                            <Link
-                                                                to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}>
-                                                                <i className="kt-nav__link-icon flaticon-eye"></i>
-                                                            </Link>
+                                                        <ul className="kt-nav">
+                                                            <li className="kt-nav__head">
+                                                                Messagerie
+                                                                <Link
+                                                                    to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}>
+                                                                    <i className="kt-nav__link-icon flaticon-eye"></i>
+                                                                </Link>
 
 
-                                                        </li>
-                                                        <li className="kt-nav__separator"></li>
-                                                        <li className="kt-nav__item">
-                                                            <Link to={"/treatment/chat/add"}
-                                                                  className="kt-nav__link">
-                                                                <i className="kt-nav__link-icon flaticon-chat-1"></i>
-                                                                <span
-                                                                    className="kt-nav__link-text">Créer un Chat</span>
-                                                            </Link>
-                                                        </li>
+                                                            </li>
+                                                            <li className="kt-nav__separator"></li>
+                                                            <li className="kt-nav__item">
+                                                                <Link to={"/treatment/chat/add"}
+                                                                      className="kt-nav__link">
+                                                                    <i className="kt-nav__link-icon flaticon-chat-1"></i>
+                                                                    <span
+                                                                        className="kt-nav__link-text">Créer un Chat</span>
+                                                                </Link>
+                                                            </li>
 
-                                                        <li className="kt-nav__item">
-                                                            <Link to={"treatment/chat/remove_chat"}
-                                                                  className="kt-nav__link">
-                                                                <i className="kt-nav__link-icon flaticon-delete"></i>
-                                                                <span
-                                                                    className="kt-nav__link-text">Supprimer un Chat</span>
-                                                            </Link>
-                                                        </li>
+                                                            <li className="kt-nav__item">
+                                                                <Link to={"treatment/chat/remove_chat"}
+                                                                      className="kt-nav__link">
+                                                                    <i className="kt-nav__link-icon flaticon-delete"></i>
+                                                                    <span
+                                                                        className="kt-nav__link-text">Supprimer un Chat</span>
+                                                                </Link>
+                                                            </li>
 
-                                                        <li className="kt-nav__separator"></li>
+                                                            <li className="kt-nav__separator"></li>
 
-                                                        <li className="kt-nav__item">
-                                                            <Link
-                                                                to={idChat ? `/treatment/chat/add_user/${idChat}` : ""}
-                                                                className="kt-nav__link">
-                                                                <i className="kt-nav__link-icon flaticon2-group"></i>
-                                                                <span
-                                                                    className="kt-nav__link-text">Ajouter un Membre</span>
-                                                                <span className="kt-nav__link-badge">
+                                                            <li className="kt-nav__item">
+                                                                <Link
+                                                                    to={idChat ? `/treatment/chat/add_user/${idChat}` : ""}
+                                                                    className="kt-nav__link">
+                                                                    <i className="kt-nav__link-icon flaticon2-group"></i>
+                                                                    <span
+                                                                        className="kt-nav__link-text">Ajouter un Membre</span>
+                                                                    <span className="kt-nav__link-badge">
                                                                 <span
                                                                     className="kt-badge kt-badge--brand  kt-badge--rounded-">{listChatUsers.length}</span>
                                                             </span>
-                                                            </Link>
-                                                        </li>
-                                                        <li className="kt-nav__item">
-                                                            <Link
-                                                                to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}
-                                                                className="kt-nav__link">
-                                                                <i className="kt-nav__link-icon flaticon-delete"></i>
-                                                                <span
-                                                                    className="kt-nav__link-text">Retirer un Membre</span>
-                                                            </Link>
-                                                        </li>
-                                                    </ul>
-                                                </div>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="kt-nav__item">
+                                                                <Link
+                                                                    to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}
+                                                                    className="kt-nav__link">
+                                                                    <i className="kt-nav__link-icon flaticon-delete"></i>
+                                                                    <span
+                                                                        className="kt-nav__link-text">Retirer un Membre</span>
+                                                                </Link>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                :""
+                                                }
+
                                             </div>
                                         </div>
                                     </div>
