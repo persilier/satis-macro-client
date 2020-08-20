@@ -33,7 +33,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 
 const ClaimListDetail = (props) => {
-    document.title = "Satis client - Détail plainte";
+    document.title = "Satis client - Détail réclamation";
     const {id} = useParams();
 
     if (!verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment"))
@@ -145,9 +145,11 @@ const ClaimListDetail = (props) => {
                                     <i className="flaticon2-shelter"/>
                                 </a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
+                                <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "text"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail réclamation
+                                    {
+                                        claim ? claim.reference : "Détail réclamation"
+                                    }
                                 </a>
                             </div>
                         </div>
@@ -225,7 +227,7 @@ const ClaimListDetail = (props) => {
                                                 <div className="kt-wizard-v2__content"
                                                      data-ktwizard-type="step-content">
                                                     <div className="kt-heading kt-heading--md">Affectation de la
-                                                        plainte
+                                                        réclamation
                                                     </div>
                                                     <div className="kt-form__section kt-form__section--first">
                                                         <div className="kt-wizard-v2__review">
