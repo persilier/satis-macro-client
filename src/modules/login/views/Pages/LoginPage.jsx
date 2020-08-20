@@ -63,7 +63,7 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
-                console.log(defaultError, error.response.data.error,"ERROR");
+                console.log({...defaultError}, error.response.data.error,"ERROR");
                 // setError({...defaultError, ...error.response.data.error});
                 setStartRequest(false);
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
@@ -127,13 +127,11 @@ const LoginPage = (props) => {
                                                 <h3>Connexion</h3>
                                             </div>
 
-                                            <form className="kt-form" noValidate={"novalidate"} id="kt_login__form" style={{marginBottom: '142px'}}>
+                                            <form className="kt-form" id="kt_login__form" style={{marginBottom: '142px'}}>
                                                 <div className={error.username.length ? "form-group row validated" : "form-group row"}>
 
                                                     <input
                                                         className={error.username.length ? "form-control is-invalid" : "form-control"}
-
-                                                        aria-describedby={'username-error'}
                                                         type="email"
                                                            placeholder="Votre Email"
                                                            name="username"
