@@ -259,7 +259,7 @@ const ClaimMonitoring = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Cette interface vous permet d'effectuer le suivi de vos réclamations"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage

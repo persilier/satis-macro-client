@@ -192,7 +192,7 @@ const Aside = (props) => {
                                             <NavLink exact to="/monitoring/claims/monitoring" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                    <span className="kt-menu__link-text">Suivi des plaintes</span>
+                                                    <span className="kt-menu__link-text">Suivi des réclamations</span>
                                                 </li>
                                             </NavLink>
                                         ) : null
@@ -444,7 +444,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Catégorie de plainte</span>
+                                                                <span className="kt-menu__link-text">Catégorie de réclamation</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -456,7 +456,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Objet de plainte</span>
+                                                                <span className="kt-menu__link-text">Objet de réclamation</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
