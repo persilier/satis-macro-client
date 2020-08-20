@@ -23,19 +23,48 @@ loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 loadScript("/assets/js/pages/custom/chat/chat.js");
 
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    },
+    MACRO: {
+        holding: {
+            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        },
+        filial: {
+            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        edit: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+    }
+};
+
 
 const SatisfactionMeasureDetail = (props) => {
     document.title = "Satis client - Détail plainte";
     const {id} = useParams();
 
-    if (!verifyPermission(props.userPermissions, 'update-claim-satisfaction-measured'))
+    if (!(verifyPermission(props.userPermissions, ' update-satisfaction-measured-any-claim') ||
+        verifyPermission(props.userPermissions, " update-satisfaction-measured-my-claim")))
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     const [claim, setClaim] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-satisfaction-measured/${id}`)
+            await axios.get(endPoint.edit + `/${id}`)
                 .then(response => {
                     setClaim(response.data);
                 })

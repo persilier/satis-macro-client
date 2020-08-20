@@ -3,8 +3,40 @@ import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
+import {connect} from "react-redux";
+
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    },
+    MACRO: {
+        holding: {
+            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        },
+        filial: {
+            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        edit: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+    }
+};
 
 const ReasonSatisfaction = (props) => {
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
+
     const option1 = 1;
     const option2 = 0;
     const defaultData = {
@@ -35,7 +67,7 @@ const ReasonSatisfaction = (props) => {
     const onClick = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/claim-satisfaction-measured/${props.getId}`, data)
+        axios.put(endPoint.edit + `/${props.getId}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -114,7 +146,7 @@ const ReasonSatisfaction = (props) => {
                     <button
                         className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                         type="button" disabled>
-                        Loading...
+                        Chargement...
                     </button>
                 )
             }
@@ -122,5 +154,11 @@ const ReasonSatisfaction = (props) => {
     );
 
 };
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
+    };
+};
 
-export default ReasonSatisfaction;
+export default connect(mapStateToProps)(ReasonSatisfaction);

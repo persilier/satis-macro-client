@@ -27,7 +27,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 
 const ClaimAssignToStaffDetail = (props) => {
-    document.title = "Satis client - Détail plainte";
+    document.title = "Satis client - Détail réclamation";
     const {id} = useParams();
 
     if (!verifyPermission(props.userPermissions, "show-claim-assignment-to-staff"))
