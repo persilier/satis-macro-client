@@ -175,7 +175,7 @@ const ClaimToValidatedList = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                    <InfirmationTable information={"Liste des réclamations à valider"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -221,7 +221,7 @@ const ClaimToValidatedList = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objets
+                                                            aria-label="Country: activate to sort column ascending">Objet
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
