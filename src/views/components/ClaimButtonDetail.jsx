@@ -1,7 +1,7 @@
 import React from "react";
 import {formatDateToTimeStampte} from "../../helpers/function";
 
-const ClaimButtonDetail = ({claim}) => {
+const ClaimButtonDetail = ({claim, rejected}) => {
     return (
         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
             <div className="kt-heading kt-heading--md">Détails de la réclamation</div>
@@ -17,19 +17,23 @@ const ClaimButtonDetail = ({claim}) => {
                                 </div>
                             )
                         }
+
+
                         {
-                            claim ? (
-                                claim.active_treatment ? (
-                                    <div className="kt-wizard-v2__review-item">
-                                        <div className="kt-wizard-v2__review-title">
-                                            <h5><strong>Rejet</strong></h5>
+                            rejected ? (
+                                claim ? (
+                                    claim.active_treatment ? (
+                                        <div className="kt-wizard-v2__review-item">
+                                            <div className="kt-wizard-v2__review-title">
+                                                <h5><strong>Rejet</strong></h5>
+                                            </div>
+                                            <div className="kt-wizard-v2__review-content">
+                                                <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.rejected_reason} 1</span><br/>
+                                                <strong>Unité</strong>: <span className="mx-2">{claim.active_treatment.responsible_unit.name["fr"]}</span><br/>
+                                                <strong>Date de rejet</strong>: <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.rejected_at)}</span><br/>
+                                            </div>
                                         </div>
-                                        <div className="kt-wizard-v2__review-content">
-                                            <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.rejected_reason} 1</span><br/>
-                                            <strong>Unité</strong>: <span className="mx-2">{claim.active_treatment.responsible_unit.name["fr"]}</span><br/>
-                                            <strong>Date de rejet</strong>: <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.rejected_at)}</span><br/>
-                                        </div>
-                                    </div>
+                                    ) : null
                                 ) : null
                             ) : null
                         }

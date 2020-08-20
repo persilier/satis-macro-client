@@ -225,7 +225,7 @@ const ClaimAssignDetail = (props) => {
                                             ) : null
                                         }
 
-                                        <ClientButtonDetail claim={claim}/>
+                                        <ClientButtonDetail claim={claim} rejected={true}/>
 
                                         <ClaimButtonDetail claim={claim}/>
 
