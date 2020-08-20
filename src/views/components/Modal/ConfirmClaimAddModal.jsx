@@ -14,6 +14,7 @@ import {
 } from "../../../config/toastConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import InputRequire from "../InputRequire";
+import WithoutCode from "../WithoutCode";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -632,7 +633,7 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s) <InputRequire/></label>
+                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/> <InputRequire/></label>
                                                         <TagsInput disabled={true} value={data.telephone} onChange={onChangeTelephone} />
                                                         {
                                                             error.telephone.length ? (
@@ -979,7 +980,7 @@ const ConfirmClaimAddModal = props => {
                                 <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                             ) : (
                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                    Loading...
+                                    Chargement...
                                 </button>
                             )
                         }

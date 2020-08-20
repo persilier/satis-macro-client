@@ -17,6 +17,7 @@ import {
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
 import InfirmationTable from "../components/InfirmationTable";
 import InputRequire from "../components/InputRequire";
+import WithoutCode from "../components/WithoutCode";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -752,7 +753,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s) <InputRequire/></label>
+                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/> <InputRequire/></label>
                                                         <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (

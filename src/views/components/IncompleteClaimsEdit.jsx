@@ -25,6 +25,7 @@ import {
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
+import WithoutCode from "./WithoutCode";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -638,7 +639,7 @@ const IncompleteClaimsEdit = props => {
                                                         <div className="form-group row">
                                                             <div
                                                                 className={error.telephone.length ? "col validated" : "col"}>
-                                                                <label htmlFor="telephone"> Téléphone(s) <InputRequire/></label>
+                                                                <label htmlFor="telephone"> Téléphone(s)<WithoutCode/> <InputRequire/></label>
                                                                 <TagsInput disabled={!disabledInput}
                                                                    value={data.telephone}
                                                                    onChange={onChangeTelephone}
