@@ -5,16 +5,15 @@ import {
     Link,
     useParams
 } from "react-router-dom";
-import FormInformation from "../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import {
+    debug,
     filterChannel,
     formatSelectOption,
     formatToTime,
-    formatToTimeStamp,
     formatToTimeStampUpdate
 } from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
@@ -22,7 +21,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastSuccessMessageWithParameterConfig,
+    toastEditErrorMessageConfig, toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
@@ -388,7 +387,7 @@ const IncompleteClaimsEdit = props => {
         const formData = new FormData();
         formData.append("_method", "put");
         for (const key in newData) {
-            console.log(`${key}:`, newData[key]);
+            // console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
@@ -422,13 +421,19 @@ const IncompleteClaimsEdit = props => {
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
 
-        axios.post(endPoint.update(`${id}`), formatFormData(newData))
-            .then(async (response) => {
+        console.log('Coucou', 'COUCOU')
+        debug(endPoint.update(`${id}`), "endpoint");
+        for (var value of formatFormData(newData).values()) {
+            debug(value, "value");
+        }
+       axios.post(endPoint.update(`${id}`), formatFormData(newData))
+            .then( (response) => {
+                console.log(response.data, "response");
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
                 window.location.href="/process/incomplete_claims"
             })
-            .catch(async (error) => {
+            .catch( (error) => {
                 setStartRequest(false);
                 setError({...defaultError, ...error.response.data.error});
                 ToastBottomEnd.fire(toastEditErrorMessageConfig);
