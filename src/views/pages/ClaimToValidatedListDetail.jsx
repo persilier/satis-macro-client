@@ -145,10 +145,10 @@ const ClaimToValidatedListDetail = (props) => {
                                                             </div>
                                                             <div className="kt-wizard-v2__nav-label">
                                                                 <div className="kt-wizard-v2__nav-label-title">
-                                                                    Validation de la réclamation
+                                                                    Validation du traitement
                                                                 </div>
                                                                 <div className="kt-wizard-v2__nav-label-desc">
-                                                                    Valider le retour de l'agent sur la réclamation
+                                                                    Valider du traitement de l'agent
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -169,10 +169,9 @@ const ClaimToValidatedListDetail = (props) => {
 
                                         {
                                             verifyPermission(props.userPermissions, validation[props.plan].permission) ? (
-                                                <div className="kt-wizard-v2__content"
-                                                     data-ktwizard-type="step-content">
-                                                    <div className="kt-heading kt-heading--md">Validation de la
-                                                        réclamation
+                                                <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                                                    <div className="kt-heading kt-heading--md">
+                                                        Validation du traitement
                                                     </div>
                                                     <div className="kt-form__section kt-form__section--first">
                                                         <div className="kt-wizard-v2__review">
