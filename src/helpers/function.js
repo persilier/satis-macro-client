@@ -198,7 +198,10 @@ export const formatToTimeStampUpdate = dateTime => {
 };
 
 export const formatDateToTimeStampte = dateTime => {
-    return moment(dateTime).format('LLLL')
+    if (dateTime)
+        return moment(dateTime).format('LLLL');
+    else
+        return "Pas de date";
 };
 
 export const formatToTime = dateTime => {
