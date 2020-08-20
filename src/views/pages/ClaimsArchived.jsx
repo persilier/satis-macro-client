@@ -16,7 +16,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 
 const ClaimsArchived = (props) => {
-    document.title = "Satis client - Liste plaintes archivées";
+    document.title = "Satis client - Liste réclamations archivées";
     localStorage.setItem('page', 'ClaimsArchived');
     if (!verifyPermission(props.userPermissions, "list-claim-archived"))
         window.location.href = ERROR_401;
@@ -167,7 +167,7 @@ const ClaimsArchived = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"Liste des plaintes archivées"}/>
+                    information={"Liste des réclamtions archivées"}/>
 
                 <div className="kt-portlet">
 
@@ -197,7 +197,7 @@ const ClaimsArchived = (props) => {
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{width: "952px"}}>
                                                 <thead>

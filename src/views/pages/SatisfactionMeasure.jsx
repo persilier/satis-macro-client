@@ -164,7 +164,7 @@ const SatisfactionMeasure = (props) => {
             </div>
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable information={"La liste des plaintes à mésurer la satisfaction"}/>
+                <InfirmationTable information={"La liste des réclamations à mésurer la satisfaction"}/>
 
                 <div className="kt-portlet">
 
@@ -194,7 +194,7 @@ const SatisfactionMeasure = (props) => {
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                 style={{width: "952px"}}>
                                                 <thead>
