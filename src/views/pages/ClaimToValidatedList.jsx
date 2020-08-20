@@ -10,7 +10,7 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {filterDataTableBySearchValue, forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -125,7 +125,7 @@ const ClaimToValidatedList = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
-                <td>{claim.created_at}</td>
+                <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
                 <td>{claim.institution_targeted.name}</td>
