@@ -3,6 +3,7 @@ import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {toastMergeSuccessMessageConfig} from "../../config/toastConfig";
+import {formatDateToTimeStampte} from "../../helpers/function";
 
 const FusionClaim = props => {
     const [startRequest, setStartRequest] = useState(false);
@@ -33,7 +34,7 @@ const FusionClaim = props => {
             <div className="modal-dialog modal-lg" role="document">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Fusion de plainte</h5>
+                        <h5 className="modal-title" id="exampleModalLabel">Fusion de réclamation</h5>
                         <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="close"/>
                     </div>
                     <div className="modal-body">
@@ -41,7 +42,7 @@ const FusionClaim = props => {
                             <table className="table table-bordered text-center">
                                 <thead>
                                     <tr>
-                                        <th><strong>Libellé</strong></th>
+                                        <th><strong>Paramètre</strong></th>
                                         <th><strong>Plainte</strong></th>
                                         <th><strong>Doublon</strong></th>
                                     </tr>
@@ -59,18 +60,18 @@ const FusionClaim = props => {
                                     </tr>
                                     <tr>
                                         <td><strong>Date de reclamation</strong></td>
-                                        <td>{props.claim.created_at ? props.claim.created_at : "Pas de date de reclamation"}</td>
-                                        <td>{props.copyClaim.created_at ? props.claim.created_at : "Pas de date de reclamation"}</td>
+                                        <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "Pas de date de reclamation"}</td>
+                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "Pas de date de reclamation"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Date de l'évernement</strong></td>
-                                        <td>{props.claim.event_occured_at ? props.claim.event_occured_at : "Pas de date"}</td>
-                                        <td>{props.copyClaim.event_occured_at ? props.claim.event_occured_at : "Pas de date"}</td>
+                                        <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
+                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Objet de reclamation</strong></td>
-                                        <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "Pas d'objet de plainte"}</td>
-                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "Pas d'objet de plainte"}</td>
+                                        <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "Pas d'objet de Réclamation"}</td>
+                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "Pas d'objet de Réclamation"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Description</strong></td>

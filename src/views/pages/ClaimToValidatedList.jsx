@@ -194,7 +194,7 @@ const ClaimToValidatedList = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>
@@ -209,11 +209,11 @@ const ClaimToValidatedList = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de plainte
+                                                            aria-label="Country: activate to sort column ascending">Date de réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de plainte
+                                                            aria-label="Country: activate to sort column ascending">Objet de réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
@@ -254,8 +254,8 @@ const ClaimToValidatedList = (props) => {
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
                                                         <th rowSpan="1" colSpan="1">Date de l'opération</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de plainte</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de plainte</th>
+                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
                                                         <th rowSpan="1" colSpan="1">Agent</th>
                                                         <th rowSpan="1" colSpan="1">Unité</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>

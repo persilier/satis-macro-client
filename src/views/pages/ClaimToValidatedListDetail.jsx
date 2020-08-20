@@ -195,9 +195,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                     className="kt-widget__top">
                                                                                                     <div
                                                                                                         className="kt-widget__media kt-hidden-">
-                                                                                                        <img
-                                                                                                            src="/assets/media/users/100_13.jpg"
-                                                                                                            alt="image"/>
+                                                                                                        <img src="/personal/img/default-avatar.png" alt="image"/>
                                                                                                     </div>
                                                                                                     <div
                                                                                                         className="kt-widget__pic kt-widget__pic--danger kt-font-danger kt-font-boldest kt-font-light kt-hidden">

@@ -428,7 +428,7 @@ const ClaimReporting = props => {
                                         fetchData ? (
                                             <div className="col-sm-12">
                                                 <strong>Légende: <br/>R </strong>{"<===>"} Réclamtions
-                                                <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
+                                                <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
                                                     <thead style={{backgroundColor: "#7F9CF5"}}>
                                                     <tr role="row">
                                                         <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
