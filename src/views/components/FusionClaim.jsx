@@ -43,7 +43,7 @@ const FusionClaim = props => {
                                 <thead>
                                     <tr>
                                         <th><strong>Paramètre</strong></th>
-                                        <th><strong>Plainte</strong></th>
+                                        <th><strong>Réclamation</strong></th>
                                         <th><strong>Doublon</strong></th>
                                     </tr>
                                 </thead>
@@ -59,14 +59,14 @@ const FusionClaim = props => {
                                         <td>{props.copyClaim.amount_disputed ? `${props.copyClaim.amount_disputed} ${props.copyClaim.amount_currency ? props.copyClaim.amount_currency.name["fr"] : ""}` : "Pas de montant"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Date de reclamation</strong></td>
+                                        <td><strong>Date de réception</strong></td>
                                         <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "Pas de date de reclamation"}</td>
-                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "Pas de date de reclamation"}</td>
+                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "Pas de date de reclamation"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Date de l'évernement</strong></td>
                                         <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
-                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
+                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "Pas de date"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Objet de reclamation</strong></td>
