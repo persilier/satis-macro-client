@@ -235,8 +235,10 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                 <h5><strong>Traitement</strong></h5>
                                                                                             </div>
                                                                                             <div className="kt-wizard-v2__review-content">
-                                                                                                <strong>Statut</strong>: <span className="mx-2">Non fondé</span><br/>
-                                                                                                <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.unfounded_reason ? claim.active_treatment.unfounded_reason : "Pas de motif"}</span><br/>
+                                                                                                <strong>Statut</strong>: <span className="mx-2">Non fondé</span>
+                                                                                                <br/>
+                                                                                                <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.unfounded_reason ? claim.active_treatment.unfounded_reason : "Pas de motif"}</span>
+                                                                                                <br/>
                                                                                             </div>
                                                                                         </div>
                                                                                         <div className="kt-widget__action">
