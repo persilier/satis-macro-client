@@ -59,7 +59,7 @@ const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
                                                             className="kt-widget__info">
                                                             <div
                                                                 className="kt-widget__desc">
-                                                                {newClaim.description}
+                                                               <i className={"flaticon-notes"}></i> {newClaim.description}
                                                             </div>
                                                             <div
                                                                 className="kt-widget__progress">
@@ -76,8 +76,8 @@ const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
                                                                     <div
                                                                         className="progress-bar kt-bg-danger"
                                                                         role="progressbar"
-                                                                        style={{width: "46%"}}
-                                                                        aria-valuenow="35"
+                                                                        style={{width: newClaim.duplicate_percent + "%"}}
+                                                                        aria-valuenow={newClaim.duplicate_percent}
                                                                         aria-valuemin="0"
                                                                         aria-valuemax="100"/>
                                                                 </div>
