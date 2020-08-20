@@ -334,7 +334,8 @@ const Chats = (props) => {
                                         <div className="kt-chat__center">
                                             <h5>Discussions</h5>
                                         </div>
-
+                                        {
+                                            verifyPermission(props.userPermissions,"store new discussion")?
                                         <div className="kt-chat__right">
                                             <div className="dropdown dropdown-inline">
                                                 <button type="button"
@@ -343,8 +344,7 @@ const Chats = (props) => {
                                                         aria-expanded="false">
                                                     <i className="flaticon2-add-1"></i>
                                                 </button>
-                                                {
-                                                    verifyPermission(props.userPermissions,"store new discussion")?
+
                                                     <div
                                                         className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
 
@@ -403,11 +403,12 @@ const Chats = (props) => {
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                :""
-                                                }
-
                                             </div>
                                         </div>
+                                                :
+                                                <div className="kt-chat__right"></div>
+                                        }
+
                                     </div>
                                 </div>
                                 <div className="kt-portlet__body">
