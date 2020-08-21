@@ -29,12 +29,41 @@ const ClaimArchivedDetail = (props) => {
 
     const [claim, setClaim] = useState(null);
 
-    if (!verifyPermission(props.userPermissions, 'show-claim-archived'))
+    const endPointConfig = {
+        PRO: {
+            plan: "PRO",
+            list: `${appConfig.apiDomaine}/my/claim-archived`,
+        },
+        MACRO: {
+            holding: {
+                list: `${appConfig.apiDomaine}/any/claim-archived`,
+            },
+            filial: {
+                list: `${appConfig.apiDomaine}/my/claim-archived`,
+            }
+        },
+        HUB: {
+            plan: "HUB",
+            list: `${appConfig.apiDomaine}/any/claim-archived`,
+        }
+    };
+
+    if (!(verifyPermission(props.userPermissions, 'show-any-claim-archived') ||
+        verifyPermission(props.userPermissions, "show-my-claim-archived")))
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'show-any-claim-archived'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'show-my-claim-archived'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-archived/${id}`)
+            await axios.get(endPoint.list + `/${id}`)
                 .then(response => {
                     setClaim(response.data);
                 })

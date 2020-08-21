@@ -65,6 +65,7 @@ const ReasonSatisfaction = (props) => {
     };
 
     const onClick = (e) => {
+        // console.log(props.getEndPoint,'GET_ENDPOINT'),
         e.preventDefault();
         setStartRequest(true);
         axios.put(endPoint.edit + `/${props.getId}`, data)
