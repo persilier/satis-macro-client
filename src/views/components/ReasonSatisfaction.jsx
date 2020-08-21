@@ -13,7 +13,7 @@ const ReasonSatisfaction = (props) => {
     const option1 = 1;
     const option2 = 0;
     const defaultData = {
-        is_claimer_satisfied: option1,
+        is_claimer_satisfied: "",
         unsatisfaction_reason: "",
     };
     const defaultError = {
@@ -65,6 +65,7 @@ const ReasonSatisfaction = (props) => {
 
                     <label className="kt-radio kt-radio--bold kt-radio--success">
                         <input
+
                             type="radio"
                             name="radio6"
                             value={option1}
