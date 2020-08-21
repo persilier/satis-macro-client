@@ -43,8 +43,8 @@ const FusionClaim = props => {
                                 <thead>
                                     <tr>
                                         <th><strong>Paramètre</strong></th>
-                                        <th><strong>Réclamation</strong></th>
-                                        <th><strong>Doublon</strong></th>
+                                        <th style={{width: "40%"}}><strong>Réclamation</strong></th>
+                                        <th style={{width: "40%"}}><strong>Doublon</strong></th>
                                     </tr>
                                 </thead>
                                 <tbody>
