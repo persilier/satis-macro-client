@@ -189,7 +189,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     Nom du traitant: <span
-                                                                    className="mx-2">{claim.completed_by ? claim.completed_by.identite.lastname + "" + claim.completed_by.identite.firstname : "Pas de traitant"}</span><br/>
+                                                                    className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.identite.lastname + "  " + claim.active_treatment.responsible_staff.identite.firstname : "Pas de traitant"}</span><br/>
                                                                 </div>
                                                             )
                                                         }
@@ -198,14 +198,16 @@ const SatisfactionMeasureDetail = (props) => {
                                                         <div className="kt-wizard-v2__review-title">
                                                             Unité du traitant
                                                         </div>
-                                                        {console.log(claim,'COMPLETED')}
+                                                        {/*{console.log(claim,'COMPLETED')}*/}
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Nom de l'unité: <span
-                                                                    className="mx-2">{claim.unit?claim.unit.name['fr']:""}</span><br/>
-                                                                    Description de l'unité: <span
-                                                                    className="mx-2">{claim.unit?claim.unit.description["fr"]:""}</span><br/>
+                                                                   <strong>Nom de l'unité:</strong>  <span
+                                                                    className="mx-2">{claim.active_treatment.responsible_staff.unit?claim.active_treatment.responsible_staff.unit.name.fr:""}</span><br/>
+                                                                    <strong>Solution apportée:</strong> <span
+                                                                    className="mx-2">
+                                                                    {claim.active_treatment ? claim.active_treatment.solution : ""}
+                                                                </span>
                                                                 </div>
                                                             )
                                                         }

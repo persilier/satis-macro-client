@@ -94,7 +94,8 @@ const ClaimArchivedDetail = (props) => {
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim_archived" className="kt-subheader__breadcrumbs-link">
                                         Archivage
@@ -168,11 +169,12 @@ const ClaimArchivedDetail = (props) => {
                                                         <div className="kt-wizard-v2__review-title">
                                                             Le Staff
                                                         </div>
+                                                        {console.log(claim, "DATA")}
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     Nom du traitant: <span
-                                                                    className="mx-2">{claim.completed_by ? claim.completed_by.identite.lastname + "" + claim.completed_by.identite.firstname : "Pas de traitant"}</span><br/>
+                                                                    className="mx-2">{claim.active_treatment.responsible_staff.identite ? claim.active_treatment.responsible_staff.identite.lastname + " " + claim.active_treatment.responsible_staff.identite.firstname : "Pas de traitant"}</span><br/>
                                                                 </div>
                                                             )
                                                         }
@@ -184,10 +186,12 @@ const ClaimArchivedDetail = (props) => {
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Nom de l'unité: <span
-                                                                    className="mx-2">{claim.completed_by.unit.name["fr"]}</span><br/>
-                                                                    Description de l'unité: <span
-                                                                    className="mx-2">{claim.completed_by.unit.description["fr"]}</span><br/>
+                                                                    <strong>Nom de l'unité: </strong> <span
+                                                                    className="mx-2">{claim.active_treatment.responsible_staff.unit ? claim.active_treatment.responsible_staff.unit.name.fr : ""}</span><br/>
+                                                                    <strong>Solution apportée:</strong> <span
+                                                                    className="mx-2">
+                                                                    {claim.active_treatment ? claim.active_treatment.solution : ""}
+                                                                </span><br/>
                                                                 </div>
                                                             )
                                                         }
@@ -199,8 +203,9 @@ const ClaimArchivedDetail = (props) => {
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Description:</strong> <span
-                                                                    className="mx-2">{claim.active_treatment.solution_communicated}</span><br/>
+                                                                   <span className="mx-2">
+                                                                       {claim.active_treatment.solution_communicated}
+                                                                   </span><br/>
                                                                     <br/>
 
                                                                 </div>
