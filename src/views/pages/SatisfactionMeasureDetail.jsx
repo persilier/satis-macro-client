@@ -226,7 +226,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Description:</strong> <span
+                                                                    <span
                                                                     className="mx-2">{claim.active_treatment.solution_communicated}</span><br/>
                                                                 </div>
                                                             )
