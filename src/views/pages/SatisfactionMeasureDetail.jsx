@@ -191,7 +191,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     <strong>Nom :</strong> <span
                                                                     className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.identite.lastname + "  " + claim.active_treatment.responsible_staff.identite.firstname : "Pas de traitant"}</span><br/>
-                                                                    <strong>Nom de l'unité:</strong> <span
+                                                                    <strong>Unité:</strong> <span
                                                                     className="mx-2">{claim.active_treatment.responsible_staff.unit ? claim.active_treatment.responsible_staff.unit.name.fr : ""}</span>
                                                                 </div>
                                                             )
@@ -207,13 +207,15 @@ const SatisfactionMeasureDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     <strong>Montant retourné:</strong> <span
                                                                     className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Aucun montant retourné"}</span><br/>
+                                                                    <br/>
                                                                     <strong>Solution :</strong>
                                                                     <span className="mx-2">
                                                                     {claim.active_treatment ? claim.active_treatment.solution : ""}
-                                                                    </span><br/>
-                                                                    <strong>Commentaire:</strong> <span
+                                                                    </span><br/><br/>
+                                                                    <strong>Commentaires:</strong> <span
                                                                     className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "Aucun commentaire"}</span><br/>
-                                                                    <strong>Mesure préventive:</strong> <span
+                                                                    <br/>
+                                                                    <strong>Mesures préventives:</strong> <span
                                                                     className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Aucune mesure préventive"}</span><br/>
                                                                 </div>
                                                             )
