@@ -89,7 +89,7 @@ const ClaimListDetail = (props) => {
 
     const assignClaim = () => {
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/assignment`, {staff_id: staff ? staff.value : ""})
+        axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/assignment`, {staff_id: staff ? staff.value : null})
             .then(response => {
                 ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
                 setStartRequest(false);
@@ -197,19 +197,20 @@ const ClaimListDetail = (props) => {
                                     <form className="kt-form" id="kt_form">
                                         <div className="d-flex justify-content-end">
                                             {
-                                                verifyPermission(props.userPermissions, "self-assignment-claim-awaiting-treatment") ? (
-                                                    <button className="btn btn-primary btn-sm mx-2"
-                                                            onClick={selfAssign}>Auto-affectation</button>
-                                                ) : ""
+                                                !props.lead ? (
+                                                    verifyPermission(props.userPermissions, "self-assignment-claim-awaiting-treatment") ? (
+                                                        <button className="btn btn-primary btn-sm mx-2" onClick={selfAssign}>Auto-affectation</button>
+                                                    ) : null
+                                                ) : null
                                             }
                                             {
                                                 verifyPermission(props.userPermissions, "rejected-claim-awaiting-treatment") ? (
                                                     <button
-                                                        className="btn btn-secondary btn-sm"
+                                                        className="btn btn-danger btn-sm"
                                                         onClick={() => showReasonInput("reject")}>
                                                         Rejet
                                                     </button>
-                                                ) : ""
+                                                ) : null
                                             }
                                             <button id={"reason-modal"} style={{display: "none"}} type="button"
                                                     className="btn btn-bold btn-label-brand btn-sm"
@@ -299,7 +300,7 @@ const ClaimListDetail = (props) => {
                                                 reasonLabel={reasonLabel}
                                                 onClose={() => setShowReason(false)}
                                             />
-                                        ) : ""
+                                        ) : null
                                     }
                                 </div>
                             </div>
@@ -307,7 +308,7 @@ const ClaimListDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 
