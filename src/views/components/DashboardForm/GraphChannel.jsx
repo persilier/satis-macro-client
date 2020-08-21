@@ -61,7 +61,7 @@ const GraphChannel = (props) => {
         async function fetchData() {
             axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
-                    console.log(response.data, "CANAL_STAT")
+                    // console.log(response.data, "CANAL_STAT")
                     if (!isCancelled) {
                         let channels = [];
                         for (const channel in response.data.channelsUse) {
