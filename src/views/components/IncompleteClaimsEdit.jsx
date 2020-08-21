@@ -598,7 +598,7 @@ const IncompleteClaimsEdit = props => {
                                                                     </option>
                                                                     <option value="F">Féminin</option>
                                                                     <option value="M">Masculin</option>
-                                                                    <option value="M">Autres</option>
+                                                                    <option value="A">Autres</option>
                                                                 </select>
                                                                 {
                                                                     error.sexe.length ? (

@@ -14,12 +14,41 @@ import {verifyPermission} from "../../helpers/permission";
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list: `${appConfig.apiDomaine}/my/claim-archived`,
+    },
+    MACRO: {
+        holding: {
+            list: `${appConfig.apiDomaine}/any/claim-archived`,
+        },
+        filial: {
+            list: `${appConfig.apiDomaine}/my/claim-archived`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        list: `${appConfig.apiDomaine}/any/claim-archived`,
+    }
+};
 
 const ClaimsArchived = (props) => {
     document.title = "Satis client - Liste réclamations archivées";
     localStorage.setItem('page', 'ClaimsArchived');
-    if (!verifyPermission(props.userPermissions, "list-claim-archived"))
+
+    if (!(verifyPermission(props.userPermissions, 'list-any-claim-archived') ||
+        verifyPermission(props.userPermissions, "list-my-claim-archived")))
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'list-any-claim-archived'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'list-my-claim-archived'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     const [load, setLoad] = useState(true);
     const [claimsArchived, setClaimsArchived] = useState([]);
@@ -30,7 +59,7 @@ const ClaimsArchived = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/claim-archived")
+        axios.get(endPoint.list)
             .then(response => {
                 setLoad(false);
                 setClaimsArchived(response.data);
@@ -295,7 +324,8 @@ const ClaimsArchived = (props) => {
 };
 const mapStateToProps = (state) => {
     return {
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
     };
 };
 

@@ -78,6 +78,7 @@ const DashboardStatClaim = (props) => {
         async function fetchData() {
             axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
+
                     if (!isCancelled) {
                         let claimSatifaction = response.data.claimerSatisfactionEvolution;
                         let satisfiedData = [];

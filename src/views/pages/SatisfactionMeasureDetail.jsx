@@ -237,6 +237,7 @@ const SatisfactionMeasureDetail = (props) => {
 
                                                         <ReasonSatisfaction
                                                             getId={`${id}`}
+                                                            getEndPoint={endPoint.edit}
                                                         />
 
                                                     </div>
