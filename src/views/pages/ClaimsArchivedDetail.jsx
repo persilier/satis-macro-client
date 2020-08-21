@@ -191,7 +191,7 @@ const ClaimArchivedDetail = (props) => {
                                                                     <strong>Solution apportée:</strong> <span
                                                                     className="mx-2">
                                                                     {claim.active_treatment ? claim.active_treatment.solution : ""}
-                                                                </span><br/>
+                                                                </span>
                                                                 </div>
                                                             )
                                                         }

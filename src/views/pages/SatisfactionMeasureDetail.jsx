@@ -95,7 +95,8 @@ const SatisfactionMeasureDetail = (props) => {
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim_measure" className="kt-subheader__breadcrumbs-link">
                                         Mesure de Satisfaction
@@ -110,7 +111,7 @@ const SatisfactionMeasureDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail plainte
+                                    {claim ? claim.reference : 'Detail'}
                                 </a>
                             </div>
                         </div>
@@ -176,38 +177,44 @@ const SatisfactionMeasureDetail = (props) => {
 
                                         <div className="kt-wizard-v2__content"
                                              data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Information sur la
+                                            <div className="kt-heading kt-heading--md">Information sur le
                                                 Traitement Effectué
                                             </div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                            Le Staff
+                                                            Agent
                                                         </div>
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    Nom du traitant: <span
+                                                                    <strong>Nom :</strong> <span
                                                                     className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.identite.lastname + "  " + claim.active_treatment.responsible_staff.identite.firstname : "Pas de traitant"}</span><br/>
+                                                                    <strong>Nom de l'unité:</strong> <span
+                                                                    className="mx-2">{claim.active_treatment.responsible_staff.unit ? claim.active_treatment.responsible_staff.unit.name.fr : ""}</span>
                                                                 </div>
                                                             )
                                                         }
                                                     </div>
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                            Unité du traitant
+                                                            Traitement
                                                         </div>
-                                                        {/*{console.log(claim,'COMPLETED')}*/}
+                                                        {console.log(claim, 'COMPLETED')}
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                   <strong>Nom de l'unité:</strong>  <span
-                                                                    className="mx-2">{claim.active_treatment.responsible_staff.unit?claim.active_treatment.responsible_staff.unit.name.fr:""}</span><br/>
-                                                                    <strong>Solution apportée:</strong> <span
-                                                                    className="mx-2">
+                                                                    <strong>Montant retourné:</strong> <span
+                                                                    className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Aucun montant retourné"}</span><br/>
+                                                                    <strong>Solution :</strong>
+                                                                    <span className="mx-2">
                                                                     {claim.active_treatment ? claim.active_treatment.solution : ""}
-                                                                </span>
+                                                                    </span><br/>
+                                                                    <strong>Commentaire:</strong> <span
+                                                                    className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "Aucun commentaire"}</span><br/>
+                                                                    <strong>Mesure préventive:</strong> <span
+                                                                    className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Aucune mesure préventive"}</span><br/>
                                                                 </div>
                                                             )
                                                         }
@@ -221,8 +228,6 @@ const SatisfactionMeasureDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     <strong>Description:</strong> <span
                                                                     className="mx-2">{claim.active_treatment.solution_communicated}</span><br/>
-                                                                    <br/>
-
                                                                 </div>
                                                             )
                                                         }

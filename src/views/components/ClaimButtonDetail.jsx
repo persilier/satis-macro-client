@@ -58,7 +58,7 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                             !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Institution</strong>: <span
-                                    className="mx-2">{claim.institution_targeted.name} 1</span><br/>
+                                    className="mx-2">{claim.institution_targeted.name}</span><br/>
                                     <strong>Unité</strong>: <span
                                     className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "Pas d'institution ciblé"}</span><br/>
                                 </div>
