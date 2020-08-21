@@ -184,7 +184,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                            <span style={{color:"black"}}>Agent</span>
+                                                            <span style={{color:"#48465b"}}>Agent</span>
                                                         </div>
                                                         {
                                                             !claim ? "" : (
@@ -199,7 +199,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title" >
-                                                            <span style={{color:"black"}}>Traitement</span>
+                                                            <span style={{color:"#48465b"}}>Traitement</span>
                                                         </div>
                                                         {console.log(claim, 'COMPLETED')}
                                                         {
@@ -223,7 +223,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__review-item">
                                                         <div className="kt-wizard-v2__review-title">
-                                                           <span style={{color:"black"}}> Solution Communiquée</span>
+                                                           <span style={{color:"#48465b"}}> Solution Communiquée</span>
                                                         </div>
                                                         {
                                                             !claim ? "" : (

@@ -11,7 +11,8 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                         {
                             !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
-                                    <strong>Référence:</strong> <span className="mx-2">{claim.reference ? claim.reference : "Pas de canal de référence"}</span>
+                                    <h5><span style={{color:"#48465b"}}>Référence:</span></h5>
+                                    <span className="mx-2">{claim.reference ? claim.reference : "Pas de canal de référence"}</span>
                                     <br/>
                                     <br/>
                                 </div>
@@ -24,7 +25,7 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                                 claim && claim.active_treatment && claim.active_treatment.rejected_reason ? (
                                     <div className="kt-wizard-v2__review-item">
                                         <div className="kt-wizard-v2__review-title">
-                                            <h5><strong>Rejet</strong></h5>
+                                            <h5><span style={{color:"#48465b"}}>Rejet</span></h5>
                                         </div>
                                         <div className="kt-wizard-v2__review-content">
                                             <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.rejected_reason}</span><br/>
@@ -37,7 +38,7 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                         }
 
                         <div className="kt-wizard-v2__review-title">
-                            <h5><strong>Canaux</strong></h5>
+                            <h5><span style={{color:"#48465b"}}>Canaux</span></h5>
                         </div>
                         {
                             !claim ? null : (
@@ -52,7 +53,7 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                     </div>
                     <div className="kt-wizard-v2__review-item">
                         <div className="kt-wizard-v2__review-title">
-                            <h5><strong>Cible</strong></h5>
+                            <h5><span style={{color:"#48465b"}}>Cible</span></h5>
                         </div>
                         {
                             !claim ? null : (
@@ -67,7 +68,7 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                     </div>
                     <div className="kt-wizard-v2__review-item">
                         <div className="kt-wizard-v2__review-title">
-                            <h5><strong>Spécifications</strong></h5>
+                            <h5><span style={{color:"#48465b"}}>Spécifications</span></h5>
                         </div>
                         {
                             !claim ? null : (
