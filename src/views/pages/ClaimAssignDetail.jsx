@@ -217,7 +217,7 @@ const ClaimAssignDetail = (props) => {
 
                                         {
                                             claim ? (
-                                                claim.active_treatment ? (
+                                                claim.active_treatment && claim.active_treatment.rejected_reason && claim.active_treatment.rejected_at ? (
                                                     <div className="d-flex justify-content-end">
                                                         <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
                                                     </div>
@@ -225,9 +225,9 @@ const ClaimAssignDetail = (props) => {
                                             ) : null
                                         }
 
-                                        <ClientButtonDetail claim={claim} rejected={true}/>
+                                        <ClientButtonDetail claim={claim}/>
 
-                                        <ClaimButtonDetail claim={claim}/>
+                                        <ClaimButtonDetail claim={claim} rejected={claim && claim.active_treatment && claim.active_treatment.rejected_reason ? true : false}/>
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
