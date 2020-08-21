@@ -31,14 +31,12 @@ const UnfoundedModal = (props) => {
         axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
             .then(response => {
                 setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 window.location.href="/process/claim-assign/to-staff"
             })
             .catch(error => {
                 setStartRequest(false);
-                setError({...defaultError});
+                setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;

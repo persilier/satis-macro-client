@@ -44,7 +44,6 @@ const ReasonSatisfaction = (props) => {
         axios.put(props.getEndPoint + `/${props.getId}`, data)
             .then(response => {
                 setStartRequest(false);
-                setError(defaultError);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 window.location.href = "/process/claim_measure";
             })
@@ -65,7 +64,7 @@ const ReasonSatisfaction = (props) => {
 
                     <label className="kt-radio kt-radio--bold kt-radio--success">
                         <input
-                            className={error.is_claimer_satisfied.length ? "form-control is-invalid" : "form-control"}
+                            className={error.is_claimer_satisfied.length? "form-control is-invalid" : "form-control"}
                             type="radio"
                             name="radio6"
                             value={option1}
