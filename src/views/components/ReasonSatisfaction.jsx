@@ -59,13 +59,13 @@ const ReasonSatisfaction = (props) => {
 
     return (
         <div>
-            <div className="form-group">
-                <label>Client Satisfait?</label>
+            <div className={error.is_claimer_satisfied.length ? "form-group validated" : "form-group"}>
+                <label>Client Satisfait?  <InputRequire/></label>
                 <div className="kt-radio-inline">
 
                     <label className="kt-radio kt-radio--bold kt-radio--success">
                         <input
-
+                            className={error.is_claimer_satisfied.length ? "form-control is-invalid" : "form-control"}
                             type="radio"
                             name="radio6"
                             value={option1}
@@ -83,6 +83,16 @@ const ReasonSatisfaction = (props) => {
                         <span></span>
                     </label>
                 </div>
+                {
+                    error.unsatisfaction_reason.length ? (
+                        error.unsatisfaction_reason.map((error, index) => (
+                            <div key={index}
+                                 className="invalid-feedback">
+                                {error}
+                            </div>
+                        ))
+                    ) : ""
+                }
             </div>
             <div
                 className={error.unsatisfaction_reason.length ? "form-group row validated" : "form-group row"}>
@@ -92,7 +102,7 @@ const ReasonSatisfaction = (props) => {
                                                                 <textarea
                                                                     id="measures"
                                                                     className={error.unsatisfaction_reason.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la mesure de satisfaction"
+                                                                    placeholder="Veillez entrer la raison"
                                                                     cols="30"
                                                                     rows="10"
                                                                     value={data.unsatisfaction_reason}
