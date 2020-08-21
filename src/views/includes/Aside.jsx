@@ -20,10 +20,14 @@ const Aside = (props) => {
                             </NavLink>
                         </li>
 
-                        <li className="kt-menu__section ">
-                            <h4 className="kt-menu__section-text">Processus</h4>
-                            <i className="kt-menu__section-icon flaticon-more-v2"/>
-                        </li>
+                        {
+                            seeCollect(props.userPermissions) || seeTreatment(props.userPermissions) ? (
+                                <li className="kt-menu__section ">
+                                    <h4 className="kt-menu__section-text">Processus</h4>
+                                    <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                </li>
+                            ) : null
+                        }
 
                         {
                             !seeCollect(props.userPermissions) ? null : (
