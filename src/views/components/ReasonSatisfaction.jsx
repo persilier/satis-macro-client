@@ -6,37 +6,10 @@ import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../co
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
+import InputRequire from "./InputRequire";
 
-const endPointConfig = {
-    PRO: {
-        plan: "PRO",
-        edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
-    },
-    MACRO: {
-        holding: {
-            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
-        },
-        filial: {
-            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
-        }
-    },
-    HUB: {
-        plan: "HUB",
-        edit: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
-    }
-};
 
 const ReasonSatisfaction = (props) => {
-
-    let endPoint = "";
-    if (props.plan === "MACRO") {
-        if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
-            endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
-            endPoint = endPointConfig[props.plan].filial
-    } else
-        endPoint = endPointConfig[props.plan];
-
     const option1 = 1;
     const option2 = 0;
     const defaultData = {
@@ -65,19 +38,20 @@ const ReasonSatisfaction = (props) => {
     };
 
     const onClick = (e) => {
-        // console.log(props.getEndPoint,'GET_ENDPOINT'),
+        // console.log(props.getEndPoint,'GET_ENDPOINT');
         e.preventDefault();
         setStartRequest(true);
-        axios.put(endPoint.edit + `/${props.getId}`, data)
+        axios.put(props.getEndPoint + `/${props.getId}`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href = "/settings/claim_measure";
+                window.location.href = "/process/claim_measure";
             })
             .catch(error => {
                 setStartRequest(false);
                 console.log(error.response.data.error,"ERROR");
+                setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
@@ -112,7 +86,7 @@ const ReasonSatisfaction = (props) => {
             <div
                 className={error.unsatisfaction_reason.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="raison">Raison</label>
+                       htmlFor="raison">Raison <InputRequire/></label>
                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="measures"

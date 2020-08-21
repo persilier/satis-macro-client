@@ -47,8 +47,8 @@ const SatisfactionMeasureDetail = (props) => {
     document.title = "Satis client - Détail plainte";
     const {id} = useParams();
 
-    if (!(verifyPermission(props.userPermissions, ' update-satisfaction-measured-any-claim') ||
-        verifyPermission(props.userPermissions, " update-satisfaction-measured-my-claim")))
+    if (!(verifyPermission(props.userPermissions, 'update-satisfaction-measured-any-claim') ||
+        verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim")))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -75,7 +75,8 @@ const SatisfactionMeasureDetail = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "update-claim-satisfaction-measured") ? (
+        verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
+        verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -197,13 +198,14 @@ const SatisfactionMeasureDetail = (props) => {
                                                         <div className="kt-wizard-v2__review-title">
                                                             Unité du traitant
                                                         </div>
+                                                        {console.log(claim,'COMPLETED')}
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     Nom de l'unité: <span
-                                                                    className="mx-2">{claim.completed_by.unit.name["fr"]}</span><br/>
+                                                                    className="mx-2">{claim.unit?claim.unit.name['fr']:""}</span><br/>
                                                                     Description de l'unité: <span
-                                                                    className="mx-2">{claim.completed_by.unit.description["fr"]}</span><br/>
+                                                                    className="mx-2">{claim.unit?claim.unit.description["fr"]:""}</span><br/>
                                                                 </div>
                                                             )
                                                         }
