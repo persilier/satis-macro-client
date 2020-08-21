@@ -119,12 +119,13 @@ const ClaimAssignToStaff = (props) => {
 
     const printBodyTable = (claim, index) => {
         return (
+
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
                 <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
+                <td>{`${claim.active_treatment.responsible_staff?claim.active_treatment.responsible_staff.identite.lastname:""} ${claim.active_treatment.responsible_staff?claim.active_treatment.responsible_staff.identite.firstname:""}`}</td>
                 <td>{claim.institution_targeted.name}</td>
                 {/*<td>{claim.unit_targeted_id ? claim.unit_targeted.name.fr : "-"}</td>*/}
                 <td>
@@ -243,6 +244,7 @@ const ClaimAssignToStaff = (props) => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
+                                                    {console.log(claims,"Claims")}
                                                     {
                                                         claims.length ? (
                                                             search ? (
