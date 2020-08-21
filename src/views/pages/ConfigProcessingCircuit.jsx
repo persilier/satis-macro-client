@@ -229,6 +229,7 @@ const ConfigProcessingCircuit = (props) => {
         setInstitution(selected);
         axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
             .then(response => {
+                console.log(response.data, "UNIT_DATA")
                 setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
@@ -258,6 +259,7 @@ const ConfigProcessingCircuit = (props) => {
                             {object.name.fr}
                         </td>
                         <td>
+                            {console.log(object.id,"object_id")}
                             {units ? (
                                 <Select
                                     value={data[object.id]}
@@ -404,7 +406,7 @@ const ConfigProcessingCircuit = (props) => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {console.log(data,'data')}
+                                                {/*{console.log(data,'data')}*/}
                                                 {
                                                     claimObject ? (
                                                         search ? (
@@ -429,12 +431,12 @@ const ConfigProcessingCircuit = (props) => {
                                                         !startRequest ? (
                                                             <button type="submit"
                                                                     onClick={(e) => onSubmit(e)}
-                                                                    className="btn btn-primary">Envoyer</button>
+                                                                    className="btn btn-primary">Enregistrer</button>
                                                         ) : (
                                                             <button
                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                 type="button" disabled>
-                                                                Loading...
+                                                                Chargement...
                                                             </button>
                                                         )
                                                     }

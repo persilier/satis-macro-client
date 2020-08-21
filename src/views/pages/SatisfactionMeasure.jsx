@@ -14,11 +14,40 @@ import {connect} from "react-redux";
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        list:`${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    },
+    MACRO: {
+        holding: {
+            list:`${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        },
+        filial: {
+            list:`${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        list:`${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+    }
+};
 
 const SatisfactionMeasure = (props) => {
-    document.title = "Satis client - Mésure satisfaction";
-    if (!verifyPermission(props.userPermissions, "list-claim-satisfaction-measured"))
+    document.title = "Satis client - Mesure satisfaction";
+
+    if (!(verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim') ||
+        verifyPermission(props.userPermissions, "list-satisfaction-measured-any-claim")))
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     const [load, setLoad] = useState(true);
     const [satisfactionMeasure, setSatisfactionMeasure] = useState([]);
@@ -29,7 +58,7 @@ const SatisfactionMeasure = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/claim-satisfaction-measured")
+        axios.get(endPoint.list)
             .then(response => {
                 setLoad(false);
                 setSatisfactionMeasure(response.data);
@@ -155,7 +184,7 @@ const SatisfactionMeasure = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Mésure de Satisfaction
+                                    Mesure de Satisfaction
                                 </a>
                             </div>
                         </div>
@@ -293,7 +322,8 @@ const SatisfactionMeasure = (props) => {
 };
 const mapStateToProps = (state) => {
     return {
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan,
     };
 };
 

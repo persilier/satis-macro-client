@@ -141,7 +141,8 @@ const Aside = (props) => {
                                                 ) : null
                                             }
                                             {
-                                                verifyPermission(props.userPermissions, 'list-claim-satisfaction-measured')?(
+                                                verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
+                                                verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')?(
                                                     <NavLink exact to="/process/claim_measure" className="kt-menu__item "
                                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
