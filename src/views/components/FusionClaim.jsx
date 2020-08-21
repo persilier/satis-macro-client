@@ -64,7 +64,7 @@ const FusionClaim = props => {
                                         <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "Pas de date de reclamation"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Date de l'évernement</strong></td>
+                                        <td><strong>Date de l'évenement</strong></td>
                                         <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
                                         <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "Pas de date"}</td>
                                     </tr>
