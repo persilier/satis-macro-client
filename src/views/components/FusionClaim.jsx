@@ -76,7 +76,7 @@ const FusionClaim = props => {
                                     <tr>
                                         <td><strong>Description</strong></td>
                                         <td>{props.claim.description ? props.claim.description: "Pas de description"}</td>
-                                        <td>{props.claim.description ? props.claim.description : "Pas de description"}</td>
+                                        <td>{props.copyClaim.description ? props.copyClaim.description : "Pas de description"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Attente</strong></td>
