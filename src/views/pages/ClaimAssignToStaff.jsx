@@ -121,7 +121,7 @@ const ClaimAssignToStaff = (props) => {
         return (
 
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference}</td>
+                <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
                 <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
@@ -170,7 +170,13 @@ const ClaimAssignToStaff = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des réclamations qui vous sont assignés"}/>
+                    <InfirmationTable information={(
+                        <div>
+                            Liste des réclamations qui vous sont assignés
+                            <br/>
+                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les réclamations réjetées
+                        </div>
+                    )}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
