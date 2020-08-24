@@ -174,7 +174,7 @@ const ClaimAssignToStaff = (props) => {
                         <div>
                             Liste des réclamations qui vous sont assignés
                             <br/>
-                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les réclamations réjetées
+                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les traitements réjetés
                         </div>
                     )}/>
 
