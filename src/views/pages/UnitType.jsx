@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {debug, filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -165,8 +165,8 @@ const UnitType = (props) => {
     const printBodyTable = (unitType, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{unitType.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description["fr"]}</td>
+                <td>{unitType.name ? unitType.name["fr"] : ""}</td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : ""}</td>
                 <td>
                     {
                         verifyPermission(props.userPermissions, 'update-unit-type') ? (
