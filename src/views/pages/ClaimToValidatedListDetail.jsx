@@ -5,7 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {formatDateToTimeStampte, loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
+import {debug, formatDateToTimeStampte, loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";

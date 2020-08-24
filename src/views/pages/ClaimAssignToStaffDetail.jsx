@@ -5,12 +5,11 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {debug, formatDateToTimeStampte, loadCss, loadScript} from "../../helpers/function";
+import {debug, loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import Loader from "../components/Loader";
 import UnfoundedModal from "../components/UnfoundedModal";
 import TreatmentForm from "../components/TreatmentForm";
 import ClientButtonDetail from "../components/ClientButtonDetail";
@@ -208,7 +207,7 @@ const ClaimAssignToStaffDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

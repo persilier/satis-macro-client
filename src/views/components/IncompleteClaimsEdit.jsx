@@ -141,7 +141,7 @@ const IncompleteClaimsEdit = props => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-     const [isRequire, setIsRequire] = useState(null);
+    const [isRequire, setIsRequire] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
