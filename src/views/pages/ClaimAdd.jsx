@@ -475,7 +475,7 @@ const ClaimAdd = props => {
         e.preventDefault();
         const newData = {...data};
         newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
-        console.log(formatToTimeStamp(data.event_occured_at),"FORMATAGE_DATE")
+        // console.log(formatToTimeStamp(data.event_occured_at),"FORMATAGE_DATE")
         setStartRequest(true);
         if (!newData.file.length)
             delete newData.file;

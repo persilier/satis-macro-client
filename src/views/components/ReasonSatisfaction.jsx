@@ -34,11 +34,12 @@ const ReasonSatisfaction = (props) => {
         const newData = {...data};
         newData.is_claimer_satisfied = e.target.value;
         setData(newData);
-        console.log(newData, "OPTION")
+        // console.log(newData, "OPTION")
     };
 
     const onClick = (e) => {
         // console.log(props.getEndPoint,'GET_ENDPOINT');
+        console.log(data,'GET_ENDPOINT');
         e.preventDefault();
         setStartRequest(true);
         axios.put(props.getEndPoint + `/${props.getId}`, data)
@@ -49,7 +50,7 @@ const ReasonSatisfaction = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-                console.log(error.response.data.error,"ERROR");
+                // console.log(error.response.data.error,"ERROR");
                 setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
@@ -98,15 +99,15 @@ const ReasonSatisfaction = (props) => {
                 <label className="col-xl-3 col-lg-3 col-form-label"
                        htmlFor="raison">Raison <InputRequire/></label>
                 <div className="col-lg-9 col-xl-6">
-                                                                <textarea
-                                                                    id="measures"
-                                                                    className={error.unsatisfaction_reason.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la raison"
-                                                                    cols="30"
-                                                                    rows="10"
-                                                                    value={data.unsatisfaction_reason}
-                                                                    onChange={(e) => onChangeReason(e)}
-                                                                />
+                    <textarea
+                        id="measures"
+                        className={error.unsatisfaction_reason.length ? "form-control is-invalid" : "form-control"}
+                        placeholder="Veillez entrer la raison"
+                        cols="30"
+                        rows="10"
+                        value={data.unsatisfaction_reason}
+                        onChange={(e) => onChangeReason(e)}
+                    />
                     {
                         error.unsatisfaction_reason.length ? (
                             error.unsatisfaction_reason.map((error, index) => (

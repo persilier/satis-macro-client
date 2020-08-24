@@ -121,7 +121,7 @@ const ClaimList = (props) => {
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
                 <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
+                {/*<td>{claim.active_treatment.responsible_staff?`${claim.active_treatment.responsible_staff.identite.lastname} ${claim.active_treatment.responsible_staff.identite.firstname}`:""}</td>*/}
                 <td>{claim.institution_targeted.name}</td>
                 {/*<td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>*/}
                 {
@@ -215,10 +215,10 @@ const ClaimList = (props) => {
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Objet
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Agent
-                                                        </th>
+                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
+                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
+                                                        {/*    aria-label="Country: activate to sort column ascending">Agent*/}
+                                                        {/*</th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Institution concernée
@@ -255,7 +255,7 @@ const ClaimList = (props) => {
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
                                                         <th rowSpan="1" colSpan="1">Objet </th>
-                                                        <th rowSpan="1" colSpan="1">Agent</th>
+                                                        {/*<th rowSpan="1" colSpan="1">Agent</th>*/}
                                                         <th rowSpan="1" colSpan="1">Institution concernée</th>
                                                         {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
                                                         <th rowSpan="1" colSpan="1">Action</th>

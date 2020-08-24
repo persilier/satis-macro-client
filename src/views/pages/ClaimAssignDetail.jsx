@@ -306,7 +306,7 @@ const ClaimAssignDetail = (props) => {
                                                                             <button
                                                                                 className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                Chargement...
                                                                             </button>
                                                                         )
                                                                     }

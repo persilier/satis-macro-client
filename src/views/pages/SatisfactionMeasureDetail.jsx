@@ -201,7 +201,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                         <div className="kt-wizard-v2__review-title" >
                                                             <span style={{color:"#48465b"}}>Traitement</span>
                                                         </div>
-                                                        {console.log(claim, 'COMPLETED')}
+                                                        
                                                         {
                                                             !claim ? "" : (
                                                                 <div className="kt-wizard-v2__review-content">

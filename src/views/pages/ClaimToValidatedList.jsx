@@ -37,6 +37,7 @@ const ClaimToValidatedList = (props) => {
         async function fetchData () {
             axios.get(endpoint)
                 .then(response => {
+                    console.log(response.data);
                     setNumberPage(forceRound((Object.values(response.data)).length/numberPerPage));
                     setShowList((Object.values(response.data)).slice(0, numberPerPage));
                     setClaims(Object.values(response.data));
@@ -127,7 +128,7 @@ const ClaimToValidatedList = (props) => {
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
                 <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>
+                <td>{claim.active_treatment.responsible_staff?`${claim.active_treatment.responsible_staff.identite.lastname} ${claim.active_treatment.responsible_staff.identite.firstname}`:""}</td>
                 <td>{claim.institution_targeted.name}</td>
                 {/*<td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>*/}
                 {
