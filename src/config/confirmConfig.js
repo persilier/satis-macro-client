@@ -9,6 +9,19 @@ export const confirmDeleteConfig =  {
     cancelButtonText: "Quitter"
 };
 
+export const confirmActivation =  (label) => {
+    return {
+        title: 'Êtes-vous sûr?',
+        text: `Le compte sera ${label}`,
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: `Oui, ${label}!`,
+        cancelButtonText: "Quitter"
+    };
+};
+
 export const confirmLeadConfig = (lead) =>  {
     return {
         title: 'Confirmation',

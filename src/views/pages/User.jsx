@@ -11,6 +11,15 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmActivation, confirmDeleteConfig} from "../../config/confirmConfig";
+import {ToastBottomEnd} from "../components/Toast";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
+} from "../../config/toastConfig";
+import {Link} from "react-router-dom";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -43,7 +52,6 @@ const User = (props) => {
         async function fetchData () {
             await axios.get(endpoint)
                 .then(response => {
-                    debug(response.data, "data");
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setUser(response.data);
@@ -56,7 +64,7 @@ const User = (props) => {
             ;
         }
         fetchData();
-    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
+    }, [appConfig.apiDomaine, props.plan, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -127,13 +135,86 @@ const User = (props) => {
 
     const pages = arrayNumberPage();
 
+    const printRole = (roles) => {
+        const newRoles = [];
+        roles.map(r => newRoles.push(r.name));
+        return newRoles.join(' / ');
+    };
+
+    const activeAccount = (e, user, index, label) => {
+        e.preventDefault();
+        DeleteConfirmation.fire(confirmActivation(label))
+            .then(async (result) => {
+                if (result.value) {
+                    document.getElementById(`user-spinner-${user.id}`).style.display = "block";
+                    document.getElementById(`user-${user.id}`).style.display = "none";
+                    document.getElementById(`user-edit-${user.id}`).style.display = "none";
+
+                    let endpoint = "";
+                    if (props.plan === "MACRO") {
+                        if (verifyPermission(props.userPermissions, "list-user-any-institution"))
+                            endpoint = `${appConfig.apiDomaine}/any/users/${user.id}/enabled-desabled`;
+                        if (verifyPermission(props.userPermissions, "list-user-my-institution"))
+                            endpoint = `${appConfig.apiDomaine}/my/users/${user.id}/enabled-desabled`;
+                    }
+                    else if(props.plan === "HUB")
+                        endpoint = `${appConfig.apiDomaine}/any/users/${user.id}/enabled-desabled`;
+                    else if(props.plan === "PRO")
+                        endpoint = `${appConfig.apiDomaine}/my/users/${user.id}/enabled-desabled`;
+
+                    await axios.put(endpoint)
+                        .then(response => {
+                            const newUsers = [...users];
+                            debug(newUsers[index].disabled_at, "disabled_at");
+                            newUsers[index].disabled_at = newUsers[index].disabled_at === null ? true : null;
+                            debug(newUsers[index].disabled_at, "disabled_at");
+                            document.getElementById(`user-spinner-${user.id}`).style.display = "none";
+                            document.getElementById(`user-${user.id}`).style.display = "block";
+                            document.getElementById(`user-edit-${user.id}`).style.display = "block";
+                            setUser(newUsers);
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succes de l'opération"));
+                        })
+                        .catch(error => {
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'opération"));
+                        })
+                    ;
+                }
+            })
+        ;
+    };
+
     const printBodyTable = (user, index) => {
         return (
             <tr key={index} role="row" className="odd">
+                <td>{user.identite.lastname} {user.identite.firstname}</td>
                 <td>{user.username}</td>
-                <td>{user.role}</td>
+                <td>{printRole(user.roles)}</td>
                 <td>
-                    -
+                    {
+                        user.disabled_at === null ? (
+                            <span className="kt-badge kt-badge--success kt-badge--inline">Active</span>
+                        ) : (
+                            <span className="kt-badge kt-badge--danger kt-badge--inline">Désactiver</span>
+                        )
+                    }
+                </td>
+                <td className="d-flex justify-content-between align-items-center">
+                    <div id={`user-spinner-${user.id}`} className="kt-spinner kt-spinner--lg kt-spinner--dark mt-2 mx-3" style={{display: "none"}}/>
+                    <a
+                        className="mt-2"
+                        id={`user-${user.id}`}
+                        href={user.disabled_at === null ? `desactive/${user.id}` : `reactive/${user.id}`}
+                        onClick={(e) => activeAccount(e, user, index, user.disabled_at === null ? "désactiver" : "réactiver")}
+                        title={user.disabled_at === null ? "Désactiver" : "Réactiver"}>
+                        {user.disabled_at === null ? "Désactiver" : "Réactiver"}
+                    </a>
+
+                    <Link to={`/settings/users/${user.id}/change-role`}
+                          id={`user-edit-${user.id}`}
+                          className="btn btn-sm btn-clean btn-icon btn-icon-md mx-3"
+                          title="Changer Role">
+                        <i className="la la-edit"/>
+                    </Link>
                 </td>
             </tr>
         );
@@ -163,10 +244,10 @@ const User = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-user-any-institution"}
+                            addPermission={["store-user-any-institution", "store-user-my-institution"]}
                             title={"Type d'utilisateur"}
                             addText={"Ajouter"}
-                            addLink={"/settings/user/add"}
+                            addLink={"/settings/users/add"}
                         />
 
                         {
@@ -199,9 +280,17 @@ const User = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Email
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Role
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Statut
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
                                                     </tr>
@@ -226,7 +315,9 @@ const User = (props) => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
+                                                        <th rowSpan="1" colSpan="1">Email</th>
                                                         <th rowSpan="1" colSpan="1">role</th>
+                                                        <th rowSpan="1" colSpan="1">Statut</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>

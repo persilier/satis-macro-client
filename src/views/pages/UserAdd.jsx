@@ -1,34 +1,39 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
+import Select from "react-select";
+import {Link, useParams} from "react-router-dom";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import {debug, formatSelectOption} from "../../helpers/function";
-import Select from "react-select";
-import {Link} from "react-router-dom";
+import {AUTH_TOKEN} from "../../constants/token";
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UserAdd = (props) => {
+    const {id} = useParams();
+
     document.title = "Satis client - Paramètre Envoie de mail";
     if (!(verifyPermission(props.userPermissions, 'store-user-any-institution') || verifyPermission(props.userPermissions, "store-user-my-institution")))
         window.location.href = ERROR_401;
 
     const defaultData = {
         identite_id: "",
-        role: "",
+        roles: [],
         institution_id: "",
         password: "",
         password_confirmation: "",
     };
     const defaultError = {
         identite_id: [],
-        role: [],
+        roles: [],
         institution_id: [],
         password: [],
     };
@@ -40,7 +45,7 @@ const UserAdd = (props) => {
     const [identities, setIdentities] = useState([]);
     const [identity, setIdentity] = useState(null);
     const [roles, setRoles] = useState([]);
-    const [role, setRole] = useState(null);
+    const [role, setRole] = useState([]);
 
     useEffect(() => {
         async function fetchData () {
@@ -59,7 +64,13 @@ const UserAdd = (props) => {
             await axios.get(endpoint)
                 .then(({data}) => {
                     debug(data, "data");
-                    setInstitutions(formatSelectOption(data, "name", false));
+                    if (verifyPermission(props.userPermissions, "store-user-any-institution"))
+                        setInstitutions(formatSelectOption(data, "name", false));
+                    else {
+                        setRoles(formatSelectOption(data.roles, "name", false, "name"));
+                        setIdentities(formatSelectOption(formatIdentities(data.identites), "fullName", false));
+                    }
+
                 })
                 .catch(error => {
                     console.log("Something is wrong");
@@ -67,7 +78,7 @@ const UserAdd = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [props.plan, appConfig.apiDomaine]);
 
     const handleIdentityChange = (selected) => {
         const newData = {...data};
@@ -76,9 +87,15 @@ const UserAdd = (props) => {
         setData(newData);
     };
 
+    const formatSelected = (selected) => {
+        const newSelected = [];
+        selected.map(s => newSelected.push(s.value));
+        return newSelected;
+    };
+
     const handleRoleChange = (selected) => {
         const newData = {...data};
-        newData.role = selected ? selected.value : "";
+        newData.roles = selected ? formatSelected(selected) : [];
         setRole(selected);
         setData(newData);
     };
@@ -142,12 +159,15 @@ const UserAdd = (props) => {
                 setStartRequest(false);
                 setError(defaultError);
                 setData(defaultData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                setRole(null);
+                setInstitution(null);
+                setIdentity(null);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
             })
             .catch(errorRequest => {
                 setStartRequest(false);
                 setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
     };
@@ -240,19 +260,20 @@ const UserAdd = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.role.length ? "form-group row validated" : "form-group row"}>
+                                            <div className={error.roles.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"role"}>Role <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
+                                                        isMulti
                                                         value={role}
                                                         placeholder={"admin-dmd"}
                                                         onChange={handleRoleChange}
                                                         options={roles}
                                                     />
                                                     {
-                                                        error.role.length ? (
-                                                            error.role.map((error, index) => (
+                                                        error.roles.length ? (
+                                                            error.roles.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -310,6 +331,8 @@ const UserAdd = (props) => {
                                                         </button>
                                                     )
                                                 }
+
+                                                <Link to={"/settings/users"} className="btn btn-secondary mx-2">Quitter</Link>
                                             </div>
                                         </div>
                                     </div>

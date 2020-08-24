@@ -464,7 +464,11 @@ const Body = () => {
                 <User/>
             </Route>
 
-            <Route exact path="/settings/user/add">
+            <Route exact path="/settings/users/add">
+                <UserAdd/>
+            </Route>
+
+            <Route exact path="/settings/users/:id/change-role">
                 <UserAdd/>
             </Route>
 

@@ -175,7 +175,7 @@ const UnitType = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-unit-type') ? (
@@ -185,7 +185,7 @@ const UnitType = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -306,7 +306,7 @@ const UnitType = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -316,7 +316,7 @@ const UnitType = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
 
     );
 };
