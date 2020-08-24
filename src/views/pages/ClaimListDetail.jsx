@@ -208,7 +208,7 @@ const ClaimListDetail = (props) => {
                                                     <button
                                                         className="btn btn-danger btn-sm"
                                                         onClick={() => showReasonInput("reject")}>
-                                                        Rejet la réclamation
+                                                        Rejeter la réclamation
                                                     </button>
                                                 ) : null
                                             }

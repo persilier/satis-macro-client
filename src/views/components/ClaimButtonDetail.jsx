@@ -25,7 +25,7 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                                 claim && claim.active_treatment && claim.active_treatment.rejected_reason ? (
                                     <div className="kt-wizard-v2__review-item">
                                         <div className="kt-wizard-v2__review-title">
-                                            <h5><span style={{color:"#48465b"}}>Rejet</span></h5>
+                                            <h5><span style={{color:"red"}}>Rejet</span></h5>
                                         </div>
                                         <div className="kt-wizard-v2__review-content">
                                             <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.rejected_reason}</span><br/>
