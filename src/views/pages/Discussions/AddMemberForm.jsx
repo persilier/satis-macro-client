@@ -36,9 +36,9 @@ const {id}=useParams();
     const [staffIdData, setStaffIdData] = useState([]);
 
     useEffect(() => {
-        async function fetchData() {
             axios.get(`${appConfig.apiDomaine}/discussions/${id}/staff/create`)
                 .then(response => {
+                    console.log(response.data, "PARTICIPANT")
                     let newStaffs=Object.values(response.data.staff).map(staff=>(
                         {value:staff.id, label:staff.identite.lastname+" "+staff.identite.firstname}
                     ));
@@ -48,9 +48,6 @@ const {id}=useParams();
                     console.log("Something is wrong");
                 })
             ;
-        }
-
-        fetchData();
     }, []);
 
     const onChangeClaim = (e,selected) => {

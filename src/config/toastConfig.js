@@ -143,13 +143,13 @@ export const toastMergeSuccessMessageConfig = {
 export const toastRejectClaimSuccessMessageConfig = {
     background: "#3c3e40",
     icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte rejetée avec succès</strong>"
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Réclamation rejetée avec succès</strong>"
 };
 
 export const toastAssignClaimSuccessMessageConfig = {
     background: "#3c3e40",
     icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte affectée avec succès</strong>"
+    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Réclamation affectée avec succès</strong>"
 };
 
 export const toastRejectTreatmentClaimSuccessMessageConfig = {

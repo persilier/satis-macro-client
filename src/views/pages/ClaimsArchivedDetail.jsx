@@ -17,6 +17,7 @@ import AttachmentsButton from "../components/AttachmentsButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
+import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -158,87 +159,7 @@ const ClaimArchivedDetail = (props) => {
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
-                                        <div className="kt-wizard-v2__content"
-                                             data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Information sur la
-                                                Traitement Effectué
-                                            </div>
-                                            <div className="kt-form__section kt-form__section--first">
-                                                <div className="kt-wizard-v2__review">
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                            Le Staff
-                                                        </div>
-                                                        {console.log(claim, "DATA")}
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    Nom du traitant: <span
-                                                                    className="mx-2">{claim.active_treatment.responsible_staff.identite ? claim.active_treatment.responsible_staff.identite.lastname + " " + claim.active_treatment.responsible_staff.identite.firstname : "Pas de traitant"}</span><br/>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                            Unité du traitant
-                                                        </div>
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Nom de l'unité: </strong> <span
-                                                                    className="mx-2">{claim.active_treatment.responsible_staff.unit ? claim.active_treatment.responsible_staff.unit.name.fr : ""}</span><br/>
-                                                                    <strong>Solution apportée:</strong> <span
-                                                                    className="mx-2">
-                                                                    {claim.active_treatment ? claim.active_treatment.solution : ""}
-                                                                </span>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                            Solution Communiquée
-                                                        </div>
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                   <span className="mx-2">
-                                                                       {claim.active_treatment.solution_communicated}
-                                                                   </span><br/>
-                                                                    <br/>
-
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-
-                                                    <div className="kt-wizard-v2__review-item">
-                                                        <div className="kt-wizard-v2__review-title">
-                                                            Mesure de Satisfaction
-                                                        </div>
-                                                        {
-                                                            !claim ? "" : (
-                                                                <div
-                                                                    className="kt-wizard-v2__review-content">
-                                                                    {
-                                                                        claim.active_treatment.is_claimer_satisfied === 1 ?
-                                                                            <span className="mx-2">
-                                                                                                Le Client <strong>est satisfait</strong> de la soltion communiquée
-                                                                                            </span>
-                                                                            :
-                                                                            <span className="mx-2">
-                                                                                                Le Client <strong>n'est pas satisfait</strong>  de la soltion communiquée
-                                                                                            </span>
-                                                                    }
-                                                                    <br/>
-                                                                </div>
-                                                            )
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <TreatmentButtonDetail claim={claim}/>
 
                                         <div className="kt-form__actions">
                                             <button

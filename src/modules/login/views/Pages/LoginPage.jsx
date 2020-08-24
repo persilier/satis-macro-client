@@ -64,7 +64,8 @@ const LoginPage = (props) => {
             })
             .catch(error => {
                 console.log({...defaultError}, error.response.data.error,"ERROR");
-                // setError({...defaultError, ...error.response.data.error});
+                setUserName(error.response.data.error);
+                setPassword(error.response.data.error);
                 setStartRequest(false);
 				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
