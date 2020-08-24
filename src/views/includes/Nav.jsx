@@ -21,14 +21,18 @@ const Nav = (props) => {
     const [relaunchNotification, setRelaunchNotification] = useState([]);
 
     const filterEventNotification = useCallback((notification) => {
-        return notification.filter(
+        let notificationList;
+        notificationList =  notification.filter(
             n => EventNotification.includes(n.type.substr(39, n.type.length))
         );
+        localStorage.setItem("eventNotification", JSON.stringify(notificationList));
+        return notificationList;
     }, [EventNotification]);
 
     const filterRelaunchNotification = useCallback((notification) => {
         return notification.filter(
             n => RelaunchNotification.includes(n.type.substr(39, n.type.length))
+
         );
     }, [RelaunchNotification]);
 
