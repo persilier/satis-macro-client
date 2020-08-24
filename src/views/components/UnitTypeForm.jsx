@@ -5,7 +5,6 @@ import {
     useParams,
     Link
 } from "react-router-dom";
-import Select from "react-select";
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
@@ -14,10 +13,8 @@ import {
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import FormInformation from "./FormInformation";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;

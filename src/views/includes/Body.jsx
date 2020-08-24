@@ -74,6 +74,8 @@ import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
 import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
+import User from "../pages/User";
+import UserAdd from "../pages/UserAdd";
 
 const Body = () => {
     return (
@@ -456,6 +458,14 @@ const Body = () => {
 
             <Route exact path="/settings/rapport/edit/:id">
                 <ConfigRapportAutoForm/>
+            </Route>
+
+            <Route exact path="/settings/users">
+                <User/>
+            </Route>
+
+            <Route exact path="/settings/user/add">
+                <UserAdd/>
             </Route>
 
             <Route path={"*"}>

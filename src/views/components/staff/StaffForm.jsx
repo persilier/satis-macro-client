@@ -290,6 +290,7 @@ const StaffForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
         let newData = data;
+        newData.is_lead = newData.is_lead === 1 ? true : false;
         if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
             delete newData.institution_id;
 

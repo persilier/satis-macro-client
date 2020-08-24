@@ -346,6 +346,17 @@ const Aside = (props) => {
                                                 </NavLink>
 
                                                 {
+                                                    verifyPermission(props.userPermissions, "list-user-my-institution") || verifyPermission(props.userPermissions, "list-user-any-institution") ? (
+                                                        <NavLink exact to="/settings/users" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Utilisateur</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
                                                     verifyPermission(props.userPermissions, "list-client-from-any-institution") || verifyPermission(props.userPermissions, "list-client-from-my-institution") ? (
                                                         <NavLink exact to="/settings/clients" className="kt-menu__item "
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">

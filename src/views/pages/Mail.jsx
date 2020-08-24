@@ -103,11 +103,11 @@ const Mail = (props) => {
         setData(newData);
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/configurations/mail`, data)
+        await axios.put(`${appConfig.apiDomaine}/configurations/mail`, data)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
