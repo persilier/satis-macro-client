@@ -56,7 +56,7 @@ const UnfoundedModal = (props) => {
                         <div className="modal-body">
                             <div
                                 className={error.unfounded_reason.length ? "form-group validated" : "form-group"}>
-                                <label htmlFor="description">Description du motif <span style={{color:"red"}}>*</span></label>
+                                <label htmlFor="description">Motif <span style={{color:"red"}}>*</span></label>
                                 <textarea
                                     id="description"
                                     className={error.unfounded_reason.length ? "form-control is-invalid" : "form-control"}
