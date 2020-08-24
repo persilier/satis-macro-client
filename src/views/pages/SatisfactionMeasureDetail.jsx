@@ -17,7 +17,6 @@ import AttachmentsButton from "../components/AttachmentsButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
-import useReadNotification from "../../hooks/useReadNotification";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -62,9 +61,6 @@ const SatisfactionMeasureDetail = (props) => {
         endPoint = endPointConfig[props.plan];
 
     const [claim, setClaim] = useState(null);
-
-    const [isRead] = useReadNotification(id ? id : null);
-    debug(isRead, "isRead");
 
     useEffect(() => {
         async function fetchData() {

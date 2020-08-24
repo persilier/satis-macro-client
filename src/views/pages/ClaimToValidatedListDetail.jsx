@@ -19,7 +19,6 @@ import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
-import useReadNotification from "../../hooks/useReadNotification";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -42,9 +41,6 @@ const ClaimToValidatedListDetail = (props) => {
     const [reasonLabel, setReasonLabel] = useState("");
     const [action, setAction] = useState("");
     const [startRequest, setStartRequest] = useState(true);
-
-    const [isRead] = useReadNotification(id ? id : null);
-    debug(isRead, "isRead");
 
     useEffect(() => {
         async function fetchData() {

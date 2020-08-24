@@ -26,7 +26,6 @@ import {
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
 import WithoutCode from "./WithoutCode";
-import useReadNotification from "../../hooks/useReadNotification";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -143,9 +142,6 @@ const IncompleteClaimsEdit = props => {
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [isRequire, setIsRequire] = useState(null);
-
-    const [isRead] = useReadNotification(id ? id : null, "incomplete");
-    debug(isRead, "isRead");
 
     useEffect(() => {
         async function fetchData() {

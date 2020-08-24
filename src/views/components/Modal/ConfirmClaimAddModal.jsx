@@ -428,7 +428,7 @@ const ConfirmClaimAddModal = props => {
                 await setRelationship(null);
                 await setPossibleCustomers([]);
                 await setStartRequest(false);
-                await setError(defaultError);
+                // await setError(defaultError);
                 await setData(defaultData);
                 document.getElementById("customFile").value = "";
                 document.getElementById("closeConfirmSaveForm").click();

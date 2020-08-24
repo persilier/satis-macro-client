@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import Select from "react-select";
-import {debug, formatSelectOption, loadCss, loadScript} from "../../helpers/function";
+import {formatSelectOption, loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -25,7 +25,6 @@ import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import DoubleButtonDetail from "../components/DoubleButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
-import useReadNotification from "../../hooks/useReadNotification";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -69,9 +68,6 @@ const ClaimAssignDetail = (props) => {
     const [unit, setUnit] = useState(null);
     const [startRequest, setStartRequest] = useState(false);
     const [startRequestToUnit, setStartRequestToUnit] = useState(false);
-
-    const [isRead] = useReadNotification(id ? id : null, "full");
-    debug(isRead, "isRead");
 
     useEffect(() => {
         async function fetchData() {

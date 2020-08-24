@@ -13,12 +13,15 @@ import {Link} from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";
+import {debug} from "../../helpers/function";
+import Loader from "../components/Loader";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const Nav = (props) => {
     const [eventNotification, setEventNotification] = useState([]);
     const [relaunchNotification, setRelaunchNotification] = useState([]);
+    const [startRead, setStartRead] = useState(false);
 
     const filterEventNotification = useCallback((notification) => {
         let notificationList;
@@ -82,23 +85,38 @@ const Nav = (props) => {
             : EventNotificationPath[type][data.claim.status](data.claim.id);
     });
 
+    const readAllNotification = async (readNotification, path) => {
+        await axios.put(`${appConfig.apiDomaine}/unread-notifications`, readNotification)
+            .then(({data}) => {
+                debug(data, "data");
+                setStartRead(false);
+                if (data.canReload) {
+                    window.location.href = path;
+                } else {
+                    setEventNotification(filterEventNotification(data.unreadNotifications));
+                    setRelaunchNotification(filterRelaunchNotification(data.unreadNotifications));
+                }
+            })
+            .catch(({response}) => {console.log("Something is wrong")})
+    };
+
     const showDetailNotification = useCallback((e, path, idNotification, relaunchNotification = false, notification = null) => {
         e.preventDefault();
-        const readNotification = {
-            "notifications": [
-                idNotification
-            ]
-        };
-        localStorage.setItem("notification", JSON.stringify(readNotification));
-        if (path === "/chat#message-chat") {
-            localStorage.setItem("discussion_id", notification.data.discussion.id);
-        }
-        if (!relaunchNotification) {
-            window.location.href = path;
-        } else {
-            setRelaunchNotification(notifications => {
-                return notifications.filter(n => n.id !== idNotification)
-            });
+        if (!startRead) {
+            setStartRead(true);
+            const readNotification = {
+                "notifications": [
+                    idNotification
+                ]
+            };
+
+            if (!relaunchNotification) {
+                readAllNotification(readNotification, path);
+            } else {
+                setRelaunchNotification(notifications => {
+                    return notifications.filter(n => n.id !== idNotification)
+                });
+            }
         }
     });
 
@@ -203,6 +221,11 @@ const Nav = (props) => {
                                                                         {moment(new Date(n.created_at)).fromNow()}
                                                                     </div>
                                                                 </div>
+                                                                {
+                                                                    startRead ? (
+                                                                        <Loader/>
+                                                                    ) : null
+                                                                }
                                                             </a>
                                                         ))
                                                     }
