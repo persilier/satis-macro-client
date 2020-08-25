@@ -32,6 +32,7 @@ const Participants = (props) => {
 
     const [load, setLoad] = useState(true);
     const [contributor, setContributor] = useState([]);
+    const [responseData, setResponseData] = useState(null);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
@@ -43,9 +44,10 @@ const Participants = (props) => {
             .then(response => {
                 console.log(response.data, 'DONNEES');
                 setLoad(false);
-                setContributor(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
+                setResponseData(response.data);
+                setContributor(response.data.staff);
+                setShowList(response.data.staff.slice(0, numberPerPage));
+                setNumberPage(forceRound(response.data.staff.length / numberPerPage));
             })
             .catch(error => {
                 setLoad(false);
@@ -171,7 +173,7 @@ const Participants = (props) => {
                     verifyPermission(props.userPermissions, "remove-discussion-contributor") ?
                     <td style={{textAlign: 'center'}}>
                         {
-                            user.id === user.identite_id?
+                            user.id === responseData.created_by.id?
                         "":
                             <button
                                 onClick={(e) => deleteContributor(user.id, index)}

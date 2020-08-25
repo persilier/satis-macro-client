@@ -99,7 +99,7 @@ export default function Message(props) {
                                         <div><i className="la la-tags"></i></div>
                                         <em> {data.parent.text} </em>
                                         <div style={{fontSize: '12px'}}>
-                                            {"By:" + " " + data.posted_by.identite.lastname + ' ' + data.posted_by.identite.firstname}
+                                            {"By:" + " " + data.parent.posted_by.identite.lastname + ' ' + data.parent.posted_by.identite.firstname}
                                         </div>
                                         <hr/>
                                         {data.text}
@@ -135,6 +135,7 @@ export default function Message(props) {
                                     <i className="kt-nav__link-icon flaticon-reply"></i>
                                 </a>
                             </li>
+
                             <li className="kt-nav__head">
                                <span
                                    className="kt-nav__link-text">Supprimer

@@ -68,7 +68,7 @@ const Chats = (props) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (notification.discussion.id===idChat){
                             console.log(notification.messages,"notificationMessage")
-                           setListChatMessage(notification.messages);
+                           setListChatMessage(notification.messages.reverse());
                         }
 
                     }
