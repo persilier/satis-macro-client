@@ -216,6 +216,12 @@ const IncompleteClaimsEdit = props => {
                             label: response.data.claim.institution_targeted.name
                         });
                     }
+                    if (response.data.claim.relationship !== null) {
+                        setRelationship({
+                            value: response.data.claim.relationship.id,
+                            label: response.data.claim.relationship.name.fr
+                        });
+                    }
                     if (response.data.claim.amount_currency !== null) {
                         setCurrency({
                             value: response.data.claim.amount_currency.id,
