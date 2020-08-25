@@ -59,7 +59,7 @@ const Nav = (props) => {
         if (props.user) {
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props.user.identite_id}`)
                 .notification((notification) => {
-                    if (notification.type === "PostDiscussionMessage") {
+                    if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(notification.text));
                     } else {
                         fetchData();
