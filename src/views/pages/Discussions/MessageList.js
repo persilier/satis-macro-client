@@ -2,13 +2,19 @@ import React, {useEffect, useState} from 'react';
 import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
+import {debug} from "../../../helpers/function";
 
 
 export default function MessageList(props) {
 
-    const [messages,setMessage]=useState(props.getMessage);
+    const [messages,setMessage] = useState([]);
+    // const messages = props.getMessage.length ? props.getMessage : [];
 
     const MY_USER_ID = localStorage.getItem("staffData");
+
+    useState(() => {
+        setMessage(props.getMessage);
+    }, [props.getMessage])
 
     useEffect(() => {
         if (MY_USER_ID) {
@@ -90,7 +96,7 @@ const responseMessage=(key, text)=>{
 
     return (
         <div className="message-list">
-            <div className="message-list-container">{renderMessages()}</div>
+            <div className="message-list-container">{ messages.length ? renderMessages() : ""}</div>
         </div>
     );
 }

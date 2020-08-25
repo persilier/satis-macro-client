@@ -482,7 +482,7 @@ const Chats = (props) => {
                                             {/*{console.log(listChatMessages, "Message")}*/}
 
                                             {
-                                                listChatUsers && listChatMessages ?
+                                                listChatUsers && listChatMessages.length ?
                                                     <MessageList
                                                         idChat={idChat}
                                                         load={load}
