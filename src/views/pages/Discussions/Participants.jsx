@@ -198,7 +198,7 @@ const Participants = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Chat
+                                    Tchat
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -222,6 +222,9 @@ const Participants = (props) => {
                     <div className="kt-portlet">
 
                         <HeaderTablePage
+                            addPermission={"add-discussion-contributor"}
+                            addText={"Ajouter"}
+                            addLink={`/treatment/chat/add_user/${id}`}
                             title={"Liste des participants"}
                         />
                         {
@@ -243,7 +246,6 @@ const Participants = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

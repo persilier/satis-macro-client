@@ -129,9 +129,23 @@ const ClaimAssignToStaffDetail = (props) => {
                                                     className="btn btn-success">
                                                 NON FONDÉ
                                             </button>
-                                            <UnfoundedModal
-                                                getId={`${id}`}
-                                            />
+                                            {
+                                                claim ? (
+                                                    <UnfoundedModal
+                                                        activeTreatment={
+                                                            claim.active_treatment ? (
+                                                                claim.active_treatment
+                                                            ) : null
+                                                        }
+                                                        getId={`${id}`}
+                                                    />
+                                                ) : (
+                                                    <UnfoundedModal
+                                                        getId={`${id}`}
+                                                    />
+                                                )
+                                            }
+
                                         </div>
 
                                         <ClientButtonDetail claim={claim}/>
@@ -143,7 +157,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                         <div className="kt-wizard-v2__content"
                                              data-ktwizard-type="step-content">
                                             <div className="kt-heading kt-heading--md">Traitement de la
-                                                plainte
+                                                réclamation
                                             </div>
                                             {
                                                 claim ? (
@@ -151,7 +165,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                         claim.active_treatment.validated_at && claim.active_treatment.invalidated_reason ? (
                                                             <div className="kt-wizard-v2__review-item mb-4">
                                                                 <div className="kt-wizard-v2__review-title">
-                                                                    <h5><strong className="text-danger">Rejet du traitement</strong></h5>
+                                                                    <h5><strong className="text-danger">Traitement rejeté</strong></h5>
                                                                 </div>
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.invalidated_reason ? claim.active_treatment.invalidated_reason : "Pas de raison"}</span><br/>
