@@ -161,11 +161,11 @@ const Chats = (props) => {
             setStartRequest(true);
             axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
                 .then(response => {
-                    getListMessage(idChat);
+                    // getListMessage(idChat);
                     const newItems = [...listChatMessages, response.data];
                     setListChatMessage(newItems);
                     setData(defaultError);
-                    // getListMessage(idChat);
+                    getListMessage(idChat);
                     setStartRequest(false);
                 })
                 .catch(error => {
