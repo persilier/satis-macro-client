@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
@@ -6,9 +6,8 @@ import './MessageList.css';
 
 export default function MessageList(props) {
 
-    const messages=props.getMessage ? props.getMessage : [];
-    const idChat=props.idChat?props.idChat:"";
-console.log(messages,"MSG")
+    const [messages,setMessage]=useState(props.getMessage);
+
     const MY_USER_ID = localStorage.getItem("staffData");
 
     useEffect(() => {
@@ -16,14 +15,14 @@ console.log(messages,"MSG")
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${MY_USER_ID}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
-                        if (notification.discussion.id===idChat){
-                            console.log(notification, "TEMPS_REEL")
+                        if (notification.discussion.id===props.idChat){
+                            setMessage(m=>[...m, notification.message])
                         }
 
                     }
                 });
         }
-    }, [localStorage.getItem("staffData")]);
+    }, [MY_USER_ID,props.idChat]);
 
 const deletedMessage=(key)=>{
     props.deletedItem(key)

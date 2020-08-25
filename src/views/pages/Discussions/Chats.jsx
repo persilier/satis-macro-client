@@ -12,7 +12,7 @@ import {
 } from "../../../config/toastConfig";
 import {DeleteConfirmation} from "../../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../../config/confirmConfig";
-import {debug, filterDiscussionBySearchValue} from "../../../helpers/function";
+import {filterDiscussionBySearchValue} from "../../../helpers/function";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {connect} from "react-redux";
@@ -105,8 +105,8 @@ const Chats = (props) => {
             await axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
                 .then(response => {
                     setActiveChat(true);
-                    setListChatUsers(response.data);
-                    setIdChat(response.data[0].pivot.discussion_id);
+                    setListChatUsers(response.data.staff);
+                    setIdChat(response.data.id);
                 })
                 .catch(error => {
                     setActiveChat(false);
@@ -149,12 +149,14 @@ const Chats = (props) => {
     };
 
     const addItem = (e) => {
+
         e.preventDefault();
         let newData = {...data};
         if (!newData.files.length)
             delete newData.files;
         if (newData.parent_id === "")
             delete newData.parent_id;
+        console.log("coucou");
         if ((data.text !== '' && idChat) || (data.files !== [] && idChat)) {
             setStartRequest(true);
             axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
@@ -480,7 +482,7 @@ const Chats = (props) => {
                                             {/*{console.log(listChatMessages, "Message")}*/}
 
                                             {
-                                                listChatUsers ?
+                                                listChatUsers && listChatMessages ?
                                                     <MessageList
                                                         idChat={idChat}
                                                         load={load}
