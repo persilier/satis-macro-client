@@ -12,7 +12,7 @@ import EmptyNotification from "../components/EmptyNotification";
 import {Link} from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import {debug} from "../../helpers/function";
 import Loader from "../components/Loader";
 
