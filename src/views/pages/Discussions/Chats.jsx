@@ -67,8 +67,9 @@ const Chats = (props) => {
             console.log("je suis là");
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${localStorage.getItem("staffData")}`)
                 .notification((notification) => {
-
-                    console.log(notification, "TEMPS_REEL")
+                    if (notification.type === "PostDiscussionMessage") {
+                        console.log(notification, "TEMPS_REEL")
+                    }
                 });
         }
     }, [localStorage.getItem("staffData")]);
@@ -340,7 +341,8 @@ const Chats = (props) => {
                                                                                                         <span
                                                                                                             className="kt-nav__link-text">Liste des Participants</span>
 
-                                                                                                        <span className="kt-nav__link-badge">
+                                                                                                        <span
+                                                                                                            className="kt-nav__link-badge">
                                                                                                         <span
                                                                                                             className="kt-badge kt-badge--success  kt-badge--rounded-">
                                                                                                             {chat.staff ? chat.staff.length : 0}

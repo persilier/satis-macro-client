@@ -26,7 +26,7 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Participants = (props) => {
-    const {id}=useParams();
+    const {id} = useParams();
     if (!verifyPermission(props.userPermissions, "list-discussion-contributors"))
         window.location.href = ERROR_401;
 
@@ -51,7 +51,7 @@ const Participants = (props) => {
                 setLoad(false);
                 console.log("Something is wrong");
             })
-    },[]);
+    }, []);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -159,25 +159,32 @@ const Participants = (props) => {
     const printBodyTable = (user, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{user.identite.lastname + "  "+ user.identite.firstname}</td>
+                <td>{user.identite.lastname + "  " + user.identite.firstname}</td>
                 <td>{user.unit.name.fr}</td>
                 <td>{user.identite.email ?
                     user.identite.email.map((mail, index) => (
-                        index === user.identite.email.length - 1 ? mail : mail  +" "+ <br/> +" "
+                        index === user.identite.email.length - 1 ? mail : mail + " " + <br/> + " "
                     )) : ""
                 }</td>
-                <td style={{textAlign:'center'}}>
 
-                    {verifyPermission(props.userPermissions, "remove-discussion-contributor") ?
-                        <button
-                            onClick={(e) => deleteContributor(user.id, index)}
-                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Retirer du chat">
-                            <i className="la la-user-times fa-2x"/>
-                        </button>
-                        : ""
-                    }
-                </td>
+                {
+                    verifyPermission(props.userPermissions, "remove-discussion-contributor") ?
+                    <td style={{textAlign: 'center'}}>
+                        {
+                            user.id === user.identite_id?
+                        "":
+                            <button
+                                onClick={(e) => deleteContributor(user.id, index)}
+                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                title="Retirer du Tchat">
+                                <i className="la la-user-times fa-2x"/>
+                            </button>
+                        }
+
+                    </td>
+                    : ""
+                }
+
             </tr>
         )
     };
@@ -274,12 +281,17 @@ const Participants = (props) => {
                                                             colSpan="1" style={{width: "150px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Email
                                                         </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
+                                                        {
+                                                            verifyPermission(props.userPermissions, "remove-discussion-contributor") ?
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1" colSpan="1" style={{width: "50px"}}
+                                                                    aria-label="Type: activate to sort column ascending">
+                                                                    Action
+                                                                </th>
+                                                                :""
+                                                        }
+
                                                     </tr>
                                                     </thead>
                                                     <tbody>
