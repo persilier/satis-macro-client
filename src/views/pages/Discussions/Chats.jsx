@@ -88,13 +88,13 @@ const Chats = (props) => {
     };
 
     const onChangeText = (e) => {
-        const newData = {...data};
+        let newData = {...data};
         newData.text = e.target.value;
         setData(newData);
     };
 
     const onChangeFile = (e) => {
-        const newData = {...data};
+        let newData = {...data};
         newData.files = Object.values(e.target.files);
         setData(newData);
     };
@@ -138,7 +138,7 @@ const Chats = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + `/discussions/${id}/messages`)
                 .then(response => {
-                    setListChatMessage(response.data);
+                    setListChatMessage(response.data.reverse());
                     document.getElementById('kt-scroll').scrollTo(0, 10000);
                 })
                 .catch(error => {
@@ -224,7 +224,7 @@ const Chats = (props) => {
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="#button" onClick={e => e.preventDefault()}
                                className="kt-subheader__breadcrumbs-link">
-                                Chats
+                                TChats
                             </a>
                         </div>
                     </div>
@@ -376,7 +376,7 @@ const Chats = (props) => {
                                                                           className="kt-nav__link">
                                                                         <i className="kt-nav__link-icon flaticon-chat-1"></i>
                                                                         <span
-                                                                            className="kt-nav__link-text">Créer un Chat</span>
+                                                                            className="kt-nav__link-text">Créer un Tchat</span>
                                                                     </Link>
                                                                 </li>
 
@@ -385,7 +385,7 @@ const Chats = (props) => {
                                                                           className="kt-nav__link">
                                                                         <i className="kt-nav__link-icon flaticon-delete"></i>
                                                                         <span
-                                                                            className="kt-nav__link-text">Supprimer un Chat</span>
+                                                                            className="kt-nav__link-text">Supprimer un Tchat</span>
                                                                     </Link>
                                                                 </li>
 
@@ -429,14 +429,14 @@ const Chats = (props) => {
                                          style={{height: '250px', overflow: 'auto'}}>
                                         <div className="message-list">
 
-                                            {console.log(listChatMessages, "Message")}
+                                            {/*{console.log(listChatMessages, "Message")}*/}
 
                                             {
                                                 listChatUsers ?
                                                     <MessageList
                                                         load={load}
                                                         getList={listChatUsers}
-                                                        getMessage={listChatMessages.reverse()}
+                                                        getMessage={listChatMessages}
                                                         deletedItem={deletedItem}
                                                         responseItem={responseToMessage}/>
                                                     : ""}
@@ -483,6 +483,7 @@ const Chats = (props) => {
                                                     ))
                                                     : ""
                                             }
+                                            {console.log(data,"data")}
                                             <textarea
                                                 style={{height: "35px"}}
                                                 placeholder="Type here..."
@@ -516,7 +517,7 @@ const Chats = (props) => {
                                                         <button
                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                             type="button" disabled>
-                                                            Loading...
+                                                            Chargement...
                                                         </button>
                                                     )
                                                 }

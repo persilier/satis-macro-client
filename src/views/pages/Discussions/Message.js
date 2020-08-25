@@ -33,21 +33,6 @@ export default function Message(props) {
             document.getElementById(id).style.display = "none";
     };
 
-
-    function downloadFile(data, fileName, type = "text/plain") {
-        const a = document.createElement("a");
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.href = window.URL.createObjectURL(
-            new Blob([data], {type})
-        );
-        console.log(a.href, "A");
-        a.setAttribute("download", fileName);
-        a.click();
-        window.URL.revokeObjectURL(a.href);
-        document.body.removeChild(a);
-    }
-
     return (
 
         <div

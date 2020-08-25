@@ -169,7 +169,7 @@ const {id}=useParams();
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                Chargement...
                                                                             </button>
                                                                         )
                                                                     }
