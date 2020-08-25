@@ -12,7 +12,7 @@ import EmptyNotification from "../components/EmptyNotification";
 import {Link} from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";
+import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import {debug} from "../../helpers/function";
 import Loader from "../components/Loader";
 
@@ -61,7 +61,7 @@ const Nav = (props) => {
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (window.location.pathname !== "chat#messageList")
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(notification.text));
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(notification.text.length > 40 ? notification.text.substr(0, 40)+"..." : notification.text));
                     } else {
                         fetchData();
                     }
