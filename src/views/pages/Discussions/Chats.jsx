@@ -12,7 +12,7 @@ import {
 } from "../../../config/toastConfig";
 import {DeleteConfirmation} from "../../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../../config/confirmConfig";
-import {filterDiscussionBySearchValue} from "../../../helpers/function";
+import {debug, filterDiscussionBySearchValue} from "../../../helpers/function";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {connect} from "react-redux";
@@ -59,20 +59,6 @@ const Chats = (props) => {
 
 
     }, []);
-
-
-    useEffect(() => {
-        console.log("COUCOU" + localStorage.getItem("staffData"));
-        if (localStorage.getItem("staffData")) {
-            console.log("je suis là");
-            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${localStorage.getItem("staffData")}`)
-                .notification((notification) => {
-                    if (notification.type === "PostDiscussionMessage") {
-                        console.log(notification, "TEMPS_REEL")
-                    }
-                });
-        }
-    }, [localStorage.getItem("staffData")]);
 
 
     const searchElement = async (e) => {
@@ -496,6 +482,7 @@ const Chats = (props) => {
                                             {
                                                 listChatUsers ?
                                                     <MessageList
+                                                        idChat={idChat}
                                                         load={load}
                                                         getList={listChatUsers}
                                                         getMessage={listChatMessages}
