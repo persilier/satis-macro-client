@@ -14,7 +14,7 @@ window.Echo = new Echo({
     cluster: 'mt1',
     forceTLS: false,
     wsHost: appConfig.host,
-    wsPort: 6001,
+    wsPort: localStorage.getItem("plan") === "PRO" ? 6003 : 6001,
     disableStats: true,
     authEndpoint: appConfig.apiDomaine+'/api/broadcasting/auth',
     auth: {
