@@ -115,7 +115,7 @@ const ClaimAdd = props => {
     const [claimObjects, setClaimObjects] = useState([]);
     const [claimCategory, setClaimCategory] = useState(null);
     const [claimCategories, setClaimCategories] = useState([]);
-    const [relationship, setRelationship] = useState({});
+    const [relationship, setRelationship] = useState(null);
     const [relationships, setRelationships] = useState([]);
     const [accounts, setAccounts] = useState([]);
     const [account, setAccount] = useState(null);
@@ -421,13 +421,8 @@ const ClaimAdd = props => {
 
     const onChangeRelationShip = selected => {
         const newData = {...data};
-        if (selected) {
-            setRelationship(selected);
-            newData.relationship_id = selected.value;
-        } else {
-            setRelationship(null);
-            newData.relationship_id = "";
-        }
+        setRelationship(selected);
+        newData.relationship_id = selected ? selected.value : "";
         setData(newData);
     };
 
@@ -484,7 +479,7 @@ const ClaimAdd = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
-        if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
+        if (props.plan !== "HUB")
             delete newData.relationship_id;
         axios.post(endPoint.store, formatFormData(newData))
             .then(async () => {
@@ -979,7 +974,7 @@ const ClaimAdd = props => {
                                                     {
                                                         verifyPermission(props.userPermissions, "store-claim-without-client") ? (
                                                             <div className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution <InputRequire/></label>
                                                                 <Select
                                                                     isClearable
                                                                     value={relationship}

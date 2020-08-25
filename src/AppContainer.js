@@ -13,7 +13,7 @@ window.Echo = new Echo({
     key: 'e0acb5bac6ddb3b710f4',
     cluster: 'mt1',
     forceTLS: false,
-    wsHost: "satis-macro.local",
+    wsHost: appConfig.host,
     wsPort: 6001,
     disableStats: true,
     authEndpoint: appConfig.apiDomaine+'/api/broadcasting/auth',

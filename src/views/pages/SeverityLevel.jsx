@@ -190,7 +190,7 @@ const SeverityLevel = (props) => {
                         {severityLevel.color ? `${severityLevel.color} ${severityLevel.color === "#ffffff" ? " Blanc" : ""}` : <strong style={{color: "black"}}>-</strong>}
                     </div>
                 </td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description ? severityLevel.description["fr"] : ""}</td>
                 <td>
                     {
                         verifyPermission(props.userPermissions, 'update-severity-level') ? (

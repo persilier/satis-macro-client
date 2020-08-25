@@ -5,6 +5,7 @@ const appConfig =  {
     enterprise: 'DMD',
     contact: '21256325',
     apiDomaine: `http://satis-${localStorage.getItem('plan') ? localStorage.getItem('plan').toLowerCase() : ""}.local`,
+    host: `satis-${localStorage.getItem('plan') ? localStorage.getItem('plan').toLowerCase() : ""}.local`,
 };
 
 export default appConfig;

@@ -158,7 +158,7 @@ const ClaimObject = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claimObject.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "200px" }}>{claimObject.description["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "200px" }}>{claimObject ? claimObject.description["fr"] : ""}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name[props.language]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "50px" }}>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
                 <td>
