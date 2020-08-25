@@ -14,7 +14,7 @@ export default function MessageList(props) {
     const MY_USER_ID = localStorage.getItem("staffData");
 
     useState(() => {
-        setMessage(props.getMessage);
+        setMessages(props.getMessage);
     }, [props.getMessage])
 
     useEffect(() => {
