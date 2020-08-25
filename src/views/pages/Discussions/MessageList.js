@@ -7,29 +7,10 @@ import {debug} from "../../../helpers/function";
 
 export default function MessageList(props) {
 
-    const [messages,setMessages] = useState([]);
-    debug(messages, "messages");
-    // const messages = props.getMessage.length ? props.getMessage : [];
+    // const [messages,setMessage] = useState([]);
+    const messages = props.getMessage.length ? props.getMessage : [];
 
     const MY_USER_ID = localStorage.getItem("staffData");
-
-    useState(() => {
-        setMessages(props.getMessage);
-    }, [props.getMessage])
-
-    useEffect(() => {
-        if (MY_USER_ID) {
-            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${MY_USER_ID}`)
-                .notification((notification) => {
-                    if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
-                        if (notification.discussion.id===props.idChat){
-                            setMessages(notification.messages);
-                        }
-
-                    }
-                });
-        }
-    }, [MY_USER_ID,props.idChat]);
 
 const deletedMessage=(key)=>{
     props.deletedItem(key)

@@ -60,6 +60,21 @@ const Chats = (props) => {
 
     }, []);
 
+    useEffect(() => {
+        if (localStorage.getItem("staffData") && idChat) {
+            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${localStorage.getItem("staffData")}`)
+                .notification((notification) => {
+                    // console.log(notification,'notificationMsg')
+                    if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
+                        if (notification.discussion.id===idChat){
+                            console.log(notification.messages,"notificationMessage")
+                           setListChatMessage(notification.messages);
+                        }
+
+                    }
+                });
+        }
+    }, [localStorage.getItem("staffData"),idChat]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
