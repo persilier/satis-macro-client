@@ -72,9 +72,10 @@ const AddChatsForm = (props) => {
         axios.post(appConfig.apiDomaine + `/discussions`, data)
             .then(response => {
                 setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
+                // setError(defaultError);
+                // setData(defaultData);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                window.location.href="/chat";
             })
             .catch(error => {
                 setStartRequest(false);

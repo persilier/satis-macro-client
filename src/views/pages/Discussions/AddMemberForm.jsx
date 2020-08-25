@@ -63,9 +63,10 @@ const {id}=useParams();
         axios.post(appConfig.apiDomaine + `/discussions/${id}/staff`, data)
             .then(response => {
                 setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
+                // setError(defaultError);
+                // setData(defaultData);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                window.location.href="/chat";
             })
             .catch(error => {
                 setStartRequest(false);
