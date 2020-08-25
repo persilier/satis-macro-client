@@ -153,7 +153,8 @@ const Aside = (props) => {
                                                 ) :""
                                             }
                                             {
-                                                verifyPermission(props.userPermissions, 'list-claim-archived')?(
+                                                verifyPermission(props.userPermissions, 'list-any-claim-archived')||
+                                                verifyPermission(props.userPermissions, 'list-my-claim-archived')?(
                                                     <NavLink exact to="/process/claim_archived" className="kt-menu__item "
                                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
