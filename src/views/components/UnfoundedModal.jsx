@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
@@ -18,6 +18,14 @@ const UnfoundedModal = (props) => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+
+    useEffect(() => {
+        if (props.activeTreatment) {
+            setData({
+                unfounded_reason: props.activeTreatment.unfounded_reason ? props.activeTreatment.unfounded_reason : ""
+            });
+        }
+    }, [props.activeTreatment]);
 
     const onChangeDescription = (e) => {
         const newData = {...data};

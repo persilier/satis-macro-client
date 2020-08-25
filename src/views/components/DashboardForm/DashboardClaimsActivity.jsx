@@ -338,7 +338,7 @@ const DashboardClaimsActivity = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h4 className="kt-widget24__title">
-                                                        Total Réclamations à Mesure de Satisfaction
+                                                        Total Satisfaction Mesurée
                                                     </h4>
                                                     <span className="kt-widget24__desc">
 
@@ -362,7 +362,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                             <div className="kt-widget24__action">
 								<span className="kt-widget24__change">
-									% Réclamations à Mesure de Satisfaction
+									% Satisfaction Mesurée
 								</span>
                                                 <span className="kt-widget24__number">
 									{
