@@ -23,11 +23,7 @@ export default function MessageList(props) {
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (notification.discussion.id===props.idChat){
-                            const newMessages = [...messages];
-                            // newMessages.push(notification.message);
-                            // debug(notification.message.text);
-                            // debug(newMessages, "newMessages");
-                            setMessages(m => [...m, notification.message]);
+                            setMessages(notification.messages);
                         }
 
                     }
