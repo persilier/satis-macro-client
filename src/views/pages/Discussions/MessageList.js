@@ -7,13 +7,14 @@ import {debug} from "../../../helpers/function";
 
 export default function MessageList(props) {
 
-    const [messages,setMessage] = useState([]);
+    const [messages,setMessages] = useState([]);
+    debug(messages, "messages");
     // const messages = props.getMessage.length ? props.getMessage : [];
 
     const MY_USER_ID = localStorage.getItem("staffData");
 
     useState(() => {
-        setMessage(props.getMessage);
+        setMessages(props.getMessage);
     }, [props.getMessage])
 
     useEffect(() => {
@@ -22,7 +23,11 @@ export default function MessageList(props) {
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (notification.discussion.id===props.idChat){
-                            setMessage(m=>[...m, notification.message])
+                            const newMessages = [...messages];
+                            // newMessages.push(notification.message);
+                            // debug(notification.message.text);
+                            // debug(newMessages, "newMessages");
+                            setMessages(m => [...m, notification.message]);
                         }
 
                     }

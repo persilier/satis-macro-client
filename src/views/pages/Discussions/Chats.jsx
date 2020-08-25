@@ -165,7 +165,7 @@ const Chats = (props) => {
                     const newItems = [...listChatMessages, response.data];
                     setListChatMessage(newItems);
                     setData(defaultError);
-                    getListMessage(idChat);
+                    // getListMessage(idChat);
                     setStartRequest(false);
                 })
                 .catch(error => {
