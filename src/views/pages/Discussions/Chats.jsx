@@ -362,15 +362,15 @@ const Chats = (props) => {
                                                             className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
 
                                                             <ul className="kt-nav">
-                                                                <li className="kt-nav__head">
-                                                                    Messagerie
-                                                                    <Link
-                                                                        to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}>
-                                                                        <i className="kt-nav__link-icon flaticon-eye"></i>
-                                                                    </Link>
+                                                                {/*<li className="kt-nav__head">*/}
+                                                                {/*    Messagerie*/}
+                                                                {/*    <Link*/}
+                                                                {/*        to={idChat ? `/treatment/chat/contributor/${idChat}` : ""}>*/}
+                                                                {/*        <i className="kt-nav__link-icon flaticon-eye"></i>*/}
+                                                                {/*    </Link>*/}
 
-                                                                </li>
-                                                                <li className="kt-nav__separator"></li>
+                                                                {/*</li>*/}
+                                                                {/*<li className="kt-nav__separator"></li>*/}
                                                                 <li className="kt-nav__item">
                                                                     <Link to={"/treatment/chat/add"}
                                                                           className="kt-nav__link">
