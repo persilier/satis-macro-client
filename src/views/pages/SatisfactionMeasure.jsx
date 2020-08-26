@@ -147,15 +147,20 @@ const SatisfactionMeasure = (props) => {
                 <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}`}</td>
                 <td>{measure.description === null ? "" : measure.description}</td>
                 <td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>
-                
-                <td style={{textAlign: 'center'}}>
-                    <a href={`/process/claim_measure/${measure.id}/detail`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </a>
+                {
+                    verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
+                    verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ? (
+                        <td style={{textAlign: 'center'}}>
+                            <a href={`/process/claim_measure/${measure.id}/detail`}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title="Détail">
+                                <i className="la la-eye"/>
+                            </a>
 
-                </td>
+                        </td>
+                    ):""
+                }
+
             </tr>
         )
     };

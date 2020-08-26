@@ -148,14 +148,19 @@ const ClaimsArchived = (props) => {
                 <td>{`${archived.claimer.lastname} ${archived.claimer.firstname}`}</td>
                 <td>{archived.description === null ? "-" : archived.description}</td>
                 <td>{archived.active_treatment.solution === null ? "-" : archived.active_treatment.solution}</td>
-                <td style={{textAlign: 'center'}}>
-                    <a href={`/process/claim_archived/${archived.id}/detail`}
-                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                       title="Détail">
-                        <i className="la la-eye"/>
-                    </a>
+                {
+                    verifyPermission(props.userPermissions, "show-any-claim-archived") ||
+                    verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
+                        <td style={{textAlign: 'center'}}>
+                            <a href={`/process/claim_archived/${archived.id}/detail`}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title="Détail">
+                                <i className="la la-eye"/>
+                            </a>
+                        </td>
+                    ) : ""
+                }
 
-                </td>
             </tr>
         )
     };
@@ -256,12 +261,18 @@ const ClaimsArchived = (props) => {
                                                         colSpan="1" style={{width: "150px"}}
                                                         aria-label="Ship City: activate to sort column ascending">Solution
                                                     </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                        aria-label="Type: activate to sort column ascending">
-                                                        Action
-                                                    </th>
+                                                    {
+                                                        verifyPermission(props.userPermissions, "show-any-claim-archived") ||
+                                                        verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                                aria-label="Type: activate to sort column ascending">
+                                                                Action
+                                                            </th>
+                                                        ) : ""
+                                                    }
+
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -282,9 +293,7 @@ const ClaimsArchived = (props) => {
                                                 }
                                                 </tbody>
                                                 <tfoot>
-                                                <tr>
-
-                                                </tr>
+                                                <tr/>
                                                 </tfoot>
                                             </table>
                                         </div>
