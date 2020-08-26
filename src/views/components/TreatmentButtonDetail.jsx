@@ -12,7 +12,7 @@ const TreatmentButtonDetail = ({claim}) => {
                 <div className="kt-wizard-v2__review">
                     <div className="kt-wizard-v2__review-item">
                         <div className="kt-wizard-v2__review-title">
-                            <span style={{color:"#48465b"}}>Agent</span>
+                            <span style={{color: "#48465b"}}>Agent</span>
                         </div>
                         {
                             !claim ? "" : (
@@ -26,32 +26,35 @@ const TreatmentButtonDetail = ({claim}) => {
                         }
                     </div>
                     <div className="kt-wizard-v2__review-item">
-                        <div className="kt-wizard-v2__review-title" >
-                            <span style={{color:"#48465b"}}>Traitement</span>
+                        <div className="kt-wizard-v2__review-title">
+                            <span style={{color: "#48465b"}}>Traitement</span>
                         </div>
 
                         {
                             !claim ? "" : (
-                                <div className="kt-wizard-v2__review-content">
-                                    <strong>Montant retourné:</strong> <span
-                                    className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Aucun montant retourné"}</span><br/>
-                                    <br/>
-                                    <strong>Solution :</strong>
-                                    <span className="mx-2">
-                                                                    {claim.active_treatment ? claim.active_treatment.solution : ""}
+                                claim.active_treatment.satisfaction_measured_at!==null?(
+                                        <div className="kt-wizard-v2__review-content">
+                                            <strong>Montant retourné:</strong> <span
+                                            className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Aucun montant retourné"}</span><br/>
+                                            <br/>
+                                            <strong>Solution :</strong>
+                                            <span className="mx-2">
+                                                                    {claim.active_treatment.solution ? claim.active_treatment.solution : "Aucune solution proposé"}
                                                                     </span><br/><br/>
-                                    <strong>Commentaires:</strong> <span
-                                    className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "Aucun commentaire"}</span><br/>
-                                    <br/>
-                                    <strong>Mesures préventives:</strong> <span
-                                    className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Aucune mesure préventive"}</span><br/>
-                                </div>
+                                            <strong>Commentaires:</strong> <span
+                                            className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "Aucun commentaire"}</span><br/>
+                                            <br/>
+                                            <strong>Mesures préventives:</strong> <span
+                                            className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Aucune mesure préventive"}</span><br/>
+                                        </div>
+                                    ):"Non Fondé"
+
                             )
                         }
                     </div>
                     <div className="kt-wizard-v2__review-item">
                         <div className="kt-wizard-v2__review-title">
-                            <span style={{color:"#48465b"}}> Solution Communiquée</span>
+                            <span style={{color: "#48465b"}}> Solution Communiquée</span>
                         </div>
                         {
                             !claim ? "" : (
@@ -62,32 +65,46 @@ const TreatmentButtonDetail = ({claim}) => {
                             )
                         }
                     </div>
-                    {localStorage.getItem("page")==="ClaimsArchived"?(
+                    {localStorage.getItem("page") === "ClaimsArchived" ? (
                             <div className="kt-wizard-v2__review-item">
                                 <div className="kt-wizard-v2__review-title">
-                                    <span style={{color:"#48465b"}}>  Mesure de Satisfaction</span>
+                                    <span style={{color: "#48465b"}}>  Mesure de Satisfaction</span>
                                 </div>
                                 {
                                     !claim ? "" : (
                                         <div
                                             className="kt-wizard-v2__review-content">
+                                            {console.log(claim.active_treatment.unsatisfied_reason,"claim.active_treatment.unsatisfied_reason")}
                                             {
-                                                claim.active_treatment.is_claimer_satisfied === 1 ?
-                                                    <span className="mx-2">
-                                                                                                Le Client <strong>est satisfait</strong> de la soltion communiquée
-                                                                                            </span>
-                                                    :
-                                                    <span className="mx-2">
-                                                                                                Le Client <strong>n'est pas satisfait</strong>  de la soltion communiquée
-                                                                                            </span>
+                                                claim.active_treatment.satisfaction_measured_at!==null ? (
+                                                    <div>
+                                                        {
+                                                            claim.active_treatment.is_claimer_satisfied === 1 ?
+
+                                                                <span
+                                                                    className="mx-2">Le Client <strong>est satisfait</strong> de la soltion communiquée</span>
+
+                                                                :
+                                                                <span
+                                                                    className="mx-2">Le Client <strong>n'est pas satisfait</strong>  de la soltion communiquée</span>
+                                                        }
+                                                        <br/>
+                                                        <strong>Commentaires:</strong>
+                                                        <span
+                                                            className="mx-2">{claim.active_treatment.unsatisfied_reason!==null ? claim.active_treatment.unsatisfied_reason : "Aucun commentaire"}</span><br/>
+                                                        <br/>
+                                                    </div>
+
+
+                                                ) : "Néant"
                                             }
                                             <br/>
                                         </div>
                                     )
                                 }
                             </div>
-                    )
-                    :""
+                        )
+                        : ""
                     }
 
                 </div>
