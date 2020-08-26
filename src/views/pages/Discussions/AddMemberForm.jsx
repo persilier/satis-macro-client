@@ -70,7 +70,7 @@ const {id}=useParams();
             })
             .catch(error => {
                 setStartRequest(false);
-                setError({...defaultError});
+                setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig)
             })
         ;
@@ -114,7 +114,7 @@ const {id}=useParams();
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                "Ajout de Catégorie Client"
+                                                "Ajout des Participants"
                                             }
                                         </h3>
                                     </div>

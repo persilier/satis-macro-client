@@ -163,7 +163,7 @@ const RemoveChats = (props) => {
                         <button
                             onClick={(e) => deleteContributor(chat.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Supprimer le chat">
+                            title="Supprimer le Tchat">
                             <i className="la la-trash fa-2x"/>
                         </button>
                         : ""

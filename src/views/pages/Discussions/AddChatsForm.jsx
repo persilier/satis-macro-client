@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
+    toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
@@ -79,8 +80,8 @@ const AddChatsForm = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-                setError({...defaultError});
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                setError({...defaultError,...error.response.data.error});
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
 
@@ -123,7 +124,7 @@ const AddChatsForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                "Ajout de Catégorie Client"
+                                                "Ajout de nouvelle discussion"
                                             }
                                         </h3>
                                     </div>
