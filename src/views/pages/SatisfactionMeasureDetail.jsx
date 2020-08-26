@@ -76,7 +76,7 @@ const SatisfactionMeasureDetail = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
+        verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ||
         verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">

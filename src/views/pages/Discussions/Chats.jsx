@@ -328,7 +328,7 @@ const Chats = (props) => {
                                                                                                 data-toggle="dropdown"
                                                                                                 aria-haspopup="true"
                                                                                                 aria-expanded="false">
-                                                                                            <i className="flaticon-more"></i>
+                                                                                            <i className="flaticon2-menu-1"></i>
                                                                                         </button>
 
                                                                                         <div
@@ -340,7 +340,7 @@ const Chats = (props) => {
                                                                                                     <Link
                                                                                                         to={chat.id ? `/treatment/chat/contributor/${chat.id}` : ""}
                                                                                                         className="kt-nav__link">
-                                                                                                        <i className="kt-nav__link-icon flaticon-user"></i>
+                                                                                                        <i className="kt-nav__link-icon flaticon2-group"></i>
                                                                                                         <span
                                                                                                             className="kt-nav__link-text">Liste des Participants</span>
 

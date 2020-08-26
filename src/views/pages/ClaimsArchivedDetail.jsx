@@ -76,7 +76,8 @@ const ClaimArchivedDetail = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "show-claim-archived") ? (
+        verifyPermission(props.userPermissions, "show-any-claim-archived") ||
+        verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
