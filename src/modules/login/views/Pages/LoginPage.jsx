@@ -98,7 +98,7 @@ const LoginPage = (props) => {
                                         <div className="kt-grid__item kt-grid__item--middle">
                                             <h3 className="kt-login__title">Bienvenue sur {appConfig.appFullName(props.plan)}!</h3>
                                             <h4 className="kt-login__subtitle">Votre nouvel outil de gestion des
-                                                plaintes.</h4>
+                                                Réclamations.</h4>
                                         </div>
                                     </div>
                                     <div className="kt-grid__item">
