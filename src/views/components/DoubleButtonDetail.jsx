@@ -36,7 +36,7 @@ const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
                                                                         <button
                                                                             type="button"
                                                                             className="btn btn-brand btn-sm btn-upper"
-                                                                            onClick={() => onClickFusionButton(newClaim)}>Fusioner
+                                                                            onClick={() => onClickFusionButton(newClaim)}>Comparer
                                                                         </button>
                                                                     </div>
                                                                 ) : ""
