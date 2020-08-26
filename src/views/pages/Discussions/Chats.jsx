@@ -17,6 +17,7 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
+import Loader from "../../components/Loader";
 
 
 const Chats = (props) => {
@@ -505,7 +506,8 @@ const Chats = (props) => {
                                                         getMessage={listChatMessages}
                                                         deletedItem={deletedItem}
                                                         responseItem={responseToMessage}/>
-                                                    : ""}
+                                                    :  ""
+                                            }
                                         </div>
                                     </div>
                                 </div>

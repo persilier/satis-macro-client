@@ -60,7 +60,7 @@ const ClaimsArchived = (props) => {
 
     useEffect(() => {
         axios.get(endPoint.list)
-            .then(response => {
+            .then(response => {console.log(response.data)
                 setLoad(false);
                 setClaimsArchived(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
@@ -206,7 +206,7 @@ const ClaimsArchived = (props) => {
                 <div className="kt-portlet">
 
                     <HeaderTablePage
-                        title={"Plaintes Archivées"}
+                        title={"Réclamations Archivées"}
                     />
                     {
                         load ? (

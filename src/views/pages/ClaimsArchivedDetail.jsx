@@ -112,7 +112,7 @@ const ClaimArchivedDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail plainte
+                                    {claim?claim.reference: 'Detail'}
                                 </a>
                             </div>
                         </div>
