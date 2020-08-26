@@ -71,8 +71,9 @@ const TreatmentButtonDetail = ({claim}) => {
                                     !claim ? "" : (
                                         <div
                                             className="kt-wizard-v2__review-content">
+                                            {console.log(claim.active_treatment.satisfaction_measured_at,"claim.active_treatment.satisfaction_measured_at")}
                                             {
-                                                !claim.active_treatment.satisfaction_measured_at ? (
+                                                claim.active_treatment.satisfaction_measured_at!==null ? (
                                                     <div>
                                                         {
                                                             claim.active_treatment.is_claimer_satisfied === 1 ?
