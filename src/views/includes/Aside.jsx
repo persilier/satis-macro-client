@@ -194,7 +194,7 @@ const Aside = (props) => {
                                     </li>
 
                                     {
-                                        verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission('list-monitoring-claim-my-institution') ? (
+                                        verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission(props.userPermissions, 'list-monitoring-claim-my-institution') ? (
                                             <NavLink exact to="/monitoring/claims/monitoring" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
                                                     <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
