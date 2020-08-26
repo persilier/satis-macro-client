@@ -3,7 +3,6 @@ import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
 import {debug} from "../../../helpers/function";
-import Loader from "../../components/Loader";
 
 
 export default function MessageList(props) {
@@ -79,7 +78,7 @@ const responseMessage=(key, text)=>{
 
     return (
         <div className="message-list">
-            <div className="message-list-container">{ messages.length ? renderMessages() : <Loader/>}</div>
+            <div className="message-list-container">{ messages.length ? renderMessages() : ""}</div>
         </div>
     );
 }
