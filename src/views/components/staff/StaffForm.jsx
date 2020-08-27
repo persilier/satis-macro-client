@@ -122,7 +122,7 @@ const StaffForm = (props) => {
         if (id) {
             axios.get(endPoint.edit(id))
                 .then(response => {
-                    console.log(response.data);
+                    debug(response.data, "data");
                     const newData = {
                         firstname: response.data.staff.identite.firstname,
                         lastname: response.data.staff.identite.lastname,
@@ -133,7 +133,9 @@ const StaffForm = (props) => {
                         unit_id: response.data.staff.unit_id,
                         position_id: response.data.staff.position_id,
                         institution_id: response.data.staff.institution_id,
+                        is_lead: response.data.is_lead ? 1 : 0
                     };
+
                     setPositions(response.data.positions);
                     if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')) {
                         setInstitutions(response.data.institutions);
@@ -148,7 +150,7 @@ const StaffForm = (props) => {
                     else if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit'))
                         setUnits(response.data.staff.institution.units);
 
-                    setUnit({value: response.data.staff.unit.id, label: response.data.staff.unit.name["fr"]});
+                    setUnit({value: response.data.staff.unit.id, label: response.data.staff.unit.name["fr"], lead: response.data.staff.unit.lead});
                     setData(newData);
                 })
                 .catch(error => {
@@ -223,7 +225,7 @@ const StaffForm = (props) => {
             newData.is_lead = 0;
             setData(newData);
         }
-        newData.unit_id = selected ? selected.value : null;
+        newData.unit_id = selected ? selected.value : "";
         if (selected === null)
             newData.is_lead = 0;
         setUnit(selected);
@@ -232,7 +234,7 @@ const StaffForm = (props) => {
 
     const onChangePosition = (selected) => {
         const newData = {...data};
-        newData.position_id = selected ? selected.value : null;
+        newData.position_id = selected ? selected.value : "";
         setPosition(selected);
         setData(newData);
     };
@@ -270,6 +272,7 @@ const StaffForm = (props) => {
     const handleOptionChange = (e) => {
         const value = parseInt(e.target.value);
         if (parseInt(e.target.value) === 1) {
+            debug(unit, "lead");
             if (!!Object.keys(unit.lead).length) {
                 ConfirmLead.fire(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`))
                     .then(result => {
@@ -289,9 +292,12 @@ const StaffForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        let newData = data;
+        let newData = {...data};
         if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
             delete newData.institution_id;
+
+        newData.is_lead = newData.is_lead === 0 ? false : true;
+        debug(newData, "newData");
 
         if (id) {
             axios.put(endPoint.update(id), newData)
@@ -346,7 +352,6 @@ const StaffForm = (props) => {
                         );
                     } else {
                         // Validation errors
-                        debug({...defaultError, ...errorRequest.response.data.error}, "error");
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
@@ -527,7 +532,7 @@ const StaffForm = (props) => {
                                         <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">Informations professionnelles:</h3>
-                                                <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
+                                                <div className={error.position_id.length ? "form-group row validated" : "form-group row"}>
                                                     <div className="col">
                                                         <label htmlFor="position">Poste <InputRequire/></label>
                                                         <Select
