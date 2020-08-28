@@ -8,6 +8,7 @@ import DashboardStatClaim from "../components/DashboardForm/DashboardStatClaim";
 import DashboardStatistic from "../components/DashboardForm/DashboardStatistic";
 import GraphChannel from "../components/DashboardForm/GraphChannel";
 import DashboardClaimsActivity from "../components/DashboardForm/DashboardClaimsActivity";
+import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
 
 
 const Dashboards = () => {
@@ -58,6 +59,10 @@ const Dashboards = () => {
 
                     <div>
                         <DashboardStatistic/>
+                    </div>
+
+                    <div>
+                        <ClaimToInstitution/>
                     </div>
                 </div>
 
