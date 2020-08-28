@@ -577,7 +577,6 @@ const ClaimAdd = props => {
                     </div>
                 </div>
 
-
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
                         information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour enregistrer les réclamations de vos clients."}

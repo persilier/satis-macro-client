@@ -87,10 +87,10 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                                     <strong>Date de l'évernement</strong>: <span className="mx-2">{claim.event_occured_at ? formatDateToTimeStampte(claim.event_occured_at) : "Pas de date"}</span><br/>
                                     <br/>
                                     <strong>Description:</strong> <span
-                                    className="mx-2">{claim.description}</span><br/>
+                                    className="mx-2">{claim.description ? claim.description : "Pas de description"}</span><br/>
                                     <br/>
                                     <strong>Attente:</strong> <span
-                                    className="mx-2">{claim.claimer_expectation}</span><br/>
+                                    className="mx-2">{claim.claimer_expectation ? claim.claimer_expectation : "Pas d'attente"}</span><br/>
                                 </div>
                             )
                         }
