@@ -11,35 +11,34 @@ const DashboardSummaryReport = (props) => {
     const reportColor = [
         {
             id: 0,
-            rowColor: "table-primary"
+            rowColor: "table-primary",
+            rang:1,
         },
         {
             id: 1,
-            rowColor: "table-success"
+            rowColor: "table-success",
+            rang:2,
         },
         {
             id: 2,
-            rowColor: "table-bland"
+            rowColor: "table-bland",
+            rang:3,
         },
         {
             id: 3,
-            rowColor: "table-warning"
+            rowColor: "table-warning",
+            rang:4,
         },
         {
             id: 4,
-            rowColor: "table-danger"
+            rowColor: "table-danger",
+            rang:5
         },
 
     ];
 
-
     const [data, setData] = useState("");
 
-    const sortTypes = (a, b) => {
-
-        return a.data ? data.map(data => data.label) : "" > b.data ? data.map(data => data.label) : ""
-
-    };
 
     useEffect(() => {
         let isCancelled = false;
@@ -99,6 +98,7 @@ const DashboardSummaryReport = (props) => {
                                 <table className="table">
                                     <thead>
                                     <tr>
+                                        <th>Rang</th>
                                         <th>Objets de Réclamations</th>
                                         <th>Total</th>
                                     </tr>
@@ -110,6 +110,8 @@ const DashboardSummaryReport = (props) => {
                                             reportColor.map((color, j) => (
                                                 i === j ?
                                                     <tr className={color.rowColor} key={i}>
+                                                        <td>{color.rang}</td>
+
                                                         <td>{report.canal}</td>
 
                                                         <td>{report.label}</td>

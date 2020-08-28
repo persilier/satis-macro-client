@@ -82,9 +82,9 @@ const DashboardStatistic = (props) => {
             //     min: -1
             // },
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Dec'],
                 title: {
-                    text: 'Month'
+                    text: 'Mois'
                 }
             },
 
@@ -135,7 +135,7 @@ const DashboardStatistic = (props) => {
                     }
                 })
                 .catch(error => {
-                    setLoad(false)
+                    setLoad(false);
                     console.log("Something is wrong");
                 })
         }

@@ -88,12 +88,12 @@ const InstitutionForm = (props) => {
         newData.name = e.target.value;
         setData(newData);
     };
-    const onChangeTypeInstituion = (selected) => {
-        const newData = {...data};
-        newData.institution_type_id = selected.value;
-        setTypeInstitution(selected);
-        setData(newData);
-    };
+    // const onChangeTypeInstituion = (selected) => {
+    //     const newData = {...data};
+    //     newData.institution_type_id = selected.value;
+    //     setTypeInstitution(selected);
+    //     setData(newData);
+    // };
 
     const onChangeAcronyme = (e) => {
         const newData = {...data};
@@ -222,17 +222,32 @@ const InstitutionForm = (props) => {
                                                                              id="kt_user_add_avatar">
                                                                             <div className="kt-avatar__holder"
                                                                                  style={{textAlign: 'center'}}>
+                                                                                {
+                                                                                    data.logo?(
+                                                                                        <img
+                                                                                            id="Image1"
+                                                                                            src={data.logo}
+                                                                                            alt="logo"
+                                                                                            style={{
+                                                                                                maxWidth: "115px",
+                                                                                                maxHeight: "115px",
+                                                                                                textAlign: 'center'
+                                                                                            }}
+                                                                                        />
+                                                                                )
+                                                                                :(
+                                                                                            <img
+                                                                                                id="Image1"
+                                                                                                src={"/assets/media/users/Icon.png"}
+                                                                                                alt="logo"
+                                                                                                style={{
+                                                                                                    maxWidth: "115px",
+                                                                                                    maxHeight: "115px",
+                                                                                                    textAlign: 'center'
+                                                                                                }}
+                                                                                            />
+                                                                                        )}
 
-                                                                                <img
-                                                                                    id="Image1"
-                                                                                    src={data.logo}
-                                                                                    alt="logo"
-                                                                                    style={{
-                                                                                        maxWidth: "115px",
-                                                                                        maxHeight: "115px",
-                                                                                        textAlign: 'center'
-                                                                                    }}
-                                                                                />
 
                                                                             </div>
                                                                             <label className="kt-avatar__upload"

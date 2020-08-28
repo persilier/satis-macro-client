@@ -39,7 +39,8 @@ const endPointConfig = {
 
 const ConfigRapportAuto = (props) => {
     document.title = "Satis rapport - Paramètre Configuration Rapport Automatique";
-    if (!verifyPermission(props.userPermissions, "list-reporting-claim-any-institution"))
+    if (!verifyPermission(props.userPermissions, "list-reporting-claim-any-institution")||
+        verifyPermission(props.userPermissions, "list-reporting-claim-my-institution"))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -219,7 +220,6 @@ const ConfigRapportAuto = (props) => {
     };
 
     return (
-
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
