@@ -5,14 +5,14 @@ import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import {filterChannel, formatSelectOption, formatToTimeStamp} from "../../helpers/function";
+import {debug, filterChannel, formatSelectOption, formatToTimeStamp} from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
 import InfirmationTable from "../components/InfirmationTable";
@@ -136,6 +136,11 @@ const ClaimAdd = props => {
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [foundData, setFoundData] = useState({});
+
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 1);
+
+    const maxDate = (currentDate.toISOString()).substr(0, (currentDate.toISOString()).length - 1);
 
     useEffect(() => {
         async function fetchData() {
@@ -426,9 +431,13 @@ const ClaimAdd = props => {
         setData(newData);
     };
 
-    const onChangeEventOccuredAt = e => {
+    const handleEventOccuredAt = e => {
         const newData = {...data};
-        newData.event_occured_at = e.target.value;
+        if (new Date(e.target.value) >= new Date()) {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Date invalide"));
+            newData.event_occured_at = "";
+        } else
+            newData.event_occured_at = e.target.value;
         setData(newData);
     };
 
@@ -631,7 +640,7 @@ const ClaimAdd = props => {
                                                             <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
                                                                     <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
-                                                                    Client déjà enregistrer<span/>
+                                                                    Le client est-il déjà enregistré ?<span/>
                                                                 </label>
                                                             </div>
 
@@ -957,7 +966,8 @@ const ClaimAdd = props => {
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la date de l'evernement"
                                                             value={data.event_occured_at}
-                                                            onChange={(e) => onChangeEventOccuredAt(e)}
+                                                            max={maxDate}
+                                                            onChange={(e) => handleEventOccuredAt(e)}
                                                         />
                                                         {
                                                             error.event_occured_at.length ? (

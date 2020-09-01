@@ -3,9 +3,25 @@ import moment from "moment";
 import {verifyPermission} from "../../../helpers/permission";
 import {ToastBottomEnd} from "../Toast";
 import {toastErrorMessageWithParameterConfig} from "../../../config/toastConfig";
+import KanbanElementDetail from "./KanbanElementDetail";
 
 const ColToMeasure = (props) => {
     var currentFilterData = props.claims;
+
+    const filterTimeLimit = () => {
+        currentFilterData = currentFilterData.filter(claim => {
+            if (props.filterTimeLimit === "all")
+                return true;
+            else if (props.filterTimeLimit === "today")
+                return claim.time_expire === 0;
+            else if (props.filterTimeLimit === "timeout")
+                return claim.time_expire < 0;
+            else if (props.filterTimeLimit === "notTimeout")
+                return claim.time_expire > 0;
+            else
+                return false;
+        });
+    };
 
     const filterByInstitution = () => {
         currentFilterData = currentFilterData.filter(claim => claim.created_by.institution_id.indexOf(props.filterInstitution.label) >= 0);
@@ -38,13 +54,8 @@ const ColToMeasure = (props) => {
     if (props.filterPeriod)
         filterByPeriod();
 
-    const toMeasure = (claim) => {
-        if (verifyPermission(props.userPermissions, 'update-claim-satisfaction-measured')) {
-            document.location.href = `/process/claim_measure/${claim.id}/detail`;
-        } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("vous n'avez pas l'autorisation de faire cette action"))
-        }
-    };
+    if (props.filterTimeLimit)
+        filterTimeLimit();
 
     return (
         <div data-id="_backlog" data-order="1" className="kanban-board" style={{ width: "250px", marginLeft: "0px", marginRight: "0px" }}>
@@ -56,31 +67,12 @@ const ColToMeasure = (props) => {
             <main className="kanban-drag" style={{height: "679px", overflowY: "scroll"}}>
                 {
                     currentFilterData.map((claim, index) => (
-                        <div className="kt-portlet" key={index} style={{cursor: "pointer"}} onClick={() => toMeasure(claim)}>
-                            <div className="kt-portlet__head kt-portlet__head--right kt-portlet__head--noborder  kt-ribbon kt-ribbon--clip kt-ribbon--left kt-ribbon--info">
-                                {
-                                    claim.time_expire ? (
-                                        <div className="kt-ribbon__target" style={{ top: "12px", zIndex: 0 }}>
-                                            <span className="kt-ribbon__inner" style={{backgroundColor: claim.time_expire >= 0 ? "#C6F6D5" : "#FED7D7"}}/>
-                                            <strong style={{color: claim.time_expire >= 0 ? "#2F855A" : "#C53030"}}>
-                                                {claim.time_expire} {claim.time_expire === 0 || claim.time_expire === 1 || claim.time_expire === -1 ? "jour" : "jours"}
-                                            </strong>
-                                        </div>
-                                    ) : ""
-                                }
-                                <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        {claim.claimer.lastname+" "+claim.claimer.firstname}
-                                    </h3>
-                                </div>
-                            </div>
-                            <div className="kt-portlet__body kt-portlet__body--fit-top">
-                                <p style={{textAlign: "left"}}>
-                                    La reclamation dont l'objet est <strong>{claim.claim_object.name["fr"]}</strong> à eu <br/> lieu le <strong>{moment(new Date(claim.created_at)).format("DD/MM/YYYY")}</strong> <br/>
-                                    voici la description: {claim.description.length > 34 ? claim.description.substring(0, 34)+"..." : claim.description}
-                                </p>
-                            </div>
-                        </div>
+                        <KanbanElementDetail
+                            key={index}
+                            onShowDetail={props.onShowDetail}
+                            claim={claim}
+                            index={index}
+                        />
                     ))
                 }
             </main>

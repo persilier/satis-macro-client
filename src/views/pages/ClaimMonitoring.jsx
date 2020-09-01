@@ -59,6 +59,7 @@ const ClaimMonitoring = (props) => {
     const [filterUnits, setFilterUnits] = useState([]);
     const [filterStaffs, setFilterStaffs] = useState([]);
     const [filterObjects, setFilterObjects] = useState([]);
+    const [filterTimeLimit, setFilterTimeLimit] = useState("all");
 
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -90,8 +91,6 @@ const ClaimMonitoring = (props) => {
                     setInstitutions(formatSelectOption(response.data.institutions, 'name', false));
                     setCategories(formatSelectOption(response.data.claimCategories, 'name', "fr"));
 
-                    console.log("data", response.data);
-
                     setUnits(response.data.units);
                     setStaffs(response.data.staffs);
                     setObjects(response.data.claimObjects);
@@ -102,7 +101,7 @@ const ClaimMonitoring = (props) => {
             ;
         }
         fetchData();
-    }, [props.plan, props.userPermissions]);
+    }, [props.plan, props.userPermissions, appConfig.apiDomaine]);
 
     const formatFilterStaff = staff => {
         const newFilterStaffs = [];
@@ -110,7 +109,7 @@ const ClaimMonitoring = (props) => {
             newFilterStaffs.push(
                 {
                     value: staff[i].id,
-                    label: `${staff[i].identite ? staff[i].identite.lastname+" "+staff[i].identite.firstname : ""}`,
+                    label: `${staff[i].identite ? staff[i].identite.lastname+" "+staff[i].identite.firstname : null}`,
                 }
             );
         }
@@ -237,6 +236,10 @@ const ClaimMonitoring = (props) => {
         document.getElementById("detailClaimButton").click();
     };
 
+    const handleTimeLimitChange = (e) => {
+        setFilterTimeLimit(e.target.value);
+    };
+
     return (
         verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission(props.userPermissions, "list-monitoring-claim-my-institution") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -269,9 +272,9 @@ const ClaimMonitoring = (props) => {
 
                         <div className="kt-portlet__body">
 
-                            <div className="form-group row" style={{marginRight: "12px"}}>
+                            <div className="form-group row bg-light pb-3 pt-3 rounded">
                                 <div className="col">
-                                    <label>Choix du filtre</label>
+                                    <label style={{fontSize: "1.5rem"}}>Filtre Status</label>
                                     <div className="kt-checkbox-inline">
                                         <label className="kt-checkbox">
                                             <input type="checkbox" checked={toComplete} onChange={e => onChangeToComplete(e)}/> A completer<span/>
@@ -303,74 +306,90 @@ const ClaimMonitoring = (props) => {
                                 </div>
                             </div>
 
-                            <div className="form-group row" style={{marginRight: "12px"}}>
-                                <div className={"col"}>
-                                    <label htmlFor="institution">Institution</label>
-                                    <Select
-                                        placeholder={"Veillez selectioner l'institution"}
-                                        isClearable
-                                        value={institution}
-                                        onChange={onChangeInstitution}
-                                        options={institutions}
-                                    />
-                                </div>
+                            <div className="form-group row bg-light pt-3 rounded">
+                                <div className="col">
+                                    <span className="d-block mb-3" style={{fontSize: "1.5rem", fontWeight: "400"}}>Autres Filtres</span>
 
-                                <div className={"col"}>
-                                    <label htmlFor="unite">Unité</label>
-                                    <Select
-                                        isClearable
-                                        placeholder={"Veillez selectioner l'unité"}
-                                        value={unit}
-                                        onChange={onChangeUnit}
-                                        options={filterUnits}
-                                    />
-                                </div>
+                                    <div className="form-group row" style={{marginRight: "12px"}}>
+                                        <div className={"col"}>
+                                            <label htmlFor="institution">Institution</label>
+                                            <Select
+                                                placeholder={"Veillez selectioner l'institution"}
+                                                isClearable
+                                                value={institution}
+                                                onChange={onChangeInstitution}
+                                                options={institutions}
+                                            />
+                                        </div>
 
-                                <div className={"col"}>
-                                    <label htmlFor="staff">Agent</label>
-                                    <Select
-                                        isClearable
-                                        placeholder={"Veillez selectioner l'agent"}
-                                        value={staff}
-                                        onChange={onChangeStaff}
-                                        options={filterStaffs}
-                                    />
-                                </div>
-                            </div>
+                                        <div className={"col"}>
+                                            <label htmlFor="unite">Unité</label>
+                                            <Select
+                                                isClearable
+                                                placeholder={"Veillez selectioner l'unité"}
+                                                value={unit}
+                                                onChange={onChangeUnit}
+                                                options={filterUnits}
+                                            />
+                                        </div>
 
-                            <div className="form-group row" style={{marginRight: "12px"}}>
-                                <div className={"col"}>
-                                    <label htmlFor="category">Catégorie</label>
-                                    <Select
-                                        value={category}
-                                        placeholder={"Veillez selectioner la catégorie"}
-                                        isClearable
-                                        onChange={onChangeCategory}
-                                        options={categories}
-                                    />
-                                </div>
+                                        <div className={"col"}>
+                                            <label htmlFor="staff">Agent</label>
+                                            <Select
+                                                isClearable
+                                                placeholder={"Veillez selectioner l'agent"}
+                                                value={staff}
+                                                onChange={onChangeStaff}
+                                                options={filterStaffs}
+                                            />
+                                        </div>
+                                    </div>
 
-                                <div className={"col"}>
-                                    <label htmlFor="object">Objet</label>
-                                    <Select
-                                        isClearable
-                                        value={object}
-                                        placeholder={"Veillez selectioner l'objet"}
-                                        onChange={onChangeObject}
-                                        options={filterObjects}
-                                    />
-                                </div>
-                            </div>
+                                    <div className="form-group row" style={{marginRight: "12px"}}>
+                                        <div className="col">
+                                            <label htmlFor="category">Catégorie</label>
+                                            <Select
+                                                value={category}
+                                                placeholder={"Veillez selectioner la catégorie"}
+                                                isClearable
+                                                onChange={onChangeCategory}
+                                                options={categories}
+                                            />
+                                        </div>
 
-                            <div className="form-group row" style={{marginRight: "12px"}}>
-                                <div className={"col"}>
-                                    <label htmlFor="startDate">Date début</label>
-                                    <input type="date" className="w-100 form-control" value={startDate} onChange={e => onChangeStartDate(e)}/>
-                                </div>
+                                        <div className="col">
+                                            <label htmlFor="object">Objet</label>
+                                            <Select
+                                                isClearable
+                                                value={object}
+                                                placeholder={"Veillez selectioner l'objet"}
+                                                onChange={onChangeObject}
+                                                options={filterObjects}
+                                            />
+                                        </div>
 
-                                <div className={"col"}>
-                                    <label htmlFor="endDate">Date fin</label>
-                                    <input type="date" className="w-100 form-control" value={endDate} onChange={e => onChangeEndDate(e)}/>
+                                        <div class="col">
+                                            <label htmlFor="expireDate">Délai</label>
+                                            <select name="" id="" className="form-control" value={filterTimeLimit} onChange={handleTimeLimitChange}>
+                                                <option value="all">Tout</option>
+                                                <option value="today">Expire aujourd'hui</option>
+                                                <option value="timeout">Délai dépassé</option>
+                                                <option value="notTimeout">Délai non dépassé</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group row" style={{marginRight: "12px"}}>
+                                        <div className={"col"}>
+                                            <label htmlFor="startDate">Date début</label>
+                                            <input type="date" className="w-100 form-control" value={startDate} onChange={e => onChangeStartDate(e)}/>
+                                        </div>
+
+                                        <div className={"col"}>
+                                            <label htmlFor="endDate">Date fin</label>
+                                            <input type="date" className="w-100 form-control" value={endDate} onChange={e => onChangeEndDate(e)}/>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -388,8 +407,9 @@ const ClaimMonitoring = (props) => {
                                             filterCategory={category}
                                             filterObject={object}
                                             filterPeriod={(startDate && endDate)  ? (new Date(startDate) <= new Date(endDate)) ? {start: new Date(startDate), end: new Date(endDate)} : null : null}
+                                            filterTimeLimit={filterTimeLimit}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
 
                                 {
@@ -405,8 +425,9 @@ const ClaimMonitoring = (props) => {
                                             filterCategory={category}
                                             filterObject={object}
                                             filterPeriod={(startDate && endDate)  ? (new Date(startDate) <= new Date(endDate)) ? {start: new Date(startDate), end: new Date(endDate)} : null : null}
+                                            filterTimeLimit={filterTimeLimit}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
 
                                 {
@@ -423,8 +444,9 @@ const ClaimMonitoring = (props) => {
                                             filterCategory={category}
                                             filterObject={object}
                                             filterPeriod={(startDate && endDate)  ? (new Date(startDate) <= new Date(endDate)) ? {start: new Date(startDate), end: new Date(endDate)} : null : null}
+                                            filterTimeLimit={filterTimeLimit}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
 
                                 {
@@ -442,8 +464,9 @@ const ClaimMonitoring = (props) => {
                                             filterCategory={category}
                                             filterObject={object}
                                             filterPeriod={(startDate && endDate)  ? (new Date(startDate) <= new Date(endDate)) ? {start: new Date(startDate), end: new Date(endDate)} : null : null}
+                                            filterTimeLimit={filterTimeLimit}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
 
                                 {
@@ -462,8 +485,9 @@ const ClaimMonitoring = (props) => {
                                             filterCategory={category}
                                             filterObject={object}
                                             filterPeriod={(startDate && endDate)  ? (new Date(startDate) <= new Date(endDate)) ? {start: new Date(startDate), end: new Date(endDate)} : null : null}
+                                            filterTimeLimit={filterTimeLimit}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
 
 
@@ -482,8 +506,9 @@ const ClaimMonitoring = (props) => {
                                             filterCategory={category}
                                             filterObject={object}
                                             filterPeriod={(startDate && endDate)  ? (new Date(startDate) <= new Date(endDate)) ? {start: new Date(startDate), end: new Date(endDate)} : null : null}
+                                            filterTimeLimit={filterTimeLimit}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
 
                                 <button style={{display: "none"}} id={"detailClaimButton"} type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4_2"/>
@@ -493,14 +518,14 @@ const ClaimMonitoring = (props) => {
                                             claim={claimSelected}
                                             onCloseModal={() => setClaimSelected(null)}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

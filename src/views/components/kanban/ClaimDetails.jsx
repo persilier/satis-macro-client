@@ -82,10 +82,10 @@ const ClaimDetails = (props) => {
                                     </div>
                                     <div className="kt-wizard-v2__nav-label">
                                         <div className="kt-wizard-v2__nav-label-title">
-                                            Information client
+                                            Client
                                         </div>
                                         <div className="kt-wizard-v2__nav-label-desc">
-                                            Voir les détails du compte client
+                                            Acceder aux détails du client
                                         </div>
                                     </div>
                                 </div>
@@ -98,10 +98,10 @@ const ClaimDetails = (props) => {
                                     </div>
                                     <div className="kt-wizard-v2__nav-label">
                                         <div className="kt-wizard-v2__nav-label-title">
-                                            Information Plainte
+                                            Réclamation
                                         </div>
                                         <div className="kt-wizard-v2__nav-label-desc">
-                                            Voir les détails de la plainte
+                                            Acceder aux détails de la réclamation
                                         </div>
                                     </div>
                                 </div>
@@ -114,11 +114,16 @@ const ClaimDetails = (props) => {
                                     </div>
                                     <div className="kt-wizard-v2__nav-label">
                                         <div className="kt-wizard-v2__nav-label-title">
-                                            Pièces jointe plainte
-                                            <span className="mx-lg-4 kt-badge kt-badge--success  kt-badge--inline kt-badge--pill">{claim.files.length}</span>
+                                            Pièces jointes
+                                            {
+                                                !props.claim ? "" : (
+                                                    <span
+                                                        className="mx-lg-4 kt-badge kt-badge--success  kt-badge--inline kt-badge--pill">{props.claim.files.length}</span>
+                                                )
+                                            }
                                         </div>
                                         <div className="kt-wizard-v2__nav-label-desc">
-                                            Voir les pièces jointes de la plainte
+                                            Acceder à la liste des pièces jointes
                                         </div>
                                     </div>
                                 </div>

@@ -91,7 +91,7 @@ const ReasonModal = props => {
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button id={"close-button-reason"} type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => props.onClose()}>Close</button>
+                        <button id={"close-button-reason"} type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => props.onClose()}>Fermer</button>
                         {
                             !startRequest ? (
                                 <button type="button" className="btn btn-primary" onClick={() => sendData()}>Envoyer</button>

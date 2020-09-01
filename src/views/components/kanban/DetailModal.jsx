@@ -12,7 +12,7 @@ const DetailModal = (props) => {
             <div className="modal-dialog modal-xl" role="document">
                 <div className="modal-content" style={{width: "1000px"}}>
                     <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Détail plainte</h5>
+                        <h5 className="modal-title" id="exampleModalLabel">Détail réclamation</h5>
                         <button onClick={() => props.onCloseModal()} type="button" className="close" data-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
