@@ -9,7 +9,6 @@ import DashboardStatistic from "../components/DashboardForm/DashboardStatistic";
 import GraphChannel from "../components/DashboardForm/GraphChannel";
 import DashboardClaimsActivity from "../components/DashboardForm/DashboardClaimsActivity";
 import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
-import ClaimToAgence from "../components/DashboardForm/ClaimToAgence";
 import ClaimToPointOfServices from "../components/DashboardForm/ClaimToPointOfServices";
 
 
@@ -72,9 +71,6 @@ const Dashboards = () => {
                             <ClaimToPointOfServices/>
                         </div>
 
-                        {/*<div className="kt-portlet">*/}
-                        {/*    <ClaimToAgence/>*/}
-                        {/*</div>*/}
                     </div>
                 </div>
 

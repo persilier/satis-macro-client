@@ -21,7 +21,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastEditErrorMessageConfig, toastSuccessMessageWithParameterConfig,
+    toastEditErrorMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
@@ -142,6 +142,10 @@ const IncompleteClaimsEdit = props => {
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [isRequire, setIsRequire] = useState(null);
+
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 1);
+    const maxDate = (currentDate.toISOString()).substr(0, (currentDate.toISOString()).length - 1);
 
     useEffect(() => {
         async function fetchData() {
@@ -370,7 +374,11 @@ const IncompleteClaimsEdit = props => {
 
     const onChangeEventOccuredAt = e => {
         const newData = {...data};
-        newData.event_occured_at = e.target.value;
+        if (new Date(e.target.value) >= new Date()) {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Date invalide"));
+            newData.event_occured_at = "";
+        } else
+            newData.event_occured_at = e.target.value;
         setData(newData);
     };
 
@@ -884,6 +892,7 @@ const IncompleteClaimsEdit = props => {
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer la date de l'evernement"
                                                             value={data.event_occured_at}
+                                                            max={maxDate}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
                                                         {
