@@ -50,9 +50,9 @@ const ClaimToInstitution = (props) => {
                         let newData = {...defaultData};
 
                         newData.options.labels = ServiceData;
-                        if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
-                            newData.series = Object.values(pointOfService).map(serie => serie.myInstitution)
-                        }
+                        newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
+                        // if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
+                        // }
                         // console.log(newData,"newData");
                         setPointOfServiceData(newData);
                         setLoad(false)
@@ -71,30 +71,27 @@ const ClaimToInstitution = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
-            (
-                <div>
-                    <div className="kt-portlet__head">
-                        <div className="kt-portlet__head-label">
-                            <h3 className="kt-portlet__head-title">Satisfaction des points de services qui reçoivent plus de
-                                réclamations sur les 30 derniers jours</h3>
+
+        <div>
+            <div className="kt-portlet__head">
+                <div className="kt-portlet__head-label">
+                    <h3 className="kt-portlet__head-title">Satisfaction des points de services qui reçoivent plus de
+                        réclamations sur les 30 derniers jours</h3>
+                </div>
+            </div>
+            {
+                load ? (
+                    <LoadingTable/>
+                ) : (
+                    <div className="kt-portlet__body">
+                        <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
+                            <Chart options={pointOfServiceData.options} series={pointOfServiceData.series}
+                                   type="pie" width={550}/>
                         </div>
                     </div>
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
-                            <div className="kt-portlet__body">
-                                <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
-                                    <Chart options={pointOfServiceData.options} series={pointOfServiceData.series}
-                                           type="pie" width={550} />
-                                </div>
-                            </div>
-                        )
-                    }
-                </div>
-            ) : ""
-
+                )
+            }
+        </div>
     );
 };
 const mapStateToProps = (state) => {

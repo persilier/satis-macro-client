@@ -49,9 +49,7 @@ const ClaimToInstitution = (props) => {
                         // console.log(institutionData,"institutionData");
                         let newData = {...defaultData};
                         newData.options.labels = institutionData;
-                        if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
-                            newData.series = Object.values(institutionTarget).map(serie => serie.allInstitution)
-                        }
+                        newData.series = Object.values(institutionTarget).map(serie => serie.allInstitution);
                         // console.log(newData,"newData");
                         setInstitutionData(newData);
                         setLoad(false)
@@ -70,8 +68,7 @@ const ClaimToInstitution = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
-            (
+
                 <div>
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
@@ -89,8 +86,6 @@ const ClaimToInstitution = (props) => {
                             </div>
                         )}
                 </div>
-            ) : ""
-
     );
 };
 const mapStateToProps = (state) => {

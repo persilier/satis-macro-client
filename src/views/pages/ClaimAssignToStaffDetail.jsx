@@ -183,6 +183,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                         {
                                                             claim ? (
                                                                 <TreatmentForm
+                                                                    amount_disputed={claim?claim.amount_disputed:null}
                                                                     activeTreatment={
                                                                         claim.active_treatment ? (
                                                                             claim.active_treatment
@@ -192,6 +193,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                                 />
                                                             ) : (
                                                                 <TreatmentForm
+                                                                    amount_disputed={claim?claim.amount_disputed:null}
                                                                     getId={`${id}`}
                                                                 />
                                                             )

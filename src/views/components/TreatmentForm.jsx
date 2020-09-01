@@ -65,7 +65,7 @@ const TreatmentForm = (props) => {
     };
     const onClick = (e) => {
         e.preventDefault();
-        console.log(data,"data")
+        console.log(data, "data");
         setStartRequest(true);
         axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, data)
             .then(response => {
@@ -82,33 +82,36 @@ const TreatmentForm = (props) => {
     };
     return (
         <div>
-            <div
-                className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
-                <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="name">Montant retourné</label>
-                <div className="col-lg-9 col-xl-6">
-                    <input
-                        id="amount"
-                        type="number"
-                        min="0"
-                        className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
-                        placeholder="Veillez entrer le montant à retourner"
-                        value={data.amount_returned}
-                        onChange={(e) => onChangeAmount(e)}
-                    />
-                    {
-                        error.amount_returned.length ? (
-                            error.amount_returned.map((error, index) => (
-                                <div key={index}
-                                     className="invalid-feedback">
-                                    {error}
-                                </div>
-                            ))
-                        ) : ""
-                    }
-                </div>
-            </div>
-
+            {
+                props.amount_disputed ?
+                    <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
+                        <label className="col-xl-3 col-lg-3 col-form-label"
+                               htmlFor="name">Montant retourné
+                        </label>
+                        <div className="col-lg-9 col-xl-6">
+                            <input
+                                id="amount"
+                                type="number"
+                                min="0"
+                                className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
+                                placeholder="Veillez entrer le montant à retourner"
+                                value={data.amount_returned}
+                                onChange={(e) => onChangeAmount(e)}
+                            />
+                            {
+                                error.amount_returned.length ? (
+                                    error.amount_returned.map((error, index) => (
+                                        <div key={index}
+                                             className="invalid-feedback">
+                                            {error}
+                                        </div>
+                                    ))
+                                ) : ""
+                            }
+                        </div>
+                    </div>
+                    : ""
+            }
             <div
                 className={error.solution.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"

@@ -10,9 +10,11 @@ import GraphChannel from "../components/DashboardForm/GraphChannel";
 import DashboardClaimsActivity from "../components/DashboardForm/DashboardClaimsActivity";
 import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
 import ClaimToPointOfServices from "../components/DashboardForm/ClaimToPointOfServices";
+import {verifyPermission} from "../../helpers/permission";
+import {connect} from "react-redux";
 
 
-const Dashboards = () => {
+const Dashboards = (props) => {
     document.title = "Satis client - Dashboard";
 
     return (
@@ -63,13 +65,22 @@ const Dashboards = () => {
                     </div>
 
                     <div>
-                        <div className="kt-portlet">
-                            <ClaimToInstitution/>
-                        </div>
+                        {
+                            verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
+                            (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
+                                <div className="kt-portlet">
+                                    <ClaimToInstitution/>
+                                </div> : ""
+                        }
 
-                        <div className="kt-portlet">
-                            <ClaimToPointOfServices/>
-                        </div>
+                        {
+                            !verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
+                            verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
+                                <div className="kt-portlet">
+                                    <ClaimToPointOfServices/>
+                                </div> : ""
+                        }
+
 
                     </div>
                 </div>
@@ -81,4 +92,10 @@ const Dashboards = () => {
 
 };
 
-export default Dashboards;
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
+
+export default connect(mapStateToProps)(Dashboards);
