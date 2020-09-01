@@ -179,6 +179,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-content">
+                                                        {console.log(claim ,"claim_treatment" )}
                                                         {
                                                             claim ? (
                                                                 <TreatmentForm

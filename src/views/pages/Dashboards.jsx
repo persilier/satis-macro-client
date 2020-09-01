@@ -9,6 +9,8 @@ import DashboardStatistic from "../components/DashboardForm/DashboardStatistic";
 import GraphChannel from "../components/DashboardForm/GraphChannel";
 import DashboardClaimsActivity from "../components/DashboardForm/DashboardClaimsActivity";
 import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
+import ClaimToAgence from "../components/DashboardForm/ClaimToAgence";
+import ClaimToPointOfServices from "../components/DashboardForm/ClaimToPointOfServices";
 
 
 const Dashboards = () => {
@@ -27,7 +29,7 @@ const Dashboards = () => {
             </div>
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable information={"Représentation graphique des statiques des collectes et traitements des réclamations sur les 30 derniers jours"} />
+                {/*<InfirmationTable information={"Représentation graphique des statiques des collectes et traitements des réclamations sur les 30 derniers jours"} />*/}
                 <div>
                     <div className="kt-portlet">
                         <DashboardClaimsAll/>
@@ -62,7 +64,17 @@ const Dashboards = () => {
                     </div>
 
                     <div>
-                        <ClaimToInstitution/>
+                        <div className="kt-portlet">
+                            <ClaimToInstitution/>
+                        </div>
+
+                        <div className="kt-portlet">
+                            <ClaimToPointOfServices/>
+                        </div>
+
+                        {/*<div className="kt-portlet">*/}
+                        {/*    <ClaimToAgence/>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
 

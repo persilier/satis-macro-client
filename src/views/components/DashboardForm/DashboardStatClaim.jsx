@@ -20,15 +20,15 @@ const DashboardStatClaim = (props) => {
         series: [
 
             {
-                name: "Satisfaisantes",
+                name: "Mesure Satisfaction",
                 data: satisfactionData ? satisfactionData.series.data1 : []
             },
             {
-                name: "Non Satisfaisantes",
+                name: "Satisfaisantes",
                 data: satisfactionData ? satisfactionData.series.data2 : []
             },
             {
-                name: 'Mesure Satisfaction',
+                name: 'Non Satisfaisantes',
                 data: satisfactionData ? satisfactionData.series.data3 : []
             }
         ],
@@ -63,7 +63,7 @@ const DashboardStatClaim = (props) => {
                 },
             },
             xaxis: {
-                categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Dec'],
+                categories:satisfactionData ? satisfactionData.options.xaxis.categories : [],
                 title: {
                     text: 'Mois'
                 }
@@ -78,37 +78,39 @@ const DashboardStatClaim = (props) => {
         async function fetchData() {
             axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
-
+                    // console.log(response.data, "claimerSatisfactionEvolution")
                     if (!isCancelled) {
                         let claimSatifaction = response.data.claimerSatisfactionEvolution;
                         let satisfiedData = [];
-                        for (const satisfied in claimSatifaction[1]) {
+                        for (const satisfied in Object.values(claimSatifaction)[0]) {
                             satisfiedData.push(satisfied);
                         }
+                        // console.log(satisfiedData,"satisfiedData")
                         let newData = [];
                         for (const key in claimSatifaction) {
                             let totalSatisfaction = claimSatifaction[key];
                             if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
                                 newData.push({
                                     month: key,
-                                    data0: totalSatisfaction.satisfied.allInstitution,
-                                    data1: totalSatisfaction.unsatisfied.allInstitution,
-                                    data2: totalSatisfaction.measured.allInstitution
+                                    data0: totalSatisfaction.measured.allInstitution,
+                                    data1: totalSatisfaction.satisfied.allInstitution,
+                                    data2: totalSatisfaction.unsatisfied.allInstitution
                                 })
                             } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
                                 newData.push({
                                     month: key,
-                                    data0: totalSatisfaction.satisfied.myInstitution,
-                                    data1: totalSatisfaction.unsatisfied.myInstitution,
-                                    data2: totalSatisfaction.measured.myInstitution
+                                    data0: totalSatisfaction.measured.myInstitution,
+                                    data1: totalSatisfaction.satisfied.myInstitution,
+                                    data2: totalSatisfaction.unsatisfied.myInstitution
                                 })
                             }
                         }
-
                         let newSatisfaction = {...defaultData};
+                        newSatisfaction.options.xaxis.categories=Object.values(newData.map(label=>label.month));
                         for (let i = 0; i <= satisfiedData.length - 1; i++) {
                             newSatisfaction.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
                         }
+                        // console.log(newSatisfaction,"WITH_MONTH");
                         setSatisfactionData(newSatisfaction);
                         setLoad(false)
                     }
@@ -131,19 +133,20 @@ const DashboardStatClaim = (props) => {
             <div className="kt-portlet">
                 <div className="kt-portlet__head">
                     <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Evolution de la satisfaction des réclamants</h3>
+                        <h3 className="kt-portlet__head-title">Evolution de la satisfaction des réclamants sur les 11
+                            derniers mois</h3>
                     </div>
                 </div>
                 {
                     load ? (
                         <LoadingTable/>
                     ) : (
-                    satisfactionData ?
-                        <div id="chart" className="kt-portlet__body">
-                            <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
-                                   height={350}/>
-                        </div>
-                        : ""
+                        satisfactionData ?
+                            <div id="chart" className="kt-portlet__body">
+                                <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
+                                       height={350}/>
+                            </div>
+                            : ""
                     )
                 }
             </div>

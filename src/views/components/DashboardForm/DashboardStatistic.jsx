@@ -72,7 +72,7 @@ const DashboardStatistic = (props) => {
             },
             grid: {
                 row: {
-                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    colors: ['#f3f3f3', 'transparent'],
                     opacity: 0.2
                 },
             },
@@ -82,7 +82,7 @@ const DashboardStatistic = (props) => {
             //     min: -1
             // },
             xaxis: {
-                categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Dec'],
+                categories: data ? data.options.xaxis.categories : [],
                 title: {
                     text: 'Mois'
                 }
@@ -97,12 +97,13 @@ const DashboardStatistic = (props) => {
             axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
                     if (!isCancelled) {
+                        // console.log(response.data, "claimerProcessEvolution");
                         let claimProcess = response.data.claimerProcessEvolution;
                         let processData = [];
-                        for (const processus in claimProcess[1]) {
+                        for (const processus in Object.values(claimProcess)[0]) {
                             processData.push(processus);
                         }
-
+                        // console.log(processData,"processData");
                         let newData = [];
                         for (const key in claimProcess) {
                             let totalProcess = claimProcess[key];
@@ -127,9 +128,11 @@ const DashboardStatistic = (props) => {
                             }
                         }
                         let newProcess = {...defaultData};
-                        for (var i = 0; i <= processData.length - 1; i++) {
+                        newProcess.options.xaxis.categories=Object.values(newData.map(label=>label.month));
+                        for (let i = 0; i <= processData.length - 1; i++) {
                             newProcess.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
                         }
+                        // console.log(newProcess,"WITH_MONTH");
                         setProcessData(newProcess);
                         setLoad(false)
                     }
