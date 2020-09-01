@@ -9,16 +9,16 @@ import appConfig from "../../../config/appConfig";
 
 const ClaimToInstitution = (props) => {
     const [load, setLoad] = useState(true);
-    const [institutionData, setInstitutionData] = useState("");
+    const [pointOfServiceData, setPointOfServiceData] = useState("");
 
     const defaultData = {
-        series: institutionData?institutionData.series:[],
+        series: pointOfServiceData ? pointOfServiceData.series : [],
         options: {
             chart: {
                 width: 380,
                 type: 'pie',
             },
-            labels: institutionData?institutionData.options.labels:[],
+            labels: pointOfServiceData ? pointOfServiceData.options.labels : [],
             responsive: [{
                 breakpoint: 480,
                 options: {
@@ -41,19 +41,20 @@ const ClaimToInstitution = (props) => {
                 .then(response => {
                     if (!isCancelled) {
                         // console.log(response.data, "ProcessEvolution");
-                        let institutionTarget = response.data.institutionsTargeted;
-                        let institutionData = [];
-                        for (const processus in institutionTarget) {
-                            institutionData.push(processus);
+                        let pointOfService = response.data.pointOfServicesTargeted;
+                        let ServiceData = [];
+                        for (const processus in pointOfService) {
+                            ServiceData.push(processus);
                         }
-                        // console.log(institutionData,"institutionData");
+                        // console.log(pointOfServiceData,"pointOfServiceData");
                         let newData = {...defaultData};
-                        newData.options.labels = institutionData;
-                        if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
-                            newData.series = Object.values(institutionTarget).map(serie => serie.allInstitution)
+
+                        newData.options.labels = ServiceData;
+                        if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
+                            newData.series = Object.values(pointOfService).map(serie => serie.myInstitution)
                         }
                         // console.log(newData,"newData");
-                        setInstitutionData(newData);
+                        setPointOfServiceData(newData);
                         setLoad(false)
                     }
                 })
@@ -70,7 +71,7 @@ const ClaimToInstitution = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
+        verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
             (
                 <div>
                     <div className="kt-portlet__head">
@@ -83,11 +84,14 @@ const ClaimToInstitution = (props) => {
                         load ? (
                             <LoadingTable/>
                         ) : (
-                            <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
-                                <Chart options={institutionData.options} series={institutionData.series} type="pie"
-                                       width={380}/>
+                            <div className="kt-portlet__body">
+                                <div id="chart" className="d-flex justify-content-center">
+                                    <Chart options={pointOfServiceData.options} series={pointOfServiceData.series}
+                                           type="pie" width={380}/>
+                                </div>
                             </div>
-                        )}
+                        )
+                    }
                 </div>
             ) : ""
 
