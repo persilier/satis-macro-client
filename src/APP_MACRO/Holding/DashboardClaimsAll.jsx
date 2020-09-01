@@ -44,7 +44,7 @@ const DashboardClaimsAll = (props) => {
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h3 className="kt-portlet__head-title">
-                                Statistiques des Réclamations de toutes les Institutions
+                                Statistiques des Réclamations de toutes les Institutions sur les 30 derniers jours
                             </h3>
                         </div>
                     </div>

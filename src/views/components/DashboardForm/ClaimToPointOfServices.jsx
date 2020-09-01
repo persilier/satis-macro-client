@@ -77,7 +77,7 @@ const ClaimToInstitution = (props) => {
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h3 className="kt-portlet__head-title">Satisfaction des points de services qui reçoivent plus de
-                                réclamations</h3>
+                                réclamations sur les 30 derniers jours</h3>
                         </div>
                     </div>
                     {

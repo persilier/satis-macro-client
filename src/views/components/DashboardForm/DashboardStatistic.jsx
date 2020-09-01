@@ -76,11 +76,7 @@ const DashboardStatistic = (props) => {
                     opacity: 0.2
                 },
             },
-            // yaxis: {
-            //     tickAmount: 2,
-            //     max: 1,
-            //     min: -1
-            // },
+
             xaxis: {
                 categories: data ? data.options.xaxis.categories : [],
                 title: {
@@ -155,7 +151,8 @@ const DashboardStatistic = (props) => {
             <div className="kt-portlet">
                 <div className="kt-portlet__head">
                     <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Evolution de la satisfaction des réclamations</h3>
+                        <h3 className="kt-portlet__head-title">Evolution de la satisfaction des réclamations sur les 11
+                            derniers mois</h3>
                     </div>
                 </div>
 

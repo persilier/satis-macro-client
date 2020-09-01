@@ -86,7 +86,7 @@ const DashboardSummaryReport = (props) => {
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h3 className="kt-portlet__head-title">
-                                Statistique des cinq (05) plus fréquents Objets de Réclamations
+                                Statistique des cinq (05) plus fréquents Objets de Réclamations sur les 30 derniers jours
                             </h3>
                         </div>
                     </div>

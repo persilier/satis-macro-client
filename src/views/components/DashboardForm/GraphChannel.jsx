@@ -95,7 +95,7 @@ const GraphChannel = (props) => {
             <div className="kt-portlet">
                 <div className="kt-portlet__head">
                     <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Total Réclamations Reçues Par Canal</h3>
+                        <h3 className="kt-portlet__head-title">Total des Réclamations reçues par Canal sur les 30 derniers jours</h3>
                     </div>
                 </div>
                 {
