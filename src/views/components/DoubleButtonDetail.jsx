@@ -1,6 +1,6 @@
 import React from "react";
 import {verifyPermission} from "../../helpers/permission";
-import {formatDateToTimeStampte} from "../../helpers/function";
+import {debug, formatDateToTimeStampte} from "../../helpers/function";
 
 const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
     return (
@@ -31,13 +31,16 @@ const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
                                                                 Nº{index + 1}</div>
                                                             {
                                                                 verifyPermission(userPermissions, "merge-claim-awaiting-assignment") ? (
-                                                                    <div
-                                                                        className="kt-widget__action">
-                                                                        <button
-                                                                            type="button"
-                                                                            className="btn btn-brand btn-sm btn-upper"
-                                                                            onClick={() => onClickFusionButton(newClaim)}>Comparer
-                                                                        </button>
+                                                                    <div className="kt-widget__action">
+                                                                        {
+                                                                            newClaim.is_mergeable ? (
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="btn btn-brand btn-sm btn-upper"
+                                                                                    onClick={() => onClickFusionButton(newClaim)}>Comparer
+                                                                                </button>
+                                                                            ) : null
+                                                                        }
                                                                     </div>
                                                                 ) : ""
                                                             }

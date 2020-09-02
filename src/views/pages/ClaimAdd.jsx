@@ -130,12 +130,15 @@ const ClaimAdd = props => {
     const [disabledInput, setDisabledInput] = useState(false);
     const [customer, setCustomer] = useState(null);
     const [possibleCustomers, setPossibleCustomers] = useState([]);
+    const [filterPossibleCustomers, setFilterPossibleCustomers] = useState([]);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [foundData, setFoundData] = useState({});
+
+    const [inputValue, setInputValue] = useState("");
 
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 1);
@@ -324,6 +327,15 @@ const ClaimAdd = props => {
             newData.account_targeted_id = "";
         }
         setData(newData);
+    };
+
+    const handleInputValueChange = value => {
+        if(value) {
+            setFilterPossibleCustomers(possibleCustomers.filter(e => e.label.toLowerCase().indexOf(value.toLowerCase()) >= 0 ))
+        } else {
+            setFilterPossibleCustomers([]);
+        }
+        setInputValue(value);
     };
 
     const onChangeAccount = selected => {
@@ -645,14 +657,16 @@ const ClaimAdd = props => {
                                                             </div>
 
                                                             <div className={"col"}>
-                                                                <label htmlFor="client">Selectionez le client</label>
+                                                                <label htmlFor="client">Recherché un client</label>
                                                                 <Select
                                                                     isClearable
                                                                     isDisabled={!disabledInput}
                                                                     placeholder={"Veuillez sélectionner le client"}
                                                                     value={customer}
+                                                                    inputValue={inputValue}
+                                                                    onInputChange={handleInputValueChange}
                                                                     onChange={handleCustomerChange}
-                                                                    options={possibleCustomers}
+                                                                    options={filterPossibleCustomers}
                                                                 />
                                                             </div>
                                                         </div>

@@ -76,6 +76,10 @@ import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
 import User from "../pages/User";
 import UserAdd from "../pages/UserAdd";
+import QualificationPeriod from "../pages/QualificationPeriod";
+import TreatmentPeriod from "../pages/TreatmentPeriod";
+import QualificationPeriodAdd from "../pages/QualificationPeriodAdd";
+import TreatmentPeriodAdd from "../pages/TreatmentPeriodAdd";
 
 const Body = () => {
     return (
@@ -468,8 +472,20 @@ const Body = () => {
                 <UserAdd/>
             </Route>
 
-            <Route exact path="/settings/users/:id/change-role">
-                <UserAdd/>
+            <Route exact path="/settings/qualification-period">
+                <QualificationPeriod/>
+            </Route>
+
+            <Route exact path="/settings/qualification-period/add">
+                <QualificationPeriodAdd/>
+            </Route>
+
+            <Route exact path="/settings/treatment-period">
+                <TreatmentPeriod/>
+            </Route>
+
+            <Route exact path="/settings/treatment-period/add">
+                <TreatmentPeriodAdd/>
             </Route>
 
             <Route path={"*"}>

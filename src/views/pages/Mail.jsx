@@ -17,13 +17,13 @@ const Mail = (props) => {
         window.location.href = ERROR_401;
 
     const defaultData = {
-        senderID: "",
-        username: "",
-        password: "",
-        "from": "",
-        server: "",
-        port: "",
-        security: ""
+        senderID: null,
+        username: null,
+        password: null,
+        "from": null,
+        server: null,
+        port: null,
+        security: null
     };
     const defaultError = {
         senderID: [],
@@ -45,7 +45,7 @@ const Mail = (props) => {
                     const newData = {
                         senderID: response.data.senderID,
                         username: response.data.username,
-                        password: "",
+                        password: null,
                         "from": response.data["from"],
                         server: response.data.server,
                         port: response.data.port,
@@ -226,7 +226,7 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -249,7 +249,7 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -272,7 +272,7 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -295,7 +295,7 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -319,7 +319,7 @@ const Mail = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -344,7 +344,7 @@ const Mail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 
