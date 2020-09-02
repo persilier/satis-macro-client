@@ -101,39 +101,38 @@ const StaffChannels = () => {
                                             <div className="form-group row" key={index}>
                                                 <label className="col col-form-label ">{channel}</label>
                                                 <div className="col">
-                                                <span
-                                                    className="kt-switch kt-switch--sm kt-switch--outline kt-switch--icon kt-switch--success ">
-                                                <label>
-                                                    {data.feedback_preferred_channels.length ?
-                                                        data.feedback_preferred_channels.map((feedback, i) => (
-                                                            feedback === channel ?
+                                                    <span className="kt-switch kt-switch--sm kt-switch--outline kt-switch--icon kt-switch--success ">
+                                                    <label>
+                                                        {data.feedback_preferred_channels.length ?
+                                                            data.feedback_preferred_channels.map((feedback, i) => (
+                                                                feedback === channel ?
 
-                                                                <input
-                                                                    key={i}
-                                                                    type="checkbox"
-                                                                    onChange={(e) => onChangeOption(e, channel)}
-                                                                    checked={"checked"}
-                                                                    name={channel}
-                                                                />
-                                                                :
-                                                                <input
-                                                                    key={i}
-                                                                    type="checkbox"
-                                                                    onChange={(e) => onChangeOption(e, channel)}
-                                                                    name={channel}
-                                                                />
-                                                        ))
-                                                    :
-                                                        <input
-                                                            type="checkbox"
-                                                            onChange={(e) => onChangeOption(e, channel)}
-                                                            name={channel}
-                                                        />
+                                                                    <input
+                                                                        key={i}
+                                                                        type="checkbox"
+                                                                        onChange={(e) => onChangeOption(e, channel)}
+                                                                        checked={"checked"}
+                                                                        name={channel}
+                                                                    />
+                                                                    :
+                                                                    <input
+                                                                        key={i}
+                                                                        type="checkbox"
+                                                                        onChange={(e) => onChangeOption(e, channel)}
+                                                                        name={channel}
+                                                                    />
+                                                            ))
+                                                        :
+                                                            <input
+                                                                type="checkbox"
+                                                                onChange={(e) => onChangeOption(e, channel)}
+                                                                name={channel}
+                                                            />
 
-                                                    }
-                                                           <span></span>
-                                                </label>
-                                                </span>
+                                                        }
+                                                               <span></span>
+                                                    </label>
+                                                    </span>
                                                 </div>
                                             </div>
                                         )) : ""

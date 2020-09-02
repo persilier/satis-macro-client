@@ -2,26 +2,52 @@ import React, {useState} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
-import {toastMergeSuccessMessageConfig} from "../../config/toastConfig";
-import {formatDateToTimeStampte} from "../../helpers/function";
+import {
+    toastErrorMessageWithParameterConfig,
+    toastMergeSuccessMessageConfig,
+    toastSuccessMessageWithParameterConfig
+} from "../../config/toastConfig";
+import {debug, formatDateToTimeStampte} from "../../helpers/function";
 
 const FusionClaim = props => {
     const [startRequest, setStartRequest] = useState(false);
+    const [choice, setChoice] = useState({
+        original: false,
+        duplicate: false
+    });
 
     const onClickFusion = () => {
-        setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {})
-            .then(response => {
-                ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
-                setStartRequest(false);
-                document.getElementById("close-button").click();
-                window.location.href = `/process/claim-assign/${response.data.id}/detail`;
-            })
-            .catch(error => {
-                setStartRequest(false);
-                console.log("Something is wrong")
-            })
-        ;
+        if (choice.original || choice.duplicate) {
+            setStartRequest(true);
+            if (choice.original && choice.duplicate)
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez choisir une seule réclamation."));
+            else {
+                setStartRequest(true);
+                axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {keep_claim: !choice.original && !choice.duplicate ? null : choice.original})
+                    .then(response => {
+                        ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
+                        setStartRequest(false);
+                        document.getElementById("close-button").click();
+                        window.location.href = `/process/claim-assign/${response.data.id}/detail`;
+                    })
+                    .catch(({response}) => {
+                        if (response.data.error.keep_claim)
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.keep_claim[0]));
+                        setStartRequest(false);
+                        console.log("Something is wrong")
+                    })
+                ;
+            }
+        } else
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez choisir la réclamation à conserver."));
+    };
+
+    const handleChoiceChange = (e) => {
+        const newChoice = {...choice};
+        if (e.target.id === "original")
+            setChoice({...newChoice, original: e.target.checked, duplicate: !e.target.checked});
+        else if(e.target.id === "duplicate")
+            setChoice({...newChoice, duplicate: e.target.checked, original: !e.target.checked});
     };
 
     const onClickCloseButton = () => {
@@ -82,6 +108,19 @@ const FusionClaim = props => {
                                         <td><strong>Attente</strong></td>
                                         <td>{props.claim.claimer_expectation ? props.claim.claimer_expectation : "Pas d'attente"}</td>
                                         <td>{props.copyClaim.claimer_expectation ? props.copyClaim.claimer_expectation : "Pas d'attente"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Choix</strong></td>
+                                        <td>
+                                            <label className="kt-checkbox">
+                                                <input id={"original"} type="checkbox" checked={choice.original} onChange={handleChoiceChange}/><span/>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label className="kt-checkbox">
+                                                <input id={"duplicate"} type="checkbox" checked={choice.duplicate} onChange={handleChoiceChange}/><span/>
+                                            </label>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

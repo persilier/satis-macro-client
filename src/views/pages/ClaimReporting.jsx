@@ -18,7 +18,7 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {formatSelectOption} from "../../helpers/function";
+import {debug, formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -293,6 +293,7 @@ const ClaimReporting = props => {
                 },
                 headeBackground: "#7F9CF5",
             };
+            debug(sendData, "sendData");
 
             axios({
                 method: 'post',
@@ -430,88 +431,88 @@ const ClaimReporting = props => {
                                                 <strong>Légende: <br/>R </strong>{"<===>"} Réclamtions
                                                 <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
                                                     <thead style={{backgroundColor: "#7F9CF5"}}>
-                                                    <tr role="row">
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending">Catégorie de <strong>R</strong>
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending">Objets de <strong>R</strong>
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> collectées
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> incomplète
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à une unité
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à un agent
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> à traiter
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> à valider
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending"><strong>R</strong> à mesurer satisfaction
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                            aria-label="Country: activate to sort column ascending">Pourcentage de Résolues
-                                                        </th>
-                                                    </tr>
+                                                        <tr role="row">
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending">Catégorie de <strong>R</strong>
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending">Objets de <strong>R</strong>
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> collectées
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> incomplète
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à une unité
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à un agent
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à traiter
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à valider
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à mesurer satisfaction
+                                                            </th>
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white" }}
+                                                                aria-label="Country: activate to sort column ascending">Pourcentage de Résolues
+                                                            </th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {
-                                                        fetchData.statistiqueObject.map((row, index) => (
-                                                            row.claim_objects.map((elRow, indexEleRow) => (
-                                                                indexEleRow === 0 ? (
-                                                                    <tr key={index}>
-                                                                        {
-                                                                            row.claim_objects.length === 0 ? (
-                                                                                <td>{row.name["fr"]}</td>
-                                                                            ) : (
-                                                                                <td rowSpan={row.claim_objects.length}>{row.name["fr"]}</td>
-                                                                            )
-                                                                        }
-                                                                        <td>{elRow.name["fr"]}</td>
-                                                                        <td>{elRow.total}</td>
-                                                                        <td>{elRow.incomplete}</td>
-                                                                        <td>{elRow.toAssignementToUnit}</td>
-                                                                        <td>{elRow.toAssignementToStaff}</td>
-                                                                        <td>{elRow.awaitingTreatment}</td>
-                                                                        <td>{elRow.toValidate}</td>
-                                                                        <td>{elRow.toMeasureSatisfaction}</td>
-                                                                        <td>{elRow.percentage} %</td>
-                                                                    </tr>
-                                                                ) : (
-                                                                    <tr key={indexEleRow}>
-                                                                        <td>{elRow.name["fr"]}</td>
-                                                                        <td>{elRow.total}</td>
-                                                                        <td>{elRow.incomplete}</td>
-                                                                        <td>{elRow.toAssignementToUnit}</td>
-                                                                        <td>{elRow.toAssignementToStaff}</td>
-                                                                        <td>{elRow.awaitingTreatment}</td>
-                                                                        <td>{elRow.toValidate}</td>
-                                                                        <td>{elRow.toMeasureSatisfaction}</td>
-                                                                        <td>{elRow.percentage} %</td>
-                                                                    </tr>
-                                                                )
+                                                        {
+                                                            fetchData.statistiqueObject.map((row, index) => (
+                                                                row.claim_objects.map((elRow, indexEleRow) => (
+                                                                    indexEleRow === 0 ? (
+                                                                        <tr key={index}>
+                                                                            {
+                                                                                row.claim_objects.length === 0 ? (
+                                                                                    <td>{row.name["fr"]}</td>
+                                                                                ) : (
+                                                                                    <td rowSpan={row.claim_objects.length}>{row.name["fr"]}</td>
+                                                                                )
+                                                                            }
+                                                                            <td>{elRow.name["fr"]}</td>
+                                                                            <td>{elRow.total}</td>
+                                                                            <td>{elRow.incomplete}</td>
+                                                                            <td>{elRow.toAssignementToUnit}</td>
+                                                                            <td>{elRow.toAssignementToStaff}</td>
+                                                                            <td>{elRow.awaitingTreatment}</td>
+                                                                            <td>{elRow.toValidate}</td>
+                                                                            <td>{elRow.toMeasureSatisfaction}</td>
+                                                                            <td>{elRow.percentage} %</td>
+                                                                        </tr>
+                                                                    ) : (
+                                                                        <tr key={indexEleRow}>
+                                                                            <td>{elRow.name["fr"]}</td>
+                                                                            <td>{elRow.total}</td>
+                                                                            <td>{elRow.incomplete}</td>
+                                                                            <td>{elRow.toAssignementToUnit}</td>
+                                                                            <td>{elRow.toAssignementToStaff}</td>
+                                                                            <td>{elRow.awaitingTreatment}</td>
+                                                                            <td>{elRow.toValidate}</td>
+                                                                            <td>{elRow.toMeasureSatisfaction}</td>
+                                                                            <td>{elRow.percentage} %</td>
+                                                                        </tr>
+                                                                    )
+                                                                ))
                                                             ))
-                                                        ))
-                                                    }
+                                                        }
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
@@ -551,52 +552,40 @@ const ClaimReporting = props => {
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead style={{backgroundColor: "#7F9CF5", borderLeft: "none", borderRight: "none"}}>
-                                                    <tr role="row">
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">Délai de qualification (en jour)
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">0-2 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">2-4 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">4-6 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">6-10 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">Plus de 10 jours
-                                                        </th>
-                                                    </tr>
+                                                        <tr role="row">
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                aria-label="Country: activate to sort column ascending">Délai de qualification (en jour)
+                                                            </th>
+                                                            {
+                                                                fetchData.statistiqueQualificationPeriod.map((el, index) => (
+                                                                    <th key={index} tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                        colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                        aria-label="Country: activate to sort column ascending">{el.libelle}
+                                                                    </th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td style={{borderRight: "none", borderLeft: "none"}}>Nombre</td>
-                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["0-2"].total}</td>
-                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["2-4"].total}</td>
-                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["4-6"].total}</td>
-                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["6-10"].total}</td>
-                                                        <td style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["+10"].total}</td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td style={{borderRight: "none", borderLeft: "none"}}>Nombre</td>
+                                                            {
+                                                                fetchData.statistiqueQualificationPeriod.map((el, index) => (
+                                                                    <td key={index} style={{borderRight: "none", borderLeft: "none"}}>{el.total}</td>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>Taux (%)</th>
-                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["0-2"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["2-4"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["4-6"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["6-10"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{fetchData.statistiqueQualificationPeriod["+10"].pourcentage}</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>Taux (%)</th>
+                                                            {
+                                                                fetchData.statistiqueQualificationPeriod.map((el, index) => (
+                                                                    <th key={index} rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>{el.pourcentage}</th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -628,46 +617,34 @@ const ClaimReporting = props => {
                                                             colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
                                                             aria-label="Country: activate to sort column ascending">Délai de Traitement (en jour)
                                                         </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">0-2 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">2-4 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">4-6 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">6-10 jours
-                                                        </th>
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">Plus de 10 jours
-                                                        </th>
+                                                        {
+                                                            fetchData.statistiqueTreatmentPeriod.map((el, index) => (
+                                                                <th key={index} tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                    colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                    aria-label="Country: activate to sort column ascending">{el.libelle}
+                                                                </th>
+                                                            ))
+                                                        }
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr>
                                                         <td style={{ borderLeft: "none", borderRight: "none" }}>Nombre</td>
-                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["0-2"].total}</td>
-                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["2-4"].total}</td>
-                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["4-6"].total}</td>
-                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["6-10"].total}</td>
-                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["+10"].total}</td>
+                                                        {
+                                                            fetchData.statistiqueTreatmentPeriod.map((el, index) => (
+                                                                <td key={index} style={{ borderLeft: "none", borderRight: "none" }}>{el.total}</td>
+                                                            ))
+                                                        }
                                                     </tr>
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>Taux</th>
-                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["0-2"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["2-4"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["4-6"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["6-10"].pourcentage}</th>
-                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{fetchData.statistiqueTreatmentPeriod["+10"].pourcentage}</th>
+                                                        {
+                                                            fetchData.statistiqueTreatmentPeriod.map((el, index) => (
+                                                                <th key={index} rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{el.pourcentage}</th>
+                                                            ))
+                                                        }
                                                     </tr>
                                                     </tfoot>
                                                 </table>

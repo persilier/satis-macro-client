@@ -1,36 +1,31 @@
 import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
-import axios from "axios";
-import {
-    Link
-} from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
+import EmptyTable from "../components/EmptyTable";
+import Pagination from "../components/Pagination";
+import {debug, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import axios from "axios";
+import appConfig from "../../config/appConfig";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmDeleteConfig} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastDeleteErrorMessageConfig,
-    toastDeleteSuccessMessageConfig, toastErrorMessageWithParameterConfig
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
-import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmDeleteConfig} from "../../config/confirmConfig";
-import appConfig from "../../config/appConfig";
-import Pagination from "../components/Pagination";
-import EmptyTable from "../components/EmptyTable";
-import HeaderTablePage from "../components/HeaderTablePage";
-import {ERROR_401} from "../../config/errorPage";
-import {verifyPermission} from "../../helpers/permission";
-import {AUTH_TOKEN} from "../../constants/token";
-import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {connect} from "react-redux";
 
-loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
-const UnitType = (props) => {
-    if (!verifyPermission(props.userPermissions, "list-unit-type"))
+const QualificationPeriod = props => {
+    document.title = "Satis client - Paramètre délai de qualification";
+    if (!verifyPermission(props.userPermissions, "list-delai-qualification-parameters"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
-    const [unitTypes, setUnitTypes] = useState([]);
+    const [qualificationPeriods, setQualificationPeriods] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
@@ -39,11 +34,11 @@ const UnitType = (props) => {
 
     useEffect(() => {
         async function fetchData () {
-            axios.get(`${appConfig.apiDomaine}/unit-types`)
+            axios.get(`${appConfig.apiDomaine}/delai-qualification-parameters`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-                    setUnitTypes(response.data);
+                    setQualificationPeriods(response.data);
                     setLoad(false);
                 })
                 .catch(error => {
@@ -69,8 +64,8 @@ const UnitType = (props) => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(unitTypes.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(unitTypes.length/parseInt(e.target.value)));
+        setShowList(qualificationPeriods.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(qualificationPeriods.length/parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -84,7 +79,7 @@ const UnitType = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(unitTypes.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(qualificationPeriods.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -92,9 +87,8 @@ const UnitType = (props) => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                unitTypes.slice(
-                    getEndByPosition(
-                        activeNumberPage + 1) - numberPerPage,
+                qualificationPeriods.slice(
+                    getEndByPosition(activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
                 )
             );
@@ -106,7 +100,7 @@ const UnitType = (props) => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                unitTypes.slice(
+                qualificationPeriods.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -114,15 +108,15 @@ const UnitType = (props) => {
         }
     };
 
-    const deleteUnitType = (unitTypeId, index) => {
+    const deletePeriod = (qualificationPeriodId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/unit-types/${unitTypeId}`)
+                    axios.delete(`${appConfig.apiDomaine}/delai-qualification-parameters/${qualificationPeriodId}`)
                         .then(response => {
-                            const newUnitTypes = [...unitTypes];
+                            const newUnitTypes = [...qualificationPeriods];
                             newUnitTypes.splice(index, 1);
-                            setUnitTypes(newUnitTypes);
+                            setQualificationPeriods(newUnitTypes);
                             if (showList.length > 1) {
                                 setShowList(
                                     newUnitTypes.slice(
@@ -162,25 +156,23 @@ const UnitType = (props) => {
 
     const pages = arrayNumberPage();
 
-    const printBodyTable = (unitType, index) => {
+    const printBodyTable = (qualificationPeriod, index) => {
         return (
-            <tr key={index} role="row" className="odd">
-                <td>{unitType.name ? unitType.name["fr"] : ""}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : ""}</td>
+            <tr key={index} role="row" className="odd text-center">
                 <td>
                     {
-                        verifyPermission(props.userPermissions, 'update-unit-type') ? (
-                            <Link to={`/settings/unit_type/${unitType.id}/edit`}
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
-                                <i className="la la-edit"/>
-                            </Link>
-                        ) : null
-                    }
+                        qualificationPeriod.borne_sup === "+" ? (
+                            `Plus de ${qualificationPeriod.borne_inf}`
+                        ) : (
+                            `${qualificationPeriod.borne_inf}-${qualificationPeriod.borne_sup}`
+                        )
+                    } Jours
+                </td>
+                <td>
                     {
-                        verifyPermission(props.userPermissions, 'destroy-unit-type') ? (
+                        verifyPermission(props.userPermissions, 'destroy-delai-qualification-parameters') ? (
                             <button
-                                onClick={(e) => deleteUnitType(unitType.id, index)}
+                                onClick={(e) => deletePeriod(qualificationPeriod.uuid, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Supprimer">
                                 <i className="la la-trash"/>
@@ -193,7 +185,7 @@ const UnitType = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-unit-type') ? (
+        verifyPermission(props.userPermissions, 'list-delai-qualification-parameters') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -206,7 +198,7 @@ const UnitType = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Type d'unité
+                                    Délai qualification
                                 </a>
                             </div>
                         </div>
@@ -216,10 +208,10 @@ const UnitType = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-unit-type"}
-                            title={"Type d'unité"}
+                            addPermission={"store-delai-qualification-parameters"}
+                            title={"Délai qualification"}
                             addText={"Ajouter"}
-                            addLink={"/settings/unit_type/add"}
+                            addLink={"/settings/qualification-period/add"}
                         />
 
                         {
@@ -245,30 +237,26 @@ const UnitType = (props) => {
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>
-                                                    <tr role="row">
+                                                    <tr role="row" className="text-center">
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
+                                                            aria-label="Country: activate to sort column ascending">Période
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "300px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "15%" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        unitTypes.length ? (
+                                                        qualificationPeriods.length ? (
                                                             search ? (
-                                                                unitTypes.map((unitType, index) => (
-                                                                    printBodyTable(unitType, index)
+                                                                qualificationPeriods.map((qualificationPeriod, index) => (
+                                                                    printBodyTable(qualificationPeriod, index)
                                                                 ))
                                                             ) : (
-                                                                showList.map((unitType, index) => (
-                                                                    printBodyTable(unitType, index)
+                                                                showList.map((qualificationPeriod, index) => (
+                                                                    printBodyTable(qualificationPeriod, index)
                                                                 ))
                                                             )
                                                         ) : (
@@ -277,9 +265,8 @@ const UnitType = (props) => {
                                                     }
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
+                                                    <tr className="text-center">
+                                                        <th rowSpan="1" colSpan="1">Période</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
@@ -289,7 +276,7 @@ const UnitType = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {unitTypes.length} données
+                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {qualificationPeriods.length} données
                                                 </div>
                                             </div>
                                             {
@@ -327,4 +314,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(UnitType);
+export default connect(mapStateToProps)(QualificationPeriod);
