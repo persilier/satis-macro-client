@@ -78,6 +78,7 @@ const ClaimReporting = props => {
                 totalPercentage = totalPercentage + elRow.percentage
             });
         });
+        totalPercentage = parseFloat((totalPercentage / fetchData.statistiqueObject.length).toFixed(2));
     };
 
     if (fetchData)
@@ -293,7 +294,6 @@ const ClaimReporting = props => {
                 },
                 headeBackground: "#7F9CF5",
             };
-            debug(sendData, "sendData");
 
             axios({
                 method: 'post',
