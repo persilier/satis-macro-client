@@ -56,13 +56,13 @@ const DashboardClaimsActivity = (props) => {
                         ) : (
                             <div className="kt-portlet__body kt-portlet__body--fit">
                                 <div className="row row-no-padding row-col-separator-lg">
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations Enregistrées
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 
 									</span>
@@ -73,13 +73,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations Incomplètes
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 									</span>
                                                 </div>
@@ -116,13 +116,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations Complètes
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 									</span>
                                                 </div>
@@ -160,13 +160,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations Transférées à une Unité
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 
 									</span>
@@ -204,13 +204,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations en Cours de Traitement
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 
 									</span>
@@ -248,13 +248,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations Traitées
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 
 									</span>
@@ -291,13 +291,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Réclamations Non Fondées
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 
 									</span>
@@ -333,13 +333,13 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-6 col-xl-3">
+                                    <div className="col-md-12 col-lg-3 col-xl-1">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
-                                                    <h4 className="kt-widget24__title">
+                                                    <h5 className="kt-widget24__title">
                                                         Total Satisfaction Mesurée
-                                                    </h4>
+                                                    </h5>
                                                     <span className="kt-widget24__desc">
 
 									</span>

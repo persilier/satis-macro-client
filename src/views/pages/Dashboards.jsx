@@ -72,7 +72,6 @@ const Dashboards = (props) => {
                                     <ClaimToInstitution/>
                                 </div> : ""
                         }
-
                         {
                             !verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                             verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?

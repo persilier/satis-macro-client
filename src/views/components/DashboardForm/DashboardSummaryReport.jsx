@@ -95,7 +95,7 @@ const DashboardSummaryReport = (props) => {
                             <LoadingTable/>
                         ) : (
                             <div className="kt-portlet__body">
-                                <table className="table">
+                                <table className="table table-striped table-bordered">
                                     <thead>
                                     <tr>
                                         <th>Rang</th>
@@ -109,17 +109,18 @@ const DashboardSummaryReport = (props) => {
                                         data.map((report, i) => (
                                             reportColor.map((color, j) => (
                                                 i === j ?
-                                                    <tr className={color.rowColor} key={i}>
+                                                    report.label!==0?
+                                                    <tr key={i}>
                                                         <td>{color.rang}</td>
 
                                                         <td>{report.canal}</td>
 
                                                         <td>{report.label}</td>
-                                                    </tr>
-                                                    : <tr key={j} style={{display: 'none'}}></tr>
+                                                    </tr> : null
+                                                    : null
                                             ))
                                         ))
-                                        : <tr style={{display: 'none'}}></tr>
+                                        : null
                                     }
 
                                     </tbody>

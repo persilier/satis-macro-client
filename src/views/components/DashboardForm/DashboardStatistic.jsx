@@ -24,11 +24,11 @@ const DashboardStatistic = (props) => {
                 data: data ? data.series.data2 : []
             },
             {
-                name: 'Non Fondées',
+                name: 'Traitées',
                 data: data ? data.series.data3 : []
             },
             {
-                name: 'Traitées',
+                name: 'Non Fondées',
                 data: data ? data.series.data4 : []
             },
             {
@@ -108,8 +108,8 @@ const DashboardStatistic = (props) => {
                                     month: key,
                                     data0: totalProcess.registered.allInstitution,
                                     data1: totalProcess.transferred_to_unit.allInstitution,
-                                    data2: totalProcess.unfounded.allInstitution,
-                                    data3: totalProcess.treated.allInstitution,
+                                    data2: totalProcess.treated.allInstitution,
+                                    data3: totalProcess.unfounded.allInstitution,
                                     data4: totalProcess.measured.allInstitution
                                 })
                             } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
@@ -117,8 +117,8 @@ const DashboardStatistic = (props) => {
                                     month: key,
                                     data0: totalProcess.registered.myInstitution,
                                     data1: totalProcess.transferred_to_unit.myInstitution,
-                                    data2: totalProcess.unfounded.myInstitution,
-                                    data3: totalProcess.treated.myInstitution,
+                                    data2: totalProcess.treated.myInstitution,
+                                    data3: totalProcess.unfounded.myInstitution,
                                     data4: totalProcess.measured.myInstitution
                                 })
                             }
