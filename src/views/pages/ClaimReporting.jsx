@@ -20,6 +20,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {debug, formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
+import {month} from "../../constants/date";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -293,9 +294,6 @@ const ClaimReporting = props => {
                 },
                 headeBackground: "#7F9CF5",
             };
-
-            debug(fetchData, "fetchData");
-            debug(sendData, "sendData");
 
             axios({
                 method: 'post',
