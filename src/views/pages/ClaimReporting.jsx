@@ -78,7 +78,7 @@ const ClaimReporting = props => {
                 totalPercentage = totalPercentage + elRow.percentage
             });
         });
-        totalPercentage = parseFloat((totalPercentage / fetchData.statistiqueObject.length).toFixed(2));
+        totalPercentage = parseFloat((isNaN(totalPercentage / fetchData.statistiqueObject.length) ? 0 : totalPercentage / fetchData.statistiqueObject.length).toFixed(2));
     };
 
     if (fetchData)
