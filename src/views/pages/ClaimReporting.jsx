@@ -280,7 +280,6 @@ const ClaimReporting = props => {
                         TELEPHONE: "#00E396",
                         EMAIL: "#FEB019",
                         ENTRETIEN: "#FF4560",
-                        SATELITE: "#775DD0",
                     },
                     image: pictures.graphOne
                 },
@@ -294,6 +293,9 @@ const ClaimReporting = props => {
                 },
                 headeBackground: "#7F9CF5",
             };
+
+            debug(fetchData, "fetchData");
+            debug(sendData, "sendData");
 
             axios({
                 method: 'post',
