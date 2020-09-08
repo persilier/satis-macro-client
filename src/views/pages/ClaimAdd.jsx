@@ -62,25 +62,25 @@ const ClaimAdd = props => {
     } else
         endPoint = endPointConfig[props.plan];
     const defaultData = {
-        firstname: "",
-        lastname: "",
-        sexe: "",
+        firstname: null,
+        lastname: null,
+        sexe: null,
         telephone: [],
         email: [],
-        ville: "",
-        unit_targeted_id: "",
-        institution_targeted_id: "",
-        account_targeted_id: "",
-        relationship_id: "",
-        claim_object_id: "",
-        request_channel_slug: "",
-        response_channel_slug: "",
-        claimer_expectation: "",
-        description: "",
-        amount_currency_slug: "",
-        amount_disputed: "",
-        claimer_id: "",
-        event_occured_at: "",
+        ville: null,
+        unit_targeted_id: null,
+        institution_targeted_id: null,
+        account_targeted_id: null,
+        relationship_id: null,
+        claim_object_id: null,
+        request_channel_slug: null,
+        response_channel_slug: null,
+        claimer_expectation: null,
+        description: null,
+        amount_currency_slug: null,
+        amount_disputed: null,
+        claimer_id: null,
+        event_occured_at: null,
         is_revival: 0,
         file: []
     };
@@ -224,7 +224,7 @@ const ClaimAdd = props => {
                     sexe: customers[i].client.identite.sexe,
                     telephone: customers[i].client.identite.telephone,
                     email: customers[i].client.identite.email,
-                    ville: customers[i].client.identite.ville ? customers[i].client.identite.ville : "",
+                    ville: customers[i].client.identite.ville ? customers[i].client.identite.ville : null,
                     accounts: [...customers[i].accounts]
                 }
             );
@@ -439,7 +439,7 @@ const ClaimAdd = props => {
     const onChangeRelationShip = selected => {
         const newData = {...data};
         setRelationship(selected);
-        newData.relationship_id = selected ? selected.value : "";
+        newData.relationship_id = selected ? selected.value : null;
         setData(newData);
     };
 
@@ -635,11 +635,11 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
 
                                         <div className="kt-section">
@@ -670,7 +670,7 @@ const ClaimAdd = props => {
                                                                 />
                                                             </div>
                                                         </div>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 <div className="form-group row">
@@ -692,7 +692,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -714,7 +714,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -741,7 +741,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                     <div className={error.ville.length ? "col validated" : "col"}>
@@ -762,7 +762,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -778,7 +778,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -792,7 +792,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -825,7 +825,7 @@ const ClaimAdd = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
 
@@ -845,11 +845,11 @@ const ClaimAdd = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
                                                         </div>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 <div className="form-group row">
@@ -869,7 +869,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -889,7 +889,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -922,7 +922,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -946,7 +946,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -966,7 +966,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -990,7 +990,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -1012,10 +1012,10 @@ const ClaimAdd = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
-                                                        ) : ""
+                                                        ) : null
                                                     }
 
                                                     <div className="col">
@@ -1034,7 +1034,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -1057,7 +1057,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -1078,7 +1078,7 @@ const ClaimAdd = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -1135,7 +1135,7 @@ const ClaimAdd = props => {
                                             sexe={foundData.entity.sexe}
                                             telephone={foundData.entity.telephone}
                                             email={foundData.entity.email}
-                                            ville={foundData.entity.ville ? foundData.entity.ville : ""}
+                                            ville={foundData.entity.ville ? foundData.entity.ville : null}
                                             unit_targeted_id={data.unit_targeted_id}
                                             institution_targeted_id={data.institution_targeted_id}
                                             account_targeted_id={data.account_targeted_id}
@@ -1176,7 +1176,7 @@ const ClaimAdd = props => {
                                             endPoint={endPoint}
                                             fileValue={document.getElementById("customFile").value}
                                         />
-                                    ) : ""
+                                    ) : null
                                 }
                             </div>
                         </div>

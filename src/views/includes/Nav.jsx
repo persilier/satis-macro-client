@@ -379,7 +379,7 @@ const Nav = (props) => {
                                                 </div>
                                             </Link>
                                         )
-                                        : ""
+                                        : null
                                 }
 
                                 {/*<Link to={"/feedback-channels"} className="kt-notification__item">*/}

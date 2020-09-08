@@ -81,7 +81,7 @@ const FourModel = ({data, type}) => {
     };
 
     return (
-        <div id="chart">
+        <div id="chart" style={{position: "relative", zIndex: 0}}>
             <div className="row d-flex justify-content-center">
                 <div id="graphTwo" className="col-10">
                     <ReactApexChart options={options} series={series} type="area" height={350} />
