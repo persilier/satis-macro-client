@@ -324,7 +324,9 @@ const ClaimReporting = props => {
                             <h3 className="kt-subheader__title">
                                 Monitoring
                             </h3>
+
                             <span className="kt-subheader__separator kt-hidden"/>
+
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
@@ -382,6 +384,7 @@ const ClaimReporting = props => {
                                         onChange={handleStartDateChange}
                                     />
                                 </div>
+
                                 <div className="form-group col-3">
                                     <label htmlFor="end">Date de début</label>
                                     <input
@@ -392,6 +395,7 @@ const ClaimReporting = props => {
                                         onChange={handleEndDateChange}
                                     />
                                 </div>
+
                                 <div className="form-group col-3">
                                     {
                                         !startFilter ? (
@@ -547,10 +551,7 @@ const ClaimReporting = props => {
                                     {
                                         fetchData ? (
                                             <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
+                                                <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
                                                     <thead style={{backgroundColor: "#7F9CF5", borderLeft: "none", borderRight: "none"}}>
                                                         <tr role="row">
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
@@ -612,40 +613,40 @@ const ClaimReporting = props => {
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead style={{backgroundColor: "#7F9CF5"}}>
-                                                    <tr role="row">
-                                                        <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                            aria-label="Country: activate to sort column ascending">Délai de Traitement (en jour)
-                                                        </th>
-                                                        {
-                                                            fetchData.statistiqueTreatmentPeriod.map((el, index) => (
-                                                                <th key={index} tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                    colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                                    aria-label="Country: activate to sort column ascending">{el.libelle}
-                                                                </th>
-                                                            ))
-                                                        }
-                                                    </tr>
+                                                        <tr role="row">
+                                                            <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                aria-label="Country: activate to sort column ascending">Délai de Traitement (en jour)
+                                                            </th>
+                                                            {
+                                                                fetchData.statistiqueTreatmentPeriod.map((el, index) => (
+                                                                    <th key={index} tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                        colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                        aria-label="Country: activate to sort column ascending">{el.libelle}
+                                                                    </th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td style={{ borderLeft: "none", borderRight: "none" }}>Nombre</td>
-                                                        {
-                                                            fetchData.statistiqueTreatmentPeriod.map((el, index) => (
-                                                                <td key={index} style={{ borderLeft: "none", borderRight: "none" }}>{el.total}</td>
-                                                            ))
-                                                        }
-                                                    </tr>
+                                                        <tr>
+                                                            <td style={{ borderLeft: "none", borderRight: "none" }}>Nombre</td>
+                                                            {
+                                                                fetchData.statistiqueTreatmentPeriod.map((el, index) => (
+                                                                    <td key={index} style={{ borderLeft: "none", borderRight: "none" }}>{el.total}</td>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>Taux</th>
-                                                        {
-                                                            fetchData.statistiqueTreatmentPeriod.map((el, index) => (
-                                                                <th key={index} rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{el.pourcentage}</th>
-                                                            ))
-                                                        }
-                                                    </tr>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>Taux</th>
+                                                            {
+                                                                fetchData.statistiqueTreatmentPeriod.map((el, index) => (
+                                                                    <th key={index} rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{el.pourcentage}</th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -667,36 +668,33 @@ const ClaimReporting = props => {
                                     {
                                         fetchData ? (
                                             <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
+                                                <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
                                                     <thead style={{ backgroundColor: "#7F9CF5" }}>
-                                                    <tr role="row">
-                                                        {
-                                                            fetchData.statistiqueChannel.map((channel, index) => (
-                                                                <th
-                                                                    key={index}
-                                                                    tabIndex="0"
-                                                                    aria-controls="kt_table_1"
-                                                                    rowSpan="1"
-                                                                    colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                                    aria-label="Country: activate to sort column ascending">
-                                                                    {channel.name["fr"]}
-                                                                </th>
-                                                            ))
-                                                        }
-                                                    </tr>
+                                                        <tr role="row">
+                                                            {
+                                                                fetchData.statistiqueChannel.map((channel, index) => (
+                                                                    <th
+                                                                        key={index}
+                                                                        tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {channel.name["fr"]}
+                                                                    </th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </thead>
                                                     <tbody/>
                                                     <tfoot>
-                                                    <tr>
-                                                        {
-                                                            fetchData.statistiqueChannel.map((channel, index) => (
-                                                                <th key={index} rowSpan="1" colSpan="1" style={{borderLeft: "none", borderRight: "none"}}>{channel.total_claim}</th>
-                                                            ))
-                                                        }
-                                                    </tr>
+                                                        <tr>
+                                                            {
+                                                                fetchData.statistiqueChannel.map((channel, index) => (
+                                                                    <th key={index} rowSpan="1" colSpan="1" style={{borderLeft: "none", borderRight: "none"}}>{channel.total_claim}</th>
+                                                                ))
+                                                            }
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
 
