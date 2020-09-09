@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {debug, filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -50,14 +50,36 @@ const ClaimObject = (props) => {
         fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
+    const filterShowListBySearchValue = (value) => {
+        let newClaimObjects = [...claimObjects];
+        newClaimObjects = newClaimObjects.filter(el => {
+            if (el.description["fr"]) {
+                return (el.name["fr"].toLowerCase().indexOf(value) >= 0 || el.description["fr"].toLowerCase().indexOf(value) >= 0 || el.claim_category.name["fr"].toLowerCase().indexOf(value) >= 0 || el.time_limit.toString().indexOf(value.toString()) >= 0);
+            } else {
+                return (el.name["fr"].toLowerCase().indexOf(value) >= 0 || el.claim_category.name["fr"].toLowerCase().indexOf(value) >= 0 || el.time_limit.toString().indexOf(value.toString()) >= 0);
+            }
+        });
+
+        return newClaimObjects;
+    };
+
     const searchElement = async (e) => {
-        if (e.target.value) {
+        /*if (e.target.value) {
             await setSearch(true);
             filterDataTableBySearchValue(e);
         } else {
             await setSearch(true);
             filterDataTableBySearchValue(e);
             setSearch(false);
+        }*/
+
+        if (e.target.value) {
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
+        } else {
+            setNumberPage(forceRound(claimObjects.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claimObjects.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
