@@ -2,13 +2,11 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
 import Select from "react-select";
-import svgToImg from "save-svg-as-png";
 import FileSaver from "file-saver";
+import ApexCharts from "apexcharts";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import FourModel from "../components/charts/FourModel";
 import appConfig from "../../config/appConfig";
-import SixModel from "../components/charts/SixModel";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -56,6 +54,8 @@ const ClaimReporting = props => {
             days: true
         }
     );
+    const [stateChartOne, setStateChartOne] = useState("");
+    const [stateChartTwo, setStateChartTwo] = useState("");
 
     var totalCollect = 0;
     var totalIncomplete = 0;
@@ -93,12 +93,149 @@ const ClaimReporting = props => {
         setPossibleFilter(newPossibleFilter);
     };
 
+    const getGraphOneOptions = (dataGraphOne) => {
+        var labels = [];
+        var series = [];
+        dataGraphOne.map(el => {
+            labels.push(el.name["fr"]);
+            series.push(el.pourcentage)
+        });
+
+        return {
+            series: series,
+            chart: {
+                width: 450,
+                type: 'pie',
+            },
+            labels: labels,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        };
+    };
+
+    const getGraphTwoOptions = (dataGraphTwo, type = null) => {
+        var categories = [];
+        var newSeries = {
+            claims_received: [],
+            claims_resolved: []
+        };
+        const getDetailData = () => {
+            for (const property in dataGraphTwo[type ? type : typeFilter].claims_received) {
+                categories.push(property);
+                newSeries.claims_received.push(dataGraphTwo[type ? type : typeFilter].claims_received[property]);
+            }
+            for (const property in dataGraphTwo[type ? type : typeFilter].claims_resolved) {
+                newSeries.claims_resolved.push(dataGraphTwo[type ? type : typeFilter].claims_resolved[property]);
+            }
+        };
+
+        const formatCategoriesMouths = () => {
+            for (var i = 0; i < categories.length; i++)
+                categories[i] = `${ month[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
+        };
+
+        const formatCategoriesDays = () => {
+            for (var i = 0; i < categories.length; i++) {
+                categories[i] = `${ categories[i].split("-")[2] } ${ month[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
+            }
+        };
+
+        const formatCategoriesWeeks = () => {
+            var start = "";
+            var end = "";
+            for (var i = 0; i < categories.length; i++) {
+                start = `${categories[i].replace(/\s/g, '').split("-")[2]} ${month[categories[i].replace(/\s/g, '').split("-")[1]]} ${categories[i].replace(/\s/g, '').split("-")[0][2]}${categories[i].replace(/\s/g, '').split("-")[0][3]}`;
+                end = `${categories[i].replace(/\s/g, '').split("-")[5]} ${month[categories[i].replace(/\s/g, '').split("-")[4]]} ${categories[i].replace(/\s/g, '').split("-")[3][2]}${categories[i].replace(/\s/g, '').split("-")[3][3]}`;
+                categories[i] = `${start} - ${end}`;
+            }
+        };
+
+        getDetailData();
+
+        if (type === null) {
+            if (typeFilter === "months")
+                formatCategoriesMouths();
+            else if (typeFilter === "days")
+                formatCategoriesDays();
+            else
+                formatCategoriesWeeks();
+        } else {
+            if (type === "months")
+                formatCategoriesMouths();
+            else if (type === "days")
+                formatCategoriesDays();
+            else
+                formatCategoriesWeeks();
+        }
+
+        const series = [
+            {
+                name: 'Réclamtions réçues',
+                data: newSeries.claims_received
+            },
+            {
+                name: 'Réclamations résolues',
+                data: newSeries.claims_resolved
+            }
+        ];
+
+        return {
+            series: [{
+                name: series[0].name,
+                data: series[0].data
+            }, {
+                name: series[1].name,
+                data: series[1].data
+            }],
+            chart: {
+                height: 350,
+                type: 'area'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            xaxis: {
+                categories: categories
+            },
+            tooltip: {
+                x: {
+                    format: 'MMM \'yyyy'
+                },
+            },
+        };
+    };
+
+    const renderChart = (dataGraphOne, dataGraphTwo) => {
+        const chartOne = new ApexCharts(document.getElementById("graphOne"), getGraphOneOptions(dataGraphOne));
+        const chartTwo = new ApexCharts(document.getElementById("graphTwo"), getGraphTwoOptions(dataGraphTwo));
+
+        setStateChartOne(chartOne);
+        setStateChartTwo(chartTwo);
+
+        chartOne.render();
+        chartTwo.render();
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             await axios.get(endpoint)
                 .then(response => {
                     applyPossibleFilter(response.data.statistiqueGraphePeriod);
                     setFetchData(response.data);
+
+                    renderChart(response.data.statistiqueChannel, response.data.statistiqueGraphePeriod);
                 })
                 .catch(error => console.log("Something is wrong"))
             ;
@@ -109,6 +246,15 @@ const ClaimReporting = props => {
 
     const handleTypeFilterChange = (e) => {
         setTypeFilter(e.target.value);
+        debug(getGraphTwoOptions(fetchData.statistiqueGraphePeriod), "options");
+        const parent = document.getElementById("parentGraphTwo");
+        document.getElementById("graphTwo").remove();
+        const div = document.createElement("div");
+        div.id = "graphTwo";
+        parent.appendChild(div);
+        const chartTwo = new ApexCharts(document.getElementById("graphTwo"), getGraphTwoOptions(fetchData.statistiqueGraphePeriod, e.target.value));
+        setStateChartTwo(chartTwo);
+        chartTwo.render();
     };
 
     const handleStartDateChange = e => {
@@ -160,6 +306,8 @@ const ClaimReporting = props => {
                 setStartFilter(false);
                 applyPossibleFilter(response.data.statistiqueGraphePeriod);
                 setFetchData(response.data);
+
+                renderChart(response.data.statistiqueChannel, response.data.statistiqueGraphePeriod);
             })
             .catch(error => {
                 setStartFilter(false);
@@ -197,41 +345,6 @@ const ClaimReporting = props => {
         }
     };
 
-    const formatPngToFileObject = (dataUrl, filename) => {
-        const arr = dataUrl.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        var n = bstr.length;
-        const u8arr = new Uint8Array(n);
-
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new File([u8arr], filename, {type:mime});
-    };
-
-    const transformChartToPng = async () => {
-        const files = {};
-        var graphOne = document.getElementById("graphOne").cloneNode(true);
-        graphOne.children[0].children[0].children[0].children[0].remove();
-        await svgToImg.svgAsPngUri(graphOne.children[0].children[0].children[0], "graphOne.png")
-            .then(data => {
-                files.graphOne = data;
-            })
-            .catch(error => console.log("error:", error))
-        ;
-
-        var graphTwo = document.getElementById("graphTwo").cloneNode(true);
-        graphTwo.children[0].children[0].children[0].children[0].remove();
-        await svgToImg.svgAsPngUri(graphTwo.children[0].children[0].children[0], "graphTwo.png")
-            .then(data => {
-                files.graphTwo = data;
-            })
-            .catch(error => console.log("error:", error))
-        ;
-        return files;
-    };
-
     const formatPdfTitle = () => {
         let newStartDate = startDate;
         let newEndDate = endDate;
@@ -250,9 +363,21 @@ const ClaimReporting = props => {
     };
 
     const exportToPdf = async () => {
+        var uriOne = "";
+        var uriTwo = "";
+        await stateChartOne.dataURI().then(({ imgURI, blob }) => {
+            uriOne = imgURI;
+        });
+
+        await stateChartTwo.dataURI().then(({ imgURI, blob }) => {
+            uriTwo = imgURI;
+        });
+
+        debug(uriOne, "uriOne");
+        debug(uriTwo, "uriTwo");
+
         if (fetchData) {
             setStartExportation(true);
-            const pictures = await transformChartToPng();
             const sendData = {
                 filter: {
                     institution: institution ? institution.value : "",
@@ -282,14 +407,14 @@ const ClaimReporting = props => {
                         EMAIL: "#FEB019",
                         ENTRETIEN: "#FF4560",
                     },
-                    image: pictures.graphOne
+                    image: uriOne
                 },
                 evolutionClaim: {
                     legend: {
                         claims_received: "#008FFB",
                         claims_resolved: "#00E396"
                     },
-                    image: pictures.graphTwo,
+                    image: uriTwo,
                     filter: typeFilter
                 },
                 headeBackground: "#7F9CF5",
@@ -349,7 +474,7 @@ const ClaimReporting = props => {
                                         Chargement...
                                     </button>
                                 ) : (
-                                    <button className="btn btn-info btn-circle" onClick={() => exportToPdf()}>
+                                    <button className="btn btn-info btn-circle" onClick={exportToPdf}>
                                         <i className="fa fa-file-export" style={{color: "white"}}/> Exportez
                                     </button>
                                 )
@@ -698,9 +823,13 @@ const ClaimReporting = props => {
                                                     </tfoot>
                                                 </table>
 
-                                                <SixModel
-                                                    data={fetchData.statistiqueChannel}
-                                                />
+                                                {
+                                                    fetchData ? (
+                                                        <div className="col-12 d-flex justify-content-center">
+                                                            <div id="graphOne"/>
+                                                        </div>
+                                                    ) : null
+                                                }
                                             </div>
                                         ) : <LoadingTable/>
                                     }
@@ -747,11 +876,8 @@ const ClaimReporting = props => {
                                 <div className="row">
                                     {
                                         fetchData ? (
-                                            <div className="col-sm-12">
-                                                <FourModel
-                                                    type={typeFilter}
-                                                    data={fetchData.statistiqueGraphePeriod}
-                                                />
+                                            <div id="parentGraphTwo" className="col-sm-12">
+                                                <div id="graphTwo"/>
                                             </div>
                                         ) : <LoadingTable/>
                                     }
