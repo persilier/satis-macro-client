@@ -16,7 +16,7 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {debug, formatSelectOption} from "../../helpers/function";
+import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {month} from "../../constants/date";
 
@@ -246,7 +246,6 @@ const ClaimReporting = props => {
 
     const handleTypeFilterChange = (e) => {
         setTypeFilter(e.target.value);
-        debug(getGraphTwoOptions(fetchData.statistiqueGraphePeriod), "options");
         const parent = document.getElementById("parentGraphTwo");
         document.getElementById("graphTwo").remove();
         const div = document.createElement("div");
@@ -373,9 +372,6 @@ const ClaimReporting = props => {
             uriTwo = imgURI;
         });
 
-        debug(uriOne, "uriOne");
-        debug(uriTwo, "uriTwo");
-
         if (fetchData) {
             setStartExportation(true);
             const sendData = {
@@ -432,7 +428,6 @@ const ClaimReporting = props => {
                 })
                 .catch(({response}) => {
                     setStartExportation(false);
-                    console.log(response.data.error);
                 })
             ;
         } else {
