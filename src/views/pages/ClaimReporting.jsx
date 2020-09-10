@@ -371,7 +371,7 @@ const ClaimReporting = props => {
         await stateChartTwo.dataURI().then(({ imgURI, blob }) => {
             uriTwo = imgURI;
         });
-
+        
         if (fetchData) {
             setStartExportation(true);
             const sendData = {
