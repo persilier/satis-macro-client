@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {
+    loadCss,
+    forceRound,
+    getLowerCaseString,
+} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -10,6 +14,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -56,11 +61,10 @@ const ClaimsArchived = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(endPoint.list)
-            .then(response => {console.log(response.data)
+            .then(response => {
                 setLoad(false);
                 setClaimsArchived(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
@@ -72,14 +76,27 @@ const ClaimsArchived = (props) => {
             })
     }, []);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaims = [...claimsArchived];
+        newClaims = newClaims.filter(el => (
+            getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}`).indexOf(value) >= 0 ||
+            getLowerCaseString(el.description).indexOf(value) >= 0 ||
+            getLowerCaseString(el.active_treatment.solution === null ? "-" : el.active_treatment.solution).indexOf(value) >= 0
+        ));
+
+        return newClaims;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(claimsArchived.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -201,7 +218,8 @@ const ClaimsArchived = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"Liste des réclamtions archivées"}/>
+                    information={"Liste des réclamtions archivées"}
+                />
 
                 <div className="kt-portlet">
 
@@ -220,10 +238,11 @@ const ClaimsArchived = (props) => {
                                                 <label>
                                                     Rechercher:
                                                     <input id="myInput" type="text"
-                                                           onKeyUp={(e) => searchElement(e)}
-                                                           className="form-control form-control-sm"
-                                                           placeholder=""
-                                                           aria-controls="kt_table_1"/>
+                                                       onKeyUp={(e) => searchElement(e)}
+                                                       className="form-control form-control-sm"
+                                                       placeholder=""
+                                                       aria-controls="kt_table_1"
+                                                    />
                                                 </label>
                                             </div>
                                         </div>
@@ -278,15 +297,11 @@ const ClaimsArchived = (props) => {
                                                 <tbody>
                                                 {
                                                     claimsArchived.length ? (
-                                                        search ? (
-                                                            claimsArchived.map((archived, index) => (
-                                                                printBodyTable(archived, index)
-                                                            ))
-                                                        ) : (
+                                                        showList.length ? (
                                                             showList.map((archived, index) => (
                                                                 printBodyTable(archived, index)
                                                             ))
-                                                        )
+                                                        ) : <EmptyTable search={true}/>
                                                     ) : (
                                                         <EmptyTable/>
                                                     )
@@ -305,22 +320,19 @@ const ClaimsArchived = (props) => {
                                                 à {numberPerPage} sur {claimsArchived.length} données
                                             </div>
                                         </div>
-                                        {
-                                            !search ? (
-                                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                    <Pagination
-                                                        numberPerPage={numberPerPage}
-                                                        onChangeNumberPerPage={onChangeNumberPerPage}
-                                                        activeNumberPage={activeNumberPage}
-                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                        pages={pages}
-                                                        onClickPage={(e, number) => onClickPage(e, number)}
-                                                        numberPage={numberPage}
-                                                        onClickNextPage={e => onClickNextPage(e)}
-                                                    />
-                                                </div>
-                                            ) : ""
-                                        }
+
+                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                            <Pagination
+                                                numberPerPage={numberPerPage}
+                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                activeNumberPage={activeNumberPage}
+                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                pages={pages}
+                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                numberPage={numberPage}
+                                                onClickNextPage={e => onClickNextPage(e)}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

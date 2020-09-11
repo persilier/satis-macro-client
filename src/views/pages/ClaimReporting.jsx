@@ -16,7 +16,7 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {formatSelectOption} from "../../helpers/function";
+import {debug, formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {month} from "../../constants/date";
 
@@ -100,6 +100,7 @@ const ClaimReporting = props => {
             labels.push(el.name["fr"]);
             series.push(el.pourcentage)
         });
+        debug(series, "series");
 
         return {
             series: series,

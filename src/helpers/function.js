@@ -367,3 +367,7 @@ export const debug = (variable, label = null) => {
     "type": "Satis2020\\ServicePackage\\Notifications\\ReminderAfterDeadline"
   }
 ]*/
+
+export const getLowerCaseString = (value) => {
+    return (value+"").toLowerCase();
+};

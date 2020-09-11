@@ -10,6 +10,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
+import {debug} from "../../helpers/function";
 
 const Mail = (props) => {
     document.title = "Satis client - Paramètre Envoie de mail";
@@ -17,13 +18,13 @@ const Mail = (props) => {
         window.location.href = ERROR_401;
 
     const defaultData = {
-        senderID: null,
-        username: null,
-        password: null,
-        "from": null,
-        server: null,
-        port: null,
-        security: null
+        senderID: "",
+        username: "",
+        password: "",
+        "from": "",
+        server: "",
+        port: "",
+        security: ""
     };
     const defaultError = {
         senderID: [],

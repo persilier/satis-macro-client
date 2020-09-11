@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -16,6 +16,7 @@ import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -38,7 +39,6 @@ const Institution = (props) => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/any/institutions")
             .then(response => {
-                console.log(response.data)
                 setLoad(false);
                 setInstitution(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
@@ -50,14 +50,27 @@ const Institution = (props) => {
             })
     }, []);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newInstitutions = [...institutions];
+        newInstitutions = newInstitutions.filter(el => (
+            getLowerCaseString(el.institution_type ? el.institution_type.name : "").indexOf(value) >= 0 ||
+            getLowerCaseString(el.name).indexOf(value) >= 0 ||
+            getLowerCaseString(el.acronyme).indexOf(value) >= 0 ||
+            getLowerCaseString(el.iso_code).indexOf(value) >= 0
+        ));
+
+        return newInstitutions;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(institutions.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(institutions.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -160,7 +173,8 @@ const Institution = (props) => {
                 <td style={{textAlign: 'center'}}>
                     {institution.logo?(
                         <img id="Image1" src={institution.logo} alt="logo" style={{maxWidth: "35px", maxHeight: "35px", textAlign: 'center'}}/>)
-                        :""}
+                        :""
+                    }
                 </td>
                 <td>{institution.institution_type?institution.institution_type.name:""}</td>
                 <td>{institution.name}</td>
@@ -190,7 +204,7 @@ const Institution = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                            : ""
+                            : null
                     }
 
                     {/*{*/}
@@ -201,7 +215,7 @@ const Institution = (props) => {
                     {/*            title="Supprimer">*/}
                     {/*            <i className="la la-trash"/>*/}
                     {/*        </button>*/}
-                    {/*        : ""*/}
+                    {/*        : null*/}
                     {/*}*/}
 
                 </td>
@@ -310,14 +324,12 @@ const Institution = (props) => {
                                                     <tbody>
                                                     {
                                                         institutions.length ? (
-                                                            search ? (
-                                                                institutions.map((institution, index) => (
-                                                                printBodyTable(institution, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((institution, index) => (
                                                                     printBodyTable(institution, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -344,8 +356,9 @@ const Institution = (props) => {
                                                     à {numberPerPage} sur {institutions.length} données
                                                 </div>
                                             </div>
+
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -358,7 +371,7 @@ const Institution = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -368,7 +381,7 @@ const Institution = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

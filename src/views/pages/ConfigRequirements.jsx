@@ -2,7 +2,12 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Select from "react-select";
 import {Link} from "react-router-dom";
-import {loadCss, filterDataTableBySearchValue, forceRound, formatSelectOption} from "../../helpers/function";
+import {
+    loadCss,
+    forceRound,
+    formatSelectOption,
+    getLowerCaseString, debug
+} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -13,6 +18,7 @@ import {
      toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import HeaderTablePage from "../components/HeaderTablePage";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -31,7 +37,6 @@ const ConfigRequirements = () => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [data, setData] = useState(defaultData);
     const [startRequest, setStartRequest] = useState(false);
 
@@ -61,14 +66,49 @@ const ConfigRequirements = () => {
 
     }, []);
 
+    const matchRequirement = (requirement, value) => {
+        var match = false;
+        requirement.map(el => {
+            match = (
+                match ||
+                getLowerCaseString(el.description["fr"]).indexOf(value) >= 0
+            )
+        });
+        return match;
+    };
+
+    const matchObject = (objects, value) => {
+        var match = false;
+        objects.map(el => {
+            match = (
+                match ||
+                getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
+                matchRequirement(el.requirements, value)
+            )
+        });
+        return match;
+    };
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaimObject = [...claimObject];
+        debug(newClaimObject, "object");
+        newClaimObject = newClaimObject.filter(el => (
+            getLowerCaseString(el.name.fr).indexOf(value) >= 0 ||
+            (!el.claim_objects.length ? false : matchObject(el.claim_objects, value))
+        ));
+
+        return newClaimObject;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(claimObject.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claimObject.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -167,11 +207,10 @@ const ConfigRequirements = () => {
             category.claim_objects ?
                 category.claim_objects.map((object, i) => (
                     <tr key={i} role="row" className="odd">
-
                         {
                             i === 0 ?
                                 <td rowSpan={category.claim_objects.length}>{category.name.fr}</td>
-                                : <td style={{display:"none"}}/>
+                                : null
                         }
                         <td>
                             {object.name.fr}
@@ -185,11 +224,11 @@ const ConfigRequirements = () => {
                                     isMulti
                                     key={object.id}
                                 />
-                            ) : ''
+                            ) : null
                             }
                         </td>
                     </tr>
-                )) : ""
+                )) : null
         )
     };
 
@@ -219,7 +258,8 @@ const ConfigRequirements = () => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"Configuration des Exigences "}/>
+                    information={"Configuration des Exigences "}
+                />
 
                 <div className="kt-portlet">
                     <HeaderTablePage
@@ -282,24 +322,18 @@ const ConfigRequirements = () => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-
                                                 {
                                                     claimObject ? (
-                                                        search ? (
-                                                            claimObject.map((category, index) => (
-                                                                printBodyTable(category, index)
-                                                            ))
-                                                        ) : (
+                                                        showList.length ? (
                                                             showList.map((category, index) => (
                                                                 printBodyTable(category, index)
                                                             ))
-                                                        )
+                                                        ) : <EmptyTable search={true}/>
                                                     ) : (
                                                         <EmptyTable/>
                                                     )
                                                 }
                                                 </tbody>
-
                                             </table>
                                             <div className="kt-portlet__foot">
                                                 <div className="kt-form__actions text-right">
@@ -339,8 +373,9 @@ const ConfigRequirements = () => {
                                                 à {numberPerPage} sur {claimObject.length} données
                                             </div>
                                         </div>
+
                                         {
-                                            !search ? (
+                                            showList.length ? (
                                                 <div className="col-sm-12 col-md-7 dataTables_pager">
                                                     <Pagination
                                                         numberPerPage={numberPerPage}
@@ -353,7 +388,7 @@ const ConfigRequirements = () => {
                                                         onClickNextPage={e => onClickNextPage(e)}
                                                     />
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
                                     </div>
                                 </div>
