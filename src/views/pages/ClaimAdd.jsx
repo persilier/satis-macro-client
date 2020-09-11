@@ -18,6 +18,7 @@ import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
 import InfirmationTable from "../components/InfirmationTable";
 import InputRequire from "../components/InputRequire";
 import WithoutCode from "../components/WithoutCode";
+import Loader from "../components/Loader";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -61,26 +62,27 @@ const ClaimAdd = props => {
             endPoint = endPointConfig[props.plan].filial
     } else
         endPoint = endPointConfig[props.plan];
+
     const defaultData = {
-        firstname: null,
-        lastname: null,
-        sexe: null,
+        firstname: "",
+        lastname: "",
+        sexe: "",
         telephone: [],
         email: [],
-        ville: null,
-        unit_targeted_id: null,
-        institution_targeted_id: null,
-        account_targeted_id: null,
-        relationship_id: null,
-        claim_object_id: null,
-        request_channel_slug: null,
-        response_channel_slug: null,
-        claimer_expectation: null,
-        description: null,
-        amount_currency_slug: null,
-        amount_disputed: null,
-        claimer_id: null,
-        event_occured_at: null,
+        ville: "",
+        unit_targeted_id: "",
+        institution_targeted_id: "",
+        account_targeted_id: "",
+        relationship_id: "",
+        claim_object_id: "",
+        request_channel_slug: "",
+        response_channel_slug: "",
+        claimer_expectation: "",
+        description: "",
+        amount_currency_slug: "",
+        amount_disputed: "",
+        claimer_id: "",
+        event_occured_at: "",
         is_revival: 0,
         file: []
     };
@@ -128,17 +130,18 @@ const ClaimAdd = props => {
     const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
-    const [customer, setCustomer] = useState(null);
-    const [possibleCustomers, setPossibleCustomers] = useState([]);
-    const [filterPossibleCustomers, setFilterPossibleCustomers] = useState([]);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [foundData, setFoundData] = useState({});
+    const [clientCash, setClientCash] = useState({searchInputValue: "", clients: []});
 
-    const [inputValue, setInputValue] = useState("");
+    const [searchList , setSearchList] = useState([]);
+    const [showSearchResult, setShowSearchResult] = useState(false);
+    const [searchInputValue, setSearchInputValue] = useState("");
+    const [startSearch, setStartSearch] = useState(false);
 
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 1);
@@ -154,7 +157,6 @@ const ClaimAdd = props => {
                     if (verifyPermission(props.userPermissions, "store-claim-against-any-institution") || verifyPermission(props.userPermissions, "store-claim-without-client"))
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
-                        setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
                         setUnits(formatSelectOption(response.data.units, "name", "fr"))
                     }
                     setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
@@ -211,27 +213,6 @@ const ClaimAdd = props => {
         setData(newData);
     };
 
-    const formatPossibleCustomers = customers => {
-        const newCustomers = [];
-        for (let i = 0; i < customers.length; i++) {
-            newCustomers.push(
-                {
-                    claimer_id: customers[i].client.identite.id,
-                    value: customers[i].id,
-                    label: `${customers[i].client.identite.lastname} ${customers[i].client.identite.firstname}`,
-                    lastname: customers[i].client.identite.lastname,
-                    firstname: customers[i].client.identite.firstname,
-                    sexe: customers[i].client.identite.sexe,
-                    telephone: customers[i].client.identite.telephone,
-                    email: customers[i].client.identite.email,
-                    ville: customers[i].client.identite.ville ? customers[i].client.identite.ville : null,
-                    accounts: [...customers[i].accounts]
-                }
-            );
-        }
-        return newCustomers;
-    };
-
     const onChangeInstitution = (selected) => {
         const newData = {...data};
         if (selected) {
@@ -240,7 +221,6 @@ const ClaimAdd = props => {
             if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
                 axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
                     .then(response => {
-                        setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
                         setUnits(formatSelectOption(response.data.units, "name", "fr"))
                     })
                     .catch(error => {
@@ -251,8 +231,6 @@ const ClaimAdd = props => {
         else {
             setUnits([]);
             setUnit(null);
-            setPossibleCustomers([]);
-            setCustomer(null);
             setInstitution(null);
             setAccount(null);
             setAccounts([]);
@@ -270,9 +248,11 @@ const ClaimAdd = props => {
         setData(newData);
     };
 
-    const handleDisabledInputChange = () => {
+    const handleDisabledInputChange = (e) => {
+        setSearchList([]);
+        setShowSearchResult(false);
+        setSearchInputValue("");
         const newData = {...data};
-        setCustomer(null);
         setAccount(null);
         setAccounts([]);
         newData.firstname = "";
@@ -284,7 +264,7 @@ const ClaimAdd = props => {
         newData.claimer_id = "";
         newData.account_targeted_id = "";
         setData(newData);
-        setDisabledInput(!disabledInput);
+        setDisabledInput(e.target.checked);
     };
 
     const onChangeUnit = selected => {
@@ -299,43 +279,21 @@ const ClaimAdd = props => {
         setData(newData);
     };
 
-    const handleCustomerChange = (selected) => {
+    const handleCustomerChange = (e, selected) => {
         const newData = {...data};
-        if (selected) {
-            setCustomer(selected);
-            setAccount(null);
-            newData.account_targeted_id = "";
-            setAccounts(formatSelectOption(selected.accounts, "number", false));
-            newData.firstname = selected.firstname;
-            newData.lastname = selected.lastname;
-            newData.sexe = selected.sexe;
-            newData.telephone = selected.telephone;
-            newData.email = selected.email;
-            newData.ville = selected.ville;
-            newData.claimer_id = selected.claimer_id;
-        } else {
-            newData.firstname = "";
-            newData.lastname = "";
-            newData.sexe = "";
-            newData.telephone = [];
-            newData.email = [];
-            newData.ville = "";
-            setCustomer(null);
-            setAccount(null);
-            setAccounts([]);
-            newData.claimer_id = "";
-            newData.account_targeted_id = "";
-        }
+        setAccount(null);
+        newData.account_targeted_id = "";
+        setAccounts(formatSelectOption(selected.accounts, "number", false));
+        newData.firstname = selected.client.identite.firstname;
+        newData.lastname = selected.client.identite.lastname;
+        newData.sexe = selected.client.identite.sexe;
+        newData.telephone = selected.client.identite.telephone;
+        newData.email = selected.client.identite.email;
+        newData.ville = selected.client.identite.ville;
+        newData.claimer_id = selected.client.identite.id;
+        setShowSearchResult(false);
+        setSearchList([]);
         setData(newData);
-    };
-
-    const handleInputValueChange = value => {
-        if(value) {
-            setFilterPossibleCustomers(possibleCustomers.filter(e => e.label.toLowerCase().indexOf(value.toLowerCase()) >= 0 ))
-        } else {
-            setFilterPossibleCustomers([]);
-        }
-        setInputValue(value);
     };
 
     const onChangeAccount = selected => {
@@ -460,9 +418,14 @@ const ClaimAdd = props => {
     };
 
     const resetFountData = () => {
+        resetAllData();
         setFoundData({});
         setData(defaultData);
         setError(defaultError)
+    };
+
+    const closeModal = () => {
+        setFoundData({});
     };
 
     const formatFormData = (newData) => {
@@ -487,6 +450,59 @@ const ClaimAdd = props => {
         return formData;
     };
 
+    const blur = () => {
+        setTimeout(function(){ setShowSearchResult(false); }, 500);
+    };
+
+    const searchClient = async () => {
+        if (searchInputValue.length) {
+            if (institution) {
+                setStartSearch(true);
+                if (searchInputValue === clientCash.searchInputValue) {
+                    setStartSearch(false);
+                    setSearchList(clientCash.clients);
+                } else {
+                    await axios.get(`${appConfig.apiDomaine}/search/institutions/${institution.value}/clients?r=${searchInputValue}`)
+                        .then(({data}) => {
+                            setStartSearch(false);
+                            setShowSearchResult(true);
+                            if (data.length)
+                                setClientCash({ "searchInputValue": searchInputValue, "clients": data});
+                            setSearchList(data);
+                        })
+                        .catch(({response}) => {
+                            setStartSearch(false);
+                            console.log("Something is wrong");
+                        })
+                    ;
+                }
+            } else
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez selectioner une institution"))
+        } else {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez renseigner le champ de recherche"))
+        }
+    };
+
+    const resetAllData = async () => {
+        await setInstitution(null);
+        await setClaimCategory(null);
+        await setCurrency(null);
+        await setResponseChannel(null);
+        await setReceptionChannel(null);
+        await setClaimObject(null);
+        await setClaimObjects([]);
+        await setAccounts([]);
+        await setAccount(null);
+        await setUnits([]);
+        await setUnit(null);
+        await setDisabledInput(false);
+        await setData(defaultData);
+        await setRelationship(null);
+        setStartRequest(false);
+        await setSearchInputValue("");
+        await setError(defaultError);
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         const newData = {...data};
@@ -505,49 +521,16 @@ const ClaimAdd = props => {
         axios.post(endPoint.store, formatFormData(newData))
             .then(async () => {
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                await setInstitution(null);
-                await setClaimCategory(null);
-                await setCurrency(null);
-                await setResponseChannel(null);
-                await setReceptionChannel(null);
-                await setClaimObject(null);
-                await setClaimObjects([]);
-                await setAccounts([]);
-                await setAccount(null);
-                await setUnits([]);
-                await setUnit(null);
-                await setDisabledInput(false);
-                await setCustomer(null);
-                await setRelationship(null);
-                await setPossibleCustomers([]);
-                await setStartRequest(false);
-                await setError(defaultError);
-                await setData(defaultData);
+                resetAllData();
                 document.getElementById("customFile").value = "";
             })
             .catch(async (error) => {
                 if (error.response.data.code === 409) {
                     //Existing entity claimer
                     setFoundData(error.response.data.error);
-                    await document.getElementById("confirmSaveForm").click();
-                    //Reset form
-                    await setInstitution(null);
-                    await setClaimCategory(null);
-                    await setCurrency(null);
-                    await setResponseChannel(null);
-                    await setReceptionChannel(null);
-                    await setClaimObject(null);
-                    await setClaimObjects([]);
-                    await setAccounts([]);
-                    await setAccount(null);
-                    await setUnits([]);
-                    await setUnit(null);
-                    await setDisabledInput(false);
-                    await setCustomer(null);
-                    await setPossibleCustomers([]);
-                    await setData(defaultData);
-                    await setRelationship(null);
                     setStartRequest(false);
+                    await setError(defaultError);
+                    await document.getElementById("confirmSaveForm").click();
                 } else {
                     setStartRequest(false);
                     let fileErrors = [];
@@ -613,7 +596,7 @@ const ClaimAdd = props => {
                                     </div>
                                 </div>
 
-                                <form method="POST" className="kt-form">
+                                <div className="kt-form">
                                     <div className="kt-portlet__body">
 
                                         {
@@ -657,17 +640,64 @@ const ClaimAdd = props => {
                                                             </div>
 
                                                             <div className={"col"}>
-                                                                <label htmlFor="client">Recherché un client</label>
-                                                                <Select
-                                                                    isClearable
-                                                                    isDisabled={!disabledInput}
-                                                                    placeholder={"Veuillez sélectionner le client"}
-                                                                    value={customer}
-                                                                    inputValue={inputValue}
-                                                                    onInputChange={handleInputValueChange}
-                                                                    onChange={handleCustomerChange}
-                                                                    options={filterPossibleCustomers}
-                                                                />
+                                                                <div className="row" onFocus={e => setShowSearchResult(true)} onBlur={e => blur()}>
+                                                                    <div className="col d-flex">
+                                                                        <input
+                                                                            style={{marginTop: "2rem", borderBottomRightRadius: "0px", borderTopRightRadius: "0px"}}
+                                                                            type="text"
+                                                                            value={searchInputValue}
+                                                                            onChange={e => setSearchInputValue(e.target.value)}
+                                                                            placeholder={"Rechercher un client..."}
+                                                                            className="form-control"
+                                                                            disabled={!disabledInput}
+                                                                        />
+
+                                                                        <button
+                                                                            style={{marginTop: "2rem", borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px"}}
+                                                                            type="button"
+                                                                            className="btn btn-primary btn-icon"
+                                                                            disabled={!disabledInput || startSearch}
+                                                                            onClick={(e) => searchClient()}
+                                                                        >
+                                                                            <i className="fa fa-search"/>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                {
+                                                                    disabledInput ? (
+                                                                        searchList.length ? (
+                                                                            <div className="row">
+                                                                                <div className={ showSearchResult ? `dropdown-menu show` : `dropdown-menu` } aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style={{width: "100%", position: "absolute", willChange: "transform", top: "33px", left: "0px", transform: "translate3d(0px, 38px, 0px)", zIndex: "1"}}>
+                                                                                    {
+                                                                                        searchList.map((el, index) => (
+                                                                                            <span
+                                                                                                onClick={(e) => handleCustomerChange(e, el)}
+                                                                                                key={index}
+                                                                                                className="dropdown-item"
+                                                                                                style={{cursor: "pointer"}}
+                                                                                            >
+                                                                                                {el.fullName}
+                                                                                            </span>
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="row">
+                                                                                <div className={ showSearchResult ? `dropdown-menu show` : `dropdown-menu` } aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style={{width: "100%", position: "absolute", willChange: "transform", top: "33px", left: "0px", transform: "translate3d(0px, 38px, 0px)", zIndex: "1"}}>
+                                                                                    {
+                                                                                        startSearch ? (
+                                                                                            <span className={"mt-3 mb-3"}><Loader/></span>
+                                                                                        ) : (
+                                                                                            <span className="d-flex justify-content-center">Pas de resultat</span>
+                                                                                        )
+                                                                                    }
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    ) : null
+                                                                }
                                                             </div>
                                                         </div>
                                                     ) : null
@@ -1124,7 +1154,7 @@ const ClaimAdd = props => {
                                             </button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                                 {
                                     foundData.entity ? (
                                         <ConfirmClaimAddModal
@@ -1166,11 +1196,9 @@ const ClaimAdd = props => {
                                             channels={channels}
                                             responseChannel={responseChannel}
                                             receptionChannel={receptionChannel}
+                                            closeModal={closeModal}
                                             currency={currency}
                                             currencies={currencies}
-                                            disabledInput={disabledInput}
-                                            customer={customer}
-                                            possibleCustomers={possibleCustomers}
                                             institution={institution}
                                             institutions={institutions}
                                             endPoint={endPoint}

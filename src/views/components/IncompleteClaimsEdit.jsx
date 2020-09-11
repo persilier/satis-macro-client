@@ -70,25 +70,25 @@ const IncompleteClaimsEdit = props => {
         endPoint = endPointConfig[props.plan];
 
     const defaultData = {
-        firstname: "",
-        lastname: "",
-        sexe: "",
+        firstname: null,
+        lastname: null,
+        sexe: null,
         telephone: [],
         email: [],
-        ville: "",
-        unit_targeted_id: "",
-        institution_targeted_id: "",
-        account_targeted_id: "",
-        claim_object_id: "",
-        request_channel_slug: "",
-        response_channel_slug: "",
-        claimer_expectation: "",
-        description: "",
-        amount_currency_slug: "",
-        amount_disputed: "",
-        claimer_id: "",
-        relationship_id: "",
-        event_occured_at: "",
+        ville: null,
+        unit_targeted_id: null,
+        institution_targeted_id: null,
+        account_targeted_id: null,
+        claim_object_id: null,
+        request_channel_slug: null,
+        response_channel_slug: null,
+        claimer_expectation: null,
+        description: null,
+        amount_currency_slug: null,
+        amount_disputed: null,
+        claimer_id: null,
+        relationship_id: null,
+        event_occured_at: null,
         is_revival: 0,
         file: []
     };
@@ -174,7 +174,7 @@ const IncompleteClaimsEdit = props => {
                         amount_disputed: response.data.claim.amount_disputed?response.data.claim.amount_disputed:"",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
                         is_revival: response.data.claim.is_revival,
-                        // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : ""
+                        // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : null
                     };
                     setData(newIncompleteClaim);
                     setIsRequire(response.data.requirements);
@@ -532,11 +532,11 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
                                         {
                                             verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
@@ -567,7 +567,7 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
 
@@ -591,7 +591,7 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
                                                         </div>
@@ -622,7 +622,7 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
                                                             <div
@@ -645,7 +645,7 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
                                                         </div>
@@ -667,7 +667,7 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
 
@@ -683,14 +683,14 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
 
                                                         </div>
                                                     </div>
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
 
                                         <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
@@ -721,7 +721,7 @@ const IncompleteClaimsEdit = props => {
                                                                                     {error}
                                                                                 </div>
                                                                             ))
-                                                                        ) : ""
+                                                                        ) : null
                                                                     }
                                                                 </div>
                                                                 <div
@@ -744,12 +744,12 @@ const IncompleteClaimsEdit = props => {
                                                                                     {error}
                                                                                 </div>
                                                                             ))
-                                                                        ) : ""
+                                                                        ) : null
                                                                     }
                                                                 </div>
                                                             </div>
                                                         )
-                                                        : ""
+                                                        : null
                                                 }
 
                                                 <div className="form-group row">
@@ -771,7 +771,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -793,7 +793,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -829,7 +829,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -854,7 +854,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -876,7 +876,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -902,7 +902,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                     {
@@ -926,10 +926,10 @@ const IncompleteClaimsEdit = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
-                                                        ) : ""
+                                                        ) : null
                                                     }
 
                                                     <div className="col">
@@ -948,7 +948,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -973,7 +973,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -995,7 +995,7 @@ const IncompleteClaimsEdit = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -1065,7 +1065,7 @@ const IncompleteClaimsEdit = props => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

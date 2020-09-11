@@ -16,7 +16,7 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {formatSelectOption} from "../../helpers/function";
+import {debug, formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {month} from "../../constants/date";
 
@@ -276,7 +276,7 @@ const ClaimReporting = props => {
         setEndDate(e.target.value);
     };
 
-    const handleInstitutionChange = selected => {
+        const handleInstitutionChange = selected => {
         setInstitution(selected)
     };
 
@@ -370,7 +370,7 @@ const ClaimReporting = props => {
 
         await stateChartTwo.dataURI().then(({ imgURI, blob }) => {
             uriTwo = imgURI;
-        });
+            });
 
         if (fetchData) {
             setStartExportation(true);
