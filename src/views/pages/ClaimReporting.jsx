@@ -276,7 +276,7 @@ const ClaimReporting = props => {
         setEndDate(e.target.value);
     };
 
-    const handleInstitutionChange = selected => {
+        const handleInstitutionChange = selected => {
         setInstitution(selected)
     };
 
@@ -370,7 +370,7 @@ const ClaimReporting = props => {
 
         await stateChartTwo.dataURI().then(({ imgURI, blob }) => {
             uriTwo = imgURI;
-        });
+            });
 
         if (fetchData) {
             setStartExportation(true);
