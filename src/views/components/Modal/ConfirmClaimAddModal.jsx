@@ -85,9 +85,6 @@ const ConfirmClaimAddModal = props => {
     const [receptionChannel, setReceptionChannel] = useState(props.receptionChannel);
     const [currency, setCurrency] = useState(props.currency);
     const currencies = props.currencies;
-    const [disabledInput, setDisabledInput] = useState(props.disabledInput);
-    const [customer, setCustomer] = useState(props.customer);
-    const [possibleCustomers, setPossibleCustomers] = useState(props.possibleCustomers);
     const [institution, setInstitution] = useState(props.institution);
     const institutions = props.institutions;
     const [data, setData] = useState(defaultData);
@@ -136,27 +133,6 @@ const ConfirmClaimAddModal = props => {
         setData(newData);
     };
 
-    const formatPossibleCustomers = customers => {
-        const newCustomers = [];
-        for (let i = 0; i < customers.length; i++) {
-            newCustomers.push(
-                {
-                    claimer_id: customers[i].client.identite.id,
-                    value: customers[i].id,
-                    label: `${customers[i].client.identite.lastname} ${customers[i].client.identite.firstname}`,
-                    lastname: customers[i].client.identite.lastname,
-                    firstname: customers[i].client.identite.firstname,
-                    sexe: customers[i].client.identite.sexe,
-                    telephone: customers[i].client.identite.telephone,
-                    email: customers[i].client.identite.email,
-                    ville: customers[i].client.identite.ville ? customers[i].client.identite.ville : "",
-                    accounts: [...customers[i].accounts]
-                }
-            );
-        }
-        return newCustomers;
-    };
-
 
     const onChangeInstitution = (selected) => {
         const newData = {...data};
@@ -166,7 +142,6 @@ const ConfirmClaimAddModal = props => {
             if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
                 axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
                     .then(response => {
-                        setPossibleCustomers(formatPossibleCustomers(response.data.client_institutions));
                         setUnits(formatSelectOption(response.data.units, "name", "fr"))
                     })
                     .catch(error => {
@@ -177,8 +152,6 @@ const ConfirmClaimAddModal = props => {
         else {
             setUnits([]);
             setUnit(null);
-            setPossibleCustomers([]);
-            setCustomer(null);
             setInstitution(null);
             setAccount(null);
             setAccounts([]);
@@ -196,23 +169,6 @@ const ConfirmClaimAddModal = props => {
         setData(newData);
     };
 
-    const handleDisabledInputChange = () => {
-        const newData = {...data};
-        setCustomer(null);
-        setAccount(null);
-        setAccounts([]);
-        newData.firstname = "";
-        newData.lastname = "";
-        newData.sexe = "";
-        newData.telephone = [];
-        newData.email = [];
-        newData.ville = "";
-        newData.claimer_id = "";
-        newData.account_targeted_id = "";
-        setData(newData);
-        setDisabledInput(!disabledInput);
-    };
-
     const onChangeUnit = selected => {
         const newData = {...data};
         if (selected) {
@@ -221,36 +177,6 @@ const ConfirmClaimAddModal = props => {
         } else {
             newData.unit_targeted_id = "";
             setUnit(null)
-        }
-        setData(newData);
-    };
-
-    const handleCustomerChange = (selected) => {
-        const newData = {...data};
-        if (selected) {
-            setCustomer(selected);
-            setAccount(null);
-            newData.account_targeted_id = "";
-            setAccounts(formatSelectOption(selected.accounts, "number", false));
-            newData.firstname = selected.firstname;
-            newData.lastname = selected.lastname;
-            newData.sexe = selected.sexe;
-            newData.telephone = selected.telephone;
-            newData.email = selected.email;
-            newData.ville = selected.ville;
-            newData.claimer_id = selected.claimer_id;
-        } else {
-            newData.firstname = "";
-            newData.lastname = "";
-            newData.sexe = "";
-            newData.telephone = [];
-            newData.email = [];
-            newData.ville = "";
-            setCustomer(null);
-            setAccount(null);
-            setAccounts([]);
-            newData.claimer_id = "";
-            newData.account_targeted_id = "";
         }
         setData(newData);
     };
@@ -423,10 +349,7 @@ const ConfirmClaimAddModal = props => {
                 await setAccount(null);
                 await setUnits([]);
                 await setUnit(null);
-                await setDisabledInput(false);
-                await setCustomer(null);
                 await setRelationship(null);
-                await setPossibleCustomers([]);
                 await setStartRequest(false);
                 // await setError(defaultError);
                 await setData(defaultData);
@@ -443,23 +366,9 @@ const ConfirmClaimAddModal = props => {
     };
 
     const onClickClose = async () => {
-        await setInstitution({});
-        await setClaimCategory({});
-        await setCurrency({});
-        await setResponseChannel({});
-        await setReceptionChannel({});
-        await setClaimObject({});
-        await setClaimObjects([]);
-        await setAccounts([]);
-        await setAccount({});
-        await setUnits([]);
-        await setUnit({});
-        await setDisabledInput(false);
-        await setCustomer({});
-        await setPossibleCustomers([]);
-        await setData(defaultData);
         await document.getElementById("closeButton").click();
-        await props.resetFoundData();
+        props.closeModal();
+        // await props.resetFoundData();
     };
 
     return (
@@ -501,11 +410,11 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
 
                                         <div className="kt-section">
@@ -517,24 +426,35 @@ const ConfirmClaimAddModal = props => {
                                                         <div className="form-group row">
                                                             <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
-                                                                    <input disabled={true} type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
-                                                                    Client déjà enregistrer<span/>
+                                                                    <input disabled={true} type="checkbox" />
+                                                                    Le client est-il déjà enregistré ?<span/>
                                                                 </label>
                                                             </div>
 
                                                             <div className={"col"}>
-                                                                <label htmlFor="client">Selectionez le client</label>
-                                                                <Select
-                                                                    isClearable
-                                                                    isDisabled={true}
-                                                                    placeholder={"Veillez selectioner le client"}
-                                                                    value={customer}
-                                                                    onChange={handleCustomerChange}
-                                                                    options={possibleCustomers}
-                                                                />
+                                                                <div className="row">
+                                                                    <div className="col d-flex">
+                                                                        <input
+                                                                            style={{marginTop: "2rem", borderBottomRightRadius: "0px", borderTopRightRadius: "0px"}}
+                                                                            type="text"
+                                                                            placeholder={"Rechercher un client..."}
+                                                                            className="form-control"
+                                                                            disabled={true}
+                                                                        />
+
+                                                                        <button
+                                                                            style={{marginTop: "2rem", borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px"}}
+                                                                            type="button"
+                                                                            className="btn btn-primary btn-icon"
+                                                                            disabled={true}
+                                                                        >
+                                                                            <i className="fa fa-search"/>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 <div className="form-group row">
@@ -556,7 +476,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -578,7 +498,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -604,7 +524,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -616,7 +536,7 @@ const ConfirmClaimAddModal = props => {
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer votre ville"
-                                                            value={data.ville}
+                                                            value={data.ville === null ? "" : data.ville}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
                                                         {
@@ -626,7 +546,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -642,7 +562,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -656,7 +576,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -688,7 +608,7 @@ const ConfirmClaimAddModal = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
 
@@ -708,11 +628,11 @@ const ConfirmClaimAddModal = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
                                                         </div>
-                                                    ) : ""
+                                                    ) : null
                                                 }
 
                                                 <div className="form-group row">
@@ -732,7 +652,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -752,7 +672,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -785,7 +705,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -808,7 +728,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -828,7 +748,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
@@ -851,7 +771,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -871,7 +791,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -893,10 +813,10 @@ const ConfirmClaimAddModal = props => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
-                                                        ) : ""
+                                                        ) : null
                                                     }
 
 
@@ -920,7 +840,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
@@ -941,7 +861,7 @@ const ConfirmClaimAddModal = props => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
