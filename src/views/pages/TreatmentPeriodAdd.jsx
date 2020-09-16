@@ -191,6 +191,18 @@ const TreatmentPeriodAdd = (props) => {
                                                         </button>
                                                     )
                                                 }
+
+                                                {
+                                                    !startRequest ? (
+                                                        <Link to="/settings/treatment-period" className="btn btn-secondary mx-2">
+                                                            Quitter
+                                                        </Link>
+                                                    ) : (
+                                                        <Link to="/settings/treatment-period" className="btn btn-secondary mx-2" disabled>
+                                                            Quitter
+                                                        </Link>
+                                                    )
+                                                }
                                             </div>
                                         </div>
                                     </div>

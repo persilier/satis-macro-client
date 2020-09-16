@@ -12,11 +12,9 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmActivation, confirmDeleteConfig} from "../../config/confirmConfig";
+import {confirmActivation} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastDeleteErrorMessageConfig,
-    toastDeleteSuccessMessageConfig,
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {Link} from "react-router-dom";
@@ -245,7 +243,7 @@ const User = (props) => {
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={["store-user-any-institution", "store-user-my-institution"]}
-                            title={"Type d'utilisateur"}
+                            title={"Utilisateur"}
                             addText={"Ajouter"}
                             addLink={"/settings/users/add"}
                         />

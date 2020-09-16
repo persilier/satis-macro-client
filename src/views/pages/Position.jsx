@@ -201,7 +201,7 @@ const Position = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Postes
+                                    Fonctions
                                 </a>
                             </div>
                         </div>
@@ -209,11 +209,11 @@ const Position = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des postes occupés"}/>
+                    <InfirmationTable information={"Liste des fonctions occupés"}/>
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-position"}
-                            title={"Postes"}
+                            title={"Fonctions"}
                             addText={"Ajouter"}
                             addLink={"/settings/positions/add"}
                         />

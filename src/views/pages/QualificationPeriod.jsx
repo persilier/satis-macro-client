@@ -208,7 +208,9 @@ const QualificationPeriod = props => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-delai-qualification-parameters"}
+                            addPermission={
+                                !qualificationPeriods.length ? "" : qualificationPeriods[qualificationPeriods.length - 1 ].borne_sup === "+" ? "" : "store-delai-qualification-parameters"
+                            }
                             title={"Délai qualification"}
                             addText={"Ajouter"}
                             addLink={"/settings/qualification-period/add"}

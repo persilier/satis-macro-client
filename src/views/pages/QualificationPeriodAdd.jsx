@@ -191,6 +191,18 @@ const QualificationPeriodAdd = (props) => {
                                                         </button>
                                                     )
                                                 }
+
+                                                {
+                                                    !startRequest ? (
+                                                        <Link to="/settings/qualification-period" className="btn btn-secondary mx-2">
+                                                            Quitter
+                                                        </Link>
+                                                    ) : (
+                                                        <Link to="/settings/qualification-period" className="btn btn-secondary mx-2" disabled>
+                                                            Quitter
+                                                        </Link>
+                                                    )
+                                                }
                                             </div>
                                         </div>
                                     </div>

@@ -321,7 +321,7 @@ const HoldingUnitForm = (props) => {
                                                 id ? (
                                                     verifyPermission(props.userPermissions, 'update-any-unit') ? (
                                                         <div className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
-                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable <InputRequire/></label>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable</label>
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <Select
                                                                     isClearable

@@ -81,7 +81,7 @@ const PositionForm = (props) => {
                 })
             ;
         } else {
-            axios.post(`${appConfig.apiDomaine}/positions`, data)
+            axios.fonction(`${appConfig.apiDomaine}/positions`, data)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -108,10 +108,10 @@ const PositionForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#postes" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#fonctions" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/positions" className="kt-subheader__breadcrumbs-link">
-                                    Postes
+                                    Fonctions
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#ajout" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -132,7 +132,7 @@ const PositionForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de la poste" : "Ajout de la post"
+                                                id ? "Modification d'une fonction" : "Ajout d'une fonction"
                                             }
                                         </h3>
                                     </div>

@@ -397,23 +397,13 @@ const ClaimReporting = props => {
                 statistiqueTreatmentPeriod: fetchData.statistiqueTreatmentPeriod,
                 statistiqueChannel: fetchData.statistiqueChannel,
                 chanelGraph: {
-                    legend: {
-                        SMS: "#008FFB",
-                        TELEPHONE: "#00E396",
-                        EMAIL: "#FEB019",
-                        ENTRETIEN: "#FF4560",
-                    },
                     image: uriOne
                 },
                 evolutionClaim: {
-                    legend: {
-                        claims_received: "#008FFB",
-                        claims_resolved: "#00E396"
-                    },
                     image: uriTwo,
                     filter: typeFilter
                 },
-                headeBackground: "#7F9CF5",
+                headerBackground: "#7F9CF5",
             };
 
             axios({

@@ -238,7 +238,7 @@ const ClaimObject = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Objet de plainte
+                                    Objet de réclamation
                                 </a>
                             </div>
                         </div>
@@ -249,7 +249,7 @@ const ClaimObject = (props) => {
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-claim-object"}
-                            title={"Objet de plainte"}
+                            title={"Objet de réclamation"}
                             addText={"Ajouter"}
                             addLink={"/settings/claim_objects/add"}
                         />

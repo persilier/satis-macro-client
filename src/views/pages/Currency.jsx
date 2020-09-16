@@ -174,7 +174,7 @@ const Currency = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-currency') ? (
@@ -184,7 +184,7 @@ const Currency = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -305,7 +305,7 @@ const Currency = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -315,7 +315,7 @@ const Currency = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

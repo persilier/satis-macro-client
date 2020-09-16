@@ -109,7 +109,7 @@ const ClaimCategoryForm = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/claim_categories" className="kt-subheader__breadcrumbs-link">
-                                    Catégorie de plainte
+                                    Catégorie de réclamation
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -130,7 +130,7 @@ const ClaimCategoryForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de catégorie de plainte" : "Ajout de catégorie de plainte"
+                                                id ? "Modification de catégorie de réclamation" : "Ajout de catégorie de réclamation"
                                             }
                                         </h3>
                                     </div>
@@ -146,7 +146,7 @@ const ClaimCategoryForm = (props) => {
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom de la catégorie"
+                                                        placeholder="Nom de la catégorie"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />

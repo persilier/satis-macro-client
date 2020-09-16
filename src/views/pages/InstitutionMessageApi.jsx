@@ -46,6 +46,7 @@ const InstitutionMessageApi = props => {
     const formatState = (params, paramData = null) => {
         const newState = {};
         const newError = {};
+        console.log(paramData,"PARAMS");
         params.map(param => {
             if (param !== "to" && param !== "text") {
                 newState[param] = paramData ? paramData[param] : "";

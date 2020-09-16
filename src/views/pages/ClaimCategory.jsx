@@ -205,7 +205,7 @@ const ClaimCategory = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Catégorie de plainte
+                                    Catégorie de réclamation
                                 </a>
                             </div>
                         </div>
@@ -216,7 +216,7 @@ const ClaimCategory = (props) => {
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-claim-category"}
-                            title={"Catégories de plainte"}
+                            title={"Catégories de réclamation"}
                             addText={"Ajouter"}
                             addLink={"/settings/claim_categories/add"}
                         />

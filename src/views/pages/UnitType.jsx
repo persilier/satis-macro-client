@@ -166,7 +166,7 @@ const UnitType = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{unitType.name ? unitType.name["fr"] : ""}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : ""}</td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : "-"}</td>
                 <td>
                     {
                         verifyPermission(props.userPermissions, 'update-unit-type') ? (

@@ -220,7 +220,7 @@ const UserAdd = (props) => {
                                                             <Select
                                                                 isClearable
                                                                 value={institution}
-                                                                placeholder={"ALIDE"}
+                                                                placeholder={"SATIS"}
                                                                 onChange={handleInstitutionChange}
                                                                 options={institutions}
                                                             />
@@ -267,7 +267,7 @@ const UserAdd = (props) => {
                                                         isClearable
                                                         isMulti
                                                         value={role}
-                                                        placeholder={"admin-dmd"}
+                                                        placeholder={"admin-satis"}
                                                         onChange={handleRoleChange}
                                                         options={roles}
                                                     />

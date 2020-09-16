@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 
 const KanbanElementDetail = ({claim, index, onShowDetail}) => {
-    const timeExpire = `${claim.time_expire > 0 ? "+" : claim.time_expire < 0 ? "-" : "" } ${claim.time_expire} ${claim.time_expire === 0 || claim.time_expire === 1 || claim.time_expire === -1 ? "jour" : "jours"}`
+    const timeExpire = `${claim.time_expire > 0 ? "+" : "" } ${claim.time_expire} ${claim.time_expire === 0 || claim.time_expire === 1 || claim.time_expire === -1 ? "jour" : "jours"}`;
     return (
         <div className="kt-portlet" style={{cursor: "pointer"}} onClick={() => onShowDetail(claim)}>
             <div className="kt-portlet__head kt-portlet__head--right kt-portlet__head--noborder  kt-ribbon kt-ribbon--clip kt-ribbon--left kt-ribbon--info">

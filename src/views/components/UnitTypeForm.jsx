@@ -16,6 +16,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -151,7 +152,7 @@ const UnitTypeForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité(<strong className="text-danger">*</strong>)</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -174,7 +175,7 @@ const UnitTypeForm = (props) => {
                                             </div>
 
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description(<strong className="text-danger">*</strong>)</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"

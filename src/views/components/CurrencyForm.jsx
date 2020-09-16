@@ -49,59 +49,34 @@ const CurrencyForm = () => {
 
     useEffect(() => {
         async function fetchData () {
-            setListCurrency(filterCurrency([]));
             if (id) {
                 await axios.get(`${appConfig.apiDomaine}/currencies/${id}`)
-                    .then(response => {
+                    .then(({data}) => {
                         const newData = {
-                            name: response.data.name["fr"],
-                            iso_code: response.data.iso_code
+                            name: data.currency.name["fr"],
+                            iso_code: data.currency.iso_code
                         };
                         setData(newData);
+                        setListCurrency(filterCurrency(data.currencies));
                     })
                     .catch(error => {
                         console.log("Something is wrong");
                     })
                 ;
+            } else {
+                await axios.get(`${appConfig.apiDomaine}/currencies`)
+                    .then(({data}) => {
+                        setListCurrency(filterCurrency(data));
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
             }
         }
         fetchData();
     }, [appConfig.apiDomaine, id]);
 
     const filterCurrency = (removeElement) => {
-        removeElement = [
-            {
-                value: 0,
-                label: "dinar algérien",
-                iso_code: "DZD"
-            },
-            {
-                value: 1,
-                label: "livre égyptienne",
-                iso_code: "EGP"
-            },
-            {
-                value: 2,
-                label: "dinar libyen",
-                iso_code: "LYD"
-            },
-            {
-                value: 14,
-                label: "leone",
-                iso_code: "SLL"
-            },
-            {
-                value: 16,
-                label: "franc congolais",
-                iso_code: "CDF"
-            },
-            {
-                value: 17,
-                label: "dobra",
-                iso_code: "STD"
-            }
-        ];
-
         let newCurrencyList = [...listCurrency];
 
         for (let i = 0; i < removeElement.length; i++) {
@@ -115,8 +90,8 @@ const CurrencyForm = () => {
         if (error.iso_code.length || error.name.length)
             setError(defaultError);
         const newData = {...data};
-        newData.iso_code = selected ? selected.iso_code : "";
-        newData.name = selected ? selected.label : "";
+        newData.iso_code = selected ? selected.iso_code : null;
+        newData.name = selected ? selected.label : null;
         setCurrency(selected);
         setData(newData);
     };
@@ -130,6 +105,7 @@ const CurrencyForm = () => {
                     setStartRequest(false);
                     setCurrency(null);
                     setError(defaultError);
+                    setListCurrency(filterCurrency([data]));
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
                 .catch(errorRequest => {
@@ -145,6 +121,7 @@ const CurrencyForm = () => {
                     setError(defaultError);
                     setData(defaultData);
                     setCurrency(null);
+                    setListCurrency(filterCurrency([data]));
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(errorRequest => {
@@ -232,7 +209,7 @@ const CurrencyForm = () => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -255,7 +232,7 @@ const CurrencyForm = () => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -264,7 +241,7 @@ const CurrencyForm = () => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...
@@ -298,10 +275,10 @@ const CurrencyForm = () => {
         id ?
             verifyPermission(["update-currency"], 'update-currency') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(["store-currency"], 'store-currency') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

@@ -209,7 +209,7 @@ const TreatmentPeriod = props => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-delai-treatment-parameters"}
+                            addPermission={!TreatmentPeriods.length ? "" : TreatmentPeriods[TreatmentPeriods.length - 1].borne_sup === "+" ? "" : "store-delai-treatment-parameters"}
                             title={"Délai traitement"}
                             addText={"Ajouter"}
                             addLink={"/settings/treatment-period/add"}

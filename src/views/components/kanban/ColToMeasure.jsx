@@ -1,8 +1,5 @@
 import React from "react";
 import moment from "moment";
-import {verifyPermission} from "../../../helpers/permission";
-import {ToastBottomEnd} from "../Toast";
-import {toastErrorMessageWithParameterConfig} from "../../../config/toastConfig";
 import KanbanElementDetail from "./KanbanElementDetail";
 
 const ColToMeasure = (props) => {

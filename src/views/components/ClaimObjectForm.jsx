@@ -171,7 +171,7 @@ const ClaimObjectForm = (props) => {
                             <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <Link to="/settings/claim_objects" className="kt-subheader__breadcrumbs-link">
-                                Objet de plainte
+                                Objet de réclamation
                             </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -192,7 +192,7 @@ const ClaimObjectForm = (props) => {
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
                                         {
-                                            id ? "Modification d'objet de plainte" : "Ajout d'objet de plainte"
+                                            id ? "Modification d'objet de réclamation" : "Ajout d'objet de réclamation"
                                         }
                                     </h3>
                                 </div>
@@ -202,13 +202,13 @@ const ClaimObjectForm = (props) => {
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Objet de plainte <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Objet de réclamation <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="name"
                                                     type="text"
                                                     className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer le nom de l'objet de plainte"
+                                                    placeholder="Nom de l'objet de réclamation"
                                                     value={data.name}
                                                     onChange={(e) => onChangeName(e)}
                                                 />
@@ -230,7 +230,7 @@ const ClaimObjectForm = (props) => {
                                                 <Select
                                                     isClearable
                                                     value={claimCategory}
-                                                    placeholder={"Veillez entrer la catégorie de l'objet de plainte"}
+                                                    placeholder={"Catégorie de l'objet de réclamation"}
                                                     onChange={onChangeClaimCategory}
                                                     options={claimCategories}
                                                 />
@@ -253,7 +253,7 @@ const ClaimObjectForm = (props) => {
                                                     id="timeLimite"
                                                     type="number"
                                                     className={error.time_limit.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la limitation de temps"
+                                                    placeholder="Temps limite de l'objet"
                                                     value={data.time_limit}
                                                     onChange={(e) => onChangeTimeLimit(e)}
                                                 />
@@ -275,7 +275,7 @@ const ClaimObjectForm = (props) => {
                                                 <Select
                                                     isClearable
                                                     value={severityLevel}
-                                                    placeholder={"Veillez selectioner le niveau de gravité"}
+                                                    placeholder={"Selectioner le niveau de gravité"}
                                                     onChange={onChangeSeverityLevel}
                                                     options={severityLevels}
                                                 />
@@ -292,12 +292,12 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description</label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"
                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
+                                                    placeholder="Description"
                                                     cols="30"
                                                     rows="5"
                                                     value={data.description}

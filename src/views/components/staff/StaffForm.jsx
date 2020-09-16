@@ -27,6 +27,7 @@ import {AUTH_TOKEN} from "../../../constants/token";
 import InputRequire from "../InputRequire";
 import {confirmLeadConfig} from "../../../config/confirmConfig";
 import {ConfirmLead} from "../ConfirmationAlert";
+import WithoutCode from "../WithoutCode";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -464,6 +465,7 @@ const StaffForm = (props) => {
                                                             <option value="" disabled={true}>Veillez choisir le Sexe</option>
                                                             <option value="F">Féminin</option>
                                                             <option value="M">Masculin</option>
+                                                            <option value="A">Autres</option>
                                                         </select>
                                                         {
                                                             error.sexe.length ? (
@@ -479,7 +481,7 @@ const StaffForm = (props) => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s) <InputRequire/></label>
+                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/> <InputRequire/></label>
                                                         <TagsInput value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (
@@ -507,7 +509,7 @@ const StaffForm = (props) => {
                                                     </div>
 
                                                     <div className={error.ville.length ? "col validated" : "col"}>
-                                                        <label htmlFor="ville">Ville <InputRequire/></label>
+                                                        <label htmlFor="ville">Ville</label>
                                                         <input
                                                             id="ville"
                                                             type="text"
