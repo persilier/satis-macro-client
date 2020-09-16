@@ -56,7 +56,7 @@ const DashboardClaimsActivity = (props) => {
                         ) : (
                             <div className="kt-portlet__body kt-portlet__body--fit">
                                 <div className="row row-no-padding row-col-separator-lg">
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -73,7 +73,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -116,7 +116,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -160,7 +160,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -204,7 +204,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -248,7 +248,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -291,7 +291,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
@@ -333,7 +333,7 @@ const DashboardClaimsActivity = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-12 col-lg-3 col-xl-1">
+                                    <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
