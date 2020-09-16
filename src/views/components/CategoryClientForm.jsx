@@ -9,7 +9,6 @@ import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";

@@ -1,12 +1,12 @@
-import React, {useState} from "react";
-import {loadCss, loadScript} from "../../../../helpers/function";
+import React, {useEffect, useState} from "react";
+import {forceRound, loadCss, loadScript} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import {connect} from 'react-redux';
 import {ToastBottomEnd} from "../../../../views/components/Toast";
 import {
-	toastConnectErrorMessageConfig,
-	toastConnectSuccessMessageConfig
+    toastConnectErrorMessageConfig,
+    toastConnectSuccessMessageConfig
 } from "../../../../config/toastConfig";
 import {listConnectData} from "../../../../constants/userClient";
 
@@ -23,9 +23,20 @@ const LoginPage = (props) => {
         // client_secret:[]
     };
     const [username, setUserName] = useState("");
+    const [data, setData] = useState(null);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+
+    useEffect(() => {
+        axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
+            .then(response => {
+                setData(response.data);
+            })
+            .catch(error => {
+                console.log("Something is wrong");
+            })
+    }, []);
 
     const onChangeUserName = (e) => {
         setUserName(e.target.value)
@@ -34,7 +45,7 @@ const LoginPage = (props) => {
         setPassword(e.target.value)
     };
     const onClickConnectButton = (e) => {
-        e.preventDefault(e)
+        e.preventDefault(e);
         setStartRequest(true);
         const formData = {
             grant_type: listConnectData[props.plan].grant_type,
@@ -43,10 +54,10 @@ const LoginPage = (props) => {
             username: username,
             password: password
         };
-        axios.post(appConfig.apiDomaine +`/oauth/token`, formData)
+        axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
             .then(response => {
                 const token = response.data.access_token;
-                axios.get(appConfig.apiDomaine +`/login`, {
+                axios.get(appConfig.apiDomaine + `/login`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
@@ -64,7 +75,7 @@ const LoginPage = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-				ToastBottomEnd.fire(toastConnectErrorMessageConfig);
+                ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;
     };
@@ -83,22 +94,24 @@ const LoginPage = (props) => {
 
                                 <div
                                     className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                    style={{backgroundImage: "url(/assets/media/bg/bg-4.jpg)"}}>
+                                    style={{backgroundImage: `url(${data ? appConfig.apiDomaine + data.params.fr.background.value.url : "/assets/media/bg/bg-1.jpg"})`}}>
                                     <div className="kt-grid__item">
                                         <a href="/login" className="kt-login__logo">
-                                            <img src="/assets/images/satisLogo.png"/>
+                                            <img
+                                                src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : "/assets/images/satisLogo.png"}/>
                                             <span style={{
                                                 color: "white",
                                                 fontSize: "1.5em",
                                                 paddingLeft: "5px"
-                                            }}>{props.plan}  {appConfig.version}</span>
+                                            }}>
+                                                {data ? data.params.fr.version.value : props.plan + appConfig.version}
+                                            </span>
                                         </a>
                                     </div>
                                     <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
                                         <div className="kt-grid__item kt-grid__item--middle">
-                                            <h3 className="kt-login__title">Bienvenue sur {appConfig.appFullName(props.plan)}!</h3>
-                                            <h4 className="kt-login__subtitle">Votre nouvel outil de gestion des
-                                                Réclamations.</h4>
+                                            <h3 className="kt-login__title"> {data ? data.params.fr.header.value + " " + data.params.fr.version.value: "Bienvenue"}</h3>
+                                            <h4 className="kt-login__subtitle"> {data ? data.params.fr.description.value + " " : "Votre nouvelle application"}</h4>
                                         </div>
                                     </div>
                                     <div className="kt-grid__item">
@@ -122,19 +135,21 @@ const LoginPage = (props) => {
 
                                         <div className="kt-login__form">
                                             <div className="kt-login__title" style={{marginTop: '175px'}}>
-                                                <h3>Connexion</h3>
+                                                <h3> {data ? data.params.fr.title.value : "Connexion"}</h3>
                                             </div>
 
-                                            <form className="kt-form" id="kt_login__form" style={{marginBottom: '142px'}}>
-                                                <div className={error.username.length ? "form-group row validated" : "form-group row"}>
+                                            <form className="kt-form" id="kt_login__form"
+                                                  style={{marginBottom: '142px'}}>
+                                                <div
+                                                    className={error.username.length ? "form-group row validated" : "form-group row"}>
 
                                                     <input
                                                         className={error.username.length ? "form-control is-invalid" : "form-control"}
                                                         type="email"
-                                                           placeholder="Votre Email"
-                                                           name="username"
-                                                           onChange={(e) => onChangeUserName(e)}
-														   value={username}
+                                                        placeholder="Votre Email"
+                                                        name="username"
+                                                        onChange={(e) => onChangeUserName(e)}
+                                                        value={username}
                                                     />
                                                     {/*<div id="username-error" className="error invalid-feedback">This*/}
                                                     {/*    field is required.*/}
@@ -150,15 +165,16 @@ const LoginPage = (props) => {
                                                         ) : ""
                                                     }
                                                 </div>
-                                                <div className={error.password.length ? "form-group row validated" : "form-group row"}>
+                                                <div
+                                                    className={error.password.length ? "form-group row validated" : "form-group row"}>
 
-                                                <input
-                                                    className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                       type="password"
-                                                           placeholder="Votre Mot de Passe"
-                                                           name="password"
-                                                           onChange={(e) => onChangePassword(e)}
-														   value={password}
+                                                    <input
+                                                        className={error.password.length ? "form-control is-invalid" : "form-control"}
+                                                        type="password"
+                                                        placeholder="Votre Mot de Passe"
+                                                        name="password"
+                                                        onChange={(e) => onChangePassword(e)}
+                                                        value={password}
                                                     />
                                                     {
                                                         error.password.length ? (
@@ -178,7 +194,8 @@ const LoginPage = (props) => {
                                                             <button type="submit"
                                                                     id="kt_login_signin_submit"
                                                                     className="btn btn-primary btn-elevate kt-login__btn-primary"
-                                                                    onClick={onClickConnectButton}> Se connecter</button>
+                                                                    onClick={onClickConnectButton}> Se
+                                                                connecter</button>
                                                         ) : (
                                                             <button
                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
