@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import Message from './Message';
 import moment from 'moment';
 import './MessageList.css';
-import {debug} from "../../../helpers/function";
-
 
 export default function MessageList(props) {
 
