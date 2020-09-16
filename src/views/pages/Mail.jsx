@@ -17,13 +17,13 @@ const Mail = (props) => {
         window.location.href = ERROR_401;
 
     const defaultData = {
-        senderID: null,
-        username: null,
-        password: null,
-        "from": null,
-        server: null,
-        port: null,
-        security: null
+        senderID: "",
+        username: "",
+        password: "",
+        "from": "",
+        server: "",
+        port: "",
+        security: ""
     };
     const defaultError = {
         senderID: [],
