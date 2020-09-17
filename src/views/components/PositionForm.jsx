@@ -111,7 +111,7 @@ const PositionForm = (props) => {
                                 <a href="#postes" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/positions" className="kt-subheader__breadcrumbs-link">
-                                    Postes
+                                    Fonctions
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#ajout" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -132,7 +132,7 @@ const PositionForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de la poste" : "Ajout de la post"
+                                                id ? "Modification de la poste" : "Ajout de la Fonction"
                                             }
                                         </h3>
                                     </div>
@@ -148,7 +148,7 @@ const PositionForm = (props) => {
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Développeur"
+                                                        placeholder="Ex:  Comptable"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
