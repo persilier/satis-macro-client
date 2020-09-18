@@ -8,7 +8,7 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
@@ -39,9 +39,9 @@ const ConfigRapportAutoForm = (props) => {
 
     let endPoint = "";
     if (props.plan === "MACRO") {
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution'))
+        if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+        else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
             endPoint = endPointConfig[props.plan].filial
     } else {
         endPoint = endPointConfig[props.plan]
@@ -335,7 +335,7 @@ const ConfigRapportAutoForm = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
+        verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ? (
             printJsx()
         ) : ""
     );
