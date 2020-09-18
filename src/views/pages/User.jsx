@@ -207,12 +207,16 @@ const User = (props) => {
                         {user.disabled_at === null ? "Désactiver" : "Réactiver"}
                     </a>
 
-                    <Link to={`/settings/users/${user.id}/change-role`}
-                          id={`user-edit-${user.id}`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md mx-3"
-                          title="Changer Role">
-                        <i className="la la-edit"/>
-                    </Link>
+                    {
+                        verifyPermission(props.userPermissions, "show-user-any-institution") || verifyPermission(props.userPermissions, "show-user-my-institution") ? (
+                            <Link to={`/settings/users/${user.id}/edit`}
+                                  id={`user-edit-${user.id}`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md mx-3"
+                                  title="Modifier">
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : null
+                    }
                 </td>
             </tr>
         );

@@ -83,6 +83,7 @@ import TreatmentPeriodAdd from "../pages/TreatmentPeriodAdd";
 import ParametersComponent from "../pages/ParametersComponent";
 import ParametersComponentForm from "../components/ParametersComponentForm";
 import ParametersComponentEdit from "../components/ParametersComponentEdit";
+import UserEdit from "../pages/UserEdit";
 
 const Body = () => {
     return (
@@ -480,6 +481,10 @@ const Body = () => {
 
             <Route exact path="/settings/users/add">
                 <UserAdd/>
+            </Route>
+
+            <Route exact path="/settings/users/:id/edit">
+                <UserEdit/>
             </Route>
 
             <Route exact path="/settings/qualification-period">
