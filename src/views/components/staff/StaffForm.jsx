@@ -123,7 +123,6 @@ const StaffForm = (props) => {
         if (id) {
             axios.get(endPoint.edit(id))
                 .then(response => {
-                    debug(response.data, "data");
                     const newData = {
                         firstname: response.data.staff.identite.firstname,
                         lastname: response.data.staff.identite.lastname,
@@ -134,7 +133,7 @@ const StaffForm = (props) => {
                         unit_id: response.data.staff.unit_id,
                         position_id: response.data.staff.position_id,
                         institution_id: response.data.staff.institution_id,
-                        is_lead: response.data.is_lead ? 1 : 0
+                        is_lead: response.data.staff.is_lead ? 1 : 0
                     };
 
                     setPositions(response.data.positions);
@@ -163,7 +162,6 @@ const StaffForm = (props) => {
                 .then(response => {
                     if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit'))
                         setInstitutions(formatInstitutions(response.data.institutions));
-                    setUnits(response.data.units ? response.data.units : []);
                     setPositions(response.data.positions);
                 })
                 .catch(error => {
@@ -273,7 +271,6 @@ const StaffForm = (props) => {
     const handleOptionChange = (e) => {
         const value = parseInt(e.target.value);
         if (parseInt(e.target.value) === 1) {
-            debug(unit, "lead");
             if (!!Object.keys(unit.lead).length) {
                 ConfirmLead.fire(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`))
                     .then(result => {
@@ -293,13 +290,10 @@ const StaffForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        let newData = data;
-        newData.is_lead = newData.is_lead === 1 ? true : false;
+        let newData = {...data};
+        newData.is_lead = newData.is_lead === 1;
         if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
             delete newData.institution_id;
-
-        newData.is_lead = newData.is_lead === 0 ? false : true;
-        debug(newData, "newData");
 
         if (id) {
             axios.put(endPoint.update(id), newData)
@@ -337,7 +331,6 @@ const StaffForm = (props) => {
                     if (errorRequest.response.data.error.identite)
                     {
                         // Existing entity
-                        console.log("Found data");
                         await setFoundData(errorRequest.response.data.error);
                         await document.getElementById("confirmSaveForm").click();
                         await setInstitution(null);

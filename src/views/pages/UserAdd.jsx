@@ -135,6 +135,7 @@ const UserAdd = (props) => {
         newData.institution_id = selected ? selected.value : "";
         setInstitution(selected);
         setData(newData);
+        setIdentity(null);
         loadStaff(selected ? selected.value : null);
     };
 

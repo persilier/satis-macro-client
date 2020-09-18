@@ -203,129 +203,129 @@ const ConfirmSaveForm = (props) => {
                                 />
 
                                 <div className="kt-section kt-section--first">
-                                            <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations personnelles:</h3>
-                                                <div className="form-group row">
-                                                    <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Votre nom de famille</label>
-                                                        <input
-                                                            id="lastname"
-                                                            type="text"
-                                                            className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le nom de famille"
-                                                            value={data.lastname}
-                                                            onChange={(e) => onChangeLastName(e)}
-                                                        />
-                                                        {
-                                                            error.lastname.length ? (
-                                                                error.lastname.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
+                                    <div className="kt-section__body">
+                                        <h3 className="kt-section__title kt-section__title-lg">Informations personnelles:</h3>
+                                        <div className="form-group row">
+                                            <div className={error.lastname.length ? "col validated" : "col"}>
+                                                <label htmlFor="lastname">Votre nom de famille</label>
+                                                <input
+                                                    id="lastname"
+                                                    type="text"
+                                                    className={error.lastname.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le nom de famille"
+                                                    value={data.lastname}
+                                                    onChange={(e) => onChangeLastName(e)}
+                                                />
+                                                {
+                                                    error.lastname.length ? (
+                                                        error.lastname.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
 
-                                                    <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Votre prénom</label>
-                                                        <input
-                                                            id="firstname"
-                                                            type="text"
-                                                            className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le prénom"
-                                                            value={data.firstname}
-                                                            onChange={(e) => onChangeFirstName(e)}
-                                                        />
-                                                        {
-                                                            error.firstname.length ? (
-                                                                error.firstname.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className="row">
-                                                    <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Votre sexe</label>
-                                                        <select
-                                                            id="sexe"
-                                                            className={error.sexe.length ? "form-control is-invalid" : "form-control"}
-                                                            value={data.sexe}
-                                                            onChange={(e) => onChangeSexe(e)}
-                                                        >
-                                                            <option value="" disabled={true}>Veillez choisir le Sexe</option>
-                                                            <option value="F">Féminin</option>
-                                                            <option value="M">Masculin</option>
-                                                        </select>
-                                                        {
-                                                            error.sexe.length ? (
-                                                                error.sexe.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className="form-group row">
-                                                    <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Votre Téléphone(s)</label>
-                                                        <TagsInput value={data.telephone} onChange={onChangeTelephone} />
-                                                        {
-                                                            error.telephone.length ? (
-                                                                error.telephone.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-
-                                                    <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email">Votre Email(s)</label>
-                                                        <TagsInput value={data.email} onChange={onChangeEmail} />
-                                                        {
-                                                            error.email.length ? (
-                                                                error.email.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-
-                                                    <div className={error.ville.length ? "col validated" : "col"}>
-                                                        <label htmlFor="ville">Votre ville</label>
-                                                        <input
-                                                            id="ville"
-                                                            type="text"
-                                                            className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer votre ville"
-                                                            value={data.ville}
-                                                            onChange={(e) => onChangeVille(e)}
-                                                        />
-                                                        {
-                                                            error.ville.length ? (
-                                                                error.ville.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : ""
-                                                        }
-                                                    </div>
-                                                </div>
+                                            <div className={error.firstname.length ? "col validated" : "col"}>
+                                                <label htmlFor="firstname">Votre prénom</label>
+                                                <input
+                                                    id="firstname"
+                                                    type="text"
+                                                    className={error.firstname.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le prénom"
+                                                    value={data.firstname}
+                                                    onChange={(e) => onChangeFirstName(e)}
+                                                />
+                                                {
+                                                    error.firstname.length ? (
+                                                        error.firstname.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
                                             </div>
                                         </div>
+
+                                        <div className="row">
+                                            <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
+                                                <label htmlFor="sexe">Votre sexe</label>
+                                                <select
+                                                    id="sexe"
+                                                    className={error.sexe.length ? "form-control is-invalid" : "form-control"}
+                                                    value={data.sexe}
+                                                    onChange={(e) => onChangeSexe(e)}
+                                                >
+                                                    <option value="" disabled={true}>Veillez choisir le Sexe</option>
+                                                    <option value="F">Féminin</option>
+                                                    <option value="M">Masculin</option>
+                                                </select>
+                                                {
+                                                    error.sexe.length ? (
+                                                        error.sexe.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div className="form-group row">
+                                            <div className={error.telephone.length ? "col validated" : "col"}>
+                                                <label htmlFor="telephone">Votre Téléphone(s)</label>
+                                                <TagsInput value={data.telephone} onChange={onChangeTelephone} />
+                                                {
+                                                    error.telephone.length ? (
+                                                        error.telephone.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+
+                                            <div className={error.email.length ? "col validated" : "col"}>
+                                                <label htmlFor="email">Votre Email(s)</label>
+                                                <TagsInput value={data.email} onChange={onChangeEmail} />
+                                                {
+                                                    error.email.length ? (
+                                                        error.email.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+
+                                            <div className={error.ville.length ? "col validated" : "col"}>
+                                                <label htmlFor="ville">Votre ville</label>
+                                                <input
+                                                    id="ville"
+                                                    type="text"
+                                                    className={error.ville.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer votre ville"
+                                                    value={data.ville}
+                                                    onChange={(e) => onChangeVille(e)}
+                                                />
+                                                {
+                                                    error.ville.length ? (
+                                                        error.ville.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div className="kt-section">
                                     <div className="kt-section__body">
@@ -345,7 +345,7 @@ const ConfirmSaveForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -367,10 +367,10 @@ const ConfirmSaveForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
 
                                             <div className="col">
@@ -387,7 +387,7 @@ const ConfirmSaveForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
