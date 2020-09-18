@@ -454,30 +454,40 @@ const ClaimAdd = props => {
         setTimeout(function(){ setShowSearchResult(false); }, 500);
     };
 
-    const searchClient = async () => {
-        if (searchInputValue.length) {
-            if (institution) {
-                setStartSearch(true);
-                if (searchInputValue === clientCash.searchInputValue) {
+    const startSearchClient = async () => {
+        setStartSearch(true);
+        const value = props.plan === "PRO" ? props.currentUserInstitution : institution.value;
+        if (searchInputValue === clientCash.searchInputValue) {
+            setStartSearch(false);
+            setSearchList(clientCash.clients);
+        } else {
+            await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?r=${searchInputValue}`)
+                .then(({data}) => {
                     setStartSearch(false);
-                    setSearchList(clientCash.clients);
-                } else {
-                    await axios.get(`${appConfig.apiDomaine}/search/institutions/${institution.value}/clients?r=${searchInputValue}`)
-                        .then(({data}) => {
-                            setStartSearch(false);
-                            setShowSearchResult(true);
-                            if (data.length)
-                                setClientCash({ "searchInputValue": searchInputValue, "clients": data});
-                            setSearchList(data);
-                        })
-                        .catch(({response}) => {
-                            setStartSearch(false);
-                            console.log("Something is wrong");
-                        })
-                    ;
-                }
-            } else
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez selectioner une institution"))
+                    setShowSearchResult(true);
+                    if (data.length)
+                        setClientCash({ "searchInputValue": searchInputValue, "clients": data});
+                    setSearchList(data);
+                })
+                .catch(({response}) => {
+                    setStartSearch(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+    };
+
+    const searchClient = () => {
+        if (searchInputValue.length) {
+            if (verifyPermission(props.userPermissions, "store-claim-against-any-institution")) {
+                if (institution) {
+                    startSearchClient();
+                } else
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez selectioner une institution"))
+            } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
+                startSearchClient();
+            }
+
         } else {
             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez renseigner le champ de recherche"))
         }
@@ -782,7 +792,7 @@ const ClaimAdd = props => {
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer votre ville"
-                                                            value={data.ville}
+                                                            value={data.ville ? data.ville : ""}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
                                                         {
@@ -1219,6 +1229,7 @@ const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
         plan: state.plan.plan,
+        currentUserInstitution: state.user.user.staff.institution_id,
     };
 };
 
