@@ -145,7 +145,7 @@ const ConfigRequirements = () => {
         for (const claim_object_id in claimObjects) {
             let requirements = claimObjects[claim_object_id];
             // console.log(requirements, 'requirement_for_' + claim_object_id);
-            values[claim_object_id] = requirements.map(requirement => (requirement.value));
+            values[claim_object_id] = requirements?requirements.map(requirement => (requirement.value)):null;
         }
         // console.log(values, 'values');
 

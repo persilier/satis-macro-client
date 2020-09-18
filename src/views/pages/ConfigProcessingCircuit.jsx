@@ -201,7 +201,7 @@ const ConfigProcessingCircuit = (props) => {
         for (const claim_object_id in claimObjects) {
             let processings = claimObjects[claim_object_id];
 
-            values[claim_object_id] = processings.map(requirement => (requirement.value));
+            values[claim_object_id] = processings?processings.map(processing => (processing.value)):null;
         }
 
         let newEndPoint = '';
@@ -293,7 +293,7 @@ const ConfigProcessingCircuit = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Configuration circuit de traitement
+                                    Configuration Entités de traitement
                                 </a>
                             </div>
                         </div>
@@ -303,13 +303,13 @@ const ConfigProcessingCircuit = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"Paramètre de configuration des circuits de traitement"}/>
+                    information={"Paramètre de configuration des entités de traitement"}/>
 
                 <div className="kt-portlet">
                     <HeaderTablePage
                         addPermission={""}
-                        title={"Circuit de Traitement"}
-                        addText={"Ajouter un circuit de traitement"}
+                        title={"Entités de Traitement"}
+                        addText={"Ajouter une entité de traitement"}
                         addLink={"/settings/processing-circuit"}
                     />
 
@@ -399,7 +399,7 @@ const ConfigProcessingCircuit = (props) => {
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "170px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Circuits
+                                                        aria-label="Ship City: activate to sort column ascending">Entités
                                                         de traitement
                                                     </th>
 
