@@ -148,7 +148,7 @@ const PositionForm = (props) => {
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Développeur"
+                                                        placeholder="Ex:  Comptable"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
