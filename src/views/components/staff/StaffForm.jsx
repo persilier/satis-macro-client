@@ -508,7 +508,7 @@ const StaffForm = (props) => {
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer votre ville"
-                                                            value={data.ville}
+                                                            value={data.ville ? data.ville : ""}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
                                                         {
