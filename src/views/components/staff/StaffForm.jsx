@@ -303,7 +303,6 @@ const StaffForm = (props) => {
         if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
             delete newData.institution_id;
 
-        debug(newData, "newData");
         if (id) {
             axios.put(endPoint.update(id), newData)
                 .then(response => {
