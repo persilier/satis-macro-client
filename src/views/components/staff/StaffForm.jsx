@@ -268,19 +268,27 @@ const StaffForm = (props) => {
         setData(newData);
     };
 
+    const confirmIsLead = (config, value) => {
+        ConfirmLead.fire(config)
+            .then(result => {
+                if (result.value) {
+                    changeOption(value);
+                }
+            })
+        ;
+    }
+
     const handleOptionChange = (e) => {
         const value = parseInt(e.target.value);
         if (parseInt(e.target.value) === 1) {
-            if (!!Object.keys(unit.lead).length) {
-                ConfirmLead.fire(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`))
-                    .then(result => {
-                        if (result.value) {
-                            changeOption(value);
-                        }
-                    })
-                ;
+            if (unit.lead) {
+                if (!!Object.keys(unit.lead).length) {
+                    confirmIsLead(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`), value);
+                } else {
+                    changeOption(parseInt(e.target.value));
+                }
             } else {
-                changeOption(parseInt(e.target.value));
+                confirmIsLead(confirmLeadConfig(null), value);
             }
         } else {
             changeOption(parseInt(e.target.value));
@@ -295,6 +303,7 @@ const StaffForm = (props) => {
         if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
             delete newData.institution_id;
 
+        debug(newData, "newData");
         if (id) {
             axios.put(endPoint.update(id), newData)
                 .then(response => {

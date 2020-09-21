@@ -25,7 +25,7 @@ export const confirmActivation =  (label) => {
 export const confirmLeadConfig = (lead) =>  {
     return {
         title: 'Confirmation',
-        text: `Cette unité à déjà un responsable: ${lead}. Êtes-vous sûr de vouloire continuer?`,
+        text: lead ? `Cette unité à déjà un responsable: ${lead}. Êtes-vous sûr de vouloire continuer?` : "Êtes-vous sûr de vouloire continuer?",
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
