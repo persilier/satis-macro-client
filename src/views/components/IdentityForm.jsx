@@ -10,6 +10,7 @@ import {
     useParams
 } from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
+import InputRequire from "./InputRequire";
 
 const endPointConfig = {
     PRO: {
@@ -145,9 +146,11 @@ const IndentiteForm = (props) => {
                 ];
                     setNameClient(options);
             });
+
         setData(newData);
         setDisableInput(false)
     };
+
 
     const onChangeClient = (selected) => {
         const newData = {...data};
@@ -246,7 +249,7 @@ const IndentiteForm = (props) => {
                     }
                     <div className="form-group row">
                         <div className={error.lastname.length ? "col validated" : "col"}>
-                            <label htmlFor="lastname">Votre nom de famille</label>
+                            <label htmlFor="lastname">Nom <InputRequire/></label>
                             <input
                                 id="lastname"
                                 type="text"
@@ -268,7 +271,7 @@ const IndentiteForm = (props) => {
                         </div>
 
                         <div className={error.firstname.length ? "col validated" : "col"}>
-                            <label htmlFor="firstname">Votre prénom</label>
+                            <label htmlFor="firstname">Prénom(s) <InputRequire/></label>
                             <input
                                 id="firstname"
                                 type="text"
@@ -292,7 +295,7 @@ const IndentiteForm = (props) => {
 
                     <div className="form-group row">
                         <div className={error.sexe.length ? " col validated" : "col"}>
-                            <label htmlFor="sexe">Votre sexe</label>
+                            <label htmlFor="sexe">Sexe <InputRequire/></label>
                             <select
                                 id="sexe"
                                 className={error.sexe.length ? "form-control is-invalid" : "form-control"}
@@ -304,6 +307,7 @@ const IndentiteForm = (props) => {
                                 </option>
                                 <option value="F">Féminin</option>
                                 <option value="M">Masculin</option>
+                                <option value="A">Autres</option>
                             </select>
                             {
                                 error.sexe.length ? (
@@ -316,7 +320,7 @@ const IndentiteForm = (props) => {
                             }
                         </div>
                         <div className={error.ville.length ? "col validated" : "col"}>
-                            <label htmlFor="ville">Votre ville</label>
+                            <label htmlFor="ville">Ville <InputRequire/></label>
                             <input
                                 id="ville"
                                 type="text"
@@ -340,7 +344,7 @@ const IndentiteForm = (props) => {
 
                     <div className="form-group row">
                         <div className={error.telephone.length ? "col validated" : "col"}>
-                            <label htmlFor="telephone">Votre Téléphone(s)</label>
+                            <label htmlFor="telephone"> Téléphone(s) <InputRequire/></label>
                             <TagsInput
                                 value={data.telephone}
                                 onChange={onChangeTelephone}
@@ -359,7 +363,7 @@ const IndentiteForm = (props) => {
                         </div>
 
                         <div className={error.email.length ? "col validated" : "col"}>
-                            <label htmlFor="email">Votre Email(s)</label>
+                            <label htmlFor="email">Email(s) <InputRequire/></label>
                             <TagsInput
                                 value={data.email}
                                 onChange={onChangeEmail}

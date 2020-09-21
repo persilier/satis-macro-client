@@ -13,6 +13,7 @@ import {
 import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
+import InputRequire from "./InputRequire";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -154,7 +155,7 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="name">Libellé</label>
+                                                                       htmlFor="name">Libellé <InputRequire/></label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <input
                                                                         id="name"
@@ -180,7 +181,7 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="description">Description</label>
+                                                                       htmlFor="description">Description <InputRequire/></label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="description"

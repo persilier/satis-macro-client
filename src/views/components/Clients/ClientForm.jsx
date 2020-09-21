@@ -118,15 +118,16 @@ const EditClients = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-
-        const formData = {...props.identite,...data};
-console.log(formData,"FORM_DATA")
+        {
+            console.log(...props.identite, "props")
+        }
+        const formData = {...props.identite, ...data};
+        console.log(formData, "FORM_DATA");
         if (id) {
             axios.put(appConfig.apiDomaine + `/my/clients/${id}`, formData)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch((errorRequest) => {
@@ -138,7 +139,7 @@ console.log(formData,"FORM_DATA")
                 })
             ;
         } else {
-            console.log(props.identite.client_id,"CLIENT_ID")
+            console.log(props.identite.client_id, "CLIENT_ID");
             if (props.identite.client_id) {
                 axios.post(appConfig.apiDomaine + `/my/accounts/${props.identite.client_id}/clients`, formData)
                     .then(response => {
@@ -156,40 +157,40 @@ console.log(formData,"FORM_DATA")
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     })
                 ;
-            }else {
+            } else {
                 axios.post(appConfig.apiDomaine + `/my/clients`, formData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    setType({});
-                    setCategory({});
-                    setIdentity({});
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(async (errorRequest) => {
-
-                    console.log(errorRequest.response.data.identite, 'ERROR');
-
-                    if (errorRequest.response.data.identite) {
-                        await axios.post(appConfig.apiDomaine + `/my/identites/${errorRequest.response.data.identite.id}/client`, formData)
-                            .then(response => {
-                                setStartRequest(false);
-                                setError(defaultError);
-                                setData(defaultData);
-                                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                            })
-                    } else if (errorRequest.response.data.client) {
+                    .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                            errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
-                        );
-                    } else {
-                        setStartRequest(false);
-                        setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    }
-                });
+                        setError(defaultError);
+                        setData(defaultData);
+                        setType({});
+                        setCategory({});
+                        setIdentity({});
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(async (errorRequest) => {
+
+                        console.log(errorRequest.response.data.identite, 'ERROR');
+
+                        if (errorRequest.response.data.identite) {
+                            await axios.post(appConfig.apiDomaine + `/my/identites/${errorRequest.response.data.identite.id}/client`, formData)
+                                .then(response => {
+                                    setStartRequest(false);
+                                    setError(defaultError);
+                                    setData(defaultData);
+                                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                                })
+                        } else if (errorRequest.response.data.client) {
+                            setStartRequest(false);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                                errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
+                            );
+                        } else {
+                            setStartRequest(false);
+                            setError({...defaultError, ...errorRequest.response.data.error});
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        }
+                    });
             }
         }
     };

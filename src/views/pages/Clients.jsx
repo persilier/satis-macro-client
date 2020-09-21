@@ -210,12 +210,12 @@ const Clients = (props) => {
                             }
                         </td>
 
-                        <td>
-                            <Link to="/settings/clients/detail"
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Détail">
-                                <i className="la la-eye"/>
-                            </Link>
+                        <td className="d-flex justify-content-center">
+                            {/*<Link to="/settings/clients/detail"*/}
+                            {/*      className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
+                            {/*      title="Détail">*/}
+                            {/*    <i className="la la-eye"/>*/}
+                            {/*</Link>*/}
                             {
                                 verifyPermission(props.userPermissions, "update-client-from-my-institution")?
                                     <Link to={`/settings/clients/edit/${client.accounts[0].id}`}
@@ -232,17 +232,17 @@ const Clients = (props) => {
                                     :""
                             }
 
-                            {
-                                verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||
-                                verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?
-                                    <button
-                                        onClick={(e) => deleteClient(client.id, index)}
-                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                        title="Supprimer">
-                                        <i className="la la-trash"/>
-                                    </button>
-                                    : ""
-                            }
+                            {/*{*/}
+                            {/*    verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||*/}
+                            {/*    verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?*/}
+                            {/*        <button*/}
+                            {/*            onClick={(e) => deleteClient(client.id, index)}*/}
+                            {/*            className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
+                            {/*            title="Supprimer">*/}
+                            {/*            <i className="la la-trash"/>*/}
+                            {/*        </button>*/}
+                            {/*        : ""*/}
+                            {/*}*/}
                         </td>
                     </tr>
                 )) : ""

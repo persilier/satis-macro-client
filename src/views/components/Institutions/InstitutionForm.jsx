@@ -35,7 +35,8 @@ const InstitutionForm = (props) => {
         name: "",
         acronyme: "",
         iso_code: "",
-        logo: "/assets/media/users/Icon.png"
+        logo: "/assets/media/users/Icon.png",
+        default_currency_slug:""
     };
     const defaultError = {
         institution_type_id: [],
@@ -43,19 +44,28 @@ const InstitutionForm = (props) => {
         acronyme: [],
         iso_code: [],
         logo: "/assets/media/users/Icon.png",
+        default_currency_slug:[]
     };
     const [data, setData] = useState(defaultData);
     const [logo, setLogo] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [typeInstitution, setTypeInstitution] = useState(null);
-    const [typeInstitutionData, setTypeInstitutionData] = useState([]);
+    const [defaultCurrency, setDefaultCurrency] = useState(null);
+    const [defaultCurrencyData, setDefaultCurrencyData] = useState([]);
 
     useEffect(() => {
         if (verifyPermission(props.userPermissions, 'store-any-institution')) {
             axios.get(appConfig.apiDomaine + '/any/institutions/create')
                 .then(response => {
-                    setTypeInstitutionData(response.data.institutionTypes)
+                    console.log(response.data, "DEVISE")
+                        setDefaultCurrencyData(response.data.currencies.length ?
+                        response.data.currencies.map((currencie) => ({
+                            value: currencie.slug,
+                            label: currencie.name.fr
+                        })) : null
+                    )
+
+                    // setDefaultCurrencyData(options);
                 });
         }
 
@@ -64,17 +74,17 @@ const InstitutionForm = (props) => {
                 .then(response => {
                     console.log(response, "GET_INSTITUTION");
                     const newInstitution = {
-                        institution_type_id: (response.data.institution_type_id !== null) ? (response.data.institution_type.id) : '',
+                        default_currency_slug: (response.data.default_currency_slug !== null) ? (response.data.default_currency_slug) : '',
                         name: response.data.name,
                         acronyme: response.data.acronyme,
                         iso_code: response.data.iso_code,
-                        logo: response.data.logo
+                        logo: response.data.logo,
                     };
                     setData(newInstitution);
-                    if (response.data.institution_type_id !== null) {
-                        setTypeInstitution({
-                            value: response.data.institution_type.id,
-                            label: response.data.institution_type.name
+                    if (response.data.default_currency_slug !== null) {
+                        setDefaultCurrency({
+                            value: response.data.default_currency.slug,
+                            label: response.data.default_currency.name.fr
                         });
                     }
                 });
@@ -88,12 +98,12 @@ const InstitutionForm = (props) => {
         newData.name = e.target.value;
         setData(newData);
     };
-    // const onChangeTypeInstituion = (selected) => {
-    //     const newData = {...data};
-    //     newData.institution_type_id = selected.value;
-    //     setTypeInstitution(selected);
-    //     setData(newData);
-    // };
+    const onChangeCurrencies = (selected) => {
+        const newData = {...data};
+        newData.default_currency_slug = selected.value;
+        setDefaultCurrency(selected);
+        setData(newData);
+    };
 
     const onChangeAcronyme = (e) => {
         const newData = {...data};
@@ -128,7 +138,7 @@ const InstitutionForm = (props) => {
             formData.append('logo', data.logo);
         }
         formData.set('name', data.name);
-        formData.set('institution_type_id', data.institution_type_id);
+        formData.set('default_currency_slug', data.default_currency_slug);
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
         setStartRequest(true);
@@ -269,33 +279,34 @@ const InstitutionForm = (props) => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {/*{typeInstitutionData ? (*/}
-                                                                {/*    <div*/}
-                                                                {/*        className={error.institution_type_id.length ? "form-group row validated" : "form-group row"}>*/}
-                                                                {/*        <label*/}
-                                                                {/*            className="col-xl-3 col-lg-3 col-form-label"*/}
-                                                                {/*            htmlFor="exampleSelect1">Type</label>*/}
-                                                                {/*        <div className="col-lg-9 col-xl-6">*/}
+                                                                {console.log(defaultCurrencyData,"defaultCurrencyData")}
+                                                                {defaultCurrencyData ? (
+                                                                    <div
+                                                                        className={error.default_currency_slug.length ? "form-group row validated" : "form-group row"}>
+                                                                        <label
+                                                                            className="col-xl-3 col-lg-3 col-form-label"
+                                                                            htmlFor="exampleSelect1">Devise</label>
+                                                                        <div className="col-lg-9 col-xl-6">
 
-                                                                {/*            <Select*/}
-                                                                {/*                value={typeInstitution}*/}
-                                                                {/*                onChange={onChangeTypeInstituion}*/}
-                                                                {/*                options={formatSelectOption(typeInstitutionData, 'name', false)}*/}
-                                                                {/*            />*/}
-                                                                {/*            {*/}
-                                                                {/*                error.institution_type_id.length ? (*/}
-                                                                {/*                    error.institution_type_id.map((error, index) => (*/}
-                                                                {/*                        <div key={index}*/}
-                                                                {/*                             className="invalid-feedback">*/}
-                                                                {/*                            {error}*/}
-                                                                {/*                        </div>*/}
-                                                                {/*                    ))*/}
-                                                                {/*                ) : ""*/}
-                                                                {/*            }*/}
-                                                                {/*        </div>*/}
-                                                                {/*    </div>*/}
-                                                                {/*) : ''*/}
-                                                                {/*}*/}
+                                                                            <Select
+                                                                                value={defaultCurrency}
+                                                                                onChange={onChangeCurrencies}
+                                                                                options={defaultCurrencyData.length ? defaultCurrencyData.map(name => name) : ''}
+                                                                            />
+                                                                            {
+                                                                                error.default_currency_slug.length ? (
+                                                                                    error.default_currency_slug.map((error, index) => (
+                                                                                        <div key={index}
+                                                                                             className="invalid-feedback">
+                                                                                            {error}
+                                                                                        </div>
+                                                                                    ))
+                                                                                ) : ""
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                ) : ''
+                                                                }
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
