@@ -30,16 +30,14 @@ const LoginPage = (props) => {
 
     useEffect(() => {
         let mounted = true;
-        async function fetchData(mounted) {
+        async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    if (mounted)
-                        setData(response.data);
+                    setData(response.data);
                 })
                 .catch(error => {
                     console.log("Something is wrong");
-                });
-        }
+                });}
         fetchData();
         return () => mounted = false;
     }, []);
