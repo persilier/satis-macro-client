@@ -17,6 +17,7 @@ import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
+import {debug} from "../../helpers/function";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -31,10 +32,14 @@ const UnitTypeForm = (props) => {
     }
     const defaultData = {
         name: "",
+        can_be_target: false,
+        can_treat: false,
         description: "",
     };
     const defaultError = {
         name: [],
+        can_be_target: [],
+        can_treat: [],
         description: [],
     };
     const [data, setData] = useState(defaultData);
@@ -44,10 +49,12 @@ const UnitTypeForm = (props) => {
     useEffect(() => {
         async function fetchData () {
             if (id) {
-                axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
+                await axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
                     .then(response => {
                         const newData = {
                             name: response.data.unitType.name.fr,
+                            can_be_target: response.data.unitType.can_be_target === 1,
+                            can_treat: response.data.unitType.can_treat === 1,
                             description: response.data.unitType.description.fr,
                         };
                         setData(newData);
@@ -70,6 +77,16 @@ const UnitTypeForm = (props) => {
     const onChangeDescription = (e) => {
         const newData = {...data};
         newData.description = e.target.value;
+        setData(newData);
+    };
+
+    const handleCanBeTargetChange = e => {
+        const newData = {...data, can_be_target: e.target.checked};
+        setData(newData);
+    };
+
+    const handleCanTreatChange = e => {
+        const newData = {...data, can_treat: e.target.checked};
         setData(newData);
     };
 
@@ -151,6 +168,40 @@ const UnitTypeForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
+                                            <div className={error.can_be_target.length || error.can_treat.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <div className="col-lg-9 col-xl-6">
+                                                    <div className="kt-checkbox-inline">
+                                                        <label className="kt-checkbox">
+                                                            <input type="checkbox" checked={data.can_be_target} onChange={handleCanBeTargetChange}/> Peut-être visé par une réclamation ?
+                                                            <span/>
+                                                            {
+                                                                error.can_be_target.length ? (
+                                                                    error.can_be_target.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </label>
+                                                        <label className="kt-checkbox">
+                                                            <input type="checkbox" checked={data.can_treat} onChange={handleCanTreatChange}/> Peut résoudre une réclamation ?
+                                                            <span/>
+                                                            {
+                                                                error.can_treat.length ? (
+                                                                    error.can_treat.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
@@ -169,7 +220,7 @@ const UnitTypeForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -193,7 +244,7 @@ const UnitTypeForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -236,10 +287,10 @@ const UnitTypeForm = (props) => {
         id ?
             verifyPermission(props.userPermissions, 'update-unit-type') ? (
                 printJsx()
-            ) : ""
+            ) : null
         : verifyPermission(props.userPermissions, 'store-unit-type') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

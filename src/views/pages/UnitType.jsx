@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {debug, filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -165,7 +165,9 @@ const UnitType = (props) => {
     const printBodyTable = (unitType, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{unitType.name ? unitType.name["fr"] : ""}</td>
+                <td>{unitType.name ? unitType.name["fr"] : "-"}</td>
+                <td>{unitType.can_be_target ? "Oui" : "Non"}</td>
+                <td>{unitType.can_treat ? "Oui" : "Non"}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : "-"}</td>
                 <td>
                     {
@@ -251,6 +253,14 @@ const UnitType = (props) => {
                                                             aria-label="Country: activate to sort column ascending">Nom
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Peut-être visé par une réclamation
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Peut traité une réclamation
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "300px" }}
                                                             aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
@@ -279,6 +289,8 @@ const UnitType = (props) => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
+                                                        <th rowSpan="1" colSpan="1">Peut-être visé par une réclamation</th>
+                                                        <th rowSpan="1" colSpan="1">Peut traité une réclamation</th>
                                                         <th rowSpan="1" colSpan="1">Description</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
