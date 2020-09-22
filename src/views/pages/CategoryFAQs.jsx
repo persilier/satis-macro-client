@@ -14,13 +14,23 @@ import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
+import {AUTH_TOKEN} from "../../constants/token";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
+import {connect} from "react-redux";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const CategoryFAQs = () => {
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
+const CategoryFAQs = (props) => {
     document.title = "Satis client - Paramètre Categorie FAQs";
+
+    if (!verifyPermission(props.userPermissions, "list-faq-category"))
+        window.location.href = ERROR_401;
+
     const [load, setLoad] = useState(true);
-    const [categoryFaqs, setCategoryFaqs] = useState([]);
+    const [categoryFaqs, setCategoryFaqs] = useState(undefined);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
@@ -30,10 +40,11 @@ const CategoryFAQs = () => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine+"/faq-categories")
             .then(response => {
+                console.log(response.data, "DATA_FAQ")
                 setLoad(false);
-                setCategoryFaqs(response.data.data);
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.data.length / numberPerPage));
+                setCategoryFaqs(response.data);
+                setShowList(response.data.slice(0, numberPerPage));
+                setNumberPage(forceRound(response.data.length / numberPerPage));
             })
             .catch(error => {
                 setLoad(false);
@@ -147,31 +158,22 @@ const CategoryFAQs = () => {
     const printBodyTable = (category, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{category.name}</td>
-                <td >{category.slug}</td>
-                <td>
-                    <Link to="/settings/faqs/category/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>
-                    <Link to={`/settings/faqs/category/edit/${category.slug}`}
+                <td>{category.name.fr}</td>
+                <td >{category.slug.fr}</td>
+                <td className="d-flex justify-content-center">
+                    <Link to={`/settings/faqs/category/edit/${category.id}`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                           title="Modifier">
                         <i className="la la-edit"/>
                     </Link>
-                    <button
-                        onClick={(e) => deleteCategoryFaqs(category.id, index)}
-                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                        title="Supprimer">
-                        <i className="la la-trash"/>
-                    </button>
+
                 </td>
             </tr>
         )
     };
 
     return (
+        verifyPermission(props.userPermissions, "list-faq-category") ? (
         <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
@@ -201,11 +203,12 @@ const CategoryFAQs = () => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <InfirmationTable
-                    information={"Liste des catégorie de FAQs"}/>
+                    information={"Liste des catégories de FAQs"}/>
 
                 <div className="kt-portlet">
 
                     <HeaderTablePage
+                        addPermission={"store-faq-category"}
                         title={"Catégorie FAQ"}
                         addText={"Ajouter une Catégorie FAQ"}
                         addLink={"/settings/faqs/category/add"}
@@ -239,7 +242,7 @@ const CategoryFAQs = () => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "150px" }}
-                                                        aria-label="Country: activate to sort column ascending">Nom
+                                                        aria-label="Country: activate to sort column ascending">Libellé
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                         colSpan="1" style={{ width: "200px" }}
@@ -252,7 +255,8 @@ const CategoryFAQs = () => {
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    categoryFaqs.length ? (
+                                                    categoryFaqs?
+                                                        categoryFaqs.length ? (
                                                         search ? (
                                                             categoryFaqs.map((category, index) => (
                                                                 printBodyTable(category, index)
@@ -264,11 +268,11 @@ const CategoryFAQs = () => {
                                                         )
                                                     ) : (
                                                         <EmptyTable/>
-                                                    )
+                                                    ):null
                                                 }
                                                 </tbody>
                                                 <tfoot>
-                                                <tr></tr>
+                                                <tr/>
                                                 </tfoot>
                                             </table>
                                         </div>
@@ -276,7 +280,7 @@ const CategoryFAQs = () => {
                                     <div className="row">
                                         <div className="col-sm-12 col-md-5">
                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {categoryFaqs.length} données
+                                                 aria-live="polite">Affichage de 1 à {numberPerPage} sur {categoryFaqs?categoryFaqs.length:0} données
                                             </div>
                                         </div>
                                         {
@@ -303,7 +307,13 @@ const CategoryFAQs = () => {
                 </div>
             </div>
         </div>
+        ):""
     );
 };
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
 
-export default CategoryFAQs;
+export default connect(mapStateToProps)(CategoryFAQs);

@@ -144,7 +144,6 @@ const ParametersComponentEdit = props => {
         return formData
     };
 
-
     const saveData = (e) => {
         e.preventDefault();
         // const newData = {...data};

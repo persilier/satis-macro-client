@@ -12,8 +12,14 @@ import {
 import appConfig from "../../config/appConfig";
 import {formatSelectOption} from "../../helpers/function";
 import Select from "react-select";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
+import {connect} from "react-redux";
 
-const FaqsForm = () => {
+axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+
+const FaqsForm = (props) => {
+
     const defaultData = {
         faq_category_id: "",
         question: "",
@@ -31,21 +37,29 @@ const FaqsForm = () => {
     const [startRequest, setStartRequest] = useState(false);
     const {editfaqid} = useParams();
 
+    if (!editfaqid) {
+        if (!verifyPermission(props.userPermissions, 'store-faq'))
+            window.location.href = ERROR_401;
+    } else {
+        if (!verifyPermission(props.userPermissions, 'update-faq'))
+            window.location.href = ERROR_401;
+    }
+
     useEffect(() => {
         axios.get(appConfig.apiDomaine + '/faq-categories')
             .then(response => {
-                setCategorieData(response.data.data)
+                setCategorieData(response.data)
             });
         if (editfaqid) {
             axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
                 .then(response => {
                     const newFaq = {
-                        faq_category_id: response.data.category.id,
-                        question: response.data.question,
-                        answer: response.data.answer
+                        faq_category_id: response.data.faq_category.id,
+                        question: response.data.question["fr"],
+                        answer: response.data.answer["fr"]
                     };
                     setData(newFaq);
-                    setCategory({value: response.data.category.id, label: response.data.category.name});
+                    setCategory({value: response.data.faq_category.id, label: response.data.faq_category.name.fr});
                 })
         }
 
@@ -82,7 +96,7 @@ const FaqsForm = () => {
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    setError({...defaultError});
+                    setError({...defaultError,...error.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
@@ -96,122 +110,122 @@ const FaqsForm = () => {
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    setError({...defaultError});
+                    setError({...defaultError,...error.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
         }
 
     };
-
-    return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i
-                                className="flaticon2-shelter"/></a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <Link to="/settings/faqs/faq" className="kt-subheader__breadcrumbs-link">
-                                FAQs
-                            </Link>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                {
-                                    editfaqid ? "Modification" : "Ajout"
-                                }
-                            </a>
+    const printJsx = () => {
+        return(
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                Paramètres
+                            </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <Link to="/settings/faqs/faq" className="kt-subheader__breadcrumbs-link">
+                                    FAQs
+                                </Link>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                    {
+                                        editfaqid ? "Modification" : "Ajout"
+                                    }
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <div className="row">
-                    <div className="col">
-                        <div className="kt-portlet">
-                            <div className="kt-portlet__head">
-                                <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                    {
-                                        editfaqid?" Modifier une FAQ" :"Ajout de FAQs"
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <div className="row">
+                        <div className="col">
+                            <div className="kt-portlet">
+                                <div className="kt-portlet__head">
+                                    <div className="kt-portlet__head-label">
+                                        <h3 className="kt-portlet__head-title">
+                                            {
+                                                editfaqid?" Modifier une FAQ" :"Ajout de FAQs"
 
-                                    }
-                                    </h3>
+                                            }
+                                        </h3>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <form method="POST" className="kt-form">
-                                <div className="kt-portlet__body">
-                                    <div className="tab-content">
-                                        <div className="tab-pane active" id="kt_user_edit_tab_1" role="tabpanel">
-                                            <div className="kt-form kt-form--label-right">
-                                                <div className="kt-form__body">
-                                                    <div className="kt-section kt-section--first">
-                                                        <div className="kt-section__body">
-                                                            <div
-                                                                className={error.faq_category_id.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="exampleSelect1">Catégorie</label>
-                                                                <div className="col-lg-9 col-xl-6">
-                                                                    {categorieData ? (
-                                                                        <Select
-                                                                            value={category}
-                                                                            onChange={onChangeCategory}
-                                                                            options={formatSelectOption(categorieData, 'name', false)}
+                                <form method="POST" className="kt-form">
+                                    <div className="kt-portlet__body">
+                                        <div className="tab-content">
+                                            <div className="tab-pane active" id="kt_user_edit_tab_1" role="tabpanel">
+                                                <div className="kt-form kt-form--label-right">
+                                                    <div className="kt-form__body">
+                                                        <div className="kt-section kt-section--first">
+                                                            <div className="kt-section__body">
+                                                                <div
+                                                                    className={error.faq_category_id.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                           htmlFor="exampleSelect1">Catégorie</label>
+                                                                    <div className="col-lg-9 col-xl-6">
+                                                                        {categorieData ? (
+                                                                            <Select
+                                                                                value={category}
+                                                                                onChange={onChangeCategory}
+                                                                                options={formatSelectOption(categorieData, 'name', "fr")}
+                                                                            />
+                                                                        ) : ''
+                                                                        }
+
+                                                                        {
+                                                                            error.faq_category_id.length ? (
+                                                                                error.faq_category_id.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : ""
+                                                                        }
+                                                                    </div>
+                                                                </div>
+
+                                                                <div
+                                                                    className={error.question.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                           htmlFor="quiz">Question</label>
+                                                                    <div className="col-lg-9 col-xl-6">
+                                                                        <input
+                                                                            id="quiz"
+                                                                            type="text"
+                                                                            className={error.question.length ? "form-control is-invalid" : "form-control"}
+                                                                            placeholder="Veillez entrer la question"
+                                                                            value={data.question}
+                                                                            onChange={(e) => onChangeQuiz(e)}
                                                                         />
-                                                                    ) : ''
-                                                                    }
-
-                                                                    {
-                                                                        error.faq_category_id.length ? (
-                                                                            error.faq_category_id.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
+                                                                        {
+                                                                            error.question.length ? (
+                                                                                error.question.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : ""
+                                                                        }
+                                                                    </div>
                                                                 </div>
-                                                            </div>
 
-                                                            <div
-                                                                className={error.question.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="quiz">La question</label>
-                                                                <div className="col-lg-9 col-xl-6">
-                                                                    <input
-                                                                        id="quiz"
-                                                                        type="text"
-                                                                        className={error.question.length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder="Veillez entrer la question"
-                                                                        value={data.question}
-                                                                        onChange={(e) => onChangeQuiz(e)}
-                                                                    />
-                                                                    {
-                                                                        error.question.length ? (
-                                                                            error.question.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
-                                                                </div>
-                                                            </div>
-
-                                                            <div
-                                                                className={error.answer.length ? "form-group row validated" : "form-group row"}>
-                                                                <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="answer">La réponse'</label>
-                                                                <div className="col-lg-9 col-xl-6">
+                                                                <div
+                                                                    className={error.answer.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                           htmlFor="answer">Réponse</label>
+                                                                    <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="answer"
                                                                     className={error.answer.length ? "form-control is-invalid" : "form-control"}
@@ -221,48 +235,49 @@ const FaqsForm = () => {
                                                                     value={data.answer}
                                                                     onChange={(e) => onChangeAnswers(e)}
                                                                 />
-                                                                    {
-                                                                        error.answer.length ? (
-                                                                            error.answer.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : ""
-                                                                    }
+                                                                        {
+                                                                            error.answer.length ? (
+                                                                                error.answer.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : ""
+                                                                        }
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div className="kt-portlet__foot">
-                                                            <div className="kt-form__actions text-right">
-                                                                {
-                                                                    !startRequest ? (
-                                                                        <button type="submit"
-                                                                                onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Envoyer</button>
-                                                                    ) : (
-                                                                        <button
-                                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                                            type="button" disabled>
-                                                                            Loading...
-                                                                        </button>
-                                                                    )
-                                                                }
-                                                                {
-                                                                    !startRequest ? (
-                                                                        <Link to="/settings/faqs/add"
-                                                                              className="btn btn-secondary mx-2">
-                                                                            Quitter
-                                                                        </Link>
-                                                                    ) : (
-                                                                        <Link to="/settings/faqs/add"
-                                                                              className="btn btn-secondary mx-2"
-                                                                              disabled>
-                                                                            Quitter
-                                                                        </Link>
-                                                                    )
-                                                                }
+                                                            <div className="kt-portlet__foot">
+                                                                <div className="kt-form__actions text-right">
+                                                                    {
+                                                                        !startRequest ? (
+                                                                            <button type="submit"
+                                                                                    onClick={(e) => onSubmit(e)}
+                                                                                    className="btn btn-primary">Envoyer</button>
+                                                                        ) : (
+                                                                            <button
+                                                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                                type="button" disabled>
+                                                                                Loading...
+                                                                            </button>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        !startRequest ? (
+                                                                            <Link to="/settings/faqs/add"
+                                                                                  className="btn btn-secondary mx-2">
+                                                                                Quitter
+                                                                            </Link>
+                                                                        ) : (
+                                                                            <Link to="/settings/faqs/add"
+                                                                                  className="btn btn-secondary mx-2"
+                                                                                  disabled>
+                                                                                Quitter
+                                                                            </Link>
+                                                                        )
+                                                                    }
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -270,14 +285,29 @@ const FaqsForm = () => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        );
+    }
+    return (
+        editfaqid ?
+            verifyPermission(props.userPermissions, 'update-faq') ? (
+                printJsx()
+            ) : ""
+            : verifyPermission(props.userPermissions, 'store-faq') ? (
+                printJsx()
+            ) : ""
     );
 };
 
-export default FaqsForm;
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions
+    }
+};
+
+export default connect(mapStateToProps)(FaqsForm);
