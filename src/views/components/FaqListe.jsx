@@ -6,10 +6,15 @@ import LoadingTable from "./LoadingTable";
 
 const FaqListe = () => {
     const [load, setLoad] = useState(true);
-
     const [data, setData] = useState([]);
     const [category, setCategory] = useState([]);
+
     useEffect(() => {
+        axios.get(appConfig.apiDomaine+`/faqs`)
+            .then(response => {
+                console.log(response.data, "DATA")
+            });
+
         axios.get(appConfig.apiDomaine+`/faq-categories`)
             .then(response => {
                 setLoad(false);
@@ -33,30 +38,30 @@ const FaqListe = () => {
                         <div className="col-xl-12">
                             <div className="accordion accordion-solid accordion-toggle-plus" id="accordionExample1">
 
-                                {category.data ? (
-                                    category.data.map((cat, i) => (
+                                {category ? (
+                                    category.map((cat, i) => (
                                         <div className="card" key={i}>
                                             <h6 className="text-dark">
-                                                {cat.name}
+                                                {cat.name.fr}
                                             </h6>
 
-                                            {data.data ? (
-                                                data.data.map((elemt, id) => (
+                                            {data ? (
+                                                data.map((elemt, id) => (
                                                     <div className="card-header" id={"heading" + id} key={id}>
-                                                        {(elemt.category.name === cat.name) ? (
-                                                            <div>
+                                                        {(elemt.faq_category.name.fr === cat.name.fr) ? (
+                                                            <div className="ml-4">
                                                                 <div className="card-title" data-toggle="collapse"
                                                                      data-target={"#collapse" + id} aria-expanded="false"
                                                                      aria-controls={"collapse" + id}>
-                                                                    {elemt.question}
+                                                                    {elemt.question.fr}
                                                                 </div>
 
                                                                 <div id={"collapse" + id} className="collapse show"
                                                                      aria-labelledby={"heading" + id}
                                                                      data-parent="#accordionExample1">
                                                                     <div className="card-body">
-                                                                        <p>
-                                                                            {elemt.answer}
+                                                                        <p className="ml-3">
+                                                                            {elemt.answer.fr}
                                                                         </p>
                                                                     </div>
                                                                 </div>

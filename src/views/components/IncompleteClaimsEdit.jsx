@@ -170,8 +170,8 @@ const IncompleteClaimsEdit = props => {
                         response_channel_slug: response.data.claim.response_channel_slug,
                         claimer_expectation: response.data.claim.claimer_expectation === null ? "" : response.data.claim.claimer_expectation,
                         description: response.data.claim.description,
-                        amount_currency_slug: response.data.claim.amount_currency_slug?response.data.claim.amount_currency_slug:"",
-                        amount_disputed: response.data.claim.amount_disputed?response.data.claim.amount_disputed:"",
+                        amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
+                        amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
                         is_revival: response.data.claim.is_revival,
                         // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : null
@@ -394,6 +394,16 @@ const IncompleteClaimsEdit = props => {
         setData(newData);
     };
 
+
+    const requiementInput = (dataRequire,inputData) => {
+        console.log(Object.keys(dataRequire),"require")
+        for (let i = 0; i < Object.keys(dataRequire).length; i++) {
+            if (Object.keys(dataRequire)[i] === inputData) {
+                InputRequire()
+            }
+        }
+
+    };
     // const onClickToEdit = (e) => {
     //     setIsModified(true)
     // };
@@ -441,14 +451,14 @@ const IncompleteClaimsEdit = props => {
         for (var value of formatFormData(newData).values()) {
             debug(value, "value");
         }
-       axios.post(endPoint.update(`${id}`), formatFormData(newData))
-            .then( (response) => {
+        axios.post(endPoint.update(`${id}`), formatFormData(newData))
+            .then((response) => {
                 console.log(response.data, "response");
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
-                window.location.href="/process/incomplete_claims"
+                window.location.href = "/process/incomplete_claims"
             })
-            .catch( (error) => {
+            .catch((error) => {
                 setStartRequest(false);
                 setError({...defaultError, ...error.response.data.error});
                 ToastBottomEnd.fire(toastEditErrorMessageConfig);
@@ -457,9 +467,9 @@ const IncompleteClaimsEdit = props => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
+       ( verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
         || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
-        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
+        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) && isRequire? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -491,7 +501,6 @@ const IncompleteClaimsEdit = props => {
                     </div>
                 </div>
 
-
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
                         information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
@@ -515,7 +524,8 @@ const IncompleteClaimsEdit = props => {
                                                 <div
                                                     className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                           htmlFor="institution">Institution concernée <InputRequire/></label>
+                                                           htmlFor="institution">Institution
+                                                        concernée <InputRequire/></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             classNamePrefix="select"
@@ -573,7 +583,8 @@ const IncompleteClaimsEdit = props => {
 
                                                             <div
                                                                 className={error.firstname.length ? "col validated" : "col"}>
-                                                                <label htmlFor="firstname">Prénom (s) <InputRequire/></label>
+                                                                <label htmlFor="firstname">Prénom
+                                                                    (s) <InputRequire/></label>
                                                                 <input
                                                                     disabled={!disabledInput}
                                                                     id="firstname"
@@ -627,7 +638,7 @@ const IncompleteClaimsEdit = props => {
                                                             </div>
                                                             <div
                                                                 className={error.ville.length ? "col validated" : "col"}>
-                                                                <label htmlFor="ville">Ville</label>
+                                                                <label htmlFor="ville">Ville </label>
                                                                 <input
                                                                     disabled={!disabledInput}
                                                                     id="ville"
@@ -653,11 +664,15 @@ const IncompleteClaimsEdit = props => {
                                                         <div className="form-group row">
                                                             <div
                                                                 className={error.telephone.length ? "col validated" : "col"}>
-                                                                <label htmlFor="telephone"> Téléphone(s)<WithoutCode/> <InputRequire/></label>
+                                                                <label htmlFor="telephone"> Téléphone(s)<WithoutCode/>
+                                                                    <InputRequire/></label>
                                                                 <TagsInput disabled={!disabledInput}
-                                                                   value={data.telephone}
-                                                                   onChange={onChangeTelephone}
-                                                                   inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}}
+                                                                           value={data.telephone}
+                                                                           onChange={onChangeTelephone}
+                                                                           inputProps={{
+                                                                               className: 'react-tagsinput-input',
+                                                                               placeholder: 'Numéro(s)'
+                                                                           }}
                                                                 />
                                                                 {
                                                                     error.telephone.length ? (
@@ -674,7 +689,11 @@ const IncompleteClaimsEdit = props => {
                                                             <div
                                                                 className={error.email.length ? "col validated" : "col"}>
                                                                 <label htmlFor="email">Email(s) <InputRequire/></label>
-                                                                <TagsInput disabled={!disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
+                                                                <TagsInput disabled={!disabledInput} value={data.email}
+                                                                           onChange={onChangeEmail} inputProps={{
+                                                                    className: 'react-tagsinput-input',
+                                                                    placeholder: 'Email(s)'
+                                                                }}/>
                                                                 {
                                                                     error.email.length ? (
                                                                         error.email.map((error, index) => (
@@ -693,7 +712,8 @@ const IncompleteClaimsEdit = props => {
                                             ) : null
                                         }
 
-                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                        <div
+                                            className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
@@ -704,7 +724,7 @@ const IncompleteClaimsEdit = props => {
                                                             <div className="form-group row">
                                                                 <div
                                                                     className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">Unité concernée</label>
+                                                                    <label htmlFor="unit">Unité concernée {isRequire.unit_targeted_id?<InputRequire/>:""}</label>
                                                                     <Select
                                                                         classNamePrefix="select"
                                                                         className="basic-single"
@@ -727,7 +747,7 @@ const IncompleteClaimsEdit = props => {
                                                                 <div
                                                                     className={error.account_targeted_id.length ? "col validated" : "col"}>
                                                                     <label htmlFor="account">Numéro de compte
-                                                                        concerné</label>
+                                                                        concerné {isRequire.account_targeted_id?<InputRequire/>:""}</label>
                                                                     <Select
                                                                         classNamePrefix="select"
                                                                         className="basic-single"
@@ -755,7 +775,8 @@ const IncompleteClaimsEdit = props => {
                                                 <div className="form-group row">
                                                     <div
                                                         className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception <InputRequire/></label>
+                                                        <label htmlFor="receptionChannel">Canal de
+                                                            réception <InputRequire/></label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
@@ -777,7 +798,8 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="responseChannel">Canal de réponse <InputRequire/></label>
+                                                        <label htmlFor="responseChannel">Canal de
+                                                            réponse <InputRequire/></label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
@@ -813,7 +835,8 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de réclamation <InputRequire/></label>
+                                                        <label htmlFor="claimObject">Objet de
+                                                            réclamation <InputRequire/></label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
@@ -833,11 +856,10 @@ const IncompleteClaimsEdit = props => {
                                                         }
                                                     </div>
                                                 </div>
-
                                                 <div className="form-group row">
                                                     <div
                                                         className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                        <label htmlFor="amount_claim">Montant réclamé</label>
+                                                        <label htmlFor="amount_claim">Montant réclamé {isRequire.amount_disputed?<InputRequire/>:""}</label>
                                                         <input
                                                             type={"number"}
                                                             min="0"
@@ -860,7 +882,7 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="currency">Devise du montant réclamé</label>
+                                                        <label htmlFor="currency">Devise du montant réclamé {isRequire.amount_currency_slug?<InputRequire/>:""}</label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
@@ -885,7 +907,8 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évènement  <InputRequire/></label>
+                                                        <label htmlFor="date">Date de
+                                                            l'évènement <InputRequire/></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
@@ -910,7 +933,7 @@ const IncompleteClaimsEdit = props => {
                                                             <div
                                                                 className={error.relationship_id.length ? "col validated" : "col"}>
                                                                 <label htmlFor="relationship">Relation du reclamant avec
-                                                                    l'institution</label>
+                                                                    l'institution {isRequire.relationship_id?<InputRequire/>:""}</label>
                                                                 <Select
                                                                     isClearable
                                                                     value={relationship}
@@ -933,7 +956,7 @@ const IncompleteClaimsEdit = props => {
                                                     }
 
                                                     <div className="col">
-                                                        <label htmlFor="file">Pièces jointes</label>
+                                                        <label htmlFor="file">Pièces jointes  {isRequire.file?<InputRequire/>:""}</label>
                                                         <input
                                                             onChange={onChangeFile}
                                                             type="file"
@@ -955,9 +978,8 @@ const IncompleteClaimsEdit = props => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    {/*{console.log(isRequire,"LIST_REQUIRE")}*/}
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description <InputRequire/></label>
+                                                        <label htmlFor="description">Description {isRequire.description?<InputRequire/>:""}</label>
                                                         <textarea
                                                             rows="7"
                                                             id="description"
@@ -979,7 +1001,7 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimer_expectation">Attente </label>
+                                                        <label htmlFor="claimer_expectation">Attente {isRequire.claimer_expectation?<InputRequire/>:""} </label>
                                                         <textarea
                                                             rows="7"
                                                             id="claimer_expectation"
@@ -1002,10 +1024,12 @@ const IncompleteClaimsEdit = props => {
                                             </div>
                                         </div>
 
-                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                        <div
+                                            className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <InputRequire/></h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <InputRequire/>
+                                                </h3>
 
                                                 <div className="form-group row">
                                                     <label className="col-3 col-form-label">Est-ce une relance ?</label>

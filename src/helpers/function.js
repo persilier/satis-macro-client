@@ -2,6 +2,7 @@ import {RECEPTION_CHANNEL, RESPONSE_CHANNEL} from "../constants/channel";
 import {verifyPermission} from "./permission";
 import appConfig from "../config/appConfig";
 import moment from "moment";
+
 moment.locale();
 export const existingScript = function (id) {
     return !!document.getElementById(id);
@@ -179,8 +180,8 @@ export const filterChannel = (channels, typeFilter) => {
 export const percentageData = (data, total) => {
 
     if (total !== 0)
-      return   Math.round((data * 100) / total)+"%";
-    else return 0+"%"
+        return Math.round((data * 100) / total) + "%";
+    else return 0 + "%"
 
 };
 
@@ -205,7 +206,7 @@ export const formatDateToTimeStampte = dateTime => {
 };
 
 export const formatToTime = dateTime => {
-    if (dateTime!==null)
+    if (dateTime !== null)
         return dateTime.split("T")[0] + "T" + dateTime.split("T")[1].split(".")[0];
     else
         return "";
@@ -238,6 +239,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-currency')
         || verifyPermission(userPermissions, 'update-notifications')
         || verifyPermission(userPermissions, 'list-channel'))
+        || verifyPermission(userPermissions, "list-faq-category")
         ;
 };
 

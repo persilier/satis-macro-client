@@ -187,7 +187,7 @@ const Body = () => {
                 <ClientForm/>
             </Route>
 
-            <Route exact path="/settings/faqs/category/edit/:editcategoryslug">
+            <Route exact path="/settings/faqs/category/edit/:id">
                 <CategoryFaqsForm/>
             </Route>
 
