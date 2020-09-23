@@ -31,15 +31,17 @@ const LoginPage = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
-            .then(response => {
-                setLoad(false);
-                setData(response.data);
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        let mounted = true;
+        async function fetchData() {
+            await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
+                .then(response => {
+                    setData(response.data);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                });}
+        fetchData();
+        return () => mounted = false;
     }, []);
 
     const onChangeUserName = (e) => {
@@ -48,7 +50,7 @@ const LoginPage = (props) => {
     const onChangePassword = (e) => {
         setPassword(e.target.value)
     };
-    const onClickConnectButton = (e) => {
+    const onClickConnectButton = async (e) => {
         e.preventDefault(e);
         setStartRequest(true);
         const formData = {
@@ -58,7 +60,7 @@ const LoginPage = (props) => {
             username: username,
             password: password
         };
-        axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
+        await axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
             .then(response => {
                 const token = response.data.access_token;
                 axios.get(appConfig.apiDomaine + `/login`, {

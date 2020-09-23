@@ -39,7 +39,7 @@ const UnitType = (props) => {
 
     useEffect(() => {
         async function fetchData () {
-            axios.get(`${appConfig.apiDomaine}/unit-types`)
+            await axios.get(`${appConfig.apiDomaine}/unit-types`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
