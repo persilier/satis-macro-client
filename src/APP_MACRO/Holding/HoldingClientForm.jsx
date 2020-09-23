@@ -44,7 +44,7 @@ const HoldingClientForm = (props) => {
         ville: "",
         telephone: [],
         email: [],
-        client_id: [],
+        client_id: "",
         institution_id: [],
         account_type_id: "",
         number: [],
@@ -198,7 +198,6 @@ const HoldingClientForm = (props) => {
             newData.email = [];
             newData.ville = "";
             newData.client_id = [];
-            newData.institution_id = [];
             newData.account_type_id = "";
             newData.number = [];
             newData.category_client_id = "";
@@ -253,7 +252,10 @@ const HoldingClientForm = (props) => {
                 })
             ;
         } else {
-            if (data.client_id === "") {
+            console.log(data.client_id,"client_Id")
+            console.log(data,"client")
+
+            if (data.client_id.length !== 0) {
                 axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, data)
                     .then(response => {
                         setStartRequest(false);
