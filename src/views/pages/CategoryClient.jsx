@@ -39,7 +39,6 @@ const CategoryClient = (props) => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/category-clients")
             .then(response => {
-                console.log(response.data, 'RESPONSE');
                 setLoad(false);
                 setCategoryClient(response.data);
                 setShowList(response.data.slice(0, numberPerPage));

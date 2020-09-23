@@ -43,7 +43,7 @@ const endPointConfig = {
 
 
 const ConfigProcessingCircuit = (props) => {
-    document.title = "Satis client - Paramètre Cirtuit de traitement";
+    document.title = "Satis client - Paramètre Entités de traitement";
 
     if (!(verifyPermission(props.userPermissions, 'update-processing-circuit-my-institution') ||
         verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ||
@@ -210,7 +210,7 @@ const ConfigProcessingCircuit = (props) => {
         } else {
             newEndPoint = endPoint.list
         }
-        {console.log(values, 'valeur à enregistrer')}
+        // {console.log(values, 'valeur à enregistrer')}
 
         axios.put(newEndPoint, values)
             .then(response => {
@@ -229,7 +229,6 @@ const ConfigProcessingCircuit = (props) => {
         setInstitution(selected);
         axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
             .then(response => {
-                console.log(response.data, "UNIT_DATA")
                 setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
@@ -259,7 +258,6 @@ const ConfigProcessingCircuit = (props) => {
                             {object.name.fr}
                         </td>
                         <td>
-                            {console.log(object.id,"object_id")}
                             {units ? (
                                 <Select
                                     value={data[object.id]}
