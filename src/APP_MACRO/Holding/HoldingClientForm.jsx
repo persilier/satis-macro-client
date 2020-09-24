@@ -11,7 +11,7 @@ import {
     toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import '../../views/components/staff/react-tagsinput.css'
+import '../../views/components/staff/react-tagsinput.css';
 import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
 import {connect} from "react-redux";
@@ -21,21 +21,54 @@ import {ERROR_401} from "../../config/errorPage";
 import TagsInput from "react-tagsinput";
 import InputRequire from "../../views/components/InputRequire";
 import WithoutCode from "../../views/components/WithoutCode";
+import ConfirmClientSaveForm from "../../views/components/Clients/ConfirmClientSaveForm";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        store: `${appConfig.apiDomaine}/my/clients`,
+        update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
+        create: `${appConfig.apiDomaine}/my/clients/create`,
+        edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
+    },
+    MACRO: {
+        holding: {
+            store: `${appConfig.apiDomaine}/any/clients`,
+            update: id => `${appConfig.apiDomaine}/any/clients/${id}`,
+            create: `${appConfig.apiDomaine}/any/clients/create`,
+            edit: id => `${appConfig.apiDomaine}/any/clients/${id}/edit`
+        },
+        filial: {
+            store: `${appConfig.apiDomaine}/my/clients`,
+            update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
+            create: `${appConfig.apiDomaine}/my/clients/create`,
+            edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
+        }
+    },
+};
 
 const HoldingClientForm = (props) => {
 
     const {id} = useParams();
 
     if (!id) {
-        if (!verifyPermission(props.userPermissions, 'store-client-from-any-institution'))
+        if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'store-client-from-my-institution')))
             window.location.href = ERROR_401;
     } else {
-        if (!verifyPermission(props.userPermissions, 'update-client-from-any-institution'))
+        if (!(verifyPermission(props.userPermissions, 'update-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution')))
             window.location.href = ERROR_401;
     }
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'store-client-from-my-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     const defaultData = {
         firstname: "",
@@ -76,10 +109,12 @@ const HoldingClientForm = (props) => {
     const [institutionData, setInstitutionData] = useState(undefined);
     const [institution, setInstitution] = useState([]);
     const [disableInput, setDisableInput] = useState(true);
+    const [foundData, setFoundData] = useState({});
+
 
     useEffect(() => {
 
-        axios.get(appConfig.apiDomaine + `/any/clients/create`)
+        axios.get(endPoint.create)
             .then(response => {
                 const options =
                     response.data.institutions.length ? response.data.institutions.map((institution) => ({
@@ -87,17 +122,13 @@ const HoldingClientForm = (props) => {
                         label: institution.name
                     })) : "";
                 setInstitutionData(options);
-            });
-        axios.get(appConfig.apiDomaine + '/any/clients/create')
-            .then(response => {
                 setAccountTypes(response.data.accountTypes);
                 setCategoryClient(response.data.clientCategories);
             });
 
         if (id) {
-            axios.get(appConfig.apiDomaine + `/any/clients/${id}/edit`)
+            axios.get(endPoint.edit(id))
                 .then(response => {
-                    console.log(response.data, 'UPDATE_DATA')
                     const newClient = {
                         firstname: response.data.client_institution.client.identite.firstname,
                         lastname: response.data.client_institution.client.identite.lastname,
@@ -177,31 +208,31 @@ const HoldingClientForm = (props) => {
     const onChangeInstitution = (selected) => {
         const newData = {...data};
         if (selected) {
-            newData.institution_id = selected.value;
-            setInstitution(selected);
-            axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
-                .then(response => {
-                    console.log(response.data, "CLIENT D'UNE INSTITUTION");
-                    const options =
-                        response.data ? response.data.map((client) => ({
-                            value: client.client_id,
-                            label: client.client.identite.firstname + ' ' + client.client.identite.lastname
-                        })) : "";
-                    setNameClient(options);
-                });
-            setCategory([]);
-            setClient([]);
-            newData.firstname = "";
-            newData.lastname = "";
-            newData.sexe = "";
-            newData.telephone = [];
-            newData.email = [];
-            newData.ville = "";
-            newData.client_id = [];
-            newData.institution_id = [];
-            newData.account_type_id = "";
-            newData.number = [];
-            newData.category_client_id = "";
+            if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')) {
+                newData.institution_id = selected.value;
+                setInstitution(selected);
+                axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
+                    .then(response => {
+                        const options =
+                            response.data ? response.data.map((client) => ({
+                                value: client.client_id,
+                                label: client.client.identite.firstname + ' ' + client.client.identite.lastname
+                            })) : "";
+                        setNameClient(options);
+                    });
+                setCategory([]);
+                setClient([]);
+                newData.firstname = "";
+                newData.lastname = "";
+                newData.sexe = "";
+                newData.telephone = [];
+                newData.email = [];
+                newData.ville = "";
+                newData.client_id = [];
+                newData.account_type_id = "";
+                newData.number = [];
+                newData.category_client_id = "";
+            }
         }
         setData(newData);
         setDisableInput(false)
@@ -210,9 +241,8 @@ const HoldingClientForm = (props) => {
         const newData = {...data};
         newData.client_id = selected.value;
         setClient(selected);
-        // setData(newData);
         if (newData.client_id) {
-            axios.get(`${appConfig.apiDomaine}/any/clients` + `/${newData.client_id}`)
+            axios.get(endPoint.update(`${newData.client_id}`))
                 .then(response => {
                     const newIdentity = {
                         firstname: response.data.client.identite.firstname,
@@ -238,9 +268,12 @@ const HoldingClientForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
+        let newData = {...data};
+        if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')))
+            delete newData.institution_id;
 
         if (id) {
-            axios.put(appConfig.apiDomaine + `/any/clients/${id}`, data)
+            axios.put(endPoint.update(`${id}`), newData)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -254,13 +287,14 @@ const HoldingClientForm = (props) => {
             ;
         } else {
             if (data.client_id === "") {
-                axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, data)
+                axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, newData)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        setType({});
-                        setCategory({});
+                        setInstitution(null);
+                        setType(null);
+                        setCategory(null);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch((errorRequest) => {
@@ -270,29 +304,38 @@ const HoldingClientForm = (props) => {
                     })
                 ;
             } else {
-                axios.post(appConfig.apiDomaine + `/any/clients`, data)
+                axios.post(endPoint.store, newData)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        setType({});
-                        setCategory({});
+                        setType(null);
+                        setCategory(null);
+                        setInstitution(null);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(async (errorRequest) => {
 
-                        console.log(errorRequest.response.data.identite, 'ERROR');
-
                         if (errorRequest.response.data.identite) {
-                            await axios.post(appConfig.apiDomaine + `/any/identites/${errorRequest.response.data.identite.id}/client`, data)
-                                .then(response => {
-                                    setStartRequest(false);
-                                    setError(defaultError);
-                                    setData(defaultData);
-                                    setType({});
-                                    setCategory({});
-                                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                                })
+                            console.log(errorRequest.response.data, 'ERROR_DATA');
+                            await setFoundData({...errorRequest.response.data});
+                            await document.getElementById("confirmClientSaveForm").click();
+                            await setInstitution(null);
+                            await setType(null);
+                            await setCategory(null);
+                            setStartRequest(false);
+                            setError(defaultError);
+                            setData(defaultData);
+
+                            // await axios.post(appConfig.apiDomaine + `/any/identites/${errorRequest.response.data.identite.id}/client`, newData)
+                            //     .then(response => {
+                            //         setStartRequest(false);
+                            //         setError(defaultError);
+                            //         setData(defaultData);
+                            //         setType({});
+                            //         setCategory({});
+                            //         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                            //     })
                         } else if (errorRequest.response.data.client) {
                             setStartRequest(false);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
@@ -364,7 +407,6 @@ const HoldingClientForm = (props) => {
                                                                 className={error.institution_id.length ? "col validated" : "col"}>
                                                                 <label htmlFor="exampleSelect1"> Institution <span
                                                                     style={{color: "red"}}>*</span></label>
-                                                                {console.log(nameClient, "NAME_CLIENT")}
                                                                 {institutionData ? (
                                                                     <Select
                                                                         value={institution}
@@ -550,7 +592,7 @@ const HoldingClientForm = (props) => {
                                                 <TagsInput
                                                     value={data.email}
                                                     onChange={onChangeEmail}
-                                                    disabled={props.getDisable ? props.getDisable : false}
+                                                    // disabled={props.getDisable ? props.getDisable : false}
                                                     inputProps={{
                                                         className: "react-tagsinput-input",
                                                         placeholder: "Email(s)"
@@ -669,12 +711,12 @@ const HoldingClientForm = (props) => {
                                         {
                                             !startRequest ? (
                                                 <button type="submit" onClick={(e) => onSubmit(e)}
-                                                        className="btn btn-primary">Enregistrer</button>
+                                                        className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
                                             ) : (
                                                 <button
                                                     className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                     type="button" disabled>
-                                                    Loading...
+                                                    Chargement...
                                                 </button>
                                             )
                                         }
@@ -690,9 +732,36 @@ const HoldingClientForm = (props) => {
                                                 </Link>
                                             )
                                         }
+                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button"
+                                                className="btn btn-bold btn-label-brand btn-sm"
+                                                data-toggle="modal" data-target="#kt_modal_4">Launch Modal
+                                        </button>
                                     </div>
                                 </div>
                             </form>
+                            {console.log(foundData.identite,"foundData" )}
+                            {
+                                foundData.identite ? (
+                                    <ConfirmClientSaveForm
+                                        plan={props.plan}
+                                        userPermissions={props.userPermissions}
+                                        message={foundData.message}
+                                        institution={institution}
+                                        category={category}
+                                        categories={categoryClient}
+                                        type={type}
+                                        identite={foundData.identite}
+                                        client={client}
+                                        clients={nameClient}
+                                        types={accountType}
+                                        institutions={institutionData}
+                                        client_id={data.client_id}
+                                        type_id={data.account_type_id}
+                                        category_id={data.category_client_id}
+                                        resetFoundData={() => setFoundData({})}
+                                    />
+                                ) : null
+                            }
                         </div>
                     </div>
                 </div>
@@ -703,7 +772,8 @@ const HoldingClientForm = (props) => {
 const mapStateToProps = state => {
     return {
         identite: state.identity,
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        plan: state.plan.plan
     }
 };
 
