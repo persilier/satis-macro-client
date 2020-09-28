@@ -22,6 +22,7 @@ import TagsInput from "react-tagsinput";
 import InputRequire from "../../views/components/InputRequire";
 import WithoutCode from "../../views/components/WithoutCode";
 import ConfirmClientSaveForm from "../../views/components/Clients/ConfirmClientSaveForm";
+import TestModal from "../../views/components/testModal";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -109,7 +110,8 @@ const HoldingClientForm = (props) => {
     const [institutionData, setInstitutionData] = useState(undefined);
     const [institution, setInstitution] = useState([]);
     const [disableInput, setDisableInput] = useState(true);
-    const [foundData, setFoundData] = useState({});
+    const [foundIdentity, setFoundIdentity] = useState(undefined);
+    const [foundMessage, setFoundMessage] = useState(undefined);
 
 
     useEffect(() => {
@@ -212,7 +214,6 @@ const HoldingClientForm = (props) => {
             setInstitution(selected);
             axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
                 .then(response => {
-                    console.log(response.data, "CLIENT D'UNE INSTITUTION");
                     const options =
                         response.data ? response.data.map((client) => ({
                             value: client.client_id,
@@ -286,8 +287,6 @@ const HoldingClientForm = (props) => {
                 })
             ;
         } else {
-            console.log(data.client_id,"client_Id")
-            console.log(data,"client")
 
             if (data.client_id.length !== 0) {
                 axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, data)
@@ -320,9 +319,9 @@ const HoldingClientForm = (props) => {
                     })
                     .catch(async (errorRequest) => {
 
-                        if (errorRequest.response.data.identite) {
-                            console.log(errorRequest.response.data, 'ERROR_DATA');
-                            await setFoundData({...errorRequest.response.data});
+                        if (errorRequest.response.data.error.identite) {
+
+                            await setFoundIdentity(errorRequest.response.data.error);
                             await document.getElementById("confirmClientSaveForm").click();
                             await setInstitution(null);
                             await setType(null);
@@ -330,16 +329,6 @@ const HoldingClientForm = (props) => {
                             setStartRequest(false);
                             setError(defaultError);
                             setData(defaultData);
-
-                            // await axios.post(appConfig.apiDomaine + `/any/identites/${errorRequest.response.data.identite.id}/client`, newData)
-                            //     .then(response => {
-                            //         setStartRequest(false);
-                            //         setError(defaultError);
-                            //         setData(defaultData);
-                            //         setType({});
-                            //         setCategory({});
-                            //         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                            //     })
                         } else if (errorRequest.response.data.client) {
                             setStartRequest(false);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
@@ -356,7 +345,9 @@ const HoldingClientForm = (props) => {
         }
 
     };
+const handleClick=()=>{
 
+}
     return (
         <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
@@ -736,36 +727,39 @@ const HoldingClientForm = (props) => {
                                                 </Link>
                                             )
                                         }
-                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button"
-                                                className="btn btn-bold btn-label-brand btn-sm"
+                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm"
                                                 data-toggle="modal" data-target="#kt_modal_4">Launch Modal
                                         </button>
+
+                                        {
+                                            foundIdentity? (
+                                                <ConfirmClientSaveForm
+                                                    plan={props.plan}
+                                                    userPermissions={props.userPermissions}
+                                                    message={foundIdentity.message}
+                                                    institution={institution}
+                                                    category={category}
+                                                    categories={categoryClient}
+                                                    type={type}
+                                                    identite={foundIdentity}
+                                                    client={client}
+                                                    clients={nameClient}
+                                                    types={accountType}
+                                                    institutions={institutionData}
+                                                    client_id={data.client_id}
+                                                    institution_id={data.institution_id}
+                                                    account_type_id={data.account_type_id}
+                                                    category_id={data.category_client_id}
+                                                    number={data.number}
+                                                    resetFoundIdentity={() => setFoundIdentity({})}
+                                                />
+                                            ) :  null
+                                        }
                                     </div>
                                 </div>
                             </form>
-                            {console.log(foundData.identite,"foundData" )}
-                            {
-                                foundData.identite ? (
-                                    <ConfirmClientSaveForm
-                                        plan={props.plan}
-                                        userPermissions={props.userPermissions}
-                                        message={foundData.message}
-                                        institution={institution}
-                                        category={category}
-                                        categories={categoryClient}
-                                        type={type}
-                                        identite={foundData.identite}
-                                        client={client}
-                                        clients={nameClient}
-                                        types={accountType}
-                                        institutions={institutionData}
-                                        client_id={data.client_id}
-                                        type_id={data.account_type_id}
-                                        category_id={data.category_client_id}
-                                        resetFoundData={() => setFoundData({})}
-                                    />
-                                ) : null
-                            }
+
+
                         </div>
                     </div>
                 </div>

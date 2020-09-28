@@ -66,6 +66,7 @@ const Clients = (props) => {
     useEffect(() => {
         axios.get(endPoint.list)
             .then(response => {
+                console.log(response, "OK");
                 setLoad(false);
                 setClients(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
