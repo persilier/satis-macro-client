@@ -3,7 +3,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
-import {debug, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {forceRound, getLowerCaseString} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
@@ -28,7 +28,6 @@ const QualificationPeriod = props => {
     const [qualificationPeriods, setQualificationPeriods] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -50,14 +49,24 @@ const QualificationPeriod = props => {
         fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newQualificationPeriods = [...qualificationPeriods];
+        newQualificationPeriods = newQualificationPeriods.filter(el => (
+            getLowerCaseString(`${el.borne_sup === "+" ? `Plus de ${el.borne_inf}` : `${el.borne_inf}-${el.borne_sup}`} jours`).indexOf(value) >= 0
+        ));
+
+        return newQualificationPeriods;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(qualificationPeriods.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(qualificationPeriods.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -227,7 +236,14 @@ const QualificationPeriod = props => {
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         Recherche:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        <input
+                                                            id="myInput"
+                                                            type="text"
+                                                            onKeyUp={(e) => searchElement(e)}
+                                                            className="form-control form-control-sm"
+                                                            placeholder=""
+                                                            aria-controls="kt_table_1"
+                                                        />
                                                     </label>
                                                 </div>
                                             </div>
@@ -252,14 +268,12 @@ const QualificationPeriod = props => {
                                                     <tbody>
                                                     {
                                                         qualificationPeriods.length ? (
-                                                            search ? (
-                                                                qualificationPeriods.map((qualificationPeriod, index) => (
-                                                                    printBodyTable(qualificationPeriod, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((qualificationPeriod, index) => (
                                                                     printBodyTable(qualificationPeriod, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -282,7 +296,7 @@ const QualificationPeriod = props => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}

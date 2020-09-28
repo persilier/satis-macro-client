@@ -100,6 +100,7 @@ const ClaimReporting = props => {
             labels.push(el.name["fr"]);
             series.push(el.pourcentage)
         });
+        debug(series, "series");
 
         return {
             series: series,

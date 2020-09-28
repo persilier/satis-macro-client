@@ -3,7 +3,12 @@ import axios from "axios";
 import {connect} from "react-redux";
 import Select from "react-select";
 import {Link} from "react-router-dom";
-import {loadCss, filterDataTableBySearchValue, forceRound, formatSelectOption} from "../../helpers/function";
+import {
+    loadCss,
+    forceRound,
+    formatSelectOption,
+    getLowerCaseString, debug
+} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -17,6 +22,7 @@ import {
 import HeaderTablePage from "../components/HeaderTablePage";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -70,7 +76,6 @@ const ConfigProcessingCircuit = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [data, setData] = useState(undefined);
     const [institutionId, setInstitutionId] = useState(undefined);
     const [error] = useState(defaultData);
@@ -86,7 +91,7 @@ const ConfigProcessingCircuit = (props) => {
                         response.data.institutions.length ? response.data.institutions.map((institution) => ({
                             value: institution.id,
                             label: institution.name
-                        })) : ""
+                        })) : null
                     ];
                     setInstitutionData(options);
                 });
@@ -118,14 +123,62 @@ const ConfigProcessingCircuit = (props) => {
 
     }, [endPoint.list,numberPerPage, props.userPermissions]);
 
+    {/*<tr key={i} role="row" className="odd">
+        {
+            i === 0 ?
+                <td rowSpan={category.claim_objects.length}>{category.name.fr}</td>
+                : <td style={{display: "none"}}/>
+        }
+        <td>
+            {object.name.fr}
+        </td>
+        <td>
+            {units ? (
+                <Select
+                    value={data[object.id]}
+                    onChange={(e) => onChangeProcessing(e, object.id)}
+                    options={formatSelectOption(units, 'name', "fr")}
+                    isMulti
+                    placeholder={"Veillez selectionez le circuit"}
+                    key={object.id}
+                />
+            ) : null
+            }
+        </td>
+    </tr>*/}
+
+    const matchToClaimObjectOrEntity = (list, value) => {
+        let match = false;
+        list.map(el => {
+            match = (
+                match ||
+                getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
+                (el.units ? matchToClaimObjectOrEntity(el.units, value) : false)
+            )
+        });
+        return match;
+    };
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaimObject = [...claimObject];
+        debug(newClaimObject, "all");
+        newClaimObject = newClaimObject.filter(el => (
+            getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
+            matchToClaimObjectOrEntity(el.claim_objects, value)
+        ));
+
+        return newClaimObject;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(claimObject.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claimObject.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -229,7 +282,7 @@ const ConfigProcessingCircuit = (props) => {
         setInstitution(selected);
         axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
             .then(response => {
-                setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : "");
+                setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : null);
                 let newObjectData = [];
                 response.data.claimCategories.map((claimCategory) => (
                     claimCategory.claim_objects.map((claimObject) => (
@@ -267,11 +320,11 @@ const ConfigProcessingCircuit = (props) => {
                                     placeholder={"Veillez selectionez le circuit"}
                                     key={object.id}
                                 />
-                            ) : ''
+                            ) : null
                             }
                         </td>
                     </tr>
-                )) : ""
+                )) : null
         )
     };
 
@@ -347,13 +400,13 @@ const ConfigProcessingCircuit = (props) => {
                                                                         placeholder={"Veillez selectionner l'institution"}
                                                                         value={institution}
                                                                         onChange={onChangeInstitution}
-                                                                        options={institutionData.length ? institutionData[0].map(name => name) : ''}
+                                                                        options={institutionData.length ? institutionData[0].map(name => name) : null}
                                                                     />
 
                                                                 ) : (<select name="category"
                                                                              className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
                                                                              id="category">
-                                                                    <option value=""></option>
+                                                                    <option value=""/>
                                                                 </select>)
                                                             }
                                                         </div>
@@ -364,11 +417,11 @@ const ConfigProcessingCircuit = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
 
                                                     </div>
-                                                    : ""
+                                                    : null
                                             }
 
 
@@ -407,14 +460,12 @@ const ConfigProcessingCircuit = (props) => {
                                                 {/*{console.log(data,'data')}*/}
                                                 {
                                                     claimObject ? (
-                                                        search ? (
-                                                            claimObject.map((category, index) => (
-                                                                printBodyTable(category, index)
-                                                            ))
-                                                        ) : (
+                                                        showList.length ? (
                                                             showList.map((category, index) => (
                                                                 printBodyTable(category, index)
                                                             ))
+                                                        ) : (
+                                                            <EmptyTable search={true}/>
                                                         )
                                                     ) : (
                                                         <EmptyTable/>
@@ -462,7 +513,7 @@ const ConfigProcessingCircuit = (props) => {
                                             </div>
                                         </div>
                                         {
-                                            !search ? (
+                                            showList.length ? (
                                                 <div className="col-sm-12 col-md-7 dataTables_pager">
                                                     <Pagination
                                                         numberPerPage={numberPerPage}
@@ -475,7 +526,7 @@ const ConfigProcessingCircuit = (props) => {
                                                         onClickNextPage={e => onClickNextPage(e)}
                                                     />
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
                                     </div>
                                 </div>

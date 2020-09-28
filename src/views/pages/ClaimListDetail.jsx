@@ -6,12 +6,11 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import Select from "react-select";
-import {debug, loadCss, loadScript} from "../../helpers/function";
+import {loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import Loader from "../components/Loader";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAssignClaimSuccessMessageConfig

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
-import {debug, filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -30,7 +30,6 @@ const User = (props) => {
     const [users, setUser] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -64,14 +63,27 @@ const User = (props) => {
         fetchData();
     }, [appConfig.apiDomaine, props.plan, NUMBER_ELEMENT_PER_PAGE]);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newUsers = [...users];
+        newUsers = newUsers.filter(el => (
+            getLowerCaseString(`${el.identite.lastname} ${el.identite.firstname}`).indexOf(value) >= 0 ||
+            getLowerCaseString(el.username).indexOf(value) >= 0 ||
+            getLowerCaseString(printRole(el.roles)).indexOf(value) >= 0 ||
+            getLowerCaseString(el.disabled_at === null ? "Active" : "Désactiver").indexOf(value) >= 0
+        ));
+
+        return newUsers;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(users.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(users.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -163,9 +175,7 @@ const User = (props) => {
                     await axios.put(endpoint)
                         .then(response => {
                             const newUsers = [...users];
-                            debug(newUsers[index].disabled_at, "disabled_at");
                             newUsers[index].disabled_at = newUsers[index].disabled_at === null ? true : null;
-                            debug(newUsers[index].disabled_at, "disabled_at");
                             document.getElementById(`user-spinner-${user.id}`).style.display = "none";
                             document.getElementById(`user-${user.id}`).style.display = "block";
                             document.getElementById(`user-edit-${user.id}`).style.display = "block";
@@ -300,14 +310,12 @@ const User = (props) => {
                                                     <tbody>
                                                     {
                                                         users.length ? (
-                                                            search ? (
-                                                                users.map((user, index) => (
-                                                                    printBodyTable(user, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((user, index) => (
                                                                     printBodyTable(user, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -333,7 +341,7 @@ const User = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -346,7 +354,7 @@ const User = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -356,7 +364,7 @@ const User = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
 
     );
 };

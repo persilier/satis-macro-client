@@ -10,6 +10,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
+import {debug} from "../../helpers/function";
 
 const Mail = (props) => {
     document.title = "Satis client - Paramètre Envoie de mail";

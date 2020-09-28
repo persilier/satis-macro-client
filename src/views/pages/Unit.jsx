@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -63,7 +63,6 @@ const Unit = (props) => {
     const [units, setUnits] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -85,14 +84,35 @@ const Unit = (props) => {
         fetchData();
     }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
+    {/*<tr key={index} role="row" className="odd">
+        {
+            verifyPermission(props.userPermissions, 'list-any-unit') ? (
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : null}</td>
+            ) : : null
+        }
+    </tr>*/}
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newUnits = [...units];
+        newUnits = newUnits.filter(el => (
+            getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.unit_type.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.lead ? el.lead.identite ? el.lead.identite.lastname+" "+el.lead.identite.firstname : "Pas d'identite" : "Pas de responsable").indexOf(value) >= 0 ||
+            getLowerCaseString(verifyPermission(props.userPermissions, "list-any-unit") ? el.institution ? el.institution.name : "" : "").indexOf(value) >= 0
+        ));
+
+        return newUnits;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(units.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(units.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -203,8 +223,8 @@ const Unit = (props) => {
                 </td>
                 {
                     verifyPermission(props.userPermissions, 'list-any-unit') ? (
-                        <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : ""}</td>
-                    ) : <td style={{display: "none"}}/>
+                        <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : null}</td>
+                    ) : null
                 }
                 <td>
                     {
@@ -214,7 +234,7 @@ const Unit = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-any-unit') || verifyPermission(props.userPermissions, 'destroy-my-unit') || verifyPermission(props.userPermissions, 'destroy-without-link-unit') ? (
@@ -224,7 +244,7 @@ const Unit = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -314,14 +334,12 @@ const Unit = (props) => {
                                                     <tbody>
                                                     {
                                                         units.length ? (
-                                                            search ? (
-                                                                units.map((unit, index) => (
-                                                                    printBodyTable(unit, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((unit, index) => (
                                                                     printBodyTable(unit, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -351,7 +369,7 @@ const Unit = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -364,7 +382,7 @@ const Unit = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -374,7 +392,7 @@ const Unit = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

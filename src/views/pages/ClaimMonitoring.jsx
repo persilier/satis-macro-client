@@ -101,7 +101,7 @@ const ClaimMonitoring = (props) => {
             ;
         }
         fetchData();
-    }, [props.plan, props.userPermissions, appConfig.apiDomaine]);
+    }, [props.plan, props.userPermissions]);
 
     const formatFilterStaff = staff => {
         const newFilterStaffs = [];
@@ -368,7 +368,7 @@ const ClaimMonitoring = (props) => {
                                             />
                                         </div>
 
-                                        <div class="col">
+                                        <div className="col">
                                             <label htmlFor="expireDate">Délai</label>
                                             <select name="" id="" className="form-control" value={filterTimeLimit} onChange={handleTimeLimitChange}>
                                                 <option value="all">Tout</option>

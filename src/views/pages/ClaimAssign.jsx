@@ -10,13 +10,12 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {
-    debug,
-    filterDataTableBySearchValue,
     forceRound,
-    formatToTimeStampUpdate,
+    formatToTimeStampUpdate, getLowerCaseString,
     loadCss
 } from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -49,16 +48,30 @@ const ClaimAssign = (props) => {
             ;
         }
         fetchData();
-    }, []);
+    }, [numberPerPage]);
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaims = [...claims];
+        newClaims = newClaims.filter(el => (
+            getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}`).indexOf(value) >= 0 ||
+            getLowerCaseString(formatToTimeStampUpdate(el.created_at)).indexOf(value) >= 0 ||
+            getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+        ));
+
+        return newClaims;
+    };
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -166,7 +179,7 @@ const ClaimAssign = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        Réclamation à transférer
+                                        Réclamations à transférer
                                     </a>
                                 </div>
                             </div>
@@ -185,7 +198,7 @@ const ClaimAssign = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamation à transférer"}
+                            title={"Réclamations à transférer"}
                         />
 
                         {
