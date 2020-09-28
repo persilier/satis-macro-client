@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -18,6 +18,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import {AUTH_TOKEN} from "../../constants/token";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -34,7 +35,6 @@ const FAQs = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/faqs")
@@ -49,14 +49,27 @@ const FAQs = (props) => {
                 console.log("Something is wrong");
             })
     }, []);
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newFaqs = [...faqs];
+        newFaqs = newFaqs.filter(el => (
+            getLowerCaseString(el.faq_category.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.question["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.answer["fr"]).indexOf(value) >= 0
+        ));
+
+        return newFaqs;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(faqs.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(faqs.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -263,23 +276,18 @@ const FAQs = (props) => {
                                                         <tbody>
                                                         {
                                                             faqs.length ? (
-                                                                search ? (
-                                                                    faqs.map((faq, index) => (
-                                                                        printBodyTable(faq, index)
-                                                                    ))
-                                                                ) : (
+                                                                showList.length ? (
                                                                     showList.map((faq, index) => (
                                                                         printBodyTable(faq, index)
                                                                     ))
+                                                                ) : (
+                                                                    <EmptyTable search={true}/>
                                                                 )
                                                             ) : (
                                                                 <EmptyTable/>
                                                             )
                                                         }
                                                         </tbody>
-                                                        <tfoot>
-                                                        <tr></tr>
-                                                        </tfoot>
                                                     </table>
                                                 </div>
                                             </div>
@@ -290,7 +298,7 @@ const FAQs = (props) => {
                                                     </div>
                                                 </div>
                                                 {
-                                                    !search ? (
+                                                    showList.length ? (
                                                         <div className="col-sm-12 col-md-7 dataTables_pager">
                                                             <Pagination
                                                                 numberPerPage={numberPerPage}
@@ -303,7 +311,7 @@ const FAQs = (props) => {
                                                                 onClickNextPage={e => onClickNextPage(e)}
                                                             />
                                                         </div>
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>

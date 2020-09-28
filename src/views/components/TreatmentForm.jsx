@@ -6,7 +6,6 @@ import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
-import {debug} from "../../helpers/function";
 
 const TreatmentForm = (props) => {
     const defaultData = {

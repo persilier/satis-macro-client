@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -11,6 +11,7 @@ import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {connect} from "react-redux";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -26,7 +27,6 @@ const ParametersComponent = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/components")
@@ -43,14 +43,24 @@ const ParametersComponent = (props) => {
             })
     },[]);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newComponent = [...component];
+        newComponent = newComponent.filter(el => (
+            getLowerCaseString(el.params["fr"].title ? el.params["fr"].title.value : "").indexOf(value) >= 0
+        ));
+
+        return newComponent;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(component.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(component.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -102,7 +112,7 @@ const ParametersComponent = (props) => {
         }
     };
 
-  
+
     const arrayNumberPage = () => {
         const pages = [];
         for (let i = 0; i < numberPage; i++) {
@@ -220,14 +230,12 @@ const ParametersComponent = (props) => {
                                                 <tbody>
                                                 {
                                                     component.length ? (
-                                                        search ? (
-                                                            component.map((component, index) => (
-                                                                printBodyTable(component, index)
-                                                            ))
-                                                        ) : (
+                                                        showList ? (
                                                             showList.map((component, index) => (
                                                                 printBodyTable(component, index)
                                                             ))
+                                                        ) : (
+                                                            <EmptyTable search={true}/>
                                                         )
                                                     ) : (
                                                         <EmptyTable/>
@@ -250,7 +258,7 @@ const ParametersComponent = (props) => {
                                             </div>
                                         </div>
                                         {
-                                            !search ? (
+                                            showList.length ? (
                                                 <div className="col-sm-12 col-md-7 dataTables_pager">
                                                     <Pagination
                                                         numberPerPage={numberPerPage}
@@ -263,7 +271,7 @@ const ParametersComponent = (props) => {
                                                         onClickNextPage={e => onClickNextPage(e)}
                                                     />
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
                                     </div>
                                 </div>

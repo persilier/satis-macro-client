@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -17,6 +17,7 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -59,12 +60,10 @@ const ConfigRapportAuto = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(endPoint.list)
             .then(response => {
-                console.log(response.data,"DATA")
                 setLoad(false);
                 setRapportAuto(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
@@ -76,14 +75,35 @@ const ConfigRapportAuto = (props) => {
             })
     },[]);
 
+    const getEmailString = (email) => {
+        let emailString = "";
+        email.map((mail, index) => (
+            index === email.length - 1 ? emailString + mail : emailString + mail  +"/ "
+        ));
+        return emailString;
+    };
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newRapportAuto = [...rapportAuto];
+        newRapportAuto = newRapportAuto.filter(el => (
+            getLowerCaseString(el.institution_targeted ? el.institution_targeted.name : "").indexOf(value) >= 0 ||
+            getLowerCaseString(el.period ? el.period_tag.label : "").indexOf(value) >= 0 ||
+            getLowerCaseString(getEmailString(el.email)).indexOf(value) >= 0 ||
+            getLowerCaseString(el.email ? el.email : "").indexOf(value) >= 0
+        ));
+
+        return newRapportAuto;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(rapportAuto.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(rapportAuto.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -187,8 +207,8 @@ const ConfigRapportAuto = (props) => {
                 <td>
                     {rapport.email ?
                         rapport.email.map((mail, index) => (
-                            index === rapport.email.length - 1 ? mail : mail  +" "+ "/" +" "
-                        )) : ""
+                            index === rapport.email.length - 1 ? mail : mail  +"/ "
+                        )) : null
                     }
                 </td>
                 {/*<td>{rapport.email===null?"":rapport.email}</td>*/}
@@ -202,7 +222,7 @@ const ConfigRapportAuto = (props) => {
                                 title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                            : ""
+                            : null
                     }
 
                     {verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ?
@@ -212,7 +232,7 @@ const ConfigRapportAuto = (props) => {
                             title="Supprimer">
                             <i className="la la-trash"/>
                         </button>
-                        : ""
+                        : null
                     }
                 </td>
             </tr>
@@ -311,14 +331,12 @@ const ConfigRapportAuto = (props) => {
                                                     <tbody>
                                                     {
                                                         rapportAuto.length ? (
-                                                            search ? (
-                                                                rapportAuto.map((rapport, index) => (
-                                                                    printBodyTable(rapport, index)
-                                                                ))
-                                                            ) : (
+                                                            showList ? (
                                                                 showList.map((rapport, index) => (
                                                                     printBodyTable(rapport, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -344,7 +362,7 @@ const ConfigRapportAuto = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -357,7 +375,7 @@ const ConfigRapportAuto = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>

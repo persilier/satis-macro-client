@@ -7,7 +7,7 @@ import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
@@ -54,14 +54,25 @@ const Channel = (props) => {
         fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newChannels = [...channels];
+        newChannels = newChannels.filter(el => (
+            getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.is_response ? "Oui" : "Non").indexOf(value) >= 0
+        ));
+
+        return newChannels;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(channels.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(channels.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -174,7 +185,7 @@ const Channel = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable ? (
@@ -184,7 +195,7 @@ const Channel = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -232,7 +243,13 @@ const Channel = (props) => {
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         Recherche:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        <input
+                                                            id="myInput"
+                                                            type="text"
+                                                            onKeyUp={(e) => searchElement(e)}
+                                                            className="form-control form-control-sm"
+                                                            placeholder="" aria-controls="kt_table_1"
+                                                        />
                                                     </label>
                                                 </div>
                                             </div>
@@ -261,14 +278,12 @@ const Channel = (props) => {
                                                     <tbody>
                                                     {
                                                         channels.length ? (
-                                                            search ? (
-                                                                channels.map((channel, index) => (
-                                                                    printBodyTable(channel, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((channel, index) => (
                                                                     printBodyTable(channel, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -292,7 +307,7 @@ const Channel = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -305,7 +320,7 @@ const Channel = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -315,7 +330,7 @@ const Channel = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

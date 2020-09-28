@@ -9,8 +9,14 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
+import {
+    forceRound,
+    formatDateToTimeStampte,
+    getLowerCaseString,
+    loadCss
+} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -23,7 +29,6 @@ const ClaimAssignToStaff = (props) => {
     const [claims, setClaims] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -47,14 +52,29 @@ const ClaimAssignToStaff = (props) => {
         fetchData();
     }, []);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaims = [...claims];
+        newClaims = newClaims.filter(el => (
+            getLowerCaseString(`${el.reference} ${ el.isInvalidTreatment ? "(R)" : ""}`).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}`).indexOf(value) >= 0 ||
+            getLowerCaseString(formatDateToTimeStampte(el.created_at)).indexOf(value) >= 0 ||
+            getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.active_treatment.responsible_staff ? el.active_treatment.responsible_staff.identite.lastname : ""} ${ el.active_treatment.responsible_staff ? el.active_treatment.responsible_staff.identite.firstname : "" }`).indexOf(value) >= 0 ||
+            getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+        ));
+
+        return newClaims;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -250,34 +270,32 @@ const ClaimAssignToStaff = (props) => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {console.log(claims,"Claims")}
                                                     {
                                                         claims.length ? (
-                                                            search ? (
-                                                                claims.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((claim, index) => (
                                                                     printBodyTable(claim, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
+
                                                         ) : (
                                                             <EmptyTable/>
                                                         )
                                                     }
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Référence</th>
-                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet</th>
-                                                        <th rowSpan="1" colSpan="1">Agent</th>
-                                                        <th rowSpan="1" colSpan="1">Institution concernée</th>
-                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">Référence</th>
+                                                            <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                            <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                            <th rowSpan="1" colSpan="1">Objet</th>
+                                                            <th rowSpan="1" colSpan="1">Agent</th>
+                                                            <th rowSpan="1" colSpan="1">Institution concernée</th>
+                                                            {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
+                                                            <th rowSpan="1" colSpan="1">Action</th>
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -289,22 +307,19 @@ const ClaimAssignToStaff = (props) => {
                                                     à {numberPerPage} sur {claims.length} données
                                                 </div>
                                             </div>
-                                            {
-                                                !search ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
-                                                    </div>
-                                                ) : ""
-                                            }
+
+                                            <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                <Pagination
+                                                    numberPerPage={numberPerPage}
+                                                    onChangeNumberPerPage={onChangeNumberPerPage}
+                                                    activeNumberPage={activeNumberPage}
+                                                    onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                    pages={pages}
+                                                    onClickPage={(e, number) => onClickPage(e, number)}
+                                                    numberPage={numberPage}
+                                                    onClickNextPage={e => onClickNextPage(e)}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -4,7 +4,7 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -17,6 +17,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -61,7 +62,6 @@ const Clients = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(endPoint.list)
@@ -76,14 +76,40 @@ const Clients = (props) => {
             })
     }, []);
 
+    const matchByAttribute = (accountNumbers, value, attribute) => {
+        var match = false;
+        accountNumbers.map(el => {
+            match = (
+                match ||
+                getLowerCaseString(attribute === "number" ? el[attribute] : el).indexOf(value) >= 0
+            )
+        });
+        return match;
+    };
+
+
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClients = [...clients];
+        newClients = newClients.filter(el => (
+            getLowerCaseString(el.client.identite.lastname+" "+el.client.identite.firstname).indexOf(value) >= 0 ||
+            matchByAttribute(el.accounts, value, "number") ||
+            matchByAttribute(el.client.identite.telephone, value, "telephone") ||
+            matchByAttribute(el.client.identite.email, value, "email")
+        ));
+
+        return newClients;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(clients.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(clients.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -189,7 +215,7 @@ const Clients = (props) => {
 
                         {
                             i === 0 ?
-                                <td rowSpan={client.accounts.length}>{client.client.identite.lastname} &ensp; {client.client.identite.firstname}</td> : <td style={{display:"none"}}/>
+                                <td rowSpan={client.accounts.length}>{client.client.identite.lastname} &ensp; {client.client.identite.firstname}</td> : null
                         }
                         <td>
                             {account.number}
@@ -198,7 +224,7 @@ const Clients = (props) => {
                             {client.client.identite.telephone.length ?
                                 client.client.identite.telephone.map((tel, index) => (
                                     index === client.client.identite.telephone.length - 1 ? tel : tel +" "+ "/ "+" "
-                                )) : ""
+                                )) : null
                             }
                         </td>
 
@@ -206,7 +232,7 @@ const Clients = (props) => {
                             {client.client.identite.email ?
                                 client.client.identite.email.map((mail, index) => (
                                     index === client.client.identite.email.length - 1 ? mail : mail  +" "+ "/ "+" "
-                                )) : ""
+                                )) : null
                             }
                         </td>
 
@@ -229,9 +255,8 @@ const Clients = (props) => {
                                           title="Modifier">
                                         <i className="la la-edit"/>
                                     </Link>
-                                    :""
+                                    : null
                             }
-
                             {/*{*/}
                             {/*    verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||*/}
                             {/*    verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?*/}
@@ -241,11 +266,22 @@ const Clients = (props) => {
                             {/*            title="Supprimer">*/}
                             {/*            <i className="la la-trash"/>*/}
                             {/*        </button>*/}
-                            {/*        : ""*/}
+                            {/*        : null*/}
                             {/*}*/}
+                            {
+                                verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||
+                                verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?
+                                    <button
+                                        onClick={(e) => deleteClient(client.id, index)}
+                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                        title="Supprimer">
+                                        <i className="la la-trash"/>
+                                    </button>
+                                    : null
+                            }
                         </td>
                     </tr>
-                )) : ""
+                )) : null
         )
     };
 
@@ -291,7 +327,7 @@ const Clients = (props) => {
                                         title={"Client"}
                                         addText={"Ajouter"}
                                         addLink={"/settings/any/clients/add"}
-                                    /> : ""
+                                    /> : null
                             )
                     }
 
@@ -353,14 +389,12 @@ const Clients = (props) => {
 
                                                 {
                                                     clients.length ? (
-                                                        search ? (
-                                                            clients.map((client, index) => (
-                                                                printBodyTable(client, index)
-                                                            ))
-                                                        ) : (
+                                                        showList.length ? (
                                                             showList.map((client, index) => (
                                                                 printBodyTable(client, index)
                                                             ))
+                                                        ) : (
+                                                            <EmptyTable search={true}/>
                                                         )
                                                     ) : (
                                                         <EmptyTable/>
@@ -387,7 +421,7 @@ const Clients = (props) => {
                                             </div>
                                         </div>
                                         {
-                                            !search ? (
+                                            showList.length ? (
                                                 <div className="col-sm-12 col-md-7 dataTables_pager">
                                                     <Pagination
                                                         numberPerPage={numberPerPage}
@@ -400,7 +434,7 @@ const Clients = (props) => {
                                                         onClickNextPage={e => onClickNextPage(e)}
                                                     />
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
                                     </div>
                                 </div>
