@@ -10,6 +10,7 @@ import {
 } from "../../../../config/toastConfig";
 import {listConnectData} from "../../../../constants/userClient";
 import LoadingTable from "../../../../views/components/LoadingTable";
+import Loader from "../../../../views/components/Loader";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
@@ -35,6 +36,7 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
+                    setLoad(false);
                     setData(response.data);
                     setLoad(false);
                 })
@@ -89,7 +91,7 @@ const LoginPage = (props) => {
     };
     return (
         load ? (
-            <LoadingTable/>
+            <Loader/>
         ) : (
             <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
                 <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1" id="kt_login">
@@ -145,7 +147,7 @@ const LoginPage = (props) => {
 
                                             <div className="kt-login__form">
                                                 <div className="kt-login__title" style={{marginTop: '175px'}}>
-                                                    <h3> {data ? data.params.fr.title.value : "Connexion"}</h3>
+                                                    <h3> {data ? data.params.fr.title.value : ""}</h3>
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"

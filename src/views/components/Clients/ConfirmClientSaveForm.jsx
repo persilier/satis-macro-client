@@ -3,6 +3,7 @@ import TagsInput from "react-tagsinput";
 import axios from "axios";
 import {ToastBottomEnd} from "../Toast";
 import {
+    toastAddErrorMessageConfig,
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig,
 } from "../../../config/toastConfig";
@@ -12,24 +13,26 @@ import Select from "react-select";
 import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import FormInformation from "../FormInformation";
+import InputRequire from "../InputRequire";
 
 const endPointConfig = {
     PRO: {
         plan: "PRO",
-        confirm: id => `${appConfig.apiDomaine}/my/identites/${id}/client`
+        confirm: id => `${appConfig.apiDomaine}/my/identites/${id}/clients`
     },
     MACRO: {
         plan: "MACRO",
         holding: {
-            confirm: id => `${appConfig.apiDomaine}/any/identites/${id}/client`
+            confirm: id => `${appConfig.apiDomaine}/any/identites/${id}/clients`
         },
         filial: {
-            confirm: id => `${appConfig.apiDomaine}/my/identites/${id}/client`
+            confirm: id => `${appConfig.apiDomaine}/my/identites/${id}/clients`
         }
     },
 };
 
 const ConfirmClientSaveForm = (props) => {
+
     let endPoint = "";
     if (props.plan === "MACRO") {
         if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution'))
@@ -43,32 +46,38 @@ const ConfirmClientSaveForm = (props) => {
     const [clients, setClients] = useState(props.clients);
     const [category, setCategory] = useState(props.category);
     const [categories, setCategories] = useState(props.categories);
-    const institutions = props.institutions;
+    // const institution = props.institution;
     const [institution, setInstitution] = useState(props.institution);
+    const [institutions, setInstitutions] = useState(props.institutions);
     const [type, setType] = useState(props.type);
     const [client, setClient] = useState(props.client);
 
+
     const defaultData = {
-        firstname: props.identite.identite.firstname,
-        lastname: props.identite.identite.lastname,
-        sexe: props.identite.identite.sexe,
-        telephone: JSON.parse(props.identite.identite.telephone),
-        email: JSON.parse(props.identite.identite.email),
-        ville: props.identite.identite.ville === null ? "" : props.identite.identite.ville,
-        type_id: props.type_id,
+        firstname: props.identite.identite.identite.firstname,
+        lastname: props.identite.identite.identite.lastname,
+        sexe: props.identite.identite.identite.sexe,
+        telephone: (props.identite.identite.identite.telephone),
+        email: (props.identite.identite.identite.email),
+        ville: props.identite.identite.identite.ville === null ? "" : props.identite.identite.identite.ville,
+        number:props.number,
+        account_type_id: props.account_type_id,
         client_id: props.client_id,
-        category_client_id:props.category_client_id
+        institution_id: props.institution_id,
+        category_client_id:props.category_id
     };
+
     const defaultError = {
-        name: [],
         firstname: [],
         lastname: [],
         sexe: [],
         telephone: [],
         email: [],
         ville: [],
-        type_id: [],
+        number:[],
+        account_type_id: [],
         client_id: [],
+        institution_id: [],
         category_client_id:[]
     };
     const [data, setData] = useState(defaultData);
@@ -111,94 +120,48 @@ const ConfirmClientSaveForm = (props) => {
         setData(newData);
     };
 
-    const onChangeUnit = (selected) => {
+    const onChangeType = (selected) => {
         const newData = {...data};
-        newData.type_id = selected.value;
+        newData.account_type_id = selected.value;
         setType(selected);
         setData(newData);
     };
 
-    const onChangePosition = (selected) => {
+    const onChangeAccount = (e) => {
         const newData = {...data};
-        newData.client_id = selected.value;
-        setClient(selected);
+        newData.number = e.target.value;
+        setData(newData);
+    };
+    const onChangeCategory = (selected) => {
+        const newData = {...data};
+        newData.category_client_id = selected.value;
+        setCategory(selected);
         setData(newData);
     };
 
     const onChangeInstitution = (selected) => {
         const newData = {...data};
-        if (selected) {
-            if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')) {
-                newData.institution_id = selected.value;
-                setInstitution(selected);
-                axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
-                    .then(response => {
-                        const options =
-                            response.data ? response.data.map((client) => ({
-                                value: client.client_id,
-                                label: client.client.identite.firstname + ' ' + client.client.identite.lastname
-                            })) : "";
-                        setClients(options);
-                    });
-                setCategory([]);
-                setClient([]);
-                newData.firstname = "";
-                newData.lastname = "";
-                newData.sexe = "";
-                newData.telephone = [];
-                newData.email = [];
-                newData.ville = "";
-                newData.client_id = [];
-                newData.type_id = "";
-                newData.category_client_id = "";
-            }
-        }
+        newData.institution_id = selected.value;
+        setInstitution(selected);
         setData(newData);
-    };
-    const onChangeClient = (selected) => {
-        const newData = {...data};
-        newData.client_id = selected.value;
-        setClient(selected);
-        if (newData.client_id) {
-            axios.get(appConfig.apiDomaine + `/any/clients/${newData.client_id}`)
-                .then(response => {
-                    const newIdentity = {
-                        firstname: response.data.client.identite.firstname,
-                        lastname: response.data.client.identite.lastname,
-                        sexe: response.data.client.identite.sexe,
-                        telephone: response.data.client.identite.telephone,
-                        email: response.data.client.identite.email,
-                        ville: response.data.client.identite.ville === null ? "" : response.data.client.identite.ville,
-                        client_id: response.data.client_id,
-                        institution_id: response.data.institution_id,
-                        category_client_id: response.data.category_client_id
-                    };
-                    setData(newIdentity);
-                    setCategory({
-                        value: response.data.category_client ? response.data.category_client.id : "",
-                        label: response.data.category_client ? response.data.category_client.name.fr : ""
-                    });
-                });
-        }
-
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         setStartRequest(true);
-        axios.post(endPoint.confirm(props.identite.id), data)
+        axios.post(endPoint.confirm(props.identite.identite.identites_id), data)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 await setStartRequest(false);
                 await setError(defaultError);
                 await setTypes([]);
-                await setClients([]);
+                await setCategories([]);
+                await setInstitutions([]);
                 await setInstitution({});
                 await setType({});
-                await setClient({});
+                await setCategory({});
                 document.getElementById("closeConfirmSaveForm").click();
-                await props.resetFoundData();
+                // await props.resetFoundIdentity();
             })
             .catch(errorRequest => {
                 setStartRequest(false);
@@ -211,13 +174,15 @@ const ConfirmClientSaveForm = (props) => {
     const onClickClose = async (e) => {
         await setStartRequest(false);
         await setError(defaultError);
+        await setData(defaultError);
         await setTypes([]);
-        await setClients([]);
+        await setCategory({});
+        await setCategories([]);
+        await setInstitutions([]);
         await setInstitution({});
         await setType({});
-        await setClient({});
         await document.getElementById("closeButton").click();
-        await props.resetFoundData();
+        // await props.resetFoundIdentity();
     };
 
     return (
@@ -240,6 +205,32 @@ const ConfirmClientSaveForm = (props) => {
                                 <div className="kt-section kt-section--first">
                                     <div className="kt-section__body">
                                         <h3 className="kt-section__title kt-section__title-lg">Informations personnelles:</h3>
+
+                                        <div className={"form-group row "}>
+                                            {
+                                                verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution') ? (
+
+                                                    <div className="col">
+                                                        <label htmlFor="type">Institution</label>
+                                                        <Select
+                                                            value={institution}
+                                                            onChange={onChangeInstitution}
+                                                            options={institutions}
+                                                        />
+                                                        {
+                                                            error.institution_id.length ? (
+                                                                error.institution_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                ) : null
+                                            }
+                                        </div>
+
                                         <div className="form-group row">
                                             <div className={error.lastname.length ? "col validated" : "col"}>
                                                 <label htmlFor="lastname">Nom</label>
@@ -366,17 +357,18 @@ const ConfirmClientSaveForm = (props) => {
                                 <div className="kt-section">
                                     <div className="kt-section__body">
                                         <h3 className="kt-section__title kt-section__title-lg">Informations professionnelles:</h3>
-                                        <div className={"form-group"}>
-                                            <div className={"form-group"}>
-                                                <label htmlFor="client">Client</label>
+                                        <div className={"form-group row "}>
+
+                                            <div className="col">
+                                                <label htmlFor="type">Categorie client</label>
                                                 <Select
-                                                    value={client}
-                                                    onChange={onChangePosition}
-                                                    options={formatSelectOption(clients, "name", "fr")}
+                                                    value={category}
+                                                    onChange={onChangeCategory}
+                                                    options={formatSelectOption(categories, "name", "fr")}
                                                 />
                                                 {
-                                                    error.client_id.length ? (
-                                                        error.client_id.map((error, index) => (
+                                                    error.category_client_id.length ? (
+                                                        error.category_client_id.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -385,20 +377,17 @@ const ConfirmClientSaveForm = (props) => {
                                                 }
                                             </div>
                                         </div>
-
-                                        <div className={error.type_id.length ? "form-group row validated" : "form-group row"}>
-                                            {
-                                                verifyPermission(props.userPermissions, 'store-client-from-any-type') || verifyPermission(props.userPermissions, 'update-client-from-any-type') || verifyPermission(props.userPermissions, 'store-client-from-maybe-no-type') || verifyPermission(props.userPermissions, 'update-client-from-maybe-no-type') ? (
-                                                    <div className="col">
-                                                        <label htmlFor="institution">Institution</label>
+                                        <div className={"form-group row"}>
+                                              <div className="col">
+                                                        <label htmlFor="institution">Type de compte </label>
                                                         <Select
-                                                            value={institution}
-                                                            onChange={onChangeInstitution}
-                                                            options={formatSelectOption(formatInstitutions(institutions), "name", false)}
+                                                            value={type}
+                                                            onChange={onChangeType}
+                                                            options={formatSelectOption(types, "name", "fr")}
                                                         />
                                                         {
-                                                            error.institution_id.length ? (
-                                                                error.institution_id.map((error, index) => (
+                                                            error.account_type_id.length ? (
+                                                                error.account_type_id.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -406,27 +395,33 @@ const ConfirmClientSaveForm = (props) => {
                                                             ) : null
                                                         }
                                                     </div>
-                                                ) : null
-                                            }
 
-                                            <div className="col">
-                                                <label htmlFor="type">Type de compte</label>
-                                                <Select
-                                                    value={type}
-                                                    onChange={onChangeUnit}
-                                                    options={formatSelectOption(types, "name", "fr")}
+                                        </div>
+
+                                        <div className="form-group row">
+                                            <div className={error.number.length ? "col validated" : "col"}>
+                                                <label htmlFor="number">Numero de Compte <InputRequire/></label>
+                                                <input
+                                                    id="number"
+                                                    type="text"
+                                                    className={error.number.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le numero de compte"
+                                                    value={data.number}
+                                                    onChange={onChangeAccount}
                                                 />
                                                 {
-                                                    error.type_id.length ? (
-                                                        error.type_id.map((error, index) => (
+                                                    error.number.length ? (
+                                                        error.number.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : null
+                                                    ) : ""
                                                 }
                                             </div>
+
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
