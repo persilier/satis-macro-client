@@ -533,7 +533,7 @@ const HoldingClientForm = (props) => {
                                                 }
                                             </div>
                                             <div className={error.ville.length ? "col validated" : "col"}>
-                                                <label htmlFor="ville">Ville</label>
+                                                <label htmlFor="ville">Ville <InputRequire/></label>
                                                 <input
                                                     id="ville"
                                                     type="text"
