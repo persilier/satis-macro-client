@@ -66,7 +66,6 @@ const Clients = (props) => {
     useEffect(() => {
         axios.get(endPoint.list)
             .then(response => {
-                console.log(response, "OK");
                 setLoad(false);
                 setClients(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
@@ -168,10 +167,10 @@ const Clients = (props) => {
                 if (result.value) {
                     axios.delete(endPoint.destroy(clientId))
                         .then(response => {
-                            console.log(response, "OK");
                             const newClient = [...clients];
                             newClient.splice(index, 1);
-                            clients(newClient);
+                            setClients(newClient);
+
                             if (showList.length > 1) {
                                 setShowList(
                                     newClient.slice(
@@ -258,17 +257,7 @@ const Clients = (props) => {
                                     </Link>
                                     : null
                             }
-                            {/*{*/}
-                            {/*    verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||*/}
-                            {/*    verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?*/}
-                            {/*        <button*/}
-                            {/*            onClick={(e) => deleteClient(client.id, index)}*/}
-                            {/*            className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
-                            {/*            title="Supprimer">*/}
-                            {/*            <i className="la la-trash"/>*/}
-                            {/*        </button>*/}
-                            {/*        : null*/}
-                            {/*}*/}
+
                             {
                                 verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||
                                 verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?

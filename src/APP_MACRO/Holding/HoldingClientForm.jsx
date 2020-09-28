@@ -320,7 +320,6 @@ const HoldingClientForm = (props) => {
                     .catch(async (errorRequest) => {
 
                         if (errorRequest.response.data.error.identite) {
-
                             await setFoundIdentity(errorRequest.response.data.error);
                             await document.getElementById("confirmClientSaveForm").click();
                             await setInstitution(null);
@@ -345,9 +344,7 @@ const HoldingClientForm = (props) => {
         }
 
     };
-const handleClick=()=>{
 
-}
     return (
         <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">

@@ -76,7 +76,6 @@ const CategoryClientForm = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(error => {
