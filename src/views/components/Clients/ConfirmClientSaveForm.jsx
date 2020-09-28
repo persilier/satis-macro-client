@@ -400,7 +400,7 @@ const ConfirmClientSaveForm = (props) => {
 
                                         <div className="form-group row">
                                             <div className={error.number.length ? "col validated" : "col"}>
-                                                <label htmlFor="number">Numero de Compte <InputRequire/><InputRequire/></label>
+                                                <label htmlFor="number">Numero de Compte <InputRequire/></label>
                                                 <input
                                                     id="number"
                                                     type="text"
