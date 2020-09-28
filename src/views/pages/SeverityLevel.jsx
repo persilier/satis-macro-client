@@ -5,7 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import LoadingTable from "../components/LoadingTable";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastDeleteErrorMessageConfig,
@@ -51,7 +51,6 @@ const SeverityLevel = (props) => {
     const [severityLevels, setSeverityLevels] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -73,14 +72,26 @@ const SeverityLevel = (props) => {
         fetchData();
     }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newSeverityLeveles = [...severityLevels];
+        newSeverityLeveles = newSeverityLeveles.filter(el => (
+            getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(el.color ? `${el.color} ${el.color === "#ffffff" ? " Blanc" : ""}` : `-`).indexOf(value) >= 0 ||
+            getLowerCaseString(el.description ? el.description["fr"] : "").indexOf(value) >= 0
+        ));
+
+        return newSeverityLeveles;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(severityLevels.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(severityLevels.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -187,10 +198,10 @@ const SeverityLevel = (props) => {
                 <td>{severityLevel.name["fr"]}</td>
                 <td>
                     <div className="p-2 text-center" style={{backgroundColor: severityLevel.color, color: severityLevel.color === "#ffffff" ? "black" : "white"}}>
-                        {severityLevel.color ? `${severityLevel.color} ${severityLevel.color === "#ffffff" ? " Blanc" : ""}` : <strong style={{color: "black"}}>-</strong>}
+                        {severityLevel.color ? `${severityLevel.color} ${severityLevel.color === "#ffffff" ? " Blanc" : ''}` : <strong style={{color: "black"}}>-</strong>}
                     </div>
                 </td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description ? severityLevel.description["fr"] : ""}</td>
+                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{severityLevel.description ? severityLevel.description["fr"] : null}</td>
                 <td>
                     {
                         verifyPermission(props.userPermissions, 'update-severity-level') ? (
@@ -290,14 +301,12 @@ const SeverityLevel = (props) => {
                                                     <tbody>
                                                     {
                                                         severityLevels.length ? (
-                                                            search ? (
-                                                                severityLevels.map((severityLevel, index) => (
-                                                                    printBodyTable(severityLevel, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((severityLevel, index) => (
                                                                     printBodyTable(severityLevel, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -322,7 +331,7 @@ const SeverityLevel = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -335,7 +344,7 @@ const SeverityLevel = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -345,7 +354,7 @@ const SeverityLevel = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

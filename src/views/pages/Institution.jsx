@@ -34,7 +34,6 @@ const Institution = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/any/institutions")
@@ -270,7 +269,8 @@ const Institution = (props) => {
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
                                                                placeholder=""
-                                                               aria-controls="kt_table_1"/>
+                                                               aria-controls="kt_table_1"
+                                                        />
                                                     </label>
                                                 </div>
                                             </div>

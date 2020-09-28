@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {debug, filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -28,7 +28,6 @@ const ClaimObject = (props) => {
     const [claimObjects, setClaimObjects] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -64,15 +63,6 @@ const ClaimObject = (props) => {
     };
 
     const searchElement = async (e) => {
-        /*if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-        } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
-        }*/
-
         if (e.target.value) {
             setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
@@ -180,23 +170,23 @@ const ClaimObject = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claimObject.name["fr"]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "200px" }}>{claimObject ? claimObject.description["fr"] : ""}</td>
+                <td style={{ textOverflow: "ellipsis", width: "200px" }}>{claimObject ? claimObject.description["fr"] : null}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{claimObject.claim_category.name[props.language]}</td>
-                <td style={{ textOverflow: "ellipsis", width: "50px" }}>{claimObject.severity_level ? claimObject.time_limit : ""}</td>
+                <td style={{ textOverflow: "ellipsis", width: "50px" }}>{claimObject.severity_level ? claimObject.time_limit : null}</td>
                 <td>
                     {
                         claimObject.severity_level ? (
                             <div className="p-2 text-center" style={{backgroundColor: claimObject.severity_level.color, color: claimObject.severity_level.color === "#ffffff" ? "black" : "white"}}>
                                 {
                                     claimObject.severity_level.color ? (
-                                            `${claimObject.severity_level.color} ${claimObject.severity_level.color === "#ffffff" ? " Blanc" : ""}`
+                                            `${claimObject.severity_level.color} ${claimObject.severity_level.color === "#ffffff" ? " Blanc" : ''}`
                                         )
                                         : (
                                             <strong style={{color: "black"}}>-</strong>
                                         )
                                 }
                             </div>
-                        ) : ""
+                        ) : null
                     }
                 </td>
                 <td>
@@ -207,7 +197,7 @@ const ClaimObject = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-claim-category') ? (
@@ -217,7 +207,7 @@ const ClaimObject = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -276,43 +266,41 @@ const ClaimObject = (props) => {
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
                                                     style={{ width: "952px" }}>
                                                     <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "250px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom de la catégorie
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Temps limite
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Niveau de gravité
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">Nom
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "250px" }}
+                                                                aria-label="Ship City: activate to sort column ascending">Description
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70px" }}
+                                                                aria-label="Country: activate to sort column ascending">Nom de la catégorie
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70px" }}
+                                                                aria-label="Country: activate to sort column ascending">Temps limite
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70px" }}
+                                                                aria-label="Country: activate to sort column ascending">Niveau de gravité
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                                Action
+                                                            </th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
                                                     {
                                                         claimObjects.length ? (
-                                                            search ? (
-                                                                claimObjects.map((claimObject, index) => (
-                                                                    printBodyTable(claimObject, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((claimObject, index) => (
                                                                     printBodyTable(claimObject, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -339,7 +327,7 @@ const ClaimObject = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -352,7 +340,7 @@ const ClaimObject = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -362,7 +350,7 @@ const ClaimObject = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

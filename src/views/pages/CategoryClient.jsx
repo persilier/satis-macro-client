@@ -3,7 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -17,6 +17,7 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -34,7 +35,6 @@ const CategoryClient = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/category-clients")
@@ -51,14 +51,25 @@ const CategoryClient = (props) => {
             })
     },[]);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newCategoryClients = [...categoryClient];
+        newCategoryClients = newCategoryClients.filter(el => (
+            getLowerCaseString(el.name ? el.name["fr"] : "").indexOf(value) >= 0 ||
+            getLowerCaseString(el.description ? el.description["fr"] : "").indexOf(value) >= 0
+        ));
+
+        return newCategoryClients;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(categoryClient.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(categoryClient.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -174,7 +185,7 @@ const CategoryClient = (props) => {
                                 title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                            : ""
+                            : null
                     }
 
                     {/*{verifyPermission(props.userPermissions, "destroy-category-client") ?*/}
@@ -184,7 +195,7 @@ const CategoryClient = (props) => {
                     {/*        title="Supprimer">*/}
                     {/*        <i className="la la-trash"/>*/}
                     {/*    </button>*/}
-                    {/*    : ""*/}
+                    {/*    : null*/}
                     {/*}*/}
                 </td>
             </tr>
@@ -288,14 +299,12 @@ const CategoryClient = (props) => {
                                                     <tbody>
                                                     {
                                                         categoryClient.length ? (
-                                                            search ? (
-                                                                categoryClient.map((category, index) => (
-                                                                    printBodyTable(category, index)
-                                                                ))
-                                                            ) : (
+                                                            showList.length ? (
                                                                 showList.map((category, index) => (
                                                                     printBodyTable(category, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -318,7 +327,7 @@ const CategoryClient = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -331,7 +340,7 @@ const CategoryClient = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -341,7 +350,7 @@ const CategoryClient = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
 
     );
 };

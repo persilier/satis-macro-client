@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {filterDataTableBySearchValue, forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
@@ -64,7 +64,6 @@ const   Staff = (props) => {
     const [staffs, setStaffs] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -85,14 +84,37 @@ const   Staff = (props) => {
         fetchData();
     }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
+    const separateStringByComa = (arrayString) => {
+        let generateString = "";
+        arrayString.map((t, index) => {
+            generateString = index + 1 !== arrayString.length ? generateString + t+", " : generateString + t
+        });
+        return generateString;
+    };
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newStaffs = [...staffs];
+        newStaffs = newStaffs.filter(el => (
+            getLowerCaseString(`${el.is_lead ? 'L' : ''} ${el.identite.lastname} ${el.identite.firstname}`).indexOf(value) >= 0 ||
+            getLowerCaseString(separateStringByComa(el.identite.telephone)).indexOf(value) >= 0 ||
+            getLowerCaseString(separateStringByComa(el.identite.email)).indexOf(value) >= 0 ||
+            getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? el.unit ? el.unit.name["fr"] : '' : el.unit.name["fr"]).indexOf(value) >= 0 ||
+            getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ?  el.institution.name["fr"] : '').indexOf(value) >= 0 ||
+            getLowerCaseString(el.position.name["fr"]).indexOf(value) >= 0
+        ));
+
+        return newStaffs;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(staffs.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(staffs.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -209,10 +231,10 @@ const   Staff = (props) => {
                     }
                 </td>
                 {
-                    verifyPermission(props.userPermissions, 'listx-staff-from-maybe-no-unit') ? (
+                    verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
                         staff.unit ? (
                             <td>{staff.unit.name["fr"]}</td>
-                            ) : <td/>
+                            ) : null
                     ) : (
                         <td>{staff.unit.name["fr"]}</td>
                     )
@@ -220,7 +242,7 @@ const   Staff = (props) => {
                 {
                     verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
                         <td>{staff.institution.name}</td>
-                    ) : <td style={{ display: "none" }}/>
+                    ) : null
                 }
                 <td>{staff.position.name["fr"]}</td>
                 <td>
@@ -231,7 +253,7 @@ const   Staff = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, "destroy-staff-from-any-unit") || verifyPermission(props.userPermissions, 'destroy-staff-from-my-unit') || verifyPermission(props.userPermissions, 'destroy-staff-from-maybe-no-unit') ? (
@@ -241,7 +263,7 @@ const   Staff = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -340,14 +362,12 @@ const   Staff = (props) => {
                                                     <tbody>
                                                     {
                                                         staffs.length ? (
-                                                            search ? (
-                                                                staffs.map((staff, index) => (
-                                                                    printBodyTable(staff, index)
-                                                                ))
-                                                            ) : (
+                                                            showList ? (
                                                                 showList.map((staff, index) => (
                                                                     printBodyTable(staff, index)
                                                                 ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -379,7 +399,7 @@ const   Staff = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -392,7 +412,7 @@ const   Staff = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -402,7 +422,7 @@ const   Staff = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 
