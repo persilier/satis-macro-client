@@ -40,7 +40,6 @@ const endPointConfig = {
 
 const ClaimsArchived = (props) => {
     document.title = "Satis client - Liste réclamations archivées";
-    localStorage.setItem('page', 'ClaimsArchived');
 
     if (!(verifyPermission(props.userPermissions, 'list-any-claim-archived') ||
         verifyPermission(props.userPermissions, "list-my-claim-archived")))
@@ -175,7 +174,7 @@ const ClaimsArchived = (props) => {
                                 <i className="la la-eye"/>
                             </a>
                         </td>
-                    ) : ""
+                    ) : null
                 }
 
             </tr>
@@ -289,7 +288,7 @@ const ClaimsArchived = (props) => {
                                                                 aria-label="Type: activate to sort column ascending">
                                                                 Action
                                                             </th>
-                                                        ) : ""
+                                                        ) : null
                                                     }
 
                                                 </tr>

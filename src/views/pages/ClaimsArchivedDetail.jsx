@@ -10,7 +10,6 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import Loader from "../components/Loader";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
@@ -160,7 +159,7 @@ const ClaimArchivedDetail = (props) => {
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
-                                        <TreatmentButtonDetail claim={claim}/>
+                                        <TreatmentButtonDetail archive={true} claim={claim}/>
 
                                         <div className="kt-form__actions">
                                             <button
