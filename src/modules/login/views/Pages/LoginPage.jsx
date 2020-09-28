@@ -36,8 +36,10 @@ const LoginPage = (props) => {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
                     setData(response.data);
+                    setLoad(false);
                 })
                 .catch(error => {
+                    setLoad(false);
                     console.log("Something is wrong");
                 });}
         fetchData();
@@ -106,7 +108,7 @@ const LoginPage = (props) => {
                                         <div className="kt-grid__item">
                                             <a href="/login" className="kt-login__logo">
                                                 <img
-                                                    src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : ""}/>
+                                                    src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : null}/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1.5em",
@@ -118,8 +120,8 @@ const LoginPage = (props) => {
                                         </div>
                                         <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
                                             <div className="kt-grid__item kt-grid__item--middle">
-                                                <h3 className="kt-login__title"> {data ? data.params.fr.header.value + " " + data.params.fr.version.value : ""}</h3>
-                                                <h4 className="kt-login__subtitle"> {data ? data.params.fr.description.value + " " : ""}</h4>
+                                                <h3 className="kt-login__title"> {data ? data.params.fr.header.value + " " + data.params.fr.version.value : null}</h3>
+                                                <h4 className="kt-login__subtitle"> {data ? data.params.fr.description.value + " " : null}</h4>
                                             </div>
                                         </div>
                                         <div className="kt-grid__item">
@@ -170,7 +172,7 @@ const LoginPage = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                     <div
@@ -192,7 +194,7 @@ const LoginPage = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
 
