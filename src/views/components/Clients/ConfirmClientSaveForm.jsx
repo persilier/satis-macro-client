@@ -211,7 +211,7 @@ const ConfirmClientSaveForm = (props) => {
                                                 verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution') ? (
 
                                                     <div className="col">
-                                                        <label htmlFor="type">Institution</label>
+                                                        <label htmlFor="type">Institution <InputRequire/></label>
                                                         <Select
                                                             value={institution}
                                                             onChange={onChangeInstitution}
@@ -233,7 +233,7 @@ const ConfirmClientSaveForm = (props) => {
 
                                         <div className="form-group row">
                                             <div className={error.lastname.length ? "col validated" : "col"}>
-                                                <label htmlFor="lastname">Nom</label>
+                                                <label htmlFor="lastname">Nom <InputRequire/></label>
                                                 <input
                                                     id="lastname"
                                                     type="text"
@@ -254,7 +254,7 @@ const ConfirmClientSaveForm = (props) => {
                                             </div>
 
                                             <div className={error.firstname.length ? "col validated" : "col"}>
-                                                <label htmlFor="firstname">Prénom(s)</label>
+                                                <label htmlFor="firstname">Prénom(s) <InputRequire/></label>
                                                 <input
                                                     id="firstname"
                                                     type="text"
@@ -277,7 +277,7 @@ const ConfirmClientSaveForm = (props) => {
 
                                         <div className="row">
                                             <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                <label htmlFor="sexe">Sexe</label>
+                                                <label htmlFor="sexe">Sexe <InputRequire/></label>
                                                 <select
                                                     id="sexe"
                                                     className={error.sexe.length ? "form-control is-invalid" : "form-control"}
@@ -303,7 +303,7 @@ const ConfirmClientSaveForm = (props) => {
 
                                         <div className="form-group row">
                                             <div className={error.telephone.length ? "col validated" : "col"}>
-                                                <label htmlFor="telephone"> Téléphone(s)</label>
+                                                <label htmlFor="telephone"> Téléphone(s) <InputRequire/></label>
                                                 <TagsInput value={data.telephone} onChange={onChangeTelephone} />
                                                 {
                                                     error.telephone.length ? (
@@ -317,7 +317,7 @@ const ConfirmClientSaveForm = (props) => {
                                             </div>
 
                                             <div className={error.email.length ? "col validated" : "col"}>
-                                                <label htmlFor="email"> Email(s)</label>
+                                                <label htmlFor="email"> Email(s) <InputRequire/></label>
                                                 <TagsInput value={data.email} onChange={onChangeEmail} />
                                                 {
                                                     error.email.length ? (
@@ -331,7 +331,7 @@ const ConfirmClientSaveForm = (props) => {
                                             </div>
 
                                             <div className={error.ville.length ? "col validated" : "col"}>
-                                                <label htmlFor="ville">Ville</label>
+                                                <label htmlFor="ville">Ville <InputRequire/></label>
                                                 <input
                                                     id="ville"
                                                     type="text"
@@ -360,7 +360,7 @@ const ConfirmClientSaveForm = (props) => {
                                         <div className={"form-group row "}>
 
                                             <div className="col">
-                                                <label htmlFor="type">Categorie client</label>
+                                                <label htmlFor="type">Categorie client <InputRequire/></label>
                                                 <Select
                                                     value={category}
                                                     onChange={onChangeCategory}
@@ -379,7 +379,7 @@ const ConfirmClientSaveForm = (props) => {
                                         </div>
                                         <div className={"form-group row"}>
                                               <div className="col">
-                                                        <label htmlFor="institution">Type de compte </label>
+                                                        <label htmlFor="institution">Type de compte <InputRequire/></label>
                                                         <Select
                                                             value={type}
                                                             onChange={onChangeType}
@@ -433,7 +433,7 @@ const ConfirmClientSaveForm = (props) => {
                                 <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
                             ) : (
                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                    Loading...
+                                    Chargement...
                                 </button>
                             )
                         }
