@@ -100,13 +100,18 @@ const ClaimReporting = props => {
             labels.push(el.name["fr"]);
             series.push(el.pourcentage)
         });
-        debug(series, "series");
 
         return {
             series: series,
             chart: {
                 width: 450,
                 type: 'pie',
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return val + "%"
+                }
             },
             labels: labels,
             responsive: [{
@@ -277,7 +282,7 @@ const ClaimReporting = props => {
         setEndDate(e.target.value);
     };
 
-        const handleInstitutionChange = selected => {
+    const handleInstitutionChange = selected => {
         setInstitution(selected)
     };
 
@@ -812,7 +817,7 @@ const ClaimReporting = props => {
                                                 {
                                                     fetchData ? (
                                                         <div className="col-12 d-flex justify-content-center">
-                                                            <div id="graphOne"/>
+                                                            <div id="graphOne" style={{position: "relative", zIndex: "1"}}/>
                                                         </div>
                                                     ) : null
                                                 }
@@ -863,7 +868,7 @@ const ClaimReporting = props => {
                                     {
                                         fetchData ? (
                                             <div id="parentGraphTwo" className="col-sm-12">
-                                                <div id="graphTwo"/>
+                                                <div id="graphTwo" style={{position: "relative", zIndex: 1}}/>
                                             </div>
                                         ) : <LoadingTable/>
                                     }
