@@ -17,6 +17,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import ExportButton from "../components/ExportButton";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -252,12 +253,15 @@ const ClaimObject = (props) => {
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
                                             <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter"><label>
-                                                    Recherche:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                </label>
+                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                                    <label>
+                                                        Recherche:
+                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                    </label>
                                                 </div>
                                             </div>
+
+                                            <ExportButton/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
