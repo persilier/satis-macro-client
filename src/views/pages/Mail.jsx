@@ -10,7 +10,6 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
-import {debug} from "../../helpers/function";
 
 const Mail = (props) => {
     document.title = "Satis client - Paramètre Envoie de mail";
@@ -46,7 +45,7 @@ const Mail = (props) => {
                     const newData = {
                         senderID: response.data.senderID,
                         username: response.data.username,
-                        password: null,
+                        password: "",
                         "from": response.data["from"],
                         server: response.data.server,
                         port: response.data.port,
@@ -105,10 +104,14 @@ const Mail = (props) => {
     };
 
     const onSubmit = async (e) => {
+        const sendData = {...data};
         e.preventDefault();
 
+        if (!sendData.password.length)
+            delete sendData.password;
+
         setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/configurations/mail`, data)
+        await axios.put(`${appConfig.apiDomaine}/configurations/mail`, sendData)
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -187,7 +190,7 @@ const Mail = (props) => {
                                             </div>
 
                                             <div className={error.username.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"username"}>Identifiant SMTP <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"username"}>Email de l'expéditeur <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="username"
@@ -233,7 +236,7 @@ const Mail = (props) => {
                                             </div>
 
                                             <div className={error["from"].length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="from">Email de l'expéditeur <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="from">Identifiant SMTP <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="from"
