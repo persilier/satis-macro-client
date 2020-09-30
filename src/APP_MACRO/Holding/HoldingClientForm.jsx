@@ -22,7 +22,6 @@ import TagsInput from "react-tagsinput";
 import InputRequire from "../../views/components/InputRequire";
 import WithoutCode from "../../views/components/WithoutCode";
 import ConfirmClientSaveForm from "../../views/components/Clients/ConfirmClientSaveForm";
-import TestModal from "../../views/components/testModal";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 

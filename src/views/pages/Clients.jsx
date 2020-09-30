@@ -88,12 +88,11 @@ const Clients = (props) => {
     };
 
 
-
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
         let newClients = [...clients];
         newClients = newClients.filter(el => (
-            getLowerCaseString(el.client.identite.lastname+" "+el.client.identite.firstname).indexOf(value) >= 0 ||
+            getLowerCaseString(el.client.identite.lastname + " " + el.client.identite.firstname).indexOf(value) >= 0 ||
             matchByAttribute(el.accounts, value, "number") ||
             matchByAttribute(el.client.identite.telephone, value, "telephone") ||
             matchByAttribute(el.client.identite.email, value, "email")
@@ -104,10 +103,10 @@ const Clients = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(clients.length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(clients.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(clients.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
@@ -223,7 +222,7 @@ const Clients = (props) => {
                         <td>
                             {client.client.identite.telephone.length ?
                                 client.client.identite.telephone.map((tel, index) => (
-                                    index === client.client.identite.telephone.length - 1 ? tel : tel +" "+ "/ "+" "
+                                    index === client.client.identite.telephone.length - 1 ? tel : tel + " " + "/ " + " "
                                 )) : null
                             }
                         </td>
@@ -231,7 +230,7 @@ const Clients = (props) => {
                         <td>
                             {client.client.identite.email ?
                                 client.client.identite.email.map((mail, index) => (
-                                    index === client.client.identite.email.length - 1 ? mail : mail  +" "+ "/ "+" "
+                                    index === client.client.identite.email.length - 1 ? mail : mail + " " + "/ " + " "
                                 )) : null
                             }
                         </td>
@@ -243,13 +242,8 @@ const Clients = (props) => {
                             {/*    <i className="la la-eye"/>*/}
                             {/*</Link>*/}
                             {
-                                verifyPermission(props.userPermissions, "update-client-from-my-institution")?
-                                    <Link to={`/settings/clients/edit/${client.accounts[0].id}`}
-                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                          title="Modifier">
-                                        <i className="la la-edit"/>
-                                    </Link>
-                                    :  verifyPermission(props.userPermissions, "update-client-from-any-institution")?
+                                verifyPermission(props.userPermissions, "update-client-from-any-institution") ||
+                                verifyPermission(props.userPermissions, "update-client-from-my-institution") ?
                                     <Link to={`/settings/any/clients/edit/${client.accounts[0].id}`}
                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                           title="Modifier">
@@ -308,7 +302,7 @@ const Clients = (props) => {
                                     addPermission={"store-client-from-my-institution"}
                                     title={"Client"}
                                     addText={"Ajouter"}
-                                    addLink={"/settings/clients/add"}
+                                    addLink={"/settings/any/clients/add"}
                                 />
                             ) : (
                                 verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
@@ -356,7 +350,8 @@ const Clients = (props) => {
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Numero de Compte
+                                                        aria-label="Ship Address: activate to sort column ascending">Numero
+                                                        de Compte
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         style={{width: "100px"}}
@@ -392,7 +387,7 @@ const Clients = (props) => {
                                                 }
                                                 </tbody>
                                                 <tfoot>
-                                                <tr style={{textAlign:"center"}}>
+                                                <tr style={{textAlign: "center"}}>
                                                     <th rowSpan="1" colSpan="1">Nom</th>
                                                     <th rowSpan="1" colSpan="1">Numero de Compte</th>
                                                     <th rowSpan="1" colSpan="1">Téléphone</th>

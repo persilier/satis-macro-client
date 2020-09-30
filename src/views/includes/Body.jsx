@@ -84,6 +84,7 @@ import ParametersComponent from "../pages/ParametersComponent";
 import ParametersComponentForm from "../components/ParametersComponentForm";
 import ParametersComponentEdit from "../components/ParametersComponentEdit";
 import UserEdit from "../pages/UserEdit";
+import ConfigCoefficient from "../components/ConfigCoefficient";
 
 const Body = () => {
     return (
@@ -183,8 +184,12 @@ const Body = () => {
                 <InstitutionForm/>
             </Route>
 
-            <Route exact path="/settings/clients/edit/:id">
-                <ClientForm/>
+            {/*<Route exact path="/settings/clients/edit/:id">*/}
+            {/*    <ClientForm/>*/}
+            {/*</Route>*/}
+
+            <Route exact path="/settings/relance">
+                <ConfigCoefficient/>
             </Route>
 
             <Route exact path="/settings/faqs/category/edit/:id">
