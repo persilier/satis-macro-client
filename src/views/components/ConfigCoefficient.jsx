@@ -2,93 +2,63 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
     Link,
-    useParams
 } from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {
-    toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
-import {verifyPermission} from "../../helpers/permission";
-import {ERROR_401} from "../../config/errorPage";
-import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
 
-axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
+axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
-const CategoryFaqsForm = (props) => {
-    const {id}=useParams();
-
-    if (!id) {
-        if (!verifyPermission(props.userPermissions, 'store-faq-category'))
-            window.location.href = ERROR_401;
-    } else {
-        if (!verifyPermission(props.userPermissions, 'update-faq-category'))
-            window.location.href = ERROR_401;
-    }
+const ConfigCoefficient = () => {
 
     const defaultData = {
-        name: "",
+        coef: "",
     };
     const defaultError = {
-        name: [],
+        coef: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id){
-            axios.get(appConfig.apiDomaine+`/faq-categories/${id}`)
-                .then(response => {
 
-                    const newCategory={
-                        name:response.data.name.fr,
-                    };
-                    setData(newCategory)
-                })
-        }
+        axios.get(appConfig.apiDomaine + `/configurations/relance`)
+            .then(response => {
+                console.log(response.data, "Data");
+                const newConfig = {
+                    coef: response.data.coef,
+                };
+                setData(newConfig)
+            })
+
     }, []);
 
-    const onChangeName = (e) => {
+    const onChangeCoef = (e) => {
         const newData = {...data};
-        newData.name = e.target.value;
+        newData.coef = e.target.value;
         setData(newData);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if(id){
-            axios.put(appConfig.apiDomaine+`/faq-categories/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        }else{
-            axios.post(appConfig.apiDomaine+`/faq-categories`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        }
+        axios.put(appConfig.apiDomaine + `/configurations/relance`, data)
+            .then(response => {
+                setStartRequest(false);
+                setError(defaultError);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+            })
+            .catch(error => {
+                setStartRequest(false);
+                setError({...defaultError, ...error.response.data.error});
+                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+            })
+        ;
+
 
     };
     const printJsx = () => {
@@ -105,14 +75,8 @@ const CategoryFaqsForm = (props) => {
                                 <a href="#" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/faqs/category" className="kt-subheader__breadcrumbs-link">
-                                    Categorie FAQ
-                                </Link>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    {
-                                        id ? "Modification" : "Ajout"
-                                    }
+                                    Coefficient
                                 </a>
                             </div>
                         </div>
@@ -126,10 +90,7 @@ const CategoryFaqsForm = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            {
-                                                id?
-                                                    "Modification des catégories de FAQ":" Ajout des catégories de FAQ"
-                                            }
+                                            Coefficient
                                         </h3>
                                     </div>
                                 </div>
@@ -137,20 +98,20 @@ const CategoryFaqsForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
 
-                                        <div className={error.name.length ? "form-group  validated" : "form-group"}>
-                                            <label htmlFor="name">Libellé <InputRequire/></label>
+                                        <div className={error.coef.length ? "form-group  validated" : "form-group"}>
+                                            <label htmlFor="coef">Coefficient <InputRequire/></label>
                                             <div className="col-md-6 mb-3">
                                                 <input
-                                                    id="name"
+                                                    id="coef"
                                                     type="text"
-                                                    className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer le nom"
-                                                    value={data.name}
-                                                    onChange={(e) => onChangeName(e)}
+                                                    className={error.coef.length ? "form-control is-invalid" : "form-control"}
+                                                    placeholder="Veillez entrer le Coefficient"
+                                                    value={data.coef}
+                                                    onChange={(e) => onChangeCoef(e)}
                                                 />
                                                 {
-                                                    error.name.length ? (
-                                                        error.name.map((error, index) => (
+                                                    error.coef.length ? (
+                                                        error.coef.map((error, index) => (
                                                             <div key={index} className="invalid-feedback">
                                                                 {error}
                                                             </div>
@@ -165,20 +126,25 @@ const CategoryFaqsForm = (props) => {
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id?"Modifier":"Enregistrer"}</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)}
+                                                            className="btn btn-primary">Modifier</button>
                                                 ) : (
-                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                    <button
+                                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                        type="button" disabled>
                                                         Chargement...
                                                     </button>
                                                 )
                                             }
                                             {
                                                 !startRequest ? (
-                                                    <Link to="/settings/faqs/category" className="btn btn-secondary mx-2">
+                                                    <Link to="/dashbord"
+                                                          className="btn btn-secondary mx-2">
                                                         Quitter
                                                     </Link>
                                                 ) : (
-                                                    <Link to="/settings/faqs/category" className="btn btn-secondary mx-2" disabled>
+                                                    <Link to="/dashbord"
+                                                          className="btn btn-secondary mx-2" disabled>
                                                         Quitter
                                                     </Link>
                                                 )
@@ -195,20 +161,9 @@ const CategoryFaqsForm = (props) => {
         );
     };
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-faq-category') ? (
-                printJsx()
-            ) : ""
-            : verifyPermission(props.userPermissions, 'store-faq-category') ? (
-                printJsx()
-            ) : ""
+        printJsx()
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        userPermissions: state.user.user.permissions
-    }
-};
 
-export default connect(mapStateToProps)(CategoryFaqsForm);
+export default ConfigCoefficient;
