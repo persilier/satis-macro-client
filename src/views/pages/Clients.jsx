@@ -217,23 +217,33 @@ const Clients = (props) => {
                             i === 0 ?
                                 <td rowSpan={client.accounts.length}>{client.client.identite.lastname} &ensp; {client.client.identite.firstname}</td> : null
                         }
-                        <td>
-                            {account.number}
-                        </td>
-                        <td>
-                            {client.client.identite.telephone.length ?
-                                client.client.identite.telephone.map((tel, index) => (
-                                    index === client.client.identite.telephone.length - 1 ? tel : tel + " " + "/ " + " "
-                                )) : null
-                            }
-                        </td>
+
+                        {
+                            i === 0 ?
+                                <td rowSpan={client.accounts.length}>
+                                    {
+                                        client.client.identite.telephone.length ?
+                                            client.client.identite.telephone.map((tel, index) => (
+                                                index === client.client.identite.telephone.length - 1 ? tel : tel + " " + "/ " + " "
+                                            )) : null
+                                    }
+                                </td>
+                                : null
+                        }
+                         {
+                            i === 0 ?
+                                <td rowSpan={client.accounts.length}>
+                                    {client.client.identite.email ?
+                                        client.client.identite.email.map((mail, index) => (
+                                            index === client.client.identite.email.length - 1 ? mail : mail + " " + "/ " + " "
+                                        )) : null
+                                    }
+                                </td>
+                                : null
+                        }
 
                         <td>
-                            {client.client.identite.email ?
-                                client.client.identite.email.map((mail, index) => (
-                                    index === client.client.identite.email.length - 1 ? mail : mail + " " + "/ " + " "
-                                )) : null
-                            }
+                            {account.number}
                         </td>
 
                         <td className="d-flex justify-content-center">
@@ -337,32 +347,31 @@ const Clients = (props) => {
                                             <table
                                                 className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline table"
                                                 id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                style={{width: "952px"}}>
+                                                style={{width: "100%"}}>
                                                 <thead>
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "80.25px"}}
+                                                        colSpan="1" style={{width: "30%"}}
                                                         aria-label="Country: activate to sort column ascending">Nom
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Numero
-                                                        de Compte
+                                                        style={{width: "15%"}}
+                                                        aria-label="Ship Address: activate to sort column ascending">Téléphone(s)
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "100px"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Téléphone
-                                                    </th>
-
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "100px"}}
+                                                        style={{width: "20%"}}
                                                         aria-label="Ship Address: activate to sort column ascending">Email(s)
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "70.25px"}}
+                                                        style={{width: "20%"}}
+                                                        aria-label="Ship Address: activate to sort column ascending">Numero de compte
+                                                    </th>
+
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        style={{width: "15%"}}
                                                         aria-label="Type: activate to sort column ascending">
                                                         Action
                                                     </th>
