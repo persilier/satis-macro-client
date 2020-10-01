@@ -29,6 +29,7 @@ const endPointConfig = {
     PRO: {
         plan: "PRO",
         store: `${appConfig.apiDomaine}/my/clients`,
+        storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
         update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
         create: `${appConfig.apiDomaine}/my/clients/create`,
         edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
@@ -36,12 +37,14 @@ const endPointConfig = {
     MACRO: {
         holding: {
             store: `${appConfig.apiDomaine}/any/clients`,
+            storeAccount: id=> `${appConfig.apiDomaine}/any/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/any/clients/${id}`,
             create: `${appConfig.apiDomaine}/any/clients/create`,
             edit: id => `${appConfig.apiDomaine}/any/clients/${id}/edit`
         },
         filial: {
             store: `${appConfig.apiDomaine}/my/clients`,
+            storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
             create: `${appConfig.apiDomaine}/my/clients/create`,
             edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
@@ -110,19 +113,29 @@ const HoldingClientForm = (props) => {
     const [institution, setInstitution] = useState([]);
     const [disableInput, setDisableInput] = useState(true);
     const [foundIdentity, setFoundIdentity] = useState(undefined);
-    const [foundMessage, setFoundMessage] = useState(undefined);
 
 
     useEffect(() => {
 
         axios.get(endPoint.create)
             .then(response => {
-                const options =
-                    response.data.institutions.length ? response.data.institutions.map((institution) => ({
-                        value: institution.id,
-                        label: institution.name
-                    })) : "";
-                setInstitutionData(options);
+                // console.log(response.data,"RESPONSE")
+                if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')){
+                    const options =
+                        response.data.institutions.length ? response.data.institutions.map((institution) => ({
+                            value: institution.id,
+                            label: institution.name
+                        })) : "";
+                    setInstitutionData(options);
+                }
+                if (verifyPermission(props.userPermissions, 'store-client-from-my-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution')) {
+                    const clientOptions =
+                        response.data.client_institutions ? response.data.client_institutions.map((client) => ({
+                            value: client.client_id,
+                            label: client.client.identite.firstname + ' ' + client.client.identite.lastname
+                        })) : "";
+                    setNameClient(clientOptions);
+                }
                 setAccountTypes(response.data.accountTypes);
                 setCategoryClient(response.data.clientCategories);
             });
@@ -130,6 +143,8 @@ const HoldingClientForm = (props) => {
         if (id) {
             axios.get(endPoint.edit(id))
                 .then(response => {
+                    console.log(response.data,"DATA")
+
                     const newClient = {
                         firstname: response.data.client_institution.client.identite.firstname,
                         lastname: response.data.client_institution.client.identite.lastname,
@@ -139,14 +154,14 @@ const HoldingClientForm = (props) => {
                         institution_id: response.data.client_institution.institution_id,
                         ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
 
-                        number: response.data.client_institution.accounts[0].number,
-                        account_type_id: response.data.client_institution.accounts[0].account_type_id,
+                        number: response.data.account.number,
+                        account_type_id: response.data.account.account_type_id,
                         category_client_id: response.data.client_institution.category_client_id,
                     };
                     setData(newClient);
                     setType({
-                        value: response.data.client_institution.accounts[0].account_type.id,
-                        label: response.data.client_institution.accounts[0].account_type.name.fr
+                        value: response.data.account.account_type?response.data.account.account_type.id:"",
+                        label: response.data.account.account_type?response.data.account.account_type.name.fr:""
                     });
                     setCategory({
                         value: response.data.client_institution.category_client ? response.data.client_institution.category_client.id : "",
@@ -272,7 +287,7 @@ const HoldingClientForm = (props) => {
         if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')))
             delete newData.institution_id;
 
-        if (id) {
+         if (id) {
             axios.put(endPoint.update(`${id}`), newData)
                 .then(response => {
                     setStartRequest(false);
@@ -288,7 +303,7 @@ const HoldingClientForm = (props) => {
         } else {
 
             if (data.client_id.length !== 0) {
-                axios.post(appConfig.apiDomaine + `/any/accounts/${data.client_id}/clients`, data)
+                axios.post(endPoint.storeAccount(`${data.client_id}`), data)
 
                     .then(response => {
                         setStartRequest(false);
@@ -430,9 +445,10 @@ const HoldingClientForm = (props) => {
                                                     <div
                                                         className={error.client_id.length ? "col validated" : "col"}>
                                                         <label htmlFor="exampleSelect1"> Client</label>
+                                                        {/*{console.log(nameClient,"NAME")}*/}
                                                         {nameClient ? (
                                                             <Select
-                                                                isDisabled={disableInput}
+
                                                                 placeholder={"Veillez selectionner le client"}
                                                                 value={client}
                                                                 onChange={onChangeClient}
@@ -621,9 +637,9 @@ const HoldingClientForm = (props) => {
                                                         options={formatSelectOption(accountType, 'name', 'fr')}
                                                     />
                                                 ) : (
-                                                    <select name="typeClient"
+                                                    <select name="type"
                                                             className={error.account_type_id.length ? "form-control is-invalid" : "form-control"}
-                                                            id="typeClient">
+                                                            id="type">
                                                         <option value=""/>
                                                     </select>
                                                 )
