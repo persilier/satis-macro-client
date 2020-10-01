@@ -244,7 +244,7 @@ const Clients = (props) => {
                             {
                                 verifyPermission(props.userPermissions, "update-client-from-any-institution") ||
                                 verifyPermission(props.userPermissions, "update-client-from-my-institution") ?
-                                    <Link to={`/settings/any/clients/edit/${client.accounts[0].id}`}
+                                    <Link to={`/settings/any/clients/edit/${account.id}`}
                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                           title="Modifier">
                                         <i className="la la-edit"/>

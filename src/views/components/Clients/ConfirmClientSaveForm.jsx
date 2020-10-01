@@ -430,7 +430,7 @@ const ConfirmClientSaveForm = (props) => {
                     <div className="modal-footer">
                         {
                             !startRequest ? (
-                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Submit</button>
+                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
                             ) : (
                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                     Chargement...
