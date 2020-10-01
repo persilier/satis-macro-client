@@ -18,6 +18,7 @@ import InfirmationTable from "../components/InfirmationTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import ExportButton from "../components/ExportButton";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -236,11 +237,7 @@ const Clients = (props) => {
                         </td>
 
                         <td className="d-flex justify-content-center">
-                            {/*<Link to="/settings/clients/detail"*/}
-                            {/*      className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
-                            {/*      title="Détail">*/}
-                            {/*    <i className="la la-eye"/>*/}
-                            {/*</Link>*/}
+
                             {
                                 verifyPermission(props.userPermissions, "update-client-from-any-institution") ||
                                 verifyPermission(props.userPermissions, "update-client-from-my-institution") ?
@@ -333,6 +330,7 @@ const Clients = (props) => {
                                                 </label>
                                             </div>
                                         </div>
+                                        <ExportButton/>
                                     </div>
                                     <div className="row table-responsive">
                                         <div className="col-sm-12 ">
