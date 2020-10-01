@@ -184,10 +184,6 @@ const Body = () => {
                 <InstitutionForm/>
             </Route>
 
-            {/*<Route exact path="/settings/clients/edit/:id">*/}
-            {/*    <ClientForm/>*/}
-            {/*</Route>*/}
-
             <Route exact path="/settings/relance">
                 <ConfigCoefficient/>
             </Route>
