@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
 import axios from "axios";
-import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
-import {verifyPermission} from "../../helpers/permission";
-import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
 
@@ -34,12 +31,9 @@ const ReasonSatisfaction = (props) => {
         const newData = {...data};
         newData.is_claimer_satisfied = e.target.value;
         setData(newData);
-        // console.log(newData, "OPTION")
     };
 
     const onClick = (e) => {
-        // console.log(props.getEndPoint,'GET_ENDPOINT');
-        console.log(data,'GET_ENDPOINT');
         e.preventDefault();
         setStartRequest(true);
         axios.put(props.getEndPoint + `/${props.getId}`, data)
@@ -50,7 +44,6 @@ const ReasonSatisfaction = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-                // console.log(error.response.data.error,"ERROR");
                 setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
@@ -84,8 +77,8 @@ const ReasonSatisfaction = (props) => {
                     </label>
                 </div>
                 {
-                    error.unsatisfaction_reason.length ? (
-                        error.unsatisfaction_reason.map((error, index) => (
+                    error.is_claimer_satisfied.length ? (
+                        error.is_claimer_satisfied.map((error, index) => (
                             <div key={index}
                                  className="invalid-feedback">
                                 {error}

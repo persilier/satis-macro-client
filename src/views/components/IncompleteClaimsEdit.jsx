@@ -395,19 +395,6 @@ const IncompleteClaimsEdit = props => {
     };
 
 
-    const requiementInput = (dataRequire,inputData) => {
-        console.log(Object.keys(dataRequire),"require")
-        for (let i = 0; i < Object.keys(dataRequire).length; i++) {
-            if (Object.keys(dataRequire)[i] === inputData) {
-                InputRequire()
-            }
-        }
-
-    };
-    // const onClickToEdit = (e) => {
-    //     setIsModified(true)
-    // };
-
     const formatFormData = (newData) => {
         const formData = new FormData();
         formData.append("_method", "put");

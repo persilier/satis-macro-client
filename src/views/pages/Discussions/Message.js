@@ -26,10 +26,10 @@ export default function Message(props) {
 
     };
 
-   const  ouvrirFermerSpoiler=(id)=> {
-        if(document.getElementById(id).style.display === "none")
+    const ouvrirFermerSpoiler = (id) => {
+        if (document.getElementById(id).style.display === "none")
             document.getElementById(id).style.display = "block";
-       else
+        else
             document.getElementById(id).style.display = "none";
     };
 
@@ -37,11 +37,11 @@ export default function Message(props) {
 
         <div
             className={[
-            'message',
-            `${isMine ? 'mine' : ''}`,
-            `${startsSequence ? 'start' : ''}`,
-            `${endsSequence ? 'end' : ''}`
-        ].join(' ')}>
+                'message',
+                `${isMine ? 'mine' : ''}`,
+                `${startsSequence ? 'start' : ''}`,
+                `${endsSequence ? 'end' : ''}`
+            ].join(' ')}>
 
             {
                 showTimestamp &&
@@ -71,16 +71,18 @@ export default function Message(props) {
                         data.files.map((file, index) => (
                             <div className="bubble-media" key={index}>
                                 <div>
-                                    <img src={appConfig.apiDomaine + file.url} alt="" style={{
-                                        maxWidth: "115px",
-                                        maxHeight: "115px",
-                                        textAlign: 'center'
-                                    }}/>
+                                    <img src={appConfig.apiDomaine + file.url} alt=""
+                                         style={{
+                                             maxWidth: "115px",
+                                             maxHeight: "115px",
+                                             textAlign: 'center'
+                                         }}
+                                    />
                                 </div>
 
                                 {index === file.length - 1 ? file.title : file.title + " "}
                                 <br/>
-                                <a href={appConfig.apiDomaine + '/download/'+file.id}
+                                <a href={appConfig.apiDomaine + '/download/' + file.id}
                                    download={file.title}><strong>Télécharger</strong></a>
                                 <hr/>
                                 <div className="">
@@ -116,7 +118,7 @@ export default function Message(props) {
                      style={{cursor: "pointer"}}>
                     <div
                         id={data.id}
-                        style={{display:"none"}}
+                        style={{display: "none"}}
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false">

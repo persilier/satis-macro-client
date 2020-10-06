@@ -85,6 +85,7 @@ import ParametersComponentForm from "../components/ParametersComponentForm";
 import ParametersComponentEdit from "../components/ParametersComponentEdit";
 import UserEdit from "../pages/UserEdit";
 import ConfigCoefficient from "../components/ConfigCoefficient";
+import ImportClientForm from "../components/Clients/ImportClientForm";
 
 const Body = () => {
     return (
@@ -146,6 +147,10 @@ const Body = () => {
 
             <Route exact path="/settings/clients">
                 <Clients/>
+            </Route>
+
+            <Route exact path="/settings/importClients">
+                <ImportClientForm/>
             </Route>
 
             <Route exact path="/settings/relationship">
