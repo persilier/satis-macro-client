@@ -17,8 +17,8 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
-import Loader from "../../components/Loader";
 
+axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const Chats = (props) => {
 

@@ -9,11 +9,10 @@ import {
     toastConnectSuccessMessageConfig
 } from "../../../../config/toastConfig";
 import {listConnectData} from "../../../../constants/userClient";
-import LoadingTable from "../../../../views/components/LoadingTable";
 import Loader from "../../../../views/components/Loader";
-
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
+
 
 const LoginPage = (props) => {
 
@@ -162,9 +161,7 @@ const LoginPage = (props) => {
                                                             onChange={(e) => onChangeUserName(e)}
                                                             value={username}
                                                         />
-                                                        {/*<div id="username-error" className="error invalid-feedback">This*/}
-                                                        {/*    field is required.*/}
-                                                        {/*</div>*/}
+
                                                         {
                                                             error.username.length ? (
                                                                 error.username.map((error, index) => (
