@@ -49,13 +49,11 @@ const Chats = (props) => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/discussions")
             .then(response => {
-                console.log(response.data, "LIST");
                 setListChat(response.data);
                 setLoad(false)
             })
             .catch(error => {
                 setLoad(false);
-                console.log("Something is wrong");
             });
 
 
@@ -65,10 +63,8 @@ const Chats = (props) => {
         if (localStorage.getItem("staffData") && idChat) {
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${localStorage.getItem("staffData")}`)
                 .notification((notification) => {
-                    // console.log(notification,'notificationMsg')
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (notification.discussion.id===idChat){
-                            console.log(notification.messages,"notificationMessage")
                            setListChatMessage(notification.messages.reverse());
                         }
 
@@ -127,7 +123,6 @@ const Chats = (props) => {
                 .catch(error => {
                     setActiveChat(false);
                     setLoad(false);
-                    console.log("Something is wrong");
                 });
             await getListMessage(id)
         }
@@ -143,7 +138,6 @@ const Chats = (props) => {
                     document.getElementById('kt-scroll').scrollTo(0, 10000);
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
                 });
         }
 
@@ -154,7 +148,6 @@ const Chats = (props) => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
             if (key === "files") {
                 for (let i = 0; i < (newData.files).length; i++)
                     formData.append("files[]", (newData[key])[i], ((newData[key])[i]).name);
@@ -172,7 +165,7 @@ const Chats = (props) => {
             delete newData.files;
         if (newData.parent_id === "")
             delete newData.parent_id;
-        console.log("coucou");
+
         if ((data.text !== '' && idChat) || (data.files !== [] && idChat)) {
             setStartRequest(true);
             axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
@@ -187,7 +180,6 @@ const Chats = (props) => {
                 .catch(error => {
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.text));
-                    console.log("Something is wrong");
                 });
         }
     };
@@ -495,8 +487,6 @@ const Chats = (props) => {
                                          style={{height: '250px', overflow: 'auto'}}>
                                         <div className="message-list">
 
-                                            {/*{console.log(listChatMessages, "Message")}*/}
-
                                             {
                                                 listChatUsers && listChatMessages.length ?
                                                     <MessageList
@@ -551,7 +541,7 @@ const Chats = (props) => {
                                                     ))
                                                     : ""
                                             }
-                                            {console.log(data, "data")}
+
                                             <textarea
                                                 style={{height: "35px"}}
                                                 placeholder="Type here..."

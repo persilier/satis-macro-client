@@ -340,7 +340,7 @@ const Clients = (props) => {
                                                 </label>
                                             </div>
                                         </div>
-                                        <ExportButton pageUrl={"/settings/importClients"} downloadLink={`${appConfig.apiDomaine}/download-excels/clients`}/>
+                                        <ExportButton pageUrl={"/settings/importClients"} downloadLink={`${appConfig.apiDomaine}/download-excel/clients`}/>
                                     </div>
                                     <div className="row table-responsive">
                                         <div className="col-sm-12 ">
