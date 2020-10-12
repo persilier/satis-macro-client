@@ -261,7 +261,9 @@ const ClaimObject = (props) => {
                                                 </div>
                                             </div>
 
-                                            <ExportButton/>
+                                            <ExportButton
+                                                pageUrl={"/settings/claim_objects/import"}
+                                            />
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

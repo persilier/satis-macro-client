@@ -85,6 +85,8 @@ import ParametersComponentForm from "../components/ParametersComponentForm";
 import ParametersComponentEdit from "../components/ParametersComponentEdit";
 import UserEdit from "../pages/UserEdit";
 import ConfigCoefficient from "../components/ConfigCoefficient";
+import ClaimObjectImportPage from "../pages/ClaimObjectImportPage";
+import StaffImportPage from "../pages/StaffImportPage";
 
 const Body = () => {
     return (
@@ -292,6 +294,10 @@ const Body = () => {
                 <ClaimObjectForm/>
             </Route>
 
+            <Route exact path="/settings/claim_objects/import">
+                <ClaimObjectImportPage/>
+            </Route>
+
             <Route exact path="/settings/staffs">
                 <Staff/>
             </Route>
@@ -302,6 +308,10 @@ const Body = () => {
 
             <Route exact path="/settings/staffs/:id/edit">
                 <StaffForm/>
+            </Route>
+
+            <Route exact path="/settings/staffs/import">
+                <StaffImportPage/>
             </Route>
 
             <Route exact path="/settings/severities">

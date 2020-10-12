@@ -5,7 +5,7 @@ import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import {debug, filterChannel, formatSelectOption, formatToTimeStamp} from "../../helpers/function";
+import {filterChannel, formatSelectOption, formatToTimeStamp} from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
