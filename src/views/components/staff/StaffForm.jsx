@@ -17,7 +17,7 @@ import {
 import {ToastBottomEnd} from "../Toast";
 import {formatUnits} from "../../../helpers/unit";
 import './react-tagsinput.css';
-import {debug, formatSelectOption} from "../../../helpers/function";
+import {formatSelectOption} from "../../../helpers/function";
 import {formatInstitutions} from "../../../helpers/institution";
 import appConfig from "../../../config/appConfig";
 import ConfirmSaveForm from "./ConfirmSaveForm";
@@ -276,7 +276,7 @@ const StaffForm = (props) => {
                 }
             })
         ;
-    }
+    };
 
     const handleOptionChange = (e) => {
         const value = parseInt(e.target.value);

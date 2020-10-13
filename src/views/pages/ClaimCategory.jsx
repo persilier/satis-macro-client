@@ -20,6 +20,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import ExportButton from "../components/ExportButton";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -183,7 +184,7 @@ const ClaimCategory = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, 'destroy-claim-category') ? (
@@ -193,7 +194,7 @@ const ClaimCategory = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -245,6 +246,11 @@ const ClaimCategory = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
+
+                                            <ExportButton
+                                                downloadLink={`${appConfig.apiDomaine}/download-excel/categories`}
+                                                pageUrl={"/settings/claim_category/import"}
+                                            />
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -307,7 +313,7 @@ const ClaimCategory = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -317,7 +323,7 @@ const ClaimCategory = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

@@ -81,11 +81,13 @@ import TreatmentPeriod from "../pages/TreatmentPeriod";
 import QualificationPeriodAdd from "../pages/QualificationPeriodAdd";
 import TreatmentPeriodAdd from "../pages/TreatmentPeriodAdd";
 import ParametersComponent from "../pages/ParametersComponent";
-import ParametersComponentForm from "../components/ParametersComponentForm";
 import ParametersComponentEdit from "../components/ParametersComponentEdit";
 import UserEdit from "../pages/UserEdit";
 import ConfigCoefficient from "../components/ConfigCoefficient";
 import ImportClientForm from "../components/Clients/ImportClientForm";
+import ClaimObjectImportPage from "../pages/ClaimObjectImportPage";
+import StaffImportPage from "../pages/StaffImportPage";
+import ClaimCategoryImportPage from "../pages/ClaimCategoryImportPage";
 
 const Body = () => {
     return (
@@ -273,6 +275,10 @@ const Body = () => {
                 <ClaimCategory/>
             </Route>
 
+            <Route exact path="/settings/claim_category/import">
+                <ClaimCategoryImportPage/>
+            </Route>
+
             <Route exact path="/settings/claim_categories/add">
                 <ClaimCategoryForm/>
             </Route>
@@ -293,6 +299,10 @@ const Body = () => {
                 <ClaimObjectForm/>
             </Route>
 
+            <Route exact path="/settings/claim_objects/import">
+                <ClaimObjectImportPage/>
+            </Route>
+
             <Route exact path="/settings/staffs">
                 <Staff/>
             </Route>
@@ -303,6 +313,10 @@ const Body = () => {
 
             <Route exact path="/settings/staffs/:id/edit">
                 <StaffForm/>
+            </Route>
+
+            <Route exact path="/settings/staffs/import">
+                <StaffImportPage/>
             </Route>
 
             <Route exact path="/settings/severities">

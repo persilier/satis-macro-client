@@ -19,6 +19,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import ExportButton from "../components/ExportButton";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -317,6 +318,8 @@ const   Staff = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
+
+                                            <ExportButton downloadLink={`${appConfig.apiDomaine}/download-excel/staffs`} pageUrl={"/settings/staffs/import"}/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
