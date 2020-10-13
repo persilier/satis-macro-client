@@ -523,6 +523,7 @@ const Body = () => {
                 <TreatmentPeriodAdd/>
             </Route>
 
+            
             <Route path={"*"}>
                 <Redirect to={"/dashboard"}/>
             </Route>
