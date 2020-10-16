@@ -61,9 +61,5 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    },
-    "devDependencies": {
-        "react-flip-move": "^3.0.4",
-        "sweetalert2": "^9.10.9"
     }
 }

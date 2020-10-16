@@ -17,6 +17,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import ExportButton from "../components/ExportButton";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -274,6 +275,7 @@ const Institution = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
+                                            <ExportButton pageUrl={"/settings/importInstitutions"}/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

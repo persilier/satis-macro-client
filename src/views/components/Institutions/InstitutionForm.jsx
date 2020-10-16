@@ -64,7 +64,6 @@ const InstitutionForm = (props) => {
                             label: currencie.name.fr
                         })) : null
                     )
-
                     // setDefaultCurrencyData(options);
                 });
         }

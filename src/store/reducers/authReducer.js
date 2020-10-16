@@ -15,11 +15,13 @@ export default function (state = initialState, action) {
             window.location.href = "/login";
             break;
         case UPDATE_USER:
-            newState={
+            newState = {
                 user: JSON.parse(localStorage.getItem('userData')),
                 staff: localStorage.getItem('staffData'),
-                isLogin:localStorage.getItem('isLogin'),
-                token:localStorage.getItem('token')
+                isLogin: localStorage.getItem('isLogin'),
+                token: localStorage.getItem('token'),
+                refresh_token: localStorage.getItem('refresh_token'),
+                expire_in: localStorage.getItem('expire_in')
             };
             return newState;
         default:
