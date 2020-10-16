@@ -111,14 +111,13 @@ const ParametersComponentEdit = (props) => {
         const newType = {...dataType};
         if (logo!== newData.params_logo){
             delete newData.params_logo;
-            delete newType.params_logo;
         }
         if (logo!== newData.params_background){
             delete newData.params_background
-            delete newType.params_background
         }
         // Debut de Log du contenu du formData
-        // let dataToSend = formatFormData(newData, newType);
+        let dataToSend = formatFormData(newData, newType);
+        // console.log(dataToSend.get("params_title"),"TITLE")
         // dataToSend = dataToSend.entries();
         // let obj = dataToSend.next();
         // let retrieved = {};
