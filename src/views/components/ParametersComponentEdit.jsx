@@ -171,7 +171,6 @@ const ParametersComponentEdit = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            {/*{console.log(data,"DATA")}*/}
 
                                             {
                                                 Object.keys(error).length ? (
@@ -180,7 +179,7 @@ const ParametersComponentEdit = (props) => {
                                                             <div key={index}
                                                                  className={error[Object.keys(error)[index]].length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor={Object.keys(data)[index]}>{Object.keys(data)[index]}
+                                                                       htmlFor={Object.keys(data)[index]}>{(Object.keys(data)[index]).slice(7)}
                                                                     <InputRequire/></label>
                                                                 {/*{console.log(error,"ERRor")}*/}
                                                                 <div className="col-lg-9 col-xl-6">
@@ -224,16 +223,15 @@ const ParametersComponentEdit = (props) => {
                                                             <div key={index}
                                                                  className={error[Object.keys(error)[index]].length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor={Object.keys(data)[index]}>{Object.keys(data)[index]}
+                                                                       htmlFor={Object.keys(data)[index]}>{(Object.keys(data)[index]).slice(7)}
                                                                     <InputRequire/></label>
                                                                 <div className="col-lg-9 col-xl-6">
 
-                                                                    {/*{ console.log(Object.keys(data)[index], "dataParams")}*/}
                                                                     <input
                                                                         id={Object.keys(data)[index]}
                                                                         type={dataType[Object.keys(dataType)[index]]}
                                                                         className={error[Object.keys(error)[index]].length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={Object.keys(data)[index]}
+                                                                        placeholder={"Veuillez entrer"+ " " +(Object.keys(data)[index]).slice(7)}
                                                                         value={data[Object.keys(data)[index]]}
                                                                         onChange={(e) => handleChange(e, Object.keys(data)[index])}
                                                                     />
