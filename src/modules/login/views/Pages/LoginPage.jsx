@@ -35,6 +35,7 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
+                    console.log(response.data, "DATA")
                     setData(response.data);
                     setLoad(false);
                 })
@@ -65,6 +66,8 @@ const LoginPage = (props) => {
         await axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
             .then(response => {
                 const token = response.data.access_token;
+                const refresh_token = response.data.refresh_token;
+                const expire_in = response.data.expire_in;
                 axios.get(appConfig.apiDomaine + `/login`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -77,6 +80,8 @@ const LoginPage = (props) => {
                     localStorage.setItem("userData", JSON.stringify(response.data));
                     localStorage.setItem("staffData", response.data.staff.identite_id);
                     localStorage.setItem('token', token);
+                    localStorage.setItem('expire_in', expire_in);
+                    localStorage.setItem('refresh_token', refresh_token);
                     window.location.href = "/dashboard";
                 });
 

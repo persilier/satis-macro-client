@@ -5,6 +5,7 @@ import App from "./views/layouts/App";
 import {connect} from 'react-redux';
 import {updateUser} from "./store/actions/authActions";
 
+
 class RouteApp extends Component {
     constructor(props) {
         super(props);
@@ -13,12 +14,13 @@ class RouteApp extends Component {
     }
 
     render() {
+
         return (
             <Router>
                 {
                     !this.props.user.token ? (
                         <LoginPage/>
-                    ) : <App/>
+                    ) : <App />
                 }
             </Router>
         );
@@ -39,4 +41,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps) (RouteApp);
+export default connect(mapStateToProps, mapDispatchToProps)(RouteApp);

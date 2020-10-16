@@ -9,17 +9,15 @@ import {
 } from "../../config/toastConfig";
 import {Link, useParams} from "react-router-dom";
 import {AUTH_TOKEN} from "../../constants/token";
-import {debug} from "../../helpers/function";
 import InputRequire from "../components/InputRequire";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
-const ParametersComponentEdit = props => {
+const ParametersComponentEdit = (props) => {
     const {id} = useParams();
 
     const [dataType, setDataType] = useState({});
-    const [defaultError, setDefaultError] = useState({});
-    const [defaultParam, setDefaultParam] = useState({});
     const [logo, setLogo] = useState(undefined);
 
     const [data, setData] = useState({});
@@ -30,21 +28,16 @@ const ParametersComponentEdit = props => {
         const newState = {};
         const newDataType = {};
         const newError = {};
-        // console.log(paramData, "PARAMS");
         params.map(param => {
-            newState[param] = paramData ? paramData[param].type === 'image' ? paramData[param].value.url : paramData[param].value : "";
-            newDataType[param] = paramData ? paramData[param].type : "";
-            newError[`params.${param}`] = [];
+            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? paramData[param].value.url : paramData[param].value : "";
+            newDataType[`params_${param}`] = paramData ? paramData[param].type : "";
+            newError[`params_${param}`] = [];
 
         });
-        let sendDatas = {
-            "params": newState
-        };
-        console.log(sendDatas, "sendDatas");
-        setData(sendDatas);
+        console.log(newDataType, "newDataType");
+        setData(newState);
         setDataType(newDataType);
         setError(newError);
-        setDefaultError(newError);
     };
 
     const initialState = (stateData) => {
@@ -53,40 +46,39 @@ const ParametersComponentEdit = props => {
             componentParams.push(param);
         }
         formatState(componentParams, stateData);
-        setDefaultParam(componentParams)
 
     };
 
     useEffect(() => {
         axios.get(appConfig.apiDomaine + `/components/${id}`)
             .then(response => {
-                // console.log(response.data, "DATA")
                 initialState(response.data.params.fr);
             })
     }, []);
 
     const handleChange = (e, param) => {
         const newData = {...data};
-        newData.params[param] = e.target.value;
-        // console.log(newData, "NEW_DATA");
+        newData[param] = e.target.value;
         setData(newData);
     };
     const handleChangeImage = (e, param) => {
         const newData = {...data};
-        newData.params[param] = e.target.files[0];
+        newData[param] = Object.values(e.target.files)[0];
         setData(newData);
-        setLogo(newData);
+        console.log(Object.values(e.target.files)[0], "NEW_DATA");
+        setLogo( newData[param]);
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById(param);
             console.log(image, 'image');
             image.src = e.target.result;
         };
-        reader.readAsDataURL(newData.params[param]);
+        reader.readAsDataURL(newData[param]);
     };
 
     const executeSave = (url, saveData) => {
-        axios.put(url, saveData)
+
+        axios.post(url, saveData)
             .then(response => {
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
@@ -99,77 +91,46 @@ const ParametersComponentEdit = props => {
         ;
     };
 
-    const appendArray = (form_data, values, params) => {
-        if (!values && params)
-            form_data.append(params, '');
-        else {
-            if (typeof values == 'object') {
-                for (const key in values) {
-                    if (typeof values[key] == 'object')
-                        appendArray(form_data, values[key], params + '[' + key + ']');
-                    else
-                        form_data.append(params + '[' + key + ']', values[key]);
-                }
-            } else
-                form_data.append(params, values);
-        }
 
-        return form_data;
-    };
-
-    const createFormData = (formData, key, data) => {
-        if (data === Object(data) || Array.isArray(data)) {
-            for (const i in data) {
-                createFormData(formData, key + '[' + i + ']', data[i]);
-            }
-        } else {
-            formData.append(key, data);
-        }
-    };
-
-    const formatFormData = (newData) => {
+    const formatFormData = (newData, newType) => {
         const formData = new FormData();
-        formData.append("_method", "put");
-
+        formData.set("_method", "put");
         for (const key in newData) {
-            // console.log(("params[" + key + "]", newData.params[key]), "ALLO");
-            if (logo) {
-                for (let i = 0; i < (newData).length; i++)
-                    formData.append(`params_${key}`, (newData[key])[i], ((newData[key])[i]).name);
-
+            if (newType[key]==="image") {
+                formData.append(key, newData[key]);
+            }else{
+                formData.set(key, newData[key]);
             }
-            formData.set(`params_${key}`, newData[key]);
         }
-        // return appendArray(formData, newData.params, 'params');
-        return formData
+        return formData;
     };
 
     const saveData = (e) => {
         e.preventDefault();
-        // const newData = {...data};
-        // const formData = new FormData();
-        // formData.append("params", formatFormData(data));
-        // if(!logo){
-        //     delete newData.params.logo;
-        //     delete newData.params.background
-        // }
-        // const sendData = {
-        //     params:formatFormData(newData)
-        // };
-        let dataToSend = formatFormData(data.params);
-        dataToSend = dataToSend.entries();
-        let obj = dataToSend.next();
-        let retrieved = {};
-        while(undefined !== obj.value) {
-            retrieved[obj.value[0]] = obj.value[1];
-            obj = dataToSend.next();
+        const newData = {...data};
+        const newType = {...dataType};
+        if (logo!== newData.params_logo){
+            delete newData.params_logo;
+            delete newType.params_logo;
         }
-        // console.log('data.params: ',data.params);
-        console.log('retrieved: ',retrieved);
-        console.log(data, 'DATA_SEND');
-        // console.log(formatFormData(data).get("title"), "TITLE");
+        if (logo!== newData.params_background){
+            delete newData.params_background
+            delete newType.params_background
+        }
+        // Debut de Log du contenu du formData
+        // let dataToSend = formatFormData(newData, newType);
+        // dataToSend = dataToSend.entries();
+        // let obj = dataToSend.next();
+        // let retrieved = {};
+        // while(undefined !== obj.value) {
+        //     retrieved[obj.value[0]] = obj.value[1];
+        //     obj = dataToSend.next();
+        // }
+        // console.log('retrieved: ',retrieved);
+        // fin de Log du contenu du formData
+
         setStartRequest(true);
-        executeSave(`${appConfig.apiDomaine}/components/${id}`, formatFormData(data.params));
+        executeSave(`${appConfig.apiDomaine}/components/${id}`, dataToSend);
     };
 
 
@@ -215,13 +176,14 @@ const ParametersComponentEdit = props => {
 
                                             {
                                                 Object.keys(error).length ? (
-                                                    Object.values(data.params).map((param, index) => (
+                                                    Object.values(data).map((param, index) => (
                                                         dataType[Object.keys(dataType)[index]] === "image" ?
                                                             <div key={index}
                                                                  className={error[Object.keys(error)[index]].length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor={Object.keys(data.params)[index]}>{Object.keys(data.params)[index]}
+                                                                       htmlFor={Object.keys(data)[index]}>{Object.keys(data)[index]}
                                                                     <InputRequire/></label>
+                                                                {/*{console.log(error,"ERRor")}*/}
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <div className="kt-avatar kt-avatar--outline"
                                                                          id="kt_user_add_avatar">
@@ -229,9 +191,9 @@ const ParametersComponentEdit = props => {
                                                                              style={{textAlign: 'center'}}>
 
                                                                             <img
-                                                                                id={Object.keys(data.params)[index]}
-                                                                                src={appConfig.apiDomaine + data.params[Object.keys(data.params)[index]]}
-                                                                                alt={Object.keys(data.params)[index]}
+                                                                                id={Object.keys(data)[index]}
+                                                                                src={appConfig.apiDomaine + data[Object.keys(data)[index]]}
+                                                                                alt={Object.keys(data)[index]}
                                                                                 style={{
                                                                                     maxWidth: "110px",
                                                                                     maxHeight: "110px",
@@ -248,7 +210,7 @@ const ParametersComponentEdit = props => {
                                                                             <input type="file"
                                                                                    id="file"
                                                                                    name="kt_user_add_user_avatar"
-                                                                                   onChange={(e) => handleChangeImage(e, Object.keys(data.params)[index])}
+                                                                                   onChange={(e) => handleChangeImage(e, Object.keys(data)[index])}
                                                                             />
                                                                         </label>
                                                                         <span className="kt-avatar__cancel"
@@ -263,18 +225,18 @@ const ParametersComponentEdit = props => {
                                                             <div key={index}
                                                                  className={error[Object.keys(error)[index]].length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor={Object.keys(data.params)[index]}>{Object.keys(data.params)[index]}
+                                                                       htmlFor={Object.keys(data)[index]}>{Object.keys(data)[index]}
                                                                     <InputRequire/></label>
                                                                 <div className="col-lg-9 col-xl-6">
 
-                                                                    {/*{ console.log(Object.keys(data.params)[index], "dataParams")}*/}
+                                                                    {/*{ console.log(Object.keys(data)[index], "dataParams")}*/}
                                                                     <input
-                                                                        id={Object.keys(data.params)[index]}
+                                                                        id={Object.keys(data)[index]}
                                                                         type={dataType[Object.keys(dataType)[index]]}
                                                                         className={error[Object.keys(error)[index]].length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={Object.keys(data.params)[index]}
-                                                                        value={data.params[Object.keys(data.params)[index]]}
-                                                                        onChange={(e) => handleChange(e, Object.keys(data.params)[index])}
+                                                                        placeholder={Object.keys(data)[index]}
+                                                                        value={data[Object.keys(data)[index]]}
+                                                                        onChange={(e) => handleChange(e, Object.keys(data)[index])}
                                                                     />
                                                                     {
                                                                         error[Object.keys(error)[index]].length ? (
