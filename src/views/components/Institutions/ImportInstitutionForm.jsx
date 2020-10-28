@@ -16,54 +16,17 @@ import {ERROR_401} from "../../../config/errorPage";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
-const endPointConfig = {
-    PRO: {
-        plan: "PRO",
-        store: `${appConfig.apiDomaine}/my/import-clients`,
-    },
-    MACRO: {
-        holding: {
-            store: `${appConfig.apiDomaine}/any/import-clients`,
-        },
-        filial: {
-            store: `${appConfig.apiDomaine}/my/import-clients`,
-        }
-    },
-    HUB: {
-        plan: "HUB",
-        store: `${appConfig.apiDomaine}/any/import-clients `,
-    }
-};
-
 const ImportInstitutionForm = (props) => {
-    document.title = "Satis client - Importation de fichier excel";
+    document.title = "Satis institution - Importation de fichier excel";
 
-    if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') ||
-        verifyPermission(props.userPermissions, 'store-client-from-my-institution')))
+    if (!verifyPermission(props.userPermissions, 'store-any-institution'))
         window.location.href = ERROR_401;
-
-    let endPoint = "";
-    if (props.plan === "MACRO") {
-        if (verifyPermission(props.userPermissions, 'store-client-from-any-institution'))
-            endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'store-client-from-my-institution'))
-            endPoint = endPointConfig[props.plan].filial
-    } else
-        endPoint = endPointConfig[props.plan];
-
-
-    const option1 = 1;
-    const option2 = 0;
 
     const defaultData = {
         file: "",
-        etat_update: "",
-        stop_identite_exist: "",
     };
     const defaultError = {
         file: [],
-        etat_update: "",
-        stop_identite_exist: "",
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -75,16 +38,6 @@ const ImportInstitutionForm = (props) => {
         setData(newData);
     };
 
-    const onChangeOption = (e) => {
-        const newData = {...data};
-        newData.stop_identite_exist = e.target.value;
-        setData(newData);
-    };
-    const onChangeEtatOption = (e) => {
-        const newData = {...data};
-        newData.etat_update = e.target.value;
-        setData(newData);
-    };
 
     const formatFormData = (newData) => {
         const formData = new FormData();
@@ -105,7 +58,7 @@ const ImportInstitutionForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
 
-        axios.post(endPoint.store, formatFormData(data))
+        axios.post(`${appConfig.apiDomaine}/any/import-institutions`, formatFormData(data))
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
@@ -153,93 +106,15 @@ const ImportInstitutionForm = (props) => {
                                         </h3>
                                     </div>
                                 </div>
-                                {console.log(data, "DATA_OPTION")}
+
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
-
-                                        <div
-                                            className={error.stop_identite_exist.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label">Identité existe déjà
-                                                ? <InputRequire/></label>
-                                            <div className="kt-radio-inline col-lg-9 col-xl-6">
-
-                                                <label className="kt-radio kt-radio--bold kt-radio--success">
-                                                    <input
-                                                        className={error.stop_identite_exist.length ? "form-control is-invalid" : "form-control"}
-                                                        type="radio"
-                                                        name="radio3"
-                                                        value={option1}
-                                                        onChange={(e) => onChangeOption(e)}
-                                                    /> Oui
-                                                    <span></span>
-                                                </label>
-                                                <label className="kt-radio kt-radio--bold kt-radio--danger">
-                                                    <input
-                                                        className={error.stop_identite_exist.length ? "form-control is-invalid" : "form-control"}
-                                                        type="radio"
-                                                        name="radio3"
-                                                        value={option2}
-                                                        onChange={(e) => onChangeOption(e)}
-                                                    /> Non
-                                                    <span></span>
-                                                </label>
-                                            </div>
-                                            {
-                                                error.stop_identite_exist.length ? (
-                                                    error.stop_identite_exist.map((error, index) => (
-                                                        <div key={index}
-                                                             className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
-
-                                        <div
-                                            className={error.etat_update.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label">Est ce une mise a
-                                                jour? <InputRequire/></label>
-                                            <div className="kt-radio-inline col-lg-9 col-xl-6">
-
-                                                <label className="kt-radio kt-radio--bold kt-radio--success">
-                                                    <input
-                                                        className={error.etat_update.length ? "form-control is-invalid" : "form-control"}
-                                                        type="radio"
-                                                        name="radio4"
-                                                        value={option1}
-                                                        onChange={(e) => onChangeEtatOption(e)}
-                                                    /> Oui
-                                                    <span></span>
-                                                </label>
-                                                <label className="kt-radio kt-radio--bold kt-radio--danger">
-                                                    <input
-                                                        className={error.etat_update.length ? "form-control is-invalid" : "form-control"}
-                                                        type="radio"
-                                                        name="radio4"
-                                                        value={option2}
-                                                        onChange={(e) => onChangeEtatOption(e)}
-                                                    /> Non
-                                                    <span></span>
-                                                </label>
-                                            </div>
-                                            {
-                                                error.etat_update.length ? (
-                                                    error.etat_update.map((error, index) => (
-                                                        <div key={index}
-                                                             className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-                                        </div>
 
                                         <div
                                             className={error.file.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label"
                                                    htmlFor="file">Fichier <InputRequire/></label>
-                                            <div className="col-md-6 mb-3">
+                                            <div className="col-md-9 mb-3">
                                                 <input
                                                     id="file"
                                                     type="file"
@@ -260,7 +135,7 @@ const ImportInstitutionForm = (props) => {
                                         </div>
 
                                     </div>
-                                    <div className="kt-portlet__foot">
+                                    <div className="kt-portlet__foot text-right">
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
@@ -299,8 +174,7 @@ const ImportInstitutionForm = (props) => {
         );
     };
     return (
-        verifyPermission(props.userPermissions, 'store-client-from-any-institution') ||
-        verifyPermission(props.userPermissions, 'store-client-from-my-institution') ?
+        verifyPermission(props.userPermissions, 'store-any-institution') ?
             printJsx()
             : ""
     );

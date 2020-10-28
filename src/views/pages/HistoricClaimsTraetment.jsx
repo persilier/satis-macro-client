@@ -1,46 +1,38 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {
-    Link
-} from "react-router-dom";
-import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
+import {connect} from "react-redux";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
-import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
-import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import InfirmationTable from "../components/InfirmationTable";
-import {ERROR_401} from "../../config/errorPage";
-import {verifyPermission} from "../../helpers/permission";
-import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
-
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const CategoryClient = (props) => {
-    document.title = "Satis client - Paramètre categorie client";
-    if (!verifyPermission(props.userPermissions, "list-category-client"))
-        window.location.href = ERROR_401;
 
+const HistoricClaimsAdd = (props) => {
+    document.title = "Satis client - Paramètre Historique";
+
+    // if (!verifyPermission(props.userPermissions, "history-list-treat-claim")) {
+    //     window.location.href = ERROR_401;
+    // }
     const [load, setLoad] = useState(true);
-    const [categoryClient, setCategoryClient] = useState([]);
+    const [claimsAdd, setClaimsAdd] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(5);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/category-clients")
+        axios.get(appConfig.apiDomaine + "/history/list-treat")
             .then(response => {
+                console.log(response.data,"DATA")
                 setLoad(false);
-                setCategoryClient(response.data);
+                setClaimsAdd(response.data);
                 setShowList(response.data.slice(0, numberPerPage));
                 setNumberPage(forceRound(response.data.length / numberPerPage));
             })
@@ -48,17 +40,21 @@ const CategoryClient = (props) => {
                 setLoad(false);
                 console.log("Something is wrong");
             })
-    },[]);
+    }, []);
 
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
-        let newCategoryClients = [...categoryClient];
-        newCategoryClients = newCategoryClients.filter(el => (
-            getLowerCaseString(el.name ? el.name["fr"] : "").indexOf(value) >= 0 ||
-            getLowerCaseString(el.description ? el.description["fr"] : "").indexOf(value) >= 0
+        let newClaimsAdd = [...claimsAdd];
+        newClaimsAdd = newClaimsAdd.filter(el => (
+            getLowerCaseString(el.claim_object ? el.claim_object.name.fr : "").indexOf(value) >= 0 ||
+            getLowerCaseString(el.description).indexOf(value) >= 0 ||
+            getLowerCaseString(el.claimer.lastname).indexOf(value) >= 0 ||
+            getLowerCaseString(el.claimer.firstname).indexOf(value) >= 0 ||
+            getLowerCaseString(el.request_channel_slug).indexOf(value) >= 0 ||
+            getLowerCaseString(el.response_channel_slug).indexOf(value) >= 0
         ));
 
-        return newCategoryClients;
+        return newClaimsAdd;
     };
 
     const searchElement = async (e) => {
@@ -66,8 +62,8 @@ const CategoryClient = (props) => {
             setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(categoryClient.length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(categoryClient.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(claimsAdd.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claimsAdd.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
     };
@@ -75,8 +71,8 @@ const CategoryClient = (props) => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(categoryClient.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(categoryClient.length / parseInt(e.target.value)));
+        setShowList(claimsAdd.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(claimsAdd.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -90,7 +86,7 @@ const CategoryClient = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(categoryClient.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(claimsAdd.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -98,7 +94,7 @@ const CategoryClient = (props) => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                categoryClient.slice(
+                claimsAdd.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -112,7 +108,7 @@ const CategoryClient = (props) => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                categoryClient.slice(
+                claimsAdd.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -120,40 +116,7 @@ const CategoryClient = (props) => {
         }
     };
 
-    const deleteCategoryClient = (categoryClientId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
-            .then((result) => {
-                if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/category-clients/${categoryClientId}`)
-                        .then(response => {
-                            const newCategory = [...categoryClient];
-                            newCategory.splice(index, 1);
-                            setCategoryClient(newCategory);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newCategory.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newCategory.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
-                }
-            })
-        ;
-    };
+
     const arrayNumberPage = () => {
         const pages = [];
         for (let i = 0; i < numberPage; i++) {
@@ -164,52 +127,27 @@ const CategoryClient = (props) => {
 
     const pages = arrayNumberPage();
 
-    const printBodyTable = (category, index) => {
+    const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{category.name.fr===null?"":category.name.fr}</td>
-                <td>{category.description.fr===null?"":category.description.fr}</td>
-                <td style={{textAlign:'center'}}>
-                    {/*<Link to="/settings/clients/category/detail"*/}
-                    {/*      className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
-                    {/*      title="Détail">*/}
-                    {/*    <i className="la la-eye"/>*/}
-                    {/*</Link>*/}
+                <td>{claim.claimer.lastname +" "+claim.claimer.firstname}</td>
+                <td>{claim.claim_object.name.fr}</td>
+                <td>{claim.description}</td>
+                <td>{claim.request_channel_slug}</td>
+                <td>{claim.response_channel_slug}</td>
 
-                    {
-                        verifyPermission(props.userPermissions, 'show-category-client') ?
-                            <Link
-                                to={`/settings/clients/category/edit/${category.id}`}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Modifier">
-                                <i className="la la-edit"/>
-                            </Link>
-                            : null
-                    }
-
-                    {
-                        verifyPermission(props.userPermissions, "destroy-category-client") ?
-                        <button
-                            onClick={(e) => deleteCategoryClient(category.id, index)}
-                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Supprimer">
-                            <i className="la la-trash"/>
-                        </button>
-                        : null
-                    }
-                </td>
             </tr>
         )
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-category-client") ? (
+
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                Historiques
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -218,35 +156,19 @@ const CategoryClient = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Client
+                                    Réclamations traitées
                                 </a>
-                                <span className="kt-subheader__separator kt-hidden"/>
-                                <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
-                                    <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link">
-                                        Categorie Client
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Liste des catégories client"}/>
-
                     <div className="kt-portlet">
-
                         <HeaderTablePage
-                            addPermission={"store-category-client"}
-                            title={"Catégorie Client"}
-                            addText={"Ajouter"}
-                            addLink={"/settings/clients/category/add"}
+                            title={"Réclamations traitées"}
                         />
+
                         {
                             load ? (
                                 <LoadingTable/>
@@ -262,10 +184,12 @@ const CategoryClient = (props) => {
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
                                                                placeholder=""
-                                                               aria-controls="kt_table_1"/>
+                                                               aria-controls="kt_table_1"
+                                                        />
                                                     </label>
                                                 </div>
                                             </div>
+
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -275,33 +199,44 @@ const CategoryClient = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Nom
+                                                            colSpan="1" style={{width: "80px"}}
+                                                            aria-label="Country: activate to sort column ascending">Réclamant
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "100px"}}
+                                                            aria-label="Country: activate to sort column ascending">Objets de réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
+                                                            aria-label="Country: activate to sort column ascending">Description de la Réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "50px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Canal de réception
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "50px"}}
+                                                            aria-label="Ship Address: activate to sort column ascending">Canal de réponse
                                                         </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        categoryClient.length ? (
+                                                        claimsAdd.length ? (
                                                             showList.length ? (
-                                                                showList.map((category, index) => (
-                                                                    printBodyTable(category, index)
+                                                                showList.map((claim, index) => (
+                                                                    printBodyTable(claim, index)
                                                                 ))
                                                             ) : (
                                                                 <EmptyTable search={true}/>
@@ -312,8 +247,12 @@ const CategoryClient = (props) => {
                                                     }
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-
+                                                    <tr style={{textAlign:"center"}}>
+                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                        <th rowSpan="1" colSpan="1">Objets de réclamtions</th>
+                                                        <th rowSpan="1" colSpan="1">Description de réclamation</th>
+                                                        <th rowSpan="1" colSpan="1">Canal de réception</th>
+                                                        <th rowSpan="1" colSpan="1">Canal de réponse</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -323,9 +262,10 @@ const CategoryClient = (props) => {
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
                                                      aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {categoryClient.length} données
+                                                    à {numberPerPage} sur {claimsAdd.length} données
                                                 </div>
                                             </div>
+
                                             {
                                                 showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
@@ -350,7 +290,6 @@ const CategoryClient = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
 
     );
 };
@@ -360,4 +299,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(CategoryClient);
+export default connect(mapStateToProps)(HistoricClaimsAdd);

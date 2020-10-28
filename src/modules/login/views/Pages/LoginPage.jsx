@@ -35,7 +35,6 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    console.log(response.data, "DATA")
                     setData(response.data);
                     setLoad(false);
                 })
@@ -67,7 +66,7 @@ const LoginPage = (props) => {
             .then(response => {
                 const token = response.data.access_token;
                 const refresh_token = response.data.refresh_token;
-                const expire_in = response.data.expire_in;
+                const expire_in = response.data.expires_in;
                 axios.get(appConfig.apiDomaine + `/login`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,

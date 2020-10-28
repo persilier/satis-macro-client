@@ -213,7 +213,8 @@ export const formatToTime = dateTime => {
 };
 
 export const seeParameters = (userPermissions) => {
-    return (verifyPermission(userPermissions, "update-sms-parameters")
+    return (
+        verifyPermission(userPermissions, "update-sms-parameters")
         || verifyPermission(userPermissions, 'update-mail-parameters')
         || verifyPermission(userPermissions, "list-any-institution")
         || verifyPermission(userPermissions, "update-my-institution")
@@ -238,9 +239,11 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-severity-level')
         || verifyPermission(userPermissions, 'list-currency')
         || verifyPermission(userPermissions, 'update-notifications')
-        || verifyPermission(userPermissions, 'list-channel'))
+        || verifyPermission(userPermissions, 'list-channel')
         || verifyPermission(userPermissions, "list-faq-category")
-        ;
+        || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
+    );
 };
 
 export const seeCollect = (userPermissions) => {
@@ -251,6 +254,14 @@ export const seeCollect = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-incomplete-against-any-institution')
         || verifyPermission(userPermissions, "list-claim-incomplete-against-my-institution")
         || verifyPermission(userPermissions, "list-claim-incomplete-without-client")
+    );
+};
+
+export const seeHistorique = (userPermissions) => {
+    return (
+        verifyPermission(userPermissions, 'history-list-treat-claim')
+        || verifyPermission(userPermissions, 'history-list-create-claim')
+
     );
 };
 
@@ -371,5 +382,5 @@ export const debug = (variable, label = null) => {
 ]*/
 
 export const getLowerCaseString = (value) => {
-    return (value+"").toLowerCase();
+    return (value + "").toLowerCase();
 };

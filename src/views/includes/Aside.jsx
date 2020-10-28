@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import {verifyPermission} from "../../helpers/permission";
-import {seeCollect, seeMonitoring, seeParameters, seeTreatment} from "../../helpers/function";
+import {seeCollect, seeHistorique, seeMonitoring, seeParameters, seeTreatment} from "../../helpers/function";
 
 const Aside = (props) => {
     return (
@@ -219,6 +219,61 @@ const Aside = (props) => {
                         }
 
                         {
+                            !seeHistorique(props.userPermissions) ? null : (
+                                <>
+                                    <li className="kt-menu__section ">
+                                        <h4 className="kt-menu__section-text">Historiques</h4>
+                                        <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                    </li>
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="#historique" onClick={e => e.preventDefault()}
+                                           className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-icon flaticon2-telegram-logo"/>
+                                            <span className="kt-menu__link-text">Historiques</span>
+                                            <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                        </a>
+                                        <div className="kt-menu__submenu ">
+                                            <span className="kt-menu__arrow"/>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">Historiques</span>
+                                                </span>
+                                                </li>
+
+                                                {
+                                                    verifyPermission(props.userPermissions, 'history-list-create-claim')? (
+                                                        <NavLink exact to="/historic/claims/add" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Réclamations créées</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, "history-list-treat-claim")? (
+                                                        <NavLink exact to="/historic/claims/treat" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Réclamations traitées</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </>
+                            )
+                        }
+
+
+                        {
                             !seeParameters(props.userPermissions) ? null : (
                                 <>
                                     <li className="kt-menu__section ">
@@ -321,13 +376,18 @@ const Aside = (props) => {
                                                         ):""
 
                                                 }
-                                                <NavLink to="/settings/rapport-auto" className="kt-menu__item "
-                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text"> Rapport Automatique</span>
-                                                    </li>
-                                                </NavLink>
+                                                {
+                                                    verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
+                                                    verifyPermission(props.userPermissions, "config-reporting-claim-my-institution")?
+                                                        <NavLink to="/settings/rapport-auto" className="kt-menu__item "
+                                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        <li className="kt-menu__link ">
+                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                            <span className="kt-menu__link-text"> Rapport Automatique</span>
+                                                        </li>
+                                                    </NavLink>:null
+                                                }
+
 
                                                 <NavLink to="/settings/relance" className="kt-menu__item "
                                                          activeClassName="kt-menu__item--active" aria-haspopup="true">

@@ -239,7 +239,7 @@ const ImportClientForm = (props) => {
                                             className={error.file.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label"
                                                    htmlFor="file">Fichier <InputRequire/></label>
-                                            <div className="col-md-6 mb-3">
+                                            <div className="col-md-9 mb-3">
                                                 <input
                                                     id="file"
                                                     type="file"
@@ -260,7 +260,7 @@ const ImportClientForm = (props) => {
                                         </div>
 
                                     </div>
-                                    <div className="kt-portlet__foot">
+                                    <div className="kt-portlet__foot text-right">
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
