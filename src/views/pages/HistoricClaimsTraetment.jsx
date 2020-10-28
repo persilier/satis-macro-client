@@ -8,6 +8,8 @@ import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {ERROR_401} from "../../config/errorPage";
+import {verifyPermission} from "../../helpers/permission";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -17,9 +19,9 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const HistoricClaimsAdd = (props) => {
     document.title = "Satis client - Paramètre Historique";
 
-    // if (!verifyPermission(props.userPermissions, "history-list-treat-claim")) {
-    //     window.location.href = ERROR_401;
-    // }
+    if (!verifyPermission(props.userPermissions, "history-list-treat-claim")) {
+        window.location.href = ERROR_401;
+    }
     const [load, setLoad] = useState(true);
     const [claimsAdd, setClaimsAdd] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
