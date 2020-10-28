@@ -86,6 +86,9 @@ import ParametersComponentEdit from "../components/ParametersComponentEdit";
 import UserEdit from "../pages/UserEdit";
 import ConfigCoefficient from "../components/ConfigCoefficient";
 import ImportClientForm from "../components/Clients/ImportClientForm";
+import ImportInstitutionForm from "../components/Institutions/ImportInstitutionForm";
+import HistoricClaimsAdd from "../pages/HistoricClaimsAdd";
+import HistoricClaimsTraetment from "../pages/HistoricClaimsTraetment";
 
 const Body = () => {
     return (
@@ -95,6 +98,14 @@ const Body = () => {
             </Route>*/}
             <Route exact path="/settings/config">
                 <ParametersComponent/>
+            </Route>
+
+            <Route exact path="/historic/claims/add">
+                <HistoricClaimsAdd/>
+            </Route>
+
+            <Route exact path="/historic/claims/treat">
+                <HistoricClaimsTraetment/>
             </Route>
 
             <Route exact path="/settings/config/edit/:id">
@@ -151,6 +162,10 @@ const Body = () => {
 
             <Route exact path="/settings/importClients">
                 <ImportClientForm/>
+            </Route>
+
+            <Route exact path="/settings/importInstitutions">
+                <ImportInstitutionForm/>
             </Route>
 
             <Route exact path="/settings/relationship">
@@ -509,7 +524,7 @@ const Body = () => {
                 <TreatmentPeriodAdd/>
             </Route>
 
-            
+
             <Route path={"*"}>
                 <Redirect to={"/dashboard"}/>
             </Route>

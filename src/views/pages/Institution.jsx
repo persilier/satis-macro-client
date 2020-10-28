@@ -224,7 +224,7 @@ const Institution = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-category-client") ? (
+        verifyPermission(props.userPermissions,"list-any-institution") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -275,7 +275,7 @@ const Institution = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton pageUrl={"/settings/importInstitutions"}/>
+                                            <ExportButton pageUrl={"/settings/importInstitutions"} downloadLink={`${appConfig.apiDomaine}/download-excel/institutions`}/>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

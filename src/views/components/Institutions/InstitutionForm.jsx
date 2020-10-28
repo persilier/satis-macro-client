@@ -8,11 +8,9 @@ import {ToastBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig, toastEditSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import Select from "react-select";
-import {formatSelectOption} from "../../../helpers/function";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
