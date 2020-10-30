@@ -9,7 +9,7 @@ import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import {EventNotification, EventNotificationPath, RelaunchNotification} from "../../constants/notification";
 import EmptyNotification from "../components/EmptyNotification";
-import {Link} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
@@ -292,29 +292,33 @@ const Nav = (props) => {
                             <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
                                 <li className="kt-nav__item kt-nav__item--active">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img
-                                            src="/assets/media/flags/226-united-states.svg" alt=""/></span>
+                                        <span className="kt-nav__link-icon">
+                                            <img src="/assets/media/flags/226-united-states.svg" alt=""/></span>
                                         <span className="kt-nav__link-text">English</span>
                                     </a>
                                 </li>
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "sp")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/assets/media/flags/128-spain.svg"
-                                                                                 alt=""/></span>
+                                        <span className="kt-nav__link-icon">
+                                            <img src="/assets/media/flags/128-spain.svg" alt=""/>
+                                        </span>
                                         <span className="kt-nav__link-text">Spanish</span>
                                     </a>
                                 </li>
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "gm")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img
-                                            src="/assets/media/flags/162-germany.svg" alt=""/></span>
+                                        <span className="kt-nav__link-icon">
+                                            <img src="/assets/media/flags/162-germany.svg" alt=""/>
+                                        </span>
                                         <span className="kt-nav__link-text">German</span>
                                     </a>
                                 </li>
 
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon"><img src="/personal/img/france.svg" alt=""/></span>
+                                        <span className="kt-nav__link-icon">
+                                            <img src="/personal/img/france.svg" alt=""/>
+                                        </span>
                                         <span className="kt-nav__link-text">Francais</span>
                                     </a>
                                 </li>
@@ -325,8 +329,9 @@ const Nav = (props) => {
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                             <span className="kt-header__topbar-welcome kt-visible-desktop">Salut,</span>
-                            <span
-                                className="kt-header__topbar-username kt-visible-desktop">{props.user.firstName}</span>
+                            <span className="kt-header__topbar-username kt-visible-desktop">
+                                {props.user.firstName}
+                            </span>
                             <img alt="Pic" src="/assets/media/users/default.jpg"/>
                             <span className="kt-header__topbar-icon kt-bg-brand kt-hidden"><b>S</b></span>
                         </div>
@@ -395,6 +400,20 @@ const Nav = (props) => {
                                 {/*        </div>*/}
                                 {/*    </div>*/}
                                 {/*</Link>*/}
+                                <NavLink to={"/settings/account"}
+                                   className="kt-notification__item">
+                                    <div className="kt-notification__item-icon">
+                                        <i className="flaticon2-calendar-3 kt-font-success"></i>
+                                    </div>
+                                    <div className="kt-notification__item-details">
+                                        <div className="kt-notification__item-title kt-font-bold">
+                                            Mon profile
+                                        </div>
+                                        <div className="kt-notification__item-time">
+                                            Paramètres de compte et plus
+                                        </div>
+                                    </div>
+                                </NavLink>
                                 <div className="kt-notification__custom kt-space-between">
                                     <a href="/logout" onClick={onClickLogoutLink} target="_blank"
                                        className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>

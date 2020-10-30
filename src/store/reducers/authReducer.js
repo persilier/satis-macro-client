@@ -1,4 +1,5 @@
 import {LOGOUT_USER, UPDATE_USER} from "../actions/authActions";
+import {logout} from "../../helpers/function";
 
 const initialState = {
     user: {},
@@ -9,10 +10,7 @@ export default function (state = initialState, action) {
     let newState = {};
     switch (action.type) {
         case LOGOUT_USER:
-            const plan = localStorage.getItem('plan');
-            localStorage.clear();
-            localStorage.setItem('plan', plan);
-            window.location.href = "/login";
+            logout();
             break;
         case UPDATE_USER:
             newState={

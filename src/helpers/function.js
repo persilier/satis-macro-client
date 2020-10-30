@@ -238,6 +238,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-severity-level')
         || verifyPermission(userPermissions, 'list-currency')
         || verifyPermission(userPermissions, 'update-notifications')
+        || verifyPermission(userPermissions, 'update-active-pilot')
         || verifyPermission(userPermissions, 'list-channel'))
         || verifyPermission(userPermissions, "list-faq-category")
         ;
@@ -372,4 +373,11 @@ export const debug = (variable, label = null) => {
 
 export const getLowerCaseString = (value) => {
     return (value+"").toLowerCase();
+};
+
+export const logout = () => {
+    const plan = localStorage.getItem('plan');
+    localStorage.clear();
+    localStorage.setItem('plan', plan);
+    window.location.href = "/login";
 };

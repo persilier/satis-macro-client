@@ -17,7 +17,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimToValidatedList = (props) => {
-    if (!(verifyPermission(props.userPermissions, "list-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution')))
+    if (!((verifyPermission(props.userPermissions, "list-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution')) && props.activePilot))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -130,7 +130,7 @@ const ClaimToValidatedList = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{claim.active_treatment.responsible_staff?`${claim.active_treatment.responsible_staff.identite.lastname} ${claim.active_treatment.responsible_staff.identite.firstname}`:""}</td>
                 <td>{claim.institution_targeted.name}</td>
-                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : ""}</td>*/}
+                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : null}</td>*/}
                 {
                     verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
@@ -147,7 +147,7 @@ const ClaimToValidatedList = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution') ? (
+        (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -293,7 +293,7 @@ const ClaimToValidatedList = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -303,14 +303,15 @@ const ClaimToValidatedList = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 
 const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 

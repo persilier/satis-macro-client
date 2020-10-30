@@ -14,20 +14,21 @@ const ImportFileForm = (props) => {
     const defaultError = {
         file: [],
     };
+    const [name, setName] = useState('');
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     const handleChangeFile = (e) => {
         const newData = {...data};
-        newData.file = e.target.value;
+        setName(e.target.value);
+        newData.file = Object.values(e.target.files)[0];
         setData(newData);
     };
 
     const onSubmit = async (e) => {
         const formData = new FormData();
         formData.append("file", data.file);
-        console.log("file:", formData.get('file'));
         e.preventDefault();
 
         setStartRequest(true);
@@ -35,12 +36,17 @@ const ImportFileForm = (props) => {
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
+                console.log("data:", response.data);
+                if (response.data.status) {
+                    setName("");
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
+                } else {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
+                }
             })
             .catch(({response}) => {
                 setStartRequest(false);
-                console.log("coucou:", response.data);
                 setError({...defaultError, ...response.data.error});
                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
             })
@@ -94,7 +100,7 @@ const ImportFileForm = (props) => {
                                                     type="file"
                                                     className={error.file.length ? "form-control is-invalid" : "form-control"}
                                                     placeholder="Veillez choisier le fichier"
-                                                    value={data.file}
+                                                    value={name}
                                                     onChange={(e) => handleChangeFile(e)}
                                                 />
                                                 {
@@ -123,11 +129,11 @@ const ImportFileForm = (props) => {
 
                                             {
                                                 !startRequest ? (
-                                                    <Link to="/settings/claim_objects" className="btn btn-secondary mx-2">
+                                                    <Link to={props.pageTitleLink} className="btn btn-secondary mx-2">
                                                         Quitter
                                                     </Link>
                                                 ) : (
-                                                    <Link to="/settings/claim_objects" className="btn btn-secondary mx-2" disabled>
+                                                    <Link to={props.pageTitleLink} className="btn btn-secondary mx-2" disabled>
                                                         Quitter
                                                     </Link>
                                                 )

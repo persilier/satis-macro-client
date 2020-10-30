@@ -88,6 +88,12 @@ import ImportClientForm from "../components/Clients/ImportClientForm";
 import ClaimObjectImportPage from "../pages/ClaimObjectImportPage";
 import StaffImportPage from "../pages/StaffImportPage";
 import ClaimCategoryImportPage from "../pages/ClaimCategoryImportPage";
+import ActivatePilotPage from "../pages/ActivatePilotPage";
+import RulePage from "../pages/RulePage";
+import RuleAddPage from "../pages/RuleAddPage";
+import RuleEditPage from "../pages/RuleEditPage";
+import ProfilePage from "../pages/ProfilePage";
+import ClaimImportPage from "../pages/ClaimImportPage";
 
 const Body = () => {
     return (
@@ -359,6 +365,10 @@ const Body = () => {
                 <ClaimAdd/>
             </Route>
 
+            <Route exact path="/process/claims/import">
+                <ClaimImportPage/>
+            </Route>
+
             <Route exact path="/process/incomplete_claims">
                 <IncompleteClaims/>
             </Route>
@@ -507,6 +517,18 @@ const Body = () => {
                 <UserEdit/>
             </Route>
 
+            <Route exact path="/settings/rules">
+                <RulePage/>
+            </Route>
+
+            <Route exact path="/settings/rules/add">
+                <RuleAddPage/>
+            </Route>
+
+            <Route exact path="/settings/rules/:id/edit">
+                <RuleEditPage/>
+            </Route>
+
             <Route exact path="/settings/qualification-period">
                 <QualificationPeriod/>
             </Route>
@@ -523,7 +545,22 @@ const Body = () => {
                 <TreatmentPeriodAdd/>
             </Route>
 
-            
+            <Route exact path="/settings/activate-pilot">
+                <ActivatePilotPage/>
+            </Route>
+
+            <Route exact path="/settings/account">
+                <ProfilePage/>
+            </Route>
+
+            <Route exact path="/settings/account/personal-information">
+                <ProfilePage/>
+            </Route>
+
+            <Route exact path="/settings/account/change-password">
+                <ProfilePage/>
+            </Route>
+
             <Route path={"*"}>
                 <Redirect to={"/dashboard"}/>
             </Route>

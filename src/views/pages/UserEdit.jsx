@@ -5,12 +5,12 @@ import Select from "react-select";
 import {Link, useParams} from "react-router-dom";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
+    toastEditErrorMessageConfig, toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {debug, formatSelectOption} from "../../helpers/function";
+import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 
@@ -176,10 +176,10 @@ const UserEdit = (props) => {
                                                     <strong>Utilisateur</strong>
                                                 </label>
                                                 <div className="col-lg-9 col-xl-6">
-                                                    {debug(user, "user")}
                                                     <h4>{ user ? user.identite.lastname : "......." } { user ? user.identite.firstname : "......." }</h4>
                                                 </div>
                                             </div>
+
                                             <div className={error.roles.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"role"}>Role <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">

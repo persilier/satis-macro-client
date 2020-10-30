@@ -5,7 +5,6 @@ import {
     useParams,
     Link
 } from "react-router-dom";
-import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
@@ -16,11 +15,13 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
-import InputRequire from "./InputRequire";
+import InputRequire from "../components/InputRequire";
+import {ToastBottomEnd} from "../components/Toast";
+import Select from "react-select";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const UnitTypeForm = (props) => {
+const RuleEditPage = (props) => {
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(props.userPermissions, 'update-unit-type'))
@@ -31,16 +32,16 @@ const UnitTypeForm = (props) => {
     }
     const defaultData = {
         name: "",
-        can_be_target: false,
-        can_treat: false,
-        description: "",
+        institution_type: [],
+        permission: []
     };
     const defaultError = {
         name: [],
-        can_be_target: [],
-        can_treat: [],
-        description: [],
+        institution_type: "",
+        permission: []
     };
+    const [institutionTypes, setInstitutionTypes] = useState([{value: "onesine", label: "onesine"}, {value: "tony", label: "tony"}]);
+    const [institutionType, setInstitutionType] = useState(null);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -67,25 +68,19 @@ const UnitTypeForm = (props) => {
         fetchData();
     }, [id, appConfig.apiDomaine]);
 
-    const onChangeName = (e) => {
+    const handleNameChange = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
         setData(newData);
     };
 
-    const onChangeDescription = (e) => {
+    const handleInstitutionType = (selected) => {
         const newData = {...data};
-        newData.description = e.target.value;
-        setData(newData);
-    };
-
-    const handleCanBeTargetChange = e => {
-        const newData = {...data, can_be_target: e.target.checked};
-        setData(newData);
-    };
-
-    const handleCanTreatChange = e => {
-        const newData = {...data, can_treat: e.target.checked};
+        const values = [];
+        if (selected)
+            selected.map(el => values.push(el.value));
+        newData.institution_type = values;
+        setInstitutionType(selected);
         setData(newData);
     };
 
@@ -93,33 +88,9 @@ const UnitTypeForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
         if (id) {
-            axios.put(`${appConfig.apiDomaine}/unit-types/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
+
         } else {
-            axios.post(`${appConfig.apiDomaine}/unit-types`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    redirectError401Page(errorRequest.response.data.code);
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+
         }
     };
 
@@ -136,8 +107,8 @@ const UnitTypeForm = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/unit_type" className="kt-subheader__breadcrumbs-link">
-                                    Type d'unité
+                                <Link to="/settings/rules" className="kt-subheader__breadcrumbs-link">
+                                    Roles
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -158,7 +129,7 @@ const UnitTypeForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de type d'unité" : "Ajout d'un type d'unité"
+                                                id ? "Modification de role" : "Ajout de role"
                                             }
                                         </h3>
                                     </div>
@@ -167,42 +138,8 @@ const UnitTypeForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <div className={error.can_be_target.length || error.can_treat.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <div className="kt-checkbox-inline">
-                                                        <label className="kt-checkbox">
-                                                            <input type="checkbox" checked={data.can_be_target} onChange={handleCanBeTargetChange}/> Peut-être visé par une réclamation ?
-                                                            <span/>
-                                                            {
-                                                                error.can_be_target.length ? (
-                                                                    error.can_be_target.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
-                                                        </label>
-                                                        <label className="kt-checkbox">
-                                                            <input type="checkbox" checked={data.can_treat} onChange={handleCanTreatChange}/> Peut résoudre une réclamation ?
-                                                            <span/>
-                                                            {
-                                                                error.can_treat.length ? (
-                                                                    error.can_treat.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -210,7 +147,7 @@ const UnitTypeForm = (props) => {
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
                                                         placeholder="Veillez entrer le nom du type d'unité"
                                                         value={data.name}
-                                                        onChange={(e) => onChangeName(e)}
+                                                        onChange={(e) => handleNameChange(e)}
                                                     />
                                                     {
                                                         error.name.length ? (
@@ -224,21 +161,20 @@ const UnitTypeForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description</label>
+                                            <div className={error.institution_type.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Veillez choisir le pilote actif <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
-                                                <textarea
-                                                    id="description"
-                                                    className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
-                                                    cols="30"
-                                                    rows="5"
-                                                    value={data.description}
-                                                    onChange={(e) => onChangeDescription(e)}
-                                                />
+                                                    <Select
+                                                        isClearable
+                                                        isMulti
+                                                        value={institutionType}
+                                                        placeholder={"collecteur"}
+                                                        onChange={handleInstitutionType}
+                                                        options={institutionTypes}
+                                                    />
                                                     {
-                                                        error.description.length ? (
-                                                            error.description.map((error, index) => (
+                                                        error.institution_type.length ? (
+                                                            error.institution_type.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -247,7 +183,59 @@ const UnitTypeForm = (props) => {
                                                     }
                                                 </div>
                                             </div>
+
+                                            {
+                                                institutionType ? (
+                                                    <div className={error.permission.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Permissions <InputRequire/></label>
+                                                        <div className="col-lg-9 col-xl-6">
+                                                            <div className="kt-checkbox-inline">
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 1<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 2<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 3<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 4<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 5<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 6<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 7<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 8<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 9<span/>
+                                                                </label>
+                                                                <label className="kt-checkbox">
+                                                                    <input type="checkbox"/> Permission 10<span/>
+                                                                </label>
+                                                            </div>
+                                                            {
+                                                                error.permission.length ? (
+                                                                    error.permission.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                ) : null
+                                            }
                                         </div>
+
                                         <div className="kt-portlet__foot">
                                             <div className="kt-form__actions text-right">
                                                 {
@@ -261,11 +249,11 @@ const UnitTypeForm = (props) => {
                                                 }
                                                 {
                                                     !startRequest ? (
-                                                        <Link to="/settings/unit_type" className="btn btn-secondary mx-2">
+                                                        <Link to="/settings/rules" className="btn btn-secondary mx-2">
                                                             Quitter
                                                         </Link>
                                                     ) : (
-                                                        <Link to="/settings/unit_type" className="btn btn-secondary mx-2" disabled>
+                                                        <Link to="/settings/rules" className="btn btn-secondary mx-2" disabled>
                                                             Quitter
                                                         </Link>
                                                     )
@@ -287,7 +275,7 @@ const UnitTypeForm = (props) => {
             verifyPermission(props.userPermissions, 'update-unit-type') ? (
                 printJsx()
             ) : null
-        : verifyPermission(props.userPermissions, 'store-unit-type') ? (
+            : verifyPermission(props.userPermissions, 'store-unit-type') ? (
                 printJsx()
             ) : null
     );
@@ -299,4 +287,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(UnitTypeForm);
+export default connect(mapStateToProps)(RuleEditPage);

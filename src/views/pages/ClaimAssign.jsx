@@ -21,14 +21,13 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssign = (props) => {
-    if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
+    if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
     const [claims, setClaims] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -155,7 +154,7 @@ const ClaimAssign = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') ? (
+        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -261,7 +260,7 @@ const ClaimAssign = (props) => {
                                                     <tbody>
                                                     {
                                                         claims.length ? (
-                                                            search ? (
+                                                            showList.length ? (
                                                                 claims.map((claim, index) => (
                                                                     printBodyTable(claim, index)
                                                                 ))
@@ -297,7 +296,7 @@ const ClaimAssign = (props) => {
                                                 </div>
                                             </div>
                                             {
-                                                !search ? (
+                                                showList.length ? (
                                                     <div className="col-sm-12 col-md-7 dataTables_pager">
                                                         <Pagination
                                                             numberPerPage={numberPerPage}
@@ -326,7 +325,8 @@ const ClaimAssign = (props) => {
 
 const mapStateToProps = state => {
     return {
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 

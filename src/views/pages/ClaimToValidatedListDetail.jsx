@@ -31,8 +31,8 @@ const ClaimToValidatedListDetail = (props) => {
     const {id} = useParams();
     const validation = validatedClaimRule(id);
 
-    if (!(verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-my-institution') ||
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-any-institution')))
+    if (!((verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-my-institution') ||
+        verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-any-institution')) && props.activePilot))
         window.location.href = ERROR_401;
 
     const [claim, setClaim] = useState(null);
@@ -80,8 +80,8 @@ const ClaimToValidatedListDetail = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ||
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-any-institution') ? (
+        (verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ||
+        verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-any-institution') && props.activePilot) ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -223,7 +223,7 @@ const ClaimToValidatedListDetail = (props) => {
 
                                                                                         </div>
                                                                                     </>
-                                                                                ) : ""
+                                                                                ) : null
                                                                             }
 
                                                                             {
@@ -250,7 +250,7 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                             </button>
                                                                                         </div>
                                                                                     </>
-                                                                                ) : ""
+                                                                                ) : null
                                                                             }
                                                                             <button id={"reason-modal"}
                                                                                     style={{display: "none"}} type="button"
@@ -300,7 +300,7 @@ const ClaimToValidatedListDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 
@@ -309,6 +309,7 @@ const mapStateToProps = state => {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
+        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 

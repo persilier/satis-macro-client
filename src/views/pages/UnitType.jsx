@@ -26,6 +26,8 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UnitType = (props) => {
+    document.title = "Satis client - Paramètre type d'unité";
+
     if (!verifyPermission(props.userPermissions, "list-unit-type"))
         window.location.href = ERROR_401;
 

@@ -19,6 +19,8 @@ import InfirmationTable from "../components/InfirmationTable";
 import InputRequire from "../components/InputRequire";
 import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
+import ExportButton from "../components/ExportButton";
+import {NavLink} from "react-router-dom";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -603,6 +605,15 @@ const ClaimAdd = props => {
                                         <h3 className="kt-portlet__head-title">
                                             Enregistrement réclamation
                                         </h3>
+                                    </div>
+
+                                    <div className="kt-portlet__head-toolbar">
+                                        <div className="kt-portlet__head-wrapper">&nbsp;
+                                            <div className="dropdown dropdown-inline">
+                                                <a href={`${appConfig.apiDomaine}/download-excel/claims`} download={true} className="btn mr-1 btn-secondary">Télécharger Format</a>
+                                                <NavLink to={"/process/claims/import"} className="btn ml-1 btn-primary">Importer Réclamations</NavLink>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

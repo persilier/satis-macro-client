@@ -12,20 +12,18 @@ import InputRequire from "../components/InputRequire";
 import {Link} from "react-router-dom";
 import ImportFileForm from "../components/ImportFileForm";
 
-const ClaimCategoryImportPage = (props) => {
-    document.title = "Satis client - Importation catégorie de reclamation";
-    if (!verifyPermission(props.userPermissions, 'store-claim-category'))
-        window.location.href = ERROR_401;
+const ClaimImportPage = (props) => {
+    document.title = "Satis client - Importation reclamation";
+    /*if (!verifyPermission(props.userPermissions, 'update-mail-parameters'))
+        window.location.href = ERROR_401;*/
 
     return (
-        verifyPermission(props.userPermissions, 'store-claim-category') ? (
-            <ImportFileForm
-                submitEndpoint={`${appConfig.apiDomaine}/import-claim-categories`}
-                pageTitleLink="/settings/claim_categories"
-                pageTitle="Catégorie de réclamation"
-                panelTitle="Importation catégorie reclamation au format excel"
-            />
-        ) : null
+        <ImportFileForm
+            submitEndpoint={`${appConfig.apiDomaine}/import-claim`}
+            pageTitleLink="/process/claims/add"
+            pageTitle="Enregistrement reclamation"
+            panelTitle="Importation de reclamation au format excel"
+        />
     );
 };
 
@@ -35,4 +33,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(ClaimCategoryImportPage);
+export default connect(mapStateToProps)(ClaimImportPage);

@@ -50,8 +50,7 @@ const Aside = (props) => {
 
                                             {
                                                 verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
-                                                    <NavLink exact to="/process/claims/add" className="kt-menu__item "
-                                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <NavLink exact to="/process/claims/add" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                             <span className="kt-menu__link-text">Enregistrer réclamation</span>
@@ -63,8 +62,7 @@ const Aside = (props) => {
                                                 verifyPermission(props.userPermissions, 'list-claim-incomplete-against-any-institution') ||
                                                 verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution")||
                                                 verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")? (
-                                                    <NavLink exact to="/process/incomplete_claims" className="kt-menu__item "
-                                                             activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <NavLink exact to="/process/incomplete_claims" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                             <span className="kt-menu__link-text">Réclamation incomplète</span>
@@ -98,7 +96,7 @@ const Aside = (props) => {
                                             </li>
 
                                             {
-                                                verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") ? (
+                                                verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
                                                     <NavLink exact to="/process/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
@@ -131,7 +129,7 @@ const Aside = (props) => {
                                             }
 
                                             {
-                                                verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution') ? (
+                                                (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
                                                     <NavLink exact to="/process/claim-to-validated" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
@@ -366,6 +364,13 @@ const Aside = (props) => {
                                                     </NavLink>
                                                 :null
                                                 }
+
+                                                {/*<NavLink exact to="/settings/rules" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                        <span className="kt-menu__link-text">Role</span>
+                                                    </li>
+                                                </NavLink>*/}
 
                                                 {
                                                     verifyPermission(props.userPermissions, "list-user-my-institution") || verifyPermission(props.userPermissions, "list-user-any-institution") ? (
@@ -603,6 +608,18 @@ const Aside = (props) => {
                                                         </NavLink>
                                                     ) : null
                                                 }
+
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "update-active-pilot") && props.activePilot ? (
+                                                        <NavLink exact to="/settings/activate-pilot" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Pilote actif</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
                                             </ul>
                                         </div>
                                     </li>
@@ -618,7 +635,8 @@ const Aside = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 

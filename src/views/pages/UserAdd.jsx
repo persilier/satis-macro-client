@@ -2,17 +2,18 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import Select from "react-select";
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
+    toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
-import {debug, formatSelectOption} from "../../helpers/function";
+import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -22,9 +23,12 @@ const UserAdd = (props) => {
     if (!(verifyPermission(props.userPermissions, 'store-user-any-institution') || verifyPermission(props.userPermissions, "store-user-my-institution")))
         window.location.href = ERROR_401;
 
+    const optionOne = 1;
+    const optionTwo = 0;
     const defaultData = {
         identite_id: "",
         roles: [],
+        activate: optionTwo,
         institution_id: "",
         password: "",
         password_confirmation: "",
@@ -32,6 +36,7 @@ const UserAdd = (props) => {
     const defaultError = {
         identite_id: [],
         roles: [],
+        activate: [],
         institution_id: [],
         password: [],
     };
@@ -44,6 +49,7 @@ const UserAdd = (props) => {
     const [identity, setIdentity] = useState(null);
     const [roles, setRoles] = useState([]);
     const [role, setRole] = useState([]);
+    const activePilot = institution ? institution.value === props.activeUserInstitution : "" === props.activeUserInstitution;
 
     useEffect(() => {
         async function fetchData () {
@@ -61,7 +67,6 @@ const UserAdd = (props) => {
 
             await axios.get(endpoint)
                 .then(({data}) => {
-                    debug(data, "data");
                     if (verifyPermission(props.userPermissions, "store-user-any-institution"))
                         setInstitutions(formatSelectOption(data, "name", false));
                     else {
@@ -98,6 +103,12 @@ const UserAdd = (props) => {
         setData(newData);
     };
 
+    const handleOptionChange = (e) => {
+        const newData = {...data};
+        newData.activate = parseInt(e.target.value);
+        setData(newData);
+    };
+
     const handlePasswordChange = (e) => {
         const newData = {...data};
         newData.password = e.target.value;
@@ -108,6 +119,14 @@ const UserAdd = (props) => {
         const newData = {...data};
         newData.password_confirmation = e.target.value;
         setData(newData);
+    };
+
+    const formatStaff = function (options, labelKey, valueKey = "id") {
+        const newOptions = [];
+        for (let i = 0; i < options.length; i++) {
+            newOptions.push({value: (options[i])[valueKey], label: (options[i])[labelKey], staff_id: options[i].staff.id});
+        }
+        return newOptions;
     };
 
     const formatIdentities = (identityList) => {
@@ -121,7 +140,7 @@ const UserAdd = (props) => {
             await axios.get(`${appConfig.apiDomaine}/any/users/${institutionId}/create`)
                 .then(({data}) => {
                     setRoles(formatSelectOption(data.roles, "name", false, "name"));
-                    setIdentities(formatSelectOption(formatIdentities(data.identites), "fullName", false));
+                    setIdentities(formatStaff(formatIdentities(data.identites), "fullName"));
                 })
                 .catch(() => console.log("Something is wrong"))
             ;
@@ -129,11 +148,12 @@ const UserAdd = (props) => {
     };
 
     const handleInstitutionChange = (selected) => {
-        const newData = {...data};
+        const newData = {...defaultData, roles: []};
         newData.institution_id = selected ? selected.value : "";
         setInstitution(selected);
-        setData(newData);
+        setRole(null);
         setIdentity(null);
+        setData(newData);
         loadStaff(selected ? selected.value : null);
     };
 
@@ -153,22 +173,75 @@ const UserAdd = (props) => {
         else if(props.plan === "PRO")
             endpoint = `${appConfig.apiDomaine}/my/users`;
 
-        await axios.post(endpoint, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                setRole(null);
-                setInstitution(null);
+        if ((data.roles.includes("pilot-filial") || data.roles.includes('pilot-holding')) && activePilot) {
+            const addUser = await axios.post(endpoint, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    setRole(null);
+                    setInstitution(null);
+                    return true;
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    return false;
+                })
+            ;
+
+            if (addUser) {
+                if (data.activate === 1) {
+                    setStartRequest(true);
+                    const active = await axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${data.institution_id}`, {staff_id: identity.staff_id})
+                        .then(({data}) => {
+                            setStartRequest(false);
+                            setIdentity(null);
+                            return true;
+                        })
+                        .catch(({response}) => {
+                            setStartRequest(false);
+                            setIdentity(null);
+                            return false;
+                        })
+                    ;
+
+                    if (addUser && active) {
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Utilisateur enregistré et désigné comme pilote"));
+                    }
+
+                    if (addUser && !active) {
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Utilisateur enregistré mais non défini comme pilote actif"));
+                    }
+                } else {
+                    setIdentity(null);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig)
+                }
+            }
+        } else {
+            const addUser = await axios.post(endpoint, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    setRole(null);
+                    setInstitution(null);
+                    return true;
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    return false;
+                })
+            ;
+
+            if (addUser) {
                 setIdentity(null);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig)
+            }
+        }
     };
 
     return (
@@ -282,6 +355,33 @@ const UserAdd = (props) => {
                                                 </div>
                                             </div>
 
+                                            {
+                                                (data.roles.includes("pilot-filial") || data.roles.includes('pilot-holding')) && activePilot ? (
+                                                    <div className={error.activate.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"role"}>Pilote actif <InputRequire/></label>
+                                                        <div className="col-lg-9 col-xl-6">
+                                                            <div className="kt-radio-inline">
+                                                                <label className="kt-radio">
+                                                                    <input type="radio" className={error.activate.length ? "form-control is-invalid" : "form-control"}  value={optionOne} onChange={handleOptionChange} checked={optionOne === data.activate}/> OUI<span/>
+                                                                </label>
+                                                                <label className="kt-radio">
+                                                                    <input type="radio" className={error.activate.length ? "form-control is-invalid" : "form-control"} value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.activate}/> NON<span/>
+                                                                </label>
+                                                            </div>
+                                                            {
+                                                                error.activate.length ? (
+                                                                    error.activate.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                ) : null
+                                            }
+
                                             <div className={error.password.length ? "form-group row validated" : "form-group row"}>
                                                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
@@ -348,6 +448,7 @@ const UserAdd = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
+        activeUserInstitution: state.user.user.institution.id,
         plan: state.plan.plan
     };
 };
