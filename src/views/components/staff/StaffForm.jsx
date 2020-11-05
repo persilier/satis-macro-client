@@ -609,10 +609,10 @@ const StaffForm = (props) => {
                                                                 <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">Responsable de l'unité <InputRequire/></label>
                                                                 <div className="col-lg-6 col-xl-6 kt-radio-inline">
                                                                     <label className="kt-radio mt-4">
-                                                                        <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> Oui<span/>
+                                                                        <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> OUI<span/>
                                                                     </label>
                                                                     <label className="kt-radio">
-                                                                        <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> Non<span/>
+                                                                        <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> NON<span/>
                                                                     </label>
                                                                 </div>
                                                             </div>

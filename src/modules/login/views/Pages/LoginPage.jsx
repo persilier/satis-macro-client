@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {forceRound, loadCss, loadScript} from "../../../../helpers/function";
+import {loadCss, loadScript} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import {connect} from 'react-redux';
@@ -80,6 +80,9 @@ const LoginPage = (props) => {
                     localStorage.setItem("staffData", response.data.staff.identite_id);
                     localStorage.setItem('token', token);
                     localStorage.setItem('expire_in', expire_in);
+                    var date = new Date();
+                    date.setSeconds(date.getSeconds() + expire_in - 180);
+                    localStorage.setItem('date_expire', date);
                     localStorage.setItem('refresh_token', refresh_token);
                     window.location.href = "/dashboard";
                 });

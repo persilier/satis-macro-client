@@ -29,7 +29,7 @@ const ClaimAssignToStaffDetail = (props) => {
     document.title = "Satis client - Détail réclamation";
     const {id} = useParams();
 
-    if (!verifyPermission(props.userPermissions, "show-claim-assignment-to-staff"))
+    if (!(verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") && props.activePilot))
         window.location.href = ERROR_401;
 
     const [claim, setClaim] = useState(null);
@@ -47,7 +47,7 @@ const ClaimAssignToStaffDetail = (props) => {
     }, []);
 
     return (
-        verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") ? (
+        verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -233,6 +233,7 @@ const mapStateToProps = state => {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
+        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 

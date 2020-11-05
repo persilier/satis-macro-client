@@ -55,7 +55,7 @@ const ClaimAssignDetail = (props) => {
     document.title = "Satis client - Détail réclamation";
     const {id} = useParams();
 
-    if (!verifyPermission(props.userPermissions, "show-claim-awaiting-assignment"))
+    if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot))
         window.location.href = ERROR_401;
 
     let endPoint = endPointConfig[props.plan];
@@ -63,7 +63,7 @@ const ClaimAssignDetail = (props) => {
     const [claim, setClaim] = useState(null);
     const [copyClaim, setCopyClaim] = useState(null);
     const [dataId, setDataId] = useState("");
-    const [data, setData] = useState({unit_id: ""});
+    const [data, setData] = useState({unit_id: null});
     const [unitsData, setUnitsData] = useState({});
     const [unit, setUnit] = useState(null);
     const [startRequest, setStartRequest] = useState(false);
@@ -132,7 +132,7 @@ const ClaimAssignDetail = (props) => {
 
     const onChangeUnits = (selected) => {
         const newData = {...data};
-        newData.unit_id = selected ? selected.value : "";
+        newData.unit_id = selected ? selected.value : null;
         setUnit(selected);
         setData(newData)
     };
@@ -143,7 +143,7 @@ const ClaimAssignDetail = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") ? (
+        verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -273,7 +273,7 @@ const ClaimAssignDetail = (props) => {
 
                                                                 </div>
                                                             </div>
-                                                            : ""
+                                                            : null
                                                     }
                                                     {
                                                         (verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") ||
@@ -313,7 +313,7 @@ const ClaimAssignDetail = (props) => {
 
                                                                 </div>
                                                             </div>
-                                                            : ""
+                                                            : null
                                                     }
                                                 </div>
                                             </div>
@@ -347,10 +347,10 @@ const ClaimAssignDetail = (props) => {
                                                             copyClaim={copyClaim}
                                                             onCloseModal={() => setCopyClaim(null)}
                                                         />
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
-                                        ) : ""
+                                        ) : null
                                     }
                                 </div>
                             </div>
@@ -358,7 +358,7 @@ const ClaimAssignDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 
@@ -367,6 +367,7 @@ const mapStateToProps = state => {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
+        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 
