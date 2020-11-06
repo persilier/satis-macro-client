@@ -6,14 +6,18 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
+import {verifyPermission} from "../../helpers/permission";
+import {connect} from "react-redux";
 
 const UnfoundedModal = (props) => {
 
     const defaultData = {
         unfounded_reason: "",
+        solution_communicated: "",
     };
     const defaultError = {
         unfounded_reason: [],
+        solution_communicated: [],
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -22,7 +26,9 @@ const UnfoundedModal = (props) => {
     useEffect(() => {
         if (props.activeTreatment) {
             setData({
-                unfounded_reason: props.activeTreatment.unfounded_reason ? props.activeTreatment.unfounded_reason : ""
+                unfounded_reason: props.activeTreatment.unfounded_reason ? props.activeTreatment.unfounded_reason : "",
+                solution_communicated: props.activeTreatment.solution_communicated ? props.activeTreatment.solution_communicated : ""
+
             });
         }
     }, [props.activeTreatment]);
@@ -33,21 +39,38 @@ const UnfoundedModal = (props) => {
         setData(newData);
     };
 
+    const onChangeSolution = (e) => {
+        const newData = {...data};
+        newData.solution_communicated = e.target.value;
+        setData(newData);
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
-            .then(response => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href="/process/claim-assign/to-staff"
-            })
-            .catch(error => {
+        if (verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")){
+            axios.put(appConfig.apiDomaine + `/claim-awaiting-assignment/${props.getId}/unfounded`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/process/claim-assign"
+                }).catch(error => {
                 setStartRequest(false);
                 setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
-        ;
+        }else{
+            axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/process/claim-assign/to-staff"
+                }).catch(error => {
+                setStartRequest(false);
+                setError({...defaultError,...error.response.data.error});
+                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+            })
+        }
     };
     return (
         <div>
@@ -84,8 +107,36 @@ const UnfoundedModal = (props) => {
                                         ))
                                     ) : ""
                                 }
-
                             </div>
+                            {
+                                verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
+                                    <div
+                                        className={error.solution_communicated.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="description">Solution <span style={{color:"red"}}>*</span></label>
+                                        <textarea
+                                            id="description"
+                                            className={error.solution_communicated.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder="Veillez entrer la solution à communiquer"
+                                            cols="30"
+                                            rows="7"
+                                            value={data.solution_communicated}
+                                            onChange={(e) => onChangeSolution(e)}
+                                        />
+                                        {
+                                            error.solution_communicated.length ? (
+                                                error.solution_communicated.map((error, index) => (
+                                                    <div key={index}
+                                                         className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : ""
+                                        }
+
+                                    </div>
+                                ):""
+                            }
+
                         </div>
                         <div className="modal-footer">
 
@@ -112,5 +163,11 @@ const UnfoundedModal = (props) => {
         </div>
     )
 };
+const mapStateToProps = state => {
+    return {
+        userPermissions: state.user.user.permissions,
 
-export default UnfoundedModal;
+    };
+};
+
+export default connect(mapStateToProps)(UnfoundedModal);
