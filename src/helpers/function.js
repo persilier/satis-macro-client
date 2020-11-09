@@ -240,9 +240,13 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-currency')
         || verifyPermission(userPermissions, 'update-notifications')
         || verifyPermission(userPermissions, 'list-channel')
+        || verifyPermission(userPermissions, 'update-active-pilot')
         || verifyPermission(userPermissions, "list-faq-category")
-        || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
+        || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        || verifyPermission(userPermissions, "update-recurrence-alert-settings")
+        || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
+        || verifyPermission(userPermissions, "update-min-fusion-percent-parameters")
     );
 };
 
@@ -383,4 +387,11 @@ export const debug = (variable, label = null) => {
 
 export const getLowerCaseString = (value) => {
     return (value + "").toLowerCase();
+};
+
+export const logout = () => {
+    const plan = localStorage.getItem('plan');
+    localStorage.clear();
+    localStorage.setItem('plan', plan);
+    window.location.href = "/login";
 };

@@ -89,6 +89,18 @@ import ImportClientForm from "../components/Clients/ImportClientForm";
 import ImportInstitutionForm from "../components/Institutions/ImportInstitutionForm";
 import HistoricClaimsAdd from "../pages/HistoricClaimsAdd";
 import HistoricClaimsTraetment from "../pages/HistoricClaimsTraetment";
+import ClaimObjectImportPage from "../pages/ClaimObjectImportPage";
+import StaffImportPage from "../pages/StaffImportPage";
+import ClaimCategoryImportPage from "../pages/ClaimCategoryImportPage";
+import ActivatePilotPage from "../pages/ActivatePilotPage";
+import RulePage from "../pages/RulePage";
+import RuleAddPage from "../pages/RuleAddPage";
+import RuleEditPage from "../pages/RuleEditPage";
+import ProfilePage from "../pages/ProfilePage";
+import ClaimImportPage from "../pages/ClaimImportPage";
+import RecurencePage from "../pages/RecurencePage";
+import RejectLimitPage from "../pages/RejectLimitPage";
+import PercentageMinFusion from "../pages/PercentageMinFusion";
 
 const Body = () => {
     return (
@@ -288,6 +300,10 @@ const Body = () => {
                 <ClaimCategory/>
             </Route>
 
+            <Route exact path="/settings/claim_category/import">
+                <ClaimCategoryImportPage/>
+            </Route>
+
             <Route exact path="/settings/claim_categories/add">
                 <ClaimCategoryForm/>
             </Route>
@@ -308,6 +324,10 @@ const Body = () => {
                 <ClaimObjectForm/>
             </Route>
 
+            <Route exact path="/settings/claim_objects/import">
+                <ClaimObjectImportPage/>
+            </Route>
+
             <Route exact path="/settings/staffs">
                 <Staff/>
             </Route>
@@ -318,6 +338,10 @@ const Body = () => {
 
             <Route exact path="/settings/staffs/:id/edit">
                 <StaffForm/>
+            </Route>
+
+            <Route exact path="/settings/staffs/import">
+                <StaffImportPage/>
             </Route>
 
             <Route exact path="/settings/severities">
@@ -358,6 +382,10 @@ const Body = () => {
 
             <Route exact path="/process/claims/add">
                 <ClaimAdd/>
+            </Route>
+
+            <Route exact path="/process/claims/import">
+                <ClaimImportPage/>
             </Route>
 
             <Route exact path="/process/incomplete_claims">
@@ -508,6 +536,18 @@ const Body = () => {
                 <UserEdit/>
             </Route>
 
+            <Route exact path="/settings/rules">
+                <RulePage/>
+            </Route>
+
+            <Route exact path="/settings/rules/add">
+                <RuleAddPage/>
+            </Route>
+
+            <Route exact path="/settings/rules/:id/edit">
+                <RuleEditPage/>
+            </Route>
+
             <Route exact path="/settings/qualification-period">
                 <QualificationPeriod/>
             </Route>
@@ -524,6 +564,33 @@ const Body = () => {
                 <TreatmentPeriodAdd/>
             </Route>
 
+            <Route exact path="/settings/activate-pilot">
+                <ActivatePilotPage/>
+            </Route>
+
+            <Route exact path="/settings/account">
+                <ProfilePage/>
+            </Route>
+
+            <Route exact path="/settings/account/personal-information">
+                <ProfilePage/>
+            </Route>
+
+            <Route exact path="/settings/account/change-password">
+                <ProfilePage/>
+            </Route>
+
+            <Route exact path="/settings/recurence">
+                <RecurencePage/>
+            </Route>
+
+            <Route exact path="/settings/reject-limit">
+                <RejectLimitPage/>
+            </Route>
+
+            <Route exact path="/settings/percentage-min-fusion">
+                <PercentageMinFusion/>
+            </Route>
 
             <Route path={"*"}>
                 <Redirect to={"/dashboard"}/>
