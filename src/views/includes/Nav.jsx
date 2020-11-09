@@ -266,6 +266,11 @@ const Nav = (props) => {
                                                                         {moment(new Date(n.created_at)).fromNow()}
                                                                     </div>
                                                                 </div>
+                                                                {
+                                                                    startRead ? (
+                                                                        <Loader/>
+                                                                    ) : null
+                                                                }
                                                             </a>
                                                         )))
                                                     }

@@ -244,6 +244,9 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "list-faq-category")
         || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        || verifyPermission(userPermissions, "update-recurrence-alert-settings")
+        || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
+        || verifyPermission(userPermissions, "update-min-fusion-percent-parameters")
     );
 };
 

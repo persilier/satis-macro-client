@@ -19,7 +19,6 @@ import InfirmationTable from "../components/InfirmationTable";
 import InputRequire from "../components/InputRequire";
 import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
-import ExportButton from "../components/ExportButton";
 import {NavLink} from "react-router-dom";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;

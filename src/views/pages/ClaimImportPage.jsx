@@ -14,15 +14,25 @@ import ImportFileForm from "../components/ImportFileForm";
 
 const ClaimImportPage = (props) => {
     document.title = "Satis client - Importation reclamation";
-    /*if (!verifyPermission(props.userPermissions, 'update-mail-parameters'))
-        window.location.href = ERROR_401;*/
+
+    let endpoint = "";
+    if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
+        window.location.href = ERROR_401;
+
+    if (verifyPermission(props.userPermissions, 'store-claim-against-any-institution'))
+        endpoint = `${appConfig.apiDomaine}/any/import-claim`;
+    else if(verifyPermission(props.userPermissions, 'store-claim-against-my-institution'))
+        endpoint = `${appConfig.apiDomaine}/my/import-claim`;
+    else if(verifyPermission(props.userPermissions, 'store-claim-without-client'))
+        endpoint = `${appConfig.apiDomaine}/without-client/import-claim`;
 
     return (
         <ImportFileForm
-            submitEndpoint={`${appConfig.apiDomaine}/import-claim`}
+            submitEndpoint={endpoint}
             pageTitleLink="/process/claims/add"
             pageTitle="Enregistrement reclamation"
             panelTitle="Importation de reclamation au format excel"
+            claimImport={true}
         />
     );
 };

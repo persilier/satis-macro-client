@@ -125,7 +125,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Réclamations à traiter</span>
                                                         </li>
                                                     </NavLink>
-                                                ) :""
+                                                ) : null
                                             }
 
                                             {
@@ -148,7 +148,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Mesure Satisfaction</span>
                                                         </li>
                                                     </NavLink>
-                                                ) :""
+                                                ) : null
                                             }
                                             {
                                                 verifyPermission(props.userPermissions, 'list-any-claim-archived')||
@@ -160,7 +160,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Archivage</span>
                                                         </li>
                                                     </NavLink>
-                                                ) :""
+                                                ) : null
                                             }
                                             {
                                                 verifyPermission(props.userPermissions, 'list-my-discussions')||
@@ -172,7 +172,7 @@ const Aside = (props) => {
                                                             <span className="kt-menu__link-text">Discussions</span>
                                                         </li>
                                                     </NavLink>
-                                                ):""
+                                                ) : null
                                             }
 
 
@@ -371,7 +371,7 @@ const Aside = (props) => {
                                                                     <span className="kt-menu__link-text"> Entités de Traitement</span>
                                                                 </li>
                                                             </NavLink>
-                                                        ):""
+                                                        ): null
 
                                                 }
                                                 {
@@ -676,6 +676,39 @@ const Aside = (props) => {
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                 <span className="kt-menu__link-text">Pilote actif</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "update-recurrence-alert-settings") ? (
+                                                        <NavLink exact to="/settings/recurence" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Configuration des alerts de recurences</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "update-reject-unit-transfer-parameters") ? (
+                                                        <NavLink exact to="/settings/reject-limit" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Configuration limitation rejet</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "update-min-fusion-percent-parameters") ? (
+                                                        <NavLink exact to="/settings/percentage-min-fusion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Configuration pourcentage minimum fusion</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null

@@ -13,11 +13,20 @@ const ImportFileForm = (props) => {
     };
     const defaultError = {
         file: [],
+        etat_update: []
     };
+    const optionOne = 1;
+    const optionTwo = 0;
+
+    const [stateUpdate, setStateUpdate] = useState(optionTwo);
     const [name, setName] = useState('');
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+
+    const handleStateUpdateChange = (e) => {
+        setStateUpdate(parseInt(e.target.value));
+    };
 
     const handleChangeFile = (e) => {
         const newData = {...data};
@@ -29,6 +38,9 @@ const ImportFileForm = (props) => {
     const onSubmit = async (e) => {
         const formData = new FormData();
         formData.append("file", data.file);
+        if (props.claimImport) {
+            formData.append('etat_update', stateUpdate);
+        }
         e.preventDefault();
 
         setStartRequest(true);
@@ -36,7 +48,6 @@ const ImportFileForm = (props) => {
             .then(response => {
                 setStartRequest(false);
                 setError(defaultError);
-                console.log("data:", response.data);
                 if (response.data.status) {
                     setName("");
                     setData(defaultData);
@@ -92,6 +103,34 @@ const ImportFileForm = (props) => {
                             <form method="POST" className="kt-form">
                                 <div className="kt-form kt-form--label-right">
                                     <div className="kt-portlet__body">
+                                        {
+                                            props.claimImport ? (
+                                                <div className={error.etat_update.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"role"}>Modifier <InputRequire/></label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <div className="kt-radio-inline">
+                                                            <label className="kt-radio">
+                                                                <input type="radio" className={error.etat_update.length ? "form-control is-invalid" : "form-control"}  value={optionOne} onChange={handleStateUpdateChange} checked={optionOne === stateUpdate}/> OUI<span/>
+                                                            </label>
+                                                            <label className="kt-radio">
+                                                                <input type="radio" className={error.etat_update.length ? "form-control is-invalid" : "form-control"} value={optionTwo} onChange={handleStateUpdateChange} checked={optionTwo === stateUpdate}/> NON<span/>
+                                                            </label>
+                                                        </div>
+                                                        {
+                                                            error.etat_update.length ? (
+                                                                error.etat_update.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+                                            ) :  null
+                                        }
+
+
                                         <div className={error.file.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Fichier <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">

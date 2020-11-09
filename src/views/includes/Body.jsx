@@ -98,6 +98,9 @@ import RuleAddPage from "../pages/RuleAddPage";
 import RuleEditPage from "../pages/RuleEditPage";
 import ProfilePage from "../pages/ProfilePage";
 import ClaimImportPage from "../pages/ClaimImportPage";
+import RecurencePage from "../pages/RecurencePage";
+import RejectLimitPage from "../pages/RejectLimitPage";
+import PercentageMinFusion from "../pages/PercentageMinFusion";
 
 const Body = () => {
     return (
@@ -575,6 +578,18 @@ const Body = () => {
 
             <Route exact path="/settings/account/change-password">
                 <ProfilePage/>
+            </Route>
+
+            <Route exact path="/settings/recurence">
+                <RecurencePage/>
+            </Route>
+
+            <Route exact path="/settings/reject-limit">
+                <RejectLimitPage/>
+            </Route>
+
+            <Route exact path="/settings/percentage-min-fusion">
+                <PercentageMinFusion/>
             </Route>
 
             <Route path={"*"}>
