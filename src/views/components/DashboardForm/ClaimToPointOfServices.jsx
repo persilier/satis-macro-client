@@ -85,8 +85,12 @@ const ClaimToInstitution = (props) => {
                 ) : (
                     <div className="kt-portlet__body">
                         <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
-                            <Chart options={pointOfServiceData.options} series={pointOfServiceData.series}
-                                   type="pie" width={550}/>
+                            {pointOfServiceData?(
+                                <Chart options={pointOfServiceData.options} series={pointOfServiceData.series}
+                                       type="pie" width={550}/>
+                            ):""
+                            }
+
                         </div>
                     </div>
                 )
