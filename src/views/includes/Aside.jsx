@@ -391,14 +391,18 @@ const Aside = (props) => {
                                                     </NavLink>:null
                                                 }
 
+                                                {
+                                                    verifyPermission(props.userPermissions, "update-relance-parameters")?(
+                                                        <NavLink to="/settings/relance" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Configuration de Relance</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ): null
+                                                }
 
-                                                <NavLink to="/settings/relance" className="kt-menu__item "
-                                                         activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Configuration de Relance</span>
-                                                    </li>
-                                                </NavLink>
                                                 {
                                                     verifyPermission(props.userPermissions, "list-faq")?(
                                                         <NavLink to="/settings/faqs/list" className="kt-menu__item "
