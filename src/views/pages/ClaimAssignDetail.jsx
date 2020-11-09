@@ -91,6 +91,7 @@ const ClaimAssignDetail = (props) => {
             }
 
         }
+
         fetchData();
     }, []);
 
@@ -156,7 +157,8 @@ const ClaimAssignDetail = (props) => {
                             <div className="kt-subheader__breadcrumbs">
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim-assign" className="kt-subheader__breadcrumbs-link">
                                         Réclamation à Transférer
@@ -186,6 +188,17 @@ const ClaimAssignDetail = (props) => {
                                 <div className="kt-grid__item kt-wizard-v2__aside">
                                     <div className="kt-wizard-v2__nav">
                                         <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                                            {
+                                                claim ? (
+                                                    claim.active_treatment && claim.active_treatment.rejected_reason && claim.active_treatment.rejected_at ? (
+                                                        <div className="d-flex justify-content-start">
+                                                            <span className="kt-badge kt-badge--danger kt-badge--inline"
+                                                                  style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
+                                                        </div>
+                                                    ) : null
+                                                ) : null
+                                            }<br/>
+
                                             <ClientButton/>
 
                                             <ClaimButton/>
@@ -216,7 +229,7 @@ const ClaimAssignDetail = (props) => {
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
                                         {
-                                            verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
+                                            verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment") ? (
                                                 <div className="d-flex justify-content-md-end">
                                                     <button type="button"
                                                             data-toggle="modal" data-target="#exampleModal"
@@ -241,22 +254,14 @@ const ClaimAssignDetail = (props) => {
                                                     }
 
                                                 </div>
-                                            ):""
+                                            ) : ""
                                         }
 
-                                        {
-                                            claim ? (
-                                                claim.active_treatment && claim.active_treatment.rejected_reason && claim.active_treatment.rejected_at ? (
-                                                    <div className="d-flex justify-content-end">
-                                                        <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
-                                                    </div>
-                                                ) : null
-                                            ) : null
-                                        }
 
                                         <ClientButtonDetail claim={claim}/>
 
-                                        <ClaimButtonDetail claim={claim} rejected={claim && claim.active_treatment && claim.active_treatment.rejected_reason ? true : false}/>
+                                        <ClaimButtonDetail claim={claim}
+                                                           rejected={claim && claim.active_treatment && claim.active_treatment.rejected_reason ? true : false}/>
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
