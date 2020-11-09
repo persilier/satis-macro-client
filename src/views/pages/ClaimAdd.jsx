@@ -1,25 +1,32 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
+import {NavLink} from "react-router-dom";
 import axios from "axios";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
-import {filterChannel, formatSelectOption, formatToTimeStamp} from "../../helpers/function";
+import {
+    filterChannel,
+    formatSelectOption,
+    formatToTimeStamp,
+    refreshToken,
+} from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig,
+    toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import ConfirmClaimAddModal from "../components/Modal/ConfirmClaimAddModal";
 import InfirmationTable from "../components/InfirmationTable";
 import InputRequire from "../components/InputRequire";
 import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
-import {NavLink} from "react-router-dom";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -169,7 +176,11 @@ const ClaimAdd = props => {
                     console.log("Something is wrong");
                 });
         }
-        fetchData();
+
+        if (verifyTokenExpire()) {
+            fetchData();
+            refreshToken();
+        }
     }, [endPoint.create, props.userPermissions]);
 
     const onChangeFirstName = (e) => {
@@ -220,13 +231,17 @@ const ClaimAdd = props => {
             setInstitution(selected);
             newData.institution_targeted_id = selected.value;
             if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
-                axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
-                    .then(response => {
-                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
-                    })
-                    .catch(error => {
-                        console.log("Something is wrong");
-                    });
+                if (verifyTokenExpire()) {
+                    axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
+                        .then(response => {
+                            setUnits(formatSelectOption(response.data.units, "name", "fr"))
+                        })
+                        .catch(error => {
+                            console.log("Something is wrong");
+                        })
+                    ;
+                    refreshToken();
+                }
             }
         }
         else {
@@ -349,13 +364,18 @@ const ClaimAdd = props => {
         const newData = {...data};
         if (selected) {
             setClaimCategory(selected);
-            axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
-                .then(response => {
-                    newData.claim_object_id = "";
-                    setClaimObject(null);
-                    setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
-                })
-                .catch(error => console.log("Something is wrong"))
+            if (verifyTokenExpire()) {
+                axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
+                    .then(response => {
+                        newData.claim_object_id = "";
+                        setClaimObject(null);
+                        setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
+                    })
+                    .catch(error => console.log("Something is wrong"))
+                ;
+                refreshToken();
+            }
+
         } else {
             setClaimObjects([]);
             setClaimObject(null);
@@ -462,19 +482,22 @@ const ClaimAdd = props => {
             setStartSearch(false);
             setSearchList(clientCash.clients);
         } else {
-            await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?r=${searchInputValue}`)
-                .then(({data}) => {
-                    setStartSearch(false);
-                    setShowSearchResult(true);
-                    if (data.length)
-                        setClientCash({ "searchInputValue": searchInputValue, "clients": data});
-                    setSearchList(data);
-                })
-                .catch(({response}) => {
-                    setStartSearch(false);
-                    console.log("Something is wrong");
-                })
-            ;
+            if (verifyTokenExpire()) {
+                await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?r=${searchInputValue}`)
+                    .then(({data}) => {
+                        setStartSearch(false);
+                        setShowSearchResult(true);
+                        if (data.length)
+                            setClientCash({ "searchInputValue": searchInputValue, "clients": data});
+                        setSearchList(data);
+                    })
+                    .catch(({response}) => {
+                        setStartSearch(false);
+                        console.log("Something is wrong");
+                    })
+                ;
+                refreshToken();
+            }
         }
     };
 
@@ -529,34 +552,37 @@ const ClaimAdd = props => {
             delete newData.account_targeted_id;
         if (props.plan !== "HUB")
             delete newData.relationship_id;
-        axios.post(endPoint.store, formatFormData(newData))
-            .then(async () => {
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                resetAllData();
-                document.getElementById("customFile").value = "";
-            })
-            .catch(async (error) => {
-                if (error.response.data.code === 409) {
-                    //Existing entity claimer
-                    setFoundData(error.response.data.error);
-                    setStartRequest(false);
-                    await setError(defaultError);
-                    await document.getElementById("confirmSaveForm").click();
-                } else {
-                    setStartRequest(false);
-                    let fileErrors = [];
-                    let i = 0;
-                    for (const key in error.response.data.error) {
-                        if (key === `file.${i}`) {
-                            fileErrors = [...fileErrors, ...error.response.data.error[`file.${i}`]];
-                            i++;
+        if (verifyTokenExpire()) {
+            axios.post(endPoint.store, formatFormData(newData))
+                .then(async () => {
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    resetAllData();
+                    document.getElementById("customFile").value = "";
+                })
+                .catch(async (error) => {
+                    if (error.response.data.code === 409) {
+                        //Existing entity claimer
+                        setFoundData(error.response.data.error);
+                        setStartRequest(false);
+                        await setError(defaultError);
+                        await document.getElementById("confirmSaveForm").click();
+                    } else {
+                        setStartRequest(false);
+                        let fileErrors = [];
+                        let i = 0;
+                        for (const key in error.response.data.error) {
+                            if (key === `file.${i}`) {
+                                fileErrors = [...fileErrors, ...error.response.data.error[`file.${i}`]];
+                                i++;
+                            }
                         }
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     }
-                    setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                }
-            })
-        ;
+                })
+            ;
+            refreshToken();
+        }
     };
 
     return (
