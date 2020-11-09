@@ -25,6 +25,7 @@ import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import DoubleButtonDetail from "../components/DoubleButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
+import UnfoundedModal from "../components/UnfoundedModal";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -214,6 +215,34 @@ const ClaimAssignDetail = (props) => {
 
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
+                                        {
+                                            verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
+                                                <div className="d-flex justify-content-md-end">
+                                                    <button type="button"
+                                                            data-toggle="modal" data-target="#exampleModal"
+                                                            className="btn btn-success">
+                                                        NON FONDÉ
+                                                    </button>
+                                                    {
+                                                        claim ? (
+                                                            <UnfoundedModal
+                                                                activeTreatment={
+                                                                    claim.active_treatment ? (
+                                                                        claim.active_treatment
+                                                                    ) : null
+                                                                }
+                                                                getId={`${id}`}
+                                                            />
+                                                        ) : (
+                                                            <UnfoundedModal
+                                                                getId={`${id}`}
+                                                            />
+                                                        )
+                                                    }
+
+                                                </div>
+                                            ):""
+                                        }
 
                                         {
                                             claim ? (

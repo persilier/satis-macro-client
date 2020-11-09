@@ -123,6 +123,7 @@ const ClaimAssignToStaffDetail = (props) => {
 
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
+
                                         <div className="d-flex justify-content-end">
                                             <button type="button"
                                                     data-toggle="modal" data-target="#exampleModal"
