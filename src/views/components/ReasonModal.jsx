@@ -3,7 +3,9 @@ import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {
-    toastAssignClaimSuccessMessageConfig, toastRejectTreatmentClaimSuccessMessageConfig,
+    toastAssignClaimSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig,
+    toastRejectTreatmentClaimSuccessMessageConfig,
     toastValidateTreatmentClaimSuccessMessageConfig
 } from "../../config/toastConfig";
 
@@ -21,9 +23,12 @@ const ReasonModal = props => {
                     ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
                     window.location.href = `/process/unit-claims`
                 })
-                .catch(error => {
+                .catch(({response}) => {
                     setStartRequest(false);
-                    setError(error.response.data.error.rejected_reason);
+                    if (response.data.code === 403)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error))
+                    else
+                        setError(response.data.error.rejected_reason);
                 })
             ;
         } else if(props.action === "validateReject") {
