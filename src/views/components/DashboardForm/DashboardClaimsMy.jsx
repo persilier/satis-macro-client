@@ -18,7 +18,7 @@ const DashboardClaimsMy = (props) => {
         let isCancelled = false;
 
         async function fetchData() {
-            axios.get(appConfig.apiDomaine + "/dashboard")
+           await axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
                     if (!isCancelled) {
                         setData(response.data.statistics);

@@ -408,16 +408,16 @@ const Body = () => {
                 <ClaimAssign/>
             </Route>
 
+            <Route exact path="/process/claim-assign/:id/detail">
+                <ClaimAssignDetail/>
+            </Route>
+
             <Route exact path="/process/claim-assign/to-staff">
                 <ClaimAssignToStaff/>
             </Route>
 
             <Route exact path="/process/claim-assign/to-staff/:id/detail">
                 <ClaimAssignToStaffDetail/>
-            </Route>
-
-            <Route exact path="/process/claim-assign/:id/detail">
-                <ClaimAssignDetail/>
             </Route>
 
             <Route exact path="/process/unit-claims">
