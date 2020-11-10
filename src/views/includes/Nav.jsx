@@ -90,13 +90,18 @@ const Nav = (props) => {
     const readAllNotification = async (readNotification, path) => {
         await axios.put(`${appConfig.apiDomaine}/unread-notifications`, readNotification)
             .then(({data}) => {
-                debug(data, "data");
                 setStartRead(false);
-                if (data.canReload) {
-                    window.location.href = path;
+                if (path) {
+                    if (data.canReload) {
+                        window.location.href = path;
+                    } else {
+                        setEventNotification(filterEventNotification(data.unreadNotifications));
+                        setRelaunchNotification(filterRelaunchNotification(data.unreadNotifications));
+                    }
                 } else {
-                    setEventNotification(filterEventNotification(data.unreadNotifications));
-                    setRelaunchNotification(filterRelaunchNotification(data.unreadNotifications));
+                    setRelaunchNotification(notifications => {
+                        return notifications.filter(n => n.id !== readNotification.notifications[0]);
+                    });
                 }
             })
             .catch(({response}) => {console.log("Something is wrong")})
@@ -115,9 +120,9 @@ const Nav = (props) => {
             if (!relaunchNotification) {
                 readAllNotification(readNotification, path);
             } else {
-                setRelaunchNotification(notifications => {
-                    return notifications.filter(n => n.id !== idNotification)
-                });
+                if (!path) {
+                    readAllNotification(readNotification, path);
+                }
             }
         }
     });
@@ -251,7 +256,7 @@ const Nav = (props) => {
                                                             <a
                                                                 key={index}
                                                                 href={`/read-notification-${index}`}
-                                                                onClick={e => showDetailNotification(e, `/read-notification-${index}`, n.id, true)}
+                                                                onClick={e => showDetailNotification(e, ``, n.id, true)}
                                                                 className="kt-notification__item"
                                                             >
                                                                 <div className="kt-notification__item-icon">

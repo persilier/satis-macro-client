@@ -14,7 +14,8 @@ export const notificationConfig = {
     "add-contributor-to-discussion": "Ajouter contributeur à la discussion",
     "post-discussion-message": "Message post discussion",
     "reminder-before-deadline": "Relance automatique avant échéance",
-    "reminder-after-deadline": "Relance automatique après échéance"
+    "reminder-after-deadline": "Relance automatique après échéance",
+    "recurrence": "Le nombre maximum de réclamation est dépassé"
 };
 
 export const EventNotification = [
@@ -52,5 +53,6 @@ export const EventNotificationPath = {
 
 export const RelaunchNotification = [
     "ReminderBeforeDeadline",
-    "ReminderAfterDeadline"
+    "ReminderAfterDeadline",
+    "Recurrence"
 ];
