@@ -241,12 +241,15 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'update-notifications')
         || verifyPermission(userPermissions, 'list-channel')
         || verifyPermission(userPermissions, 'update-active-pilot')
+        || verifyPermission(userPermissions, "list-faq")
         || verifyPermission(userPermissions, "list-faq-category")
         || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
         || verifyPermission(userPermissions, "update-min-fusion-percent-parameters")
+        || verifyPermission(userPermissions, "update-components-parameters")
+        || verifyPermission(userPermissions, "update-relance-parameters")
     );
 };
 

@@ -9,10 +9,15 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import InputRequire from "./InputRequire";
+import {verifyPermission} from "../../helpers/permission";
+import {ERROR_401} from "../../config/errorPage";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
-const ConfigCoefficient = () => {
+const ConfigCoefficient = (props) => {
+
+    if (!verifyPermission(props.userPermissions, "update-relance-parameters"))
+        window.location.href = ERROR_401;
 
     const defaultData = {
         coef: "",
@@ -161,7 +166,9 @@ const ConfigCoefficient = () => {
         );
     };
     return (
-        printJsx()
+        verifyPermission(props.userPermissions, "update-relance-parameters") ?
+            printJsx()
+            : null
     );
 };
 

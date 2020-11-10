@@ -24,7 +24,7 @@ axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 const ClaimAssignToStaff = (props) => {
     document.title = "Satis client - Détail réclamation";
 
-    if (!(verifyPermission(props.userPermissions, "list-claim-assignment-to-staff") && props.activePilot))
+    if (!verifyPermission(props.userPermissions, "list-claim-assignment-to-staff"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -162,7 +162,7 @@ const ClaimAssignToStaff = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-claim-assignment-to-staff') && props.activePilot ? (
+        verifyPermission(props.userPermissions, 'list-claim-assignment-to-staff') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -337,7 +337,6 @@ const ClaimAssignToStaff = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot
     };
 };
 

@@ -40,7 +40,7 @@ const HeaderTablePage = (props) => {
                             </div>
                         </div>
                     </div>
-                ) : ""
+                ) : null
             }
         </div>
     );
