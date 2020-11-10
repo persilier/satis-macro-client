@@ -46,6 +46,17 @@ export const confirmAssignConfig =  {
     cancelButtonText: "Quitter"
 };
 
+export const confirmTranfertConfig =  {
+    title: 'Confirmation!',
+    text: "Voulez-vous tranférer Cette Réclamation?",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Oui, confirmer!',
+    cancelButtonText: "Quitter"
+};
+
 export const toastDeleteErrorMessageConfig = {
     background: "#3c3e40",
     icon: 'error',

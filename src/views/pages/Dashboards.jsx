@@ -70,14 +70,14 @@ const Dashboards = (props) => {
                             (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
                                 <div className="kt-portlet">
                                     <ClaimToInstitution/>
-                                </div> : ""
+                                </div> : null
                         }
                         {
                             !verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                             verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
                                 <div className="kt-portlet">
                                     <ClaimToPointOfServices/>
-                                </div> : ""
+                                </div> : null
                         }
 
 
