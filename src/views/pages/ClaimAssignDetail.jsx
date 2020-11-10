@@ -26,6 +26,8 @@ import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import DoubleButtonDetail from "../components/DoubleButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import UnfoundedModal from "../components/UnfoundedModal";
+import {AssignClaimConfirmation, TranfertClaimConfirmation} from "../components/ConfirmationAlert";
+import {confirmAssignConfig, confirmTranfertConfig} from "../../config/confirmConfig";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -62,7 +64,7 @@ const ClaimAssignDetail = (props) => {
     let endPoint = endPointConfig[props.plan];
 
     const defaultError = {
-       unit_id: [],
+        unit_id: [],
     };
     const [error, setError] = useState(defaultError);
 
@@ -100,43 +102,47 @@ const ClaimAssignDetail = (props) => {
         fetchData();
     }, []);
 
-    const onClickToTranfertInstitution = async (e) => {
-        e.preventDefault();
-        setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
-            .then(response => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href = "/process/claim-assign";
-            })
-            .catch(error => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddErrorMessageConfig)
-            })
-        ;
-    };
+    const onClickToTranfertInstitution = (e) => {
+            e.preventDefault();
+            TranfertClaimConfirmation.fire(confirmTranfertConfig)
+                .then(async (response) => {
+                    if (response.value) {
+                        setStartRequest(true);
+                        await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
+                            .then(response => {
+                                setStartRequest(false);
+                                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                                window.location.href = "/process/claim-assign";
+                            })
+                            .catch(error => {
+                                setStartRequest(false);
+                                ToastBottomEnd.fire(toastAddErrorMessageConfig)
+                            })
+                        ;
+                    }
+                });
+        };
 
     const onClickToTranfert = (e) => {
         e.preventDefault();
-        setStartRequestToUnit(true);
-
-        async function fetchData() {
-            await axios.put(endPoint.update(`${id}`), data)
-                .then(response => {
-                    setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    window.location.href = "/process/claim-assign";
-                })
-                .catch(error => {
-                    setError({...defaultError,...error.response.data.error});
-                    setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    // ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.unit_id))
-                })
-            ;
-        }
-
-        fetchData()
+        TranfertClaimConfirmation.fire(confirmTranfertConfig)
+            .then(async (response) => {
+                if (response.value) {
+                    setStartRequestToUnit(true);
+                    await axios.put(endPoint.update(`${id}`), data)
+                        .then(response => {
+                            setStartRequestToUnit(false);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                            window.location.href = "/process/claim-assign";
+                        })
+                        .catch(error => {
+                            setError({...defaultError, ...error.response.data.error});
+                            setStartRequestToUnit(false);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec du Tranfert"));
+                        })
+                    ;
+                }
+            });
     };
 
     const onChangeUnits = (selected) => {
@@ -144,7 +150,7 @@ const ClaimAssignDetail = (props) => {
         newData.unit_id = selected ? selected.value : null;
         setUnit(selected);
         setData(newData);
-        console.log(newData.unit_id,"UNIT")
+        console.log(newData.unit_id, "UNIT")
     };
 
     const onClickFusionButton = async (newClaim) => {
@@ -154,7 +160,8 @@ const ClaimAssignDetail = (props) => {
 
     return (
         verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
+                 id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
@@ -168,7 +175,8 @@ const ClaimAssignDetail = (props) => {
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                         className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <Link to="/process/claim-assign" className="kt-subheader__breadcrumbs-link">
+                                    <Link to="/process/claim-assign"
+                                          className="kt-subheader__breadcrumbs-link">
                                         Réclamation à Transférer
                                     </Link>
                                 </div>
@@ -179,7 +187,8 @@ const ClaimAssignDetail = (props) => {
                                     <i className="flaticon2-shelter"/>
                                 </a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
+                                <a href="#detail" onClick={e => e.preventDefault()}
+                                   style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
                                     Détail
                                 </a>
@@ -195,7 +204,8 @@ const ClaimAssignDetail = (props) => {
                                  data-ktwizard-state="step-first">
                                 <div className="kt-grid__item kt-wizard-v2__aside">
                                     <div className="kt-wizard-v2__nav">
-                                        <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                                        <div
+                                            className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
                                             {
                                                 claim ? (
                                                     claim.active_treatment && claim.active_treatment.rejected_reason && claim.active_treatment.rejected_at ? (
@@ -215,7 +225,8 @@ const ClaimAssignDetail = (props) => {
 
                                             <DoubleButton claim={claim}/>
 
-                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                            <div className="kt-wizard-v2__nav-item"
+                                                 data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon">
                                                         <i className="flaticon-truck"/>
@@ -281,15 +292,17 @@ const ClaimAssignDetail = (props) => {
 
                                         <div className="kt-wizard-v2__content"
                                              data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Transfert de la réclamation
+                                            <div className="kt-heading kt-heading--md">Transfert de la
+                                                réclamation
                                             </div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     {
                                                         verifyPermission(props.userPermissions, "transfer-claim-to-targeted-institution") ?
                                                             <div className="kt-wizard-v2__review-item">
-                                                                <div className="kt-wizard-v2__review-content"
-                                                                     style={{fontSize: "15px"}}>
+                                                                <div
+                                                                    className="kt-wizard-v2__review-content"
+                                                                    style={{fontSize: "15px"}}>
                                                                     <label
                                                                         className="col-xl-6 col-lg-6 col-form-label"><strong>Institution
                                                                         concernée</strong></label>
@@ -324,7 +337,8 @@ const ClaimAssignDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-title">
                                                                     Tranferer à une unité
                                                                 </div>
-                                                                <div className="kt-wizard-v2__review-content">
+                                                                <div
+                                                                    className="kt-wizard-v2__review-content">
                                                                     <div
                                                                         className={error.unit_id.length ? "form-group validated" : "form-group"}>
                                                                         <label>Unité</label>
@@ -390,7 +404,8 @@ const ClaimAssignDetail = (props) => {
                                     {
                                         verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
                                             <div>
-                                                <button style={{display: "none"}} id={`modal-button`} type="button"
+                                                <button style={{display: "none"}} id={`modal-button`}
+                                                        type="button"
                                                         className="btn btn-bold btn-label-brand btn-sm"
                                                         data-toggle="modal" data-target="#kt_modal_4"/>
                                                 {
