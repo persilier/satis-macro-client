@@ -40,20 +40,15 @@ const ClaimToInstitution = (props) => {
             axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
                     if (!isCancelled) {
-                        // console.log(response.data, "ProcessEvolution");
                         let pointOfService = response.data.pointOfServicesTargeted;
                         let ServiceData = [];
                         for (const processus in pointOfService) {
                             ServiceData.push(processus);
                         }
-                        // console.log(pointOfServiceData,"pointOfServiceData");
                         let newData = {...defaultData};
 
                         newData.options.labels = ServiceData;
                         newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
-                        // if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
-                        // }
-                        // console.log(newData,"newData");
                         setPointOfServiceData(newData);
                         setLoad(false)
                     }
@@ -75,7 +70,7 @@ const ClaimToInstitution = (props) => {
         <div>
             <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Satisfaction des points de services qui reçoivent plus de
+                    <h3 className="kt-portlet__head-title">Statistique des points de services qui reçoivent plus de
                         réclamations sur les 30 derniers jours</h3>
                 </div>
             </div>

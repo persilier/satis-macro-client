@@ -15,7 +15,7 @@ import FusionClaim from "../components/FusionClaim";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig
+    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
@@ -60,6 +60,11 @@ const ClaimAssignDetail = (props) => {
         window.location.href = ERROR_401;
 
     let endPoint = endPointConfig[props.plan];
+
+    const defaultError = {
+       unit_id: [],
+    };
+    const [error, setError] = useState(defaultError);
 
     const [claim, setClaim] = useState(null);
     const [copyClaim, setCopyClaim] = useState(null);
@@ -123,8 +128,10 @@ const ClaimAssignDetail = (props) => {
                     window.location.href = "/process/claim-assign";
                 })
                 .catch(error => {
+                    setError({...defaultError,...error.response.data.error});
                     setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig)
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    // ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.unit_id))
                 })
             ;
         }
@@ -136,7 +143,8 @@ const ClaimAssignDetail = (props) => {
         const newData = {...data};
         newData.unit_id = selected ? selected.value : null;
         setUnit(selected);
-        setData(newData)
+        setData(newData);
+        console.log(newData.unit_id,"UNIT")
     };
 
     const onClickFusionButton = async (newClaim) => {
@@ -317,7 +325,8 @@ const ClaimAssignDetail = (props) => {
                                                                     Tranferer à une unité
                                                                 </div>
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    <div className="form-group">
+                                                                    <div
+                                                                        className={error.unit_id.length ? "form-group validated" : "form-group"}>
                                                                         <label>Unité</label>
                                                                         <Select
                                                                             isClearable
@@ -326,6 +335,16 @@ const ClaimAssignDetail = (props) => {
                                                                             options={unitsData}
                                                                             placeholder={"Veuillez sélectionner l'unité de traitement"}
                                                                         />
+                                                                        {
+                                                                            error.unit_id.length ? (
+                                                                                error.unit_id.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : ""
+                                                                        }
                                                                     </div>
                                                                 </div>
                                                                 <div className="modal-footer">
