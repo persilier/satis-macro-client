@@ -979,7 +979,7 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                        <label htmlFor="amount_claim">Montant réclamé</label>
+                                                        <label htmlFor="amount_claim">Montant réclamé (<strong className="text-danger">Laisser vide si pas de montant</strong>)</label>
                                                         <input
                                                             type={"number"}
                                                             id="amount_claim"

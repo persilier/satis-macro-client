@@ -113,9 +113,8 @@ const LoginPage = (props) => {
                                         className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
                                         style={{backgroundImage: `url(${data ? appConfig.apiDomaine + data.params.fr.background.value.url : " "})`}}>
                                         <div className="kt-grid__item">
-                                            <a href="/login" className="kt-login__logo">
-                                                <img
-                                                    src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : null}/>
+                                            <span className="kt-login__logo">
+                                                <img src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : null}/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1.5em",
@@ -123,7 +122,7 @@ const LoginPage = (props) => {
                                                 }}>
                                                 {data ? data.params.fr.version.value : props.plan + appConfig.version}
                                             </span>
-                                            </a>
+                                            </span>
                                         </div>
                                         <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
                                             <div className="kt-grid__item kt-grid__item--middle">
@@ -135,11 +134,6 @@ const LoginPage = (props) => {
                                             <div className="kt-login__info">
                                                 <div className="kt-login__copyright">
                                                     &copy {appConfig.appFullName(props.plan)}
-                                                </div>
-                                                <div className="kt-login__menu">
-                                                    <a href="#" className="kt-link">Privacy</a>
-                                                    <a href="#" className="kt-link">Legal</a>
-                                                    <a href="#" className="kt-link">Contact</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -233,7 +227,6 @@ const LoginPage = (props) => {
                 </div>
             </div>
         )
-
     );
 };
 
