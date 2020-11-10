@@ -10,18 +10,18 @@ const FaqListe = () => {
     const [category, setCategory] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+`/faqs`)
+        axios.get(appConfig.apiDomaine + `/faqs`)
             .then(response => {
                 console.log(response.data, "DATA")
             });
 
-        axios.get(appConfig.apiDomaine+`/faq-categories`)
+        axios.get(appConfig.apiDomaine + `/faq-categories`)
             .then(response => {
                 setLoad(false);
                 setCategory(response.data)
             });
 
-        axios.get(appConfig.apiDomaine+`/faqs`)
+        axios.get(appConfig.apiDomaine + `/faqs`)
             .then(response => {
                 setLoad(false);
                 setData(response.data)
@@ -45,31 +45,33 @@ const FaqListe = () => {
                                                 {cat.name.fr}
                                             </h6>
 
-                                            {data ? (
-                                                data.map((elemt, id) => (
-                                                    <div className="card-header" id={"heading" + id} key={id}>
-                                                        {(elemt.faq_category.name.fr === cat.name.fr) ? (
-                                                            <div className="ml-4">
-                                                                <div className="card-title" data-toggle="collapse"
-                                                                     data-target={"#collapse" + id} aria-expanded="false"
-                                                                     aria-controls={"collapse" + id}>
-                                                                    {elemt.question.fr}
-                                                                </div>
+                                            {
+                                                data ? (
+                                                    data.map((elemt, id) => (
+                                                        <div className="card-header" id={"heading" + id} key={id}>
+                                                            {(elemt.faq_category.name.fr === cat.name.fr) ? (
+                                                                <div className="ml-4">
+                                                                    <div className="card-title" data-toggle="collapse"
+                                                                         data-target={"#collapse" + id}
+                                                                         aria-expanded="false"
+                                                                         aria-controls={"collapse" + id}>
+                                                                        {elemt.question.fr}
+                                                                    </div>
 
-                                                                <div id={"collapse" + id} className="collapse show"
-                                                                     aria-labelledby={"heading" + id}
-                                                                     data-parent="#accordionExample1">
-                                                                    <div className="card-body">
-                                                                        <p className="ml-3">
-                                                                            {elemt.answer.fr}
-                                                                        </p>
+                                                                    <div id={"collapse" + id} className="collapse show"
+                                                                         aria-labelledby={"heading" + id}
+                                                                         data-parent="#accordionExample1">
+                                                                        <div className="card-body">
+                                                                            <p className="ml-3">
+                                                                                {elemt.answer.fr}
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        ) : ''}
-                                                    </div>
-                                                ))
-                                            ) : ''}
+                                                            ) : ''}
+                                                        </div>
+                                                    ))
+                                                ) : ''}
                                         </div>
                                     ))
                                 ) : ""}
