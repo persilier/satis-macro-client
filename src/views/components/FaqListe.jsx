@@ -10,10 +10,6 @@ const FaqListe = () => {
     const [category, setCategory] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/faqs`)
-            .then(response => {
-                console.log(response.data, "DATA")
-            });
 
         axios.get(appConfig.apiDomaine + `/faq-categories`)
             .then(response => {
