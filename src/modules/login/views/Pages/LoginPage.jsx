@@ -41,7 +41,9 @@ const LoginPage = (props) => {
                 .catch(error => {
                     setLoad(false);
                     console.log("Something is wrong");
-                });}
+                })
+            ;
+        }
         fetchData();
         return () => mounted = false;
     }, []);
