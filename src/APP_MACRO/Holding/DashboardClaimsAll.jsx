@@ -18,7 +18,7 @@ const DashboardClaimsAll = (props) => {
         let isCancelled = false;
 
         async function fetchData() {
-           await axios.get(appConfig.apiDomaine + "/dashboard")
+            await axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
                     if (!isCancelled) {
                         setData(response.data.statistics);
@@ -31,6 +31,7 @@ const DashboardClaimsAll = (props) => {
                     console.log("Something is wrong");
                 });
         }
+
         fetchData();
         return () => {
             isCancelled = true;
@@ -61,9 +62,7 @@ const DashboardClaimsAll = (props) => {
                                                     <h5 className="kt-widget24__title">
                                                         Total Réclamations Enregistrées
                                                     </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                                    <span className="kt-widget24__desc"></span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-brand">
 									{data.totalRegistered ? data.totalRegistered.allInstitution : ""}
