@@ -44,7 +44,7 @@ const DashboardSummaryReport = (props) => {
         let isCancelled = false;
 
         async function fetchData() {
-            axios.get(appConfig.apiDomaine + "/dashboard")
+            await axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
                     if (!isCancelled) {
                         let claimObjects = response.data.claimObjectsUse;
