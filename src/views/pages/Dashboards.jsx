@@ -49,15 +49,15 @@ const Dashboards = (props) => {
                     </div>
 
                     <div>
+                        <DashboardSummaryReport/>
+                    </div>
+
+                    <div>
                         <GraphChannel/>
                     </div>
 
                     <div>
                         <DashboardStatClaim/>
-                    </div>
-
-                    <div>
-                        <DashboardSummaryReport/>
                     </div>
 
                     <div>
