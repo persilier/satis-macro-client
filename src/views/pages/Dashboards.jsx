@@ -32,21 +32,33 @@ const Dashboards = (props) => {
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 {/*<InfirmationTable information={"Représentation graphique des statiques des collectes et traitements des réclamations sur les 30 derniers jours"} />*/}
                 <div>
-                    <div className="kt-portlet">
-                        <DashboardClaimsAll/>
-                    </div>
+                    {
+                        verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
+                            <div className="kt-portlet">
+                                <DashboardClaimsAll/>
+                            </div>:null
+                    }
 
-                    <div className="kt-portlet">
-                        <DashboardClaimsMy/>
-                    </div>
+                    {
+                        verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
+                            <div className="kt-portlet">
+                                <DashboardClaimsMy/>
+                            </div>:null
+                    }
 
-                    <div className="kt-portlet">
-                        <DashboardClaimsUnit/>
-                    </div>
+                    {
+                        verifyPermission(props.userPermissions, "show-dashboard-data-my-unit") ?
+                            <div className="kt-portlet">
+                                <DashboardClaimsUnit/>
+                            </div>:null
+                    }
 
-                    <div className="kt-portlet">
-                        <DashboardClaimsActivity/>
-                    </div>
+                    {
+                        verifyPermission(props.userPermissions, "show-dashboard-data-my-activity") ?
+                        <div className="kt-portlet">
+                            <DashboardClaimsActivity/>
+                        </div>:null
+                    }
 
                     <div>
                         <DashboardSummaryReport/>

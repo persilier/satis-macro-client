@@ -82,7 +82,6 @@ const DashboardSummaryReport = (props) => {
         (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
             verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
             <div className="kt-portlet">
-                <div className="kt-portlet kt-portlet--height-fluid ">
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h3 className="kt-portlet__head-title">
@@ -129,8 +128,6 @@ const DashboardSummaryReport = (props) => {
                             </div>
                         )
                     }
-
-                </div>
             </div>
             : ""
     );
