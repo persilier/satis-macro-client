@@ -6,7 +6,7 @@ import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../../config/appConfig";
 import {AUTH_TOKEN} from "../../../constants/token";
-import {formatSelectOption, formatToTimeStamp, refreshToken} from "../../../helpers/function";
+import {formatSelectOption, formatToTimeStamp} from "../../../helpers/function";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
     toastAddSuccessMessageConfig,
@@ -150,7 +150,6 @@ const ConfirmClaimAddModal = props => {
                             console.log("Something is wrong");
                         })
                     ;
-                    refreshToken();
                 }
             }
         }
@@ -247,7 +246,6 @@ const ConfirmClaimAddModal = props => {
                     })
                     .catch(error => console.log("Something is wrong"))
                 ;
-                refreshToken();
             }
         } else {
             setClaimObjects([]);
@@ -373,7 +371,6 @@ const ConfirmClaimAddModal = props => {
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);
                 })
             ;
-            refreshToken();
         }
 
     };

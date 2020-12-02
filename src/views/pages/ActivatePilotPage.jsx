@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import axios from "axios";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig, toastConnectSuccessMessageConfig,
+    toastAddSuccessMessageConfig,
 } from "../../config/toastConfig";
 import {ToastBottomEnd} from "../../views/components/Toast";
 import Select from "react-select";
@@ -12,6 +12,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import appConfig from "../../config/appConfig";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -47,7 +48,8 @@ const ActivatePilotPage = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [props.userPermissions, props.activeUserInstitution]);
 
     const handleStaffChange = (selected) => {
@@ -57,27 +59,29 @@ const ActivatePilotPage = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${props.activeUserInstitution}`, {staff_id: staff ? staff.value : ""})
-            .then( async () => {
-                setStaff(null);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                if (props.activePilot) {
-                    await axios.get(`${appConfig.apiDomaine}/login`)
-                        .then(response => {
-                            setStartRequest(false);
-                            localStorage.setItem("userData", JSON.stringify(response.data));
-                            window.location.href = "/";
-                        })
-                    ;
-                }
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${props.activeUserInstitution}`, {staff_id: staff ? staff.value : ""})
+                .then( async () => {
+                    setStaff(null);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    if (props.activePilot) {
+                        await axios.get(`${appConfig.apiDomaine}/login`)
+                            .then(response => {
+                                setStartRequest(false);
+                                localStorage.setItem("userData", JSON.stringify(response.data));
+                                window.location.href = "/";
+                            })
+                        ;
+                    }
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     const printJsx = () => {

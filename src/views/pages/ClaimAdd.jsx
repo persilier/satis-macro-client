@@ -179,7 +179,6 @@ const ClaimAdd = props => {
 
         if (verifyTokenExpire()) {
             fetchData();
-            refreshToken();
         }
     }, [endPoint.create, props.userPermissions]);
 
@@ -240,7 +239,6 @@ const ClaimAdd = props => {
                             console.log("Something is wrong");
                         })
                     ;
-                    refreshToken();
                 }
             }
         }
@@ -373,7 +371,6 @@ const ClaimAdd = props => {
                     })
                     .catch(error => console.log("Something is wrong"))
                 ;
-                refreshToken();
             }
 
         } else {
@@ -496,7 +493,6 @@ const ClaimAdd = props => {
                         console.log("Something is wrong");
                     })
                 ;
-                refreshToken();
             }
         }
     };

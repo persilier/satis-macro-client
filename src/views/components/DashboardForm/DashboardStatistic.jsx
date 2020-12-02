@@ -5,6 +5,7 @@ import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardStatistic = (props) => {
     const [data, setProcessData] = useState("");
@@ -137,9 +138,11 @@ const DashboardStatistic = (props) => {
                     setLoad(false);
                     console.log("Something is wrong");
                 })
+            ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }
@@ -164,11 +167,11 @@ const DashboardStatistic = (props) => {
                         <div id="chart" className="kt-portlet__body">
                             <Chart options={data.options} series={data.series} type="area" height={350}/>
                         </div>
-                        : ""
+                        : null
                     )
                 }
             </div>
-            : ""
+            : null
     )
 
 };

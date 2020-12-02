@@ -123,6 +123,12 @@ export const forceRound = (decimalNumber) => {
     return (("" + decimalNumber).split('.'))[1] ? Math.trunc(decimalNumber) + 1 : Math.trunc(decimalNumber);
 };
 
+export const formatPermissions = (permissions) => {
+    const newPermissions = [];
+    permissions.map(permission => newPermissions.push(permission.name));
+    return newPermissions;
+};
+
 export const filterDataTableBySearchValue = () => {
     function myFunction() {
         var input, filter, table, tr, td, i, txtValue;
@@ -251,6 +257,8 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
+        || verifyPermission(userPermissions, "list-any-institution-type-role")
+        || verifyPermission(userPermissions, "list-my-institution-type-role")
         || verifyPermission(userPermissions, "update-min-fusion-percent-parameters")
     );
 };

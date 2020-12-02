@@ -15,6 +15,7 @@ import InfirmationTable from "../../components/InfirmationTable";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -34,18 +35,21 @@ const RemoveChats = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/discussions`)
-            .then(response => {
-                console.log(response.data, 'REMOVE');
-                setLoad(false);
-                setChats(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + `/discussions`)
+                .then(response => {
+                    console.log(response.data, 'REMOVE');
+                    setLoad(false);
+                    setChats(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     },[]);
 
     const searchElement = async (e) => {
@@ -111,32 +115,34 @@ const RemoveChats = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/discussions/${chatsId}`)
-                        .then(response => {
-                            const newChats = [...chats];
-                            newChats.splice(index, 1);
-                            setChats(newChats);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newChats.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newChats.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/discussions/${chatsId}`)
+                            .then(response => {
+                                const newChats = [...chats];
+                                newChats.splice(index, 1);
+                                setChats(newChats);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newChats.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newChats.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -156,7 +162,7 @@ const RemoveChats = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{chat.name}</td>
                 <td>{chat.claim.reference}</td>
-               
+
                 <td style={{textAlign:'center'}}>
 
                     {verifyPermission(props.userPermissions, "destroy-discussion") ?
@@ -166,7 +172,7 @@ const RemoveChats = (props) => {
                             title="Supprimer le Tchat">
                             <i className="la la-trash fa-2x"/>
                         </button>
-                        : ""
+                        : null
                     }
                 </td>
             </tr>
@@ -257,7 +263,7 @@ const RemoveChats = (props) => {
                                                             colSpan="1" style={{width: "150px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Référence réclamation
                                                         </th>
-                                                       
+
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "50px"}}
@@ -312,7 +318,7 @@ const RemoveChats = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -322,8 +328,7 @@ const RemoveChats = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
-
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

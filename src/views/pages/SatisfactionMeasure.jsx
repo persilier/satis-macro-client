@@ -10,6 +10,7 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -58,17 +59,20 @@ const SatisfactionMeasure = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(endPoint.list)
-            .then(response => {
-                setLoad(false);
-                setSatisfactionMeasure(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(endPoint.list)
+                .then(response => {
+                    setLoad(false);
+                    setSatisfactionMeasure(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const searchElement = async (e) => {
@@ -158,7 +162,7 @@ const SatisfactionMeasure = (props) => {
                             </a>
 
                         </td>
-                    ):""
+                    ): null
                 }
 
             </tr>
@@ -313,7 +317,7 @@ const SatisfactionMeasure = (props) => {
                                                         onClickNextPage={e => onClickNextPage(e)}
                                                     />
                                                 </div>
-                                            ) : ""
+                                            ) : null
                                         }
                                     </div>
                                 </div>

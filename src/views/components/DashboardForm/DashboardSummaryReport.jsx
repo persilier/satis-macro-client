@@ -4,6 +4,7 @@ import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardSummaryReport = (props) => {
     const [load, setLoad] = useState(true);
@@ -71,9 +72,11 @@ const DashboardSummaryReport = (props) => {
                     setLoad(false);
                     console.log("Something is wrong");
                 })
+            ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }
@@ -132,7 +135,7 @@ const DashboardSummaryReport = (props) => {
 
                 </div>
             </div>
-            : ""
+            : null
     );
 };
 const mapStateToProps = (state) => {

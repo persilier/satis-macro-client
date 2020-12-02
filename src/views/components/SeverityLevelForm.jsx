@@ -16,6 +16,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const endPointConfig = {
     PRO: {
@@ -86,7 +87,8 @@ const SeverityLevelForm = (props) => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
@@ -110,39 +112,41 @@ const SeverityLevelForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (id) {
-            axios.put(endpoint.update(id), data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(endpoint.store, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    console.log(errorRequest.response.data);
-                    setStartRequest(false);
-                    if (errorRequest.response.data.code === 422) {
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(endpoint.update(id), data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    } else {
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
-                    }
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(endpoint.store, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        console.log(errorRequest.response.data);
+                        setStartRequest(false);
+                        if (errorRequest.response.data.code === 422) {
+                            setError({...defaultError, ...errorRequest.response.data.error});
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        } else {
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
+                        }
 
-                })
-            ;
+                    })
+                ;
+            }
         }
     };
 
@@ -208,7 +212,7 @@ const SeverityLevelForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -231,7 +235,7 @@ const SeverityLevelForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -255,7 +259,7 @@ const SeverityLevelForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -298,11 +302,11 @@ const SeverityLevelForm = (props) => {
         id ? (
             verifyPermission(props.userPermissions, 'update-severity-level') ? (
                 printJsx()
-            ) : ""
+            ) : null
         ) : (
             verifyPermission(props.userPermissions, 'store-severity-level') ? (
                 printJsx()
-            ) : ""
+            ) : null
         )
     );
 };

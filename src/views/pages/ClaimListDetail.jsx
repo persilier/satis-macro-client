@@ -24,6 +24,7 @@ import AttachmentsButton from "../components/AttachmentsButton";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -62,10 +63,11 @@ const ClaimListDetail = (props) => {
                     setClaim(response.data.claim);
                     setStaffs(formatStaffsOptions(response.data.staffs));
                 })
-                .catch(error => console.log("Something is wrong"));
-
+                .catch(error => console.log("Something is wrong"))
+            ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [id]);
 
     const onChangeStaff = (selected) => {
@@ -75,32 +77,37 @@ const ClaimListDetail = (props) => {
     const selfAssign = () => {
         AssignClaimConfirmation.fire(confirmAssignConfig)
             .then(response => {
-                if (response.value) {
-                    axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/self-assignment`, {})
-                        .then(response => {
-                            ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                            window.location.href = "/process/unit-claims";
-                        })
-                        .catch(error => console.log("Something is wrong"))
+                if (verifyTokenExpire()) {
+                    if (response.value) {
+                        axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/self-assignment`, {})
+                            .then(response => {
+                                ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
+                                window.location.href = "/process/unit-claims";
+                            })
+                            .catch(error => console.log("Something is wrong"))
+                        ;
+                    }
                 }
             })
     };
 
     const assignClaim = () => {
         setStartRequest(true);
-        axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/assignment`, {staff_id: staff ? staff.value : null})
-            .then(response => {
-                ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                setStartRequest(false);
-                setStaff(null);
-                setErrors([]);
-                window.location.href = "/process/unit-claims";
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setErrors(error.response.data.error.staff_id)
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/assignment`, {staff_id: staff ? staff.value : null})
+                .then(response => {
+                    ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
+                    setStartRequest(false);
+                    setStaff(null);
+                    setErrors([]);
+                    window.location.href = "/process/unit-claims";
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setErrors(error.response.data.error.staff_id)
+                })
+            ;
+        }
     };
 
     const showReasonInput = async (type) => {

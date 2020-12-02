@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import Chart from "react-apexcharts";
 import LoadingTable from "../LoadingTable";
-import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
 const ClaimToInstitution = (props) => {
@@ -62,9 +62,11 @@ const ClaimToInstitution = (props) => {
                     setLoad(false);
                     console.log("Something is wrong");
                 })
+            ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }

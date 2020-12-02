@@ -6,6 +6,7 @@ import {Link} from "react-router-dom";
 import {ToastBottomEnd} from "./Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 import LoadingTable from "./LoadingTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const StaffChannels = () => {
     const defaultData = {
@@ -18,20 +19,23 @@ const StaffChannels = () => {
     const [load, setLoad] = useState(true);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/feedback-channels")
-            .then(response => {
-                 const newChannel={...data};
-                 if (response.data.staff.feedback_preferred_channels!==null){
-                     newChannel.feedback_preferred_channels=response.data.staff.feedback_preferred_channels;
-                     setData(newChannel);
-                 }
-                setListChannels(response.data);
-                setLoad(false)
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            });
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/feedback-channels")
+                .then(response => {
+                    const newChannel={...data};
+                    if (response.data.staff.feedback_preferred_channels!==null){
+                        newChannel.feedback_preferred_channels=response.data.staff.feedback_preferred_channels;
+                        setData(newChannel);
+                    }
+                    setListChannels(response.data);
+                    setLoad(false)
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const onChangeOption = (e, channel) => {
@@ -46,18 +50,20 @@ const StaffChannels = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + "/feedback-channels", data)
-            .then(response => {
-                console.log(response.data);
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                console.log("something is wrong");
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.put(appConfig.apiDomaine + "/feedback-channels", data)
+                .then(response => {
+                    console.log(response.data);
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    console.log("something is wrong");
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -130,12 +136,12 @@ const StaffChannels = () => {
                                                             />
 
                                                         }
-                                                               <span></span>
+                                                        <span/>
                                                     </label>
                                                     </span>
                                                 </div>
                                             </div>
-                                        )) : ""
+                                        )) : null
                                     )
                                 }
                                 <div className="kt-portlet__foot">

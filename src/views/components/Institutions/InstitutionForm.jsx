@@ -15,6 +15,7 @@ import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import InputRequire from "../InputRequire";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -52,42 +53,44 @@ const InstitutionForm = (props) => {
     const [defaultCurrencyData, setDefaultCurrencyData] = useState([]);
 
     useEffect(() => {
-        if (verifyPermission(props.userPermissions, 'store-any-institution')) {
-            axios.get(appConfig.apiDomaine + '/any/institutions/create')
-                .then(response => {
-                    console.log(response.data, "DEVISE")
+        if (verifyTokenExpire()) {
+            if (verifyPermission(props.userPermissions, 'store-any-institution')) {
+                axios.get(appConfig.apiDomaine + '/any/institutions/create')
+                    .then(response => {
+                        console.log(response.data, "DEVISE")
                         setDefaultCurrencyData(response.data.currencies.length ?
-                        response.data.currencies.map((currencie) => ({
-                            value: currencie.slug,
-                            label: currencie.name.fr
-                        })) : null
-                    )
-                    // setDefaultCurrencyData(options);
-                });
+                            response.data.currencies.map((currencie) => ({
+                                value: currencie.slug,
+                                label: currencie.name.fr
+                            })) : null
+                        )
+                        // setDefaultCurrencyData(options);
+                    })
+                ;
+            }
+
+            if (id) {
+                axios.get(appConfig.apiDomaine + `/any/institutions/${id}`)
+                    .then(response => {
+                        console.log(response, "GET_INSTITUTION");
+                        const newInstitution = {
+                            default_currency_slug: (response.data.default_currency_slug !== null) ? (response.data.default_currency_slug) : '',
+                            name: response.data.name,
+                            acronyme: response.data.acronyme,
+                            iso_code: response.data.iso_code,
+                            logo: response.data.logo,
+                        };
+                        setData(newInstitution);
+                        if (response.data.default_currency_slug !== null) {
+                            setDefaultCurrency({
+                                value: response.data.default_currency.slug,
+                                label: response.data.default_currency.name.fr
+                            });
+                        }
+                    })
+                ;
+            }
         }
-
-        if (id) {
-            axios.get(appConfig.apiDomaine + `/any/institutions/${id}`)
-                .then(response => {
-                    console.log(response, "GET_INSTITUTION");
-                    const newInstitution = {
-                        default_currency_slug: (response.data.default_currency_slug !== null) ? (response.data.default_currency_slug) : '',
-                        name: response.data.name,
-                        acronyme: response.data.acronyme,
-                        iso_code: response.data.iso_code,
-                        logo: response.data.logo,
-                    };
-                    setData(newInstitution);
-                    if (response.data.default_currency_slug !== null) {
-                        setDefaultCurrency({
-                            value: response.data.default_currency.slug,
-                            label: response.data.default_currency.name.fr
-                        });
-                    }
-                });
-
-        }
-
     }, []);
 
     const onChangeName = (e) => {
@@ -139,34 +142,36 @@ const InstitutionForm = (props) => {
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
         setStartRequest(true);
-        if (id) {
-            formData.append("_method", "put");
-            axios.post(appConfig.apiDomaine + `/any/institutions/${id}`, formData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(appConfig.apiDomaine + `/any/institutions`, formData)
-                .then(response => {
-                    setError(defaultError);
-                    setStartRequest(false);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setError({defaultError, ...error.response.data.error});
-                    setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                formData.append("_method", "put");
+                axios.post(appConfig.apiDomaine + `/any/institutions/${id}`, formData)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(appConfig.apiDomaine + `/any/institutions`, formData)
+                    .then(response => {
+                        setError(defaultError);
+                        setStartRequest(false);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setError({defaultError, ...error.response.data.error});
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
     const printJsx = () => {
@@ -298,7 +303,7 @@ const InstitutionForm = (props) => {
                                                                                             {error}
                                                                                         </div>
                                                                                     ))
-                                                                                ) : ""
+                                                                                ) : null
                                                                             }
                                                                         </div>
                                                                     </div>
@@ -325,7 +330,7 @@ const InstitutionForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -351,7 +356,7 @@ const InstitutionForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -377,7 +382,7 @@ const InstitutionForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -434,10 +439,10 @@ const InstitutionForm = (props) => {
         id ?
             verifyPermission(props.userPermissions, 'update-any-institution') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-any-institution') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 
 };

@@ -3,6 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
+import {connect} from "react-redux";
 import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -12,7 +13,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -67,18 +68,21 @@ const IncompleteClaims = (props) => {
 
     useEffect(() => {
 
-        axios.get(endPoint.list)
-            .then(response => {
-                console.log(response.data, 'Incomplete_Data');
-                setLoad(false);
-                setIncompleteClaims(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(endPoint.list)
+                .then(response => {
+                    console.log(response.data, 'Incomplete_Data');
+                    setLoad(false);
+                    setIncompleteClaims(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const searchElement = async (e) => {
@@ -174,7 +178,7 @@ const IncompleteClaims = (props) => {
                                 title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                            : ""
+                            : null
                     }
 
                 </td>
@@ -333,7 +337,7 @@ const IncompleteClaims = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -343,7 +347,7 @@ const IncompleteClaims = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
 
     );
 };

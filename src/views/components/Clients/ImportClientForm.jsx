@@ -13,6 +13,7 @@ import InputRequire from "../InputRequire";
 import {connect} from "react-redux";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -105,19 +106,21 @@ const ImportClientForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
 
-        axios.post(endPoint.store, formatFormData(data))
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.post(endPoint.store, formatFormData(data))
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     const printJsx = () => {
@@ -171,7 +174,7 @@ const ImportClientForm = (props) => {
                                                         value={option1}
                                                         onChange={(e) => onChangeOption(e)}
                                                     /> Oui
-                                                    <span></span>
+                                                    <span/>
                                                 </label>
                                                 <label className="kt-radio kt-radio--bold kt-radio--danger">
                                                     <input
@@ -181,7 +184,7 @@ const ImportClientForm = (props) => {
                                                         value={option2}
                                                         onChange={(e) => onChangeOption(e)}
                                                     /> Non
-                                                    <span></span>
+                                                    <span/>
                                                 </label>
                                             </div>
                                             {
@@ -192,7 +195,7 @@ const ImportClientForm = (props) => {
                                                             {error}
                                                         </div>
                                                     ))
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
 
@@ -210,7 +213,7 @@ const ImportClientForm = (props) => {
                                                         value={option1}
                                                         onChange={(e) => onChangeEtatOption(e)}
                                                     /> Oui
-                                                    <span></span>
+                                                    <span/>
                                                 </label>
                                                 <label className="kt-radio kt-radio--bold kt-radio--danger">
                                                     <input
@@ -220,7 +223,7 @@ const ImportClientForm = (props) => {
                                                         value={option2}
                                                         onChange={(e) => onChangeEtatOption(e)}
                                                     /> Non
-                                                    <span></span>
+                                                    <span/>
                                                 </label>
                                             </div>
                                             {
@@ -231,7 +234,7 @@ const ImportClientForm = (props) => {
                                                             {error}
                                                         </div>
                                                     ))
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
 
@@ -254,7 +257,7 @@ const ImportClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -302,7 +305,7 @@ const ImportClientForm = (props) => {
         verifyPermission(props.userPermissions, 'store-client-from-any-institution') ||
         verifyPermission(props.userPermissions, 'store-client-from-my-institution') ?
             printJsx()
-            : ""
+            : null
     );
 };
 

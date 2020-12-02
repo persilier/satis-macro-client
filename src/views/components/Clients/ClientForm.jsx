@@ -20,6 +20,7 @@ import {addIdentity} from "../../../store/actions/IdentityAction";
 import {AUTH_TOKEN} from "../../../constants/token";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -55,42 +56,45 @@ const EditClients = (props) => {
     const [category, setCategory] = useState([]);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + '/my/clients/create')
-            .then(response => {
-                setAccountTypes(response.data.AccountTypes);
-                setCategoryClient(response.data.clientCategories);
-            });
-
-        if (id) {
-            axios.get(appConfig.apiDomaine + `/my/clients/${id}/edit`)
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + '/my/clients/create')
                 .then(response => {
-                    const newClient = {
-                        number: response.data.client_institution.accounts[0].number,
-                        account_type_id: response.data.client_institution.accounts[0].account_type_id,
-                        category_client_id: response.data.client_institution.category_client_id,
+                    setAccountTypes(response.data.AccountTypes);
+                    setCategoryClient(response.data.clientCategories);
+                })
+            ;
 
-                    };
-                    setData(newClient);
-                    const newIdentity = {
-                        firstname: response.data.client_institution.client.identite.firstname,
-                        lastname: response.data.client_institution.client.identite.lastname,
-                        sexe: response.data.client_institution.client.identite.sexe,
-                        telephone: response.data.client_institution.client.identite.telephone,
-                        email: response.data.client_institution.client.identite.email,
-                        ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
-                    };
-                    setIdentity(newIdentity);
-                    props.addIdentite(newIdentity);
-                    setType({
-                        value: response.data.client_institution.accounts[0].account_type.id,
-                        label: response.data.client_institution.accounts[0].account_type.name.fr
-                    });
-                    setCategory({
-                        value: response.data.client_institution.category_client.id,
-                        label: response.data.client_institution.category_client.name.fr
-                    });
+            if (id) {
+                axios.get(appConfig.apiDomaine + `/my/clients/${id}/edit`)
+                    .then(response => {
+                        const newClient = {
+                            number: response.data.client_institution.accounts[0].number,
+                            account_type_id: response.data.client_institution.accounts[0].account_type_id,
+                            category_client_id: response.data.client_institution.category_client_id,
 
-                });
+                        };
+                        setData(newClient);
+                        const newIdentity = {
+                            firstname: response.data.client_institution.client.identite.firstname,
+                            lastname: response.data.client_institution.client.identite.lastname,
+                            sexe: response.data.client_institution.client.identite.sexe,
+                            telephone: response.data.client_institution.client.identite.telephone,
+                            email: response.data.client_institution.client.identite.email,
+                            ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
+                        };
+                        setIdentity(newIdentity);
+                        props.addIdentite(newIdentity);
+                        setType({
+                            value: response.data.client_institution.accounts[0].account_type.id,
+                            label: response.data.client_institution.accounts[0].account_type.name.fr
+                        });
+                        setCategory({
+                            value: response.data.client_institution.category_client.id,
+                            label: response.data.client_institution.category_client.name.fr
+                        });
+
+                    });
+            }
         }
     }, []);
 
@@ -123,74 +127,76 @@ const EditClients = (props) => {
         }
         const formData = {...props.identite, ...data};
         console.log(formData, "FORM_DATA");
-        if (id) {
-            axios.put(appConfig.apiDomaine + `/my/clients/${id}`, formData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch((errorRequest) => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                        errorRequest.response.data.identite.lastname + " " + errorRequest.response.data.identite.firstname + ": " + errorRequest.response.data.message)
-                    );
-                })
-            ;
-        } else {
-            console.log(props.identite.client_id, "CLIENT_ID");
-            if (props.identite.client_id) {
-                axios.post(appConfig.apiDomaine + `/my/accounts/${props.identite.client_id}/clients`, formData)
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(appConfig.apiDomaine + `/my/clients/${id}`, formData)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        setData(defaultData);
-                        setType({});
-                        setCategory({});
-                        setIdentity({});
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch((errorRequest) => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                            errorRequest.response.data.identite.lastname + " " + errorRequest.response.data.identite.firstname + ": " + errorRequest.response.data.message)
+                        );
                     })
                 ;
             } else {
-                axios.post(appConfig.apiDomaine + `/my/clients`, formData)
-                    .then(response => {
-                        setStartRequest(false);
-                        setError(defaultError);
-                        setData(defaultData);
-                        setType({});
-                        setCategory({});
-                        setIdentity({});
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    })
-                    .catch(async (errorRequest) => {
-
-                        console.log(errorRequest.response.data.identite, 'ERROR');
-
-                        if (errorRequest.response.data.identite) {
-                            await axios.post(appConfig.apiDomaine + `/my/identites/${errorRequest.response.data.identite.id}/client`, formData)
-                                .then(response => {
-                                    setStartRequest(false);
-                                    setError(defaultError);
-                                    setData(defaultData);
-                                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                                })
-                        } else if (errorRequest.response.data.client) {
+                console.log(props.identite.client_id, "CLIENT_ID");
+                if (props.identite.client_id) {
+                    axios.post(appConfig.apiDomaine + `/my/accounts/${props.identite.client_id}/clients`, formData)
+                        .then(response => {
                             setStartRequest(false);
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                                errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
-                            );
-                        } else {
+                            setError(defaultError);
+                            setData(defaultData);
+                            setType({});
+                            setCategory({});
+                            setIdentity({});
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        })
+                        .catch((errorRequest) => {
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
                             ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                        }
-                    });
+                        })
+                    ;
+                } else {
+                    axios.post(appConfig.apiDomaine + `/my/clients`, formData)
+                        .then(response => {
+                            setStartRequest(false);
+                            setError(defaultError);
+                            setData(defaultData);
+                            setType({});
+                            setCategory({});
+                            setIdentity({});
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        })
+                        .catch(async (errorRequest) => {
+
+                            console.log(errorRequest.response.data.identite, 'ERROR');
+
+                            if (errorRequest.response.data.identite) {
+                                await axios.post(appConfig.apiDomaine + `/my/identites/${errorRequest.response.data.identite.id}/client`, formData)
+                                    .then(response => {
+                                        setStartRequest(false);
+                                        setError(defaultError);
+                                        setData(defaultData);
+                                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                                    })
+                            } else if (errorRequest.response.data.client) {
+                                setStartRequest(false);
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                                    errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
+                                );
+                            } else {
+                                setStartRequest(false);
+                                setError({...defaultError, ...errorRequest.response.data.error});
+                                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                            }
+                        });
+                }
             }
         }
     };
@@ -251,7 +257,8 @@ const EditClients = (props) => {
                                                     getIdentite={identity}
                                                     getLoading={true}
                                                 />
-                                                : "")
+                                                : null
+                                        )
                                     }
 
                                     <div className="kt-portlet__body">
@@ -273,7 +280,7 @@ const EditClients = (props) => {
                                                     ) : (<select name="typeClient"
                                                                  className={error.account_type_id.length ? "form-control is-invalid" : "form-control"}
                                                                  id="typeClient">
-                                                        <option value=""></option>
+                                                        <option value=""/>
                                                     </select>)
                                                     }
 
@@ -284,7 +291,7 @@ const EditClients = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                                 <div
@@ -301,7 +308,7 @@ const EditClients = (props) => {
                                                     ) : (<select name="category"
                                                                  className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
                                                                  id="category">
-                                                        <option value=""></option>
+                                                        <option value=""/>
                                                     </select>)
                                                     }
 
@@ -312,7 +319,7 @@ const EditClients = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -336,14 +343,12 @@ const EditClients = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                                 <div className="kt-portlet__foot">
                                     <div className="kt-form__actions text-right">

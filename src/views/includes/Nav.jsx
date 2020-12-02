@@ -15,6 +15,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import {debug} from "../../helpers/function";
 import Loader from "../components/Loader";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -40,15 +41,17 @@ const Nav = (props) => {
     }, [RelaunchNotification]);
 
     const fetchData = async () => {
-        await axios.get(`${appConfig.apiDomaine}/unread-notifications`)
-            .then(response => {
-                setEventNotification(filterEventNotification(response.data));
-                setRelaunchNotification(filterRelaunchNotification(response.data));
-            })
-            .catch(error => {
-                console.log("Something is wrong");
-            })
-        ;
+        if (verifyTokenExpire()) {
+            await axios.get(`${appConfig.apiDomaine}/unread-notifications`)
+                .then(response => {
+                    setEventNotification(filterEventNotification(response.data));
+                    setRelaunchNotification(filterRelaunchNotification(response.data));
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     };
 
     useEffect(() => {
@@ -88,18 +91,21 @@ const Nav = (props) => {
     });
 
     const readAllNotification = async (readNotification, path) => {
-        await axios.put(`${appConfig.apiDomaine}/unread-notifications`, readNotification)
-            .then(({data}) => {
-                debug(data, "data");
-                setStartRead(false);
-                if (data.canReload) {
-                    window.location.href = path;
-                } else {
-                    setEventNotification(filterEventNotification(data.unreadNotifications));
-                    setRelaunchNotification(filterRelaunchNotification(data.unreadNotifications));
-                }
-            })
-            .catch(({response}) => {console.log("Something is wrong")})
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/unread-notifications`, readNotification)
+                .then(({data}) => {
+                    debug(data, "data");
+                    setStartRead(false);
+                    if (data.canReload) {
+                        window.location.href = path;
+                    } else {
+                        setEventNotification(filterEventNotification(data.unreadNotifications));
+                        setRelaunchNotification(filterRelaunchNotification(data.unreadNotifications));
+                    }
+                })
+                .catch(({response}) => {console.log("Something is wrong")})
+            ;
+        }
     };
 
     const showDetailNotification = useCallback((e, path, idNotification, relaunchNotification = false, notification = null) => {

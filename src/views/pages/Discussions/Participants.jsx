@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {
-    Link,
     useParams
 } from "react-router-dom";
 import {loadCss, filterDataTableBySearchValue, forceRound} from "../../../helpers/function";
@@ -13,12 +12,12 @@ import {confirmDeleteConfig} from "../../../config/confirmConfig";
 import appConfig from "../../../config/appConfig";
 import Pagination from "../../components/Pagination";
 import EmptyTable from "../../components/EmptyTable";
-import ExportButton from "../../components/ExportButton";
 import HeaderTablePage from "../../components/HeaderTablePage";
 import InfirmationTable from "../../components/InfirmationTable";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -40,19 +39,22 @@ const Participants = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
-            .then(response => {
-                console.log(response.data, 'DONNEES');
-                setLoad(false);
-                setResponseData(response.data);
-                setContributor(response.data.staff);
-                setShowList(response.data.staff.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.staff.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
+                .then(response => {
+                    console.log(response.data, 'DONNEES');
+                    setLoad(false);
+                    setResponseData(response.data);
+                    setContributor(response.data.staff);
+                    setShowList(response.data.staff.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.staff.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const searchElement = async (e) => {
@@ -118,32 +120,34 @@ const Participants = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/discussions/${id}/staff/${contributorId}`)
-                        .then(response => {
-                            const newContributor = [...contributor];
-                            newContributor.splice(index, 1);
-                            setContributor(newContributor);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newContributor.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newContributor.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/discussions/${id}/staff/${contributorId}`)
+                            .then(response => {
+                                const newContributor = [...contributor];
+                                newContributor.splice(index, 1);
+                                setContributor(newContributor);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newContributor.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newContributor.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -166,7 +170,7 @@ const Participants = (props) => {
                 <td>{user.identite.email ?
                     user.identite.email.map((mail, index) => (
                         index === user.identite.email.length - 1 ? mail : mail + " " + <br/> + " "
-                    )) : ""
+                    )) : null
                 }</td>
 
                 {
@@ -184,7 +188,7 @@ const Participants = (props) => {
                         }
 
                     </td>
-                    : ""
+                    : null
                 }
 
             </tr>
@@ -342,7 +346,7 @@ const Participants = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -352,7 +356,7 @@ const Participants = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
 
     );
 };

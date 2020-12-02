@@ -19,6 +19,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -38,17 +39,20 @@ const CategoryFAQs = (props) => {
     const [activeNumberPage, setActiveNumberPage] = useState(0);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine+"/faq-categories")
-            .then(response => {
-                setLoad(false);
-                setCategoryFaqs(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine+"/faq-categories")
+                .then(response => {
+                    setLoad(false);
+                    setCategoryFaqs(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const filterShowListBySearchValue = (value) => {
@@ -124,34 +128,36 @@ const CategoryFAQs = (props) => {
     const deleteCategoryFaqs = (categoryId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(appConfig.apiDomaine+`/faq-categories/${categoryId}`)
-                        .then(response => {
-                            console.log(response, "OK");
-                            const newCategory = [setCategoryFaqs];
-                            newCategory.splice(index, 1);
-                            setCategoryFaqs(newCategory);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newCategory.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newCategory.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(appConfig.apiDomaine+`/faq-categories/${categoryId}`)
+                            .then(response => {
+                                console.log(response, "OK");
+                                const newCategory = [setCategoryFaqs];
+                                newCategory.splice(index, 1);
+                                setCategoryFaqs(newCategory);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newCategory.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newCategory.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -316,7 +322,7 @@ const CategoryFAQs = (props) => {
                 </div>
             </div>
         </div>
-        ):""
+        ): null
     );
 };
 const mapStateToProps = (state) => {

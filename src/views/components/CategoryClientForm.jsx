@@ -14,6 +14,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -43,14 +44,17 @@ const CategoryClientForm = (props) => {
     useEffect(() => {
 
         if (editcategoryid) {
-            axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
-                .then(response => {
-                    const newCategory = {
-                        name: response.data.name.fr,
-                        description: response.data.description.fr
-                    };
-                    setData(newCategory);
-                })
+            if (verifyTokenExpire()) {
+                axios.get(appConfig.apiDomaine + `/category-clients/${editcategoryid}`)
+                    .then(response => {
+                        const newCategory = {
+                            name: response.data.name.fr,
+                            description: response.data.description.fr
+                        };
+                        setData(newCategory);
+                    })
+                ;
+            }
         }
 
     },[]);
@@ -71,33 +75,35 @@ const CategoryClientForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
 
-        if (editcategoryid) {
-            axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(appConfig.apiDomaine + `/category-clients`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (editcategoryid) {
+                axios.put(appConfig.apiDomaine + `/category-clients/${editcategoryid}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError,...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(appConfig.apiDomaine + `/category-clients`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError,...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
     const printJsx = () => {
@@ -172,7 +178,7 @@ const CategoryClientForm = (props) => {
                                                                                     {error}
                                                                                 </div>
                                                                             ))
-                                                                        ) : ""
+                                                                        ) : null
                                                                     }
                                                                 </div>
                                                             </div>
@@ -180,7 +186,7 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="description">Description <InputRequire/></label>
+                                                                       htmlFor="description">Description </label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="description"
@@ -199,7 +205,7 @@ const CategoryClientForm = (props) => {
                                                                                     {error}
                                                                                 </div>
                                                                             ))
-                                                                        ) : ""
+                                                                        ) : null
                                                                     }
                                                                 </div>
                                                             </div>
@@ -255,10 +261,10 @@ const CategoryClientForm = (props) => {
         editcategoryid ?
             verifyPermission(props.userPermissions, 'update-category-client') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-category-client') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 
 };

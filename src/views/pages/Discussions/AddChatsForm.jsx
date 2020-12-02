@@ -8,13 +8,13 @@ import {ToastBottomEnd} from "../../components/Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import Select from "react-select";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {formatSelectOption} from "../../../helpers/function";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -50,7 +50,8 @@ const AddChatsForm = (props) => {
             ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const onChangeName = (e) => {
@@ -70,22 +71,22 @@ const AddChatsForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
 
-        axios.post(appConfig.apiDomaine + `/discussions`, data)
-            .then(response => {
-                setStartRequest(false);
-                // setError(defaultError);
-                // setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href="/chat";
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError,...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
-
-
+        if (verifyTokenExpire()) {
+            axios.post(appConfig.apiDomaine + `/discussions`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    // setError(defaultError);
+                    // setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/chat";
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError,...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
     const printJsx = () => {
         return (
@@ -162,7 +163,7 @@ const AddChatsForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -188,7 +189,7 @@ const AddChatsForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -244,7 +245,7 @@ const AddChatsForm = (props) => {
     return (
         verifyPermission(props.userPermissions, 'store-discussion') ? (
             printJsx()
-        ) : ""
+        ) : null
     );
 
 };

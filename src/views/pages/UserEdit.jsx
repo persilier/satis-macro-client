@@ -13,6 +13,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -57,19 +58,21 @@ const UserEdit = (props) => {
             else if(props.plan === "PRO")
                 endpoint = `${appConfig.apiDomaine}/my/users/${id}/change-role-password`;
 
-            await axios.get(endpoint)
-                .then(({data}) => {
-                    const newData = {...defaultData};
-                    newData.roles = formatDefaultRoles(data.user.roles);
-                    setRole(formatSelectOption(data.user.roles, "name", false, "name"));
-                    setRoles(formatSelectOption(data.roles, "name", false, "name"));
-                    setUser(data.user);
-                    setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
+            if (verifyTokenExpire()) {
+                await axios.get(endpoint)
+                    .then(({data}) => {
+                        const newData = {...defaultData};
+                        newData.roles = formatDefaultRoles(data.user.roles);
+                        setRole(formatSelectOption(data.user.roles, "name", false, "name"));
+                        setRoles(formatSelectOption(data.roles, "name", false, "name"));
+                        setUser(data.user);
+                        setData(newData);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
         }
         fetchData();
     }, [props.plan, appConfig.apiDomaine]);
@@ -113,22 +116,25 @@ const UserEdit = (props) => {
         else if(props.plan === "PRO")
             endpoint = `${appConfig.apiDomaine}/my/users/${id}/change-role-password`;
 
-        await axios.put(endpoint, data)
-            .then(response => {
-                setStartRequest(false);
-                const newData = {...data};
-                newData.new_password = "";
-                newData.new_password_confirmation = "";
-                setError(defaultError);
-                setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            console.log("enpoint:", endpoint);
+            await axios.put(endpoint, data)
+                .then(response => {
+                    setStartRequest(false);
+                    const newData = {...data};
+                    newData.new_password = "";
+                    newData.new_password_confirmation = "";
+                    setError(defaultError);
+                    setData(newData);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (

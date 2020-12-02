@@ -8,6 +8,7 @@ import {
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const UnfoundedModal = (props) => {
 
@@ -48,28 +49,30 @@ const UnfoundedModal = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")){
-            axios.put(appConfig.apiDomaine + `/claim-awaiting-assignment/${props.getId}/unfounded`, data)
-                .then(response => {
+        if (verifyTokenExpire()) {
+            if (verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")){
+                axios.put(appConfig.apiDomaine + `/claim-awaiting-assignment/${props.getId}/unfounded`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        window.location.href="/process/claim-assign"
+                    }).catch(error => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    window.location.href="/process/claim-assign"
-                }).catch(error => {
-                setStartRequest(false);
-                setError({...defaultError,...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        }else{
-            axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
-                .then(response => {
+                    setError({...defaultError,...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            }else{
+                axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        window.location.href="/process/claim-assign/to-staff"
+                    }).catch(error => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    window.location.href="/process/claim-assign/to-staff"
-                }).catch(error => {
-                setStartRequest(false);
-                setError({...defaultError,...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
+                    setError({...defaultError,...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            }
         }
     };
     return (

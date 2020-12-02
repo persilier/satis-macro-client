@@ -10,6 +10,7 @@ import {
 import {Link, useParams} from "react-router-dom";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
@@ -50,10 +51,13 @@ const ParametersComponentEdit = (props) => {
     };
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + `/components/${id}`)
-            .then(response => {
-                initialState(response.data.params.fr);
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + `/components/${id}`)
+                .then(response => {
+                    initialState(response.data.params.fr);
+                })
+            ;
+        }
     }, []);
 
     const handleChange = (e, param) => {
@@ -77,18 +81,19 @@ const ParametersComponentEdit = (props) => {
     };
 
     const executeSave = (url, saveData) => {
-
-        axios.post(url, saveData)
-            .then(response => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                window.location.href = "/settings/config"
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.post(url, saveData)
+                .then(response => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    window.location.href = "/settings/config"
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
 
@@ -291,9 +296,7 @@ const ParametersComponentEdit = (props) => {
     };
 
     return (
-
         printJsx()
-
     );
 };
 

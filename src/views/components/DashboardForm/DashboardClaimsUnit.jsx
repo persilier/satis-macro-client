@@ -6,6 +6,7 @@ import appConfig from "../../../config/appConfig";
 import {connect} from "react-redux";
 import {percentageData} from "../../../helpers/function";
 import LoadingTable from "../LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -31,9 +32,11 @@ const DashboardClaimsUnit = (props) => {
                     setLoad(false);
                     console.log("Something is wrong");
                 })
+            ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
 
             isCancelled = true;

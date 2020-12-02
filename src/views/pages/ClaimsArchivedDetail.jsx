@@ -17,6 +17,7 @@ import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -71,7 +72,8 @@ const ClaimArchivedDetail = (props) => {
             ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     return (
@@ -181,7 +183,7 @@ const ClaimArchivedDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

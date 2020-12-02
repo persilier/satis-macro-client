@@ -10,6 +10,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const RejectLimitPage = (props) => {
     document.title = "Satis client - Paramètre Limite de rejet";
@@ -30,7 +31,6 @@ const RejectLimitPage = (props) => {
         async function fetchData () {
             await axios.get(`${appConfig.apiDomaine}/configurations/reject-unit-transfer-limitation`)
                 .then(({data}) => {
-                    console.log("data:", data);
                     setData({
                         number_reject_max: data.number_reject_max,
                     });
@@ -40,7 +40,8 @@ const RejectLimitPage = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const handleRecurencePeriod = (e) => {
@@ -54,18 +55,20 @@ const RejectLimitPage = (props) => {
         e.preventDefault();
 
         setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/configurations/reject-unit-transfer-limitation`, sendData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/configurations/reject-unit-transfer-limitation`, sendData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -98,7 +101,7 @@ const RejectLimitPage = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Limite de rejet
+                                            Limite de rejet après affectation
                                         </h3>
                                     </div>
                                 </div>

@@ -5,6 +5,7 @@ import appConfig from "../../config/appConfig";
 import {connect} from "react-redux";
 import {percentageData} from "../../helpers/function";
 import LoadingTable from "../../views/components/LoadingTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -18,18 +19,21 @@ const DashboardClaimsAll = (props) => {
         let isCancelled = false;
 
         async function fetchData() {
-            axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    if (!isCancelled) {
-                        setData(response.data.statistics);
-                        setTotalData(response.data.totalClaimsRegisteredStatistics);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                });
+            if (verifyTokenExpire()) {
+                axios.get(appConfig.apiDomaine + "/dashboard")
+                    .then(response => {
+                        if (!isCancelled) {
+                            setData(response.data.statistics);
+                            setTotalData(response.data.totalClaimsRegisteredStatistics);
+                            setLoad(false)
+                        }
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
         }
         fetchData();
         return () => {
@@ -93,7 +97,7 @@ const DashboardClaimsAll = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalIncomplete.allInstitution), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
@@ -108,7 +112,7 @@ const DashboardClaimsAll = (props) => {
                                                         <span className="kt-widget24__number">
                                                 {percentageData((data.totalIncomplete.allInstitution), totalData)}
                                            </span>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -136,7 +140,7 @@ const DashboardClaimsAll = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalComplete.allInstitution), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -152,7 +156,7 @@ const DashboardClaimsAll = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalComplete.allInstitution), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -182,7 +186,7 @@ const DashboardClaimsAll = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalTransferredToUnit.allInstitution), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -196,7 +200,7 @@ const DashboardClaimsAll = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalTransferredToUnit.allInstitution), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -226,7 +230,7 @@ const DashboardClaimsAll = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalBeingProcess.allInstitution), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -240,7 +244,7 @@ const DashboardClaimsAll = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalBeingProcess.allInstitution), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -283,7 +287,7 @@ const DashboardClaimsAll = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalTreated.allInstitution), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -312,7 +316,7 @@ const DashboardClaimsAll = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalUnfounded.allInstitution), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
@@ -325,7 +329,7 @@ const DashboardClaimsAll = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalUnfounded.allInstitution), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -355,7 +359,7 @@ const DashboardClaimsAll = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalMeasuredSatisfaction.allInstitution), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
@@ -368,7 +372,7 @@ const DashboardClaimsAll = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalMeasuredSatisfaction.allInstitution), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -380,7 +384,7 @@ const DashboardClaimsAll = (props) => {
                     }
                 </div>
 
-            ) : ""
+            ) : null
     )
 };
 

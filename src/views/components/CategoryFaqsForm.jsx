@@ -14,6 +14,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -40,14 +41,17 @@ const CategoryFaqsForm = (props) => {
 
     useEffect(() => {
         if (id){
-            axios.get(appConfig.apiDomaine+`/faq-categories/${id}`)
-                .then(response => {
+            if (verifyTokenExpire()) {
+                axios.get(appConfig.apiDomaine+`/faq-categories/${id}`)
+                    .then(response => {
 
-                    const newCategory={
-                        name:response.data.name.fr,
-                    };
-                    setData(newCategory)
-                })
+                        const newCategory={
+                            name:response.data.name.fr,
+                        };
+                        setData(newCategory)
+                    })
+                ;
+            }
         }
     }, []);
 
@@ -60,36 +64,37 @@ const CategoryFaqsForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if(id){
-            axios.put(appConfig.apiDomaine+`/faq-categories/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        }else{
-            axios.post(appConfig.apiDomaine+`/faq-categories`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if(id){
+                axios.put(appConfig.apiDomaine+`/faq-categories/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError,...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }else{
+                axios.post(appConfig.apiDomaine+`/faq-categories`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError,...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
-
     };
     const printJsx = () => {
         return (
@@ -155,7 +160,7 @@ const CategoryFaqsForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -198,10 +203,10 @@ const CategoryFaqsForm = (props) => {
         id ?
             verifyPermission(props.userPermissions, 'update-faq-category') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-faq-category') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

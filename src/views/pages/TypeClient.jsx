@@ -17,6 +17,7 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -36,17 +37,20 @@ const TypeClient = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/type-clients")
-            .then(response => {
-                setLoad(false);
-                setTypeClient(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/type-clients")
+                .then(response => {
+                    setLoad(false);
+                    setTypeClient(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const searchElement = async (e) => {
@@ -112,33 +116,35 @@ const TypeClient = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/type-clients/${typeClientId}`)
-                        .then(response => {
-                            console.log(response, "OK");
-                            const newType = [...typeClient];
-                            newType.splice(index, 1);
-                            setTypeClient(newType);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newType.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newType.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/type-clients/${typeClientId}`)
+                            .then(response => {
+                                console.log(response, "OK");
+                                const newType = [...typeClient];
+                                newType.splice(index, 1);
+                                setTypeClient(newType);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newType.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newType.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -185,7 +191,7 @@ const TypeClient = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                            : ""
+                            : null
                     }
 
                 </td>
@@ -331,7 +337,7 @@ const TypeClient = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -341,7 +347,7 @@ const TypeClient = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

@@ -100,7 +100,7 @@ const Aside = (props) => {
                                                     <NavLink exact to="/process/claim-assign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Réclamation à tranférer</span>
+                                                            <span className="kt-menu__link-text">Réclamations à tranférer</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -425,12 +425,16 @@ const Aside = (props) => {
                                                 :null
                                                 }
 
-                                                {/*<NavLink exact to="/settings/rules" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                    <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                        <span className="kt-menu__link-text">Role</span>
-                                                    </li>
-                                                </NavLink>*/}
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-any-institution-type-role') || verifyPermission(props.userPermissions, 'list-my-institution-type-role') ? (
+                                                        <NavLink exact to="/settings/rules" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Role</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
 
                                                 {
                                                     verifyPermission(props.userPermissions, "list-user-my-institution") || verifyPermission(props.userPermissions, "list-user-any-institution") ? (

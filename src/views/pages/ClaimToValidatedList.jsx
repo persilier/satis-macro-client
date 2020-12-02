@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux"
+import axios from "axios";
 import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
-import ExportButton from "../components/ExportButton";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
-import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {filterDataTableBySearchValue, forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -49,7 +49,8 @@ const ClaimToValidatedList = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const searchElement = async (e) => {

@@ -14,6 +14,7 @@ import appConfig from "../../../config/appConfig";
 import Select from "react-select";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -36,6 +37,7 @@ const {id}=useParams();
     const [staffIdData, setStaffIdData] = useState([]);
 
     useEffect(() => {
+        if (verifyTokenExpire()) {
             axios.get(`${appConfig.apiDomaine}/discussions/${id}/staff/create`)
                 .then(response => {
                     console.log(response.data, "PARTICIPANT")
@@ -48,6 +50,7 @@ const {id}=useParams();
                     console.log("Something is wrong");
                 })
             ;
+        }
     }, []);
 
     const onChangeClaim = (e,selected) => {
@@ -60,22 +63,22 @@ const {id}=useParams();
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.post(appConfig.apiDomaine + `/discussions/${id}/staff`, data)
-            .then(response => {
-                setStartRequest(false);
-                // setError(defaultError);
-                // setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href="/chat";
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError,...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig)
-            })
-        ;
-
-
+        if (verifyTokenExpire()) {
+            axios.post(appConfig.apiDomaine + `/discussions/${id}/staff`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    // setError(defaultError);
+                    // setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href="/chat";
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError,...error.response.data.error});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig)
+                })
+            ;
+        }
     };
     const printJsx = () => {
         return (
@@ -153,7 +156,7 @@ const {id}=useParams();
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -209,7 +212,7 @@ const {id}=useParams();
     return (
         verifyPermission(props.userPermissions, 'add-discussion-contributor') ? (
             printJsx()
-        ) : ""
+        ) : null
     );
 
 };

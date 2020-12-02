@@ -9,7 +9,7 @@ import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastDeleteErrorMessageConfig,
-    toastDeleteSuccessMessageConfig, toastErrorMessageWithParameterConfig
+    toastDeleteSuccessMessageConfig
 } from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
@@ -21,13 +21,14 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const RulePage = (props) => {
     document.title = "Satis client - Paramètre role";
-    if (!verifyPermission(props.userPermissions, "list-unit-type"))
+    if (!(verifyPermission(props.userPermissions, "list-any-institution-type-role") || verifyPermission(props.userPermissions ,'list-my-institution-type-role')))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -38,8 +39,13 @@ const RulePage = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
+        var endpoint = ``;
+        if (verifyPermission(props.userPermissions, 'list-any-institution-type-role'))
+            endpoint = `${appConfig.apiDomaine}/any/roles`;
+        if (verifyPermission(props.userPermissions, 'list-my-institution-type-role'))
+            endpoint = `${appConfig.apiDomaine}/my/roles`;
         async function fetchData () {
-            await axios.get(`${appConfig.apiDomaine}/unit-types`)
+            await axios.get(endpoint)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
@@ -52,7 +58,8 @@ const RulePage = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -128,36 +135,41 @@ const RulePage = (props) => {
     const deleteRulePage = (ruleId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/unit-types/${ruleId}`)
-                        .then(response => {
-                            const newRulePages = [...rules];
-                            newRulePages.splice(index, 1);
-                            setRulePages(newRulePages);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newRulePages.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newRulePages.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        var endpoint = "";
+                        if (verifyPermission(props.userPermissions, 'destroy-any-institution-type-role'))
+                            endpoint = `${appConfig.apiDomaine}/any/roles/${ruleId}`;
+                        if (verifyPermission(props.userPermissions, 'destroy-my-institution-type-role'))
+                            endpoint = `${appConfig.apiDomaine}/my/roles/${ruleId}`;
+
+                        axios.delete(endpoint)
+                            .then(response => {
+                                const newRulePages = [...rules];
+                                newRulePages.splice(index, 1);
+                                setRulePages(newRulePages);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newRulePages.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newRulePages.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
                                 ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -176,22 +188,23 @@ const RulePage = (props) => {
     const printBodyTable = (rule, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{rule.name ? rule.name["fr"] : "-"}</td>
-                <td style={{ textOverflow: "ellipsis", width: "300px" }}>{rule.description ? rule.description["fr"] : "-"}</td>
+                <td>{rule.name ? rule.name : "-"}</td>
                 <td>
                     {
-                        verifyPermission(props.userPermissions, 'update-unit-type') ? (
-                            <Link to={`/settings/rules/${rule.id}/edit`}
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
-                                <i className="la la-edit"/>
-                            </Link>
+                        rule.is_editable === 1 ? (
+                            verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
+                                <Link to={`/settings/rules/${rule.name}/edit`}
+                                      className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                      title="Modifier">
+                                    <i className="la la-edit"/>
+                                </Link>
+                            ) : null
                         ) : null
                     }
                     {
-                        verifyPermission(props.userPermissions, 'destroy-unit-type') ? (
+                        verifyPermission(props.userPermissions, 'destroy-any-institution-type-role') || verifyPermission(props.userPermissions, 'destroy-my-institution-type-role') ? (
                             <button
-                                onClick={(e) => deleteRulePage(rule.id, index)}
+                                onClick={(e) => deleteRulePage(rule.name, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Supprimer">
                                 <i className="la la-trash"/>
@@ -204,7 +217,7 @@ const RulePage = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-unit-type') ? (
+        verifyPermission(props.userPermissions, 'list-any-institution-type-role') || verifyPermission(props.userPermissions, 'list-my-institution-type-role') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -227,7 +240,7 @@ const RulePage = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            addPermission={"store-unit-type"}
+                            addPermission={["store-any-institution-type-role", 'store-my-institution-type-role']}
                             title={"Roles"}
                             addText={"Ajouter"}
                             addLink={"/settings/rules/add"}
@@ -261,10 +274,6 @@ const RulePage = (props) => {
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Nom
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "300px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -288,7 +297,6 @@ const RulePage = (props) => {
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>

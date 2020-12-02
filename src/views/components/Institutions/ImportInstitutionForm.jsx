@@ -13,6 +13,7 @@ import InputRequire from "../InputRequire";
 import {connect} from "react-redux";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -58,19 +59,23 @@ const ImportInstitutionForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
 
-        axios.post(`${appConfig.apiDomaine}/any/import-institutions`, formatFormData(data))
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                setData(defaultData);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            if (verifyTokenExpire()) {
+                axios.post(`${appConfig.apiDomaine}/any/import-institutions`, formatFormData(data))
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
+        }
     };
 
     const printJsx = () => {
@@ -129,7 +134,7 @@ const ImportInstitutionForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -176,7 +181,7 @@ const ImportInstitutionForm = (props) => {
     return (
         verifyPermission(props.userPermissions, 'store-any-institution') ?
             printJsx()
-            : ""
+            : null
     );
 };
 

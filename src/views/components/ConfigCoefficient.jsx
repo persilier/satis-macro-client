@@ -9,6 +9,7 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -25,16 +26,17 @@ const ConfigCoefficient = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-
-        axios.get(appConfig.apiDomaine + `/configurations/relance`)
-            .then(response => {
-                console.log(response.data, "Data");
-                const newConfig = {
-                    coef: response.data.coef,
-                };
-                setData(newConfig)
-            })
-
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + `/configurations/relance`)
+                .then(response => {
+                    console.log(response.data, "Data");
+                    const newConfig = {
+                        coef: response.data.coef,
+                    };
+                    setData(newConfig)
+                })
+            ;
+        }
     }, []);
 
     const onChangeCoef = (e) => {
@@ -46,20 +48,20 @@ const ConfigCoefficient = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/configurations/relance`, data)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
-
-
+        if (verifyTokenExpire()) {
+            axios.put(appConfig.apiDomaine + `/configurations/relance`, data)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
     const printJsx = () => {
         return (
@@ -116,7 +118,7 @@ const ConfigCoefficient = () => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>

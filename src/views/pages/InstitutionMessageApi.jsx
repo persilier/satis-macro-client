@@ -14,6 +14,7 @@ import {AUTH_TOKEN} from "../../constants/token";
 import Select from "react-select";
 import {debug} from "../../helpers/function";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -98,7 +99,8 @@ const InstitutionMessageApi = props => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const handleMessageApiChange = (selected) => {
@@ -120,18 +122,20 @@ const InstitutionMessageApi = props => {
     };
 
     const executeSave = (url, saveData) => {
-        axios.post(url, saveData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.post(url, saveData)
+                .then(() => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     const saveData = (e) => {
@@ -269,10 +273,10 @@ const InstitutionMessageApi = props => {
         id ?
             verifyPermission(props.userPermissions, 'update-institution-message-api') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'update-my-institution-message-api') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

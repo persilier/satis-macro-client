@@ -15,6 +15,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import Select from "react-select";
 import TagsInput from "react-tagsinput";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -67,41 +68,42 @@ const ConfigRapportAutoForm = (props) => {
     const [institutions, setInstitutions] = useState(null);
 
     useEffect(() => {
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.get(endPoint.list + `/${id}/edit`)
+                    .then(response => {
+                        console.log(response.data);
+                        const newRapport = {
+                            period: (response.data.reportingTask.period !== null) ? (response.data.reportingTask.period) : '',
+                            email: response.data.reportingTask.email,
+                            institution_id:response.data.reportingTask.institution_targeted_id!==null?response.data.reportingTask.institution_targeted_id:""
+                        };
 
-        if (id) {
-            axios.get(endPoint.list + `/${id}/edit`)
-                .then(response => {
-                    console.log(response.data);
-                    const newRapport = {
-                        period: (response.data.reportingTask.period !== null) ? (response.data.reportingTask.period) : '',
-                        email: response.data.reportingTask.email,
-                        institution_id:response.data.reportingTask.institution_targeted_id!==null?response.data.reportingTask.institution_targeted_id:""
-                    };
+                        setData(newRapport);
 
-                    setData(newRapport);
+                        if (response.data.reportingTask.period !== null) {
+                            setPeriodData(response.data.period);
+                            setPeriod(response.data.reportingTask.period_tag);
+                        }
+                        if (response.data.reportingTask.institution_targeted_id !== null) {
+                            setInstitutions(response.data.institutions);
+                            setInstitution({value: response.data.reportingTask.institution_targeted.id, label: response.data.reportingTask.institution_targeted.name});
 
-                    if (response.data.reportingTask.period !== null) {
-                        setPeriodData(response.data.period);
-                        setPeriod(response.data.reportingTask.period_tag);
-                    }
-                    if (response.data.reportingTask.institution_targeted_id !== null) {
-                        setInstitutions(response.data.institutions);
-                        setInstitution({value: response.data.reportingTask.institution_targeted.id, label: response.data.reportingTask.institution_targeted.name});
-
-                    }
-                })
-        }
+                        }
+                    })
+            }
             axios.get(endPoint.list + `/create`)
                 .then(response => {
                     let options =
                         response.data.institutions.length ? response.data.institutions.map(institution => ({
                             value: institution.id, label: institution.name
                         })) : ""
-                ;
+                    ;
                     setInstitutions(options);
                     setPeriodData(response.data.period)
-                });
-
+                })
+            ;
+        }
     }, []);
 
     const onChangePeriod = (selected) => {
@@ -132,38 +134,38 @@ const ConfigRapportAutoForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-
-        if (id) {
-            axios.put(endPoint.list + `/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                    window.location.href="/settings/rapport-auto"
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(endPoint.list, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(endPoint.list + `/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        window.location.href="/settings/rapport-auto"
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(endPoint.list, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
-
     };
     const printJsx = () => {
         return (
@@ -255,7 +257,7 @@ const ConfigRapportAutoForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -281,7 +283,7 @@ const ConfigRapportAutoForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
 
@@ -337,7 +339,7 @@ const ConfigRapportAutoForm = (props) => {
     return (
         verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ? (
             printJsx()
-        ) : ""
+        ) : null
     );
 
 };

@@ -5,7 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {debug, loadCss, loadScript} from "../../helpers/function";
+import {loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -18,6 +18,7 @@ import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -72,7 +73,9 @@ const SatisfactionMeasureDetail = (props) => {
                 .catch(error => console.log("Something is wrong"));
         }
 
-        fetchData();
+        if (verifyTokenExpire()) {
+            fetchData();
+        }
     }, []);
 
     return (
@@ -217,7 +220,7 @@ const SatisfactionMeasureDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

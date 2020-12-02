@@ -14,7 +14,8 @@ export const notificationConfig = {
     "add-contributor-to-discussion": "Ajouter contributeur à la discussion",
     "post-discussion-message": "Message post discussion",
     "reminder-before-deadline": "Relance automatique avant échéance",
-    "reminder-after-deadline": "Relance automatique après échéance"
+    "reminder-after-deadline": "Relance automatique après échéance",
+    "recurrence-alert": "Maximum réclamations tolérable"
 };
 
 export const EventNotification = [

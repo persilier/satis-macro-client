@@ -12,6 +12,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -39,18 +40,19 @@ const FilialeInstitutionForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-
-        axios.get(appConfig.apiDomaine + `/my/institutions`)
-            .then(response => {
-                const newInstitution = {
-                    name: response.data.name,
-                    acronyme: response.data.acronyme,
-                    iso_code: response.data.iso_code,
-                    logo: response.data.logo
-                };
-                setData(newInstitution);
-            });
-
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + `/my/institutions`)
+                .then(response => {
+                    const newInstitution = {
+                        name: response.data.name,
+                        acronyme: response.data.acronyme,
+                        iso_code: response.data.iso_code,
+                        logo: response.data.logo
+                    };
+                    setData(newInstitution);
+                })
+            ;
+        }
     }, []);
 
     const onChangeName = (e) => {
@@ -99,18 +101,20 @@ const FilialeInstitutionForm = (props) => {
         setStartRequest(true);
 
         formData.append("_method", "put");
-        axios.post(appConfig.apiDomaine + `/my/institutions`, formData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                setError({...defaultError});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.post(appConfig.apiDomaine + `/my/institutions`, formData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    setError({...defaultError});
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
     const printJsx = () => {
         return (
@@ -223,7 +227,7 @@ const FilialeInstitutionForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -249,7 +253,7 @@ const FilialeInstitutionForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -275,7 +279,7 @@ const FilialeInstitutionForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -322,7 +326,7 @@ const FilialeInstitutionForm = (props) => {
     return (
         verifyPermission(props.userPermissions, 'update-my-institution') ?
             printJsx()
-            : ""
+            : null
     );
 
 };

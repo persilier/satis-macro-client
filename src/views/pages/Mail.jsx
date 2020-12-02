@@ -10,6 +10,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const Mail = (props) => {
     document.title = "Satis client - Paramètre Envoie de mail";
@@ -58,7 +59,8 @@ const Mail = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire()) {}
+            fetchData();
     }, []);
 
     const onChangeSenderID = (e) => {
@@ -111,21 +113,23 @@ const Mail = (props) => {
             delete sendData.password;
 
         setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/configurations/mail`, sendData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                const newData = {...data};
-                newData.password = "";
-                setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/configurations/mail`, sendData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    const newData = {...data};
+                    newData.password = "";
+                    setData(newData);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (

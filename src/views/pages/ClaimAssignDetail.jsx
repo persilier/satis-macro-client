@@ -26,6 +26,7 @@ import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import DoubleButtonDetail from "../components/DoubleButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import UnfoundedModal from "../components/UnfoundedModal";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -72,24 +73,27 @@ const ClaimAssignDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
-                .then(response => {
-                    setClaim(response.data);
-                    setDataId(response.data.institution_targeted.name);
-                })
-                .catch(error => console.log("Something is wrong"))
-            ;
-
-            if (verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") || verifyPermission(props.userPermissions, "transfer-claim-to-unit")) {
-                await axios.get(endPoint.edit(`${id}`))
+            if (verifyTokenExpire()) {
+                await axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
                     .then(response => {
-                        let newUnit = Object.values(response.data.units);
-                        setUnitsData(formatSelectOption(newUnit, "name", "fr"))
+                        setClaim(response.data);
+                        setDataId(response.data.institution_targeted.name);
                     })
                     .catch(error => console.log("Something is wrong"))
                 ;
             }
 
+            if (verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") || verifyPermission(props.userPermissions, "transfer-claim-to-unit")) {
+                if (verifyTokenExpire()) {
+                    await axios.get(endPoint.edit(`${id}`))
+                        .then(response => {
+                            let newUnit = Object.values(response.data.units);
+                            setUnitsData(formatSelectOption(newUnit, "name", "fr"))
+                        })
+                        .catch(error => console.log("Something is wrong"))
+                    ;
+                }
+            }
         }
         fetchData();
     }, []);
@@ -97,17 +101,19 @@ const ClaimAssignDetail = (props) => {
     const onClickToTranfertInstitution = async (e) => {
         e.preventDefault();
         setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
-            .then(response => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                window.location.href = "/process/claim-assign";
-            })
-            .catch(error => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddErrorMessageConfig)
-            })
-        ;
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
+                .then(response => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.href = "/process/claim-assign";
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig)
+                })
+            ;
+        }
     };
 
     const onClickToTranfert = (e) => {
@@ -128,7 +134,8 @@ const ClaimAssignDetail = (props) => {
             ;
         }
 
-        fetchData()
+        if (verifyTokenExpire())
+            fetchData()
     };
 
     const onChangeUnits = (selected) => {
@@ -241,7 +248,7 @@ const ClaimAssignDetail = (props) => {
                                                     }
 
                                                 </div>
-                                            ):""
+                                            ): null
                                         }
 
                                         {

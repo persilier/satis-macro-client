@@ -5,7 +5,7 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {debug, formatDateToTimeStampte, loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
+import {loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -19,6 +19,7 @@ import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -63,7 +64,9 @@ const ClaimToValidatedListDetail = (props) => {
                         console.log("Something is wrong")
                 });
         }
-        fetchData();
+        if (verifyTokenExpire()) {
+            fetchData();
+        }
     }, [id]);
 
     const showReasonInput = async (type) => {

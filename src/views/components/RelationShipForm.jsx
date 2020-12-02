@@ -13,6 +13,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -39,16 +40,19 @@ const RelationShipForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(appConfig.apiDomaine + `/relationships/${id}`)
-                .then(response => {
-                    console.log(response.data, 'DATA');
-                    const newType = {
-                        name: response.data.name.fr,
-                        description: response.data.description.fr
-                    };
-                    setData(newType);
-                })
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.get(appConfig.apiDomaine + `/relationships/${id}`)
+                    .then(response => {
+                        console.log(response.data, 'DATA');
+                        const newType = {
+                            name: response.data.name.fr,
+                            description: response.data.description.fr
+                        };
+                        setData(newType);
+                    })
+                ;
+            }
         }
     },[appConfig.apiDomaine, id]);
 
@@ -68,36 +72,37 @@ const RelationShipForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (id) {
-            axios.put(appConfig.apiDomaine + `/relationships/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(appConfig.apiDomaine + `/relationships`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(({response}) => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(appConfig.apiDomaine + `/relationships/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(appConfig.apiDomaine + `/relationships`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(({response}) => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
-
     };
     const printJsx = () => {
         return (
@@ -171,7 +176,7 @@ const RelationShipForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -197,7 +202,7 @@ const RelationShipForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -252,10 +257,10 @@ const RelationShipForm = (props) => {
         id ?
             verifyPermission(props.userPermissions, 'update-relationship') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-relationship') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 
 };

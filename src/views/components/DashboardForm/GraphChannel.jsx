@@ -5,6 +5,7 @@ import appConfig from "../../../config/appConfig";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -84,7 +85,8 @@ const GraphChannel = (props) => {
                 })
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }
@@ -107,12 +109,12 @@ const GraphChannel = (props) => {
                                 <Chart options={channelData.options} series={channelData.series} type="bar"
                                        height={350}/>
                             </div>
-                            : ""
+                            : null
                     )
                 }
 
             </div>
-            : ""
+            : null
     );
 };
 

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { connect } from "react-redux";
-import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -14,8 +13,8 @@ import {
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {debug} from "../../helpers/function";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -40,6 +39,7 @@ const ConfigNotification = (props) => {
         "notifications.post-discussion-message": [],
         "notifications.reminder-before-deadline": [],
         "notifications.reminder-after-deadline": [],
+        "notifications.recurrence-alert": [],
     });
     const [load, setLoad] = useState(true);
     const [startUpdate, setStartUpdate] = useState(false);
@@ -47,8 +47,9 @@ const ConfigNotification = (props) => {
     useEffect(() => {
         async function fetchData() {
             await axios.get(`${appConfig.apiDomaine}/notifications/edit`)
-                .then(response => {
-                    setData(response.data);
+                .then(({data}) => {
+                    console.log("data:", data);
+                    setData(data);
                     setLoad(false);
                 })
                 .catch(error => {
@@ -57,7 +58,8 @@ const ConfigNotification = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine]);
 
     const handleTextChange = (e, index) => {
@@ -79,18 +81,20 @@ const ConfigNotification = (props) => {
             "notifications": formatUpdateData(),
         };
 
-        axios.put(`${appConfig.apiDomaine}/notifications`, updateData)
-            .then(({data}) => {
-                setStartUpdate(false);
-                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la modification"));
-            })
-            .catch(({response}) => {
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                setError({...error, ...response.data.error});
-                setStartUpdate(false);
-                console.log("error", response.data.error)
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.put(`${appConfig.apiDomaine}/notifications`, updateData)
+                .then(({data}) => {
+                    setStartUpdate(false);
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la modification"));
+                })
+                .catch(({response}) => {
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    setError({...error, ...response.data.error});
+                    setStartUpdate(false);
+                    console.log("error", response.data.error)
+                })
+            ;
+        }
     };
 
     return (

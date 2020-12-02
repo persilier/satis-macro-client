@@ -17,6 +17,7 @@ import ColToTreat from "../components/kanban/ColToTreat";
 import ColToValidate from "../components/kanban/ColToValidate";
 import ColToMeasure from "../components/kanban/ColToMeasure";
 import DetailModal from "../components/kanban/DetailModal";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/kanban/kanban.bundle.css");
 
@@ -78,9 +79,9 @@ const ClaimMonitoring = (props) => {
                 endpoint = `${appConfig.apiDomaine}/any/monitoring-claim`;
             else if(props.plan === "PRO")
                 endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
-
             await axios.get(endpoint)
                 .then(response => {
+                    console.log("response:", response.data);
                     setClaimsToComplete(response.data.incompletes);
                     setClaimsToAssignUnit(response.data.toAssignementToUnit);
                     setClaimsToAssignStaff(response.data.toAssignementToStaff);
@@ -88,9 +89,15 @@ const ClaimMonitoring = (props) => {
                     setClaimsToValidate(response.data.toValidate);
                     setClaimsToMeasure(response.data.toMeasureSatisfaction);
 
-                    setInstitutions(formatSelectOption(response.data.institutions, 'name', false));
+                    if (verifyPermission(props.userPermissions, "list-monitoring-claim-any-institution"))
+                        setInstitutions(formatSelectOption(response.data.institutions, 'name', false));
                     setCategories(formatSelectOption(response.data.claimCategories, 'name', "fr"));
 
+                    setFilterUnits(formatSelectOption(
+                        response.data.units,
+                        "name",
+                        "fr"
+                    ));
                     setUnits(response.data.units);
                     setStaffs(response.data.staffs);
                     setObjects(response.data.claimObjects);
@@ -100,7 +107,8 @@ const ClaimMonitoring = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [props.plan, props.userPermissions]);
 
     const formatFilterStaff = staff => {
@@ -311,16 +319,20 @@ const ClaimMonitoring = (props) => {
                                     <span className="d-block mb-3" style={{fontSize: "1.5rem", fontWeight: "400"}}>Autres Filtres</span>
 
                                     <div className="form-group row" style={{marginRight: "12px"}}>
-                                        <div className={"col"}>
-                                            <label htmlFor="institution">Institution</label>
-                                            <Select
-                                                placeholder={"Veillez selectioner l'institution"}
-                                                isClearable
-                                                value={institution}
-                                                onChange={onChangeInstitution}
-                                                options={institutions}
-                                            />
-                                        </div>
+                                        {
+                                            verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') ? (
+                                                <div className={"col"}>
+                                                    <label htmlFor="institution">Institution</label>
+                                                    <Select
+                                                        placeholder={"Veillez selectioner l'institution"}
+                                                        isClearable
+                                                        value={institution}
+                                                        onChange={onChangeInstitution}
+                                                        options={institutions}
+                                                    />
+                                                </div>
+                                            ) : null
+                                        }
 
                                         <div className={"col"}>
                                             <label htmlFor="unite">Unité</label>

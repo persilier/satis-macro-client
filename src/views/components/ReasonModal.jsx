@@ -6,6 +6,7 @@ import {
     toastAssignClaimSuccessMessageConfig, toastRejectTreatmentClaimSuccessMessageConfig,
     toastValidateTreatmentClaimSuccessMessageConfig
 } from "../../config/toastConfig";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const ReasonModal = props => {
     const [description, setDescription] = useState("");
@@ -14,52 +15,54 @@ const ReasonModal = props => {
 
     const sendData = () => {
         setStartRequest(true);
-        if (props.action === "reject") {
-            axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${props.id}/rejected`, {rejected_reason: description})
-                .then(response => {
-                setStartRequest(false);
-                    ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
-                    window.location.href = `/process/unit-claims`
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError(error.response.data.error.rejected_reason);
-                })
-            ;
-        } else if(props.action === "validateReject") {
-            let endpoint = ``;
-            if (props.plan === "MACRO" || props.plan === "PRO")
-                endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${props.id}/invalidate`;
-            else if(props.plan === "HUB")
-                endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${props.id}/invalidate`;
-            axios.put(endpoint, {invalidated_reason: description})
-                .then(response => {
-                    setStartRequest(false);
-                    ToastBottomEnd.fire(toastRejectTreatmentClaimSuccessMessageConfig);
-                    window.location.href = `/process/claim-to-validated`
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError(error.response.data.error.invalidated_reason);
-                })
-            ;
-        } else if(props.action === "validateSolution") {
-            let endpoint = "";
-            if (props.plan === "MACRO" || props.plan === "PRO")
-                endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${props.id}/validate`;
-            else if(props.plan === "HUB")
-                endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${props.id}/validate`;
-            axios.put(endpoint, {solution_communicated: description})
-                .then(response => {
-                    setStartRequest(false);
-                    ToastBottomEnd.fire(toastValidateTreatmentClaimSuccessMessageConfig);
-                    window.location.href = `/process/claim-to-validated`
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError(error.response.data.error.solution_communicated);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (props.action === "reject") {
+                axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${props.id}/rejected`, {rejected_reason: description})
+                    .then(response => {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
+                        window.location.href = `/process/unit-claims`
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError(error.response.data.error.rejected_reason);
+                    })
+                ;
+            } else if(props.action === "validateReject") {
+                let endpoint = ``;
+                if (props.plan === "MACRO" || props.plan === "PRO")
+                    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${props.id}/invalidate`;
+                else if(props.plan === "HUB")
+                    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${props.id}/invalidate`;
+                axios.put(endpoint, {invalidated_reason: description})
+                    .then(response => {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastRejectTreatmentClaimSuccessMessageConfig);
+                        window.location.href = `/process/claim-to-validated`
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError(error.response.data.error.invalidated_reason);
+                    })
+                ;
+            } else if(props.action === "validateSolution") {
+                let endpoint = "";
+                if (props.plan === "MACRO" || props.plan === "PRO")
+                    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${props.id}/validate`;
+                else if(props.plan === "HUB")
+                    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${props.id}/validate`;
+                axios.put(endpoint, {solution_communicated: description})
+                    .then(response => {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastValidateTreatmentClaimSuccessMessageConfig);
+                        window.location.href = `/process/claim-to-validated`
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError(error.response.data.error.solution_communicated);
+                    })
+                ;
+            }
         }
     };
 
