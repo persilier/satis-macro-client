@@ -33,7 +33,6 @@ class AppContainer extends Component {
         if (localStorage.getItem("plan"))
             this.props.loadPlan(localStorage.getItem("plan"));
         this.state = {
-            // plan: null,
             load: true
         };
     }

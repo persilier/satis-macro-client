@@ -42,7 +42,7 @@ const NatureAppChoice = (props) => {
                         <i className="la la-puzzle-piece"/>
                     </span>
                     <h3 className="kt-portlet__head-title">
-                       WELCOME IN SATIS 2020
+                       BIENVENUE SUR SATIS 2020
                     </h3>
                 </div>
             </div>
