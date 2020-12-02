@@ -6,6 +6,9 @@ import RouteApp from "./routeApp";
 import {loadPlan} from "./store/actions/planAction";
 import appConfig from "./config/appConfig";
 import {AUTH_TOKEN} from "./constants/token";
+import axios from "axios";
+import Loader from "./views/components/Loader";
+
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
@@ -16,7 +19,7 @@ window.Echo = new Echo({
     wsHost: appConfig.host,
     wsPort: appConfig.port,
     disableStats: true,
-    authEndpoint: appConfig.apiDomaine+'/api/broadcasting/auth',
+    authEndpoint: appConfig.apiDomaine + '/api/broadcasting/auth',
     auth: {
         headers: {
             Authorization: AUTH_TOKEN
@@ -24,18 +27,40 @@ window.Echo = new Echo({
     }
 });
 
-class AppContainer extends Component{
+class AppContainer extends Component {
     constructor(props) {
         super(props);
         if (localStorage.getItem("plan"))
-            this.props.loadPlan(localStorage.getItem("plan"))
+            this.props.loadPlan(localStorage.getItem("plan"));
+        this.state = {
+            // plan: null,
+            load: true
+        };
+    }
+
+    componentDidMount() {
+        axios.get(`${appConfig.apiDomaine}/plan`)
+            .then(response => {
+                // this.setState({plan: response.data});
+                this.setState({load: false});
+                localStorage.setItem('plan', response.data);
+                this.props.loadPlan(response.data);
+            })
+            .catch(error => {
+                this.setState({load: false});
+                console.log("Something is wrong");
+            });
     }
 
     render() {
-        const {plan} = this.props.plan;
+        const plan = this.props.plan;
+        const load = this.state.load;
         return (
             !plan ? (
-                <NatureAppChoice/>
+                load ? (
+                        <Loader/>
+                    ) :
+                    <NatureAppChoice/>
             ) : (
                 <RouteApp/>
             )
@@ -45,7 +70,7 @@ class AppContainer extends Component{
 
 const mapStateToProps = (state) => {
     return {
-        plan: state.plan
+        plan: state.plan.plan
     }
 };
 

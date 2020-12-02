@@ -4,6 +4,9 @@ import {loadCss} from "./helpers/function";
 import {DeleteConfirmation} from "./views/components/ConfirmationAlert";
 import {chosePlan} from "./config/confirmConfig";
 import {changePlan} from "./store/actions/planAction";
+import axios from "axios";
+import appConfig from "./config/appConfig";
+
 
 loadCss("/assets/css/pages/pricing/pricing-3.css");
 
@@ -11,10 +14,21 @@ const NatureAppChoice = (props) => {
 
     const onMakeChoice = (e, choice) => {
         e.preventDefault();
+        const data={
+            plan:choice.toLowerCase()
+        };
         DeleteConfirmation.fire(chosePlan("SATIS "+choice))
             .then((result) => {
                 if (result.value) {
-                    props.changePlan(choice)
+                    axios.put(`${appConfig.apiDomaine}/plan`, data)
+                        .then(response => {
+                            console.log("Updata Plan:", response.data);
+                            props.changePlan(choice);
+                            // localStorage.setItem('plan', choice);
+                        })
+                        .catch(error => {
+                            console.log("Something is wrong");
+                        });
                 }
             })
         ;
