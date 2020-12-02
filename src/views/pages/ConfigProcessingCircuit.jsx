@@ -23,6 +23,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -84,43 +85,45 @@ const ConfigProcessingCircuit = (props) => {
     const [institution, setInstitution] = useState([]);
 
     useEffect(() => {
-        if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution')) {
+        if (verifyTokenExpire()) {
+            if (verifyPermission(props.userPermissions, 'update-processing-circuit-any-institution')) {
+                axios.get(endPoint.list)
+                    .then(response => {
+                        const options = [
+                            response.data.institutions.length ? response.data.institutions.map((institution) => ({
+                                value: institution.id,
+                                label: institution.name
+                            })) : null
+                        ];
+                        setInstitutionData(options);
+                    });
+            }
+
             axios.get(endPoint.list)
                 .then(response => {
-                    const options = [
-                        response.data.institutions.length ? response.data.institutions.map((institution) => ({
-                            value: institution.id,
-                            label: institution.name
-                        })) : null
-                    ];
-                    setInstitutionData(options);
-                });
+                    let newObjectData = [];
+                    response.data.claimCategories.map((claimCategory) => (
+                        claimCategory.claim_objects.map((claimObject) => (
+                            newObjectData[claimObject.id] = claimObject.units.map(unit => (
+                                {value: unit.id, label: unit.name.fr})
+                            )
+                        ))
+                    ));
+
+                    setData(newObjectData);
+                    setLoad(false);
+                    setClaimObject(response.data.claimCategories);
+                    setUnits(response.data.units);
+                    setInstitutionId(response.data.institution_id);
+                    setShowList(response.data.claimCategories.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.claimCategories.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
         }
-
-        axios.get(endPoint.list)
-            .then(response => {
-                let newObjectData = [];
-                response.data.claimCategories.map((claimCategory) => (
-                    claimCategory.claim_objects.map((claimObject) => (
-                        newObjectData[claimObject.id] = claimObject.units.map(unit => (
-                            {value: unit.id, label: unit.name.fr})
-                        )
-                    ))
-                ));
-
-                setData(newObjectData);
-                setLoad(false);
-                setClaimObject(response.data.claimCategories);
-                setUnits(response.data.units);
-                setInstitutionId(response.data.institution_id);
-                setShowList(response.data.claimCategories.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.claimCategories.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            });
-
     }, [endPoint.list,numberPerPage, props.userPermissions]);
 
     {/*<tr key={i} role="row" className="odd">
@@ -265,34 +268,39 @@ const ConfigProcessingCircuit = (props) => {
         }
         // {console.log(values, 'valeur à enregistrer')}
 
-        axios.put(newEndPoint, values)
-            .then(response => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.put(newEndPoint, values)
+                .then(response => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     const onChangeInstitution = (selected) => {
         setInstitutionId(selected.value);
         setInstitution(selected);
-        axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
-            .then(response => {
-                setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : null);
-                let newObjectData = [];
-                response.data.claimCategories.map((claimCategory) => (
-                    claimCategory.claim_objects.map((claimObject) => (
-                        newObjectData[claimObject.id] = claimObject.units.map(unit => (
-                            {value: unit.id, label: unit.name.fr})
-                        )
-                    ))
-                ));
-                setData(newObjectData)
-            });
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + `/any/processing-circuits/${selected.value}`)
+                .then(response => {
+                    setUnits(response.data.units ? response.data.units.map((unit) => (unit)) : null);
+                    let newObjectData = [];
+                    response.data.claimCategories.map((claimCategory) => (
+                        claimCategory.claim_objects.map((claimObject) => (
+                            newObjectData[claimObject.id] = claimObject.units.map(unit => (
+                                {value: unit.id, label: unit.name.fr})
+                            )
+                        ))
+                    ));
+                    setData(newObjectData)
+                })
+            ;
+        }
     };
 
     const printBodyTable = (category, index) => {

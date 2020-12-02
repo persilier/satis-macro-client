@@ -5,53 +5,99 @@ import {
     useParams,
     Link
 } from "react-router-dom";
+import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {ERROR_401, redirectError401Page} from "../../config/errorPage";
+import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {formatPermissions, formatSelectOption} from "../../helpers/function";
 import {ToastBottomEnd} from "../components/Toast";
-import Select from "react-select";
+import {
+    toastAddErrorMessageConfig,
+    toastAddSuccessMessageConfig, toastEditErrorMessageConfig,
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const RuleAddPage = (props) => {
     const {id} = useParams();
     if (id) {
-        if (!verifyPermission(props.userPermissions, 'update-unit-type'))
+        if (!(verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role')))
             window.location.href = ERROR_401;
     } else {
-        if (!verifyPermission(props.userPermissions, 'store-unit-type'))
+        if (!(verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'store-my-institution-type-role')))
             window.location.href = ERROR_401;
     }
     const defaultData = {
         name: "",
         institution_type: [],
-        permission: []
     };
     const defaultError = {
         name: [],
-        institution_type: "",
-        permission: []
+        institutionTypes: [],
+        permissions: []
     };
-    const [institutionTypes, setInstitutionTypes] = useState([{value: "onesine", label: "onesine"}, {value: "tony", label: "tony"}]);
-    const [institutionType, setInstitutionType] = useState(null);
+    const [institutionTypes, setInstitutionTypes] = useState([]);
+    const [institutionType, setInstitutionType] = useState([]);
+    const [modulesPermissions, setModulesPermissions] = useState(null);
+    const [proModule, setProModule] = useState(null);
+    const [permissions, setPermissions] = useState([]);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
         async function fetchData () {
+            var endpoint = '';
             if (id) {
-                await axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
+                if (verifyPermission(props.userPermissions, 'update-any-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/any/roles/${id}/edit`;
+                if (verifyPermission(props.userPermissions, 'update-my-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/my/roles/${id}/edit`;
+                await axios.get(endpoint)
                     .then(response => {
-                        const newData = {
-                            name: response.data.unitType.name.fr,
-                            can_be_target: response.data.unitType.can_be_target === 1,
-                            can_treat: response.data.unitType.can_treat === 1,
-                            description: response.data.unitType.description.fr,
-                        };
-                        setData(newData);
+                        if (verifyPermission(props.userPermissions, 'update-any-institution-type-role')) {
+                            const newInstitutionTypes = [];
+                            response.data.role.institution_types.map((el, index) => newInstitutionTypes.push({value: index, label: el}));
+
+                            setInstitutionTypes(formatSelectOption(response.data.institutionTypes, 'name'));
+                            setModulesPermissions(response.data.modulesPermissions);
+
+                            const newData = {...data};
+                            newData.name = response.data.role.name;
+                            newData.institution_type = response.data.role.institution_types;
+                            setPermissions(formatPermissions(response.data.role.permissions));
+                            setData(newData);
+                            setInstitutionType(newInstitutionTypes);
+                        } else if (verifyPermission(props.userPermissions, 'update-my-institution-type-role')) {
+                            setPermissions(formatPermissions(response.data.role.permissions));
+                            const newData = {...data};
+                            newData.name = response.data.role.name;
+                            setData(newData);
+                            setProModule(response.data.modulesPermissions.independant);
+                        }
+                    })
+                    .catch(({response}) => {
+                        if (response.data && response.data.error)
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error));
+                        console.log("Something is wrong");
+                    })
+                ;
+            } else {
+                if (verifyPermission(props.userPermissions, 'store-any-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/any/roles/create`;
+                if (verifyPermission(props.userPermissions, 'store-my-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/my/roles/create`;
+                await axios.get(endpoint)
+                    .then(response => {
+                        if (verifyPermission(props.userPermissions, 'store-any-institution-type-role')) {
+                            setInstitutionTypes(formatSelectOption(response.data.institutionTypes, 'name'));
+                            setModulesPermissions(response.data.modulesPermissions);
+                        } else if (verifyPermission(props.userPermissions, 'store-my-institution-type-role'))
+                            setProModule(response.data);
                     })
                     .catch(error => {
                         console.log("Something is wrong");
@@ -59,8 +105,9 @@ const RuleAddPage = (props) => {
                 ;
             }
         }
-        fetchData();
-    }, [id, appConfig.apiDomaine]);
+        if (verifyTokenExpire())
+            fetchData();
+    }, [id, props.userPermissions]);
 
     const handleNameChange = (e) => {
         const newData = {...data};
@@ -69,23 +116,64 @@ const RuleAddPage = (props) => {
     };
 
     const handleInstitutionType = (selected) => {
-        const newData = {...data};
         const values = [];
+        const newData = {...data};
         if (selected)
-            selected.map(el => values.push(el.value));
+            selected.map(el => values.push(el.label));
         newData.institution_type = values;
-        setInstitutionType(selected);
+        setPermissions([]);
         setData(newData);
+
+        setInstitutionType(selected);
+        setInstitutionType(selected ? selected : []);
     };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        setStartRequest(true);
-        if (id) {
+    const handlePermissionChange = (e) => {
+        var newPermission = [...permissions];
+        if (newPermission.includes(e.target.name))
+            newPermission.splice(newPermission.indexOf(e.target.name), 1);
+        else
+            newPermission.push(e.target.name);
+        setPermissions(newPermission);
+    };
 
-        } else {
+    const printModule = (module, index, allModule) => {
+        return (
+            <div key={index}>
+                <h5 className="text-center">Module: {module.name["fr"]}</h5>
+                <div className={error.permissions.length ? "form-group row validated" : "form-group row"}>
+                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Permissions <InputRequire/></label>
+                    <div className="col-lg-9 col-xl-6">
+                        <div className="kt-checkbox-inline">
+                            {
+                                module.permissions.map((el, ind) => (
+                                    <label className="kt-checkbox" key={ind}>
+                                        <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.name)}/> {el.name}<span/>
+                                    </label>
+                                ))
+                            }
+                            {
+                                error.permissions.length ? (
+                                    index === allModule.length - 1 ? (
+                                        error.permissions.map((error, indEr) => (
+                                            <div key={indEr} className="invalid-feedback text-center">
+                                                {error}
+                                            </div>
+                                        ))
+                                    ) : null
+                                ) : null
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    };
 
-        }
+    const resetAllCheckbox = () => {
+        const checkbox = document.getElementsByClassName("checkInput");
+        for (var i = 0; i < checkbox.length; i++)
+            checkbox[i].checked = false;
     };
 
     const printJsx = () => {
@@ -155,69 +243,22 @@ const RuleAddPage = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.institution_type.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Veillez choisir le pilote actif <InputRequire/></label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <Select
-                                                        isClearable
-                                                        isMulti
-                                                        value={institutionType}
-                                                        placeholder={"collecteur"}
-                                                        onChange={handleInstitutionType}
-                                                        options={institutionTypes}
-                                                    />
-                                                    {
-                                                        error.institution_type.length ? (
-                                                            error.institution_type.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </div>
-
                                             {
-                                                institutionType ? (
-                                                    <div className={error.permission.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Permissions <InputRequire/></label>
+                                                verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-any-institution-type-role') ? (
+                                                    <div className={error.institutionTypes.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'institution <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
-                                                            <div className="kt-checkbox-inline">
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 1<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 2<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 3<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 4<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 5<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 6<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 7<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 8<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 9<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 10<span/>
-                                                                </label>
-                                                            </div>
+                                                            <Select
+                                                                isClearable
+                                                                isMulti
+                                                                value={institutionType}
+                                                                placeholder={"filial"}
+                                                                onChange={handleInstitutionType}
+                                                                options={institutionTypes}
+                                                            />
                                                             {
-                                                                error.permission.length ? (
-                                                                    error.permission.map((error, index) => (
+                                                                error.institutionTypes.length ? (
+                                                                    error.institutionTypes.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -228,13 +269,47 @@ const RuleAddPage = (props) => {
                                                     </div>
                                                 ) : null
                                             }
+
+                                            {
+                                                verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-any-institution-type-role') ? (
+                                                    institutionType.length ? (
+                                                        <>
+                                                            {
+                                                                data.institution_type.length ? (
+                                                                    data.institution_type.length === 2 ? (
+                                                                        modulesPermissions.all.map((el, index) => (
+                                                                            printModule(el, index, modulesPermissions.all)
+                                                                        ))
+                                                                    ) : (
+                                                                        modulesPermissions[data.institution_type[0]].map((el, index) => (
+                                                                            printModule(el, index, modulesPermissions[data.institution_type[0]])
+                                                                        ))
+                                                                    )
+                                                                ) : null
+                                                            }
+                                                        </>
+                                                    ) : null
+                                                ) : (
+                                                    verifyPermission(props.userPermissions, 'store-my-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
+                                                        proModule ? (
+                                                            proModule.map((el, index) => (
+                                                                printModule(el, index, proModule)
+                                                            ))
+                                                        ) : null
+                                                    ) : null
+                                                )
+                                            }
                                         </div>
 
                                         <div className="kt-portlet__foot">
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">
+                                                            {
+                                                                id ? "Modifier" : "Enregistrer"
+                                                            }
+                                                        </button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                             Chargement...
@@ -264,12 +339,70 @@ const RuleAddPage = (props) => {
         );
     };
 
+    const onSubmit = (e) => {
+        e.preventDefault();
+        setStartRequest(true);
+        const sendData = {
+            name: data.name,
+            permissions: permissions,
+            institutionTypes: data.institution_type
+        };
+        if (verifyPermission(props.userPermissions, 'store-my-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role'))
+            delete sendData.institutionTypes;
+        if (verifyTokenExpire()) {
+            if (id) {
+                var endpoint = "";
+                if (verifyPermission(props.userPermissions, 'update-any-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/any/roles/${id}`;
+                if (verifyPermission(props.userPermissions, 'update-my-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/my/roles/${id}`;
+
+                axios.put(endpoint, sendData)
+                    .then(() => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(({response}) => {
+                        setError({...defaultError, ...response.data.error});
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                var endpoint = "";
+                if (verifyPermission(props.userPermissions, 'store-any-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/any/roles`;
+                if (verifyPermission(props.userPermissions, 'store-my-institution-type-role'))
+                    endpoint = `${appConfig.apiDomaine}/my/roles`;
+                axios.post(endpoint, sendData)
+                    .then(() => {
+                        if (verifyPermission(props.userPermissions, 'store-any-institution-type-role'))
+                            setInstitutionType([]);
+                        if (verifyPermission(props.userPermissions, 'store-my-institution-type-role'))
+                            resetAllCheckbox();
+                        setPermissions([]);
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(({response}) => {
+                        setError({...defaultError, ...response.data.error});
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
+        }
+    };
+
     return (
         id ?
-            verifyPermission(props.userPermissions, 'update-unit-type') ? (
+            verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
                 printJsx()
             ) : null
-            : verifyPermission(props.userPermissions, 'store-unit-type') ? (
+            : verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'store-my-institution-type-role') ? (
                 printJsx()
             ) : null
     );

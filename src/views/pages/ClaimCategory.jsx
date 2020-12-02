@@ -21,6 +21,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -50,7 +51,8 @@ const ClaimCategory = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -125,38 +127,40 @@ const ClaimCategory = (props) => {
     const deleteClaimCategory = (claimCategoryId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/claim-categories/${claimCategoryId}`)
-                        .then(response => {
-                            const newClaimCategories = [...claimCategories];
-                            newClaimCategories.splice(index, 1);
-                            setClaimCategories(newClaimCategories);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newClaimCategories.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newClaimCategories.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(
-                                    toastErrorMessageWithParameterConfig(error.response.data.error)
-                                );
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(`${appConfig.apiDomaine}/claim-categories/${claimCategoryId}`)
+                            .then(response => {
+                                const newClaimCategories = [...claimCategories];
+                                newClaimCategories.splice(index, 1);
+                                setClaimCategories(newClaimCategories);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newClaimCategories.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newClaimCategories.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(
+                                        toastErrorMessageWithParameterConfig(error.response.data.error)
+                                    );
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

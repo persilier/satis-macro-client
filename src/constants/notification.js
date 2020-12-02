@@ -15,7 +15,7 @@ export const notificationConfig = {
     "post-discussion-message": "Message post discussion",
     "reminder-before-deadline": "Relance automatique avant échéance",
     "reminder-after-deadline": "Relance automatique après échéance",
-    "recurrence": "Le nombre maximum de réclamation est dépassé"
+    "recurrence-alert": "Maximum réclamations tolérable"
 };
 
 export const EventNotification = [

@@ -10,6 +10,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const PercentageMinFusion = (props) => {
     document.title = "Satis client - Paramètre pourcentage minimum fusion";
@@ -30,7 +31,6 @@ const PercentageMinFusion = (props) => {
         async function fetchData () {
             await axios.get(`${appConfig.apiDomaine}/configurations/min-fusion-percent`)
                 .then(({data}) => {
-                    console.log("data:", data);
                     setData({
                         min_fusion_percent: data,
                     });
@@ -40,7 +40,8 @@ const PercentageMinFusion = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const handleRecurencePeriod = (e) => {
@@ -54,18 +55,20 @@ const PercentageMinFusion = (props) => {
         e.preventDefault();
 
         setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/configurations/min-fusion-percent`, sendData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/configurations/min-fusion-percent`, sendData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -98,7 +101,7 @@ const PercentageMinFusion = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Pourcentage minimum fusion
+                                            Pourcentage minimum de fusion de réclamation
                                         </h3>
                                     </div>
                                 </div>
@@ -107,7 +110,7 @@ const PercentageMinFusion = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.min_fusion_percent.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="min_fusion_percent">Pourcentage minimum <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="min_fusion_percent">Pourcentage <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="min_fusion_percent"

@@ -18,6 +18,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -47,7 +48,8 @@ const ClaimObject = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -125,33 +127,35 @@ const ClaimObject = (props) => {
     const deleteClaimObject = (claimObjectId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/claim-objects/${claimObjectId}`)
-                        .then(response => {
-                            const newClaimObjects = [...claimObjects];
-                            newClaimObjects.splice(index, 1);
-                            setClaimObjects(newClaimObjects);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newClaimObjects.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newClaimObjects.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(`${appConfig.apiDomaine}/claim-objects/${claimObjectId}`)
+                            .then(response => {
+                                const newClaimObjects = [...claimObjects];
+                                newClaimObjects.splice(index, 1);
+                                setClaimObjects(newClaimObjects);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newClaimObjects.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newClaimObjects.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

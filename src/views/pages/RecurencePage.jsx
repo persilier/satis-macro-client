@@ -10,6 +10,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const RecurencePage = (props) => {
     document.title = "Satis client - Paramètre récurence";
@@ -32,7 +33,6 @@ const RecurencePage = (props) => {
         async function fetchData () {
             await axios.get(`${appConfig.apiDomaine}/configurations/recurrence-alert`)
                 .then(({data}) => {
-                    console.log("data:", data);
                     setData({
                         recurrence_period: data.recurrence_period,
                         max: data.max,
@@ -43,7 +43,8 @@ const RecurencePage = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const handleRecurencePeriod = (e) => {
@@ -63,18 +64,20 @@ const RecurencePage = (props) => {
         e.preventDefault();
 
         setStartRequest(true);
-        await axios.put(`${appConfig.apiDomaine}/configurations/recurrence-alert`, sendData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/configurations/recurrence-alert`, sendData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (
@@ -107,7 +110,7 @@ const RecurencePage = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Récurence
+                                            Alert récurence des réclamations
                                         </h3>
                                     </div>
                                 </div>
@@ -116,7 +119,7 @@ const RecurencePage = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.recurrence_period.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="recurrence_period">Période de recurence <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="recurrence_period">Période de determination(en jour) <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="recurrence_period"

@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import axios from "axios";
 import {ToastBottomEnd} from "../components/Toast";
@@ -9,8 +10,8 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
-import {Link} from "react-router-dom";
 import {AUTH_TOKEN} from "../../constants/token";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -80,21 +81,23 @@ const StaffImportPage = (props) => {
             endpoint = `${appConfig.apiDomaine}/maybe/no/import-staffs`;
         if (endpoint.length) {
             setStartRequest(true);
-            await axios.post(endpoint, formatFormData(data))
-                .then(() => {
-                    setStartRequest(false);
-                    setFileName("");
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
-                })
-                .catch(({response}) => {
-                    console.log(response.data);
-                    setStartRequest(false);
-                    setError({...defaultError, ...response.data.error});
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
-                })
-            ;
+            if (verifyTokenExpire()) {
+                await axios.post(endpoint, formatFormData(data))
+                    .then(() => {
+                        setStartRequest(false);
+                        setFileName("");
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
+                    })
+                    .catch(({response}) => {
+                        console.log(response.data);
+                        setStartRequest(false);
+                        setError({...defaultError, ...response.data.error});
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
+                    })
+                ;
+            }
         } else {
             window.location.href = ERROR_401;
         }
@@ -141,7 +144,7 @@ const StaffImportPage = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className="form-group validated row">
-                                                <label className="col-3 col-form-label">Inline Radios <InputRequire/></label>
+                                                <label className="col-3 col-form-label">Stop identite exist <InputRequire/></label>
                                                 <div className="col-9">
                                                     <div className="kt-radio-inline">
                                                         <label className="kt-radio">
@@ -164,7 +167,7 @@ const StaffImportPage = (props) => {
                                             </div>
 
                                             <div className="form-group row">
-                                                <label className="col-3 col-form-label">Inline Radios <InputRequire/></label>
+                                                <label className="col-3 col-form-label">Etat update <InputRequire/></label>
                                                 <div className="col-9">
                                                     <div className="kt-radio-inline">
                                                         <label className="kt-radio">

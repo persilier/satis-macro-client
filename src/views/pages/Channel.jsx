@@ -20,6 +20,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -32,7 +33,6 @@ const Channel = (props) => {
     const [channels, setChannels] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
-    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -51,7 +51,8 @@ const Channel = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -127,36 +128,38 @@ const Channel = (props) => {
     const deleteChannel = (channelId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/channels/${channelId}`)
-                        .then(response => {
-                            const newChannels = [...channels];
-                            newChannels.splice(index, 1);
-                            setChannels(newChannels);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newChannels.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newChannels.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(`${appConfig.apiDomaine}/channels/${channelId}`)
+                            .then(response => {
+                                const newChannels = [...channels];
+                                newChannels.splice(index, 1);
+                                setChannels(newChannels);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newChannels.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newChannels.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

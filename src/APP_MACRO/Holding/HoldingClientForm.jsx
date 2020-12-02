@@ -22,6 +22,7 @@ import TagsInput from "react-tagsinput";
 import InputRequire from "../../views/components/InputRequire";
 import WithoutCode from "../../views/components/WithoutCode";
 import ConfirmClientSaveForm from "../../views/components/Clients/ConfirmClientSaveForm";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -116,59 +117,62 @@ const HoldingClientForm = (props) => {
 
 
     useEffect(() => {
-
-        axios.get(endPoint.create)
-            .then(response => {
-                // console.log(response.data,"RESPONSE")
-                if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')){
-                    const options =
-                        response.data.institutions.length ? response.data.institutions.map((institution) => ({
-                            value: institution.id,
-                            label: institution.name
-                        })) : "";
-                    setInstitutionData(options);
-                }
-                if (verifyPermission(props.userPermissions, 'store-client-from-my-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution')) {
-                    const clientOptions =
-                        response.data.client_institutions ? response.data.client_institutions.map((client) => ({
-                            value: client.client_id,
-                            label: client.client.identite.firstname + ' ' + client.client.identite.lastname
-                        })) : "";
-                    setNameClient(clientOptions);
-                }
-                setAccountTypes(response.data.accountTypes);
-                setCategoryClient(response.data.clientCategories);
-            });
-
-        if (id) {
-            axios.get(endPoint.edit(id))
+        if (verifyTokenExpire()) {
+            axios.get(endPoint.create)
                 .then(response => {
-                    console.log(response.data,"DATA")
+                    // console.log(response.data,"RESPONSE")
+                    if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')){
+                        const options =
+                            response.data.institutions.length ? response.data.institutions.map((institution) => ({
+                                value: institution.id,
+                                label: institution.name
+                            })) : "";
+                        setInstitutionData(options);
+                    }
+                    if (verifyPermission(props.userPermissions, 'store-client-from-my-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution')) {
+                        const clientOptions =
+                            response.data.client_institutions ? response.data.client_institutions.map((client) => ({
+                                value: client.client_id,
+                                label: client.client.identite.firstname + ' ' + client.client.identite.lastname
+                            })) : "";
+                        setNameClient(clientOptions);
+                    }
+                    setAccountTypes(response.data.accountTypes);
+                    setCategoryClient(response.data.clientCategories);
+                })
+            ;
 
-                    const newClient = {
-                        firstname: response.data.client_institution.client.identite.firstname,
-                        lastname: response.data.client_institution.client.identite.lastname,
-                        sexe: response.data.client_institution.client.identite.sexe,
-                        telephone: response.data.client_institution.client.identite.telephone,
-                        email: response.data.client_institution.client.identite.email,
-                        institution_id: response.data.client_institution.institution_id,
-                        ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
+            if (id) {
+                axios.get(endPoint.edit(id))
+                    .then(response => {
+                        console.log(response.data,"DATA")
 
-                        number: response.data.account.number,
-                        account_type_id: response.data.account.account_type_id,
-                        category_client_id: response.data.client_institution.category_client_id,
-                    };
-                    setData(newClient);
-                    setType({
-                        value: response.data.account.account_type?response.data.account.account_type.id:"",
-                        label: response.data.account.account_type?response.data.account.account_type.name.fr:""
-                    });
-                    setCategory({
-                        value: response.data.client_institution.category_client ? response.data.client_institution.category_client.id : "",
-                        label: response.data.client_institution.category_client ? response.data.client_institution.category_client.name.fr : ""
-                    });
+                        const newClient = {
+                            firstname: response.data.client_institution.client.identite.firstname,
+                            lastname: response.data.client_institution.client.identite.lastname,
+                            sexe: response.data.client_institution.client.identite.sexe,
+                            telephone: response.data.client_institution.client.identite.telephone,
+                            email: response.data.client_institution.client.identite.email,
+                            institution_id: response.data.client_institution.institution_id,
+                            ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
 
-                });
+                            number: response.data.account.number,
+                            account_type_id: response.data.account.account_type_id,
+                            category_client_id: response.data.client_institution.category_client_id,
+                        };
+                        setData(newClient);
+                        setType({
+                            value: response.data.account.account_type?response.data.account.account_type.id:"",
+                            label: response.data.account.account_type?response.data.account.account_type.name.fr:""
+                        });
+                        setCategory({
+                            value: response.data.client_institution.category_client ? response.data.client_institution.category_client.id : "",
+                            label: response.data.client_institution.category_client ? response.data.client_institution.category_client.name.fr : ""
+                        });
+
+                    })
+                ;
+            }
         }
     }, []);
 
@@ -226,15 +230,18 @@ const HoldingClientForm = (props) => {
         if (selected) {
             newData.institution_id = selected.value;
             setInstitution(selected);
-            axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
-                .then(response => {
-                    const options =
-                        response.data ? response.data.map((client) => ({
-                            value: client.client_id,
-                            label: client.client.identite.firstname + ' ' + client.client.identite.lastname
-                        })) : "";
-                    setNameClient(options);
-                });
+            if (verifyTokenExpire()) {
+                axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
+                    .then(response => {
+                        const options =
+                            response.data ? response.data.map((client) => ({
+                                value: client.client_id,
+                                label: client.client.identite.firstname + ' ' + client.client.identite.lastname
+                            })) : "";
+                        setNameClient(options);
+                    })
+                ;
+            }
             setCategory([]);
             setClient([]);
             newData.firstname = "";
@@ -257,25 +264,28 @@ const HoldingClientForm = (props) => {
         newData.client_id = selected.value;
         setClient(selected);
         if (newData.client_id) {
-            axios.get(endPoint.update(`${newData.client_id}`))
-                .then(response => {
-                    const newIdentity = {
-                        firstname: response.data.client.identite.firstname,
-                        lastname: response.data.client.identite.lastname,
-                        sexe: response.data.client.identite.sexe,
-                        telephone: response.data.client.identite.telephone,
-                        email: response.data.client.identite.email,
-                        ville: response.data.client.identite.ville === null ? "" : response.data.client.identite.ville,
-                        client_id: response.data.client_id,
-                        institution_id: response.data.institution_id,
-                        category_client_id: response.data.category_client_id
-                    };
-                    setData(newIdentity);
-                    setCategory({
-                        value: response.data.category_client ? response.data.category_client.id : "",
-                        label: response.data.category_client ? response.data.category_client.name.fr : ""
-                    });
-                });
+            if (verifyTokenExpire()) {
+                axios.get(endPoint.update(`${newData.client_id}`))
+                    .then(response => {
+                        const newIdentity = {
+                            firstname: response.data.client.identite.firstname,
+                            lastname: response.data.client.identite.lastname,
+                            sexe: response.data.client.identite.sexe,
+                            telephone: response.data.client.identite.telephone,
+                            email: response.data.client.identite.email,
+                            ville: response.data.client.identite.ville === null ? "" : response.data.client.identite.ville,
+                            client_id: response.data.client_id,
+                            institution_id: response.data.institution_id,
+                            category_client_id: response.data.category_client_id
+                        };
+                        setData(newIdentity);
+                        setCategory({
+                            value: response.data.category_client ? response.data.category_client.id : "",
+                            label: response.data.category_client ? response.data.category_client.name.fr : ""
+                        });
+                    })
+                ;
+            }
         }
 
     };
@@ -284,79 +294,80 @@ const HoldingClientForm = (props) => {
         e.preventDefault();
         setStartRequest(true);
         let newData = {...data};
-        if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')))
-            delete newData.institution_id;
+        if (verifyTokenExpire()) {
+            if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')))
+                delete newData.institution_id;
 
-         if (id) {
-            axios.put(endPoint.update(`${id}`), newData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch((errorRequest) => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-
-            if (data.client_id.length !== 0) {
-                axios.post(endPoint.storeAccount(`${data.client_id}`), data)
-
+            if (id) {
+                axios.put(endPoint.update(`${id}`), newData)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        setData(defaultData);
-                        setInstitution(null);
-                        setType(null);
-                        setCategory(null);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                     })
                     .catch((errorRequest) => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
                     })
                 ;
             } else {
-                axios.post(endPoint.store, newData)
-                    .then(response => {
-                        setStartRequest(false);
-                        setError(defaultError);
-                        setData(defaultData);
-                        setType(null);
-                        setCategory(null);
-                        setInstitution(null);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    })
-                    .catch(async (errorRequest) => {
 
-                        if (errorRequest.response.data.error.identite) {
-                            await setFoundIdentity(errorRequest.response.data.error);
-                            await document.getElementById("confirmClientSaveForm").click();
-                            await setInstitution(null);
-                            await setType(null);
-                            await setCategory(null);
+                if (data.client_id.length !== 0) {
+                    axios.post(endPoint.storeAccount(`${data.client_id}`), data)
+
+                        .then(response => {
                             setStartRequest(false);
                             setError(defaultError);
                             setData(defaultData);
-                        } else if (errorRequest.response.data.client) {
-                            setStartRequest(false);
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                                errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
-                            );
-                        } else {
+                            setInstitution(null);
+                            setType(null);
+                            setCategory(null);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        })
+                        .catch((errorRequest) => {
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
                             ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                        }
-                    });
+                        })
+                    ;
+                } else {
+                    axios.post(endPoint.store, newData)
+                        .then(response => {
+                            setStartRequest(false);
+                            setError(defaultError);
+                            setData(defaultData);
+                            setType(null);
+                            setCategory(null);
+                            setInstitution(null);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        })
+                        .catch(async (errorRequest) => {
+
+                            if (errorRequest.response.data.error.identite) {
+                                await setFoundIdentity(errorRequest.response.data.error);
+                                await document.getElementById("confirmClientSaveForm").click();
+                                await setInstitution(null);
+                                await setType(null);
+                                await setCategory(null);
+                                setStartRequest(false);
+                                setError(defaultError);
+                                setData(defaultData);
+                            } else if (errorRequest.response.data.client) {
+                                setStartRequest(false);
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                                    errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
+                                );
+                            } else {
+                                setStartRequest(false);
+                                setError({...defaultError, ...errorRequest.response.data.error});
+                                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                            }
+                        });
+                }
+
             }
-
         }
-
     };
 
     return (
@@ -437,10 +448,10 @@ const HoldingClientForm = (props) => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
-                                                            : ""
+                                                            : null
                                                     }
                                                     <div
                                                         className={error.client_id.length ? "col validated" : "col"}>
@@ -468,11 +479,11 @@ const HoldingClientForm = (props) => {
                                                                         {error}
                                                                     </div>
                                                                 ))
-                                                            ) : ""
+                                                            ) : null
                                                         }
                                                     </div>
                                                 </div>
-                                                : ""
+                                                : null
                                         }
                                         <div className="form-group row">
                                             <div className={error.lastname.length ? "col validated" : "col"}>
@@ -494,7 +505,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
 
@@ -516,7 +527,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -544,7 +555,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                             <div className={error.ville.length ? "col validated" : "col"}>
@@ -565,7 +576,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -590,7 +601,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
 
@@ -612,7 +623,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -652,7 +663,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                             <div
@@ -683,7 +694,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -706,7 +717,7 @@ const HoldingClientForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
 

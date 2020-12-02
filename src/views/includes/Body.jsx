@@ -545,7 +545,7 @@ const Body = () => {
             </Route>
 
             <Route exact path="/settings/rules/:id/edit">
-                <RuleEditPage/>
+                <RuleAddPage/>
             </Route>
 
             <Route exact path="/settings/qualification-period">

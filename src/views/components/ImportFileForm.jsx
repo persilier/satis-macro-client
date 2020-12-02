@@ -6,6 +6,7 @@ import {
 } from "../../config/toastConfig";
 import InputRequire from "../components/InputRequire";
 import {Link} from "react-router-dom";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const ImportFileForm = (props) => {
     const defaultData = {
@@ -44,24 +45,26 @@ const ImportFileForm = (props) => {
         e.preventDefault();
 
         setStartRequest(true);
-        await axios.post(props.submitEndpoint, formData)
-            .then(response => {
-                setStartRequest(false);
-                setError(defaultError);
-                if (response.data.status) {
-                    setName("");
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
-                } else {
+        if (verifyTokenExpire()) {
+            await axios.post(props.submitEndpoint, formData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    if (response.data.status) {
+                        setName("");
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
+                    } else {
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
+                    }
+                })
+                .catch(({response}) => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...response.data.error});
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
-                }
-            })
-            .catch(({response}) => {
-                setStartRequest(false);
-                setError({...defaultError, ...response.data.error});
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
-            })
-        ;
+                })
+            ;
+        }
     };
 
     return (

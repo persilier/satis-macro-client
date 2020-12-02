@@ -19,6 +19,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {debug, formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {month} from "../../constants/date";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -247,7 +248,8 @@ const ClaimReporting = props => {
             ;
         };
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const handleTypeFilterChange = (e) => {
@@ -305,21 +307,23 @@ const ClaimReporting = props => {
             parameter = `?institution_id=${institution.value}`;
         else  if(!institution && startDate && endDate)
             parameter = `?date_start=${startDate}&date_end=${endDate}`;
-        axios.get(`${endpoint}${parameter}`)
-            .then(response => {
-                setPdfTitle(formatPdfTitle());
-                setStartFilter(false);
-                applyPossibleFilter(response.data.statistiqueGraphePeriod);
-                setFetchData(response.data);
+        if (verifyTokenExpire()) {
+            axios.get(`${endpoint}${parameter}`)
+                .then(response => {
+                    setPdfTitle(formatPdfTitle());
+                    setStartFilter(false);
+                    applyPossibleFilter(response.data.statistiqueGraphePeriod);
+                    setFetchData(response.data);
 
-                renderChart(response.data.statistiqueChannel, response.data.statistiqueGraphePeriod);
-            })
-            .catch(error => {
-                setStartFilter(false);
-                setFetchData(oldData);
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.date_end))
-            })
-        ;
+                    renderChart(response.data.statistiqueChannel, response.data.statistiqueGraphePeriod);
+                })
+                .catch(error => {
+                    setStartFilter(false);
+                    setFetchData(oldData);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.date_end))
+                })
+            ;
+        }
     };
 
     const filterData = () => {
@@ -412,20 +416,22 @@ const ClaimReporting = props => {
                 headerBackground: "#7F9CF5",
             };
 
-            axios({
-                method: 'post',
-                url: `${appConfig.apiDomaine}/any/reporting-claim/export-pdf`,
-                responseType: 'blob',
-                data: {data_export: sendData}
-            })
-                .then(({data}) => {
-                    setStartExportation(false);
-                    FileSaver.saveAs(data, `${pdfTitle}.pdf`);
+            if (verifyTokenExpire()) {
+                axios({
+                    method: 'post',
+                    url: `${appConfig.apiDomaine}/any/reporting-claim/export-pdf`,
+                    responseType: 'blob',
+                    data: {data_export: sendData}
                 })
-                .catch(({response}) => {
-                    setStartExportation(false);
-                })
-            ;
+                    .then(({data}) => {
+                        setStartExportation(false);
+                        FileSaver.saveAs(data, `${pdfTitle}.pdf`);
+                    })
+                    .catch(({response}) => {
+                        setStartExportation(false);
+                    })
+                ;
+            }
         } else {
             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Donné indisponible pour l'exportation"));
         }

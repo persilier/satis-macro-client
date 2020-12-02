@@ -19,6 +19,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -38,17 +39,21 @@ const FAQs = (props) => {
     const [activeNumberPage, setActiveNumberPage] = useState(0);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/faqs")
-            .then(response => {
-                setLoad(false);
-                setFaqs(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/faqs")
+                .then(response => {
+                    setLoad(false);
+                    setFaqs(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+
     }, []);
 
     const filterShowListBySearchValue = (value) => {
@@ -126,33 +131,36 @@ const FAQs = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/faqs/${faqId}`)
-                        .then(response => {
-                            console.log(response, "OK");
-                            const newFaq = [...faqs];
-                            newFaq.splice(index, 1);
-                            setFaqs(newFaq);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newFaq.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newFaq.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/faqs/${faqId}`)
+                            .then(response => {
+                                console.log(response, "OK");
+                                const newFaq = [...faqs];
+                                newFaq.splice(index, 1);
+                                setFaqs(newFaq);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newFaq.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newFaq.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
+
                 }
             })
         ;
@@ -322,7 +330,7 @@ const FAQs = (props) => {
                         </div>
                     </div>
                 </div>
-            ):""
+            ): null
 
     );
 };

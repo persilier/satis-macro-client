@@ -20,6 +20,7 @@ import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -49,7 +50,8 @@ const MessageApi = props => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -125,36 +127,38 @@ const MessageApi = props => {
     const deleteMessageAPI = (messageAPIid, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/message-apis/${messageAPIid}`)
-                        .then(response => {
-                            const newMessageAPIs = [...messageAPIs];
-                            newMessageAPIs.splice(index, 1);
-                            setMessageAPIs(newMessageAPIs);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newMessageAPIs.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newMessageAPIs.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(`${appConfig.apiDomaine}/message-apis/${messageAPIid}`)
+                            .then(response => {
+                                const newMessageAPIs = [...messageAPIs];
+                                newMessageAPIs.splice(index, 1);
+                                setMessageAPIs(newMessageAPIs);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newMessageAPIs.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newMessageAPIs.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

@@ -1,21 +1,11 @@
 import {logout} from "../helpers/function";
 
-export const verifyExpiration = () => {
+export const verifyTokenExpire = () => {
     if (new Date() > new Date(localStorage.getItem('date_expire'))) {
         logout();
+        return false;
+    }
+    else {
         return true;
     }
-    else
-        refreshToken();
-};
-
-export const refreshToken = async () => {
-    await axios.get(``)
-        .then(() => {
-
-        })
-        .catch(() => {
-            console.log("Something is wrong");
-        })
-    ;
 };

@@ -18,6 +18,7 @@ import {
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {Link} from "react-router-dom";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -60,7 +61,8 @@ const User = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, props.plan, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -172,20 +174,22 @@ const User = (props) => {
                     else if(props.plan === "PRO")
                         endpoint = `${appConfig.apiDomaine}/my/users/${user.id}/enabled-desabled`;
 
-                    await axios.put(endpoint)
-                        .then(response => {
-                            const newUsers = [...users];
-                            newUsers[index].disabled_at = newUsers[index].disabled_at === null ? true : null;
-                            document.getElementById(`user-spinner-${user.id}`).style.display = "none";
-                            document.getElementById(`user-${user.id}`).style.display = "block";
-                            document.getElementById(`user-edit-${user.id}`).style.display = "block";
-                            setUsers(newUsers);
-                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succes de l'opération"));
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'opération"));
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        await axios.put(endpoint)
+                            .then(response => {
+                                const newUsers = [...users];
+                                newUsers[index].disabled_at = newUsers[index].disabled_at === null ? true : null;
+                                document.getElementById(`user-spinner-${user.id}`).style.display = "none";
+                                document.getElementById(`user-${user.id}`).style.display = "block";
+                                document.getElementById(`user-edit-${user.id}`).style.display = "block";
+                                setUsers(newUsers);
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succes de l'opération"));
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'opération"));
+                            })
+                        ;
+                    }
                 }
             })
         ;

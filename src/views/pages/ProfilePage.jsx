@@ -5,6 +5,7 @@ import PersonalInfo from "../components/profile/PersonalInfo";
 import UpdatePassword from "../components/profile/UpdatePassword";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -47,7 +48,8 @@ const ProfilePage = ({user}) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const handleLastNameChange = (lastname) => {

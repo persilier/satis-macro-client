@@ -5,43 +5,41 @@ import {
     useParams,
     Link
 } from "react-router-dom";
-import {
-    toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
-    toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
-} from "../../config/toastConfig";
+import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {ERROR_401, redirectError401Page} from "../../config/errorPage";
+import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {formatSelectOption} from "../../helpers/function";
 import {ToastBottomEnd} from "../components/Toast";
-import Select from "react-select";
+import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const RuleEditPage = (props) => {
+const RuleAddPage = (props) => {
     const {id} = useParams();
     if (id) {
-        if (!verifyPermission(props.userPermissions, 'update-unit-type'))
+        if (!verifyPermission(props.userPermissions, 'store-any-institution-type-role'))
             window.location.href = ERROR_401;
     } else {
-        if (!verifyPermission(props.userPermissions, 'store-unit-type'))
+        if (!verifyPermission(props.userPermissions, 'update-any-institution-type-role'))
             window.location.href = ERROR_401;
     }
     const defaultData = {
         name: "",
         institution_type: [],
-        permission: []
     };
     const defaultError = {
         name: [],
-        institution_type: "",
-        permission: []
+        institutionTypes: [],
+        permissions: []
     };
-    const [institutionTypes, setInstitutionTypes] = useState([{value: "onesine", label: "onesine"}, {value: "tony", label: "tony"}]);
-    const [institutionType, setInstitutionType] = useState(null);
+    const [institutionTypes, setInstitutionTypes] = useState([]);
+    const [institutionType, setInstitutionType] = useState([]);
+    const [modulesPermissions, setModulesPermissions] = useState(null);
+    const [permissions, setPermissions] = useState([]);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -49,15 +47,19 @@ const RuleEditPage = (props) => {
     useEffect(() => {
         async function fetchData () {
             if (id) {
-                await axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
+                await axios.get(`${appConfig.apiDomaine}/any/roles/${id}/edit`)
                     .then(response => {
-                        const newData = {
-                            name: response.data.unitType.name.fr,
-                            can_be_target: response.data.unitType.can_be_target === 1,
-                            can_treat: response.data.unitType.can_treat === 1,
-                            description: response.data.unitType.description.fr,
-                        };
-                        setData(newData);
+                        console.log("response:", response.data);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            } else {
+                await axios.get(`${appConfig.apiDomaine}/any/roles/create`)
+                    .then(response => {
+                        setInstitutionTypes(formatSelectOption(response.data.institutionTypes, 'name'));
+                        setModulesPermissions(response.data.modulesPermissions);
                     })
                     .catch(error => {
                         console.log("Something is wrong");
@@ -65,8 +67,9 @@ const RuleEditPage = (props) => {
                 ;
             }
         }
-        fetchData();
-    }, [id, appConfig.apiDomaine]);
+        if (verifyTokenExpire())
+            fetchData();
+    }, [id]);
 
     const handleNameChange = (e) => {
         const newData = {...data};
@@ -75,23 +78,58 @@ const RuleEditPage = (props) => {
     };
 
     const handleInstitutionType = (selected) => {
-        const newData = {...data};
         const values = [];
+        const newData = {...data};
         if (selected)
-            selected.map(el => values.push(el.value));
+            selected.map(el => values.push(el.label));
         newData.institution_type = values;
-        setInstitutionType(selected);
+        setPermissions([]);
         setData(newData);
+
+        setInstitutionType(selected);
+        setInstitutionType(selected ? selected : []);
     };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        setStartRequest(true);
-        if (id) {
+    const handlePermissionChange = (e) => {
+        var newPermission = [...permissions];
+        if (newPermission.includes(e.target.name))
+            newPermission.splice(newPermission.indexOf(e.target.name), 1);
+        else
+            newPermission.push(e.target.name);
+        setPermissions(newPermission);
+    };
 
-        } else {
-
-        }
+    const printModule = (module, index, allModule) => {
+        return (
+            <div key={index}>
+                <h5 className="text-center">Module: {module.name["fr"]}</h5>
+                <div className={error.permissions.length ? "form-group row validated" : "form-group row"}>
+                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Permissions <InputRequire/></label>
+                    <div className="col-lg-9 col-xl-6">
+                        <div className="kt-checkbox-inline">
+                            {
+                                module.permissions.map((el, ind) => (
+                                    <label className="kt-checkbox" key={ind}>
+                                        <input type="checkbox" name={el.name} onClick={handlePermissionChange}/> {el.name}<span/>
+                                    </label>
+                                ))
+                            }
+                            {
+                                error.permissions.length ? (
+                                    index === allModule.length - 1 ? (
+                                        error.permissions.map((error, indEr) => (
+                                            <div key={indEr} className="invalid-feedback text-center">
+                                                {error}
+                                            </div>
+                                        ))
+                                    ) : null
+                                ) : null
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     };
 
     const printJsx = () => {
@@ -161,20 +199,20 @@ const RuleEditPage = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.institution_type.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Veillez choisir le pilote actif <InputRequire/></label>
+                                            <div className={error.institutionTypes.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'institution <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
                                                         isMulti
                                                         value={institutionType}
-                                                        placeholder={"collecteur"}
+                                                        placeholder={"filial"}
                                                         onChange={handleInstitutionType}
                                                         options={institutionTypes}
                                                     />
                                                     {
-                                                        error.institution_type.length ? (
-                                                            error.institution_type.map((error, index) => (
+                                                        error.institutionTypes.length ? (
+                                                            error.institutionTypes.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -185,53 +223,20 @@ const RuleEditPage = (props) => {
                                             </div>
 
                                             {
-                                                institutionType ? (
-                                                    <div className={error.permission.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Permissions <InputRequire/></label>
-                                                        <div className="col-lg-9 col-xl-6">
-                                                            <div className="kt-checkbox-inline">
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 1<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 2<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 3<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 4<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 5<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 6<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 7<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 8<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 9<span/>
-                                                                </label>
-                                                                <label className="kt-checkbox">
-                                                                    <input type="checkbox"/> Permission 10<span/>
-                                                                </label>
-                                                            </div>
-                                                            {
-                                                                error.permission.length ? (
-                                                                    error.permission.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
-                                                        </div>
-                                                    </div>
+                                                institutionType.length ? (
+                                                    <>
+                                                        {
+                                                            data.institution_type.length === 2 ? (
+                                                                modulesPermissions.all.map((el, index) => (
+                                                                    printModule(el, index, modulesPermissions.all)
+                                                                ))
+                                                            ) : (
+                                                                modulesPermissions[data.institution_type[0]].map((el, index) => (
+                                                                    printModule(el, index, modulesPermissions[data.institution_type[0]])
+                                                                ))
+                                                            )
+                                                        }
+                                                    </>
                                                 ) : null
                                             }
                                         </div>
@@ -270,6 +275,35 @@ const RuleEditPage = (props) => {
         );
     };
 
+    const onSubmit = (e) => {
+        e.preventDefault();
+        setStartRequest(true);
+        const sendData = {
+            name: data.name,
+            permissions: permissions,
+            institutionTypes: data.institution_type
+        };
+        if (id) {
+
+        } else {
+            axios.post(`${appConfig.apiDomaine}/any/roles`, sendData)
+                .then(() => {
+                    setInstitutionType([]);
+                    setPermissions([]);
+                    setStartRequest(false);
+                    setError(defaultError);
+                    setData(defaultData);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                })
+                .catch(({response}) => {
+                    console.log("errors:", {...defaultError, ...response.data.error});
+                    setError({...defaultError, ...response.data.error});
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                });
+        }
+    };
+
     return (
         id ?
             verifyPermission(props.userPermissions, 'update-unit-type') ? (
@@ -287,4 +321,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(RuleEditPage);
+export default connect(mapStateToProps)(RuleAddPage);

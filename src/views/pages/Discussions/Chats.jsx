@@ -1,8 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
-import {Link, NavLink} from "react-router-dom";
+import {Link} from "react-router-dom";
 import moment from "moment";
+import {connect} from "react-redux";
 import MessageList from "./MessageList";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
@@ -15,8 +16,8 @@ import {confirmDeleteConfig} from "../../../config/confirmConfig";
 import {filterDiscussionBySearchValue} from "../../../helpers/function";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
-import {connect} from "react-redux";
 import LoadingTable from "../../components/LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -47,16 +48,17 @@ const Chats = (props) => {
     const [activeChat, setActiveChat] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/discussions")
-            .then(response => {
-                setListChat(response.data);
-                setLoad(false)
-            })
-            .catch(error => {
-                setLoad(false);
-            });
-
-
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/discussions")
+                .then(response => {
+                    setListChat(response.data);
+                    setLoad(false)
+                })
+                .catch(error => {
+                    setLoad(false);
+                })
+            ;
+        }
     }, []);
 
     useEffect(() => {
@@ -127,7 +129,8 @@ const Chats = (props) => {
             await getListMessage(id)
         }
 
-        fetchData()
+        if (verifyTokenExpire())
+            fetchData();
     };
 
     const getListMessage = (id) => {
@@ -141,7 +144,8 @@ const Chats = (props) => {
                 });
         }
 
-        fetchData()
+        if (verifyTokenExpire())
+            fetchData();
     };
 
     const formatFormData = (newData) => {
@@ -168,19 +172,22 @@ const Chats = (props) => {
 
         if ((data.text !== '' && idChat) || (data.files !== [] && idChat)) {
             setStartRequest(true);
-            axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
-                .then(response => {
-                    // getListMessage(idChat);
-                    const newItems = [...listChatMessages, response.data];
-                    setListChatMessage(newItems);
-                    setData(defaultError);
-                    getListMessage(idChat);
-                    setStartRequest(false);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.text));
-                });
+            if (verifyTokenExpire()) {
+                axios.post(appConfig.apiDomaine + `/discussions/${idChat}/messages`, formatFormData(newData))
+                    .then(response => {
+                        // getListMessage(idChat);
+                        const newItems = [...listChatMessages, response.data];
+                        setListChatMessage(newItems);
+                        setData(defaultError);
+                        getListMessage(idChat);
+                        setStartRequest(false);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.text));
+                    })
+                ;
+            }
         }
     };
 
@@ -188,17 +195,19 @@ const Chats = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/discussions/${idChat}/messages/${key}`)
-                        .then(response => {
-                            getListMessage(idChat);
-                            const filteredItems = listChatMessages.filter(item => item.key !== key);
-                            setListChatMessage(filteredItems);
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/discussions/${idChat}/messages/${key}`)
+                            .then(response => {
+                                getListMessage(idChat);
+                                const filteredItems = listChatMessages.filter(item => item.key !== key);
+                                setListChatMessage(filteredItems);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

@@ -19,6 +19,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -81,7 +82,8 @@ const Unit = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
     {/*<tr key={index} role="row" className="odd">
@@ -167,33 +169,35 @@ const Unit = (props) => {
     const deleteUnit = (unitId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(endPoint.destroy(unitId))
-                        .then(response => {
-                            const newUnits = [...units];
-                            newUnits.splice(index, 1);
-                            setUnits(newUnits);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newUnits.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newUnits.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(endPoint.destroy(unitId))
+                            .then(response => {
+                                const newUnits = [...units];
+                                newUnits.splice(index, 1);
+                                setUnits(newUnits);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newUnits.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newUnits.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

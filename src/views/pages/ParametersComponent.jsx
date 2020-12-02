@@ -3,6 +3,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
+import {connect} from "react-redux";
 import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -10,10 +11,10 @@ import Pagination from "../components/Pagination";
 import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
-import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -34,17 +35,21 @@ const ParametersComponent = (props) => {
     const [activeNumberPage, setActiveNumberPage] = useState(0);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/components")
-            .then(response => {
-                setLoad(false);
-                setComponent(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/components")
+                .then(response => {
+                    setLoad(false);
+                    setComponent(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+
     },[]);
 
     const filterShowListBySearchValue = (value) => {

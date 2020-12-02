@@ -4,16 +4,15 @@ import axios from "axios";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddSuccessMessageConfig,
-    toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
+    toastErrorMessageWithParameterConfig,
+    toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import InputRequire from "../components/InputRequire";
 import {Link} from "react-router-dom";
 import PeriodForm from "../components/PeriodForm";
-import {debug} from "../../helpers/function";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const TreatmentPeriodAdd = (props) => {
     document.title = "Satis client - Paramètre délai de qualification";
@@ -108,25 +107,27 @@ const TreatmentPeriodAdd = (props) => {
         const newData = {borne_inf: parseInt(data.borne_inf), borne_sup: infinite ? "+" : parseInt(data.borne_sup)};
         if (validPeriod()) {
             setStartRequest(true);
-            axios.post(`${appConfig.apiDomaine}/delai-treatment-parameters`, newData)
-                .then(({data}) => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultError);
-                    setInfinite(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig)
-                })
-                .catch(({response}) => {
-                    setStartRequest(false);
-                    if (typeof response.data.error === "object")
-                        setError(response.data.error);
-                    if (typeof response.data.error === "string") {
+            if (verifyTokenExpire()) {
+                axios.post(`${appConfig.apiDomaine}/delai-treatment-parameters`, newData)
+                    .then(({data}) => {
+                        setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error));
-                    }
-                    console.log("Something is wrong");
-                })
-            ;
+                        setData(defaultError);
+                        setInfinite(false);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig)
+                    })
+                    .catch(({response}) => {
+                        setStartRequest(false);
+                        if (typeof response.data.error === "object")
+                            setError(response.data.error);
+                        if (typeof response.data.error === "string") {
+                            setError(defaultError);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error));
+                        }
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
         }
     };
 

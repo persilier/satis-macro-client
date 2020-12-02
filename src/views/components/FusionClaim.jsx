@@ -8,6 +8,7 @@ import {
     toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {debug, formatDateToTimeStampte} from "../../helpers/function";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const FusionClaim = props => {
     const [startRequest, setStartRequest] = useState(false);
@@ -23,20 +24,22 @@ const FusionClaim = props => {
                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez choisir une seule réclamation."));
             else {
                 setStartRequest(true);
-                axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {keep_claim: !choice.original && !choice.duplicate ? null : choice.original})
-                    .then(response => {
-                        ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
-                        setStartRequest(false);
-                        document.getElementById("close-button").click();
-                        window.location.href = `/process/claim-assign/${response.data.id}/detail`;
-                    })
-                    .catch(({response}) => {
-                        if (response.data.error.keep_claim)
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.keep_claim[0]));
-                        setStartRequest(false);
-                        console.log("Something is wrong")
-                    })
-                ;
+                if (verifyTokenExpire()) {
+                    axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {keep_claim: !choice.original && !choice.duplicate ? null : choice.original})
+                        .then(response => {
+                            ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
+                            setStartRequest(false);
+                            document.getElementById("close-button").click();
+                            window.location.href = `/process/claim-assign/${response.data.id}/detail`;
+                        })
+                        .catch(({response}) => {
+                            if (response.data.error.keep_claim)
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.keep_claim[0]));
+                            setStartRequest(false);
+                            console.log("Something is wrong")
+                        })
+                    ;
+                }
             }
         } else
             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez choisir la réclamation à conserver."));

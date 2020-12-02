@@ -16,6 +16,7 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const PerformanceIndicatorForm = (props) => {
     const {id} = useParams();
@@ -62,7 +63,8 @@ const PerformanceIndicatorForm = (props) => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [id]);
 
     const onChangeName = (e) => {
@@ -92,33 +94,35 @@ const PerformanceIndicatorForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if(id) {
-            axios.put(`${appConfig.apiDomaine}/performance-indicators/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(`${appConfig.apiDomaine}/performance-indicators`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if(id) {
+                axios.put(`${appConfig.apiDomaine}/performance-indicators/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(`${appConfig.apiDomaine}/performance-indicators`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 
@@ -184,7 +188,7 @@ const PerformanceIndicatorForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -207,7 +211,7 @@ const PerformanceIndicatorForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -230,7 +234,7 @@ const PerformanceIndicatorForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -254,7 +258,7 @@ const PerformanceIndicatorForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -297,11 +301,11 @@ const PerformanceIndicatorForm = (props) => {
         id ? (
             verifyPermission(props.userPermissions, "update-performance-indicator") ? (
                 printJsx()
-            ) : ""
+            ) : null
         ) : (
             verifyPermission(props.userPermissions, "store-performance-indicator") ? (
                 printJsx()
-            ) : ""
+            ) : null
         )
     );
 };

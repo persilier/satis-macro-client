@@ -19,6 +19,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -109,6 +110,7 @@ const HoldingUnitForm = (props) => {
             if (id) {
                 await axios.get(endPoint.edit(id))
                     .then(response => {
+                        console.log("response:", response.data);
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
@@ -143,7 +145,8 @@ const HoldingUnitForm = (props) => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [endPoint, id, props.userPermissions]);
 
     const onChangeName = (e) => {
@@ -190,37 +193,39 @@ const HoldingUnitForm = (props) => {
         let newData = {...data};
         if(!(verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit')))
             delete newData.institution_id;
-        if (id) {
-            axios.put(endPoint.update(id), newData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    debug({...defaultError, ...errorRequest.response.data.error}, "error");
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(endPoint.store, newData)
-                .then(response => {
-                    setStartRequest(false);
-                    if (verifyPermission(props.userPermissions, 'store-any-unit'))
-                        setInstitution({});
-                    setUnitType({});
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(endPoint.update(id), newData)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        debug({...defaultError, ...errorRequest.response.data.error}, "error");
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(endPoint.store, newData)
+                    .then(response => {
+                        setStartRequest(false);
+                        if (verifyPermission(props.userPermissions, 'store-any-unit'))
+                            setInstitution({});
+                        setUnitType({});
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 
@@ -286,7 +291,7 @@ const HoldingUnitForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -310,11 +315,11 @@ const HoldingUnitForm = (props) => {
                                                                             {error}
                                                                         </div>
                                                                     ))
-                                                                ) : ""
+                                                                ) : null
                                                             }
                                                         </div>
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
 
                                             {
@@ -337,12 +342,12 @@ const HoldingUnitForm = (props) => {
                                                                                 {error}
                                                                             </div>
                                                                         ))
-                                                                    ) : ""
+                                                                    ) : null
                                                                 }
                                                             </div>
                                                         </div>
-                                                    ) : ""
-                                                ) : ""
+                                                    ) : null
+                                                ) : null
                                             }
 
                                             <div className={error.unit_type_id.length ? "form-group row validated" : "form-group row"}>
@@ -362,7 +367,7 @@ const HoldingUnitForm = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -405,11 +410,11 @@ const HoldingUnitForm = (props) => {
         id ?
             verifyPermission(props.userPermissions, 'update-any-unit') || verifyPermission(props.userPermissions, 'update-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
                 printJsx()
-            ) : ""
+            ) : null
         :
             verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

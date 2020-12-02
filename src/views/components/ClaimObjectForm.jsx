@@ -18,6 +18,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const ClaimObjectForm = (props) => {
     const {id} = useParams();
@@ -88,7 +89,8 @@ const ClaimObjectForm = (props) => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     const onChangeName = (e) => {
@@ -126,35 +128,37 @@ const ClaimObjectForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (id) {
-            axios.put(`${appConfig.apiDomaine}/claim-objects/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(`${appConfig.apiDomaine}/claim-objects`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setClaimCategory({});
-                    setSeverityLevel({});
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(`${appConfig.apiDomaine}/claim-objects/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(`${appConfig.apiDomaine}/claim-objects`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setClaimCategory({});
+                        setSeverityLevel({});
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 
@@ -219,7 +223,7 @@ const ClaimObjectForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -241,7 +245,7 @@ const ClaimObjectForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -264,7 +268,7 @@ const ClaimObjectForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -286,7 +290,7 @@ const ClaimObjectForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -310,7 +314,7 @@ const ClaimObjectForm = (props) => {
                                                                 {error}
                                                             </div>
                                                         ))
-                                                    ) : ""
+                                                    ) : null
                                                 }
                                             </div>
                                         </div>
@@ -352,11 +356,11 @@ const ClaimObjectForm = (props) => {
         id ? (
             verifyPermission(props.userPermissions, 'update-claim-object') ? (
                 printJsx()
-            ) : ""
+            ) : null
         ) : (
             verifyPermission(props.userPermissions, 'store-claim-object') ? (
                 printJsx()
-            ) : ""
+            ) : null
         )
     );
 };

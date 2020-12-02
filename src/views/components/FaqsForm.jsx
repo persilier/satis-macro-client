@@ -15,6 +15,7 @@ import Select from "react-select";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -46,23 +47,24 @@ const FaqsForm = (props) => {
     }
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + '/faq-categories')
-            .then(response => {
-                setCategorieData(response.data)
-            });
-        if (editfaqid) {
-            axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + '/faq-categories')
                 .then(response => {
-                    const newFaq = {
-                        faq_category_id: response.data.faq_category.id,
-                        question: response.data.question["fr"],
-                        answer: response.data.answer["fr"]
-                    };
-                    setData(newFaq);
-                    setCategory({value: response.data.faq_category.id, label: response.data.faq_category.name.fr});
-                })
+                    setCategorieData(response.data)
+                });
+            if (editfaqid) {
+                axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
+                    .then(response => {
+                        const newFaq = {
+                            faq_category_id: response.data.faq_category.id,
+                            question: response.data.question["fr"],
+                            answer: response.data.answer["fr"]
+                        };
+                        setData(newFaq);
+                        setCategory({value: response.data.faq_category.id, label: response.data.faq_category.name.fr});
+                    })
+            }
         }
-
     }, []);
     const onChangeCategory = (selected) => {
         const newData = {...data};
@@ -86,36 +88,37 @@ const FaqsForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if(editfaqid){
-            axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        }else {
-            axios.post(appConfig.apiDomaine + `/faqs`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if(editfaqid){
+                axios.put(appConfig.apiDomaine + `/faqs/${editfaqid}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError,...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }else {
+                axios.post(appConfig.apiDomaine + `/faqs`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError,...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
-
     };
     const printJsx = () => {
         return(
@@ -190,7 +193,7 @@ const FaqsForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -216,7 +219,7 @@ const FaqsForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -243,7 +246,7 @@ const FaqsForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -297,10 +300,10 @@ const FaqsForm = (props) => {
         editfaqid ?
             verifyPermission(props.userPermissions, 'update-faq') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-faq') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

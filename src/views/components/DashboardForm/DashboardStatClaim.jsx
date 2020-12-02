@@ -5,6 +5,7 @@ import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
 const DashboardStatClaim = (props) => {
@@ -121,7 +122,8 @@ const DashboardStatClaim = (props) => {
                 });
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }
@@ -146,11 +148,11 @@ const DashboardStatClaim = (props) => {
                                 <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
                                        height={350}/>
                             </div>
-                            : ""
+                            : null
                     )
                 }
             </div>
-            : ""
+            : null
     )
 
 };

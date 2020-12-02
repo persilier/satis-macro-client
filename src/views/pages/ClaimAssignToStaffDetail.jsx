@@ -18,6 +18,7 @@ import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -43,7 +44,8 @@ const ClaimAssignToStaffDetail = (props) => {
                 .catch(error => console.log("Something is wrong"));
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     return (

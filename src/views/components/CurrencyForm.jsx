@@ -19,6 +19,7 @@ import {verifyPermission} from "../../helpers/permission";
 import currencies from "../../constants/currencyContry";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -73,7 +74,8 @@ const CurrencyForm = () => {
                     })
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, id]);
 
     const filterCurrency = (removeElement) => {
@@ -99,38 +101,40 @@ const CurrencyForm = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (id) {
-            axios.put(`${appConfig.apiDomaine}/currencies/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setCurrency(null);
-                    setError(defaultError);
-                    setListCurrency(filterCurrency([data]));
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(`${appConfig.apiDomaine}/currencies`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    setCurrency(null);
-                    setListCurrency(filterCurrency([data]));
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    redirectError401Page(errorRequest.response.data.code);
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(`${appConfig.apiDomaine}/currencies/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setCurrency(null);
+                        setError(defaultError);
+                        setListCurrency(filterCurrency([data]));
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(`${appConfig.apiDomaine}/currencies`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        setCurrency(null);
+                        setListCurrency(filterCurrency([data]));
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        redirectError401Page(errorRequest.response.data.code);
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 

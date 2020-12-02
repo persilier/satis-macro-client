@@ -17,6 +17,7 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -46,7 +47,8 @@ const PerformanceIndicator = (props) => {
                })
            ;
        }
-       fetchData();
+       if (verifyTokenExpire())
+           fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -125,32 +127,34 @@ const PerformanceIndicator = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/performance-indicators/${performanceId}`)
-                        .then(response => {
-                            const newPerformances = [...performances];
-                            newPerformances.splice(index, 1);
-                            setPerformances(newPerformances);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newPerformances.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newPerformances.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(`${appConfig.apiDomaine}/performance-indicators/${performanceId}`)
+                            .then(response => {
+                                const newPerformances = [...performances];
+                                newPerformances.splice(index, 1);
+                                setPerformances(newPerformances);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newPerformances.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newPerformances.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -181,7 +185,7 @@ const PerformanceIndicator = (props) => {
                                   title="Modifier">
                                 <i className="la la-edit"/>
                             </Link>
-                        ) : ""
+                        ) : null
                     }
                     {
                         verifyPermission(props.userPermissions, "destroy-performance-indicator") ? (
@@ -191,7 +195,7 @@ const PerformanceIndicator = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                        ) : ""
+                        ) : null
                     }
                 </td>
             </tr>
@@ -320,7 +324,7 @@ const PerformanceIndicator = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -330,7 +334,7 @@ const PerformanceIndicator = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 

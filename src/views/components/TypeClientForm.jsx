@@ -12,6 +12,7 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
@@ -39,15 +40,18 @@ const TypeClientForm = (props) => {
 
     useEffect(() => {
         if (edittypeid) {
-            axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
-                .then(response => {
-                    console.log(response.data, 'DATA');
-                    const newType = {
-                        name: response.data.name.fr,
-                        description: response.data.description.fr
-                    };
-                    setData(newType);
-                })
+            if (verifyTokenExpire()) {
+                axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
+                    .then(response => {
+                        console.log(response.data, 'DATA');
+                        const newType = {
+                            name: response.data.name.fr,
+                            description: response.data.description.fr
+                        };
+                        setData(newType);
+                    })
+                ;
+            }
         }
     },[]);
 
@@ -67,36 +71,37 @@ const TypeClientForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (edittypeid) {
-            axios.put(appConfig.apiDomaine + `/type-clients/${edittypeid}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(appConfig.apiDomaine + `/type-clients`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (edittypeid) {
+                axios.put(appConfig.apiDomaine + `/type-clients/${edittypeid}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(appConfig.apiDomaine + `/type-clients`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
-
     };
     const printJsx = () => {
         return (
@@ -171,7 +176,7 @@ const TypeClientForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -198,7 +203,7 @@ const TypeClientForm = (props) => {
                                                                                         {error}
                                                                                     </div>
                                                                                 ))
-                                                                            ) : ""
+                                                                            ) : null
                                                                         }
                                                                     </div>
                                                                 </div>
@@ -253,10 +258,10 @@ const TypeClientForm = (props) => {
         edittypeid ?
             verifyPermission(props.userPermissions, 'update-type-client') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-type-client') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 
 };

@@ -18,6 +18,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -62,17 +63,20 @@ const ConfigRapportAuto = (props) => {
     const [activeNumberPage, setActiveNumberPage] = useState(0);
 
     useEffect(() => {
-        axios.get(endPoint.list)
-            .then(response => {
-                setLoad(false);
-                setRapportAuto(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(endPoint.list)
+                .then(response => {
+                    setLoad(false);
+                    setRapportAuto(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     },[]);
 
     const getEmailString = (email) => {
@@ -158,33 +162,35 @@ const ConfigRapportAuto = (props) => {
     const deleteCategoryClient = (rapportAutoId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(endPoint.list + `/${rapportAutoId}`)
-                        .then(response => {
-                            const newRapport = [...rapportAuto];
-                            newRapport.splice(index, 1);
-                            setRapportAuto(newRapport);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newRapport.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newRapport.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(endPoint.list + `/${rapportAutoId}`)
+                            .then(response => {
+                                const newRapport = [...rapportAuto];
+                                newRapport.splice(index, 1);
+                                setRapportAuto(newRapport);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newRapport.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newRapport.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

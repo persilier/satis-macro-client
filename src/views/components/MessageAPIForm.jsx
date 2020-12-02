@@ -15,6 +15,7 @@ import {
 } from "../../config/toastConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -81,7 +82,8 @@ const MessageAPIForm = props => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
@@ -98,39 +100,41 @@ const MessageAPIForm = props => {
         e.preventDefault();
         setStartRequest(true);
         const submitData = {name: data.name, method: method ? method.label : ""};
-        if (id) {
-            axios.put(`${appConfig.apiDomaine}/message-apis/${id}`, submitData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(`${appConfig.apiDomaine}/message-apis`, submitData)
-                .then(response => {
-                    setStartRequest(false);
-                    const oldMethod = method;
-                    let newMethods = [...methods];
-                    newMethods = newMethods.filter(el => el.label !== oldMethod.label );
-                    setMethod(null);
-                    setMethods(newMethods);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    redirectError401Page(errorRequest.response.data.code);
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(`${appConfig.apiDomaine}/message-apis/${id}`, submitData)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(`${appConfig.apiDomaine}/message-apis`, submitData)
+                    .then(response => {
+                        setStartRequest(false);
+                        const oldMethod = method;
+                        let newMethods = [...methods];
+                        newMethods = newMethods.filter(el => el.label !== oldMethod.label );
+                        setMethod(null);
+                        setMethods(newMethods);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        redirectError401Page(errorRequest.response.data.code);
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 
@@ -196,7 +200,7 @@ const MessageAPIForm = props => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -218,7 +222,7 @@ const MessageAPIForm = props => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -261,10 +265,10 @@ const MessageAPIForm = props => {
         id ?
             verifyPermission(props.userPermissions, 'update-message-apis') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-message-apis') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

@@ -5,6 +5,7 @@ import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
 const ClaimToInstitution = (props) => {
@@ -61,7 +62,8 @@ const ClaimToInstitution = (props) => {
                 })
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }

@@ -17,6 +17,7 @@ import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -49,12 +50,12 @@ const UnitTypeForm = (props) => {
         async function fetchData () {
             if (id) {
                 await axios.get(`${appConfig.apiDomaine}/unit-types/${id}/edit`)
-                    .then(response => {
+                    .then(({data}) => {
                         const newData = {
-                            name: response.data.unitType.name.fr,
-                            can_be_target: response.data.unitType.can_be_target === 1,
-                            can_treat: response.data.unitType.can_treat === 1,
-                            description: response.data.unitType.description.fr,
+                            name: data.unitType.name ? data.unitType.name.fr : "",
+                            can_be_target: data.unitType.can_be_target === 1,
+                            can_treat: data.unitType.can_treat === 1,
+                            description: data.unitType.description ? data.unitType.description.fr : "",
                         };
                         setData(newData);
                     })
@@ -64,7 +65,8 @@ const UnitTypeForm = (props) => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [id, appConfig.apiDomaine]);
 
     const onChangeName = (e) => {
@@ -92,34 +94,36 @@ const UnitTypeForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (id) {
-            axios.put(`${appConfig.apiDomaine}/unit-types/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(`${appConfig.apiDomaine}/unit-types`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    redirectError401Page(errorRequest.response.data.code);
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(`${appConfig.apiDomaine}/unit-types/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(`${appConfig.apiDomaine}/unit-types`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        redirectError401Page(errorRequest.response.data.code);
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 

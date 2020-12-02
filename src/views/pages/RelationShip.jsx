@@ -17,6 +17,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -36,17 +37,20 @@ const RelationShip = (props) => {
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/relationships")
-            .then(response => {
-                setLoad(false);
-                setRelation(response.data);
-                setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-                setNumberPage(forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/relationships")
+                .then(response => {
+                    setLoad(false);
+                    setRelation(response.data);
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                    setNumberPage(forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const searchElement = async (e) => {
@@ -112,33 +116,35 @@ const RelationShip = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/relationships/${relationId}`)
-                        .then(response => {
-                            console.log(response, "OK");
-                            const newType = [...relation];
-                            newType.splice(index, 1);
-                            setRelation(newType);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newType.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newType.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/relationships/${relationId}`)
+                            .then(response => {
+                                console.log(response, "OK");
+                                const newType = [...relation];
+                                newType.splice(index, 1);
+                                setRelation(newType);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newType.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newType.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -179,7 +185,7 @@ const RelationShip = (props) => {
                                 title="Supprimer">
                                 <i className="la la-trash"/>
                             </button>
-                            : ""
+                            : null
                     }
 
                 </td>
@@ -313,7 +319,7 @@ const RelationShip = (props) => {
                                                             onClickNextPage={e => onClickNextPage(e)}
                                                         />
                                                     </div>
-                                                ) : ""
+                                                ) : null
                                             }
                                         </div>
                                     </div>
@@ -323,7 +329,7 @@ const RelationShip = (props) => {
                     </div>
                 </div>
             </div>
-        ) : ""
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

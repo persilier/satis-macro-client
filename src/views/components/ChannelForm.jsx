@@ -17,6 +17,7 @@ import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -60,7 +61,8 @@ const ChannelForms = (props) => {
                 ;
             }
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, id]);
 
     const onChangeName = (e) => {
@@ -72,34 +74,36 @@ const ChannelForms = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (id) {
-            axios.put(`${appConfig.apiDomaine}/channels/${id}`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
-        } else {
-            axios.post(`${appConfig.apiDomaine}/channels`, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    redirectError401Page(errorRequest.response.data.code);
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(`${appConfig.apiDomaine}/channels/${id}`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    })
+                ;
+            } else {
+                axios.post(`${appConfig.apiDomaine}/channels`, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        redirectError401Page(errorRequest.response.data.code);
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    })
+                ;
+            }
         }
     };
 
@@ -165,7 +169,7 @@ const ChannelForms = (props) => {
                                                                     {error}
                                                                 </div>
                                                             ))
-                                                        ) : ""
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>
@@ -208,10 +212,10 @@ const ChannelForms = (props) => {
         id ?
             verifyPermission(props.userPermissions, 'update-channel') ? (
                 printJsx()
-            ) : ""
+            ) : null
             : verifyPermission(props.userPermissions, 'store-channel') ? (
                 printJsx()
-            ) : ""
+            ) : null
     );
 };
 

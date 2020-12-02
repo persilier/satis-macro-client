@@ -15,6 +15,7 @@ import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -80,7 +81,8 @@ const UserAdd = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [props.plan, appConfig.apiDomaine]);
 
     const handleIdentityChange = (selected) => {
@@ -137,13 +139,15 @@ const UserAdd = (props) => {
 
     const loadStaff = async (institutionId) => {
         if (institutionId) {
-            await axios.get(`${appConfig.apiDomaine}/any/users/${institutionId}/create`)
-                .then(({data}) => {
-                    setRoles(formatSelectOption(data.roles, "name", false, "name"));
-                    setIdentities(formatStaff(formatIdentities(data.identites), "fullName"));
-                })
-                .catch(() => console.log("Something is wrong"))
-            ;
+            if (verifyTokenExpire()) {
+                await axios.get(`${appConfig.apiDomaine}/any/users/${institutionId}/create`)
+                    .then(({data}) => {
+                        setRoles(formatSelectOption(data.roles, "name", false, "name"));
+                        setIdentities(formatStaff(formatIdentities(data.identites), "fullName"));
+                    })
+                    .catch(() => console.log("Something is wrong"))
+                ;
+            }
         }
     };
 
@@ -173,73 +177,75 @@ const UserAdd = (props) => {
         else if(props.plan === "PRO")
             endpoint = `${appConfig.apiDomaine}/my/users`;
 
-        if ((data.roles.includes("pilot-filial") || data.roles.includes('pilot-holding')) && activePilot) {
-            const addUser = await axios.post(endpoint, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    setRole(null);
-                    setInstitution(null);
-                    return true;
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    return false;
-                })
-            ;
+        if (verifyTokenExpire()) {
+            if ((data.roles.includes("pilot-filial") || data.roles.includes('pilot-holding')) && activePilot) {
+                const addUser = await axios.post(endpoint, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        setRole(null);
+                        setInstitution(null);
+                        return true;
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        return false;
+                    })
+                ;
 
-            if (addUser) {
-                if (data.activate === 1) {
-                    setStartRequest(true);
-                    const active = await axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${data.institution_id}`, {staff_id: identity.staff_id})
-                        .then(({data}) => {
-                            setStartRequest(false);
-                            setIdentity(null);
-                            return true;
-                        })
-                        .catch(({response}) => {
-                            setStartRequest(false);
-                            setIdentity(null);
-                            return false;
-                        })
-                    ;
+                if (addUser) {
+                    if (data.activate === 1) {
+                        setStartRequest(true);
+                        const active = await axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${data.institution_id}`, {staff_id: identity.staff_id})
+                            .then(({data}) => {
+                                setStartRequest(false);
+                                setIdentity(null);
+                                return true;
+                            })
+                            .catch(({response}) => {
+                                setStartRequest(false);
+                                setIdentity(null);
+                                return false;
+                            })
+                        ;
 
-                    if (addUser && active) {
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Utilisateur enregistré et désigné comme pilote"));
+                        if (addUser && active) {
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Utilisateur enregistré et désigné comme pilote"));
+                        }
+
+                        if (addUser && !active) {
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Utilisateur enregistré mais non défini comme pilote actif"));
+                        }
+                    } else {
+                        setIdentity(null);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig)
                     }
+                }
+            } else {
+                const addUser = await axios.post(endpoint, data)
+                    .then(response => {
+                        setStartRequest(false);
+                        setError(defaultError);
+                        setData(defaultData);
+                        setRole(null);
+                        setInstitution(null);
+                        return true;
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...errorRequest.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        return false;
+                    })
+                ;
 
-                    if (addUser && !active) {
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Utilisateur enregistré mais non défini comme pilote actif"));
-                    }
-                } else {
+                if (addUser) {
                     setIdentity(null);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig)
                 }
-            }
-        } else {
-            const addUser = await axios.post(endpoint, data)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    setData(defaultData);
-                    setRole(null);
-                    setInstitution(null);
-                    return true;
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    return false;
-                })
-            ;
-
-            if (addUser) {
-                setIdentity(null);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig)
             }
         }
     };

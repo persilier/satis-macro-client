@@ -18,6 +18,7 @@ import {
     toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {connect} from "react-redux";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const TreatmentPeriod = props => {
     document.title = "Satis client - Paramètre délai de qualification";
@@ -46,7 +47,10 @@ const TreatmentPeriod = props => {
                 })
             ;
         }
-        fetchData();
+
+        if (verifyTokenExpire()) {
+            fetchData();
+        }
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -122,35 +126,37 @@ const TreatmentPeriod = props => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/delai-treatment-parameters/${TreatmentPeriodId}`)
-                        .then(response => {
-                            const newUnitTypes = [...TreatmentPeriods];
-                            newUnitTypes.splice(index, 1);
-                            setTreatmentPeriods(newUnitTypes);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newUnitTypes.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newUnitTypes.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(`${appConfig.apiDomaine}/delai-treatment-parameters/${TreatmentPeriodId}`)
+                            .then(response => {
+                                const newUnitTypes = [...TreatmentPeriods];
+                                newUnitTypes.splice(index, 1);
+                                setTreatmentPeriods(newUnitTypes);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newUnitTypes.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newUnitTypes.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

@@ -15,6 +15,7 @@ import {
 import {verifyPermission} from "../../../helpers/permission";
 import InputRequire from "../InputRequire";
 import WithoutCode from "../WithoutCode";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -140,13 +141,16 @@ const ConfirmClaimAddModal = props => {
             setInstitution(selected);
             newData.institution_targeted_id = selected.value;
             if (!verifyPermission(props.userPermissions, "store-claim-without-client")) {
-                axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
-                    .then(response => {
-                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
-                    })
-                    .catch(error => {
-                        console.log("Something is wrong");
-                    });
+                if (verifyTokenExpire()) {
+                    axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/clients`)
+                        .then(response => {
+                            setUnits(formatSelectOption(response.data.units, "name", "fr"))
+                        })
+                        .catch(error => {
+                            console.log("Something is wrong");
+                        })
+                    ;
+                }
             }
         }
         else {
@@ -229,17 +233,20 @@ const ConfirmClaimAddModal = props => {
         setData(newData);
     };
 
-    const onChangeClaimCategory = selected => {
+    const onChangeClaimCategory = async (selected) => {
         const newData = {...data};
         if (selected) {
             setClaimCategory(selected);
-            axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
-                .then(response => {
-                    newData.claim_object_id = "";
-                    setClaimObject(null);
-                    setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
-                })
-                .catch(error => console.log("Something is wrong"))
+            if (verifyTokenExpire()) {
+                await axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
+                    .then(response => {
+                        newData.claim_object_id = "";
+                        setClaimObject(null);
+                        setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
+                    })
+                    .catch(error => console.log("Something is wrong"))
+                ;
+            }
         } else {
             setClaimObjects([]);
             setClaimObject(null);
@@ -335,34 +342,37 @@ const ConfirmClaimAddModal = props => {
             delete newData.account_targeted_id;
         if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
             delete newData.relationship_id;
-        axios.post(props.endPoint.storeKnowingIdentity(props.id), formatFormData(newData))
-            .then(async (response) => {
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                await setInstitution(null);
-                await setClaimCategory(null);
-                await setCurrency(null);
-                await setResponseChannel(null);
-                await setReceptionChannel(null);
-                await setClaimObject(null);
-                await setClaimObjects([]);
-                await setAccounts([]);
-                await setAccount(null);
-                await setUnits([]);
-                await setUnit(null);
-                await setRelationship(null);
-                await setStartRequest(false);
-                // await setError(defaultError);
-                await setData(defaultData);
-                document.getElementById("customFile").value = "";
-                document.getElementById("closeConfirmSaveForm").click();
-                await props.resetFoundData();
-            })
-            .catch(errorRequest => {
-                setStartRequest(false);
-                setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.post(props.endPoint.storeKnowingIdentity(props.id), formatFormData(newData))
+                .then(async (response) => {
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    await setInstitution(null);
+                    await setClaimCategory(null);
+                    await setCurrency(null);
+                    await setResponseChannel(null);
+                    await setReceptionChannel(null);
+                    await setClaimObject(null);
+                    await setClaimObjects([]);
+                    await setAccounts([]);
+                    await setAccount(null);
+                    await setUnits([]);
+                    await setUnit(null);
+                    await setRelationship(null);
+                    await setStartRequest(false);
+                    // await setError(defaultError);
+                    await setData(defaultData);
+                    document.getElementById("customFile").value = "";
+                    document.getElementById("closeConfirmSaveForm").click();
+                    await props.resetFoundData();
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
+
     };
 
     const onClickClose = async () => {

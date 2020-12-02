@@ -18,6 +18,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -37,17 +38,20 @@ const Institution = (props) => {
     const [activeNumberPage, setActiveNumberPage] = useState(0);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/any/institutions")
-            .then(response => {
-                setLoad(false);
-                setInstitution(response.data);
-                setShowList(response.data.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            })
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/any/institutions")
+                .then(response => {
+                    setLoad(false);
+                    setInstitution(response.data);
+                    setShowList(response.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const filterShowListBySearchValue = (value) => {
@@ -126,32 +130,34 @@ const Institution = (props) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
-                    axios.delete(appConfig.apiDomaine + `/any/institutions/${institutionId}`)
-                        .then(response => {
-                            const newInstitution = [...institutions];
-                            newInstitution.splice(index, 1);
-                            setInstitution(newInstitution);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newInstitution.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newInstitution.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/any/institutions/${institutionId}`)
+                            .then(response => {
+                                const newInstitution = [...institutions];
+                                newInstitution.splice(index, 1);
+                                setInstitution(newInstitution);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newInstitution.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newInstitution.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;

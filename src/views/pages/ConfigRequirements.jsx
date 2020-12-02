@@ -19,6 +19,7 @@ import {
 } from "../../config/toastConfig";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -41,29 +42,31 @@ const ConfigRequirements = () => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        axios.get(appConfig.apiDomaine + "/claim-object-requirements")
-            .then(response => {
-                let newObjectData = [];
-                response.data.claimCategories.map((claimCategory) => (
-                    claimCategory.claim_objects.map((claimObject) => (
-                        newObjectData[claimObject.id] = claimObject.requirements.map(requirement => (
-                            {value: requirement.id, label: requirement.description.fr})
-                        )
-                    ))
-                ));
+        if (verifyTokenExpire()) {
+            axios.get(appConfig.apiDomaine + "/claim-object-requirements")
+                .then(response => {
+                    let newObjectData = [];
+                    response.data.claimCategories.map((claimCategory) => (
+                        claimCategory.claim_objects.map((claimObject) => (
+                            newObjectData[claimObject.id] = claimObject.requirements.map(requirement => (
+                                {value: requirement.id, label: requirement.description.fr})
+                            )
+                        ))
+                    ));
 
-                setData(newObjectData);
-                setLoad(false);
-                setClaimObject(response.data.claimCategories);
-                setRequirement(response.data.requirements);
-                setShowList(response.data.claimCategories.slice(0, numberPerPage));
-                setNumberPage(forceRound(response.data.claimCategories.length / numberPerPage));
-            })
-            .catch(error => {
-                setLoad(false);
-                console.log("Something is wrong");
-            });
-
+                    setData(newObjectData);
+                    setLoad(false);
+                    setClaimObject(response.data.claimCategories);
+                    setRequirement(response.data.requirements);
+                    setShowList(response.data.claimCategories.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.claimCategories.length / numberPerPage));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
     }, []);
 
     const matchRequirement = (requirement, value) => {
@@ -189,16 +192,18 @@ const ConfigRequirements = () => {
         }
         // console.log(values, 'values');
 
-        axios.put(appConfig.apiDomaine + `/claim-object-requirements`, values)
-            .then(response => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-            })
-            .catch(error => {
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.put(appConfig.apiDomaine + `/claim-object-requirements`, values)
+                .then(response => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(error => {
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     const printBodyTable = (category, index) => {

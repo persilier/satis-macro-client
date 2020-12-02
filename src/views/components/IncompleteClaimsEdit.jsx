@@ -26,6 +26,7 @@ import {
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
 import WithoutCode from "./WithoutCode";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -247,8 +248,9 @@ const IncompleteClaimsEdit = props => {
                 })
         }
 
-        fetchData();
-
+        if (verifyTokenExpire()) {
+            fetchData();
+        }
     }, [endPoint, props.userPermissions, id]);
 
     const onChangeRelationShip = selected => {
@@ -339,12 +341,15 @@ const IncompleteClaimsEdit = props => {
 
     const onChangeClaimCategory = selected => {
         setClaimCategory(selected);
-        axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
-            .then(response => {
-                setClaimObject({});
-                setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
-            })
-            .catch(error => console.log("Something is wrong"))
+        if (verifyTokenExpire()) {
+            axios.get(`${appConfig.apiDomaine}/claim-categories/${selected.value}/claim-objects`)
+                .then(response => {
+                    setClaimObject({});
+                    setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
+                })
+                .catch(error => console.log("Something is wrong"))
+            ;
+        }
     };
 
     const onChangeClaimerExpectation = e => {
@@ -438,19 +443,21 @@ const IncompleteClaimsEdit = props => {
         for (var value of formatFormData(newData).values()) {
             debug(value, "value");
         }
-        axios.post(endPoint.update(`${id}`), formatFormData(newData))
-            .then((response) => {
-                console.log(response.data, "response");
-                setStartRequest(false);
-                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
-                window.location.href = "/process/incomplete_claims"
-            })
-            .catch((error) => {
-                setStartRequest(false);
-                setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
-            })
-        ;
+        if (verifyTokenExpire()) {
+            axios.post(endPoint.update(`${id}`), formatFormData(newData))
+                .then((response) => {
+                    console.log(response.data, "response");
+                    setStartRequest(false);
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
+                    window.location.href = "/process/incomplete_claims"
+                })
+                .catch((error) => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
     };
 
     return (

@@ -1,6 +1,6 @@
 import React from "react";
 import {verifyPermission} from "../../helpers/permission";
-import {debug, formatDateToTimeStampte} from "../../helpers/function";
+import {formatDateToTimeStampte} from "../../helpers/function";
 
 const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
     return (
@@ -11,7 +11,7 @@ const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
             <div className="kt-form__section kt-form__section--first">
                 <div className="kt-wizard-v2__review">
                     {
-                        !claim ? "" : (
+                        !claim ? null : (
                             claim.duplicates.length ? (
                                 claim.duplicates.map((newClaim, index) => (
                                     <div className="kt-wizard-v2__review-item"

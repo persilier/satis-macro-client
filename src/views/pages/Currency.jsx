@@ -20,6 +20,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -50,7 +51,8 @@ const Currency = (props) => {
                 })
             ;
         }
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
@@ -126,36 +128,38 @@ const Currency = (props) => {
     const deleteCurrency = (currencyId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
-                if (result.value) {
-                    axios.delete(`${appConfig.apiDomaine}/currencies/${currencyId}`)
-                        .then(response => {
-                            const newCurrencies = [...currencies];
-                            newCurrencies.splice(index, 1);
-                            setCurrencies(newCurrencies);
-                            if (showList.length > 1) {
-                                setShowList(
-                                    newCurrencies.slice(
-                                        getEndByPosition(activeNumberPage) - numberPerPage,
-                                        getEndByPosition(activeNumberPage)
-                                    )
-                                );
-                            } else {
-                                setShowList(
-                                    newCurrencies.slice(
-                                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                        getEndByPosition(activeNumberPage - 1)
-                                    )
-                                );
-                            }
-                            ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
-                        })
-                        .catch(error => {
-                            if (error.response.data.error)
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                            else
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
-                        })
-                    ;
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.delete(`${appConfig.apiDomaine}/currencies/${currencyId}`)
+                            .then(response => {
+                                const newCurrencies = [...currencies];
+                                newCurrencies.splice(index, 1);
+                                setCurrencies(newCurrencies);
+                                if (showList.length > 1) {
+                                    setShowList(
+                                        newCurrencies.slice(
+                                            getEndByPosition(activeNumberPage) - numberPerPage,
+                                            getEndByPosition(activeNumberPage)
+                                        )
+                                    );
+                                } else {
+                                    setShowList(
+                                        newCurrencies.slice(
+                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                            getEndByPosition(activeNumberPage - 1)
+                                        )
+                                    );
+                                }
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
                 }
             })
         ;
@@ -177,7 +181,7 @@ const Currency = (props) => {
                 <td>{currency.name["fr"]}</td>
                 <td>{currency.iso_code}</td>
                 <td>
-                    {
+                    {/*{
                         verifyPermission(props.userPermissions, 'update-currency') ? (
                             <Link to={`/settings/currencies/${currency.id}/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -185,7 +189,7 @@ const Currency = (props) => {
                                 <i className="la la-edit"/>
                             </Link>
                         ) : null
-                    }
+                    }*/}
                     {
                         verifyPermission(props.userPermissions, 'destroy-currency') ? (
                             <button

@@ -5,6 +5,7 @@ import appConfig from "../../../config/appConfig";
 import {connect} from "react-redux";
 import {percentageData} from "../../../helpers/function";
 import LoadingTable from "../LoadingTable";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -31,9 +32,11 @@ const DashboardClaimsActivity = (props) => {
                     setLoad(false);
                     console.log("Something is wrong");
                 })
+            ;
         }
 
-        fetchData();
+        if (verifyTokenExpire())
+            fetchData();
         return () => {
             isCancelled = true;
         }
@@ -95,7 +98,7 @@ const DashboardClaimsActivity = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalIncomplete.myActivity), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
@@ -110,7 +113,7 @@ const DashboardClaimsActivity = (props) => {
                                                         <span className="kt-widget24__number">
                                                 {percentageData((data.totalIncomplete.myActivity), totalData)}
                                            </span>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -138,7 +141,7 @@ const DashboardClaimsActivity = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalComplete.myActivity), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -154,7 +157,7 @@ const DashboardClaimsActivity = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalComplete.myActivity), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -184,7 +187,7 @@ const DashboardClaimsActivity = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalTransferredToUnit.myActivity), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -198,7 +201,7 @@ const DashboardClaimsActivity = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalTransferredToUnit.myActivity), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -228,7 +231,7 @@ const DashboardClaimsActivity = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalBeingProcess.myActivity), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
 
                                             </div>
@@ -242,7 +245,7 @@ const DashboardClaimsActivity = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalBeingProcess.myActivity), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -285,7 +288,7 @@ const DashboardClaimsActivity = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalTreated.myActivity), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -314,7 +317,7 @@ const DashboardClaimsActivity = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalUnfounded.myActivity), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
@@ -327,7 +330,7 @@ const DashboardClaimsActivity = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalUnfounded.myActivity), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -345,7 +348,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-danger">
-                                        {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.myActivity : ""}
+                                        {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.myActivity : null}
 
 								</span>
                                             </div>
@@ -357,7 +360,7 @@ const DashboardClaimsActivity = (props) => {
                                                              aria-valuemin="0" aria-valuemax="100"
                                                              style={{width: percentageData((data.totalMeasuredSatisfaction.myActivity), totalData)}}>
                                                         </div>
-                                                        : ""
+                                                        : null
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
@@ -370,7 +373,7 @@ const DashboardClaimsActivity = (props) => {
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalMeasuredSatisfaction.myActivity), totalData)}
                                            </span>
-                                            : ""
+                                            : null
                                     }
 								</span>
                                             </div>
@@ -383,7 +386,7 @@ const DashboardClaimsActivity = (props) => {
 
                 </div>
 
-            ) : ""
+            ) : null
     )
 };
 

@@ -28,6 +28,7 @@ import InputRequire from "../InputRequire";
 import {confirmLeadConfig} from "../../../config/confirmConfig";
 import {ConfirmLead} from "../ConfirmationAlert";
 import WithoutCode from "../WithoutCode";
+import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -120,54 +121,58 @@ const StaffForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
-        if (id) {
-            axios.get(endPoint.edit(id))
-                .then(response => {
-                    const newData = {
-                        firstname: response.data.staff.identite.firstname,
-                        lastname: response.data.staff.identite.lastname,
-                        sexe: response.data.staff.identite.sexe,
-                        telephone: response.data.staff.identite.telephone,
-                        email: response.data.staff.identite.email,
-                        ville: response.data.staff.identite.ville === null ? "" : response.data.staff.identite.ville,
-                        unit_id: response.data.staff.unit_id,
-                        position_id: response.data.staff.position_id,
-                        institution_id: response.data.staff.institution_id,
-                        is_lead: response.data.staff.is_lead ? 1 : 0
-                    };
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.get(endPoint.edit(id))
+                    .then(response => {
+                        const newData = {
+                            firstname: response.data.staff.identite.firstname,
+                            lastname: response.data.staff.identite.lastname,
+                            sexe: response.data.staff.identite.sexe,
+                            telephone: response.data.staff.identite.telephone,
+                            email: response.data.staff.identite.email,
+                            ville: response.data.staff.identite.ville === null ? "" : response.data.staff.identite.ville,
+                            unit_id: response.data.staff.unit_id,
+                            position_id: response.data.staff.position_id,
+                            institution_id: response.data.staff.institution_id,
+                            is_lead: response.data.staff.is_lead ? 1 : 0
+                        };
 
-                    setPositions(response.data.positions);
-                    if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')) {
-                        setInstitutions(response.data.institutions);
-                        setInstitution({value: response.data.staff.institution.id, label: response.data.staff.institution.name});
-                    }
-                    setPosition({value: response.data.staff.position.id, label: response.data.staff.position.name["fr"]});
+                        setPositions(response.data.positions);
+                        if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')) {
+                            setInstitutions(response.data.institutions);
+                            setInstitution({value: response.data.staff.institution.id, label: response.data.staff.institution.name});
+                        }
+                        setPosition({value: response.data.staff.position.id, label: response.data.staff.position.name["fr"]});
 
-                    if (verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit'))
-                        setUnits(response.data.units);
-                    else if (verifyPermission(props.userPermissions, 'update-staff-from-my-unit'))
-                        setUnits(response.data.units);
-                    else if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit'))
-                        setUnits(response.data.staff.institution.units);
+                        if (verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit'))
+                            setUnits(response.data.units);
+                        else if (verifyPermission(props.userPermissions, 'update-staff-from-my-unit'))
+                            setUnits(response.data.units);
+                        else if (verifyPermission(props.userPermissions, 'update-staff-from-any-unit'))
+                            setUnits(response.data.staff.institution.units);
 
-                    setUnit({value: response.data.staff.unit.id, label: response.data.staff.unit.name["fr"], lead: response.data.staff.unit.lead});
-                    setData(newData);
-                })
-                .catch(error => {
-                    console.log("Something is wrong");
-                })
-            ;
-        } else {
-            axios.get(endPoint.create)
-                .then(response => {
-                    if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit'))
-                        setInstitutions(formatInstitutions(response.data.institutions));
-                    setPositions(response.data.positions);
-                })
-                .catch(error => {
-                    console.log("something is wrong");
-                })
-            ;
+                        setUnit({value: response.data.staff.unit.id, label: response.data.staff.unit.name["fr"], lead: response.data.staff.unit.lead});
+                        setData(newData);
+                    })
+                    .catch(error => {
+                        console.log("Something is wrong");
+                    })
+                ;
+            } else {
+                axios.get(endPoint.create)
+                    .then(response => {
+                        if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit'))
+                            setInstitutions(formatInstitutions(response.data.institutions));
+                        setPositions(response.data.positions);
+                        if (response.data.units)
+                            setUnits(formatUnits(response.data.units));
+                    })
+                    .catch(error => {
+                        console.log("something is wrong");
+                    })
+                ;
+            }
         }
     }, [endPoint, id, props.userPermissions]);
 
@@ -244,18 +249,20 @@ const StaffForm = (props) => {
         setInstitution(selected);
 
         if (selected) {
-            if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit')) {
-                axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/units`)
-                    .then(response => {
-                        newData.unit_id = "";
-                        setUnit(null);
-                        setUnits(formatUnits(response.data.units));
-                    })
-                    .catch(errorRequest => {
-                        console.log(errorRequest.response.data);
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
-                    })
-                ;
+            if (verifyTokenExpire()) {
+                if (verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit')) {
+                    axios.get(`${appConfig.apiDomaine}/institutions/${selected.value}/units`)
+                        .then(response => {
+                            newData.unit_id = "";
+                            setUnit(null);
+                            setUnits(formatUnits(response.data.units));
+                        })
+                        .catch(errorRequest => {
+                            console.log(errorRequest.response.data);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
+                        })
+                    ;
+                }
             }
         }
 
@@ -303,64 +310,66 @@ const StaffForm = (props) => {
         if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
             delete newData.institution_id;
 
-        if (id) {
-            axios.put(endPoint.update(id), newData)
-                .then(response => {
-                    setStartRequest(false);
-                    setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                })
-                .catch(errorRequest => {
-                    setStartRequest(false);
-                    if (errorRequest.response.data.error.staff) {
-                        // Existing staff
-                        setStartRequest(false);
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                            errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
-                        );
-                    } else {
-                        setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                    }
-                })
-            ;
-        } else {
-            axios.post(endPoint.store, newData)
-                .then(response => {
-                    setStartRequest(false);
-                    setInstitution(null);
-                    setUnit(null);
-                    setPosition(null);
-                    setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                })
-                .catch(async (errorRequest) => {
-                    if (errorRequest.response.data.error.identite)
-                    {
-                        // Existing entity
-                        await setFoundData(errorRequest.response.data.error);
-                        await document.getElementById("confirmSaveForm").click();
-                        await setInstitution(null);
-                        await setUnit(null);
-                        await setPosition(null);
+        if (verifyTokenExpire()) {
+            if (id) {
+                axios.put(endPoint.update(id), newData)
+                    .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    })
+                    .catch(errorRequest => {
+                        setStartRequest(false);
+                        if (errorRequest.response.data.error.staff) {
+                            // Existing staff
+                            setStartRequest(false);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                                errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
+                            );
+                        } else {
+                            setError({...defaultError, ...errorRequest.response.data.error});
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        }
+                    })
+                ;
+            } else {
+                axios.post(endPoint.store, newData)
+                    .then(response => {
+                        setStartRequest(false);
+                        setInstitution(null);
+                        setUnit(null);
+                        setPosition(null);
+                        setError(defaultError);
                         setData(defaultData);
-                    } else if (errorRequest.response.data.error.staff) {
-                        // Existing staff
-                        setStartRequest(false);
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
-                            errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
-                        );
-                    } else {
-                        // Validation errors
-                        setStartRequest(false);
-                        setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    }
-                })
-            ;
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    })
+                    .catch(async (errorRequest) => {
+                        if (errorRequest.response.data.error.identite)
+                        {
+                            // Existing entity
+                            await setFoundData(errorRequest.response.data.error);
+                            await document.getElementById("confirmSaveForm").click();
+                            await setInstitution(null);
+                            await setUnit(null);
+                            await setPosition(null);
+                            setStartRequest(false);
+                            setError(defaultError);
+                            setData(defaultData);
+                        } else if (errorRequest.response.data.error.staff) {
+                            // Existing staff
+                            setStartRequest(false);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
+                                errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
+                            );
+                        } else {
+                            // Validation errors
+                            setStartRequest(false);
+                            setError({...defaultError, ...errorRequest.response.data.error});
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        }
+                    })
+                ;
+            }
         }
     };
 

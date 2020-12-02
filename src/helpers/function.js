@@ -2,6 +2,11 @@ import {RECEPTION_CHANNEL, RESPONSE_CHANNEL} from "../constants/channel";
 import {verifyPermission} from "./permission";
 import appConfig from "../config/appConfig";
 import moment from "moment";
+import axios from "axios";
+import {listConnectData} from "../constants/userClient";
+import {AUTH_TOKEN} from "../constants/token";
+
+axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 moment.locale();
 export const existingScript = function (id) {
@@ -116,6 +121,12 @@ export const formatSelectOption = function (options, labelKey, translate, valueK
 
 export const forceRound = (decimalNumber) => {
     return (("" + decimalNumber).split('.'))[1] ? Math.trunc(decimalNumber) + 1 : Math.trunc(decimalNumber);
+};
+
+export const formatPermissions = (permissions) => {
+    const newPermissions = [];
+    permissions.map(permission => newPermissions.push(permission.name));
+    return newPermissions;
 };
 
 export const filterDataTableBySearchValue = () => {
@@ -247,6 +258,8 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
+        || verifyPermission(userPermissions, "list-any-institution-type-role")
+        || verifyPermission(userPermissions, "list-my-institution-type-role")
         || verifyPermission(userPermissions, "update-min-fusion-percent-parameters")
         || verifyPermission(userPermissions, "update-components-parameters")
         || verifyPermission(userPermissions, "update-relance-parameters")
@@ -397,4 +410,33 @@ export const logout = () => {
     localStorage.clear();
     localStorage.setItem('plan', plan);
     window.location.href = "/login";
+};
+
+export const refreshToken = async () => {
+    var date = new Date();
+    date.setHours(date.getHours() + appConfig.timeAfterDisconnection);
+    console.log("date:", date);
+
+    const data = {
+        grant_type: "refresh_token",
+        refresh_token: localStorage.getItem('refresh_token'),
+        client_id: listConnectData[localStorage.getItem('plan')].client_id,
+        client_secret: listConnectData[localStorage.getItem('plan')].client_secret,
+    };
+
+    await axios.post(`${appConfig.apiDomaine}/oauth/token`, data)
+        .then(({data}) => {
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('expire_in', data.expires_in);
+            var date = new Date();
+            date.setSeconds(date.getSeconds() + data.expires_in - 180);
+            localStorage.setItem('date_expire', date);
+            localStorage.setItem('refresh_token', data.refresh_token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
+            console.log("Done");
+        })
+        .catch(() => {
+            console.log("Something is wrong");
+        })
+    ;
 };
