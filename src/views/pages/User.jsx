@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
+import {Link} from "react-router-dom";
 import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -17,7 +18,6 @@ import {ToastBottomEnd} from "../components/Toast";
 import {
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
-import {Link} from "react-router-dom";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -207,12 +207,15 @@ const User = (props) => {
     const printBodyTable = (user, index) => {
         return (
             <tr key={index} role="row" className="odd">
+                {console.log('user:', user)}
                 <td>
                     {`${user.identite.lastname} ${user.identite.firstname} `}
                     {
                         rulesInclude(user.roles, "pilot-filial", "pilot-holding") ?
-                            user.identite.staff.is_active_pilot ? (
-                                <span className="kt-badge kt-badge--success kt-badge--inline">pilot actif</span>
+                            user.identite.staff ? (
+                                    user.identite.staff.is_active_pilot ? (
+                                        <span className="kt-badge kt-badge--success kt-badge--inline">pilot actif</span>
+                                    ) : null
                             ) : null
                             : null
                     }
