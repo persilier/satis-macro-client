@@ -3,7 +3,6 @@ import axios from "axios";
 import {
     Link,
 } from "react-router-dom";
-import {connect} from "react-redux";
 import {ToastBottomEnd} from "./Toast";
 import {
     toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
@@ -18,7 +17,7 @@ import {connect} from "react-redux";
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const ConfigCoefficient = (props) => {
-    console.log("permissions:", props.userPermissions);
+
     if (!verifyPermission(props.userPermissions, "update-relance-parameters"))
         window.location.href = ERROR_401;
 
@@ -178,15 +177,8 @@ const ConfigCoefficient = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-<<<<<<< HEAD
         userPermissions: state.user.user.permissions
     };
 };
-=======
-        userPermissions: state.user.user.permissions,
-    };
-};
-
->>>>>>> 6437360da1d88c97ca5ea60b306ac5b9e75e53f5
 
 export default connect(mapStateToProps)(ConfigCoefficient);
