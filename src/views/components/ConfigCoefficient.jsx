@@ -12,6 +12,7 @@ import InputRequire from "./InputRequire";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {connect} from "react-redux";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -174,5 +175,10 @@ const ConfigCoefficient = (props) => {
     );
 };
 
+const mapStateToProps = (state) => {
+    return {
+        userPermissions: state.user.user.permissions
+    };
+};
 
-export default ConfigCoefficient;
+export default connect(mapStateToProps)(ConfigCoefficient);
