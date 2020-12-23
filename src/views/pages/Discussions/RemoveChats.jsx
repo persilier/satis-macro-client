@@ -39,10 +39,10 @@ const RemoveChats = (props) => {
             axios.get(appConfig.apiDomaine + `/discussions`)
                 .then(response => {
                     console.log(response.data, 'REMOVE');
-                    setLoad(false);
-                    setChats(response.data);
                     setShowList(response.data.slice(0, numberPerPage));
                     setNumberPage(forceRound(response.data.length / numberPerPage));
+                    setChats(response.data);
+                    setLoad(false);
                 })
                 .catch(error => {
                     setLoad(false);
@@ -240,7 +240,7 @@ const RemoveChats = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            <ExportButton/>
+
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

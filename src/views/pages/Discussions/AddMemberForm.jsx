@@ -40,7 +40,7 @@ const {id}=useParams();
         if (verifyTokenExpire()) {
             axios.get(`${appConfig.apiDomaine}/discussions/${id}/staff/create`)
                 .then(response => {
-                    console.log(response.data, "PARTICIPANT")
+                    console.log(response.data, "PARTICIPANT");
                     let newStaffs=Object.values(response.data.staff).map(staff=>(
                         {value:staff.id, label:staff.identite.lastname+" "+staff.identite.firstname}
                     ));
@@ -134,8 +134,7 @@ const {id}=useParams();
                                                                 <div
                                                                     className={error.staff_id.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Référence
-                                                                        Réclamation</label>
+                                                                           htmlFor="exampleSelect1">Participants</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         {staffIdData ? (
                                                                             <Select
