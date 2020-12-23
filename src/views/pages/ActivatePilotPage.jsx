@@ -126,7 +126,7 @@ const ActivatePilotPage = (props) => {
                                                     <Select
                                                         isClearable
                                                         value={staff}
-                                                        placeholder={"Guichet"}
+                                                        placeholder={"John doe"}
                                                         onChange={handleStaffChange}
                                                         options={staffs}
                                                     />
