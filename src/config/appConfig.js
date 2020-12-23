@@ -5,7 +5,7 @@ const appConfig =  {
     enterprise: 'DMD',
     contact: '21256325',
     timeAfterDisconnection: 8,
-    apiDomaine:`http://satis-macro.local`,
+    apiDomaine:`http://satis-pro.local`,
     // apiDomaine: `http://satis-${localStorage.getItem('plan') ? localStorage.getItem('plan').toLowerCase() : ""}.local`,
     host: `satis-macro.local`,
     // host: `satis-${localStorage.getItem('plan') ? localStorage.getItem('plan').toLowerCase() : ""}.local`,
