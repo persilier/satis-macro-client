@@ -374,8 +374,7 @@ const Chats = (props) => {
                                                                                                 {/*                                    </li>*/}
 
                                                                                                 <li className="kt-nav__item">
-                                                                                                    <Link
-                                                                                                        to={"treatment/chat/remove_chat"}
+                                                                                                    <Link to={"/treatment/chat/remove_chat"}
                                                                                                         className="kt-nav__link">
                                                                                                         <i className="kt-nav__link-icon flaticon-delete"></i>
                                                                                                         <span
