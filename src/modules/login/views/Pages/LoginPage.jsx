@@ -140,7 +140,7 @@ const LoginPage = (props) => {
                                         <div className="kt-grid__item">
                                             <div className="kt-login__info">
                                                 <div className="kt-login__copyright">
-                                                    &copy {appConfig.appFullName}
+                                                    © {appConfig.appFullName}
                                                     {/*&copy {appConfig.appFullName(props.plan)}*/}
                                                 </div>
                                             </div>
@@ -197,7 +197,7 @@ const LoginPage = (props) => {
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"
-                                                      style={{marginBottom: '70px'}}>
+                                                      style={{marginBottom: '80px'}}>
                                                     <div
                                                         className={error.username.length ? "form-group row validated" : "form-group row"}>
 
@@ -243,7 +243,7 @@ const LoginPage = (props) => {
                                                             ) : null
                                                         }
                                                     </div>
-
+                                                  
                                                     <div className="kt-login__actions">
                                                         {
                                                             !startRequest ? (
