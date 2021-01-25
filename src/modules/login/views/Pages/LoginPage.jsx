@@ -140,8 +140,8 @@ const LoginPage = (props) => {
                                         <div className="kt-grid__item">
                                             <div className="kt-login__info">
                                                 <div className="kt-login__copyright">
-                                                    © {appConfig.appFullName}
-                                                    {/*&copy {appConfig.appFullName(props.plan)}*/}
+                                                    {/*© {appConfig.appFullName}*/}
+                                                    ©  {appConfig.appFullName(props.plan)}
                                                 </div>
                                             </div>
                                         </div>
