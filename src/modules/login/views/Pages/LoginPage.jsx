@@ -10,6 +10,7 @@ import {
 } from "../../../../config/toastConfig";
 import {listConnectData} from "../../../../constants/userClient";
 import Loader from "../../../../views/components/Loader";
+
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
 
@@ -19,6 +20,7 @@ const LoginPage = (props) => {
     const defaultError = {
         username: [],
         password: [],
+
         // grant_type:[],
         // client_id: [],
         // client_secret:[]
@@ -32,6 +34,7 @@ const LoginPage = (props) => {
 
     useEffect(() => {
         let mounted = true;
+
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
@@ -44,6 +47,7 @@ const LoginPage = (props) => {
                 })
             ;
         }
+
         fetchData();
         return () => mounted = false;
     }, []);
@@ -116,7 +120,8 @@ const LoginPage = (props) => {
                                         style={{backgroundImage: `url(${data ? appConfig.apiDomaine + data.params.fr.background.value.url : " "})`}}>
                                         <div className="kt-grid__item">
                                             <span className="kt-login__logo">
-                                                <img src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : null}/>
+                                                <img
+                                                    src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : null}/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1.5em",
@@ -135,24 +140,64 @@ const LoginPage = (props) => {
                                         <div className="kt-grid__item">
                                             <div className="kt-login__info">
                                                 <div className="kt-login__copyright">
-                                                    &copy {appConfig.appFullName(props.plan)}
+                                                    &copy {appConfig.appFullName}
+                                                    {/*&copy {appConfig.appFullName(props.plan)}*/}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div
-                                        className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
+                                        className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper" >
                                         <div className="kt-login__body">
 
 
-                                            <div className="kt-login__form">
-                                                <div className="kt-login__title" style={{marginTop: '175px'}}>
+                                            <div className="kt-login__form" >
+
+                                                <div className="kt-login__title">
+                                                    <div className="form-group row" style={{marginTop: '70px'}} >
+
+                                                        <div className="col-lg-12 col-xl-6">
+                                                            <div className="kt-avatar kt-avatar--outline"
+                                                                 id="kt_user_add_avatar">
+                                                                <div className="kt-avatar__holder w-100 h-75"
+                                                                     style={{textAlign: 'center'}}>
+                                                                    <img
+                                                                        id="Image1"
+                                                                        src={"/assets/media/users/Icon.png"}
+                                                                        alt="logo"
+                                                                        style={{
+                                                                            maxWidth: "75px",
+                                                                            maxHeight: "75px",
+                                                                            textAlign: 'center'
+                                                                        }}
+                                                                    />
+
+                                                                </div>
+                                                                <label className="kt-avatar__upload"
+                                                                       id="files"
+                                                                       data-toggle="kt-tooltip"
+                                                                       title="Change avatar">
+                                                                    <i className="fa fa-pen"/>
+                                                                    <input type="file"
+                                                                           id="file"
+                                                                           name="kt_user_add_user_avatar"
+                                                                        // onChange={(e) => onChangeFile(e)}
+                                                                    />
+                                                                </label>
+                                                                <span className="kt-avatar__cancel"
+                                                                      data-toggle="kt-tooltip"
+                                                                      title="Cancel avatar">
+                                                                            <i className="fa fa-times"/>
+                                                                        </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <h3> {data ? data.params.fr.title.value : ""}</h3>
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"
-                                                      style={{marginBottom: '142px'}}>
+                                                      style={{marginBottom: '70px'}}>
                                                     <div
                                                         className={error.username.length ? "form-group row validated" : "form-group row"}>
 

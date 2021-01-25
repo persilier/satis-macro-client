@@ -249,7 +249,7 @@ const ClaimAssignDetail = (props) => {
                                         {
                                             verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment") ? (
                                                 <div className="d-flex justify-content-md-end">
-                                                    <button type="button"
+                                                    <button type="button" data-keyboard="false" data-backdrop="static"
                                                             data-toggle="modal" data-target="#exampleModal"
                                                             className="btn btn-success">
                                                         NON FONDÉ
