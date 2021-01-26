@@ -129,8 +129,8 @@ const ClaimAssignToStaffDetail = (props) => {
                                         <div className="d-flex justify-content-end">
                                             <button type="button"
                                                     data-toggle="modal" data-target="#exampleModal"
-                                                    className="btn btn-success">
-                                                NON FONDÉ
+                                                    className="btn btn-danger">
+                                                NON FONDÉE
                                             </button>
                                             {
                                                 claim ? (

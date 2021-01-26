@@ -47,7 +47,7 @@ const RelationShipForm = (props) => {
                         console.log(response.data, 'DATA');
                         const newType = {
                             name: response.data.name.fr,
-                            description: response.data.description.fr
+                            description: response.data.description?response.data.description.fr:null
                         };
                         setData(newType);
                     })
@@ -78,7 +78,6 @@ const RelationShipForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        setData(defaultData);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(error => {

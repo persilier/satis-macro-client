@@ -40,10 +40,11 @@ const RelationShip = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/relationships")
                 .then(response => {
-                    setLoad(false);
+                    console.log(response.data,"DATA")
                     setRelation(response.data);
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setNumberPage(forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE));
+                    setLoad(false);
                 })
                 .catch(error => {
                     setLoad(false);
@@ -165,7 +166,7 @@ const RelationShip = (props) => {
             <tr className="d-flex justify-content-center align-content-center odd" key={index} role="row"
                 className="odd">
                 <td>{typeRelation.name.fr}</td>
-                <td>{typeRelation.description.fr}</td>
+                <td>{typeRelation.description?typeRelation.description.fr:null}</td>
                 <td style={{textAlign:"center"}}>
                     {
                         verifyPermission(props.userPermissions, 'show-relationship')?
@@ -194,7 +195,7 @@ const RelationShip = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-position") ? (
+        verifyPermission(props.userPermissions, "list-relationship") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">

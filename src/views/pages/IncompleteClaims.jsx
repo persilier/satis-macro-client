@@ -224,7 +224,7 @@ const IncompleteClaims = (props) => {
 
                         <HeaderTablePage
                             addPermission={""}
-                            title={"Réclamtions Imcomplètes"}
+                            title={"Réclamations Imcomplètes"}
                             addText={"Ajouter de réclamations"}
                             addLink={"/settings/claims/add"}
                         />
