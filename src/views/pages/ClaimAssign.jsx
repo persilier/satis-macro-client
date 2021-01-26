@@ -240,7 +240,7 @@ const ClaimAssign = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet
+                                                            aria-label="Country: activate to sort column ascending">Objet de réclamation
                                                         </th>
                                                         {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
                                                         {/*    colSpan="1" style={{ width: "70.25px" }}*/}
@@ -281,7 +281,7 @@ const ClaimAssign = (props) => {
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet </th>
+                                                        <th rowSpan="1" colSpan="1">Objet de réclamation </th>
                                                         {/*<th rowSpan="1" colSpan="1">Agent</th>*/}
                                                         <th rowSpan="1" colSpan="1">Institution ciblée</th>
                                                         {/*<th rowSpan="1" colSpan="1">Unité</th>*/}

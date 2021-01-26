@@ -155,49 +155,26 @@ const LoginPage = (props) => {
                                             <div className="kt-login__form" >
 
                                                 <div className="kt-login__title">
-                                                    <div className="form-group row" style={{marginTop: '70px'}} >
+                                                    <div className="form-group row" style={{marginTop: '80px'}} >
 
                                                         <div className="col-lg-12 col-xl-6">
-                                                            <div className="kt-avatar kt-avatar--outline"
-                                                                 id="kt_user_add_avatar">
-                                                                <div className="kt-avatar__holder w-100 h-75"
-                                                                     style={{textAlign: 'center'}}>
-                                                                    <img
-                                                                        id="Image1"
-                                                                        src={"/assets/media/users/Icon.png"}
-                                                                        alt="logo"
-                                                                        style={{
-                                                                            maxWidth: "75px",
-                                                                            maxHeight: "75px",
-                                                                            textAlign: 'center'
-                                                                        }}
-                                                                    />
-
-                                                                </div>
-                                                                <label className="kt-avatar__upload"
-                                                                       id="files"
-                                                                       data-toggle="kt-tooltip"
-                                                                       title="Change avatar">
-                                                                    <i className="fa fa-pen"/>
-                                                                    <input type="file"
-                                                                           id="file"
-                                                                           name="kt_user_add_user_avatar"
-                                                                        // onChange={(e) => onChangeFile(e)}
-                                                                    />
-                                                                </label>
-                                                                <span className="kt-avatar__cancel"
-                                                                      data-toggle="kt-tooltip"
-                                                                      title="Cancel avatar">
-                                                                            <i className="fa fa-times"/>
-                                                                        </span>
-                                                            </div>
+                                                            <img
+                                                                id="Image1"
+                                                                src={"/assets/media/users/Icon.png"}
+                                                                alt="logo"
+                                                                style={{
+                                                                    maxWidth: "60px",
+                                                                    maxHeight: "60px",
+                                                                    textAlign: 'center'
+                                                                }}
+                                                            />
                                                         </div>
                                                     </div>
                                                     <h3> {data ? data.params.fr.title.value : ""}</h3>
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"
-                                                      style={{marginBottom: '80px'}}>
+                                                      style={{marginBottom: '90px'}}>
                                                     <div
                                                         className={error.username.length ? "form-group row validated" : "form-group row"}>
 

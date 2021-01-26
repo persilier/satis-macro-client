@@ -1,5 +1,5 @@
 import React from 'react';
-import InfirmationTable from "../components/InfirmationTable";
+// import InfirmationTable from "../components/InfirmationTable";
 import DashboardClaimsAll from "../../APP_MACRO/Holding/DashboardClaimsAll";
 import DashboardClaimsMy from "../components/DashboardForm/DashboardClaimsMy";
 import DashboardClaimsUnit from "../components/DashboardForm/DashboardClaimsUnit";

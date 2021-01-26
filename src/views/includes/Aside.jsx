@@ -145,7 +145,7 @@ const Aside = (props) => {
                                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Mesure Satisfaction</span>
+                                                            <span className="kt-menu__link-text">Mesure de Satisfaction</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -157,7 +157,7 @@ const Aside = (props) => {
                                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Archivage</span>
+                                                            <span className="kt-menu__link-text">Archives</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
