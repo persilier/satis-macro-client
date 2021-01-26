@@ -4,7 +4,7 @@
 /.idea
 /node_modules
 /.pnp
-/src/config/appConfig.js
+/src/config/appConfxig.js
 .pnp.js
 
 # testing
@@ -25,3 +25,6 @@ yarn-debug.log*
 yarn-error.log*
 
 package.json
+
+# other
+/src/config/appConfig.js
