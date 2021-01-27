@@ -1,8 +1,7 @@
 const appConfig =  {
     version: "2020.1",
-    name: 'SATIS',
-    // appFullName: "SatisFinTech SA"+" "+ new Date().getFullYear() ,
-    appFullName: (plan) => `SATIS ${plan} 2020.1`,
+    name: 'Satis',
+    appFullName: (year) => `SatisFinTech SA ${year}`,
     enterprise: 'DMD',
     contact: '21256325',
     timeAfterDisconnection: 8,
