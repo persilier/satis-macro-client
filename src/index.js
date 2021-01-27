@@ -9,6 +9,7 @@ import identityReducer from "./store/reducers/IdentityReducer";
 import authReducer from "./store/reducers/authReducer";
 import planReducer from "./store/reducers/planReducer";
 import treatmentReducer from "./store/reducers/treatmentReducer";
+import yearReducer from "./store/reducers/yearReducer";
 import AppContainer from "./AppContainer";
 
 const rootReducer = combineReducers({
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     language: languageReducer,
     user: authReducer,
     plan: planReducer,
-    treatment:treatmentReducer
+    treatment:treatmentReducer,
+    year:yearReducer
 });
 
 

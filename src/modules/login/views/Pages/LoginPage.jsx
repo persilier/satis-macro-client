@@ -140,8 +140,7 @@ const LoginPage = (props) => {
                                         <div className="kt-grid__item">
                                             <div className="kt-login__info">
                                                 <div className="kt-login__copyright">
-                                                    {/*© {appConfig.appFullName}*/}
-                                                    ©  {appConfig.appFullName(props.plan)}
+                                                    ©  {appConfig.appFullName(props.year)}
                                                 </div>
                                             </div>
                                         </div>
@@ -151,53 +150,29 @@ const LoginPage = (props) => {
                                         className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper" >
                                         <div className="kt-login__body">
 
-
                                             <div className="kt-login__form" >
 
                                                 <div className="kt-login__title">
                                                     <div className="form-group row" style={{marginTop: '70px'}} >
 
                                                         <div className="col-lg-12 col-xl-6">
-                                                            <div className="kt-avatar kt-avatar--outline"
-                                                                 id="kt_user_add_avatar">
-                                                                <div className="kt-avatar__holder w-100 h-75"
-                                                                     style={{textAlign: 'center'}}>
-                                                                    <img
-                                                                        id="Image1"
-                                                                        src={"/assets/media/users/Icon.png"}
-                                                                        alt="logo"
-                                                                        style={{
-                                                                            maxWidth: "75px",
-                                                                            maxHeight: "75px",
-                                                                            textAlign: 'center'
-                                                                        }}
-                                                                    />
-
-                                                                </div>
-                                                                <label className="kt-avatar__upload"
-                                                                       id="files"
-                                                                       data-toggle="kt-tooltip"
-                                                                       title="Change avatar">
-                                                                    <i className="fa fa-pen"/>
-                                                                    <input type="file"
-                                                                           id="file"
-                                                                           name="kt_user_add_user_avatar"
-                                                                        // onChange={(e) => onChangeFile(e)}
-                                                                    />
-                                                                </label>
-                                                                <span className="kt-avatar__cancel"
-                                                                      data-toggle="kt-tooltip"
-                                                                      title="Cancel avatar">
-                                                                            <i className="fa fa-times"/>
-                                                                        </span>
-                                                            </div>
+                                                            <img
+                                                                id="Image1"
+                                                                src={"/assets/media/users/Icon.png"}
+                                                                alt="logo"
+                                                                style={{
+                                                                    maxWidth: "60px",
+                                                                    maxHeight: "60px",
+                                                                    textAlign: 'center'
+                                                                }}
+                                                            />
                                                         </div>
                                                     </div>
                                                     <h3> {data ? data.params.fr.title.value : ""}</h3>
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"
-                                                      style={{marginBottom: '80px'}}>
+                                                      style={{marginBottom: '85px'}}>
                                                     <div
                                                         className={error.username.length ? "form-group row validated" : "form-group row"}>
 
@@ -243,7 +218,14 @@ const LoginPage = (props) => {
                                                             ) : null
                                                         }
                                                     </div>
-                                                  
+
+                                                    <div className="kt-login__extra">
+
+                                                        <div className="text-right">
+                                                            <a href="#" id="kt_login_forgot">Mot de passe oublié ?</a>
+                                                        </div>
+                                                    </div>
+
                                                     <div className="kt-login__actions">
                                                         {
                                                             !startRequest ? (
@@ -264,6 +246,32 @@ const LoginPage = (props) => {
                                                     </div>
                                                 </form>
                                             </div>
+
+                                            {/*<div className="kt-login__forgot">*/}
+                                            {/*    <div className="kt-login__head">*/}
+                                            {/*        <h3 className="kt-login__title">Mot de Passe oublié?</h3>*/}
+                                            {/*        <div className="kt-login__desc">Entrer votre email pour récupérer votre mot de passe:*/}
+                                            {/*        </div>*/}
+                                            {/*    </div>*/}
+                                            {/*    <div className="kt-login__form">*/}
+                                            {/*        <form className="kt-form" action="">*/}
+                                            {/*            <div className="form-group">*/}
+                                            {/*                <input className="form-control" type="text"*/}
+                                            {/*                       placeholder="Email" name="email" id="kt_email"*/}
+                                            {/*                       autoComplete="off"/>*/}
+                                            {/*            </div>*/}
+                                            {/*            <div className="kt-login__actions">*/}
+                                            {/*                <button id="kt_login_forgot_submit"*/}
+                                            {/*                        className="btn btn-brand btn-pill btn-elevate">Envoyer*/}
+                                            {/*                </button>*/}
+                                            {/*                <button id="kt_login_forgot_cancel"*/}
+                                            {/*                        className="btn btn-outline-brand btn-pill">Quitter*/}
+                                            {/*                </button>*/}
+                                            {/*            </div>*/}
+                                            {/*        </form>*/}
+                                            {/*    </div>*/}
+                                            {/*</div>*/}
+
                                         </div>
                                     </div>
                                 </div>
@@ -279,7 +287,8 @@ const LoginPage = (props) => {
 
 const mapStateToProps = state => {
     return {
-        plan: state.plan.plan
+        plan: state.plan.plan,
+        year:state.year.year
     };
 };
 

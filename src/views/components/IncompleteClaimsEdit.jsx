@@ -21,6 +21,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
+    toastAddErrorMessageConfig,
     toastEditErrorMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
@@ -446,24 +447,39 @@ const IncompleteClaimsEdit = props => {
         if (verifyTokenExpire()) {
             axios.post(endPoint.update(`${id}`), formatFormData(newData))
                 .then((response) => {
-                    console.log(response.data, "response");
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
                     window.location.href = "/process/incomplete_claims"
                 })
                 .catch((error) => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+
+                    if (error.response.data.code === 422) {
+                        setStartRequest(false);
+                        let fileErrors = [];
+                        let i = 0;
+                        for (const key in error.response.data.error) {
+                            if (key === `file.${i}`) {
+                                fileErrors = [...fileErrors, ...error.response.data.error[`file.${i}`]];
+                                i++;
+                            }
+                        }
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }else{
+                        setStartRequest(false);
+                        // setError({...defaultError, ...error.response.data.error});
+                        // ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    }
+
                 })
             ;
         }
     };
 
     return (
-       ( verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
-        || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
-        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) && isRequire? (
+        (verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
+            || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
+            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) && isRequire ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -718,7 +734,9 @@ const IncompleteClaimsEdit = props => {
                                                             <div className="form-group row">
                                                                 <div
                                                                     className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">Unité concernée {isRequire.unit_targeted_id?<InputRequire/>:""}</label>
+                                                                    <label htmlFor="unit">Unité
+                                                                        concernée {isRequire.unit_targeted_id ?
+                                                                            <InputRequire/> : ""}</label>
                                                                     <Select
                                                                         classNamePrefix="select"
                                                                         className="basic-single"
@@ -741,7 +759,8 @@ const IncompleteClaimsEdit = props => {
                                                                 <div
                                                                     className={error.account_targeted_id.length ? "col validated" : "col"}>
                                                                     <label htmlFor="account">Numéro de compte
-                                                                        concerné {isRequire.account_targeted_id?<InputRequire/>:""}</label>
+                                                                        concerné {isRequire.account_targeted_id ?
+                                                                            <InputRequire/> : ""}</label>
                                                                     <Select
                                                                         classNamePrefix="select"
                                                                         className="basic-single"
@@ -853,7 +872,9 @@ const IncompleteClaimsEdit = props => {
                                                 <div className="form-group row">
                                                     <div
                                                         className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                        <label htmlFor="amount_claim">Montant réclamé {isRequire.amount_disputed?<InputRequire/>:""}</label>
+                                                        <label htmlFor="amount_claim">Montant
+                                                            réclamé {isRequire.amount_disputed ?
+                                                                <InputRequire/> : ""}</label>
                                                         <input
                                                             type={"number"}
                                                             min="0"
@@ -876,7 +897,9 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="currency">Devise du montant réclamé {isRequire.amount_currency_slug?<InputRequire/>:""}</label>
+                                                        <label htmlFor="currency">Devise du montant
+                                                            réclamé {isRequire.amount_currency_slug ?
+                                                                <InputRequire/> : ""}</label>
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
@@ -927,7 +950,8 @@ const IncompleteClaimsEdit = props => {
                                                             <div
                                                                 className={error.relationship_id.length ? "col validated" : "col"}>
                                                                 <label htmlFor="relationship">Relation du reclamant avec
-                                                                    l'institution {isRequire.relationship_id?<InputRequire/>:""}</label>
+                                                                    l'institution {isRequire.relationship_id ?
+                                                                        <InputRequire/> : ""}</label>
                                                                 <Select
                                                                     isClearable
                                                                     value={relationship}
@@ -950,7 +974,8 @@ const IncompleteClaimsEdit = props => {
                                                     }
 
                                                     <div className="col">
-                                                        <label htmlFor="file">Pièces jointes  {isRequire.file?<InputRequire/>:""}</label>
+                                                        <label htmlFor="file">Pièces jointes {isRequire.file ?
+                                                            <InputRequire/> : ""}</label>
                                                         <input
                                                             onChange={onChangeFile}
                                                             type="file"
@@ -973,7 +998,9 @@ const IncompleteClaimsEdit = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description {isRequire.description?<InputRequire/>:""}</label>
+                                                        <label
+                                                            htmlFor="description">Description {isRequire.description ?
+                                                            <InputRequire/> : ""}</label>
                                                         <textarea
                                                             rows="7"
                                                             id="description"
@@ -995,7 +1022,9 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div
                                                         className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimer_expectation">Attente {isRequire.claimer_expectation?<InputRequire/>:""} </label>
+                                                        <label
+                                                            htmlFor="claimer_expectation">Attente {isRequire.claimer_expectation ?
+                                                            <InputRequire/> : ""} </label>
                                                         <textarea
                                                             rows="7"
                                                             id="claimer_expectation"
@@ -1047,7 +1076,7 @@ const IncompleteClaimsEdit = props => {
                                     </div>
 
                                     <div className="kt-portlet__foot">
-                                        <div className="kt-form__actions">
+                                        <div className="kt-form__actions text-right">
                                             {
                                                 !startRequest ? (
                                                     <button type="submit" onClick={(e) => onSubmit(e)}

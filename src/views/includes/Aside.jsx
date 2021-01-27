@@ -145,7 +145,7 @@ const Aside = (props) => {
                                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Mesure Satisfaction</span>
+                                                            <span className="kt-menu__link-text">Mesure de Satisfaction</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -157,7 +157,7 @@ const Aside = (props) => {
                                                              activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                         <li className="kt-menu__link ">
                                                             <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                            <span className="kt-menu__link-text">Archivage</span>
+                                                            <span className="kt-menu__link-text">Archives</span>
                                                         </li>
                                                     </NavLink>
                                                 ) : null
@@ -216,59 +216,59 @@ const Aside = (props) => {
                             )
                         }
 
-                        {/*{*/}
-                        {/*    !seeHistorique(props.userPermissions) ? null : (*/}
-                        {/*        <>*/}
-                        {/*            <li className="kt-menu__section ">*/}
-                        {/*                <h4 className="kt-menu__section-text">Historiques</h4>*/}
-                        {/*                <i className="kt-menu__section-icon flaticon-more-v2"/>*/}
-                        {/*            </li>*/}
-                        {/*            <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"*/}
-                        {/*                data-ktmenu-submenu-toggle="hover">*/}
-                        {/*                <a href="#historique" onClick={e => e.preventDefault()}*/}
-                        {/*                   className="kt-menu__link kt-menu__toggle">*/}
-                        {/*                    <i className="kt-menu__link-icon flaticon2-telegram-logo"/>*/}
-                        {/*                    <span className="kt-menu__link-text">Historiques</span>*/}
-                        {/*                    <i className="kt-menu__ver-arrow la la-angle-right"/>*/}
-                        {/*                </a>*/}
-                        {/*                <div className="kt-menu__submenu ">*/}
-                        {/*                    <span className="kt-menu__arrow"/>*/}
-                        {/*                    <ul className="kt-menu__subnav">*/}
-                        {/*                        <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">*/}
-                        {/*                        <span className="kt-menu__link">*/}
-                        {/*                            <span className="kt-menu__link-text">Historiques</span>*/}
-                        {/*                        </span>*/}
-                        {/*                        </li>*/}
+                        {
+                            !seeHistorique(props.userPermissions) ? null : (
+                                <>
+                                    <li className="kt-menu__section ">
+                                        <h4 className="kt-menu__section-text">Historiques</h4>
+                                        <i className="kt-menu__section-icon flaticon-more-v2"/>
+                                    </li>
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="#historique" onClick={e => e.preventDefault()}
+                                           className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-icon flaticon2-telegram-logo"/>
+                                            <span className="kt-menu__link-text">Historiques</span>
+                                            <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                        </a>
+                                        <div className="kt-menu__submenu ">
+                                            <span className="kt-menu__arrow"/>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">Historiques</span>
+                                                </span>
+                                                </li>
 
-                        {/*                        {*/}
-                        {/*                            verifyPermission(props.userPermissions, 'history-list-create-claim')? (*/}
-                        {/*                                <NavLink exact to="/historic/claims/add" className="kt-menu__item "*/}
-                        {/*                                         activeClassName="kt-menu__item--active" aria-haspopup="true">*/}
-                        {/*                                    <li className="kt-menu__link ">*/}
-                        {/*                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>*/}
-                        {/*                                        <span className="kt-menu__link-text">Réclamations créées</span>*/}
-                        {/*                                    </li>*/}
-                        {/*                                </NavLink>*/}
-                        {/*                            ) : null*/}
-                        {/*                        }*/}
-                        {/*                        {*/}
-                        {/*                            verifyPermission(props.userPermissions, "history-list-treat-claim")? (*/}
-                        {/*                                <NavLink exact to="/historic/claims/treat" className="kt-menu__item "*/}
-                        {/*                                         activeClassName="kt-menu__item--active" aria-haspopup="true">*/}
-                        {/*                                    <li className="kt-menu__link ">*/}
-                        {/*                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>*/}
-                        {/*                                        <span className="kt-menu__link-text">Réclamations traitées</span>*/}
-                        {/*                                    </li>*/}
-                        {/*                                </NavLink>*/}
-                        {/*                            ) : null*/}
-                        {/*                        }*/}
+                                                {
+                                                    verifyPermission(props.userPermissions, 'history-list-create-claim')? (
+                                                        <NavLink exact to="/historic/claims/add" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Réclamations créées</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, "history-list-treat-claim")? (
+                                                        <NavLink exact to="/historic/claims/treat" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Réclamations traitées</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
 
-                        {/*                    </ul>*/}
-                        {/*                </div>*/}
-                        {/*            </li>*/}
-                        {/*        </>*/}
-                        {/*    )*/}
-                        {/*}*/}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </>
+                            )
+                        }
 
 
                         {

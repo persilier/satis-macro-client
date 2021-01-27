@@ -275,7 +275,7 @@ const IncompleteClaims = (props) => {
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "85px"}}
                                                             aria-label="Ship City: activate to sort column ascending">
-                                                            Objet
+                                                            Objet de réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"

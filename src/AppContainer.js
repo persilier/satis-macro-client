@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import Echo from "laravel-echo";
 import RouteApp from "./routeApp";
 import {loadPlan} from "./store/actions/planAction";
+import {loadYear} from "./store/actions/yearAction";
 import appConfig from "./config/appConfig";
 import {AUTH_TOKEN} from "./constants/token";
 import axios from "axios";
@@ -40,10 +41,11 @@ class AppContainer extends Component {
     componentDidMount() {
         axios.get(`${appConfig.apiDomaine}/plan`)
             .then(response => {
-                // this.setState({plan: response.data});
                 this.setState({load: false});
-                localStorage.setItem('plan', response.data);
-                this.props.loadPlan(response.data);
+                localStorage.setItem('plan', response.data.plan);
+                localStorage.setItem('year_installation', response.data.year_installation);
+                this.props.loadPlan(response.data.plan);
+                this.props.loadYear(response.data.year_installation)
             })
             .catch(error => {
                 this.setState({load: false});
@@ -75,7 +77,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        loadPlan: (plan) => dispatch(loadPlan(plan))
+        loadPlan: (plan) => dispatch(loadPlan(plan)),
+        loadYear: (plan) => dispatch(loadYear(plan))
     };
 };
 
