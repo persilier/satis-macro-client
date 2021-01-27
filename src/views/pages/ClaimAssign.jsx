@@ -191,7 +191,7 @@ const ClaimAssign = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Cette page vous présente  la liste des réclamations complètes et qui sont en attente d'être transféré.
+                            Cette page présente la liste des réclamations complètes et qui sont en attente d'être transférées.
                             <br/>
                             <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les réclamations réjetées
                         </div>
@@ -246,9 +246,7 @@ const ClaimAssign = (props) => {
                                                         {/*    colSpan="1" style={{ width: "70.25px" }}*/}
                                                         {/*    aria-label="Country: activate to sort column ascending">Agent*/}
                                                         {/*</th>*/}
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institution ciblée
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">{props.plan === "PRO" ? "Unité concernée" : "Institution ciblée"}
                                                         </th>
                                                         {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
                                                         {/*    colSpan="1" style={{ width: "70.25px" }}*/}
@@ -283,7 +281,7 @@ const ClaimAssign = (props) => {
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
                                                         <th rowSpan="1" colSpan="1">Objet </th>
                                                         {/*<th rowSpan="1" colSpan="1">Agent</th>*/}
-                                                        <th rowSpan="1" colSpan="1">Institution ciblée</th>
+                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Unité concernée" : "Institution ciblée"}</th>
                                                         {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
@@ -327,6 +325,7 @@ const ClaimAssign = (props) => {
 
 const mapStateToProps = state => {
     return {
+        plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
         activePilot: state.user.user.staff.is_active_pilot
     };

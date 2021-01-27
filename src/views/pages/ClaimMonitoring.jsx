@@ -270,7 +270,7 @@ const ClaimMonitoring = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Cette interface vous permet d'effectuer le suivi de vos réclamations"}/>
+                    <InfirmationTable information={"Cette interface permet d'effectuer le suivi de vos réclamations"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage

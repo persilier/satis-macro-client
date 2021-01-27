@@ -196,9 +196,9 @@ const ClaimAssignToStaff = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Liste des réclamations qui vous sont assignés
+                            Liste des réclamations qui vous sont assignées pour traitement
                             <br/>
-                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les traitements réjetés
+                            <span className="kt-badge kt-badge--danger kt-badge--md mr-2">R</span> représente les traitements réjetés
                         </div>
                     )}/>
 
