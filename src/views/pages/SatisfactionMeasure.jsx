@@ -155,14 +155,16 @@ const SatisfactionMeasure = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{measure.reference === null ? "" : measure.reference}</td>
                 <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}`} {measure.account_targeted !== null ? "/" + measure.account_targeted.number : ""}</td>
-                {
-                    (localStorage.getItem("plan") === 'PRO') ?
-                        "" : <td>{measure.institution_targeted.name}</td>
-                }
+                <td>
+                    {
+                        (props.plan === 'PRO') ?
+                            (measure.unit_targeted ? measure.unit_targeted.name.fr : "-")
+                            : measure.institution_targeted.name
+                    }
+                </td>
                 <td>{formatDateToTime(measure.created_at)}</td>
                 <td>{measure.claim_object.name["fr"]}</td>
                 <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
-                <td>{measure.unit_targeted ? measure.unit_targeted.name.fr : "-"}</td>
                 {/*<td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>*/}
                 <td>{`${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.lastname:""} ${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.firstname:""}`}</td>
                 {
@@ -262,17 +264,14 @@ const SatisfactionMeasure = (props) => {
                                                         colSpan="1" style={{width: "70.25px"}}
                                                         aria-label="Country: activate to sort column ascending">Réclamant
                                                     </th>
-                                                    {
-                                                        (localStorage.getItem("plan") === 'PRO') ?
-                                                            "" :
-                                                            <th className="sorting" tabIndex="0"
-                                                                aria-controls="kt_table_1"
-                                                                rowSpan="1"
-                                                                colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Country: activate to sort column ascending">Institution
-                                                                ciblée
-                                                            </th>
-                                                    }
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">
+                                                        {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
+
+                                                    </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "70.25px"}}
@@ -290,12 +289,7 @@ const SatisfactionMeasure = (props) => {
                                                         colSpan="1" style={{width: "70.25px"}}
                                                         aria-label="Country: activate to sort column ascending">Description
                                                     </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
-                                                        aria-label="Country: activate to sort column ascending">Point
-                                                        de service visé
-                                                    </th>
+
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "70.25px"}}
@@ -330,14 +324,12 @@ const SatisfactionMeasure = (props) => {
                                                 <tr>
                                                     <th rowSpan="1" colSpan="1">Référence</th>
                                                     <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                    {
-                                                        (localStorage.getItem("plan") === 'PRO') ?
-                                                            "" : <th rowSpan="1" colSpan="1">Institution ciblée</th>
-                                                    }
+                                                    <th rowSpan="1"
+                                                        colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
+                                                    </th>
                                                     <th rowSpan="1" colSpan="1">Date de réception</th>
                                                     <th rowSpan="1" colSpan="1">Objet de réclamation</th>
                                                     <th rowSpan="1" colSpan="1">Description</th>
-                                                    <th rowSpan="1" colSpan="1">Point de service visé</th>
                                                     <th rowSpan="1" colSpan="1">Agent traiteur</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>

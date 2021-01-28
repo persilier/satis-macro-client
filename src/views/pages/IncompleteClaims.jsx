@@ -164,16 +164,18 @@ const IncompleteClaims = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
                 <td>{claim.claimer.lastname}&ensp;{claim.claimer.firstname}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
-                {
-                    verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
-                    verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                        <td>claim.institution_targeted.name</td>
-                        : ""
-                }
+                <td>
+                    {
+                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
+                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
+                            claim.institution_targeted.name
+                            : (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
+
+                    }
+                </td>
                 <td>{formatDateToTime(claim.created_at)} &ensp; {}</td>
                 <td>{claim.claim_object.name.fr}</td>
                 <td>{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}</td>
-                <td>{claim.unit_targeted ? claim.unit_targeted.name.fr : "-"}</td>
                 <td style={{textAlign: 'center'}}>
 
                     {
@@ -277,18 +279,19 @@ const IncompleteClaims = (props) => {
                                                             colSpan="1" style={{width: "85px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Réclamant
                                                         </th>
-                                                        {
-                                                            verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
-                                                            verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                                                                <th className="sorting" tabIndex="0"
-                                                                    aria-controls="kt_table_1"
-                                                                    rowSpan="1"
-                                                                    colSpan="1" style={{width: "50px"}}
-                                                                    aria-label="Ship City: activate to sort column ascending">
-                                                                    Institution concernée
-                                                                </th>
-                                                                : ""
-                                                        }
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "50px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">
+                                                            {
+                                                                verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
+                                                                verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
+                                                                    " Institution concernée"
+                                                                    : "Pointde service visé"
+                                                            }
+                                                        </th>
+
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
@@ -309,13 +312,7 @@ const IncompleteClaims = (props) => {
                                                             colSpan="1" style={{width: "100px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Point
-                                                            de service visé
-                                                        </th>
+
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
@@ -345,15 +342,18 @@ const IncompleteClaims = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        {
-                                                            (localStorage.getItem("plan") === 'PRO') ?
-                                                                "" : <th rowSpan="1" colSpan="1">Institution ciblée</th>
-                                                        }
-                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Point de service visé</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                            <th rowSpan="1" colSpan="1">
+                                                                {
+                                                                    (props.plan === 'PRO') ?
+                                                                        "Point de service visé"
+                                                                        : "Institution ciblée"
+                                                                }
+                                                            </th>
+
+                                                            <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                            <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                            <th rowSpan="1" colSpan="1">Description</th>
+                                                            <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -386,19 +386,19 @@ const IncompleteClaims = (props) => {
                                     </div>
                                 </div>
                             )
-                        }
-                    </div>
-                </div>
-            </div>
-        ) : null
+                            }
+                            </div>
+                            </div>
+                            </div>
+                            ) : null
 
-    );
-};
-const mapStateToProps = (state) => {
-    return {
-        userPermissions: state.user.user.permissions,
-        plan: state.plan.plan,
-    };
-};
+                            );
+                            };
+                            const mapStateToProps = (state) => {
+                            return {
+                            userPermissions: state.user.user.permissions,
+                            plan: state.plan.plan,
+                            };
+                            };
 
-export default connect(mapStateToProps)(IncompleteClaims);
+                            export default connect(mapStateToProps)(IncompleteClaims);
