@@ -233,7 +233,8 @@ export const formatToTime = dateTime => {
 };
 export const reduceCharacter = texte => {
     if (texte !== null)
-        return texte.substr(0,50 )+"...";
+
+        return texte.substr(0,30 )+"...";
     else
         return "";
 };

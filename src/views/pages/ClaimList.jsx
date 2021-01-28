@@ -136,7 +136,7 @@ const ClaimList = (props) => {
                 </td>
                 <td>{formatDateToTime(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{claim.description.length >= 15 ? reduceCharacter(claim.description) : claim.description}</td>
+                <td>{claim.description.length > 15 ? reduceCharacter(claim.description) : claim.description}</td>
                 {
                     verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
                         <td>
