@@ -9,7 +9,13 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
+import {
+    filterDataTableBySearchValue,
+    forceRound,
+    formatDateToTime,
+    formatDateToTimeStampte,
+    loadCss, reduceCharacter
+} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
@@ -119,13 +125,16 @@ const ClaimList = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference}</td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
-                <td>{formatDateToTimeStampte(claim.created_at)}</td>
+                <td>{claim.reference} </td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                {
+                    (localStorage.getItem("plan") === 'PRO') ?
+                        "" : <td>{claim.institution_targeted.name}</td>
+                }
+                <td>{formatDateToTime(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                {/*<td>{claim.active_treatment.responsible_staff?`${claim.active_treatment.responsible_staff.identite.lastname} ${claim.active_treatment.responsible_staff.identite.firstname}`:""}</td>*/}
-                <td>{claim.institution_targeted.name}</td>
-                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>*/}
+                <td>{claim.description.length >= 15 ? reduceCharacter(claim.description) : claim.description}</td>
+                <td>{claim.unit_targeted ? claim.unit_targeted.name.fr : "-"}</td>
                 {
                     verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
                         <td>
@@ -209,6 +218,17 @@ const ClaimList = (props) => {
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Réclamant
                                                         </th>
+                                                        {
+                                                            (localStorage.getItem("plan") === 'PRO') ?
+                                                                "" :
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{width: "70.25px"}}
+                                                                    aria-label="Country: activate to sort column ascending">Institution
+                                                                    ciblée
+                                                                </th>
+                                                        }
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Date de réception
@@ -217,18 +237,17 @@ const ClaimList = (props) => {
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Objet de réclamation
                                                         </th>
-                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
-                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
-                                                        {/*    aria-label="Country: activate to sort column ascending">Agent*/}
-                                                        {/*</th>*/}
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institution concernée
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Description
                                                         </th>
-                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
-                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
-                                                        {/*    aria-label="Country: activate to sort column ascending">Unité*/}
-                                                        {/*</th>*/}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Point
+                                                            de service visé
+                                                        </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -255,11 +274,14 @@ const ClaimList = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                        {
+                                                            (localStorage.getItem("plan") === 'PRO') ?
+                                                                "" : <th rowSpan="1" colSpan="1">Institution ciblée</th>
+                                                        }
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
                                                         <th rowSpan="1" colSpan="1">Objet de réclamation</th>
-                                                        {/*<th rowSpan="1" colSpan="1">Agent</th>*/}
-                                                        <th rowSpan="1" colSpan="1">Institution concernée</th>
-                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
+                                                        <th rowSpan="1" colSpan="1">Description</th>
+                                                        <th rowSpan="1" colSpan="1">Point de service visé</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>

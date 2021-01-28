@@ -133,7 +133,7 @@ const LoginPage = (props) => {
                                         </div>
                                         <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
                                             <div className="kt-grid__item kt-grid__item--middle">
-                                                <h3 className="kt-login__title"> {data ? data.params.fr.header.value + " " + data.params.fr.version.value : null}</h3>
+                                                <h3 className="kt-login__title"> {data ? data.params.fr.header.value + data.params.fr.version.value : null}</h3>
                                                 <h4 className="kt-login__subtitle"> {data ? data.params.fr.description.value + " " : null}</h4>
                                             </div>
                                         </div>

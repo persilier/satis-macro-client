@@ -1,6 +1,12 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {
+    loadCss,
+    filterDataTableBySearchValue,
+    forceRound,
+    formatDateToTime,
+    reduceCharacter
+} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -18,19 +24,19 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const endPointConfig = {
     PRO: {
         plan: "PRO",
-        list:`${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
     },
     MACRO: {
         holding: {
-            list:`${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+            list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
         },
         filial: {
-            list:`${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+            list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
         }
     },
     HUB: {
         plan: "HUB",
-        list:`${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+        list: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
     }
 };
 
@@ -148,9 +154,17 @@ const SatisfactionMeasure = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{measure.reference === null ? "" : measure.reference}</td>
-                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}`}</td>
-                <td>{measure.description === null ? "" : measure.description}</td>
-                <td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>
+                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}`} {measure.account_targeted !== null ? "/" + measure.account_targeted.number : ""}</td>
+                {
+                    (localStorage.getItem("plan") === 'PRO') ?
+                        "" : <td>{measure.institution_targeted.name}</td>
+                }
+                <td>{formatDateToTime(measure.created_at)}</td>
+                <td>{measure.claim_object.name["fr"]}</td>
+                <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
+                <td>{measure.unit_targeted ? measure.unit_targeted.name.fr : "-"}</td>
+                {/*<td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>*/}
+                <td>{`${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.lastname:""} ${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.firstname:""}`}</td>
                 {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ? (
@@ -162,7 +176,7 @@ const SatisfactionMeasure = (props) => {
                             </a>
 
                         </td>
-                    ): null
+                    ) : null
                 }
 
             </tr>
@@ -238,40 +252,64 @@ const SatisfactionMeasure = (props) => {
                                                 style={{width: "952px"}}>
                                                 <thead>
                                                 <tr role="row">
-
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "50px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Référence
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Référence
                                                     </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Réclamant
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Réclamant
                                                     </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
+                                                    {
+                                                        (localStorage.getItem("plan") === 'PRO') ?
+                                                            "" :
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">Institution
+                                                                ciblée
+                                                            </th>
+                                                    }
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Description
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Date
+                                                        de réception
                                                     </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Solutions proposées
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Objet
+                                                        de réclamation
                                                     </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Description
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Point
+                                                        de service visé
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Agent traiteur
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1" colSpan="1" style={{width: "40.25px"}}
                                                         aria-label="Type: activate to sort column ascending">
                                                         Action
                                                     </th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                {console.log(satisfactionMeasure,"Mesure")}
                                                 {
                                                     satisfactionMeasure.length ? (
                                                         search ? (
@@ -290,7 +328,18 @@ const SatisfactionMeasure = (props) => {
                                                 </tbody>
                                                 <tfoot>
                                                 <tr>
-
+                                                    <th rowSpan="1" colSpan="1">Référence</th>
+                                                    <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                    {
+                                                        (localStorage.getItem("plan") === 'PRO') ?
+                                                            "" : <th rowSpan="1" colSpan="1">Institution ciblée</th>
+                                                    }
+                                                    <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                    <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                    <th rowSpan="1" colSpan="1">Description</th>
+                                                    <th rowSpan="1" colSpan="1">Point de service visé</th>
+                                                    <th rowSpan="1" colSpan="1">Agent traiteur</th>
+                                                    <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
                                             </table>

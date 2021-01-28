@@ -212,6 +212,15 @@ export const formatToTimeStampUpdate = dateTime => {
 export const formatDateToTimeStampte = dateTime => {
     if (dateTime)
         return moment(dateTime).format('LLLL');
+
+    else
+        return "Pas de date";
+};
+
+export const formatDateToTime = dateTime => {
+    if (dateTime)
+        return moment(dateTime).format('L');
+
     else
         return "Pas de date";
 };
@@ -219,6 +228,12 @@ export const formatDateToTimeStampte = dateTime => {
 export const formatToTime = dateTime => {
     if (dateTime !== null)
         return dateTime.split("T")[0] + "T" + dateTime.split("T")[1].split(".")[0];
+    else
+        return "";
+};
+export const reduceCharacter = texte => {
+    if (texte !== null)
+        return texte.substr(0,50 )+"...";
     else
         return "";
 };
