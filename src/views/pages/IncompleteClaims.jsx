@@ -4,7 +4,12 @@ import {
     Link
 } from "react-router-dom";
 import {connect} from "react-redux";
-import {loadCss, filterDataTableBySearchValue, forceRound} from "../../helpers/function";
+import {
+    loadCss,
+    filterDataTableBySearchValue,
+    forceRound,
+    formatDateToTime, reduceCharacter
+} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -157,21 +162,26 @@ const IncompleteClaims = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.claimer.lastname}&ensp;{claim.claimer.firstname}</td>
-                <td>{claim.institution_targeted.name}</td>
+                <td>{claim.reference}</td>
+                <td>{claim.claimer.lastname}&ensp;{claim.claimer.firstname}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>
+                    {
+                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
+                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
+                            claim.institution_targeted.name
+                            : (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
+
+                    }
+                </td>
+                <td>{formatDateToTime(claim.created_at)} &ensp; {}</td>
                 <td>{claim.claim_object.name.fr}</td>
-                <td>{claim.description}</td>
+                <td>{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}</td>
                 <td style={{textAlign: 'center'}}>
-                    {/*<Link to="/settings/clients/claim/detail"
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
-                        <i className="la la-eye"/>
-                    </Link>*/}
 
                     {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ||
-                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client")?
+                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
                             <Link
                                 to={`/process/incomplete_claims/edit/${claim.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -260,15 +270,34 @@ const IncompleteClaims = (props) => {
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
+                                                            colSpan="1" style={{width: "25px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Référence
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
                                                             colSpan="1" style={{width: "85px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Réclamant
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "85px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Institution
-                                                            concernée
+                                                            colSpan="1" style={{width: "50px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">
+                                                            {
+                                                                verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
+                                                                verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
+                                                                    " Institution concernée"
+                                                                    : "Pointde service visé"
+                                                            }
+                                                        </th>
+
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "50px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">Date
+                                                            de réception
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
@@ -283,6 +312,7 @@ const IncompleteClaims = (props) => {
                                                             colSpan="1" style={{width: "100px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Description
                                                         </th>
+
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
@@ -310,7 +340,20 @@ const IncompleteClaims = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
+                                                        <th rowSpan="1" colSpan="1">Référence</th>
+                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                            <th rowSpan="1" colSpan="1">
+                                                                {
+                                                                    (props.plan === 'PRO') ?
+                                                                        "Point de service visé"
+                                                                        : "Institution ciblée"
+                                                                }
+                                                            </th>
 
+                                                            <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                            <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                            <th rowSpan="1" colSpan="1">Description</th>
+                                                            <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -343,19 +386,19 @@ const IncompleteClaims = (props) => {
                                     </div>
                                 </div>
                             )
-                        }
-                    </div>
-                </div>
-            </div>
-        ) : null
+                            }
+                            </div>
+                            </div>
+                            </div>
+                            ) : null
 
-    );
-};
-const mapStateToProps = (state) => {
-    return {
-        userPermissions: state.user.user.permissions,
-        plan: state.plan.plan,
-    };
-};
+                            );
+                            };
+                            const mapStateToProps = (state) => {
+                            return {
+                            userPermissions: state.user.user.permissions,
+                            plan: state.plan.plan,
+                            };
+                            };
 
-export default connect(mapStateToProps)(IncompleteClaims);
+                            export default connect(mapStateToProps)(IncompleteClaims);

@@ -231,7 +231,7 @@ const ClaimToValidatedList = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Institution concernée
+                                                            aria-label="Country: activate to sort column ascending">{props.plan ? "Unité concernée" : "Institution concernée"}
                                                         </th>
                                                         {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
                                                         {/*    colSpan="1" style={{ width: "70.25px" }}*/}
@@ -266,7 +266,7 @@ const ClaimToValidatedList = (props) => {
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
                                                         <th rowSpan="1" colSpan="1">Objet de réclamation</th>
                                                         <th rowSpan="1" colSpan="1">Agent</th>
-                                                        <th rowSpan="1" colSpan="1">Institution concernée</th>
+                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Unité conernée" : "Institution concernée"}</th>
                                                         {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
