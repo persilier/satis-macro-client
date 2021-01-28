@@ -166,7 +166,9 @@ const SatisfactionMeasure = (props) => {
                 <td>{measure.claim_object.name["fr"]}</td>
                 <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
                 {/*<td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>*/}
-                <td>{`${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.lastname:""} ${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.firstname:""}`}</td>
+
+                <td>{`${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.lastname:""} ${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.firstname:""}/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
+
                 {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ? (
@@ -267,7 +269,8 @@ const SatisfactionMeasure = (props) => {
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        colSpan="1" style={{width: "80.25px"}}
+
                                                         aria-label="Country: activate to sort column ascending">
                                                         {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
 
