@@ -79,38 +79,43 @@ const FusionClaim = props => {
                                 <tbody>
                                     <tr>
                                         <td><strong>Réclamant</strong></td>
-                                        <td>{props.claim.claimer ? `${props.claim.claimer.lastname} ${props.claim.claimer.firstname}` : "Pas de reclamant"}</td>
-                                        <td>{props.copyClaim.claimer ? `${props.copyClaim.claimer.lastname} ${props.copyClaim.claimer.firstname}` : "Pas de reclamant"}</td>
+                                        <td>{props.claim.claimer ? `${props.claim.claimer.lastname} ${props.claim.claimer.firstname}` : "-"}</td>
+                                        <td>{props.copyClaim.claimer ? `${props.copyClaim.claimer.lastname} ${props.copyClaim.claimer.firstname}` : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Montant réclamé</strong></td>
-                                        <td>{props.claim.amount_disputed ? `${props.claim.amount_disputed} ${props.claim.amount_currency ? props.claim.amount_currency.name["fr"] : ""}` : "Pas de montant"}</td>
-                                        <td>{props.copyClaim.amount_disputed ? `${props.copyClaim.amount_disputed} ${props.copyClaim.amount_currency ? props.copyClaim.amount_currency.name["fr"] : ""}` : "Pas de montant"}</td>
+                                        <td>{props.claim.amount_disputed ? `${props.claim.amount_disputed} ${props.claim.amount_currency ? props.claim.amount_currency.name["fr"] : ""}` : "-"}</td>
+                                        <td>{props.copyClaim.amount_disputed ? `${props.copyClaim.amount_disputed} ${props.copyClaim.amount_currency ? props.copyClaim.amount_currency.name["fr"] : ""}` : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Date de réception</strong></td>
-                                        <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "Pas de date de reclamation"}</td>
-                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "Pas de date de reclamation"}</td>
+                                        <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "-"}</td>
+                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Date de l'évenement</strong></td>
-                                        <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
-                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "Pas de date"}</td>
+                                        <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "-"}</td>
+                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "-"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Catégorie de reclamation</strong></td>
+                                        <td>{props.claim.claim_object ? props.claim.claim_object.claim_category.name["fr"] : "-"}</td>
+                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.claim_category.name["fr"] : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Objet de reclamation</strong></td>
-                                        <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "Pas d'objet de Réclamation"}</td>
-                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "Pas d'objet de Réclamation"}</td>
+                                        <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "-"}</td>
+                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Description</strong></td>
-                                        <td>{props.claim.description ? props.claim.description: "Pas de description"}</td>
-                                        <td>{props.copyClaim.description ? props.copyClaim.description : "Pas de description"}</td>
+                                        <td>{props.claim.description ? props.claim.description: "-"}</td>
+                                        <td>{props.copyClaim.description ? props.copyClaim.description : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Attente</strong></td>
-                                        <td>{props.claim.claimer_expectation ? props.claim.claimer_expectation : "Pas d'attente"}</td>
-                                        <td>{props.copyClaim.claimer_expectation ? props.copyClaim.claimer_expectation : "Pas d'attente"}</td>
+                                        <td>{props.claim.claimer_expectation ? props.claim.claimer_expectation : "-"}</td>
+                                        <td>{props.copyClaim.claimer_expectation ? props.copyClaim.claimer_expectation : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Choix</strong></td>

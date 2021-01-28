@@ -523,7 +523,8 @@ const ClaimAdd = props => {
         await setClaimObjects([]);
         await setAccounts([]);
         await setAccount(null);
-        await setUnits([]);
+        if (props.plan !== "PRO")
+            await setUnits([]);
         await setUnit(null);
         await setDisabledInput(false);
         await setData(defaultData);
@@ -818,6 +819,7 @@ const ClaimAdd = props => {
                                                     </div>
                                                     <div className={error.ville.length ? "col validated" : "col"}>
                                                         <label htmlFor="ville">Ville</label>
+                                                        {console.log("ville:", data.ville)}
                                                         <input
                                                             disabled={disabledInput}
                                                             id="ville"
@@ -855,7 +857,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email"> Email(s) <InputRequire/></label>
+                                                        <label htmlFor="email"> Email(s) {responseChannel ? <InputRequire/> : null}</label>
                                                         <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
                                                             error.email.length ? (
@@ -1191,7 +1193,7 @@ const ClaimAdd = props => {
                                                     </button>
                                                 )
                                             }
-                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4">
+                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4_2">
                                                 Launch Modal
                                             </button>
                                         </div>

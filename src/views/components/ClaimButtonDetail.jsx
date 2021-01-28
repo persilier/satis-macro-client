@@ -11,8 +11,14 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                         {
                             !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
+                                    {claim.account_targeted ? (
+                                        <>
+                                            <h5 className="mt-4"><span style={{color:"#48465b"}}>Compte concerné:</span> <strong>{claim.account_targeted.number}</strong></h5>
+                                            <br/>
+                                        </>
+                                    ) : null}
                                     <h5><span style={{color:"#48465b"}}>Référence:</span></h5>
-                                    <span className="mx-2">{claim.reference ? claim.reference : "Pas de canal de référence"}</span>
+                                    <span className="mx-2">{claim.reference ? claim.reference : "-"}</span>
                                     <br/>
                                     <br/>
                                 </div>
@@ -44,9 +50,9 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                             !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Canal de réception:</strong> <span
-                                    className="mx-2">{claim.request_channel ? claim.request_channel.name["fr"] : "Pas de canal de réception"}</span><br/>
+                                    className="mx-2">{claim.request_channel ? claim.request_channel.name["fr"] : "-"}</span><br/>
                                     <strong>Canal de réponse préférentiel:</strong> <span
-                                    className="mx-2">{claim.response_channel ? claim.response_channel.name["fr"] : "Pas de canal de réponse"}</span><br/>
+                                    className="mx-2">{claim.response_channel ? claim.response_channel.name["fr"] : "-"}</span><br/>
                                 </div>
                             )
                         }
@@ -58,10 +64,13 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                         {
                             !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
+                                    {console.log("claim:", claim)}
+                                    <strong>Enregistrée par:</strong>: <span
+                                    className="mx-2">{claim.created_by.identite.firstname} {claim.created_by.identite.lastname}</span><br/>
                                     <strong>Institution</strong>: <span
                                     className="mx-2">{claim.institution_targeted.name}</span><br/>
                                     <strong>Unité</strong>: <span
-                                    className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "Pas d'institution ciblé"}</span><br/>
+                                    className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-"}</span><br/>
                                 </div>
                             )
                         }
@@ -73,24 +82,27 @@ const ClaimButtonDetail = ({claim, rejected}) => {
                         {
                             !claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
-                                    <strong>Objet</strong>: <span
+                                    <strong>Catégorie de réclamation</strong>: <span
+                                    className="mx-2">{claim.claim_object.claim_category.name["fr"]}</span><br/>
+                                    <br/>
+                                    <strong>Objet de réclamation</strong>: <span
                                     className="mx-2">{claim.claim_object.name["fr"]}</span><br/>
                                     <br/>
                                     <strong>Numéro de compte </strong>: <span
-                                    className="mx-2">{claim.account_targeted ? claim.account_targeted.number : "Pas de compte cible"}</span><br/>
+                                    className="mx-2">{claim.account_targeted ? claim.account_targeted.number : "-"}</span><br/>
                                     <br/>
                                     <strong>Montant réclamé</strong>: <span
-                                    className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "Pas de montant"}</span><br/>
+                                    className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "-"}</span><br/>
                                     <br/>
-                                    <strong>Date de réception</strong>: <span className="mx-2">{claim.created_at ? formatDateToTimeStampte(claim.created_at) : "Pas de date"}</span><br/>
+                                    <strong>Date de réception</strong>: <span className="mx-2">{claim.created_at ? formatDateToTimeStampte(claim.created_at) : "-"}</span><br/>
                                     <br/>
-                                    <strong>Date de l'évernement</strong>: <span className="mx-2">{claim.event_occured_at ? formatDateToTimeStampte(claim.event_occured_at) : "Pas de date"}</span><br/>
+                                    <strong>Date de l'évernement</strong>: <span className="mx-2">{claim.event_occured_at ? formatDateToTimeStampte(claim.event_occured_at) : "-"}</span><br/>
                                     <br/>
                                     <strong>Description:</strong> <span
-                                    className="mx-2">{claim.description ? claim.description : "Pas de description"}</span><br/>
+                                    className="mx-2">{claim.description ? claim.description : "-"}</span><br/>
                                     <br/>
                                     <strong>Attente:</strong> <span
-                                    className="mx-2">{claim.claimer_expectation ? claim.claimer_expectation : "Pas d'attente"}</span><br/>
+                                    className="mx-2">{claim.claimer_expectation ? claim.claimer_expectation : "-"}</span><br/>
                                 </div>
                             )
                         }

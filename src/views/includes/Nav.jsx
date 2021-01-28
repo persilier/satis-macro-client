@@ -294,9 +294,8 @@ const Nav = (props) => {
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-                        <span className="kt-header__topbar-icon">
-                            <img className="" src={props.language.countryLanguageImage[props.language.languageSelected]}
-                                 alt=""/>
+                        <span className="kt-header__topbar-icon text-white">
+                            {props.language.languageSelected.toUpperCase()}
                         </span>
                         </div>
                         <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
@@ -304,31 +303,32 @@ const Nav = (props) => {
                                 <li className="kt-nav__item kt-nav__item--active">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
-                                            <img src="/assets/media/flags/226-united-states.svg" alt=""/></span>
+                                            EN
+                                        </span>
                                         <span className="kt-nav__link-text">English</span>
                                     </a>
                                 </li>
-                                <li className="kt-nav__item">
+                                {/*<li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "sp")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             <img src="/assets/media/flags/128-spain.svg" alt=""/>
                                         </span>
                                         <span className="kt-nav__link-text">Spanish</span>
                                     </a>
-                                </li>
-                                <li className="kt-nav__item">
+                                </li>*/}
+                                {/*<li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "gm")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             <img src="/assets/media/flags/162-germany.svg" alt=""/>
                                         </span>
                                         <span className="kt-nav__link-text">German</span>
                                     </a>
-                                </li>
+                                </li>*/}
 
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
-                                            <img src="/personal/img/france.svg" alt=""/>
+                                            FR
                                         </span>
                                         <span className="kt-nav__link-text">Francais</span>
                                     </a>
