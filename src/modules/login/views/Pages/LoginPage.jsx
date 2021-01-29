@@ -26,10 +26,8 @@ const LoginPage = (props) => {
         password: []
     };
     const [load, setLoad] = useState(true);
-    const [username, setUserName] = useState("");
     const [data, setData] = useState(defaultData);
     const [componentData, setComponentData] = useState(defaultData);
-    const [password, setPassword] = useState("");
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
