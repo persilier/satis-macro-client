@@ -83,6 +83,7 @@ const ReasonModal = props => {
                                 <textarea
                                     className={error.length ? "form-control is-invalid" : "form-control"}
                                     id="message-text"
+                                    placeholder="Veuillez entrer le message à communiquer au réclamant"
                                     onChange={e => setDescription(e.target.value)}
                                 />
                                 {

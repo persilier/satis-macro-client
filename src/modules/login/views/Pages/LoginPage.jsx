@@ -166,11 +166,11 @@ const LoginPage = (props) => {
                                                         <div className="col-lg-12 col-xl-6">
                                                             <img
                                                                 id="Image1"
-                                                                src={"/assets/media/users/Icon.png"}
+                                                                src={"/assets/media/users/avatar-3.png"}
                                                                 alt="logo"
                                                                 style={{
-                                                                    maxWidth: "60px",
-                                                                    maxHeight: "60px",
+                                                                    maxWidth: "65px",
+                                                                    maxHeight: "65px",
                                                                     textAlign: 'center'
                                                                 }}
                                                             />
@@ -180,7 +180,7 @@ const LoginPage = (props) => {
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"
-                                                      style={{marginBottom: '85px'}}>
+                                                      style={{marginBottom: '90px'}}>
                                                     <div
                                                         className={error.username.length ? "form-group row validated" : "form-group row"}>
 

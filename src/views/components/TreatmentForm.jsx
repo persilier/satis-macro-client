@@ -118,7 +118,7 @@ const TreatmentForm = (props) => {
                                                                 <textarea
                                                                     id="solution"
                                                                     className={error.solution.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la solution proposée"
+                                                                    placeholder="Veuillez entrer lasolution proposée"
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.solution}
