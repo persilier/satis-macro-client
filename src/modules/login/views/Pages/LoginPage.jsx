@@ -18,16 +18,17 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 const LoginPage = (props) => {
 
     const defaultError = {
+        username: "",
+        password: ""
+    };
+    const defaultData = {
         username: [],
-        password: [],
-
-        // grant_type:[],
-        // client_id: [],
-        // client_secret:[]
+        password: []
     };
     const [load, setLoad] = useState(true);
     const [username, setUserName] = useState("");
-    const [data, setData] = useState(null);
+    const [data, setData] = useState(defaultData);
+    const [componentData, setComponentData] = useState(defaultData);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -38,7 +39,7 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    setData(response.data);
+                    setComponentData(response.data);
                     setLoad(false);
                 })
                 .catch(error => {
@@ -53,10 +54,14 @@ const LoginPage = (props) => {
     }, []);
 
     const onChangeUserName = (e) => {
-        setUserName(e.target.value)
+        const newData = {...data};
+        newData.username = e.target.value;
+        setData(newData);
     };
     const onChangePassword = (e) => {
-        setPassword(e.target.value)
+        const newData = {...data};
+        newData.password = e.target.value;
+        setData(newData);
     };
     const onClickConnectButton = async (e) => {
         e.preventDefault(e);
@@ -65,8 +70,8 @@ const LoginPage = (props) => {
             grant_type: listConnectData[props.plan].grant_type,
             client_id: listConnectData[props.plan].client_id,
             client_secret: listConnectData[props.plan].client_secret,
-            username: username,
-            password: password
+            username: data.username,
+            password: data.password
         };
         await axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
             .then(response => {
@@ -95,7 +100,12 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
+                console.log(error.response.data.error, "error");
                 setStartRequest(false);
+                setError({
+                    username: error.response.data.error?error.response.data.error:"Email ou mot de passe incorrecte",
+                    password: error.response.data.error?error.response.data.error:"Email ou mot de passe incorrecte"
+                });
                 ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
         ;
@@ -117,43 +127,43 @@ const LoginPage = (props) => {
 
                                     <div
                                         className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                        style={{backgroundImage: `url(${data ? appConfig.apiDomaine + data.params.fr.background.value.url : " "})`}}>
+                                        style={{backgroundImage: `url(${componentData ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
                                         <div className="kt-grid__item">
                                             <span className="kt-login__logo">
                                                 <img
-                                                    src={data ? appConfig.apiDomaine + data.params.fr.logo.value.url : null}/>
+                                                    src={componentData ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : null}/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1.5em",
                                                     paddingLeft: "5px"
                                                 }}>
-                                                {data ? data.params.fr.version.value : props.plan + appConfig.version}
+                                                {componentData ? componentData.params.fr.version.value : props.plan + appConfig.version}
                                             </span>
                                             </span>
                                         </div>
                                         <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
                                             <div className="kt-grid__item kt-grid__item--middle">
-                                                <h3 className="kt-login__title"> {data ? data.params.fr.header.value + data.params.fr.version.value : null}</h3>
-                                                <h4 className="kt-login__subtitle"> {data ? data.params.fr.description.value + " " : null}</h4>
+                                                <h3 className="kt-login__title"> {componentData ? componentData.params.fr.header.value + componentData.params.fr.version.value : null}</h3>
+                                                <h4 className="kt-login__subtitle"> {componentData ? componentData.params.fr.description.value + " " : null}</h4>
                                             </div>
                                         </div>
                                         <div className="kt-grid__item">
                                             <div className="kt-login__info">
                                                 <div className="kt-login__copyright">
-                                                    ©  {appConfig.appFullName(props.year)}
+                                                    © {appConfig.appFullName(props.year)}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div
-                                        className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper" >
+                                        className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
                                         <div className="kt-login__body">
 
-                                            <div className="kt-login__form" >
+                                            <div className="kt-login__form">
 
                                                 <div className="kt-login__title">
-                                                    <div className="form-group row" style={{marginTop: '70px'}} >
+                                                    <div className="form-group row" style={{marginTop: '70px'}}>
 
                                                         <div className="col-lg-12 col-xl-6">
                                                             <img
@@ -168,7 +178,7 @@ const LoginPage = (props) => {
                                                             />
                                                         </div>
                                                     </div>
-                                                    <h3> {data ? data.params.fr.title.value : ""}</h3>
+                                                    <h3> {componentData ? componentData.params.fr.title.value : ""}</h3>
                                                 </div>
 
                                                 <form className="kt-form" id="kt_login__form"
@@ -182,17 +192,14 @@ const LoginPage = (props) => {
                                                             placeholder="Votre Email"
                                                             name="username"
                                                             onChange={(e) => onChangeUserName(e)}
-                                                            value={username}
+                                                            value={data.username}
                                                         />
-
+                                                        {console.log(error.username.length,'Taille')}
                                                         {
                                                             error.username.length ? (
-                                                                error.username.map((error, index) => (
-                                                                    <div key={index}
-                                                                         className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
+                                                                <div className="invalid-feedback">
+                                                                    {error.username}
+                                                                </div>
                                                             ) : null
                                                         }
                                                     </div>
@@ -205,16 +212,13 @@ const LoginPage = (props) => {
                                                             placeholder="Votre Mot de Passe"
                                                             name="password"
                                                             onChange={(e) => onChangePassword(e)}
-                                                            value={password}
+                                                            value={data.password}
                                                         />
                                                         {
                                                             error.password.length ? (
-                                                                error.password.map((error, index) => (
-                                                                    <div key={index}
-                                                                         className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
+                                                                <div className="invalid-feedback">
+                                                                    {error.password}
+                                                                </div>
                                                             ) : null
                                                         }
                                                     </div>
@@ -288,7 +292,7 @@ const LoginPage = (props) => {
 const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
-        year:state.year.year
+        year: state.year.year
     };
 };
 

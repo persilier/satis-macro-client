@@ -153,7 +153,7 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
-                    console.log(response.data, "GET_DATA");
+                    // console.log(response.data, "GET_DATA");
                     const newIncompleteClaim = {
 
                         claimer_id: response.data.claim.claimer_id,

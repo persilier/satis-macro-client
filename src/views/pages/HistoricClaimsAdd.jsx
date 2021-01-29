@@ -34,7 +34,6 @@ const HistoricClaimsAdd = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/history/list-claim")
                 .then(response => {
-                    console.log(response.data, "DATA")
                     setLoad(false);
                     setClaimsAdd(response.data);
                     setShowList(response.data.slice(0, numberPerPage));

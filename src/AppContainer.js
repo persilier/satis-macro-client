@@ -41,7 +41,6 @@ class AppContainer extends Component {
     componentDidMount() {
         axios.get(`${appConfig.apiDomaine}/plan`)
             .then(response => {
-                console.log(response.data, 'DATA_Plan')
                 this.setState({load: false});
                 localStorage.setItem('plan', response.data.plan);
                 if (response.data.year_installation!==null){
