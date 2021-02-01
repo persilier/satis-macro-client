@@ -155,7 +155,7 @@ const ClaimAssignToStaff = (props) => {
                             : claim.institution_targeted.name
                     }
                 </td>
-                <td>{formatDateToTime(claim.created_at)}</td>
+                <td>{formatDateToTime(claim.created_at)} &ensp; {claim.timeExpire>=0?<span style={{color:"greenyellow"}}>{"J+"+ claim.timeExpire}</span>:<span style={{color:"red"}}>{"J"+ claim.timeExpire}</span>}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{claim.description.length >= 15 ? reduceCharacter(claim.description) : claim.description}</td>
 
