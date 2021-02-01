@@ -161,12 +161,12 @@ const LoginPage = (props) => {
                                             <div className="kt-login__form">
 
                                                 <div className="kt-login__title">
-                                                    <div className="form-group row" style={{marginTop: '70px'}}>
+                                                    <div className="form-group row" style={{marginTop: '75px'}}>
 
                                                         <div className="col-lg-12 col-xl-6">
                                                             <img
                                                                 id="Image1"
-                                                                src={"/assets/media/users/avatar-3.png"}
+                                                                src={componentData ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
                                                                 alt="logo"
                                                                 style={{
                                                                     maxWidth: "65px",
@@ -221,12 +221,12 @@ const LoginPage = (props) => {
                                                         }
                                                     </div>
 
-                                                    <div className="kt-login__extra">
+                                                    {/*<div className="kt-login__extra">*/}
 
-                                                        <div className="text-right">
-                                                            <a href="#" id="kt_login_forgot">Mot de passe oublié ?</a>
-                                                        </div>
-                                                    </div>
+                                                    {/*    <div className="text-right">*/}
+                                                    {/*        <a href="#" id="kt_login_forgot">Mot de passe oublié ?</a>*/}
+                                                    {/*    </div>*/}
+                                                    {/*</div>*/}
 
                                                     <div className="kt-login__actions">
                                                         {
