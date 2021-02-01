@@ -162,7 +162,7 @@ const SatisfactionMeasure = (props) => {
                             : measure.institution_targeted.name
                     }
                 </td>
-                <td>{formatDateToTime(measure.created_at)}</td>
+                <td>{formatDateToTime(measure.created_at)} &ensp; {measure.timeExpire>=0?<span style={{color:"greenyellow"}}>{"J+"+ measure.timeExpire}</span>:<span style={{color:"red"}}>{"J"+ measure.timeExpire}</span>}</td>
                 <td>{measure.claim_object.name["fr"]}</td>
                 <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
                 {/*<td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>*/}
@@ -277,7 +277,7 @@ const SatisfactionMeasure = (props) => {
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        colSpan="1" style={{width: "50px"}}
                                                         aria-label="Country: activate to sort column ascending">Date
                                                         de réception
                                                     </th>
