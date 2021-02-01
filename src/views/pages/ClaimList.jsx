@@ -35,10 +35,10 @@ const ClaimList = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        async function fetchData () {
+        async function fetchData() {
             axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
                     setLoad(false);
@@ -49,6 +49,7 @@ const ClaimList = (props) => {
                 })
             ;
         }
+
         if (verifyTokenExpire())
             fetchData();
     }, []);
@@ -68,13 +69,13 @@ const ClaimList = (props) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claims.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(claims.length/parseInt(e.target.value)));
+        setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i<position; i++) {
-            end = end+numberPerPage;
+        for (let i = 0; i < position; i++) {
+            end = end + numberPerPage;
         }
         return end;
     };
@@ -134,7 +135,10 @@ const ClaimList = (props) => {
                             : claim.institution_targeted.name
                     }
                 </td>
-                <td>{formatDateToTime(claim.created_at)} &ensp; {claim.timeExpire>=0?<span style={{color:"greenyellow"}}>{"J+"+ claim.timeExpire}</span>:<span style={{color:"red"}}>{"J"+ claim.timeExpire}</span>}</td>
+                <td>{formatDateToTime(claim.created_at)} <br/>
+                    {claim.timeExpire >= 0 ? <span style={{color: "forestgreen", fontWeight:"bold"}}>{"J+" + claim.timeExpire}</span> :
+                        <span style={{color: "red", fontWeight:"bold"}}>{"J" + claim.timeExpire}</span>}
+                </td>
                 <td>{claim.claim_object.name["fr"]}</td>
 
                 <td>{claim.description.length >= 15 ? reduceCharacter(claim.description) : claim.description}</td>
@@ -165,16 +169,20 @@ const ClaimList = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Traitement
                                 </a>
                             </div>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Liste des réclamations
                                 </a>
                             </div>
@@ -183,7 +191,8 @@ const ClaimList = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Cette page vous présente la liste des réclamations transférées à votre unité et qui sont en attente d'affectetion"}/>
+                    <InfirmationTable
+                        information={"Cette page vous présente la liste des réclamations transférées à votre unité et qui sont en attente d'affectetion"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -201,7 +210,10 @@ const ClaimList = (props) => {
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         Recherche:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control form-control-sm" placeholder=""
+                                                               aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
                                             </div>
@@ -211,15 +223,17 @@ const ClaimList = (props) => {
                                                 <table
                                                     className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
+                                                    style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Référence
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Réclamant
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
@@ -230,13 +244,17 @@ const ClaimList = (props) => {
                                                             {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
 
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de réception
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Date
+                                                            de réception
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de réclamation
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Objet
+                                                            de réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
@@ -244,7 +262,9 @@ const ClaimList = (props) => {
                                                             aria-label="Country: activate to sort column ascending">Description
                                                         </th>
 
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
+                                                            aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
                                                     </tr>
@@ -285,7 +305,8 @@ const ClaimList = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {claims.length} données
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {claims.length} données
                                                 </div>
                                             </div>
                                             {

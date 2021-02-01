@@ -162,12 +162,15 @@ const SatisfactionMeasure = (props) => {
                             : measure.institution_targeted.name
                     }
                 </td>
-                <td>{formatDateToTime(measure.created_at)} &ensp; {measure.timeExpire>=0?<span style={{color:"greenyellow"}}>{"J+"+ measure.timeExpire}</span>:<span style={{color:"red"}}>{"J"+ measure.timeExpire}</span>}</td>
+                <td>{formatDateToTime(measure.created_at)} <br/>
+                    {measure.timeExpire >= 0 ? <span style={{color: "forestgreen", fontWeight:"bold"}}>{"J+" + measure.timeExpire}</span> :
+                        <span style={{color: "red", fontWeight:"bold"}}>{"J" + measure.timeExpire}</span>}
+                </td>
                 <td>{measure.claim_object.name["fr"]}</td>
                 <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
                 {/*<td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>*/}
 
-                <td>{`${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.lastname:""} ${measure.active_treatment.responsible_staff?measure.active_treatment.responsible_staff.identite.firstname:""}/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
+                <td>{`${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.lastname : ""} ${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.firstname : ""}/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
 
                 {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
@@ -296,7 +299,8 @@ const SatisfactionMeasure = (props) => {
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "70.25px"}}
-                                                        aria-label="Country: activate to sort column ascending">Agent traiteur
+                                                        aria-label="Country: activate to sort column ascending">Agent
+                                                        traiteur
                                                     </th>
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1" colSpan="1" style={{width: "40.25px"}}
@@ -306,7 +310,7 @@ const SatisfactionMeasure = (props) => {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {console.log(satisfactionMeasure,"Mesure")}
+                                                {console.log(satisfactionMeasure, "Mesure")}
                                                 {
                                                     satisfactionMeasure.length ? (
                                                         search ? (
