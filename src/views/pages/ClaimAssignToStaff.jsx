@@ -10,8 +10,7 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {
-    forceRound,
-    formatDateToTimeStampte,
+    forceRound, formatDateToTime,
     getLowerCaseString,
     loadCss, truncateString
 } from "../../helpers/function";
@@ -62,11 +61,11 @@ const ClaimAssignToStaff = (props) => {
         newClaims = newClaims.filter(el => (
             getLowerCaseString(`${el.reference} ${ el.isInvalidTreatment ? "(R)" : ""}`).indexOf(value) >= 0 ||
             getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname} ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
-            getLowerCaseString(formatDateToTimeStampte(el.created_at)).indexOf(value) >= 0 ||
+            getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
             getLowerCaseString(truncateString(el.description)).indexOf(value) >= 0 ||
             getLowerCaseString(`${el.active_treatment.responsible_staff ? el.active_treatment.responsible_staff.identite.lastname : ""} ${ el.active_treatment.responsible_staff ? el.active_treatment.responsible_staff.identite.firstname : "" }`).indexOf(value) >= 0 ||
-            getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+            getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : el.institution_targeted ? el.institution_targeted.name : "-").indexOf(value) >= 0
         ));
 
         return newClaims;
@@ -74,10 +73,10 @@ const ClaimAssignToStaff = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
@@ -148,14 +147,17 @@ const ClaimAssignToStaff = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
-                <td>{formatDateToTimeStampte(claim.created_at)}</td>
+                <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted ? claim.institution_targeted.name : "-"}</td>
+                <td>
+                    {formatDateToTime(claim.created_at)} <br/>
+                    <strong className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}>
+                        {`${claim.timeExpire >= 0 ? 'J+'+claim.timeExpire : 'J'+claim.timeExpire}`}
+                    </strong>
+                </td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{`${truncateString(claim.description)}`}</td>
-                <td>{claim.institution_targeted.name}</td>
                 <td>
-                    <a href={`/process/claim-assign/to-staff/${claim.id}/detail`}
-                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                       title="Détail">
+                    <a href={`/process/claim-assign/to-staff/${claim.id}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Détail">
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -181,11 +183,9 @@ const ClaimAssignToStaff = (props) => {
                                 </a>
                             </div>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Réclamations à traiter
                                 </a>
                             </div>
@@ -198,7 +198,8 @@ const ClaimAssignToStaff = (props) => {
                         <div>
                             Liste des réclamations qui vous sont assignées pour traitement
                             <br/>
-                            <span className="kt-badge kt-badge--danger kt-badge--md mr-2">R</span> représente les traitements réjetés
+                            <span className="kt-badge kt-badge--danger kt-badge--md mr-2">R</span> représente les
+                            traitements réjetés
                         </div>
                     )}/>
 
@@ -231,42 +232,29 @@ const ClaimAssignToStaff = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Référence
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Référence
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Réclamant
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Réclamant
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Date de réception
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            {props.plan === "PRO" ? "Point de service visé" : "Institution concernée"}
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Objet de réclamation
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Date de réception
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Description
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Objet de réclamation
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">{props.plan === "PRO" ? "Point de service visé" : "Institution concernée"}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Description
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "40.25px"}} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
                                                     </tr>
+
                                                     </thead>
                                                     <tbody>
                                                     {
@@ -288,10 +276,10 @@ const ClaimAssignToStaff = (props) => {
                                                         <tr>
                                                             <th rowSpan="1" colSpan="1">Référence</th>
                                                             <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                            <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution concernée"}</th>
                                                             <th rowSpan="1" colSpan="1">Date de réception</th>
                                                             <th rowSpan="1" colSpan="1">Objet de réclamation</th>
                                                             <th rowSpan="1" colSpan="1">Description</th>
-                                                            <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution concernée"}</th>
                                                             <th rowSpan="1" colSpan="1">Action</th>
                                                         </tr>
                                                     </tfoot>

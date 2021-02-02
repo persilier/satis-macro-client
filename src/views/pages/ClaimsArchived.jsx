@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {
     loadCss,
     forceRound,
-    getLowerCaseString,
+    getLowerCaseString, formatDateToTime, reduceCharacter,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -94,10 +94,10 @@ const ClaimsArchived = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(claimsArchived.length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(claimsArchived.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
@@ -165,9 +165,26 @@ const ClaimsArchived = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{archived.reference === null ? "-" : archived.reference}</td>
-                <td>{`${archived.claimer.lastname} ${archived.claimer.firstname} ${archived.account_targeted ? " / "+archived.account_targeted.number : ""}`}</td>
-                <td>{archived.description === null ? "-" : archived.description}</td>
-                <td>{archived.active_treatment.solution === null ? "-" : archived.active_treatment.solution}</td>
+                <td>{`${archived.claimer.lastname} ${archived.claimer.firstname} ${archived.account_targeted !== null ? "/" + archived.account_targeted.number : ""}`}</td>
+                <td>
+                    {
+                        (props.plan === 'PRO') ?
+                            (archived.unit_targeted ? archived.unit_targeted.name.fr : "-")
+                            : archived.institution_targeted.name
+                    }
+                </td>
+                <td>{archived.claim_object.name["fr"]}</td>
+                <td>{archived.description.length > 15 ? reduceCharacter(archived.description) : archived.description}</td>
+                <td style={{textAlign: 'center'}}>{archived.claim_object.time_limit}</td>
+                <td style={{textAlign: 'center'}}>
+                    {
+                        archived.active_treatment.is_claimer_satisfied === 1 ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success">Oui</span>
+                            : archived.active_treatment.is_claimer_satisfied === 0 ?
+                            <span className="kt-badge kt-badge--inline kt-badge--danger">Non</span>
+                            : " "
+                    }
+                </td>
                 {
                     verifyPermission(props.userPermissions, "show-any-claim-archived") ||
                     verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
@@ -241,10 +258,10 @@ const ClaimsArchived = (props) => {
                                                 <label>
                                                     Rechercher:
                                                     <input id="myInput" type="text"
-                                                       onKeyUp={(e) => searchElement(e)}
-                                                       className="form-control form-control-sm"
-                                                       placeholder=""
-                                                       aria-controls="kt_table_1"
+                                                           onKeyUp={(e) => searchElement(e)}
+                                                           className="form-control form-control-sm"
+                                                           placeholder=""
+                                                           aria-controls="kt_table_1"
                                                     />
                                                 </label>
                                             </div>
@@ -258,46 +275,57 @@ const ClaimsArchived = (props) => {
                                                 style={{width: "952px"}}>
                                                 <thead>
                                                 <tr role="row">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "50.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Référence
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "50.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Réclamant
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "50.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">
+                                                        {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
 
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "50px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Référence
                                                     </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Réclamant
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Description
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Solution
-                                                    </th>
-                                                    {
-                                                        verifyPermission(props.userPermissions, "show-any-claim-archived") ||
-                                                        verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
-                                                            <th className="sorting" tabIndex="0"
-                                                                aria-controls="kt_table_1"
-                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                                aria-label="Type: activate to sort column ascending">
-                                                                Action
-                                                            </th>
-                                                        ) : null
-                                                    }
 
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "50.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Objet de
+                                                        réclamation
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "50.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Description
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Durée du
+                                                        traitement
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Satisfaction
+                                                        du client
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1" colSpan="1" style={{width: "40.25px"}}
+                                                        aria-label="Type: activate to sort column ascending">
+                                                        Action
+                                                    </th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                {console.log(claimsArchived, "données")}
                                                 {
                                                     claimsArchived.length ? (
                                                         showList.length ? (
@@ -311,7 +339,18 @@ const ClaimsArchived = (props) => {
                                                 }
                                                 </tbody>
                                                 <tfoot>
-                                                <tr/>
+                                                <tr>
+                                                    <th rowSpan="1" colSpan="1">Référence</th>
+                                                    <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                    <th rowSpan="1"
+                                                        colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
+                                                    </th>
+                                                    <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                    <th rowSpan="1" colSpan="1">Description</th>
+                                                    <th rowSpan="1" colSpan="1">Durée du traitement</th>
+                                                    <th rowSpan="1" colSpan="1">Satisfaction du client</th>
+                                                    <th rowSpan="1" colSpan="1">Action</th>
+                                                </tr>
                                                 </tfoot>
                                             </table>
                                         </div>

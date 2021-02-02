@@ -9,9 +9,15 @@ import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import {filterDataTableBySearchValue, forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
+import {
+    filterDataTableBySearchValue,
+    forceRound,
+    formatDateToTime, getLowerCaseString,
+    loadCss, truncateString
+} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -53,14 +59,31 @@ const ClaimToValidatedList = (props) => {
             fetchData();
     }, []);
 
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaims = [...claims];
+        newClaims = newClaims.filter(el => {
+            return (
+                getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+                getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+                getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
+                getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
+                getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
+                getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+            )
+        });
+
+        return newClaims;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -126,12 +149,16 @@ const ClaimToValidatedList = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
-                <td>{formatDateToTimeStampte(claim.created_at)}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
+                <td>{props.plan === 'PRO' ? claim.unit_targeted ? claim.unit_targeted.name.fr : "-" : claim.institution_targeted ? claim.institution_targeted.name : ""}</td>
+                <td>
+                    {formatDateToTime(claim.created_at)} <br/>
+                    <strong className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}>
+                        {`${claim.timeExpire >= 0 ? 'J+'+claim.timeExpire : 'J'+claim.timeExpire}`}
+                    </strong>
+                </td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{claim.active_treatment.responsible_staff?`${claim.active_treatment.responsible_staff.identite.lastname} ${claim.active_treatment.responsible_staff.identite.firstname}`:""}</td>
-                <td>{claim.institution_targeted.name}</td>
-                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted_id.name  : null}</td>*/}
+                <td>{truncateString(claim.description, 37)}</td>
                 {
                     verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
@@ -199,7 +226,6 @@ const ClaimToValidatedList = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                            {/*<ExportButton/>*/}
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -209,34 +235,24 @@ const ClaimToValidatedList = (props) => {
                                                     style={{ width: "952px" }}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Référence
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Référence
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Réclamant
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Réclamant
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de réception
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
+                                                            {props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de Réclamation
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Date de réception
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Agent
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Objet de réclamation
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">{props.plan ? "Unité concernée" : "Institution concernée"}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
+                                                            Description
                                                         </th>
-                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
-                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
-                                                        {/*    aria-label="Country: activate to sort column ascending">Unité*/}
-                                                        {/*</th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -263,11 +279,10 @@ const ClaimToValidatedList = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}</th>
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Agent</th>
-                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Unité conernée" : "Institution concernée"}</th>
-                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
+                                                        <th rowSpan="1" colSpan="1">Objet de réclamation </th>
+                                                        <th rowSpan="1" colSpan="1">Description </th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>

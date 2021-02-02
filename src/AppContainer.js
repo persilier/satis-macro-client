@@ -43,9 +43,11 @@ class AppContainer extends Component {
             .then(response => {
                 this.setState({load: false});
                 localStorage.setItem('plan', response.data.plan);
-                localStorage.setItem('year_installation', response.data.year_installation);
+                if (response.data.year_installation!==null){
+                    localStorage.setItem('year_installation', response.data.year_installation);
+                }
                 this.props.loadPlan(response.data.plan);
-                this.props.loadYear(response.data.year_installation)
+                this.props.loadYear(response.data.year_installation!==null?response.data.year_installation:"")
             })
             .catch(error => {
                 this.setState({load: false});

@@ -10,8 +10,8 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {
-    forceRound,
-    formatToTimeStampUpdate, getLowerCaseString,
+    forceRound, formatDateToTime,
+    getLowerCaseString,
     loadCss, truncateString
 } from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
@@ -33,10 +33,10 @@ const ClaimAssign = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        async function fetchData () {
+        async function fetchData() {
             axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/numberPerPage));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
                     setLoad(false);
@@ -47,6 +47,7 @@ const ClaimAssign = (props) => {
                 })
             ;
         }
+
         if (verifyTokenExpire())
             fetchData();
     }, [numberPerPage]);
@@ -58,10 +59,10 @@ const ClaimAssign = (props) => {
             return (
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
                 getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
-                getLowerCaseString(formatToTimeStampUpdate(el.created_at)).indexOf(value) >= 0 ||
+                getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
                 getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
                 getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
-                getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+                getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : el.institution_targeted.name).indexOf(value) >= 0
             )
         });
 
@@ -70,10 +71,10 @@ const ClaimAssign = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
@@ -83,13 +84,13 @@ const ClaimAssign = (props) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claims.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(claims.length/parseInt(e.target.value)));
+        setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i<position; i++) {
-            end = end+numberPerPage;
+        for (let i = 0; i < position; i++) {
+            end = end + numberPerPage;
         }
         return end;
     };
@@ -142,14 +143,18 @@ const ClaimAssign = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} {claim.is_rejected ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
-                <td>{formatToTimeStampUpdate(claim.created_at)}</td>
+                <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted.name}</td>
+                <td>
+                    {formatDateToTime(claim.created_at)} <br/>
+                    {claim.timeExpire >= 0 ?
+                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + claim.timeExpire}</span> :
+                        <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>
+                    }
+                </td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{truncateString(claim.description, 41)}</td>
-                <td>{claim.institution_targeted.name}</td>
                 <td>
-                    <a href={`/process/claim-assign/${claim.id}/detail`}
-                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
+                    <a href={`/process/claim-assign/${claim.id}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Détail">
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -193,9 +198,11 @@ const ClaimAssign = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Cette page présente la liste des réclamations complètes et qui sont en attente d'être transférées.
+                            Cette page vous présente la liste des réclamations complètes et qui sont en attente d'être
+                            transféré.
                             <br/>
-                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les réclamations réjetées
+                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les
+                            réclamations réjetées
                         </div>
                     )}/>
 
@@ -222,33 +229,26 @@ const ClaimAssign = (props) => {
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
+                                                <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Référence
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Référence
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Réclamant
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Réclamant
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Date de réception
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
+                                                            {props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Objet de réclamation
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Date de réception
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Description
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Objet de réclamation
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
+                                                            Description
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
@@ -256,30 +256,30 @@ const ClaimAssign = (props) => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    {
-                                                        claims.length ? (
-                                                            showList.length ? (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
+                                                        {
+                                                            claims.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
+                                                                ) : (
+                                                                    showList.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
+                                                                )
                                                             ) : (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
+                                                                <EmptyTable/>
                                                             )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
+                                                        }
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}</th>
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
                                                         <th rowSpan="1" colSpan="1">Objet de réclamation </th>
                                                         <th rowSpan="1" colSpan="1">Description </th>
-                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
@@ -289,7 +289,8 @@ const ClaimAssign = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {claims.length} données
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {claims.length} données
                                                 </div>
                                             </div>
                                             {

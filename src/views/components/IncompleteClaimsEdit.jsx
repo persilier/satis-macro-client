@@ -153,7 +153,7 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
-                    console.log(response.data, "GET_DATA");
+                    // console.log(response.data, "GET_DATA");
                     const newIncompleteClaim = {
 
                         claimer_id: response.data.claim.claimer_id,
@@ -182,11 +182,14 @@ const IncompleteClaimsEdit = props => {
                     setIsRequire(response.data.requirements);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
+                    setAccounts(formatSelectOption(response.data.accounts, "number", false));
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
-
+                    if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
+                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
+                    }
                     setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
                     setCurrencies(formatSelectOption(response.data.currencies, "name", "fr", "slug"));
                     setChannels(formatSelectOption(response.data.channels, "name", "fr", "slug"));
@@ -372,9 +375,14 @@ const IncompleteClaimsEdit = props => {
     };
 
     const onChangeAmountCurrency = selected => {
-        setCurrency(selected);
         const newData = {...data};
-        newData.amount_currency_slug = selected.value;
+        if (selected) {
+            setCurrency(selected);
+            newData.amount_currency_slug = selected.value;
+        } else {
+            setCurrency(null);
+            newData.amount_currency_slug = "";
+        }
         setData(newData);
     };
 
@@ -901,6 +909,7 @@ const IncompleteClaimsEdit = props => {
                                                             réclamé {isRequire.amount_currency_slug ?
                                                                 <InputRequire/> : ""}</label>
                                                         <Select
+                                                            isClearable
                                                             classNamePrefix="select"
                                                             className="basic-single"
                                                             placeholder={"Veillez selectioner la devise du montant réclamé"}

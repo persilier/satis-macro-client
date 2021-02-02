@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
+import {forceRound, formatDateToTime, getLowerCaseString, loadCss, reduceCharacter} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -34,7 +34,6 @@ const HistoricClaimsAdd = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/history/list-claim")
                 .then(response => {
-                    console.log(response.data,"DATA")
                     setLoad(false);
                     setClaimsAdd(response.data);
                     setShowList(response.data.slice(0, numberPerPage));
@@ -65,10 +64,10 @@ const HistoricClaimsAdd = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(claimsAdd.length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(claimsAdd.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claimsAdd.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
@@ -136,177 +135,206 @@ const HistoricClaimsAdd = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.claimer.lastname +" "+claim.claimer.firstname}</td>
-                <td>{claim.claim_object.name.fr}</td>
-                <td>{claim.description}</td>
-                <td>{claim.request_channel_slug}</td>
-                <td>{claim.response_channel_slug}</td>
+                <td>{claim.reference} </td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{claim.claim_object.name["fr"]}</td>
+                <td>{claim.description.length > 15 ? reduceCharacter(claim.description) : claim.description}</td>
+                <td>
+                    {
+                        (props.plan === 'PRO') ?
+                            (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
+                            : claim.institution_targeted.name
+                    }
+                </td>
+                <td style={{textAlign: "center"}}>
+                    {
+                        claim.status === "archived" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--dark">Archivé</span>
+                            : claim.status === "validated" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success">Traité</span>
+                            : <span className="kt-badge kt-badge--inline kt-badge--warning">En cours de traitement</span>
 
+                    }
+                </td>
             </tr>
         )
     };
 
     return (
 
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Historiques
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Réclamations Créées
-                                </a>
-                            </div>
+        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                <div className="kt-container  kt-container--fluid ">
+                    <div className="kt-subheader__main">
+                        <h3 className="kt-subheader__title">
+                            Historiques
+                        </h3>
+                        <span className="kt-subheader__separator kt-hidden"/>
+                        <div className="kt-subheader__breadcrumbs">
+                            <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                className="flaticon2-shelter"/></a>
+                            <span className="kt-subheader__breadcrumbs-separator"/>
+                            <a href="#button" onClick={e => e.preventDefault()}
+                               className="kt-subheader__breadcrumbs-link">
+                                Réclamations Créées
+                            </a>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Réclamations Créées"}
-                        />
+            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div className="kt-portlet">
+                    <HeaderTablePage
+                        title={"Réclamations Créées"}
+                    />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Recherche:
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm"
-                                                               placeholder=""
-                                                               aria-controls="kt_table_1"
-                                                        />
-                                                    </label>
-                                                </div>
+                    {
+                        load ? (
+                            <LoadingTable/>
+                        ) : (
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row">
+                                        <div className="col-sm-6 text-left">
+                                            <div id="kt_table_1_filter" className="dataTables_filter">
+                                                <label>
+                                                    Recherche:
+                                                    <input id="myInput" type="text"
+                                                           onKeyUp={(e) => searchElement(e)}
+                                                           className="form-control form-control-sm"
+                                                           placeholder=""
+                                                           aria-controls="kt_table_1"
+                                                    />
+                                                </label>
                                             </div>
-
                                         </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Country: activate to sort column ascending">Réclamant
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Country: activate to sort column ascending">Objets de réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Country: activate to sort column ascending">Description de la Réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Canal de réception
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">Canal de réponse
-                                                        </th>
-                                                        {/*<th className="sorting" tabIndex="0"*/}
-                                                        {/*    aria-controls="kt_table_1"*/}
-                                                        {/*    rowSpan="1" colSpan="1" style={{width: "70.25px"}}*/}
-                                                        {/*    aria-label="Type: activate to sort column ascending">*/}
-                                                        {/*    Action*/}
-                                                        {/*</th>*/}
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        claimsAdd.length ? (
-                                                            showList.length ? (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
+
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-sm-12">
+                                            <table
+                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                style={{width: "952px"}}>
+                                                <thead>
+                                                <tr role="row">
+                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">Référence
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "80px"}}
+                                                        aria-label="Country: activate to sort column ascending">Réclamant
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "100px"}}
+                                                        aria-label="Country: activate to sort column ascending">Objets
+                                                        de réclamation
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "150px"}}
+                                                        aria-label="Country: activate to sort column ascending">Description
+                                                        de la Réclamation
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Country: activate to sort column ascending">
+                                                        {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
+
+                                                    </th>
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1"
+                                                        colSpan="1" style={{width: "50px"}}
+                                                        aria-label="Ship City: activate to sort column ascending">Statut
+                                                    </th>
+
+                                                    {/*<th className="sorting" tabIndex="0"*/}
+                                                    {/*    aria-controls="kt_table_1"*/}
+                                                    {/*    rowSpan="1" colSpan="1" style={{width: "70.25px"}}*/}
+                                                    {/*    aria-label="Type: activate to sort column ascending">*/}
+                                                    {/*    Action*/}
+                                                    {/*</th>*/}
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {
+                                                    claimsAdd.length ? (
+                                                        showList.length ? (
+                                                            showList.map((claim, index) => (
+                                                                printBodyTable(claim, index)
+                                                            ))
                                                         ) : (
-                                                            <EmptyTable/>
+                                                            <EmptyTable search={true}/>
                                                         )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">Objets de réclamtions</th>
-                                                        <th rowSpan="1" colSpan="1">Description de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Canal de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Canal de réponse</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {claimsAdd.length} données
-                                                </div>
-                                            </div>
-
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
-                                                    </div>
-                                                ) : null
-                                            }
+                                                    ) : (
+                                                        <EmptyTable/>
+                                                    )
+                                                }
+                                                </tbody>
+                                                <tfoot>
+                                                <tr style={{textAlign: "center"}}>
+                                                    <th rowSpan="1" colSpan="1">Référence</th>
+                                                    <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                    <th rowSpan="1" colSpan="1">Objets de réclamtions</th>
+                                                    <th rowSpan="1" colSpan="1">Description</th>
+                                                    <th rowSpan="1"
+                                                        colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
+                                                    </th>
+                                                    <th rowSpan="1" colSpan="1">Statut</th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
                                         </div>
                                     </div>
+                                    <div className="row">
+                                        <div className="col-sm-12 col-md-5">
+                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                 aria-live="polite">Affichage de 1
+                                                à {numberPerPage} sur {claimsAdd.length} données
+                                            </div>
+                                        </div>
+
+                                        {
+                                            showList.length ? (
+                                                <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                    <Pagination
+                                                        numberPerPage={numberPerPage}
+                                                        onChangeNumberPerPage={onChangeNumberPerPage}
+                                                        activeNumberPage={activeNumberPage}
+                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                        pages={pages}
+                                                        onClickPage={(e, number) => onClickPage(e, number)}
+                                                        numberPage={numberPage}
+                                                        onClickNextPage={e => onClickNextPage(e)}
+                                                    />
+                                                </div>
+                                            ) : null
+                                        }
+                                    </div>
                                 </div>
-                            )
-                        }
-                    </div>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
+        </div>
 
     );
 };
 const mapStateToProps = (state) => {
     return {
+        plan: state.plan.plan,
         userPermissions: state.user.user.permissions
     };
 };

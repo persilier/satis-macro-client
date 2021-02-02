@@ -64,7 +64,6 @@ const TreatmentForm = (props) => {
     };
     const onClick = (e) => {
         e.preventDefault();
-        console.log(data, "data");
         setStartRequest(true);
         axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, data)
             .then(response => {
@@ -119,7 +118,7 @@ const TreatmentForm = (props) => {
                                                                 <textarea
                                                                     id="solution"
                                                                     className={error.solution.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la solution"
+                                                                    placeholder="Veuillez entrer lasolution proposée"
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.solution}
