@@ -148,7 +148,7 @@ const SatisfactionMeasure = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{measure.reference === null ? "" : measure.reference}</td>
-                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}`}</td>
+                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${measure.account_targeted ? " / "+measure.account_targeted.number : ""}`}</td>
                 <td>{measure.description === null ? "" : measure.description}</td>
                 <td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>
                 {

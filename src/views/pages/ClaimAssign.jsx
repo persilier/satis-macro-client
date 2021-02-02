@@ -12,7 +12,7 @@ import appConfig from "../../config/appConfig";
 import {
     forceRound,
     formatToTimeStampUpdate, getLowerCaseString,
-    loadCss
+    loadCss, truncateString
 } from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
@@ -54,13 +54,16 @@ const ClaimAssign = (props) => {
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
         let newClaims = [...claims];
-        newClaims = newClaims.filter(el => (
-            getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}`).indexOf(value) >= 0 ||
-            getLowerCaseString(formatToTimeStampUpdate(el.created_at)).indexOf(value) >= 0 ||
-            getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
-            getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
-        ));
+        newClaims = newClaims.filter(el => {
+            return (
+                getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+                getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+                getLowerCaseString(formatToTimeStampUpdate(el.created_at)).indexOf(value) >= 0 ||
+                getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
+                getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
+                getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+            )
+        });
 
         return newClaims;
     };
@@ -138,12 +141,11 @@ const ClaimAssign = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} {claim.is_rejected ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
                 <td>{formatToTimeStampUpdate(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                {/*<td>{`${claim.created_by.identite.lastname} ${claim.created_by.identite.firstname}`}</td>*/}
+                <td>{truncateString(claim.description, 41)}</td>
                 <td>{claim.institution_targeted.name}</td>
-                {/*<td>{claim.unit_targeted_id ? claim.unit_targeted.name["fr"]  : "-"}</td>*/}
                 <td>
                     <a href={`/process/claim-assign/${claim.id}/detail`}
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -242,16 +244,12 @@ const ClaimAssign = (props) => {
                                                             colSpan="1" style={{ width: "70.25px" }}
                                                             aria-label="Country: activate to sort column ascending">Objet de réclamation
                                                         </th>
-                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
-                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
-                                                        {/*    aria-label="Country: activate to sort column ascending">Agent*/}
-                                                        {/*</th>*/}
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">{props.plan === "PRO" ? "Unité concernée" : "Institution ciblée"}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">Description
                                                         </th>
-                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"*/}
-                                                        {/*    colSpan="1" style={{ width: "70.25px" }}*/}
-                                                        {/*    aria-label="Country: activate to sort column ascending">Unité*/}
-                                                        {/*</th>*/}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}
+                                                        </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
@@ -261,7 +259,7 @@ const ClaimAssign = (props) => {
                                                     {
                                                         claims.length ? (
                                                             showList.length ? (
-                                                                claims.map((claim, index) => (
+                                                                showList.map((claim, index) => (
                                                                     printBodyTable(claim, index)
                                                                 ))
                                                             ) : (
@@ -280,9 +278,8 @@ const ClaimAssign = (props) => {
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
                                                         <th rowSpan="1" colSpan="1">Date de réception</th>
                                                         <th rowSpan="1" colSpan="1">Objet de réclamation </th>
-                                                        {/*<th rowSpan="1" colSpan="1">Agent</th>*/}
-                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Unité concernée" : "Institution ciblée"}</th>
-                                                        {/*<th rowSpan="1" colSpan="1">Unité</th>*/}
+                                                        <th rowSpan="1" colSpan="1">Description </th>
+                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}</th>
                                                         <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>

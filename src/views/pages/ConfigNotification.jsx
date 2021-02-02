@@ -146,6 +146,8 @@ const ConfigNotification = (props) => {
                                                 <br/> <br/>
                                                 <div className="col-6">{"{discussion_name}"} {"<===>"} Nom de la discussion</div>
                                                 <div className="col-6">{"{posted_by}"} {"<===>"} Celui qui à poster la réclamation</div>
+                                                <br/> <br/>
+                                                <div className="col-6">{"{day_replay}"} {"<===>"} Date de communication de la solution au client</div>
                                             </div>
                                             <br/><br/>
                                         </div>

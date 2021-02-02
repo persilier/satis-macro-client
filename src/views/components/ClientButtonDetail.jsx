@@ -12,8 +12,7 @@ const ClientButtonDetail = ({claim}) => {
                         <div className="kt-widget kt-widget--user-profile-1">
                             <div className="kt-widget__head">
                                 <div className="kt-widget__media">
-                                    <img src="/personal/img/default-avatar.png"
-                                         alt="image"/>
+                                    <img src="/personal/img/default-avatar.png" alt="image-avatar"/>
                                 </div>
                                 <div className="kt-widget__content"
                                      style={{marginTop: "auto", marginBottom: "auto"}}>
@@ -64,7 +63,6 @@ const ClientButtonDetail = ({claim}) => {
                                             <div className="kt-widget__info">
                                                 <span className="fa fa-location-arrow" style={{fontSize: "1.5rem"}}/>
                                                 <span className="kt-widget__data">
-                                                    {console.log("ville:", claim)}
                                                     {claim.claimer.ville && claim.claimer.ville !== "null" ? claim.claimer.ville : "-"}
                                                 </span>
                                             </div>

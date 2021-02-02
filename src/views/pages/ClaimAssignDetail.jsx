@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import Select from "react-select";
-import {formatSelectOption, loadCss, loadScript} from "../../helpers/function";
+import {formatDateToTimeStampte, formatSelectOption, loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -15,7 +15,7 @@ import FusionClaim from "../components/FusionClaim";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig
+    toastAddSuccessMessageConfig
 } from "../../config/toastConfig";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
@@ -203,14 +203,12 @@ const ClaimAssignDetail = (props) => {
                                  data-ktwizard-state="step-first">
                                 <div className="kt-grid__item kt-wizard-v2__aside">
                                     <div className="kt-wizard-v2__nav">
-                                        <div
-                                            className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                                        <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
                                             {
                                                 claim ? (
                                                     claim.active_treatment && claim.active_treatment.rejected_reason && claim.active_treatment.rejected_at ? (
                                                         <div className="d-flex justify-content-start">
-                                                            <span className="kt-badge kt-badge--danger kt-badge--inline"
-                                                                  style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
+                                                            <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
                                                         </div>
                                                     ) : null
                                                 ) : null
@@ -224,19 +222,12 @@ const ClaimAssignDetail = (props) => {
 
                                             <DoubleButton claim={claim}/>
 
-                                            <div className="kt-wizard-v2__nav-item"
-                                                 data-ktwizard-type="step">
+                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                 <div className="kt-wizard-v2__nav-body">
-                                                    <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon-truck"/>
-                                                    </div>
+                                                    <div className="kt-wizard-v2__nav-icon"><i className="flaticon-truck"/></div>
                                                     <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">
-                                                            Transfert
-                                                        </div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">
-                                                            Transferer la réclamation
-                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label-title">Transfert</div>
+                                                        <div className="kt-wizard-v2__nav-label-desc">Transferer la réclamation</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -249,9 +240,7 @@ const ClaimAssignDetail = (props) => {
                                         {
                                             verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment") ? (
                                                 <div className="d-flex justify-content-md-end">
-                                                    <button type="button" data-keyboard="false" data-backdrop="static"
-                                                            data-toggle="modal" data-target="#exampleModal"
-                                                            className="btn btn-danger">
+                                                    <button type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#exampleModal" className="btn btn-danger">
                                                         NON FONDÉE
                                                     </button>
                                                     {
@@ -278,35 +267,50 @@ const ClaimAssignDetail = (props) => {
 
                                         <ClientButtonDetail claim={claim}/>
 
-                                        <ClaimButtonDetail claim={claim}
-                                                           rejected={claim && claim.active_treatment && claim.active_treatment.rejected_reason ? true : false}/>
+                                        <ClaimButtonDetail claim={claim}/>
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
-                                        <DoubleButtonDetail
-                                            claim={claim}
-                                            onClickFusionButton={onClickFusionButton}
-                                            userPermissions={props.userPermissions}
-                                        />
+                                            <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>
 
-                                        <div className="kt-wizard-v2__content"
-                                             data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Transfert de la
-                                                réclamation
-                                            </div>
+                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                                            <div className="kt-heading kt-heading--md">Transfert de la réclamation</div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
+                                                    {claim && claim.active_treatment && claim.active_treatment.rejected_at ? (
+                                                        <div className="kt-wizard-v2__review-item">
+                                                            <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>Unité de traitement</span></h5></div>
+                                                            <div className="kt-wizard-v2__review-content">
+                                                                <strong>Unité:</strong>
+                                                                <span className="mx-2">{claim.active_treatment.responsible_unit.name["fr"]}</span><br/>
+                                                            </div>
+                                                        </div>
+                                                    ) : null}
+
                                                     {
-                                                        verifyPermission(props.userPermissions, "transfer-claim-to-targeted-institution") ?
+                                                        claim && claim.active_treatment && claim.active_treatment.rejected_at ? (
+                                                            <div className="kt-wizard-v2__review-item">
+                                                                <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>Rejet</span></h5></div>
+                                                                <div className="kt-wizard-v2__review-content">
+                                                                    <strong>Raison du rejet:</strong>
+                                                                    <span className="mx-2">{claim.active_treatment.rejected_reason}</span><br/>
+                                                                    <strong>Date de rejet:</strong>
+                                                                    <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.rejected_at)}</span><br/>
+                                                                    <strong>Nombre de rejet:</strong>
+                                                                    <span className="mx-2">{claim.active_treatment.number_reject}</span><br/>
+                                                                </div>
+                                                            </div>
+                                                        ) : null
+                                                    }
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, "transfer-claim-to-targeted-institution") ? (
                                                             <div className="kt-wizard-v2__review-item">
                                                                 <div
                                                                     className="kt-wizard-v2__review-content"
                                                                     style={{fontSize: "15px"}}>
-                                                                    <label
-                                                                        className="col-xl-6 col-lg-6 col-form-label"><strong>Institution
-                                                                        concernée</strong></label>
-                                                                    <span
-                                                                        className="kt-widget__data">{dataId}</span>
+                                                                    <label className="col-xl-6 col-lg-6 col-form-label"><strong>Institution concernée</strong></label>
+                                                                    <span className="kt-widget__data">{dataId}</span>
                                                                 </div>
                                                                 <div className="modal-footer">
                                                                     {
@@ -327,15 +331,12 @@ const ClaimAssignDetail = (props) => {
 
                                                                 </div>
                                                             </div>
-                                                            : null
-                                                    }
+                                                    ) : null}
+
                                                     {
-                                                        (verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") ||
-                                                            verifyPermission(props.userPermissions, "transfer-claim-to-unit")) ?
+                                                        verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") || verifyPermission(props.userPermissions, "transfer-claim-to-unit") ? (
                                                             <div className="kt-wizard-v2__review-item">
-                                                                <div className="kt-wizard-v2__review-title">
-                                                                    Tranferer à une unité
-                                                                </div>
+                                                                <div className="kt-wizard-v2__review-title">Tranferer à une unité</div>
                                                                 <div
                                                                     className="kt-wizard-v2__review-content">
                                                                     <div
@@ -379,22 +380,17 @@ const ClaimAssignDetail = (props) => {
 
                                                                 </div>
                                                             </div>
-                                                            : null
-                                                    }
+                                                    ) : null}
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="kt-form__actions">
-                                            <button
-                                                className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
-                                                data-ktwizard-type="action-prev">
+                                            <button className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-prev">
                                                 PRÉCÉDENT
                                             </button>
 
-                                            <button
-                                                className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
-                                                data-ktwizard-type="action-next">
+                                            <button className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
                                                 SUIVANT
                                             </button>
                                         </div>
@@ -403,10 +399,7 @@ const ClaimAssignDetail = (props) => {
                                     {
                                         verifyPermission(props.userPermissions, "merge-claim-awaiting-assignment") ? (
                                             <div>
-                                                <button style={{display: "none"}} id={`modal-button`}
-                                                        type="button"
-                                                        className="btn btn-bold btn-label-brand btn-sm"
-                                                        data-toggle="modal" data-target="#kt_modal_4"/>
+                                                <button style={{display: "none"}} id={`modal-button`} type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4"/>
                                                 {
                                                     copyClaim ? (
                                                         <FusionClaim

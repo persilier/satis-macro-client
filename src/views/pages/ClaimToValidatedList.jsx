@@ -126,7 +126,7 @@ const ClaimToValidatedList = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
                 <td>{formatDateToTimeStampte(claim.created_at)}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{claim.active_treatment.responsible_staff?`${claim.active_treatment.responsible_staff.identite.lastname} ${claim.active_treatment.responsible_staff.identite.firstname}`:""}</td>
