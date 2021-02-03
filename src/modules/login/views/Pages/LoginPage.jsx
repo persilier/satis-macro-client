@@ -10,6 +10,7 @@ import {
 } from "../../../../config/toastConfig";
 import {listConnectData} from "../../../../constants/userClient";
 import Loader from "../../../../views/components/Loader";
+import "./LoginCss.css"
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
@@ -61,6 +62,14 @@ const LoginPage = (props) => {
         newData.password = e.target.value;
         setData(newData);
     };
+    const onViewPassword = (e) => {
+        let input = document.getElementById("password");
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    };
     const onClickConnectButton = async (e) => {
         e.preventDefault(e);
         setStartRequest(true);
@@ -101,8 +110,8 @@ const LoginPage = (props) => {
                 console.log(error.response.data.error, "error");
                 setStartRequest(false);
                 setError({
-                    username: error.response.data.error?error.response.data.error:"Email ou mot de passe incorrecte",
-                    password: error.response.data.error?error.response.data.error:"Email ou mot de passe incorrecte"
+                    username: error.response.data.error ? error.response.data.error : "Email ou mot de passe incorrecte",
+                    password: error.response.data.error ? error.response.data.error : "Email ou mot de passe incorrecte"
                 });
                 ToastBottomEnd.fire(toastConnectErrorMessageConfig);
             })
@@ -192,7 +201,7 @@ const LoginPage = (props) => {
                                                             onChange={(e) => onChangeUserName(e)}
                                                             value={data.username}
                                                         />
-                                                        {console.log(error.username.length,'Taille')}
+                                                        {console.log(error.username.length, 'Taille')}
                                                         {
                                                             error.username.length ? (
                                                                 <div className="invalid-feedback">
@@ -202,11 +211,14 @@ const LoginPage = (props) => {
                                                         }
                                                     </div>
                                                     <div
-                                                        className={error.password.length ? "form-group row validated" : "form-group row"}>
-
+                                                        className={error.password.length ? "form-group row validated input_container" : "form-group row input_container"}>
+                                                        <span className="input_icon">
+                                                            <i className="fa fa-eye" aria-hidden="true"></i>
+                                                        </span>
                                                         <input
                                                             className={error.password.length ? "form-control is-invalid" : "form-control"}
                                                             type="password"
+                                                            id="password"
                                                             placeholder="Votre Mot de Passe"
                                                             name="password"
                                                             onChange={(e) => onChangePassword(e)}
@@ -221,21 +233,28 @@ const LoginPage = (props) => {
                                                         }
                                                     </div>
 
-                                                    {/*<div className="kt-login__extra">*/}
+                                                    <div className="kt-login__extra ">
+                                                        <div className="form-group row mt-2">
+                                                            <label className="kt-checkbox kt-checkbox--brand col">
+                                                                <input type="checkbox" name="remember"
+                                                                       onClick={(e) => onViewPassword(e)}
+                                                                /> Afficher le mot de passe
+                                                                <span></span>
+                                                            </label>
 
-                                                    {/*    <div className="text-right">*/}
-                                                    {/*        <a href="#" id="kt_login_forgot">Mot de passe oublié ?</a>*/}
-                                                    {/*    </div>*/}
-                                                    {/*</div>*/}
-
+                                                            <a href="#" id="kt_login_forgot" className="col text-right">
+                                                                Mot de passe oublié?
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                     <div className="kt-login__actions">
                                                         {
                                                             !startRequest ? (
                                                                 <button type="submit"
                                                                         id="kt_login_signin_submit"
                                                                         className="btn btn-primary btn-elevate kt-login__btn-primary"
-                                                                        onClick={onClickConnectButton}> Se
-                                                                    connecter</button>
+                                                                        onClick={onClickConnectButton}> Se connecter
+                                                                </button>
                                                             ) : (
                                                                 <button
                                                                     className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
@@ -246,17 +265,18 @@ const LoginPage = (props) => {
                                                         }
 
                                                     </div>
-                                                </form>
-                                            </div>
 
-                                            {/*<div className="kt-login__forgot">*/}
+                                                </form>
+
+                                            </div>
+                                            {/*<div className="login_forgot">*/}
                                             {/*    <div className="kt-login__head">*/}
                                             {/*        <h3 className="kt-login__title">Mot de Passe oublié?</h3>*/}
                                             {/*        <div className="kt-login__desc">Entrer votre email pour récupérer votre mot de passe:*/}
                                             {/*        </div>*/}
                                             {/*    </div>*/}
-                                            {/*    <div className="kt-login__form">*/}
-                                            {/*        <form className="kt-form" action="">*/}
+                                            {/*    <div className="login_form">*/}
+                                            {/*        <form className="form" action="">*/}
                                             {/*            <div className="form-group">*/}
                                             {/*                <input className="form-control" type="text"*/}
                                             {/*                       placeholder="Email" name="email" id="kt_email"*/}
@@ -273,7 +293,6 @@ const LoginPage = (props) => {
                                             {/*        </form>*/}
                                             {/*    </div>*/}
                                             {/*</div>*/}
-
                                         </div>
                                     </div>
                                 </div>
