@@ -101,6 +101,7 @@ import ClaimImportPage from "../pages/ClaimImportPage";
 import RecurencePage from "../pages/RecurencePage";
 import RejectLimitPage from "../pages/RejectLimitPage";
 import PercentageMinFusion from "../pages/PercentageMinFusion";
+import ClaimDetail from "../pages/ClaimDetail";
 
 const Body = () => {
     return (
@@ -442,6 +443,10 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/reporting">
                 <ClaimReporting/>
+            </Route>
+
+            <Route exact path="/process/claims/:id/detail">
+                <ClaimDetail/>
             </Route>
 
             <Route exact path="/process/claim_measure">

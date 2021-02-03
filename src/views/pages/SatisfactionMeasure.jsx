@@ -154,7 +154,7 @@ const SatisfactionMeasure = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{measure.reference === null ? "" : measure.reference}</td>
-                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}`} {measure.account_targeted !== null ? "/" + measure.account_targeted.number : ""}</td>
+                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${measure.account_targeted ? " / "+measure.account_targeted.number : ""}`}</td>
                 <td>
                     {
                         (props.plan === 'PRO') ?
@@ -168,10 +168,7 @@ const SatisfactionMeasure = (props) => {
                 </td>
                 <td>{measure.claim_object.name["fr"]}</td>
                 <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
-                {/*<td>{measure.active_treatment.solution === null ? "" : measure.active_treatment.solution}</td>*/}
-
                 <td>{`${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.lastname : ""} ${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.firstname : ""}/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
-
                 {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ? (

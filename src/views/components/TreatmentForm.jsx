@@ -84,7 +84,7 @@ const TreatmentForm = (props) => {
                 props.amount_disputed ?
                     <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
                         <label className="col-xl-3 col-lg-3 col-form-label"
-                               htmlFor="name">Montant retourné
+                               htmlFor="name">Montant retourné en {props.currency}
                         </label>
                         <div className="col-lg-9 col-xl-6">
                             <input

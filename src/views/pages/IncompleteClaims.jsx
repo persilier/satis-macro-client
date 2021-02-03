@@ -58,7 +58,7 @@ const IncompleteClaims = (props) => {
     const [incompleteClaims, setIncompleteClaims] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(5);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
 

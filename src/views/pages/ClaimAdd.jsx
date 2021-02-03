@@ -151,6 +151,8 @@ const ClaimAdd = props => {
     const [searchInputValue, setSearchInputValue] = useState("");
     const [startSearch, setStartSearch] = useState(false);
 
+    const [completionError, setCompletionError] = useState({ref: "", list: []});
+
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 1);
 
@@ -551,12 +553,18 @@ const ClaimAdd = props => {
             delete newData.relationship_id;
         if (verifyTokenExpire()) {
             axios.post(endPoint.store, formatFormData(newData))
-                .then(async () => {
+                .then(async (response) => {
+                    setDisabledInput(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     resetAllData();
                     document.getElementById("customFile").value = "";
+                    if (response.data.errors)
+                        setCompletionError({ref: response.data.claim.reference, list: response.data.errors});
                 })
                 .catch(async (error) => {
+                    if (completionError.length)
+                    if (completionError.length)
+                        setCompletionError({ref: "", list: []});
                     if (error.response.data.code === 409) {
                         //Existing entity claimer
                         setFoundData(error.response.data.error);
@@ -578,7 +586,6 @@ const ClaimAdd = props => {
                     }
                 })
             ;
-            refreshToken();
         }
     };
 
@@ -602,8 +609,7 @@ const ClaimAdd = props => {
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -819,7 +825,6 @@ const ClaimAdd = props => {
                                                     </div>
                                                     <div className={error.ville.length ? "col validated" : "col"}>
                                                         <label htmlFor="ville">Ville</label>
-                                                        {console.log("ville:", data.ville)}
                                                         <input
                                                             disabled={disabledInput}
                                                             id="ville"
@@ -1180,6 +1185,37 @@ const ClaimAdd = props => {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {completionError.list.length ? (
+                                            <div className="kt-section">
+                                                <div className="kt-section__body">
+                                                    <div className="form-group row">
+                                                        <div className="col-12">
+                                                            <div className="alert alert-warning fade show" role="alert">
+                                                                <div className="alert-icon"><i
+                                                                    className="flaticon-warning"/></div>
+                                                                <div className="alert-text">
+                                                                    <p>La réclamation a été enregistrée avec succès sous la référence <strong>{completionError.ref}</strong></p>
+                                                                    <p>Cependant elle est incomplète</p>
+                                                                    <p>Les informations qu'il reste à fournir sont les suivants :</p>
+                                                                    <ul className="ml-4">
+                                                                        {completionError.list.map((el, index) => (
+                                                                            <li key={index}>-  {el.description["fr"]}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </div>
+                                                                <div className="alert-close">
+                                                                    <button type="button" className="close"
+                                                                            data-dismiss="alert" aria-label="Close">
+                                                                        <span aria-hidden="true"><i className="la la-close"/></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : null}
                                     </div>
 
                                     <div className="kt-portlet__foot">
