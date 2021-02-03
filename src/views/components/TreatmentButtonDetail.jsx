@@ -85,7 +85,8 @@ const TreatmentButtonDetail = ({claim}) => {
                                 {claim.amount_disputed && claim.active_treatment.solved_at ? (
                                     <>
                                         <strong>Montant retourné:</strong>
-                                        <span className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "-"}</span><br/>
+                                        {console.log("claim:", claim)}
+                                        <span className="mx-2">{claim.active_treatment.amount_returned ? `${claim.active_treatment.amount_returned} ${claim.amount_currency ? claim.amount_currency.name["fr"] : ''}` : "-"}</span><br/>
                                     </>
                                 ) : null}
 

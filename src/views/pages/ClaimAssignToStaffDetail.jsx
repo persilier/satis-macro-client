@@ -186,6 +186,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                         {
                                                             claim ? (
                                                                 <TreatmentForm
+                                                                    currency={claim.amount_currency ? claim.amount_currency.name["fr"] : null}
                                                                     amount_disputed={claim?claim.amount_disputed:null}
                                                                     activeTreatment={
                                                                         claim.active_treatment ? (
@@ -196,6 +197,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                                 />
                                                             ) : (
                                                                 <TreatmentForm
+                                                                    currency={null}
                                                                     amount_disputed={claim?claim.amount_disputed:null}
                                                                     getId={`${id}`}
                                                                 />

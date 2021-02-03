@@ -30,7 +30,7 @@ const ClaimButtonDetail = ({claim, plan}) => {
                                         </>
                                     )}
                                     <strong>Montant réclamé:</strong>
-                                    <span className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "-"}</span><br/>
+                                    <span className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency ? claim.amount_currency.name["fr"] : ''}` : "-"}</span><br/>
                                     <strong>Description:</strong>
                                     <span className="mx-2">{claim.description ? claim.description : "-"}</span><br/>
                                     <strong>Attente:</strong>

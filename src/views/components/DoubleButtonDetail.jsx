@@ -4,9 +4,9 @@ import {formatDateToTimeStampte} from "../../helpers/function";
 
 const DoubleButtonDetail = ({claim, onClickFusionButton, userPermissions}) => {
     return (
-        <div className="kt-wizard-v2__content"
-             data-ktwizard-type="step-content">
-            <div className="kt-heading kt-heading--md">Liste des doublons
+        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+            <div className="kt-heading kt-heading--md">
+                Liste des doublons
             </div>
             <div className="kt-form__section kt-form__section--first">
                 <div className="kt-wizard-v2__review">
