@@ -67,6 +67,7 @@ const ColToComplete = (props) => {
                         <KanbanElementDetail
                             key={index}
                             onShowDetail={props.onShowDetail}
+                            onClick={props.onClick}
                             claim={claim}
                             index={index}
                         />

@@ -20,7 +20,7 @@ const DetailModal = (props) => {
                         {
                             props.claim ? (
                                 <ClaimDetails claim={props.claim}/>
-                            ) : ""
+                            ) : null
                         }
                     </div>
                     <div className="modal-footer">

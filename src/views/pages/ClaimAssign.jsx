@@ -162,6 +162,8 @@ const ClaimAssign = (props) => {
         );
     };
 
+    console.log("claims:", claims);
+
     return (
         verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">

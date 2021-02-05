@@ -156,6 +156,11 @@ const HistoricClaimsAdd = (props) => {
 
                     }
                 </td>
+                <td>
+                    <a href={`/process/claims/${claim.reference}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Détail">
+                        <i className="la la-eye"/>
+                    </a>
+                </td>
             </tr>
         )
     };
@@ -259,12 +264,12 @@ const HistoricClaimsAdd = (props) => {
                                                         aria-label="Ship City: activate to sort column ascending">Statut
                                                     </th>
 
-                                                    {/*<th className="sorting" tabIndex="0"*/}
-                                                    {/*    aria-controls="kt_table_1"*/}
-                                                    {/*    rowSpan="1" colSpan="1" style={{width: "70.25px"}}*/}
-                                                    {/*    aria-label="Type: activate to sort column ascending">*/}
-                                                    {/*    Action*/}
-                                                    {/*</th>*/}
+                                                    <th className="sorting" tabIndex="0"
+                                                        aria-controls="kt_table_1"
+                                                        rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                        aria-label="Type: activate to sort column ascending">
+                                                        Action
+                                                    </th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -292,6 +297,7 @@ const HistoricClaimsAdd = (props) => {
                                                         colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
                                                     </th>
                                                     <th rowSpan="1" colSpan="1">Statut</th>
+                                                    <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>
                                             </table>

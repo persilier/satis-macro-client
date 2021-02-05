@@ -1,8 +1,10 @@
 import React from "react";
+import {connect} from "react-redux";
 import moment from "moment";
+import {verifyPermission} from "../../../helpers/permission";
 
-const KanbanElementDetail = ({claim, index, onShowDetail}) => {
-    const timeExpire = `${claim.time_expire > 0 ? "j+"+claim.time_expire : "j"+claim.time_expire}`;
+const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) => {
+    const timeExpire = `${claim.time_expire >= 0 ? "j+"+claim.time_expire : "j"+claim.time_expire}`;
     return (
         <div className="kt-portlet" style={{cursor: "pointer"}} onClick={() => onShowDetail(claim)}>
             <div className="kt-portlet__head kt-portlet__head--right kt-portlet__head--noborder  kt-ribbon kt-ribbon--clip kt-ribbon--left kt-ribbon--info">
@@ -24,9 +26,18 @@ const KanbanElementDetail = ({claim, index, onShowDetail}) => {
                     La reclamation dont l'objet est <strong>{claim.claim_object.name["fr"]}</strong> est <br/> reçu le <strong>{moment(new Date(claim.created_at)).format("DD/MM/YYYY")}</strong> <br/>
                     voici la description: {claim.description.length > 34 ? claim.description.substring(0, 34)+"..." : claim.description}
                 </p>
+                {verifyPermission(userPermissions, 'revive-staff') && (
+                    <button onClick={(e) => {e.stopPropagation(); onClick(claim.id)}} type="button" className="btn btn-outline-warning btn-sm text-uppercase">Relancer</button>
+                )}
             </div>
         </div>
     );
 };
 
-export default KanbanElementDetail;
+const mapStateToProps = state  => {
+    return {
+        userPermissions: state.user.user.permissions,
+    };
+};
+
+export default connect(mapStateToProps)(KanbanElementDetail);
