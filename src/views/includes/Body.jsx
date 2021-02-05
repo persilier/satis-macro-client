@@ -102,6 +102,8 @@ import RecurencePage from "../pages/RecurencePage";
 import RejectLimitPage from "../pages/RejectLimitPage";
 import PercentageMinFusion from "../pages/PercentageMinFusion";
 import ClaimDetail from "../pages/ClaimDetail";
+import ClaimReassign from "../pages/ClaimReassign";
+import ClaimReassignDetail from "../pages/ClaimReassignDetail";
 
 const Body = () => {
     return (
@@ -407,6 +409,14 @@ const Body = () => {
 
             <Route exact path="/process/claim-assign">
                 <ClaimAssign/>
+            </Route>
+
+            <Route exact path="/process/claim-reassign">
+                <ClaimReassign/>
+            </Route>
+
+            <Route exact path="/process/claim-reassign/:id">
+                <ClaimReassignDetail/>
             </Route>
 
             <Route exact path="/process/claim-assign/:id/detail">

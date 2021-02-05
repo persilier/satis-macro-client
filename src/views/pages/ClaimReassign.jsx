@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux"
 import {verifyPermission} from "../../helpers/permission";
-import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
@@ -21,8 +20,8 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
-const ClaimAssign = (props) => {
-    if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot))
+const ClaimReassign = (props) => {
+    if (!(verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") && props.lead))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -34,7 +33,7 @@ const ClaimAssign = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
+            axios.get(`${appConfig.apiDomaine}/claim-reassignment`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
@@ -42,6 +41,7 @@ const ClaimAssign = (props) => {
                     setLoad(false);
                 })
                 .catch(error => {
+                    console.log("error:", error.response);
                     setLoad(false);
                     console.log("Something is wrong");
                 })
@@ -141,7 +141,7 @@ const ClaimAssign = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference} {claim.is_rejected ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
+                <td>{claim.reference}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted.name}</td>
                 <td>
@@ -154,7 +154,7 @@ const ClaimAssign = (props) => {
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td>{truncateString(claim.description, 41)}</td>
                 <td>
-                    <a href={`/process/claim-assign/${claim.id}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Détail">
+                    <a href={`/process/claim-reassign/${claim.id}`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Détail">
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -163,7 +163,7 @@ const ClaimAssign = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') && props.activePilot ? (
+        verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') && props.lead ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -187,7 +187,7 @@ const ClaimAssign = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        Réclamations à transférer
+                                        Réclamations à réassigner
                                     </a>
                                 </div>
                             </div>
@@ -196,19 +196,9 @@ const ClaimAssign = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={(
-                        <div>
-                            Cette page vous présente la liste des réclamations complètes et qui sont en attente d'être
-                            transféré.
-                            <br/>
-                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les
-                            réclamations réjetées
-                        </div>
-                    )}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamations à transférer"}
+                            title={"Réclamations à réassigner"}
                         />
 
                         {
@@ -256,21 +246,21 @@ const ClaimAssign = (props) => {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {
-                                                            claims.length ? (
-                                                                showList.length ? (
-                                                                    showList.map((claim, index) => (
-                                                                        printBodyTable(claim, index)
-                                                                    ))
-                                                                ) : (
-                                                                    showList.map((claim, index) => (
-                                                                        printBodyTable(claim, index)
-                                                                    ))
-                                                                )
+                                                    {
+                                                        claims.length ? (
+                                                            showList.length ? (
+                                                                showList.map((claim, index) => (
+                                                                    printBodyTable(claim, index)
+                                                                ))
                                                             ) : (
-                                                                <EmptyTable/>
+                                                                showList.map((claim, index) => (
+                                                                    printBodyTable(claim, index)
+                                                                ))
                                                             )
-                                                        }
+                                                        ) : (
+                                                            <EmptyTable/>
+                                                        )
+                                                    }
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
@@ -325,8 +315,8 @@ const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot
+        lead: state.user.user.staff.is_lead,
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssign);
+export default connect(mapStateToProps)(ClaimReassign);
