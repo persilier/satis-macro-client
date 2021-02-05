@@ -1,0 +1,27 @@
+.input_container {
+    position: relative; /*important*/
+}
+
+.input_icon {
+    position: absolute; /*important*/
+    top: 32px;
+    color: grey; /*Tu peux changer ici*/
+    left: 390px;
+    font-size: 15px; /*Tu peux changer ici*/
+    width: 50px;
+    cursor: pointer;
+
+}
+
+.contenu {
+    transform: translateX(100%);
+}
+
+.hero {
+    overflow: hidden;
+    /*position: relative;*/
+}
+
+#contenu1 {
+    transform: translateX(30%);
+}
