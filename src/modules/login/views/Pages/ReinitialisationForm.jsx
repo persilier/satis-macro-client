@@ -109,9 +109,6 @@ const ReinitialisationForm = (props) => {
     };
 
     return (
-        load ? (
-            <Loader/>
-        ) : (
         getTokenData.token === props.token ?
             <div>
                 <div className="kt-login__form "
@@ -202,8 +199,9 @@ const ReinitialisationForm = (props) => {
                     </form>
                 </div>
             </div>
-            : window.location.href = "/login"
-        )
+            : load ? (
+                <Loader/>
+            ) : ( window.location.href = "/login")
     );
 
 };

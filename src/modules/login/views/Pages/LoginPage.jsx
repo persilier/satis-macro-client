@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {loadCss, loadScript, takeToken} from "../../../../helpers/function";
+import {getToken, loadCss, loadScript} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import {connect} from 'react-redux';
@@ -24,7 +24,6 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 
 const LoginPage = (props) => {
-    // const tokenData=(window.location.href).substr(38);
 
     const defaultError = {
         username: "",
@@ -36,18 +35,15 @@ const LoginPage = (props) => {
     };
     const [load, setLoad] = useState(true);
     const [data, setData] = useState(defaultData);
-    const [tokenData, setToken] = useState("");
     const [componentData, setComponentData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
+    const tokenData=getToken(window.location.href);
+
     useEffect(() => {
         let mounted = true;
-        if (props.plan==="MACRO"){
-             setToken((window.location.href).substr(43));
-        }else {
-             setToken((window.location.href).substr(41));
-        }
+
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
@@ -262,9 +258,7 @@ const LoginPage = (props) => {
 
                                                                 <div className="kt-login__extra text-right mt-2">
 
-                                                                    <Link to="/login/forgot" id="forgot_btn"
-                                                                       // onClick={(e) => openForgotForm(e)}
-                                                                    >
+                                                                    <Link to="/login/forgot" id="forgot_btn">
                                                                          Mot de passe oublié?
                                                                     </Link>
                                                                 </div>
@@ -358,9 +352,7 @@ const LoginPage = (props) => {
 
                                                                 <div className="kt-login__extra text-right mt-2">
 
-                                                                    <Link to="/login/forgot" id="forgot_btn"
-                                                                       // onClick={(e) => openForgotForm(e)}
-                                                                    >
+                                                                    <Link to="/login/forgot" id="forgot_btn">
                                                                          Mot de passe oublié?
                                                                     </Link>
                                                                 </div>
@@ -388,6 +380,7 @@ const LoginPage = (props) => {
                                                     <Route exact path="/login/forgot">
                                                        <ForgotForm/>
                                                     </Route>
+
                                                     <Route  exact path={`/forgot-password/${tokenData}`}>
                                                        <ReinitialisationForm
                                                        token={tokenData}

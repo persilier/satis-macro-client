@@ -237,12 +237,12 @@ export const reduceCharacter = texte => {
     else
         return "";
 };
-export const takeToken = url => {
-    if (url !== null)
-       return url.substr(38 );
-    else
-        return "";
-};
+// export const takeToken = url => {
+//     if (url !== null)
+//        return url.substr(38 );
+//     else
+//         return "";
+// };
 
 export const seeParameters = (userPermissions) => {
     return (
@@ -410,4 +410,10 @@ export const truncateString = (text, length = 41) => {
     if (text.length <= 50)
         return text;
     return `${text.substring(0, length)}...`;
+};
+export const getToken = url => {
+    if (url !== null)
+        return url.split("/")[4];
+    else
+        return "";
 };
