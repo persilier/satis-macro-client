@@ -237,6 +237,12 @@ export const reduceCharacter = texte => {
     else
         return "";
 };
+export const takeToken = url => {
+    if (url !== null)
+       return url.substr(38 );
+    else
+        return "";
+};
 
 export const seeParameters = (userPermissions) => {
     return (

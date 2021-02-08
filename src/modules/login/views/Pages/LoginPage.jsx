@@ -1,30 +1,39 @@
 import React, {useEffect, useState} from "react";
-import {loadCss, loadScript} from "../../../../helpers/function";
+import {loadCss, loadScript, takeToken} from "../../../../helpers/function";
 import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import {connect} from 'react-redux';
 import {ToastBottomEnd} from "../../../../views/components/Toast";
 import {
+    BrowserRouter, Switch, Route,Link
+} from "react-router-dom";
+
+import {
+    toastErrorMessageWithParameterConfig,
     toastConnectErrorMessageConfig,
-    toastConnectSuccessMessageConfig
+    toastConnectSuccessMessageConfig,
 } from "../../../../config/toastConfig";
 import {listConnectData} from "../../../../constants/userClient";
 import Loader from "../../../../views/components/Loader";
 import "./LoginCss.css"
+import ForgotForm from "./ForgotForm";
+import ReinitialisationForm from "./ReinitialisationForm";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
 
 
 const LoginPage = (props) => {
+    const token=(window.location.href).substr(38);
+    // console.log(token,"TOKEN_URL");
 
     const defaultError = {
         username: "",
         password: ""
     };
     const defaultData = {
-        username: [],
-        password: []
+        username: "",
+        password: ""
     };
     const [load, setLoad] = useState(true);
     const [data, setData] = useState(defaultData);
@@ -57,6 +66,7 @@ const LoginPage = (props) => {
         newData.username = e.target.value;
         setData(newData);
     };
+
     const onChangePassword = (e) => {
         const newData = {...data};
         newData.password = e.target.value;
@@ -73,12 +83,7 @@ const LoginPage = (props) => {
             icon.className = "fa fa-eye-slash"
         }
     };
-    const openForgotForm=(e)=>{
-      let contenu1=document.getElementById("contenu1");
-      let contenu2=document.getElementById("contenu2");
-      contenu1.style.transform="translateX(200%)";
-      contenu2.style.transform="translateX(-30%)";
-    };
+
     const onClickConnectButton = async (e) => {
         e.preventDefault(e);
         setStartRequest(true);
@@ -118,15 +123,18 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
-                console.log(error.response.data, "error");
                 setStartRequest(false);
-                // if(error.response.data.code===429){
-                // }
+
                 setError({
                     username: error.response.data.error ? error.response.data.error : "Email ou mot de passe incorrecte",
                     password: error.response.data.error ? error.response.data.error : "Email ou mot de passe incorrecte"
                 });
-                ToastBottomEnd.fire(toastConnectErrorMessageConfig);
+                if (error.response.data.code === 429) {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Trop de tentative de connexion. Veuillez ressayer dans 5mn."));
+                } else {
+                    ToastBottomEnd.fire(toastConnectErrorMessageConfig);
+                }
+
             })
         ;
     };
@@ -134,21 +142,22 @@ const LoginPage = (props) => {
         load ? (
             <Loader/>
         ) : (
-            <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
-                <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1" id="kt_login">
-                    <div
-                        className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
+            <BrowserRouter>
+                <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
+                    <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1" id="kt_login">
+                        <div
+                            className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
 
-                        <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
-                            <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1"
-                                 id="kt_login">
+                            <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
+                                <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1"
+                                     id="kt_login">
 
-                                <div
-                                    className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
                                     <div
-                                        className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                        style={{backgroundImage: `url(${componentData ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
-                                        <div className="kt-grid__item">
+                                        className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
+                                        <div
+                                            className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
+                                            style={{backgroundImage: `url(${componentData ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
+                                            <div className="kt-grid__item">
                                             <span className="kt-login__logo">
                                                 <img
                                                     src={componentData ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : null}/>
@@ -160,150 +169,238 @@ const LoginPage = (props) => {
                                                 {componentData ? componentData.params.fr.version.value : props.plan + appConfig.version}
                                             </span>
                                             </span>
-                                        </div>
-                                        <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
-                                            <div className="kt-grid__item kt-grid__item--middle">
-                                                <h3 className="kt-login__title"> {componentData ? componentData.params.fr.header.value + componentData.params.fr.version.value : null}</h3>
-                                                <h4 className="kt-login__subtitle"> {componentData ? componentData.params.fr.description.value + " " : null}</h4>
                                             </div>
-                                        </div>
-                                        <div className="kt-grid__item">
-                                            <div className="kt-login__info">
-                                                <div className="kt-login__copyright">
-                                                    © {appConfig.appFullName(props.year)}
+                                            <div className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver">
+                                                <div className="kt-grid__item kt-grid__item--middle">
+                                                    <h3 className="kt-login__title"> {componentData ? componentData.params.fr.header.value + componentData.params.fr.version.value : null}</h3>
+                                                    <h4 className="kt-login__subtitle"> {componentData ? componentData.params.fr.description.value + " " : null}</h4>
+                                                </div>
+                                            </div>
+                                            <div className="kt-grid__item">
+                                                <div className="kt-login__info">
+                                                    <div className="kt-login__copyright">
+                                                        © {appConfig.appFullName(props.year)}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div
-                                        className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
-                                        <div className="kt-login__body hero">
+                                        <div
+                                            className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
+                                            <div className="kt-login__body">
 
-                                                <div className="kt-login__form contenu" id="contenu1">
+                                                <Switch>
+                                                    <Route  exact path="/">
+                                                        <div className="kt-login__form" style={{paddingTop: '15px'}} >
 
-                                                    <div className="kt-login__title">
-                                                        <div className="form-group row" style={{marginTop: '70px'}}>
+                                                            <div className="kt-login__title">
+                                                                <div className="form-group row" style={{marginTop: '50px'}}>
 
-                                                            <div className="col-lg-12 col-xl-6">
-                                                                <img
-                                                                    id="Image1"
-                                                                    src={componentData ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
-                                                                    alt="logo"
-                                                                    style={{
-                                                                        maxWidth: "65px",
-                                                                        maxHeight: "65px",
-                                                                        textAlign: 'center'
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <h3> {componentData ? componentData.params.fr.title.value : ""}</h3>
-                                                    </div>
-
-                                                    <form className="kt-form" id="kt_login__form"
-                                                          style={{marginBottom: '90px'}}>
-                                                        <div
-                                                            className={error.username.length ? "form-group row validated" : "form-group row"}>
-
-                                                            <input
-                                                                className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                                                type="email"
-                                                                placeholder="Votre Email"
-                                                                name="username"
-                                                                onChange={(e) => onChangeUserName(e)}
-                                                                value={data.username}
-                                                            />
-                                                            {
-                                                                error.username.length ? (
-                                                                    <div className="invalid-feedback">
-                                                                        {error.username}
+                                                                    <div className="col-lg-12 col-xl-6">
+                                                                        <img
+                                                                            id="Image1"
+                                                                            src={componentData ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
+                                                                            alt="logo"
+                                                                            style={{
+                                                                                maxWidth: "65px",
+                                                                                maxHeight: "65px",
+                                                                                textAlign: 'center'
+                                                                            }}
+                                                                        />
                                                                     </div>
-                                                                ) : null
-                                                            }
-                                                        </div>
-                                                        <div
-                                                            className={error.password.length ? "form-group row validated input_container" : "form-group row input_container"}>
+                                                                </div>
+                                                                <h3> {componentData ? componentData.params.fr.title.value : ""}</h3>
+                                                            </div>
+
+                                                            <form className="kt-form" id="kt_login__form"
+                                                                  style={{marginBottom: '90px'}}>
+                                                                <div
+                                                                    className={error.username.length ? "form-group row validated" : "form-group row"}>
+
+                                                                    <input
+                                                                        className={error.username.length ? "form-control is-invalid" : "form-control"}
+                                                                        type="email"
+                                                                        placeholder="Votre Email"
+                                                                        name="username"
+                                                                        onChange={(e) => onChangeUserName(e)}
+                                                                        value={data.username}
+                                                                    />
+                                                                    {
+                                                                        error.username.length ? (
+                                                                            <div className="invalid-feedback">
+                                                                                {error.username}
+                                                                            </div>
+                                                                        ) : null
+                                                                    }
+                                                                </div>
+                                                                <div
+                                                                    className={error.password.length ? "form-group row validated input_container" : "form-group row input_container"}>
                                                         <span className="input_icon">
                                                             <i id="icon" className="fa fa-eye-slash" aria-hidden="true"
                                                                onClick={(e) => onViewPassword(e)}></i>
                                                         </span>
-                                                            <input
-                                                                className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                                type="password"
-                                                                id="password"
-                                                                placeholder="Votre Mot de Passe"
-                                                                name="password"
-                                                                onChange={(e) => onChangePassword(e)}
-                                                                value={data.password}
-                                                            />
-                                                            {
-                                                                error.password.length ? (
-                                                                    <div className="invalid-feedback">
-                                                                        {error.password}
+                                                                    <input
+                                                                        className={error.password.length ? "form-control is-invalid" : "form-control"}
+                                                                        type="password"
+                                                                        id="password"
+                                                                        placeholder="Votre Mot de Passe"
+                                                                        name="password"
+                                                                        onChange={(e) => onChangePassword(e)}
+                                                                        value={data.password}
+                                                                    />
+                                                                    {
+                                                                        error.password.length ? (
+                                                                            <div className="invalid-feedback">
+                                                                                {error.password}
+                                                                            </div>
+                                                                        ) : null
+                                                                    }
+                                                                </div>
+
+                                                                <div className="kt-login__extra text-right mt-2">
+
+                                                                    <Link to="/login/forgot" id="forgot_btn"
+                                                                       // onClick={(e) => openForgotForm(e)}
+                                                                    >
+                                                                         Mot de passe oublié?
+                                                                    </Link>
+                                                                </div>
+                                                                <div className="kt-login__actions">
+                                                                    {
+                                                                        !startRequest ? (
+                                                                            <button type="submit"
+                                                                                    id="kt_login_signin_submit"
+                                                                                    className="btn btn-primary btn-elevate kt-login__btn-primary"
+                                                                                    onClick={onClickConnectButton}> Se connecter
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button
+                                                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                                type="button" disabled>
+                                                                                Chargement...
+                                                                            </button>
+                                                                        )
+                                                                    }
+
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </Route>
+                                                    <Route  exact path="/login">
+                                                        <div className="kt-login__form" style={{paddingTop: '15px'}} >
+
+                                                            <div className="kt-login__title">
+                                                                <div className="form-group row" style={{marginTop: '50px'}}>
+
+                                                                    <div className="col-lg-12 col-xl-6">
+                                                                        <img
+                                                                            id="Image1"
+                                                                            src={componentData ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
+                                                                            alt="logo"
+                                                                            style={{
+                                                                                maxWidth: "65px",
+                                                                                maxHeight: "65px",
+                                                                                textAlign: 'center'
+                                                                            }}
+                                                                        />
                                                                     </div>
-                                                                ) : null
-                                                            }
-                                                        </div>
+                                                                </div>
+                                                                <h3> {componentData ? componentData.params.fr.title.value : ""}</h3>
+                                                            </div>
 
-                                                        <div className="kt-login__extra text-right mt-2">
+                                                            <form className="kt-form" id="kt_login__form"
+                                                                  style={{marginBottom: '90px'}}>
+                                                                <div
+                                                                    className={error.username.length ? "form-group row validated" : "form-group row"}>
 
-                                                            <a href="#" id="forgot_btn" onClick={(e)=>openForgotForm(e)}>
-                                                                Mot de passe oublié?
-                                                            </a>
-                                                        </div>
-                                                        <div className="kt-login__actions">
-                                                            {
-                                                                !startRequest ? (
-                                                                    <button type="submit"
-                                                                            id="kt_login_signin_submit"
-                                                                            className="btn btn-primary btn-elevate kt-login__btn-primary"
-                                                                            onClick={onClickConnectButton}> Se connecter
-                                                                    </button>
-                                                                ) : (
-                                                                    <button
-                                                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                                        type="button" disabled>
-                                                                        Chargement...
-                                                                    </button>
-                                                                )
-                                                            }
+                                                                    <input
+                                                                        className={error.username.length ? "form-control is-invalid" : "form-control"}
+                                                                        type="email"
+                                                                        placeholder="Votre Email"
+                                                                        name="username"
+                                                                        onChange={(e) => onChangeUserName(e)}
+                                                                        value={data.username}
+                                                                    />
+                                                                    {
+                                                                        error.username.length ? (
+                                                                            <div className="invalid-feedback">
+                                                                                {error.username}
+                                                                            </div>
+                                                                        ) : null
+                                                                    }
+                                                                </div>
+                                                                <div
+                                                                    className={error.password.length ? "form-group row validated input_container" : "form-group row input_container"}>
+                                                        <span className="input_icon">
+                                                            <i id="icon" className="fa fa-eye-slash" aria-hidden="true"
+                                                               onClick={(e) => onViewPassword(e)}></i>
+                                                        </span>
+                                                                    <input
+                                                                        className={error.password.length ? "form-control is-invalid" : "form-control"}
+                                                                        type="password"
+                                                                        id="password"
+                                                                        placeholder="Votre Mot de Passe"
+                                                                        name="password"
+                                                                        onChange={(e) => onChangePassword(e)}
+                                                                        value={data.password}
+                                                                    />
+                                                                    {
+                                                                        error.password.length ? (
+                                                                            <div className="invalid-feedback">
+                                                                                {error.password}
+                                                                            </div>
+                                                                        ) : null
+                                                                    }
+                                                                </div>
 
+                                                                <div className="kt-login__extra text-right mt-2">
+
+                                                                    <Link to="/login/forgot" id="forgot_btn"
+                                                                       // onClick={(e) => openForgotForm(e)}
+                                                                    >
+                                                                         Mot de passe oublié?
+                                                                    </Link>
+                                                                </div>
+                                                                <div className="kt-login__actions">
+                                                                    {
+                                                                        !startRequest ? (
+                                                                            <button type="submit"
+                                                                                    id="kt_login_signin_submit"
+                                                                                    className="btn btn-primary btn-elevate kt-login__btn-primary"
+                                                                                    onClick={onClickConnectButton}> Se connecter
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button
+                                                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                                type="button" disabled>
+                                                                                Chargement...
+                                                                            </button>
+                                                                        )
+                                                                    }
+
+                                                                </div>
+                                                            </form>
                                                         </div>
-                                                    </form>
-                                            </div>
-                                            <div className="kt-login__form contenu" id="contenu2" style={{marginLeft:"-200px"}}>
-                                                <div className="kt-login__head">
-                                                    <h3 className="kt-login__title">Mot de Passe oublié?</h3>
-                                                    <div className="kt-login__desc">Entrer votre email pour
-                                                        récupérer votre mot de passe:
-                                                    </div>
-                                                </div>
-                                                    <form className="kt-form" action="">
-                                                        <div className="form-group">
-                                                            <input className="form-control" type="text"
-                                                                   placeholder="Email" name="email"
-                                                                   id="kt_email"
-                                                                   autoComplete="off"/>
-                                                        </div>
-                                                        <div className="kt-login__actions">
-                                                            <button id="kt_login_forgot_submit"
-                                                                    className="btn btn-brand btn-pill btn-elevate">Envoyer
-                                                            </button>
-                                                            <button id="kt_login_forgot_cancel"
-                                                                    className="btn btn-outline-brand btn-pill">Quitter
-                                                            </button>
-                                                        </div>
-                                                    </form>
+                                                    </Route>
+                                                    <Route exact path="/login/forgot">
+                                                       <ForgotForm/>
+                                                    </Route>
+                                                    <Route  exact path={`/forgot-password/${token}`}>
+                                                       <ReinitialisationForm
+                                                       token={token}
+                                                       />
+                                                    </Route>
+                                                </Switch>
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
-            </div>
+            </BrowserRouter>
         )
     );
 };

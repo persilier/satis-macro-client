@@ -473,7 +473,7 @@ const IncompleteClaimsEdit = props => {
                         }
                         setError({...defaultError, ...error.response.data.error, file: fileErrors});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    }else{
+                    } else {
                         setStartRequest(false);
                         // setError({...defaultError, ...error.response.data.error});
                         // ToastBottomEnd.fire(toastEditErrorMessageConfig);
@@ -548,7 +548,7 @@ const IncompleteClaimsEdit = props => {
                                                         <Select
                                                             classNamePrefix="select"
                                                             className="basic-single"
-                                                            isDisabled={!disabledInput}
+                                                            // isDisabled={!disabledInput}
                                                             placeholder={"Veillez selectioner l'institution"}
                                                             value={institution}
                                                             options={institutions}
@@ -579,7 +579,7 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.lastname.length ? "col validated" : "col"}>
                                                                 <label htmlFor="lastname">Nom <InputRequire/></label>
                                                                 <input
-                                                                    disabled={!disabledInput}
+                                                                    // disabled={!disabledInput}
                                                                     id="lastname"
                                                                     type="text"
                                                                     className={error.lastname.length ? "form-control is-invalid" : "form-control"}
@@ -604,7 +604,7 @@ const IncompleteClaimsEdit = props => {
                                                                 <label htmlFor="firstname">Prénom
                                                                     (s) <InputRequire/></label>
                                                                 <input
-                                                                    disabled={!disabledInput}
+                                                                    // disabled={!disabledInput}
                                                                     id="firstname"
                                                                     type="text"
                                                                     className={error.firstname.length ? "form-control is-invalid" : "form-control"}
@@ -630,7 +630,7 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.firstname.length ? "form-group col validated" : "form-group col"}>
                                                                 <label htmlFor="sexe">Sexe <InputRequire/></label>
                                                                 <select
-                                                                    disabled={!disabledInput}
+                                                                    // disabled={!disabledInput}
                                                                     id="sexe"
                                                                     className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                                     value={data.sexe}
@@ -658,7 +658,7 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.ville.length ? "col validated" : "col"}>
                                                                 <label htmlFor="ville">Ville </label>
                                                                 <input
-                                                                    disabled={!disabledInput}
+                                                                    // disabled={!disabledInput}
                                                                     id="ville"
                                                                     type="text"
                                                                     className={error.ville.length ? "form-control is-invalid" : "form-control"}
@@ -684,13 +684,14 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.telephone.length ? "col validated" : "col"}>
                                                                 <label htmlFor="telephone"> Téléphone(s)<WithoutCode/>
                                                                     <InputRequire/></label>
-                                                                <TagsInput disabled={!disabledInput}
-                                                                           value={data.telephone}
-                                                                           onChange={onChangeTelephone}
-                                                                           inputProps={{
-                                                                               className: 'react-tagsinput-input',
-                                                                               placeholder: 'Numéro(s)'
-                                                                           }}
+                                                                <TagsInput
+                                                                    // disabled={!disabledInput}
+                                                                    value={data.telephone}
+                                                                    onChange={onChangeTelephone}
+                                                                    inputProps={{
+                                                                        className: 'react-tagsinput-input',
+                                                                        placeholder: 'Numéro(s)'
+                                                                    }}
                                                                 />
                                                                 {
                                                                     error.telephone.length ? (
@@ -707,8 +708,11 @@ const IncompleteClaimsEdit = props => {
                                                             <div
                                                                 className={error.email.length ? "col validated" : "col"}>
                                                                 <label htmlFor="email">Email(s) <InputRequire/></label>
-                                                                <TagsInput disabled={!disabledInput} value={data.email}
-                                                                           onChange={onChangeEmail} inputProps={{
+                                                                <TagsInput
+                                                                    // disabled={!disabledInput}
+                                                                    value={data.email}
+                                                                    onChange={onChangeEmail}
+                                                                    inputProps={{
                                                                     className: 'react-tagsinput-input',
                                                                     placeholder: 'Email(s)'
                                                                 }}/>
