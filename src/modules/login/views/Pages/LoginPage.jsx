@@ -46,7 +46,7 @@ const LoginPage = (props) => {
         if (props.plan==="MACRO"){
              setToken((window.location.href).substr(43));
         }else {
-             setToken((window.location.href).substr(38));
+             setToken((window.location.href).substr(41));
         }
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
