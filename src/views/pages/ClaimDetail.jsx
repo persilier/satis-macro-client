@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import axios from "axios";
 import {
     useParams,
@@ -18,6 +18,7 @@ import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import RelaunchModal from "../components/RelaunchModal";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -27,6 +28,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 const ClaimDetail = (props) => {
     document.title = "Satis client - Détail plainte";
     const {id} = useParams();
+    const ref = useRef(null);
 
     const [claim, setClaim] = useState(null);
 
@@ -98,6 +100,18 @@ const ClaimDetail = (props) => {
 
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
+                                        <div className="d-flex justify-content-md-end">
+                                            {verifyPermission(props.userPermissions, 'revive-staff') && (
+                                                <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
+                                                    Relancer
+                                                </button>
+                                            )}
+                                            <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
+                                                Relancer
+                                            </button>
+
+                                            <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
+                                        </div>
                                         <ClientButtonDetail claim={claim}/>
 
                                         <ClaimButtonDetail claim={claim}/>

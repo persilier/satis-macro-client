@@ -117,6 +117,15 @@ const Aside = (props) => {
                                                 ) : null
                                             }
 
+                                            {(verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') && props.lead) && (
+                                                <NavLink exact to="/process/claim-reassign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                        <span className="kt-menu__link-text">Réassigner réclamation</span>
+                                                    </li>
+                                                </NavLink>
+                                            )}
+
                                             {
                                                 verifyPermission(props.userPermissions,"list-claim-assignment-to-staff") ? (
                                                     <NavLink exact to="/process/claim-assign/to-staff" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
@@ -742,7 +751,8 @@ const Aside = (props) => {
 const mapStateToProps = (state) => {
     return {
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot
+        activePilot: state.user.user.staff.is_active_pilot,
+        lead: state.user.user.staff.is_lead,
     };
 };
 

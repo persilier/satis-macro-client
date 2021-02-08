@@ -90,6 +90,7 @@ const ColToValidate = (props) => {
                     currentFilterData.map((claim, index) => (
                         <KanbanElementDetail
                             key={index}
+                            onClick={props.onClick}
                             onShowDetail={props.onShowDetail}
                             claim={claim}
                             index={index}
