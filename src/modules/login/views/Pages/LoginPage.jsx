@@ -24,8 +24,7 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 
 const LoginPage = (props) => {
-    const token=(window.location.href).substr(38);
-    // console.log(token,"TOKEN_URL");
+    // const tokenData=(window.location.href).substr(38);
 
     const defaultError = {
         username: "",
@@ -37,13 +36,18 @@ const LoginPage = (props) => {
     };
     const [load, setLoad] = useState(true);
     const [data, setData] = useState(defaultData);
+    const [tokenData, setToken] = useState("");
     const [componentData, setComponentData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
     useEffect(() => {
         let mounted = true;
-
+        if (props.plan==="MACRO"){
+             setToken((window.location.href).substr(43));
+        }else {
+             setToken((window.location.href).substr(38));
+        }
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
@@ -384,9 +388,9 @@ const LoginPage = (props) => {
                                                     <Route exact path="/login/forgot">
                                                        <ForgotForm/>
                                                     </Route>
-                                                    <Route  exact path={`/forgot-password/${token}`}>
+                                                    <Route  exact path={`/forgot-password/${tokenData}`}>
                                                        <ReinitialisationForm
-                                                       token={token}
+                                                       token={tokenData}
                                                        />
                                                     </Route>
                                                 </Switch>

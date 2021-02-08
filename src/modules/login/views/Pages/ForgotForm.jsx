@@ -28,7 +28,7 @@ const ForgotForm = () => {
     };
 
     return (
-        
+
         <div>
             <div className="kt-login__form "
                  style={{paddingTop: "100px"}}>
