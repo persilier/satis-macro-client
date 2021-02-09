@@ -66,24 +66,15 @@ const ReinitialisationForm = (props) => {
     };
     const onViewPassword = (e) => {
         let input = document.getElementById("password");
+        let inputConfirm = document.getElementById("password_confirm");
         let icon = document.getElementById("icon");
-        if (input.type === "password") {
+        if (input.type === "password"||inputConfirm.type === "password") {
             input.type = "text";
+            inputConfirm.type = "text";
             icon.className = "fa fa-eye"
         } else {
             input.type = "password";
-            icon.className = "fa fa-eye-slash"
-        }
-    };
-
-    const onViewPasswordConfirm = (e) => {
-        let input = document.getElementById("password_confirm");
-        let icon = document.getElementById("icon2");
-        if (input.type === "password") {
-            input.type = "text";
-            icon.className = "fa fa-eye"
-        } else {
-            input.type = "password";
+            inputConfirm.type = "password";
             icon.className = "fa fa-eye-slash"
         }
     };
@@ -100,7 +91,6 @@ const ReinitialisationForm = (props) => {
             })
             .catch(error => {
                 console.log(error.response.data.error, "error");
-
                 setStartRequestForgot(false);
                 setError({...defaultError,...error.response.data.error});
                 ToastBottomEnd.fire(toastEditErrorMessageConfig);
@@ -161,10 +151,6 @@ const ReinitialisationForm = (props) => {
                         </div>
                         <div className="form-group row input_container">
 
-                             <span className="input_icon">
-                                 <i id="icon2" className="fa fa-eye-slash" aria-hidden="true"
-                                    onClick={(e) => onViewPasswordConfirm(e)}></i>
-                             </span>
                             <input
                                 id="password_confirm"
                                 className="form-control"

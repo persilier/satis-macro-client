@@ -24,6 +24,7 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 
 const LoginPage = (props) => {
+    const tokenData=getToken(window.location.href);
 
     const defaultError = {
         username: "",
@@ -38,8 +39,6 @@ const LoginPage = (props) => {
     const [componentData, setComponentData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-
-    const tokenData=getToken(window.location.href);
 
     useEffect(() => {
         let mounted = true;
