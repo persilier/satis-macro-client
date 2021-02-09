@@ -76,7 +76,6 @@ const IncompleteClaims = (props) => {
         if (verifyTokenExpire()) {
             axios.get(endPoint.list)
                 .then(response => {
-                    console.log(response.data, 'Incomplete_Data');
                     setLoad(false);
                     setIncompleteClaims(response.data);
                     setShowList(response.data.slice(0, numberPerPage));

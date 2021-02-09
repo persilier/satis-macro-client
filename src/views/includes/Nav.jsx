@@ -127,7 +127,6 @@ const Nav = (props) => {
                     axios.get(endpoint)
                         .then((response) => {
                             setLoader(false);
-                            console.log("data:", response.data[0]);
                             setSearchData(response.data);
                         })
                         .catch((error) => {
@@ -137,7 +136,6 @@ const Nav = (props) => {
                         })
                     ;
                 }
-                console.log("value:", value);
             }.bind(value), 5000);
         }
     };

@@ -82,7 +82,6 @@ const ClaimReassignDetail = (props) => {
                     setStartRequest(false);
                     setStaff(null);
                     setErrors([]);
-                    // window.location.href = "/process/claim-reassign";
                 })
                 .catch(error => {
                     setStartRequest(false);

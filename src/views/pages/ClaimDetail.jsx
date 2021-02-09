@@ -2,7 +2,6 @@ import React, {useEffect, useState, useRef} from "react";
 import axios from "axios";
 import {
     useParams,
-    Link
 } from "react-router-dom";
 import {connect} from "react-redux";
 import {loadCss, loadScript} from "../../helpers/function";
@@ -19,6 +18,10 @@ import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import RelaunchModal from "../components/RelaunchModal";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmRevokeConfig} from "../../config/confirmConfig";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -27,6 +30,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 const ClaimDetail = (props) => {
     document.title = "Satis client - Détail plainte";
+    const [revokeLoad, setRevokeLoad] = useState(false);
     const {id} = useParams();
     const ref = useRef(null);
 
@@ -45,8 +49,6 @@ const ClaimDetail = (props) => {
         async function fetchData() {
             await axios.get(endpoint)
                 .then(response => {
-                    console.log("id:", id);
-                    console.log("response:", response);
                     setClaim(response.data[0]);
                 })
                 .catch(error => console.log("Something is wrong"))
@@ -56,6 +58,34 @@ const ClaimDetail = (props) => {
         if (verifyTokenExpire())
             fetchData();
     }, []);
+
+    const revoke = e => {
+        DeleteConfirmation.fire(confirmRevokeConfig)
+            .then(result => {
+                if (result.value) {
+                    setRevokeLoad(true);
+                    if (verifyTokenExpire()) {
+                        axios.put(`${appConfig.apiDomaine}/revoke-claim/${claim.id}`)
+                            .then(response => {
+                                setRevokeLoad(false);
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Réclamation revoquer avec succès'));
+                                setTimeout(() => {
+                                    if (document.referrer)
+                                        window.location.href = document.referrer;
+                                    else
+                                        window.location.href = "/";
+                                }, 1000);
+                            })
+                            .catch(error => {
+                                setRevokeLoad(false);
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec de revocation de la réclamation'));
+                                console.log("Something is wrong");
+                            })
+                    }
+                }
+            })
+        ;
+    };
 
     return (
         verifyPermission(props.userPermissions, "search-claim-any-reference") ||
@@ -101,6 +131,16 @@ const ClaimDetail = (props) => {
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                     <form className="kt-form" id="kt_form">
                                         <div className="d-flex justify-content-md-end">
+                                            {(verifyPermission(props.userPermissions, 'revoke-claim') && ['incomplete', 'full'].includes(claim ? claim.status : "")) && (
+                                                <>
+                                                    {revokeLoad ? (
+                                                        <button className="btn mr-2 btn-outline-danger btn-sm kt-spinner kt-spinner--v2 kt-spinner--sm kt-spinner--primary text-uppercase" disabled={true}>Chargement</button>
+                                                    ) : (
+                                                        <button onClick={revoke} className="btn mr-2 btn-outline-danger btn-sm text-uppercase">Revoquer</button>
+                                                    )}
+                                                </>
+                                            )}
+
                                             {verifyPermission(props.userPermissions, 'revive-staff') && (
                                                 <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
                                                     Relancer

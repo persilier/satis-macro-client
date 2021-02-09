@@ -329,7 +329,7 @@ const ClaimMonitoring = (props) => {
                                         {
                                             verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') ? (
                                                 <div className={"col"}>
-                                                    <label htmlFor="institution">Institution</label>
+                                                    <label htmlFor="institution">Institution concernée</label>
                                                     <Select
                                                         placeholder={"Veillez selectioner l'institution"}
                                                         isClearable
@@ -342,7 +342,7 @@ const ClaimMonitoring = (props) => {
                                         }
 
                                         <div className={"col"}>
-                                            <label htmlFor="unite">Unité</label>
+                                            <label htmlFor="unite">Unité en charge du traitement</label>
                                             <Select
                                                 isClearable
                                                 placeholder={"Veillez selectioner l'unité"}
@@ -353,7 +353,7 @@ const ClaimMonitoring = (props) => {
                                         </div>
 
                                         <div className={"col"}>
-                                            <label htmlFor="staff">Agent</label>
+                                            <label htmlFor="staff">Agent traitant</label>
                                             <Select
                                                 isClearable
                                                 placeholder={"Veillez selectioner l'agent"}
@@ -366,7 +366,7 @@ const ClaimMonitoring = (props) => {
 
                                     <div className="form-group row" style={{marginRight: "12px"}}>
                                         <div className="col">
-                                            <label htmlFor="category">Catégorie</label>
+                                            <label htmlFor="category">Catégorie de la réclamation traitée</label>
                                             <Select
                                                 value={category}
                                                 placeholder={"Veillez selectioner la catégorie"}
@@ -377,7 +377,7 @@ const ClaimMonitoring = (props) => {
                                         </div>
 
                                         <div className="col">
-                                            <label htmlFor="object">Objet</label>
+                                            <label htmlFor="object">Objet de la réclamation traitée</label>
                                             <Select
                                                 isClearable
                                                 value={object}
@@ -388,7 +388,7 @@ const ClaimMonitoring = (props) => {
                                         </div>
 
                                         <div className="col">
-                                            <label htmlFor="expireDate">Délai</label>
+                                            <label htmlFor="expireDate">Délai de traitement</label>
                                             <select name="" id="" className="form-control" value={filterTimeLimit} onChange={handleTimeLimitChange}>
                                                 <option value="all">Tout</option>
                                                 <option value="today">Expire aujourd'hui</option>
@@ -399,6 +399,9 @@ const ClaimMonitoring = (props) => {
                                     </div>
 
                                     <div className="form-group row" style={{marginRight: "12px"}}>
+                                        <div className="col-12">
+                                            <h6 className="text-center">Période de reception de la réclamation</h6>
+                                        </div>
                                         <div className={"col"}>
                                             <label htmlFor="startDate">Date début</label>
                                             <input type="date" className="w-100 form-control" value={startDate} onChange={e => onChangeStartDate(e)}/>
