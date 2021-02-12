@@ -36,7 +36,7 @@ const LoginPage = (props) => {
     };
     const [load, setLoad] = useState(true);
     const [data, setData] = useState(defaultData);
-    const [componentData, setComponentData] = useState(defaultData);
+    const [componentData, setComponentData] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
 
