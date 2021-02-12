@@ -188,7 +188,7 @@ const IncompleteClaims = (props) => {
                             <Link
                                 to={`/process/incomplete_claims/edit/${claim.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Modifier">
+                                title="Complèter">
                                 <i className="la la-edit"/>
                             </Link>
                             : null
