@@ -221,6 +221,50 @@ const Aside = (props) => {
                                             </NavLink>
                                         ) : null
                                     }
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-one" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                    <span className="kt-menu__link-text">Etat global</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : null
+                                    }
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-two" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                    <span className="kt-menu__link-text">Etat Retard de +30</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : null
+                                    }
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-three" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                    <span className="kt-menu__link-text">Etat Hors Délai</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : null
+                                    }
+
+                                    {
+                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-four" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                <li className="kt-menu__link ">
+                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                    <span className="kt-menu__link-text">Etat analytique</span>
+                                                </li>
+                                            </NavLink>
+                                        ) : null
+                                    }
                                 </>
                             )
                         }

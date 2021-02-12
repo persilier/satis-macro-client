@@ -104,6 +104,10 @@ import PercentageMinFusion from "../pages/PercentageMinFusion";
 import ClaimDetail from "../pages/ClaimDetail";
 import ClaimReassign from "../pages/ClaimReassign";
 import ClaimReassignDetail from "../pages/ClaimReassignDetail";
+import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
+import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
+import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
+import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
 
 const Body = () => {
     return (
@@ -453,6 +457,22 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/reporting">
                 <ClaimReporting/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-one">
+                <ClaimReportingUemoaOne/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-two">
+                <ClaimReportingUemoaTwo/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-three">
+                <ClaimReportingUemoaThree/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-four">
+                <ClaimReportingUemoaFour/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">
