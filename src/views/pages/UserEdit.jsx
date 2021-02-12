@@ -129,6 +129,7 @@ const UserEdit = (props) => {
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 })
                 .catch(errorRequest => {
+                    console.log(errorRequest.response.data.error,"ERROR")
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);

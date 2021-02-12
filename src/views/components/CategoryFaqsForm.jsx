@@ -70,8 +70,8 @@ const CategoryFaqsForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        setData(defaultData);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        window.location.href="/settings/faqs/category"
                     })
                     .catch(error => {
                         setStartRequest(false);

@@ -7,7 +7,11 @@ import {connect} from "react-redux";
 import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
@@ -28,16 +32,16 @@ const endPointConfig = {
     PRO: {
         plan: "PRO",
         list: `${appConfig.apiDomaine}/my/clients`,
-        destroy: clientId => `${appConfig.apiDomaine}/my/clients/${clientId}`,
+        destroy: accountId => `${appConfig.apiDomaine}/my/clients/${accountId}`,
     },
     MACRO: {
         holding: {
             list: `${appConfig.apiDomaine}/any/clients`,
-            destroy: clientId => `${appConfig.apiDomaine}/any/clients/${clientId}`,
+            destroy: accountId => `${appConfig.apiDomaine}/any/clients/${accountId}`,
         },
         filial: {
             list: `${appConfig.apiDomaine}/my/clients`,
-            destroy: clientId => `${appConfig.apiDomaine}/my/clients/${clientId}`,
+            destroy: accountId => `${appConfig.apiDomaine}/my/clients/${accountId}`,
         }
     },
 
@@ -165,16 +169,16 @@ const Clients = (props) => {
         }
     };
 
-    const deleteClient = (clientId, index) => {
+    const deleteClient = (accountId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
-                        axios.delete(endPoint.destroy(clientId))
+                        axios.delete(endPoint.destroy(accountId))
                             .then(response => {
                                 const newClient = [...clients];
-                                newClient.splice(index, 1);
-                                setClients(newClient);
+                                // newClient.splice(index, 1);
+                                // setClients(newClient);
 
                                 if (showList.length > 1) {
                                     setShowList(
@@ -192,9 +196,13 @@ const Clients = (props) => {
                                     );
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                window.location.reload()
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
                             })
                         ;
                     }
@@ -269,13 +277,14 @@ const Clients = (props) => {
                                 verifyPermission(props.userPermissions, "destroy-client-from-my-institution") ||
                                 verifyPermission(props.userPermissions, "destroy-client-from-any-institution") ?
                                     <button
-                                        onClick={(e) => deleteClient(client.id, index)}
+                                        onClick={(e) => deleteClient(account.id, index)}
                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                         title="Supprimer">
                                         <i className="la la-trash"/>
                                     </button>
                                     : null
                             }
+
                         </td>
                     </tr>
                 )) : null
@@ -402,9 +411,9 @@ const Clients = (props) => {
                                                 <tfoot>
                                                 <tr style={{textAlign: "center"}}>
                                                     <th rowSpan="1" colSpan="1">Nom</th>
+                                                    <th rowSpan="1" colSpan="1">Téléphone(s)</th>
+                                                    <th rowSpan="1" colSpan="1">Email(s)</th>
                                                     <th rowSpan="1" colSpan="1">Numero de Compte</th>
-                                                    <th rowSpan="1" colSpan="1">Téléphone</th>
-                                                    <th rowSpan="1" colSpan="1">Emails</th>
                                                     <th rowSpan="1" colSpan="1">Action</th>
                                                 </tr>
                                                 </tfoot>

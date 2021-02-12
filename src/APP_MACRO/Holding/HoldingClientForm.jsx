@@ -7,7 +7,10 @@ import {
 import {ToastBottomEnd} from "../../views/components/Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
+    toastAddSuccessMessageConfig,
+    toastDeleteErrorMessageConfig,
+    toastEditErrorMessageConfig,
+    toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
@@ -33,7 +36,7 @@ const endPointConfig = {
         storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
         update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
         create: `${appConfig.apiDomaine}/my/clients/create`,
-        edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
+        edit: id => `${appConfig.apiDomaine}/my/clients/${id}`
     },
     MACRO: {
         holding: {
@@ -41,14 +44,14 @@ const endPointConfig = {
             storeAccount: id=> `${appConfig.apiDomaine}/any/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/any/clients/${id}`,
             create: `${appConfig.apiDomaine}/any/clients/create`,
-            edit: id => `${appConfig.apiDomaine}/any/clients/${id}/edit`
+            edit: id => `${appConfig.apiDomaine}/any/clients/${id}`
         },
         filial: {
             store: `${appConfig.apiDomaine}/my/clients`,
             storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
             create: `${appConfig.apiDomaine}/my/clients/create`,
-            edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
+            edit: id => `${appConfig.apiDomaine}/my/clients/${id}`
         }
     },
 };
@@ -56,7 +59,6 @@ const endPointConfig = {
 const HoldingClientForm = (props) => {
 
     const {id} = useParams();
-
     if (!id) {
         if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'store-client-from-my-institution')))
             window.location.href = ERROR_401;
@@ -145,8 +147,6 @@ const HoldingClientForm = (props) => {
             if (id) {
                 axios.get(endPoint.edit(id))
                     .then(response => {
-                        console.log(response.data,"DATA")
-
                         const newClient = {
                             firstname: response.data.client_institution.client.identite.firstname,
                             lastname: response.data.client_institution.client.identite.lastname,
@@ -156,14 +156,14 @@ const HoldingClientForm = (props) => {
                             institution_id: response.data.client_institution.institution_id,
                             ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
 
-                            number: response.data.account.number,
-                            account_type_id: response.data.account.account_type_id,
+                            number: response.data.number,
+                            account_type_id: response.data.account_type_id,
                             category_client_id: response.data.client_institution.category_client_id,
                         };
                         setData(newClient);
                         setType({
-                            value: response.data.account.account_type?response.data.account.account_type.id:"",
-                            label: response.data.account.account_type?response.data.account.account_type.name.fr:""
+                            value: response.data.account_type?response.data.account_type.id:"",
+                            label: response.data.account_type?response.data.account_type.name.fr:""
                         });
                         setCategory({
                             value: response.data.client_institution.category_client ? response.data.client_institution.category_client.id : "",
@@ -308,7 +308,10 @@ const HoldingClientForm = (props) => {
                     .catch((errorRequest) => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        if (error.response.data.error)
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.message));
+                        else
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
                     })
                 ;
             } else {
@@ -343,7 +346,6 @@ const HoldingClientForm = (props) => {
                             ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                         })
                         .catch(async (errorRequest) => {
-
                             if (errorRequest.response.data.error.identite) {
                                 await setFoundIdentity(errorRequest.response.data.error);
                                 await document.getElementById("confirmClientSaveForm").click();
@@ -753,7 +755,6 @@ const HoldingClientForm = (props) => {
                                         <button style={{display: "none"}} id="confirmClientSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm"
                                                 data-toggle="modal" data-target="#kt_modal_4">Launch Modal
                                         </button>
-
                                         {
                                             foundIdentity? (
                                                 <ConfirmClientSaveForm
