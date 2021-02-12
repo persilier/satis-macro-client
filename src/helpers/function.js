@@ -57,6 +57,11 @@ export const loadCss = function (linkStylsheet) {
             if (!exitingStyleSheet("style-kanban-bord"))
                 document.getElementsByTagName("head")[0].append(tag);
             break;
+        case "/assets/js/pages/crud/metronic-datatable/advanced/row-details.js":
+            tag.id = "datatable-row-detail";
+            if (!exitingStyleSheet("datatable-row-detail"))
+                document.getElementsByTagName("head")[0].append(tag);
+            break;
         default:
             break;
     }
