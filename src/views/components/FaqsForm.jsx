@@ -7,7 +7,7 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {formatSelectOption} from "../../helpers/function";
@@ -55,7 +55,7 @@ const FaqsForm = (props) => {
             if (editfaqid) {
                 axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
                     .then(response => {
-                        console.log(response.data, "FAQS_Edit")
+                        // console.log(response.data, "FAQS_Edit")
                         const newFaq = {
                             faq_category_id: response.data.faq_category.id,
                             question: response.data.question["fr"],
@@ -95,12 +95,12 @@ const FaqsForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
                     })
                 ;
             }else {
