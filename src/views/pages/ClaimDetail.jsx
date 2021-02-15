@@ -141,16 +141,22 @@ const ClaimDetail = (props) => {
                                                 </>
                                             )}
 
-                                            {verifyPermission(props.userPermissions, 'revive-staff') && (
-                                                <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
-                                                    Relancer
-                                                </button>
-                                            )}
-                                            <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
-                                                Relancer
-                                            </button>
+                                            {console.log("claim:", claim)}
+                                            {(claim && claim.status !== "archived") ? (
+                                                <>
+                                                    {verifyPermission(props.userPermissions, 'revive-staff') && (
+                                                        <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
+                                                            Relancer
+                                                        </button>
+                                                    )}
+                                                    <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
+                                                        Relancer
+                                                    </button>
 
-                                            <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
+                                                    <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
+                                                </>
+                                            ) : null}
+
                                         </div>
                                         <ClientButtonDetail claim={claim}/>
 

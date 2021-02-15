@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux"
-import FileSaver from "file-saver";
 import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
@@ -118,18 +117,16 @@ const ClaimReportingUemoaThree = (props) => {
                 getLowerCaseString(el.claimCategorie ? el.claimCategorie : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimObject ? el.claimObject : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.delayMediumQualification+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayMediumTreatmentOpenDay+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayMediumTreatmentWorkingDay+"").indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayMediumTreatmentWithWeekend+"").indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayMediumTreatmentWithoutWeekend+"").indexOf(value) >= 0 ||
                 getLowerCaseString(el.delayPlanned+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.filiale ? el.filiale : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.percentageNoTreated+"").indexOf(value) >= 0 ||
                 getLowerCaseString(el.percentageTreatedInDelay+"").indexOf(value) >= 0 ||
                 getLowerCaseString(el.percentageTreatedOutDelay+"").indexOf(value) >= 0 ||
                 getLowerCaseString(el.totalClaim+"").indexOf(value) >= 0 ||
                 getLowerCaseString(el.totalNoValidated+"").indexOf(value) >= 0 ||
                 getLowerCaseString(el.totalTreated+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.totalUnfounded+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.typeClient ? el.typeClient : '-').indexOf(value) >= 0
+                getLowerCaseString(el.totalUnfounded+"").indexOf(value) >= 0
             )
         });
 
@@ -234,6 +231,9 @@ const ClaimReportingUemoaThree = (props) => {
             sendData = {date_start: dateStart, date_end: dateEnd};
         }
 
+        if (!institution)
+            delete sendData.institution_id;
+
         if (verifyTokenExpire()) {
             axios({
                 method: 'post',
@@ -252,7 +252,7 @@ const ClaimReportingUemoaThree = (props) => {
                     downloadButton.click();
                     setLoadDownload(false);
                     setLoadDownload(false);
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
+                    // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
                     setError({
@@ -279,12 +279,7 @@ const ClaimReportingUemoaThree = (props) => {
                     </button>
                     <div className="dropdown-menu px-5" style={{ width: "550px" }}>
                         <div className="d-flex justify-content-between">
-                            <strong>Nombre de réclamation en cours</strong>
-                            <p className="ml-5">{claim.totalNoValidated}</p>
-                        </div>
-
-                        <div className="d-flex justify-content-between">
-                            <strong>Délai moyen de qualification</strong>
+                            <strong>Délai moyen de qualification (J) avec Weekend</strong>
                             <p className="ml-5">{claim.delayMediumQualification}</p>
                         </div>
 
@@ -294,27 +289,27 @@ const ClaimReportingUemoaThree = (props) => {
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délai moyen de traitement ouvré</strong>
-                            <p className="ml-5">{claim.delayMediumTreatmentOpenDay}</p>
+                            <strong>Délai moyen de traitement (J) avec Weekend</strong>
+                            <p className="ml-5">{claim.delayMediumTreatmentWithWeekend}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délai moyen de traitement ouvrable</strong>
-                            <p className="ml-5">{claim.delayMediumTreatmentWorkingDay}</p>
+                            <strong>Délai moyen de traitement (J) sans Weekend</strong>
+                            <p className="ml-5">{claim.delayMediumTreatmentWithoutWeekend}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Pourcentage de réclamations traitées dans le delai</strong>
+                            <strong>Pourcentage de réclamations traités dans le délai</strong>
                             <p className="ml-5">{claim.percentageTreatedInDelay+"%"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Pourcentage de réclamation traité hors délai</strong>
+                            <strong>Pourcentage de réclamations traités hors délai</strong>
                             <p className="ml-5">{claim.percentageTreatedOutDelay+"%"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Pourcentage de réclamation en cours de traitement</strong>
+                            <strong>Pourcentage de réclamations en cours de traitement</strong>
                             <p className="ml-5">{claim.percentageNoTreated+"%"}</p>
                         </div>
                     </div>
@@ -322,12 +317,12 @@ const ClaimReportingUemoaThree = (props) => {
                 {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                     <td>{claim.filiale ? claim.filiale : '-'}</td>
                 ) : null}
-                <td>{claim.typeClient ? claim.typeClient : "-"}</td>
                 <td>{claim.claimCategorie  ? claim.claimCategorie  : "-"}</td>
                 <td>{claim.claimObject  ? claim.claimObject  : "-"}</td>
                 <td>{claim.totalClaim ? claim.totalClaim : "-"}</td>
                 <td>{claim.totalTreated ? claim.totalTreated : "-"}</td>
                 <td>{claim.totalUnfounded}</td>
+                <td>{claim.totalNoValidated}</td>
             </tr>
         );
     };
@@ -479,9 +474,6 @@ const ClaimReportingUemoaThree = (props) => {
                                                             </th>
                                                         ) : null}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Type Client
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                             Catégorie réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
@@ -495,6 +487,10 @@ const ClaimReportingUemoaThree = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                             Nombre de réclamation non fondé
+                                                        </th>
+
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Nombre de réclamations en cours
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -516,18 +512,18 @@ const ClaimReportingUemoaThree = (props) => {
                                                     }
                                                     </tbody>
                                                     <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Détail</th>
-                                                        {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                                            <th rowSpan="1" colSpan="1">Filiale</th>
-                                                        ) : null}
-                                                        <th rowSpan="1" colSpan="1">Type Client</th>
-                                                        <th rowSpan="1" colSpan="1">Catégorie réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Objet réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Nombre de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Nombre de réclamation traitées</th>
-                                                        <th rowSpan="1" colSpan="1">Nombre de réclamation non fondé</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">Détail</th>
+                                                            {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
+                                                                <th rowSpan="1" colSpan="1">Filiale</th>
+                                                            ) : null}
+                                                            <th rowSpan="1" colSpan="1">Catégorie réclamation</th>
+                                                            <th rowSpan="1" colSpan="1">Objet réclamation</th>
+                                                            <th rowSpan="1" colSpan="1">Nombre de réclamation</th>
+                                                            <th rowSpan="1" colSpan="1">Nombre de réclamation traitées</th>
+                                                            <th rowSpan="1" colSpan="1">Nombre de réclamation non fondé</th>
+                                                            <th rowSpan="1" colSpan="1">Nombre de réclamations en cours</th>
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
