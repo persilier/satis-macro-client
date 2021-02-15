@@ -113,8 +113,11 @@ const ClaimReportingUemoaOne = (props) => {
         let newClaims = [...claims];
         newClaims = newClaims.filter(el => {
             return (
-                getLowerCaseString(el.account ? el.account : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.filiale ? el.filiale : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.account ? el.account : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.accountCurrency ? el.accountCurrency : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.agence ? el.agence : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.amountDisputed ? el.amountDisputed : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.amountDisputed ? el.amountDisputed : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimCategorie ? el.claimCategorie : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimObject ? el.claimObject : '-').indexOf(value) >= 0 ||
@@ -124,17 +127,16 @@ const ClaimReportingUemoaOne = (props) => {
                 getLowerCaseString(el.dateQualification ? el.dateQualification : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.dateRegister ? el.dateRegister : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.dateTreatment ? el.dateTreatment : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayQualificationOpenDay ? el.delayQualificationOpenDay : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayQualificationWorkingDay ? el.delayQualificationWorkingDay : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayTreatmentOpenDay ? el.delayTreatmentOpenDay : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayTreatmentWorkingDay ? el.delayTreatmentWorkingDay : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayQualifWithWeekend ? el.delayQualifWithWeekend : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayTreatWithWeekend ? el.delayTreatWithWeekend : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayTreatWithoutWeekend ? el.delayTreatWithoutWeekend : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.functionTreating ? el.functionTreating : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.requestChannel ? el.requestChannel : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.solution ? el.solution : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.staffTreating ? el.staffTreating : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.status ? el.status : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.typeClient ? el.typeClient : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.accountCurrency ? el.accountCurrency : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.agence ? el.agence : '-').indexOf(value) >= 0
+                getLowerCaseString(el.telephone ? el.telephone : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.typeClient ? el.typeClient : '-').indexOf(value) >= 0
             )
         });
 
@@ -239,8 +241,8 @@ const ClaimReportingUemoaOne = (props) => {
             sendData = {date_start: dateStart, date_end: dateEnd};
         }
 
-        if (sendData.institution_id === null)
-            delete  sendData.institution_id;
+        if (!institution)
+            delete sendData.institution_id;
 
         if (verifyTokenExpire()) {
             await axios({
@@ -259,7 +261,7 @@ const ClaimReportingUemoaOne = (props) => {
                     downloadButton.href =`${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
                     downloadButton.click();
                     setLoadDownload(false);
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
+                    // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
                     console.log("error:", {
@@ -292,17 +294,32 @@ const ClaimReportingUemoaOne = (props) => {
                     </button>
                     <div className="dropdown-menu px-5" style={{ width: "550px" }}>
                         <div className="d-flex justify-content-between">
-                            <strong>Commentaire (Description réclamation)</strong>
+                            <strong>Objet de réclamation</strong>
+                            <p className="ml-5">{claim.claimObject ? claim.claimObject : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Canal de réception</strong>
+                            <p className="ml-5">{claim.requestChannel ? claim.requestChannel : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Commentaire (client)</strong>
                             <p className="ml-5">{claim.commentClient ? claim.commentClient : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
                             <strong>Fonction de traitement</strong>
+                            <p className="ml-5">{claim.functionTreating ? claim.functionTreating : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Staff traitant</strong>
                             <p className="ml-5">{claim.staffTreating ? claim.staffTreating : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Commentaire (Solution du staff)</strong>
+                            <strong>Solution apportée par le staff</strong>
                             <p className="ml-5">{claim.solution ? claim.solution : "-"}</p>
                         </div>
 
@@ -317,7 +334,7 @@ const ClaimReportingUemoaOne = (props) => {
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date de qualification</strong>
+                            <strong>Date qualification</strong>
                             <p className="ml-5">{claim.dateQualification ? claim.dateQualification : "-"}</p>
                         </div>
 
@@ -327,13 +344,23 @@ const ClaimReportingUemoaOne = (props) => {
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date de qualification (j)</strong>
-                            <p className="ml-5">{claim.delayQualificationOpenDay ? claim.delayQualificationOpenDay : "-"}</p>
+                            <strong>Date clôture</strong>
+                            <p className="ml-5">{claim.dateClosing ? claim.dateClosing : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date de traitement (j)</strong>
-                            <p className="ml-5">{claim.delayQualificationWorkingDay ? claim.delayQualificationWorkingDay : "-"}</p>
+                            <strong>Délai de qualification (J) avec Weekend</strong>
+                            <p className="ml-5">{claim.delayQualifWithWeekend ? claim.delayQualifWithWeekend : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Délai de traitement (J) avec Weekend</strong>
+                            <p className="ml-5">{claim.delayTreatWithWeekend ? claim.delayTreatWithWeekend : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Délai de traitement (J) sans Weekend</strong>
+                            <p className="ml-5">{claim.delayTreatWithoutWeekend ? claim.delayTreatWithoutWeekend : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
@@ -351,11 +378,11 @@ const ClaimReportingUemoaOne = (props) => {
                     <td>{claim.filiale ? claim.filiale : '-'}</td>
                 ) : null}
                 <td>{claim.typeClient ? claim.typeClient : "-"}</td>
+                <td>{claim.client ? claim.client : "-"}</td>
                 <td>{claim.account ? claim.account : "-"}</td>
+                <td>{claim.telephone ? claim.telephone : "-"}</td>
                 <td>{claim.agence ? claim.agence : "-"}</td>
                 <td>{claim.claimCategorie ? claim.claimCategorie : "-"}</td>
-                <td>{claim.claimObject ? claim.claimObject : "-"}</td>
-                <td>{claim.requestChannel ? claim.requestChannel : "-"}</td>
             </tr>
         );
     };
@@ -510,19 +537,19 @@ const ClaimReportingUemoaOne = (props) => {
                                                             Type Client
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            N Compte
+                                                            Client
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            N° Compte
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            Téléphone
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                             Agence
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                             Catégorie réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Objet réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Canal réception
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -550,11 +577,11 @@ const ClaimReportingUemoaOne = (props) => {
                                                             <th rowSpan="1" colSpan="1">Filiale</th>
                                                         ) : null}
                                                         <th rowSpan="1" colSpan="1">Type Client</th>
-                                                        <th rowSpan="1" colSpan="1">N Compte</th>
+                                                        <th rowSpan="1" colSpan="1">Client</th>
+                                                        <th rowSpan="1" colSpan="1">N° Compte</th>
+                                                        <th rowSpan="1" colSpan="1">Téléphone</th>
                                                         <th rowSpan="1" colSpan="1">Agence</th>
                                                         <th rowSpan="1" colSpan="1">Catégorie réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Objet réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Canal réception</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>

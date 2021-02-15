@@ -115,6 +115,8 @@ const ClaimReportingUemoaThree = (props) => {
             return (
                 getLowerCaseString(el.filiale ? el.filiale : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.account ? el.account : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.accountCurrency ? el.accountCurrency : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.agence ? el.agence : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.amountDisputed ? el.amountDisputed : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimCategorie ? el.claimCategorie : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimObject ? el.claimObject : '-').indexOf(value) >= 0 ||
@@ -124,17 +126,16 @@ const ClaimReportingUemoaThree = (props) => {
                 getLowerCaseString(el.dateQualification ? el.dateQualification : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.dateRegister ? el.dateRegister : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.dateTreatment ? el.dateTreatment : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayQualificationOpenDay ? el.delayQualificationOpenDay : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayQualificationWorkingDay ? el.delayQualificationWorkingDay : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayTreatmentOpenDay ? el.delayTreatmentOpenDay : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayTreatmentWorkingDay ? el.delayTreatmentWorkingDay : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayQualifWithWeekend ? el.delayQualifWithWeekend : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayTreatWithWeekend ? el.delayTreatWithWeekend : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayTreatWithoutWeekend ? el.delayTreatWithoutWeekend : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.functionTreating ? el.functionTreating : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.requestChannel ? el.requestChannel : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.solution ? el.solution : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.staffTreating ? el.staffTreating : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.status ? el.status : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.typeClient ? el.typeClient : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.accountCurrency ? el.accountCurrency : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.agence ? el.agence : '-').indexOf(value) >= 0
+                getLowerCaseString(el.telephone ? el.telephone : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.typeClient ? el.typeClient : '-').indexOf(value) >= 0
             )
         });
 
@@ -239,7 +240,7 @@ const ClaimReportingUemoaThree = (props) => {
             sendData = {date_start: dateStart, date_end: dateEnd};
         }
 
-        if (sendData.institution_id === null)
+        if (!institution)
             delete sendData.institution_id;
 
         if (verifyTokenExpire()) {
@@ -260,7 +261,7 @@ const ClaimReportingUemoaThree = (props) => {
                     downloadButton.href =`${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
                     downloadButton.click();
                     setLoadDownload(false);
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
+                    // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
                     setError({
@@ -303,12 +304,17 @@ const ClaimReportingUemoaThree = (props) => {
 
                         <div className="d-flex justify-content-between">
                             <strong>Fonction de traitement</strong>
-                            <p className="ml-5">{claim.status ? claim.status : "-"}</p>
+                            <p className="ml-5">{claim.functionTreating ? claim.functionTreating : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Commentaire (fonction de traitement)</strong>
+                            <strong>Staff traitant</strong>
                             <p className="ml-5">{claim.staffTreating ? claim.staffTreating : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Solution apportée par le staff</strong>
+                            <p className="ml-5">{claim.solution ? claim.solution : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
@@ -332,18 +338,23 @@ const ClaimReportingUemoaThree = (props) => {
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délai de qualification</strong>
-                            <p className="ml-5">{claim.delayQualificationWorkingDay ? claim.delayQualificationWorkingDay : "-"}</p>
+                            <strong>Date clôture</strong>
+                            <p className="ml-5">{claim.dateClosing ? claim.dateClosing : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délait de traitement(jour ouvrable)</strong>
-                            <p className="ml-5">{claim.delayTreatmentWorkingDay ? claim.delayTreatmentWorkingDay : "-"}</p>
+                            <strong>Délai de qualification (J) avec Weekend</strong>
+                            <p className="ml-5">{claim.delayQualifWithWeekend ? claim.delayQualifWithWeekend : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Tempps global de traitement</strong>
-                            <p className="ml-5">{claim.delayTreatmentOpenDay ? claim.delayTreatmentOpenDay : "-"}</p>
+                            <strong>Délai de traitement (J) avec Weekend</strong>
+                            <p className="ml-5">{claim.delayTreatWithWeekend ? claim.delayTreatWithWeekend : "-"}</p>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <strong>Délai de traitement (J) sans Weekend</strong>
+                            <p className="ml-5">{claim.delayTreatWithoutWeekend ? claim.delayTreatWithoutWeekend : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
