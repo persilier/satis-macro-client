@@ -222,49 +222,69 @@ const Aside = (props) => {
                                         ) : null
                                     }
 
-                                    {
-                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-one" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                <li className="kt-menu__link ">
-                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                    <span className="kt-menu__link-text">Etat global</span>
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
+                                        data-ktmenu-submenu-toggle="hover">
+                                        <a href="#historique" onClick={e => e.preventDefault()}
+                                           className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                            <span className="kt-menu__link-text">Raport</span>
+                                            <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                        </a>
+                                        <div className="kt-menu__submenu ">
+                                            <span className="kt-menu__arrow"/>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">Raport</span>
+                                                </span>
                                                 </li>
-                                            </NavLink>
-                                        ) : null
-                                    }
 
-                                    {
-                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-two" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                <li className="kt-menu__link ">
-                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                    <span className="kt-menu__link-text">Etat Retard de +30</span>
-                                                </li>
-                                            </NavLink>
-                                        ) : null
-                                    }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                        <NavLink exact to="/monitoring/claims/uemoa/reporting-one" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Etat global</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
 
-                                    {
-                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-three" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                <li className="kt-menu__link ">
-                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                    <span className="kt-menu__link-text">Etat Hors Délai</span>
-                                                </li>
-                                            </NavLink>
-                                        ) : null
-                                    }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                        <NavLink exact to="/monitoring/claims/uemoa/reporting-two" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Etat Retard de +30</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
 
-                                    {
-                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-four" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                <li className="kt-menu__link ">
-                                                    <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                    <span className="kt-menu__link-text">Etat analytique</span>
-                                                </li>
-                                            </NavLink>
-                                        ) : null
-                                    }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                        <NavLink exact to="/monitoring/claims/uemoa/reporting-three" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Etat Hors Délai</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                        <NavLink exact to="/monitoring/claims/uemoa/reporting-four" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Etat analytique</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                            </ul>
+                                        </div>
+                                    </li>
                                 </>
                             )
                         }
