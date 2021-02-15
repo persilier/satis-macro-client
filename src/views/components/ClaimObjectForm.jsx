@@ -251,7 +251,7 @@ const ClaimObjectForm = (props) => {
                                         </div>
 
                                         <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Délai de traitement <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="timeLimite">Délai de traitement (en jour) <InputRequire/></label>
                                             <div className="col-lg-9 col-xl-6">
                                                 <input
                                                     id="timeLimite"

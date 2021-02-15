@@ -110,23 +110,25 @@ const HoldingUnitForm = (props) => {
             if (id) {
                 await axios.get(endPoint.edit(id))
                     .then(response => {
-                        console.log("response:", response.data);
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
                             institution_id: response.data.unit.institution ? response.data.unit.institution_id ? response.data.unit.institution_id : "" : "",
                         };
+                        setData(newData);
+                        setUnitType({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
+                        setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
                             response.data.unit.lead ? {value: response.data.unit.lead.id, label: response.data.unit.lead.identite.lastname+" "+response.data.unit.lead.identite.lastname} : {value: "", label: ""}
                         );
-                        setUnitType({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
-                        setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+
                         if (verifyPermission(props.userPermissions, 'update-any-unit')) {
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                             setInstitution(response.data.unit.institution ? {value: response.data.unit.institution.id, label: response.data.unit.institution.name} : {value: "", label: ""});
                         }
-                        setData(newData);
+
                     })
                     .catch(error => {
                         console.log("Something is wrong");
@@ -269,7 +271,6 @@ const HoldingUnitForm = (props) => {
                                         </h3>
                                     </div>
                                 </div>
-
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
@@ -280,7 +281,7 @@ const HoldingUnitForm = (props) => {
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="dmd"
+                                                        placeholder="Ex:dmd"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />

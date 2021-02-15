@@ -456,13 +456,13 @@ const Aside = (props) => {
                                                     ): null
                                                 }
 
-                                                        {/*<NavLink to="/settings/faqs/list" className="kt-menu__item "*/}
-                                                        {/*         activeClassName="kt-menu__item--active" aria-haspopup="true">*/}
-                                                        {/*    <li className="kt-menu__link ">*/}
-                                                        {/*        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>*/}
-                                                        {/*        <span className="kt-menu__link-text">FAQs</span>*/}
-                                                        {/*    </li>*/}
-                                                        {/*</NavLink>*/}
+                                                        <NavLink to="/settings/faqs/list" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">FAQs</span>
+                                                            </li>
+                                                        </NavLink>
 
                                                 {
                                                     verifyPermission(props.userPermissions, "list-faq")?

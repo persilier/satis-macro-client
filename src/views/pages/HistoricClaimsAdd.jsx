@@ -226,33 +226,33 @@ const HistoricClaimsAdd = (props) => {
                                                 <tr role="row">
                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        colSpan="1" style={{width: "50px"}}
                                                         aria-label="Country: activate to sort column ascending">Référence
                                                     </th>
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "80px"}}
+                                                        colSpan="1" style={{width: "50px"}}
                                                         aria-label="Country: activate to sort column ascending">Réclamant
                                                     </th>
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
+                                                        colSpan="1" style={{width: "80px"}}
                                                         aria-label="Country: activate to sort column ascending">Objets
                                                         de réclamation
                                                     </th>
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "150px"}}
+                                                        colSpan="1" style={{width: "100px"}}
                                                         aria-label="Country: activate to sort column ascending">Description
                                                         de la Réclamation
                                                     </th>
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "70.25px"}}
+                                                        colSpan="1" style={{width: "70px"}}
                                                         aria-label="Country: activate to sort column ascending">
                                                         {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
 
@@ -260,13 +260,13 @@ const HistoricClaimsAdd = (props) => {
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
                                                         rowSpan="1"
-                                                        colSpan="1" style={{width: "50px"}}
+                                                        colSpan="1" style={{width: "70px"}}
                                                         aria-label="Ship City: activate to sort column ascending">Statut
                                                     </th>
 
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"
-                                                        rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                        rowSpan="1" colSpan="1" style={{width: "25px"}}
                                                         aria-label="Type: activate to sort column ascending">
                                                         Action
                                                     </th>

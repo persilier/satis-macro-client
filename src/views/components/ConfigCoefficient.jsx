@@ -107,7 +107,12 @@ const ConfigCoefficient = (props) => {
                                     <div className="kt-portlet__body">
 
                                         <div className={error.coef.length ? "form-group  validated" : "form-group"}>
-                                            <label htmlFor="coef">Coefficient <InputRequire/></label>
+                                            <label htmlFor="coef"
+                                                   title="Coefficient de la relance"
+                                                   data-toggle="tooltip"
+                                                   data-placement="bottom">
+                                                Coefficient <InputRequire/><i className="fa fa-info-circle"/>
+                                            </label>
                                             <div className="col-md-6 mb-3">
                                                 <input
                                                     id="coef"
