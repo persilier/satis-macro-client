@@ -46,7 +46,7 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    console.log(response.data,"DATA")
+                    // console.log(response.data,"DATA")
                     setComponentData(response.data);
                     setLoad(false);
                 })
