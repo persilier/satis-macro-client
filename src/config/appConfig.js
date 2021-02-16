@@ -6,8 +6,8 @@ const appConfig =  {
     enterprise: 'DMD',
     contact: '21256325',
     timeAfterDisconnection: 8,
-    host: `satis-hub.local`,
-    apiDomaine: `http://satis-hub.local`,
+    host: `satis-pro.local`,
+    apiDomaine: `http://satis-pro.local`,
     port: 6001
 };
 
