@@ -21,11 +21,10 @@ const ParametersComponentEdit = (props) => {
         params_logo:false,
         params_owner_logo:false,
         params_background:false
-    }
+    };
 
     const [dataType, setDataType] = useState({});
     const [logo, setLogo] = useState(defaultLogo);
-
     const [data, setData] = useState({});
     const [error, setError] = useState({});
     const [startRequest, setStartRequest] = useState(false);
