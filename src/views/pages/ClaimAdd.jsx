@@ -476,7 +476,7 @@ const ClaimAdd = props => {
 
     const startSearchClient = async () => {
         setStartSearch(true);
-        const value = props.plan === "PRO" ? props.currentUserInstitution : institution.value;
+        const value = props.plan === "PRO" ? (props.currentUserInstitution) : (verifyPermission(props.userPermissions, 'store-claim-against-my-institution') ? props.currentUserInstitution : institution.value);
         if (searchInputValue === clientCash.searchInputValue) {
             setStartSearch(false);
             setSearchList(clientCash.clients);
@@ -525,8 +525,13 @@ const ClaimAdd = props => {
         await setClaimObjects([]);
         await setAccounts([]);
         await setAccount(null);
-        if (props.plan !== "PRO")
-            await setUnits([]);
+        if (props.plan !== "PRO") {
+            if (verifyPermission(props.userPermissions, 'store-claim-against-my-institution') && props.plan === "MACRO") {
+
+            } else {
+                await setUnits([]);
+            }
+        }
         await setUnit(null);
         await setDisabledInput(false);
         await setData(defaultData);
