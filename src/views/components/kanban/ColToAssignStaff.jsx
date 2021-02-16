@@ -22,8 +22,9 @@ const ColToAssignStaff = (props) => {
 
     const filterByInstitution = () => {
         currentFilterData = currentFilterData.filter(claim => {
-            if (props.plan === "MACRO" || props.plan === "PRO")
-                return claim.active_treatment.responsible_unit.institution_id.indexOf(props.filterInstitution.value) >= 0;
+            if (props.plan === "MACRO" || props.plan === "PRO") {
+                return claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0;
+            }
             else if(props.plan === "HUB")
                 return claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0;
             else
