@@ -30,7 +30,7 @@ const ParametersComponentEdit = (props) => {
         const newDataType = {};
         const newError = {};
         params.map(param => {
-            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? paramData[param].value.url : paramData[param].value : "";
+            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? (paramData[param].value!== null?paramData[param].value.url:null) : paramData[param].value : "";
             newDataType[`params_${param}`] = paramData ? paramData[param].type : "";
             newError[`params_${param}`] = [];
 
