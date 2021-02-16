@@ -351,7 +351,7 @@ const ClaimReportingUemoaThree = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Raport Etat analytique
+                            Rapport Etat analytique
                         </div>
                     )}/>
 

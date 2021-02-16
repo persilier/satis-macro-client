@@ -405,7 +405,7 @@ const ClaimReportingUemoaTwo = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Raport Etat Retard de 30 jours
+                            Rapport Etat Retard de 30 jours
                         </div>
                     )}/>
 
