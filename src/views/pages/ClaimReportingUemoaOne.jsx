@@ -411,7 +411,7 @@ const ClaimReportingUemoaOne = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Raport Etat global
+                            Rapport Etat global
                         </div>
                     )}/>
 

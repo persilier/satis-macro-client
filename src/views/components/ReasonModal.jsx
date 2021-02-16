@@ -27,7 +27,11 @@ const ReasonModal = props => {
                     })
                     .catch(error => {
                         setStartRequest(false);
-                        setError(error.response.data.error.rejected_reason);
+                        if (error.response.data.code === 403) {
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Vous ne pouvez pas effectuer cette opération. Le nombre tolérable est dépassé.'))
+                        } else {
+                            setError(error.response.data.error.rejected_reason);
+                        }
                     })
                 ;
             } else if(props.action === "validateReject") {
