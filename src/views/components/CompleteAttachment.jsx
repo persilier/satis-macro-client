@@ -29,13 +29,12 @@ const CompleteAttachments = ({claimId}) => {
         if (verifyTokenExpire()) {
             await axios.post(`${appConfig.apiDomaine}/attach-files-to-claim/${claimId}`, formData)
                 .then((response) => {
-                    console.log("cool:", response.data);
-                    // window.location.reload();
                     setLoad(false);
                     setError([]);
                     inputRef.current.files = null;
                     inputRef.current.value = null;
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Pièce(s)  jointe(s)  ajouter avec succès'));
+                    window.location.reload();
                 })
                 .catch(({response}) => {
                     console.log("error:", response.status);

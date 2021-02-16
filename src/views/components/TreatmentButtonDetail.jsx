@@ -24,7 +24,8 @@ const TreatmentButtonDetail = ({claim}) => {
                         </div>
                     ) : null}
 
-                    {claim && claim.active_treatment && claim.active_treatment.transferred_to_unit_at ? (
+                    {console.log("claim:", claim)}
+                    {claim && claim.active_treatment && claim.active_treatment.responsible_staff && claim.active_treatment.transferred_to_unit_at ? (
                         <div className="kt-wizard-v2__review-item">
                             <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>Unité de traitement</span></div>
                             <div className="kt-wizard-v2__review-content">

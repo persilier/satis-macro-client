@@ -7,7 +7,7 @@ const appConfig =  {
     contact: '21256325',
     timeAfterDisconnection: 8,
     host: `satis-${localStorage.getItem('plan') ? localStorage.getItem('plan').toLowerCase() : ""}.local`,
-    apiDomaine: `http://satis-pro.local`,
+    apiDomaine: `http://satis-macro.local`,
     port: localStorage.getItem("plan") === "PRO" ? 6003 : localStorage.getItem("plan") === "HUB" ? 6002 : 6001,
 };
 
