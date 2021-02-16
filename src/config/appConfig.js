@@ -6,9 +6,9 @@ const appConfig =  {
     enterprise: 'DMD',
     contact: '21256325',
     timeAfterDisconnection: 8,
-    host: `satis-${localStorage.getItem('plan') ? localStorage.getItem('plan').toLowerCase() : ""}.local`,
+    host: `satis-pro.local`,
     apiDomaine: `http://satis-pro.local`,
-    port: localStorage.getItem("plan") === "PRO" ? 6003 : localStorage.getItem("plan") === "HUB" ? 6002 : 6001,
+    port: 6003,
 };
 
 export default appConfig;
