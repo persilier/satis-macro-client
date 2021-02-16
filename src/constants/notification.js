@@ -15,7 +15,9 @@ export const notificationConfig = {
     "post-discussion-message": "Message post discussion",
     "reminder-before-deadline": "Relance automatique avant échéance",
     "reminder-after-deadline": "Relance automatique après échéance",
-    "recurrence-alert": "Maximum réclamations tolérable"
+    "recurrence-alert": "Maximum réclamations tolérable",
+    "revoke-claim-claimer-notification": "Notifier le réclamant lorsqu'on révoque la réclamation",
+    "revoke-claim-staff-notification": "Notifier le pilote lorsqu'on révoque la réclamation"
 };
 
 export const EventNotification = [

@@ -22,25 +22,7 @@ const ConfigNotification = (props) => {
     if (!verifyPermission(props.userPermissions, "update-notifications"))
         window.location.href = ERROR_401;
     const [data, setData] = useState([]);
-    const [error, setError] = useState({
-        "notifications.acknowledgment-of-receipt": [],
-        "notifications.register-a-claim": [],
-        "notifications.complete-a-claim": [],
-        "notifications.transferred-to-targeted-institution": [],
-        "notifications.transferred-to-unit": [],
-        "notifications.assigned-to-staff": [],
-        "notifications.reject-a-claim": [],
-        "notifications.treat-a-claim": [],
-        "notifications.invalidate-a-treatment": [],
-        "notifications.validate-a-treatment": [],
-        "notifications.communicate-the-solution": [],
-        "notifications.communicate-the-solution-unfounded": [],
-        "notifications.add-contributor-to-discussion": [],
-        "notifications.post-discussion-message": [],
-        "notifications.reminder-before-deadline": [],
-        "notifications.reminder-after-deadline": [],
-        "notifications.recurrence-alert": [],
-    });
+    const [error, setError] = useState({});
     const [load, setLoad] = useState(true);
     const [startUpdate, setStartUpdate] = useState(false);
 
@@ -49,6 +31,11 @@ const ConfigNotification = (props) => {
             await axios.get(`${appConfig.apiDomaine}/notifications/edit`)
                 .then(({data}) => {
                     console.log("data:", data);
+                    const newError = {};
+                    data.map(el => {
+                        newError["notifications."+el.event] = [];
+                    });
+                    setError(newError);
                     setData(data);
                     setLoad(false);
                 })
@@ -154,7 +141,7 @@ const ConfigNotification = (props) => {
                                         <div className="row">
                                             {
                                                 data.map((el, index) => (
-                                                    <div key={index} className={error[`notifications.${el.event}`].length ? "col-6 form-group validated" : "col-6 form-group"}>
+                                                    <div key={index} className={Object.keys(error).length && error[`notifications.${el.event}`].length ? "col-6 form-group validated" : "col-6 form-group"}>
                                                         <label htmlFor={el.event}>{notificationConfig[el.event]} <InputRequire/></label>
                                                         <textarea
                                                             id={el.event}
@@ -166,7 +153,7 @@ const ConfigNotification = (props) => {
                                                         />
 
                                                         {
-                                                            error[`notifications.${el.event}`].length ? (
+                                                            Object.keys(error).length && error[`notifications.${el.event}`].length ? (
                                                                 error[`notifications.${el.event}`].map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
