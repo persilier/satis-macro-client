@@ -19,7 +19,7 @@ axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 const ActivatePilotPage = (props) => {
     document.title = "Satis client - Paramètre pilote actif";
 
-    if (!(verifyPermission(props.userPermissions, 'update-active-pilot') && props.activePilot))
+    if (!(verifyPermission(props.userPermissions, 'update-active-pilot')))
         window.location.href = ERROR_401;
 
     const [staffs, setStaffs] = useState([]);
@@ -65,7 +65,7 @@ const ActivatePilotPage = (props) => {
                     setStaff(null);
                     setError(defaultError);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
-                    if (props.activePilot) {
+
                         await axios.get(`${appConfig.apiDomaine}/login`)
                             .then(response => {
                                 setStartRequest(false);
@@ -73,7 +73,6 @@ const ActivatePilotPage = (props) => {
                                 window.location.href = "/";
                             })
                         ;
-                    }
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
@@ -166,7 +165,7 @@ const ActivatePilotPage = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'update-active-pilot') && props.activePilot ? (
+        verifyPermission(props.userPermissions, 'update-active-pilot') ? (
             printJsx()
         ) : null
     );

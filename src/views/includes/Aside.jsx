@@ -158,7 +158,8 @@ const Aside = (props) => {
                                             }
 
                                             {
-                                                (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
+                                                (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') ||
+                                                    verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
                                                     <NavLink exact to="/process/claim-to-validated"
                                                              className="kt-menu__item "
                                                              activeClassName="kt-menu__item--active"
@@ -854,7 +855,7 @@ const Aside = (props) => {
 
 
                                                 {
-                                                    verifyPermission(props.userPermissions, "update-active-pilot") && props.activePilot ? (
+                                                    verifyPermission(props.userPermissions, "update-active-pilot")? (
                                                         <NavLink exact to="/settings/activate-pilot"
                                                                  className="kt-menu__item"
                                                                  activeClassName="kt-menu__item--active"
