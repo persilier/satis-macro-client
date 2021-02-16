@@ -442,7 +442,7 @@ const ClaimMonitoring = (props) => {
                                             onShowDetail={claim => showClaimDetail(claim, "toAssignUnit")}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
-                                            title="Affecter à une unité"
+                                            title="A affecter à une unité"
                                             claims={claimsToAssignUnit}
                                             onClick={showModal}
                                             filterInstitution={institution}
@@ -462,7 +462,7 @@ const ClaimMonitoring = (props) => {
                                             plan={props.plan}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
-                                            title="Affecter à un staff"
+                                            title="A affecter à un staff"
                                             claims={claimsToAssignStaff}
                                             filterInstitution={institution}
                                             filterUnit={unit}

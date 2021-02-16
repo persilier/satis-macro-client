@@ -51,12 +51,11 @@ const HistoricClaimsAdd = (props) => {
         value = getLowerCaseString(value);
         let newClaimsAdd = [...claimsAdd];
         newClaimsAdd = newClaimsAdd.filter(el => (
+            getLowerCaseString(el.reference).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object ? el.claim_object.name.fr : "").indexOf(value) >= 0 ||
             getLowerCaseString(el.description).indexOf(value) >= 0 ||
-            getLowerCaseString(el.claimer.lastname).indexOf(value) >= 0 ||
-            getLowerCaseString(el.claimer.firstname).indexOf(value) >= 0 ||
-            getLowerCaseString(el.request_channel_slug).indexOf(value) >= 0 ||
-            getLowerCaseString(el.response_channel_slug).indexOf(value) >= 0
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 
+
         ));
 
         return newClaimsAdd;

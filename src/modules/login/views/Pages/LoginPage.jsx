@@ -46,6 +46,7 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
+                    console.log(response.data,"DATA")
                     setComponentData(response.data);
                     setLoad(false);
                 })
@@ -155,11 +156,11 @@ const LoginPage = (props) => {
                                         className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
                                         <div
                                             className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                            style={{backgroundImage: `url(${componentData ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
+                                            style={{backgroundImage: `url(${componentData.params.fr.background.value!==null ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
                                             <div className="kt-grid__item">
                                             <span className="kt-login__logo">
                                                 <img
-                                                    src={componentData ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : null}/>
+                                                    src={componentData.params.fr.logo.value===null ? "/assets/images/satisLogo.png":appConfig.apiDomaine + componentData.params.fr.logo.value.url }/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1em",
@@ -197,7 +198,7 @@ const LoginPage = (props) => {
                                                                     <div className="col-lg-12 col-xl-6">
                                                                         <img
                                                                             id="Image1"
-                                                                            src={componentData ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
+                                                                            src={componentData.params.fr.owner_logo.value!==null ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
                                                                             alt="logo"
                                                                             style={{
                                                                                 maxWidth: "65px",

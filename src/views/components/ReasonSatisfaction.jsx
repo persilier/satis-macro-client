@@ -90,7 +90,7 @@ const ReasonSatisfaction = (props) => {
             <div
                 className={error.unsatisfaction_reason.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="raison">Raison
-                    {data.is_claimer_satisfied === 1 ? <InputRequire/> : ""}
+                    {data.is_claimer_satisfied === 0 ? <InputRequire/> : ""}
                 </label>
                 <div className="col-lg-9 col-xl-6">
                     <textarea
