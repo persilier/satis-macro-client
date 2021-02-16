@@ -24,13 +24,12 @@ const TreatmentButtonDetail = ({claim}) => {
                         </div>
                     ) : null}
 
-                    {console.log("claim:", claim)}
-                    {claim && claim.active_treatment && claim.active_treatment.responsible_staff && claim.active_treatment.transferred_to_unit_at ? (
+                    {claim && claim.active_treatment && claim.active_treatment.transferred_to_unit_at ? (
                         <div className="kt-wizard-v2__review-item">
                             <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>Unité de traitement</span></div>
                             <div className="kt-wizard-v2__review-content">
                                 <strong>Unité:</strong>
-                                <span className="mx-2">{claim.active_treatment.responsible_staff.unit ? claim.active_treatment.responsible_staff.unit.name.fr : "-"}</span><br/>
+                                <span className="mx-2">{claim.active_treatment.responsible_unit ? claim.active_treatment.responsible_unit.name.fr : "-"}</span><br/>
                                 <strong>Date de transfert:</strong>
                                 <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.transferred_to_unit_at)}</span>
                             </div>
