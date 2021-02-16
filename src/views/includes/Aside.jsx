@@ -227,7 +227,7 @@ const Aside = (props) => {
                                         <a href="#historique" onClick={e => e.preventDefault()}
                                            className="kt-menu__link kt-menu__toggle">
                                             <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                            <span className="kt-menu__link-text">Raport</span>
+                                            <span className="kt-menu__link-text">Rapport</span>
                                             <i className="kt-menu__ver-arrow la la-angle-right"/>
                                         </a>
                                         <div className="kt-menu__submenu ">
@@ -235,7 +235,7 @@ const Aside = (props) => {
                                             <ul className="kt-menu__subnav">
                                                 <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
                                                 <span className="kt-menu__link">
-                                                    <span className="kt-menu__link-text">Raport</span>
+                                                    <span className="kt-menu__link-text">Rapport</span>
                                                 </span>
                                                 </li>
 
