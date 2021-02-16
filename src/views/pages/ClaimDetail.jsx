@@ -47,6 +47,7 @@ const ClaimDetail = (props) => {
         if (verifyPermission(props.userPermissions, 'search-claim-my-reference'))
             endpoint = `${appConfig.apiDomaine}/my/search-claim/${id}`;
         async function fetchData() {
+            console.log(endpoint,"ENDPOINT")
             await axios.get(endpoint)
                 .then(response => {
                     setClaim(response.data[0]);
