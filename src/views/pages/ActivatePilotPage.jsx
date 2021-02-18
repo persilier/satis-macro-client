@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {connect} from "react-redux";
+import {useHistory, useLocation} from "react-router-dom";
 import axios from "axios";
 import {
     toastAddErrorMessageConfig,
@@ -24,6 +25,7 @@ const ActivatePilotPage = (props) => {
 
     const [staffs, setStaffs] = useState([]);
     const [staff, setStaff] = useState(null);
+    const history = useHistory();
 
     const defaultError = {
         staff_id: [],
@@ -41,6 +43,14 @@ const ActivatePilotPage = (props) => {
         async function fetchData() {
             await axios.get(`${appConfig.apiDomaine}/active-pilot/institutions/${props.activeUserInstitution}`)
                 .then(({data}) => {
+                    data.map(el => {
+                        if (el.is_active_pilot) {
+                            setStaff({
+                                value: el.id,
+                                label: el.identite.lastname+" "+el.identite.firstname
+                            });
+                        }
+                    });
                     setStaffs(formatListStaff(data));
                 })
                 .catch(error => {
@@ -62,17 +72,19 @@ const ActivatePilotPage = (props) => {
         if (verifyTokenExpire()) {
             axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${props.activeUserInstitution}`, {staff_id: staff ? staff.value : ""})
                 .then( async () => {
-                    setStaff(null);
                     setError(defaultError);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
 
-                        await axios.get(`${appConfig.apiDomaine}/login`)
-                            .then(response => {
-                                setStartRequest(false);
-                                localStorage.setItem("userData", JSON.stringify(response.data));
-                                window.location.href = "/";
-                            })
-                        ;
+                        if (props.user.staff.is_active_pilot) {
+                            await axios.get(`${appConfig.apiDomaine}/login`)
+                                .then(response => {
+                                    setStartRequest(false);
+                                    localStorage.setItem("userData", JSON.stringify(response.data));
+                                    history.goBack();
+                                })
+                            ;
+                        } else
+                            setStartRequest(false);
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
@@ -175,6 +187,7 @@ const mapDispatchToProps = state => {
     return {
         activeUserInstitution: state.user.user.institution.id,
         userPermissions: state.user.user.permissions,
+        user: state.user.user,
         plan: state.plan.plan,
         activePilot: state.user.user.staff.is_active_pilot
     };
