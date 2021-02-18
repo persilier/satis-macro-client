@@ -127,7 +127,7 @@ const DashboardStatClaim = (props) => {
         return () => {
             isCancelled = true;
         }
-    }, [props.userPermissions, defaultData]);
+    }, []);
 
     return (
         (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
