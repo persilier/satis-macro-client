@@ -34,37 +34,17 @@ const ClaimToInstitution = (props) => {
     };
 
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-          await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    if (!isCancelled) {
-                        let pointOfService = response.data.pointOfServicesTargeted;
-                        let ServiceData = [];
-                        for (const processus in pointOfService) {
-                            ServiceData.push(processus);
-                        }
-                        let newData = {...defaultData};
-
-                        newData.options.labels = ServiceData;
-                        newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
-                        setPointOfServiceData(newData);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                })
-            ;
+        let pointOfService = props.response.data.pointOfServicesTargeted;
+        let ServiceData = [];
+        for (const processus in pointOfService) {
+            ServiceData.push(processus);
         }
+        let newData = {...defaultData};
 
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
-        }
+        newData.options.labels = ServiceData;
+        newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
+        setPointOfServiceData(newData);
+        setLoad(false)
     }, []);
 
     return (
