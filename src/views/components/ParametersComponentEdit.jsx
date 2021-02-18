@@ -17,9 +17,14 @@ axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
 const ParametersComponentEdit = (props) => {
     const {id} = useParams();
+    const defaultLogo={
+        params_logo:false,
+        params_owner_logo:false,
+        params_background:false
+    }
 
     const [dataType, setDataType] = useState({});
-    const [logo, setLogo] = useState(undefined);
+    const [logo, setLogo] = useState(defaultLogo);
 
     const [data, setData] = useState({});
     const [error, setError] = useState({});
@@ -70,7 +75,10 @@ const ParametersComponentEdit = (props) => {
         newData[param] = Object.values(e.target.files)[0];
         setData(newData);
         console.log(Object.values(e.target.files)[0], "NEW_DATA");
-        setLogo( newData[param]);
+        console.log(newData[param], 'new data param');
+        const newLogo={...logo};
+        newLogo[param]=true;
+        setLogo(newLogo);
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById(param);
@@ -86,7 +94,7 @@ const ParametersComponentEdit = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                    window.location.href = "/settings/config"
+                    // window.location.href = "/settings/config"
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
@@ -98,6 +106,8 @@ const ParametersComponentEdit = (props) => {
 
 
     const formatFormData = (newData, newType) => {
+        console.log(newData,"newData");
+        console.log(newType,"newType");
         const formData = new FormData();
         formData.set("_method", "put");
         for (const key in newData) {
@@ -114,11 +124,15 @@ const ParametersComponentEdit = (props) => {
         e.preventDefault();
         const newData = {...data};
         const newType = {...dataType};
-        if (logo!== newData.params_logo){
+        const newLogo={...logo};
+        if (newLogo.params_logo===false){
             delete newData.params_logo;
         }
-        if (logo!== newData.params_background){
+        if (newLogo.params_background===false){
             delete newData.params_background
+        }
+        if (newLogo.params_owner_logo===false){
+            delete newData.params_owner_logo
         }
         // Debut de Log du contenu du formData
         let dataToSend = formatFormData(newData, newType);
@@ -176,7 +190,7 @@ const ParametersComponentEdit = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-
+                                            {console.log(logo,"Logo_Data")}
                                             {
                                                 Object.keys(error).length ? (
                                                     Object.values(data).map((param, index) => (
