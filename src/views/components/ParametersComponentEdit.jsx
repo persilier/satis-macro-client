@@ -21,11 +21,10 @@ const ParametersComponentEdit = (props) => {
         params_logo:false,
         params_owner_logo:false,
         params_background:false
-    }
+    };
 
     const [dataType, setDataType] = useState({});
     const [logo, setLogo] = useState(defaultLogo);
-
     const [data, setData] = useState({});
     const [error, setError] = useState({});
     const [startRequest, setStartRequest] = useState(false);
@@ -94,7 +93,7 @@ const ParametersComponentEdit = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                    // window.location.href = "/settings/config"
+                    window.location.href = "/settings/config"
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
@@ -106,8 +105,7 @@ const ParametersComponentEdit = (props) => {
 
 
     const formatFormData = (newData, newType) => {
-        console.log(newData,"newData");
-        console.log(newType,"newType");
+
         const formData = new FormData();
         formData.set("_method", "put");
         for (const key in newData) {
@@ -136,15 +134,6 @@ const ParametersComponentEdit = (props) => {
         }
         // Debut de Log du contenu du formData
         let dataToSend = formatFormData(newData, newType);
-        // console.log(dataToSend.get("params_title"),"TITLE")
-        // dataToSend = dataToSend.entries();
-        // let obj = dataToSend.next();
-        // let retrieved = {};
-        // while(undefined !== obj.value) {
-        //     retrieved[obj.value[0]] = obj.value[1];
-        //     obj = dataToSend.next();
-        // }
-        // console.log('retrieved: ',retrieved);
         // fin de Log du contenu du formData
 
         setStartRequest(true);
