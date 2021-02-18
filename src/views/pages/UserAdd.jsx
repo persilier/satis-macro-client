@@ -223,6 +223,7 @@ const UserAdd = (props) => {
                         setIdentity(null);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig)
                     }
+                    window.location.reload();
                 }
             } else {
                 const addUser = await axios.post(endpoint, data)
@@ -244,7 +245,8 @@ const UserAdd = (props) => {
 
                 if (addUser) {
                     setIdentity(null);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig)
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    window.location.reload();
                 }
             }
         }
