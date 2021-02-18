@@ -19,11 +19,11 @@ const DashboardClaimsMy = (props) => {
         let isCancelled = false;
 
         async function fetchData() {
-           await axios.get(appConfig.apiDomaine + "/dashboard")
+            await axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
                     if (!isCancelled) {
                         setData(response.data.statistics);
-                        setTotalData(response.data.totalClaimsRegisteredStatistics);
+                        setTotalData(response.data.statistics.totalRegistered.myInstitution);
                         setLoad(false)
                     }
                 })
@@ -33,6 +33,7 @@ const DashboardClaimsMy = (props) => {
                 })
             ;
         }
+
         if (verifyTokenExpire())
             fetchData();
         return () => {
@@ -147,17 +148,18 @@ const DashboardClaimsMy = (props) => {
 								<span className="kt-widget24__change">
 
 									% Réclamations Complètes
-
 								</span>
-                                                <span className="kt-widget24__number">
-									{
-                                        data.totalComplete ?
-                                            <span className="kt-widget24__number">
+
+                                    <span className="kt-widget24__number">
+
+                                        {
+                                                    data.totalComplete ?
+                                                        <span className="kt-widget24__number">
                                                 {percentageData((data.totalComplete.myInstitution), totalData)}
                                            </span>
-                                            : null
-                                    }
-								</span>
+                                                        : null
+                                                }
+								    </span>
                                             </div>
                                         </div>
                                     </div>

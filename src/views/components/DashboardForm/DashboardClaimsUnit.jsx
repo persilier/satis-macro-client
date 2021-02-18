@@ -22,9 +22,12 @@ const DashboardClaimsUnit = (props) => {
         async function fetchData() {
            await axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
+                    console.log(response.data, "RESPONSE")
+                    console.log(response.data.statistics.totalRegistered.myUnit,"TOTAL_RESPONSE");
+
                     if (!isCancelled) {
                         setData(response.data.statistics);
-                        setTotalData(response.data.totalClaimsRegisteredStatistics);
+                        setTotalData(response.data.statistics.totalRegistered.myUnit);
                         setLoad(false)
                     }
                 })
