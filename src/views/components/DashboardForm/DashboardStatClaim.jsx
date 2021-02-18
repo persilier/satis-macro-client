@@ -74,60 +74,40 @@ const DashboardStatClaim = (props) => {
     };
 
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-            await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    // console.log(response.data, "claimerSatisfactionEvolution")
-                    if (!isCancelled) {
-                        let claimSatifaction = response.data.claimerSatisfactionEvolution;
-                        let satisfiedData = [];
-                        for (const satisfied in Object.values(claimSatifaction)[0]) {
-                            satisfiedData.push(satisfied);
-                        }
-                        // console.log(satisfiedData,"satisfiedData")
-                        let newData = [];
-                        for (const key in claimSatifaction) {
-                            let totalSatisfaction = claimSatifaction[key];
-                            if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
-                                newData.push({
-                                    month: key,
-                                    data0: totalSatisfaction.measured.allInstitution,
-                                    data1: totalSatisfaction.satisfied.allInstitution,
-                                    data2: totalSatisfaction.unsatisfied.allInstitution
-                                })
-                            } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
-                                newData.push({
-                                    month: key,
-                                    data0: totalSatisfaction.measured.myInstitution,
-                                    data1: totalSatisfaction.satisfied.myInstitution,
-                                    data2: totalSatisfaction.unsatisfied.myInstitution
-                                })
-                            }
-                        }
-                        let newSatisfaction = {...defaultData};
-                        newSatisfaction.options.xaxis.categories=Object.values(newData.map(label=>label.month));
-                        for (let i = 0; i <= satisfiedData.length - 1; i++) {
-                            newSatisfaction.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
-                        }
-                        // console.log(newSatisfaction,"WITH_MONTH");
-                        setSatisfactionData(newSatisfaction);
-                        setLoad(false)
-                    }
+        let claimSatifaction = props.response.data.claimerSatisfactionEvolution;
+        let satisfiedData = [];
+        for (const satisfied in Object.values(claimSatifaction)[0]) {
+            satisfiedData.push(satisfied);
+        }
+        // console.log(satisfiedData,"satisfiedData")
+        let newData = [];
+        for (const key in claimSatifaction) {
+            let totalSatisfaction = claimSatifaction[key];
+            if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
+                newData.push({
+                    month: key,
+                    data0: totalSatisfaction.measured.allInstitution,
+                    data1: totalSatisfaction.satisfied.allInstitution,
+                    data2: totalSatisfaction.unsatisfied.allInstitution
                 })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                });
+            } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
+                newData.push({
+                    month: key,
+                    data0: totalSatisfaction.measured.myInstitution,
+                    data1: totalSatisfaction.satisfied.myInstitution,
+                    data2: totalSatisfaction.unsatisfied.myInstitution
+                })
+            }
         }
-
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
+        let newSatisfaction = {...defaultData};
+        newSatisfaction.options.xaxis.categories=Object.values(newData.map(label=>label.month));
+        for (let i = 0; i <= satisfiedData.length - 1; i++) {
+            newSatisfaction.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
         }
-    }, [props.userPermissions, defaultData]);
+        // console.log(newSatisfaction,"WITH_MONTH");
+        setSatisfactionData(newSatisfaction);
+        setLoad(false)
+    }, []);
 
     return (
         (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
@@ -140,16 +120,12 @@ const DashboardStatClaim = (props) => {
                     </div>
                 </div>
                 {
-                    load ? (
-                        <LoadingTable/>
-                    ) : (
-                        satisfactionData ?
-                            <div id="chart" className="kt-portlet__body">
-                                <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
-                                       height={350}/>
-                            </div>
-                            : null
-                    )
+                    satisfactionData ?
+                        <div id="chart" className="kt-portlet__body">
+                            <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
+                                   height={350}/>
+                        </div>
+                        : null
                 }
             </div>
             : null

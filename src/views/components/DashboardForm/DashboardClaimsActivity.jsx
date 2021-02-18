@@ -44,6 +44,7 @@ const DashboardClaimsActivity = (props) => {
         return () => {
             isCancelled = true;
         }
+
     }, []);
 
     return (

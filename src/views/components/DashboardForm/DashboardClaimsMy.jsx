@@ -39,6 +39,7 @@ const DashboardClaimsMy = (props) => {
         return () => {
             isCancelled = true;
         }
+
     }, []);
 
     return (

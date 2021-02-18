@@ -88,64 +88,42 @@ const DashboardStatistic = (props) => {
         },
     };
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-           await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    if (!isCancelled) {
-                        // console.log(response.data, "claimerProcessEvolution");
-                        let claimProcess = response.data.claimerProcessEvolution;
-                        let processData = [];
-                        for (const processus in Object.values(claimProcess)[0]) {
-                            processData.push(processus);
-                        }
-                        // console.log(processData,"processData");
-                        let newData = [];
-                        for (const key in claimProcess) {
-                            let totalProcess = claimProcess[key];
-                            if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
-                                newData.push({
-                                    month: key,
-                                    data0: totalProcess.registered.allInstitution,
-                                    data1: totalProcess.transferred_to_unit.allInstitution,
-                                    data2: totalProcess.treated.allInstitution,
-                                    data3: totalProcess.unfounded.allInstitution,
-                                    data4: totalProcess.measured.allInstitution
-                                })
-                            } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
-                                newData.push({
-                                    month: key,
-                                    data0: totalProcess.registered.myInstitution,
-                                    data1: totalProcess.transferred_to_unit.myInstitution,
-                                    data2: totalProcess.treated.myInstitution,
-                                    data3: totalProcess.unfounded.myInstitution,
-                                    data4: totalProcess.measured.myInstitution
-                                })
-                            }
-                        }
-                        let newProcess = {...defaultData};
-                        newProcess.options.xaxis.categories=Object.values(newData.map(label=>label.month));
-                        for (let i = 0; i <= processData.length - 1; i++) {
-                            newProcess.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
-                        }
-                        // console.log(newProcess,"WITH_MONTH");
-                        setProcessData(newProcess);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                })
-            ;
+        let claimProcess = props.response.data.claimerProcessEvolution;
+        let processData = [];
+        for (const processus in Object.values(claimProcess)[0]) {
+            processData.push(processus);
         }
-
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
+        let newData = [];
+        for (const key in claimProcess) {
+            let totalProcess = claimProcess[key];
+            if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
+                newData.push({
+                    month: key,
+                    data0: totalProcess.registered.allInstitution,
+                    data1: totalProcess.transferred_to_unit.allInstitution,
+                    data2: totalProcess.treated.allInstitution,
+                    data3: totalProcess.unfounded.allInstitution,
+                    data4: totalProcess.measured.allInstitution
+                })
+            } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
+                newData.push({
+                    month: key,
+                    data0: totalProcess.registered.myInstitution,
+                    data1: totalProcess.transferred_to_unit.myInstitution,
+                    data2: totalProcess.treated.myInstitution,
+                    data3: totalProcess.unfounded.myInstitution,
+                    data4: totalProcess.measured.myInstitution
+                })
+            }
         }
+        let newProcess = {...defaultData};
+        newProcess.options.xaxis.categories=Object.values(newData.map(label=>label.month));
+        for (let i = 0; i <= processData.length - 1; i++) {
+            newProcess.series[i].data = Object.values(newData).map(serie => serie['data' + i]);
+        }
+        // console.log(newProcess,"WITH_MONTH");
+        setProcessData(newProcess);
+        setLoad(false)
     }, []);
 
     return (

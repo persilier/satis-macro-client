@@ -42,44 +42,24 @@ const DashboardSummaryReport = (props) => {
 
 
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-            await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    if (!isCancelled) {
-                        let claimObjects = response.data.claimObjectsUse;
-                        let newData = [];
-                        for (const key in claimObjects) {
-                            let totalObjectUse = claimObjects[key];
-                            if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
-                                newData.push({canal: key, label: totalObjectUse.allInstitution})
-                            } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
-                                newData.push({canal: key, label: totalObjectUse.myInstitution})
-                            }
-                        }
-                        newData.sort(function (a, b) {
-                            return b.label - a.label;
-                        });
-                        const result = newData.filter(function (event) {
-                            return newData.indexOf(event) < 5
-                        });
-                        setData(result);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                })
-            ;
+        let claimObjects = props.response.data.claimObjectsUse;
+        let newData = [];
+        for (const key in claimObjects) {
+            let totalObjectUse = claimObjects[key];
+            if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
+                newData.push({canal: key, label: totalObjectUse.allInstitution})
+            } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
+                newData.push({canal: key, label: totalObjectUse.myInstitution})
+            }
         }
-
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
-        }
+        newData.sort(function (a, b) {
+            return b.label - a.label;
+        });
+        const result = newData.filter(function (event) {
+            return newData.indexOf(event) < 5
+        });
+        setData(result);
+        setLoad(false)
     }, []);
     return (
         (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
