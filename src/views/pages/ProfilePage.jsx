@@ -28,7 +28,6 @@ const ProfilePage = ({user}) => {
         return newRules.join(' / ');
     };
 
-    console.log("user:", user);
     const role = formatRole(user.data.roles);
 
     useEffect(() => {

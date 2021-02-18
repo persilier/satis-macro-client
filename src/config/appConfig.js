@@ -8,7 +8,7 @@ const appConfig =  {
     timeAfterDisconnection: 8,
     host: `satis-hub.local`,
     apiDomaine: `http://satis-hub.local`,
-    port: 6001
+    port: 6002
 };
 
 export default appConfig;

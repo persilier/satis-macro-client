@@ -24,7 +24,7 @@ const DashboardClaimsUnit = (props) => {
                 .then(response => {
                     if (!isCancelled) {
                         setData(response.data.statistics);
-                        setTotalData(response.data.totalClaimsRegisteredStatistics);
+                        setTotalData(response.data.statistics.totalRegistered.myUnit);
                         setLoad(false)
                     }
                 })
@@ -40,6 +40,7 @@ const DashboardClaimsUnit = (props) => {
         return () => {
             isCancelled = true;
         }
+
     }, []);
 
     return (

@@ -153,9 +153,8 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
-                    // console.log(response.data, "GET_DATA");
+                    console.log(response.data, "GET_DATA");
                     const newIncompleteClaim = {
-
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
                         lastname: response.data.claim.claimer.lastname,
@@ -182,7 +181,7 @@ const IncompleteClaimsEdit = props => {
                     setIsRequire(response.data.requirements);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
-                    setAccounts(formatSelectOption(response.data.accounts, "number", false));
+                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "number", false) : "");
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
@@ -713,9 +712,9 @@ const IncompleteClaimsEdit = props => {
                                                                     value={data.email}
                                                                     onChange={onChangeEmail}
                                                                     inputProps={{
-                                                                    className: 'react-tagsinput-input',
-                                                                    placeholder: 'Email(s)'
-                                                                }}/>
+                                                                        className: 'react-tagsinput-input',
+                                                                        placeholder: 'Email(s)'
+                                                                    }}/>
                                                                 {
                                                                     error.email.length ? (
                                                                         error.email.map((error, index) => (
@@ -885,7 +884,7 @@ const IncompleteClaimsEdit = props => {
                                                     <div
                                                         className={error.amount_disputed.length ? "col validated" : "col"}>
                                                         <label htmlFor="amount_claim">Montant
-                                                            réclamé {isRequire.amount_disputed ?
+                                                            réclamé (<strong className="text-danger">Laisser vide si pas de montant</strong>) {isRequire.amount_disputed ?
                                                                 <InputRequire/> : ""}</label>
                                                         <input
                                                             type={"number"}
