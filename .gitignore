@@ -4,7 +4,7 @@
 /.idea
 /node_modules
 /.pnp
-/src/config/appConfxig.js
+/src/config/appConfig.js
 .pnp.js
 
 # testing

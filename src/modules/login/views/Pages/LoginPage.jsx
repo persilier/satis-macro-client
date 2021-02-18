@@ -126,8 +126,8 @@ const LoginPage = (props) => {
                 setStartRequest(false);
 
                 setError({
-                    username: error.response.data.error ? error.response.data.error : "Email ou mot de passe incorrecte",
-                    password: error.response.data.error ? error.response.data.error : "Email ou mot de passe incorrecte"
+                    username: "Email ou mot de passe incorrecte",
+                    password:  "Email ou mot de passe incorrecte"
                 });
                 if (error.response.data.code === 429) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Trop de tentative de connexion. Veuillez ressayer dans 5mn."));
