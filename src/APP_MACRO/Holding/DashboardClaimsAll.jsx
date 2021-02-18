@@ -16,9 +16,32 @@ const DashboardClaimsAll = (props) => {
     const [load, setLoad] = useState(true);
 
     useEffect(() => {
-        setData(props.response.data.statistics);
-        setTotalData(props.response.data.totalClaimsRegisteredStatistics);
-        setLoad(false)
+        let isCancelled = false;
+
+        async function fetchData() {
+            if (verifyTokenExpire()) {
+                axios.get(appConfig.apiDomaine + "/dashboard")
+                    .then(response => {
+                        // console.log(response.data,"RESPONSE")
+                        console.log(response.data.statistics.totalRegistered.allInstitution,"RESPONSE")
+                        if (!isCancelled) {
+                            setData(response.data.statistics);
+                            setTotalData(response.data.statistics.totalRegistered.allInstitution);
+                            setLoad(false)
+                        }
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                        console.log("Something is wrong");
+                    })
+                ;
+            }
+        }
+
+        fetchData();
+        return () => {
+            isCancelled = true;
+        }
     }, []);
 
     return (

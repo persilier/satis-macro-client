@@ -16,9 +16,30 @@ const DashboardClaimsMy = (props) => {
     const [load, setLoad] = useState(true);
 
     useEffect(() => {
-        setData(props.response.data.statistics);
-        setTotalData(props.response.data.totalClaimsRegisteredStatistics);
-        setLoad(false)
+        let isCancelled = false;
+
+        async function fetchData() {
+            await axios.get(appConfig.apiDomaine + "/dashboard")
+                .then(response => {
+                    if (!isCancelled) {
+                        setData(response.data.statistics);
+                        setTotalData(response.data.statistics.totalRegistered.myInstitution);
+                        setLoad(false)
+                    }
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+
+        if (verifyTokenExpire())
+            fetchData();
+        return () => {
+            isCancelled = true;
+        }
+
     }, []);
 
     return (
@@ -128,17 +149,18 @@ const DashboardClaimsMy = (props) => {
 								<span className="kt-widget24__change">
 
 									% Réclamations Complètes
-
 								</span>
-                                                <span className="kt-widget24__number">
-									{
-                                        data.totalComplete ?
-                                            <span className="kt-widget24__number">
+
+                                    <span className="kt-widget24__number">
+
+                                        {
+                                                    data.totalComplete ?
+                                                        <span className="kt-widget24__number">
                                                 {percentageData((data.totalComplete.myInstitution), totalData)}
                                            </span>
-                                            : null
-                                    }
-								</span>
+                                                        : null
+                                                }
+								    </span>
                                             </div>
                                         </div>
                                     </div>
