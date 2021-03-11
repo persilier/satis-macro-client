@@ -151,7 +151,7 @@ const LoginPage = (props) => {
                             <div className="kt-grid kt-grid--ver kt-grid--root kt-page">
                                 <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1"
                                      id="kt_login">
-
+                                    
                                     <div
                                         className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
                                         <div

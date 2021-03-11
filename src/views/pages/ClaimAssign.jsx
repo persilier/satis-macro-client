@@ -198,8 +198,7 @@ const ClaimAssign = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Cette page vous présente la liste des réclamations complètes et qui sont en attente d'être
-                            transféré.
+                            Cette page présente la liste des réclamations complètes et qui sont en attente d'être transférées
                             <br/>
                             <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les
                             réclamations réjetées
