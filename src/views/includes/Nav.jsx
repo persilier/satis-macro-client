@@ -499,7 +499,7 @@ const Nav = (props) => {
                                     </div>
                                     <div className="kt-notification__item-details">
                                         <div className="kt-notification__item-title kt-font-bold">
-                                            Mon profile
+                                            Mon profil
                                         </div>
                                         <div className="kt-notification__item-time">
                                             Paramètres de compte et plus

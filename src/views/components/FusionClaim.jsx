@@ -5,9 +5,8 @@ import {ToastBottomEnd} from "./Toast";
 import {
     toastErrorMessageWithParameterConfig,
     toastMergeSuccessMessageConfig,
-    toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
-import {debug, formatDateToTimeStampte} from "../../helpers/function";
+import {formatDateToTimeStampte} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const FusionClaim = props => {
@@ -135,8 +134,8 @@ const FusionClaim = props => {
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="btn btn-secondary">Fermer</button>
-                        <button style={{display: "none"}} id={"close-button"} type="button" className="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="btn btn-secondary">Conserver les deux</button>
+                        <button style={{display: "none"}} id={"close-button"} type="button" className="btn btn-secondary" data-dismiss="modal">Conserver les deux</button>
                         {
                             !startRequest ? (
                                 <button type="button" className="btn btn-primary" onClick={() => onClickFusion()}>Fusioner</button>
