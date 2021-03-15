@@ -6,6 +6,7 @@ import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
+import InfoFormatExcel from "../../constants/InfoFormatExcel";
 import {
     filterChannel,
     formatSelectOption,
@@ -146,7 +147,7 @@ const ClaimAdd = props => {
     const [foundData, setFoundData] = useState({});
     const [clientCash, setClientCash] = useState({searchInputValue: "", clients: []});
 
-    const [searchList , setSearchList] = useState([]);
+    const [searchList, setSearchList] = useState([]);
     const [showSearchResult, setShowSearchResult] = useState(false);
     const [searchInputValue, setSearchInputValue] = useState("");
     const [startSearch, setStartSearch] = useState(false);
@@ -243,8 +244,7 @@ const ClaimAdd = props => {
                     ;
                 }
             }
-        }
-        else {
+        } else {
             setUnits([]);
             setUnit(null);
             setInstitution(null);
@@ -318,8 +318,8 @@ const ClaimAdd = props => {
             setAccount(selected);
             newData.account_targeted_id = selected.value;
         } else {
-           setAccount(null);
-           newData.account_targeted_id = ""
+            setAccount(null);
+            newData.account_targeted_id = ""
         }
         setData(newData);
     };
@@ -455,23 +455,22 @@ const ClaimAdd = props => {
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
-            }
-            else if (key === "telephone") {
+            } else if (key === "telephone") {
                 for (let i = 0; i < (newData.telephone).length; i++)
                     formData.append("telephone[]", (newData[key])[i]);
-            }
-            else if (key === "email") {
+            } else if (key === "email") {
                 for (let i = 0; i < (newData.email).length; i++)
                     formData.append("email[]", (newData[key])[i]);
-            }
-            else
+            } else
                 formData.set(key, newData[key]);
         }
         return formData;
     };
 
     const blur = () => {
-        setTimeout(function(){ setShowSearchResult(false); }, 500);
+        setTimeout(function () {
+            setShowSearchResult(false);
+        }, 500);
     };
 
     const startSearchClient = async () => {
@@ -487,7 +486,7 @@ const ClaimAdd = props => {
                         setStartSearch(false);
                         setShowSearchResult(true);
                         if (data.length)
-                            setClientCash({ "searchInputValue": searchInputValue, "clients": data});
+                            setClientCash({"searchInputValue": searchInputValue, "clients": data});
                         setSearchList(data);
                     })
                     .catch(({response}) => {
@@ -568,8 +567,8 @@ const ClaimAdd = props => {
                 })
                 .catch(async (error) => {
                     if (completionError.length)
-                    if (completionError.length)
-                        setCompletionError({ref: "", list: []});
+                        if (completionError.length)
+                            setCompletionError({ref: "", list: []});
                     if (error.response.data.code === 409) {
                         //Existing entity claimer
                         setFoundData(error.response.data.error);
@@ -614,7 +613,8 @@ const ClaimAdd = props => {
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
@@ -643,8 +643,13 @@ const ClaimAdd = props => {
                                     <div className="kt-portlet__head-toolbar">
                                         <div className="kt-portlet__head-wrapper">&nbsp;
                                             <div className="dropdown dropdown-inline">
-                                                <a href={`${appConfig.apiDomaine}/download-excel/claims`} download={true} className="btn mr-1 btn-secondary">Télécharger Format</a>
-                                                <NavLink to={"/process/claims/import"} className="btn ml-1 btn-primary">Importer Réclamations</NavLink>
+                                                <InfoFormatExcel/>
+                                                <a href={`${appConfig.apiDomaine}/download-excel/claims`}
+                                                   download={true} className="btn mr-1 btn-secondary">Télécharger
+                                                    Format</a>
+                                                <NavLink to={"/process/claims/import"} className="btn ml-1 btn-primary">Importer
+                                                    Réclamations</NavLink>
+
                                             </div>
                                         </div>
                                     </div>
@@ -655,8 +660,11 @@ const ClaimAdd = props => {
 
                                         {
                                             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
-                                                <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée <InputRequire/></label>
+                                                <div
+                                                    className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label"
+                                                           htmlFor="institution">Institution
+                                                        concernée <InputRequire/></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             isClearable
@@ -688,16 +696,23 @@ const ClaimAdd = props => {
                                                         <div className="form-group row">
                                                             <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
-                                                                    <input type="checkbox" value={disabledInput} onChange={handleDisabledInputChange}/>
+                                                                    <input type="checkbox" value={disabledInput}
+                                                                           onChange={handleDisabledInputChange}/>
                                                                     Le client est-il déjà enregistré ?<span/>
                                                                 </label>
                                                             </div>
 
                                                             <div className={"col"}>
-                                                                <div className="row" onFocus={e => setShowSearchResult(true)} onBlur={e => blur()}>
+                                                                <div className="row"
+                                                                     onFocus={e => setShowSearchResult(true)}
+                                                                     onBlur={e => blur()}>
                                                                     <div className="col d-flex">
                                                                         <input
-                                                                            style={{marginTop: "2rem", borderBottomRightRadius: "0px", borderTopRightRadius: "0px"}}
+                                                                            style={{
+                                                                                marginTop: "2rem",
+                                                                                borderBottomRightRadius: "0px",
+                                                                                borderTopRightRadius: "0px"
+                                                                            }}
                                                                             type="text"
                                                                             value={searchInputValue}
                                                                             onChange={e => setSearchInputValue(e.target.value)}
@@ -707,7 +722,11 @@ const ClaimAdd = props => {
                                                                         />
 
                                                                         <button
-                                                                            style={{marginTop: "2rem", borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px"}}
+                                                                            style={{
+                                                                                marginTop: "2rem",
+                                                                                borderTopLeftRadius: "0px",
+                                                                                borderBottomLeftRadius: "0px"
+                                                                            }}
                                                                             type="button"
                                                                             className="btn btn-primary btn-icon"
                                                                             disabled={!disabledInput || startSearch}
@@ -722,7 +741,18 @@ const ClaimAdd = props => {
                                                                     disabledInput ? (
                                                                         searchList.length ? (
                                                                             <div className="row">
-                                                                                <div className={ showSearchResult ? `dropdown-menu show` : `dropdown-menu` } aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style={{width: "100%", position: "absolute", willChange: "transform", top: "33px", left: "0px", transform: "translate3d(0px, 38px, 0px)", zIndex: "1"}}>
+                                                                                <div
+                                                                                    className={showSearchResult ? `dropdown-menu show` : `dropdown-menu`}
+                                                                                    aria-labelledby="dropdownMenuButton"
+                                                                                    x-placement="bottom-start" style={{
+                                                                                    width: "100%",
+                                                                                    position: "absolute",
+                                                                                    willChange: "transform",
+                                                                                    top: "33px",
+                                                                                    left: "0px",
+                                                                                    transform: "translate3d(0px, 38px, 0px)",
+                                                                                    zIndex: "1"
+                                                                                }}>
                                                                                     {
                                                                                         searchList.map((el, index) => (
                                                                                             <span
@@ -739,12 +769,25 @@ const ClaimAdd = props => {
                                                                             </div>
                                                                         ) : (
                                                                             <div className="row">
-                                                                                <div className={ showSearchResult ? `dropdown-menu show` : `dropdown-menu` } aria-labelledby="dropdownMenuButton" x-placement="bottom-start" style={{width: "100%", position: "absolute", willChange: "transform", top: "33px", left: "0px", transform: "translate3d(0px, 38px, 0px)", zIndex: "1"}}>
+                                                                                <div
+                                                                                    className={showSearchResult ? `dropdown-menu show` : `dropdown-menu`}
+                                                                                    aria-labelledby="dropdownMenuButton"
+                                                                                    x-placement="bottom-start" style={{
+                                                                                    width: "100%",
+                                                                                    position: "absolute",
+                                                                                    willChange: "transform",
+                                                                                    top: "33px",
+                                                                                    left: "0px",
+                                                                                    transform: "translate3d(0px, 38px, 0px)",
+                                                                                    zIndex: "1"
+                                                                                }}>
                                                                                     {
                                                                                         startSearch ? (
-                                                                                            <span className={"mt-3 mb-3"}><Loader/></span>
+                                                                                            <span
+                                                                                                className={"mt-3 mb-3"}><Loader/></span>
                                                                                         ) : (
-                                                                                            <span className="d-flex justify-content-center">Pas de resultat</span>
+                                                                                            <span
+                                                                                                className="d-flex justify-content-center">Pas de resultat</span>
                                                                                         )
                                                                                     }
                                                                                 </div>
@@ -804,7 +847,8 @@ const ClaimAdd = props => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
+                                                    <div
+                                                        className={error.firstname.length ? "form-group col validated" : "form-group col"}>
                                                         <label htmlFor="sexe">Sexe <InputRequire/></label>
                                                         <select
                                                             disabled={disabledInput}
@@ -813,7 +857,8 @@ const ClaimAdd = props => {
                                                             value={data.sexe}
                                                             onChange={(e) => onChangeSexe(e)}
                                                         >
-                                                            <option value="" disabled={true}>Veillez choisir le Sexe</option>
+                                                            <option value="" disabled={true}>Veillez choisir le Sexe
+                                                            </option>
                                                             <option value="F">Féminin</option>
                                                             <option value="M">Masculin</option>
                                                             <option value="A">Autres</option>
@@ -853,8 +898,13 @@ const ClaimAdd = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/> <InputRequire/></label>
-                                                        <TagsInput disabled={disabledInput} value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
+                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/>
+                                                            <InputRequire/></label>
+                                                        <TagsInput disabled={disabledInput} value={data.telephone}
+                                                                   onChange={onChangeTelephone} inputProps={{
+                                                            className: 'react-tagsinput-input',
+                                                            placeholder: 'Numéro(s)'
+                                                        }}/>
                                                         {
                                                             error.telephone.length ? (
                                                                 error.telephone.map((error, index) => (
@@ -867,8 +917,13 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email"> Email(s) {responseChannel ? <InputRequire/> : null}</label>
-                                                        <TagsInput disabled={disabledInput} value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
+                                                        <label htmlFor="email"> Email(s) {responseChannel ?
+                                                            <InputRequire/> : null}</label>
+                                                        <TagsInput disabled={disabledInput} value={data.email}
+                                                                   onChange={onChangeEmail} inputProps={{
+                                                            className: 'react-tagsinput-input',
+                                                            placeholder: 'Email(s)'
+                                                        }}/>
                                                         {
                                                             error.email.length ? (
                                                                 error.email.map((error, index) => (
@@ -885,7 +940,8 @@ const ClaimAdd = props => {
                                             </div>
                                         </div>
 
-                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                        <div
+                                            className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
@@ -893,7 +949,8 @@ const ClaimAdd = props => {
                                                 {
                                                     !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                         <div className="form-group row">
-                                                            <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                            <div
+                                                                className={error.unit_targeted_id.length ? "col validated" : "col"}>
                                                                 <label htmlFor="unit">Unité concernée</label>
                                                                 <Select
                                                                     value={unit}
@@ -905,7 +962,8 @@ const ClaimAdd = props => {
                                                                 {
                                                                     error.unit_targeted_id.length ? (
                                                                         error.unit_targeted_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -913,8 +971,10 @@ const ClaimAdd = props => {
                                                                 }
                                                             </div>
 
-                                                            <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="account">Numéro de compte concerné</label>
+                                                            <div
+                                                                className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="account">Numéro de compte
+                                                                    concerné</label>
                                                                 <Select
                                                                     isClearable
                                                                     value={account}
@@ -925,7 +985,8 @@ const ClaimAdd = props => {
                                                                 {
                                                                     error.account_targeted_id.length ? (
                                                                         error.account_targeted_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -937,8 +998,10 @@ const ClaimAdd = props => {
                                                 }
 
                                                 <div className="form-group row">
-                                                    <div className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception <InputRequire/></label>
+                                                    <div
+                                                        className={error.request_channel_slug.length ? "col validated" : "col"}>
+                                                        <label htmlFor="receptionChannel">Canal de
+                                                            réception <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             value={receptionChannel}
@@ -957,8 +1020,10 @@ const ClaimAdd = props => {
                                                         }
                                                     </div>
 
-                                                    <div className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="responseChannel">Canal de réponse <InputRequire/></label>
+                                                    <div
+                                                        className={error.response_channel_slug.length ? "col validated" : "col"}>
+                                                        <label htmlFor="responseChannel">Canal de
+                                                            réponse <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectionner le canal de réponse"}
@@ -990,8 +1055,10 @@ const ClaimAdd = props => {
                                                         />
                                                     </div>
 
-                                                    <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de réclamation <InputRequire/></label>
+                                                    <div
+                                                        className={error.claim_object_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="claimObject">Objet de
+                                                            réclamation <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={"Veillez selectionner l'objet de réclamation"}
@@ -1012,8 +1079,11 @@ const ClaimAdd = props => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                        <label htmlFor="amount_claim">Montant réclamé (<strong className="text-danger">Laisser vide si pas de montant</strong>)</label>
+                                                    <div
+                                                        className={error.amount_disputed.length ? "col validated" : "col"}>
+                                                        <label htmlFor="amount_claim">Montant réclamé (<strong
+                                                            className="text-danger">Laisser vide si pas de
+                                                            montant</strong>)</label>
                                                         <input
                                                             type={"number"}
                                                             id="amount_claim"
@@ -1034,7 +1104,8 @@ const ClaimAdd = props => {
                                                         }
                                                     </div>
 
-                                                    <div className={error.amount_currency_slug.length ? "col validated" : "col"}>
+                                                    <div
+                                                        className={error.amount_currency_slug.length ? "col validated" : "col"}>
                                                         <label htmlFor="currency">Devise du montant réclamé</label>
                                                         <Select
                                                             isClearable
@@ -1056,8 +1127,10 @@ const ClaimAdd = props => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évernement <InputRequire/></label>
+                                                    <div
+                                                        className={error.event_occured_at.length ? "col validated" : "col"}>
+                                                        <label htmlFor="date">Date de
+                                                            l'évernement <InputRequire/></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
@@ -1080,8 +1153,10 @@ const ClaimAdd = props => {
 
                                                     {
                                                         verifyPermission(props.userPermissions, "store-claim-without-client") ? (
-                                                            <div className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution <InputRequire/></label>
+                                                            <div
+                                                                className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="relationship">Relation du reclamant avec
+                                                                    l'institution <InputRequire/></label>
                                                                 <Select
                                                                     isClearable
                                                                     value={relationship}
@@ -1092,7 +1167,8 @@ const ClaimAdd = props => {
                                                                 {
                                                                     error.relationship_id.length ? (
                                                                         error.relationship_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1145,7 +1221,8 @@ const ClaimAdd = props => {
                                                         }
                                                     </div>
 
-                                                    <div className={error.claimer_expectation.length ? "col validated" : "col"}>
+                                                    <div
+                                                        className={error.claimer_expectation.length ? "col validated" : "col"}>
                                                         <label htmlFor="claimer_expectation">Attente</label>
                                                         <textarea
                                                             rows="7"
@@ -1169,21 +1246,27 @@ const ClaimAdd = props => {
                                             </div>
                                         </div>
 
-                                        <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                        <div
+                                            className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <InputRequire/></h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <InputRequire/>
+                                                </h3>
 
                                                 <div className="form-group row">
                                                     <label className="col-3 col-form-label">Est-ce une relance ?</label>
                                                     <div className="col-9">
                                                         <div className="kt-radio-inline">
                                                             <label className="kt-radio">
-                                                                <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_revival}/> Oui<span/>
+                                                                <input type="radio" value={option1}
+                                                                       onChange={handleOptionChange}
+                                                                       checked={option1 === data.is_revival}/> Oui<span/>
                                                             </label>
                                                             <label className="kt-radio">
-                                                                <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_revival}/> Non<span/>
+                                                                <input type="radio" value={option2}
+                                                                       onChange={handleOptionChange}
+                                                                       checked={option2 === data.is_revival}/> Non<span/>
                                                             </label>
                                                         </div>
                                                     </div>
@@ -1200,19 +1283,24 @@ const ClaimAdd = props => {
                                                                 <div className="alert-icon"><i
                                                                     className="flaticon-warning"/></div>
                                                                 <div className="alert-text">
-                                                                    <p>La réclamation a été enregistrée avec succès sous la référence <strong>{completionError.ref}</strong></p>
+                                                                    <p>La réclamation a été enregistrée avec succès sous
+                                                                        la
+                                                                        référence <strong>{completionError.ref}</strong>
+                                                                    </p>
                                                                     <p>Cependant elle est incomplète</p>
-                                                                    <p>Les informations qu'il reste à fournir sont les suivants :</p>
+                                                                    <p>Les informations qu'il reste à fournir sont les
+                                                                        suivants :</p>
                                                                     <ul className="ml-4">
                                                                         {completionError.list.map((el, index) => (
-                                                                            <li key={index}>-  {el.description["fr"]}</li>
+                                                                            <li key={index}>- {el.description["fr"]}</li>
                                                                         ))}
                                                                     </ul>
                                                                 </div>
                                                                 <div className="alert-close">
                                                                     <button type="button" className="close"
                                                                             data-dismiss="alert" aria-label="Close">
-                                                                        <span aria-hidden="true"><i className="la la-close"/></span>
+                                                                        <span aria-hidden="true"><i
+                                                                            className="la la-close"/></span>
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -1227,14 +1315,19 @@ const ClaimAdd = props => {
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)}
+                                                            className="btn btn-primary">Enregistrer</button>
                                                 ) : (
-                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                    <button
+                                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                        type="button" disabled>
                                                         Chargement...
                                                     </button>
                                                 )
                                             }
-                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4_2">
+                                            <button style={{display: "none"}} id="confirmSaveForm" type="button"
+                                                    className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal"
+                                                    data-target="#kt_modal_4_2">
                                                 Launch Modal
                                             </button>
                                         </div>

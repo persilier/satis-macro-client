@@ -92,7 +92,8 @@ const IncompleteClaimsEdit = props => {
         relationship_id: null,
         event_occured_at: null,
         is_revival: 0,
-        file: []
+        file: [],
+        lieu:null
     };
     const defaultError = {
         firstname: [],
@@ -115,7 +116,8 @@ const IncompleteClaimsEdit = props => {
         relationship_id: [],
         event_occured_at: [],
         is_revival: [],
-        file: []
+        file: [],
+        lieu:[]
     };
 
     const option1 = 1;
@@ -171,6 +173,7 @@ const IncompleteClaimsEdit = props => {
                         response_channel_slug: response.data.claim.response_channel_slug,
                         claimer_expectation: response.data.claim.claimer_expectation === null ? "" : response.data.claim.claimer_expectation,
                         description: response.data.claim.description,
+                        // lieu: response.data.claim.lieu,
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
@@ -879,6 +882,31 @@ const IncompleteClaimsEdit = props => {
                                                             ) : null
                                                         }
                                                     </div>
+
+                                                    <div
+                                                        className={error.lieu.length ? "col validated" : "col"}>
+                                                        <label htmlFor="lieu">Lieu de l'évènement </label>
+                                                        <input
+                                                            // disabled={!disabledInput}
+                                                            id="lieu"
+                                                            type="text"
+                                                            className={error.lieu.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder="Veillez entrer votre lieu"
+                                                            value={data.lieu}
+                                                            onChange={(e) => onChangeVille(e)}
+                                                        />
+                                                        {
+                                                            error.lieu.length ? (
+                                                                error.lieu.map((error, index) => (
+                                                                    <div key={index}
+                                                                         className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+
                                                 </div>
                                                 <div className="form-group row">
                                                     <div
