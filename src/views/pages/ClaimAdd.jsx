@@ -11,7 +11,6 @@ import {
     filterChannel,
     formatSelectOption,
     formatToTimeStamp,
-    refreshToken,
 } from "../../helpers/function";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
@@ -515,6 +514,8 @@ const ClaimAdd = props => {
     };
 
     const resetAllData = async () => {
+        await setDisabledInput(false);
+        document.getElementById('is_client').click();
         await setInstitution(null);
         await setClaimCategory(null);
         await setCurrency(null);
@@ -532,7 +533,6 @@ const ClaimAdd = props => {
             }
         }
         await setUnit(null);
-        await setDisabledInput(false);
         await setData(defaultData);
         await setRelationship(null);
         setStartRequest(false);
@@ -696,6 +696,7 @@ const ClaimAdd = props => {
                                                         <div className="form-group row">
                                                             <div className={"col d-flex align-items-center mt-4"}>
                                                                 <label className="kt-checkbox">
+
                                                                     <input type="checkbox" value={disabledInput}
                                                                            onChange={handleDisabledInputChange}/>
                                                                     Le client est-il déjà enregistré ?<span/>
