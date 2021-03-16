@@ -38,6 +38,7 @@ const ParametersComponent = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/components")
                 .then(response => {
+                    console.log(response.data, 'RESPONSE');
                     setLoad(false);
                     setComponent(response.data);
                     setShowList(response.data.slice(0, numberPerPage));
@@ -135,7 +136,8 @@ const ParametersComponent = (props) => {
     const printBodyTable = (component, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{component.params.fr.title===null?"":component.params.fr.title.value}</td>
+                {/*<td>{component.params.fr.title===null?"":component.params.fr.title.value}</td>*/}
+                <td>{component.name===null?"":component.name}</td>
                 <td style={{textAlign:'center'}}>
                     <Link
                         to={`/settings/config/edit/${component.id}`}
