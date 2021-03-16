@@ -23,6 +23,8 @@ const ClaimButtonDetail = ({claim, plan}) => {
                                     <span className="mx-2">{claim.claim_object.name["fr"]}</span><br/>
                                     <strong>Date de survenu de l'incident:</strong>
                                     <span className="mx-2">{claim.event_occured_at ? formatDateToTimeStampte(claim.event_occured_at) : "-"}</span><br/>
+                                    <strong>Lieu de survenu de l'incident:</strong>
+                                    <span className="mx-2">{claim.lieu ? claim.lieu : "-"}</span><br/>
                                     {plan === "HUB" && (
                                         <>
                                             <strong>Relation entretenue avec le réclamant:</strong>
