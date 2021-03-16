@@ -72,7 +72,7 @@ const IncompleteClaims = (props) => {
         endPoint = endPointConfig[props.plan];
 
     useEffect(() => {
-
+        let mounted = true;
         if (verifyTokenExpire()) {
             axios.get(endPoint.list)
                 .then(response => {
@@ -87,6 +87,7 @@ const IncompleteClaims = (props) => {
                 })
             ;
         }
+
     }, []);
 
     const searchElement = async (e) => {
