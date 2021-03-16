@@ -173,7 +173,7 @@ const IncompleteClaimsEdit = props => {
                         response_channel_slug: response.data.claim.response_channel_slug,
                         claimer_expectation: response.data.claim.claimer_expectation === null ? "" : response.data.claim.claimer_expectation,
                         description: response.data.claim.description,
-                        // lieu: response.data.claim.lieu,
+                        lieu: response.data.claim.lieu,
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
@@ -292,6 +292,11 @@ const IncompleteClaimsEdit = props => {
     const onChangeVille = (e) => {
         const newData = {...data};
         newData.ville = e.target.value;
+        setData(newData);
+    };
+    const onChangeLieu = (e) => {
+        const newData = {...data};
+        newData.Lieu = e.target.value;
         setData(newData);
     };
 
@@ -893,7 +898,7 @@ const IncompleteClaimsEdit = props => {
                                                             className={error.lieu.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder="Veillez entrer votre lieu"
                                                             value={data.lieu}
-                                                            onChange={(e) => onChangeVille(e)}
+                                                            onChange={(e) => onChangeLieu(e)}
                                                         />
                                                         {
                                                             error.lieu.length ? (
