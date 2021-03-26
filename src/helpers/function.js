@@ -422,3 +422,26 @@ export const getToken = url => {
     else
         return "";
 };
+
+
+export const formatStatus = (statutes) => {
+    const array = Object.entries(statutes);
+    const newArray = [];
+    for (var i = 0; i < array.length; i++) {
+        newArray.push({
+            value: array[i][0],
+            label: array[i][1]
+        })
+    }
+
+    return newArray;
+};
+
+export const removeNullValueInObject = (obj) => {
+    const array = Object.entries(obj);
+    for (var i = 0; i < array.length; i++) {
+        if (array[i][1] === null)
+            delete obj[array[i][0]];
+    }
+    return obj;
+};

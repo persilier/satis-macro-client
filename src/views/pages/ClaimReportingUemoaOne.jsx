@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {connect} from "react-redux"
+import {connect} from "react-redux";
+import FileSaver from "file-saver";
 import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
@@ -10,9 +11,9 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {
-    forceRound, formatSelectOption,
+    forceRound, formatSelectOption, formatStatus,
     getLowerCaseString,
-    loadCss,
+    loadCss, removeNullValueInObject,
 } from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
@@ -36,49 +37,109 @@ const ClaimReportingUemoaOne = (props) => {
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
     const [dateEnd, setDateEnd] = useState("2021-02-01");
-    const [error, setError] = useState({
+    const defaultError = {
         date_start: [],
         date_end: [],
-        institution_id: []
-    });
+        institution_targeted_id : [],
+        claim_category_id: [],
+        claim_object_id: [],
+        request_channel_slug: [],
+        unit_targeted_id: [],
+        responsible_unit_id: [],
+        account_type_id: [],
+        status: [],
+        relationShip: [],
+    };
+    const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
 
+    const [categories, setCategories] = useState([]);
+    const [category, setCategory] = useState(null);
+
+    const [objects, setObjects] = useState([]);
+    const [object, setObject] = useState(null);
+
+    const [canals, setCanals] = useState([]);
+    const [canal, setCanal] = useState(null);
+
+    const [clientTypes, setClientTypes] = useState([]);
+    const [clientType, setClientType] = useState(null);
+
+    const [units, setUnits] = useState([]);
+    const [unit, setUnit] = useState(null);
+
+    const [responsibles, setResponsibles] = useState([]);
+    const [responsible, setResponsible] = useState(null);
+
+    const [statutes, setStatutes] = useState([]);
+    const [status, setStatus] = useState(null);
+
+    const [relations, setRelations] = useState([]);
+    const [relation, setRelation] = useState(null);
+
+    const [filterObjectData, setFilterObjectData] = useState([]);
+    const [filterUnitsData, setFilterUnitsData] = useState([]);
+    const [filterResponsiblesData, setFilterResponsiblesData] = useState([]);
+
     const fetchData = async (click = false) => {
         setLoadFilter(true);
         setLoad(true);
         let endpoint = "";
-        let sendData = "";
+        let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
-            endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
-            sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
-        }
-        else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/global-state-report`;
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+                institution_id : institution ? institution.value : null,
+                claim_category_id: category ? category.value : null,
+                claim_object_id: object ? object.value : null,
+                request_channel_slug: canal ? canal.value : null,
+                unit_targeted_id: unit ? unit.value : null,
+                responsible_unit_id: responsible ? responsible.value : null,
+                account_type_id: clientType ? clientType.value : null,
+                status: status ? status.value : null,
+                relationship_id: relation ? relation.value : null,
+            };
+            if (props.plan === "HUB") {
+                delete  sendData.unit_targeted_id;
+                delete sendData.account_type_id;
+            } else
+                delete sendData.relationShip
+        } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/global-state-report`;
-            sendData = {date_start: dateStart, date_end: dateEnd};
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+                claim_category_id: category ? category.value : null,
+                claim_object_id: object ? object.value : null,
+                request_channel_slug: canal ? canal.value : null,
+                unit_targeted_id: unit ? unit.value : null,
+                responsible_unit_id: responsible ? responsible.value : null,
+                account_type_id: clientType ? clientType.value : null,
+                status: status ? status.value : null,
+            };
         }
-        await axios.get(endpoint, {params: sendData})
+        await axios.get(endpoint, {params: removeNullValueInObject(sendData)})
             .then(response => {
                 if (click)
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Filtre éffectuer avec succès"));
                 setNumberPage(forceRound(response.data.length / numberPerPage));
                 setShowList(response.data.slice(0, numberPerPage));
                 setClaims(response.data);
-                setError({
-                    date_start: [],
-                    date_end: [],
-                    institution_id: []
-                });
+                setError(defaultError);
                 setLoadFilter(false);
                 setLoad(false);
             })
             .catch(error => {
                 setError({
-                    date_start: [],
-                    date_end: [],
-                    institution_id: [],
+                    ...defaultError,
                     ...error.response.data.error
                 });
                 setLoadFilter(false);
@@ -94,17 +155,45 @@ const ClaimReportingUemoaOne = (props) => {
     }, []);
 
     useEffect(() => {
+        var endpoint = "";
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
-            if (verifyTokenExpire()) {
-                axios.get(`${appConfig.apiDomaine}/any/uemoa/institution`)
-                    .then(response => {
-                        setInstitutions(formatSelectOption(response.data, "name", false));
-                    })
-                    .catch(error => {
-                        console.log("Something is wrong")
-                    })
-                ;
-            }
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+        }
+
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+            endpoint = `${appConfig.apiDomaine}/my/uemoa/data-filter`;
+
+        if (verifyTokenExpire()) {
+            axios.get(endpoint)
+                .then(response => {
+                    setFilterObjectData(response.data.categories);
+                    if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+                        setInstitutions(formatSelectOption(response.data.institutions, "name", false));
+                        if (props.plan === "MACRO") {
+                            setFilterUnitsData(response.data.agences);
+                            setFilterResponsiblesData(response.data.functionTreating);
+                        } else {
+                            setResponsibles(formatSelectOption(response.data.functionTreating, 'name', 'fr'));
+                            setRelations(formatSelectOption(response.data.relationShip, 'name', 'fr'));
+                        }
+                    }
+                    if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+                        setUnits(formatSelectOption(response.data.agences, "name", "fr"));
+                        setResponsibles(formatSelectOption(response.data.functionTreating, "name", "fr"));
+                    }
+                    setCategories(formatSelectOption(response.data.categories, "name", "fr"));
+                    if (props.plan !== "HUB")
+                        setClientTypes(formatSelectOption(response.data.clientTypes, "name", "fr"));
+                    setCanals(formatSelectOption(response.data.requestChannels, "name", "fr", 'slug'));
+                    setStatutes(formatStatus(response.data.status));
+                })
+                .catch(error => {
+                    console.log("Something is wrong")
+                })
+            ;
         }
     }, []);
 
@@ -136,6 +225,7 @@ const ClaimReportingUemoaOne = (props) => {
                 getLowerCaseString(el.staffTreating ? el.staffTreating : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.status ? el.status : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.telephone ? el.telephone : '-').indexOf(value) >= 0 ||
+                getLowerCaseString(el.relationShip ? el.relationShip : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.typeClient ? el.typeClient : '-').indexOf(value) >= 0
             )
         });
@@ -211,7 +301,71 @@ const ClaimReportingUemoaOne = (props) => {
     };
 
     const onChangeInstitution = (selected) => {
+        setUnit(null);
+        if (props.plan === "MACRO")
+            setResponsible(null);
+        if (selected === null) {
+            setUnits([]);
+            if (props.plan === "MACRO")
+                setResponsibles([]);
+        } else {
+            if (props.plan === "MACRO") {
+                const newUnits = filterUnitsData.filter(item => item.institution_id === selected.value);
+                if (newUnits.length > 0)
+                    setUnits(formatSelectOption(newUnits, 'name', 'fr'));
+                else
+                    setUnits([]);
+
+                const newResponsibles = filterResponsiblesData.filter(item => item.institution_id === selected.value);
+                if (newResponsibles.length > 0)
+                    setResponsibles(formatSelectOption(newResponsibles, 'name', 'fr'));
+                else
+                    setResponsibles([]);
+            }
+        }
         setInstitution(selected);
+    };
+
+    const onChangeCategory = (selected) => {
+        setObject(null);
+        if (selected === null)
+            setObjects([]);
+        else {
+            const objectList = filterObjectData.filter(item => item.id === selected.value);
+            if (objectList.length > 0)
+                setObjects(formatSelectOption(objectList[0].claim_objects, 'name', 'fr'));
+            else
+                setObjects([]);
+        }
+        setCategory(selected);
+    };
+
+    const onChangeClientType = (selected) => {
+        setClientType(selected);
+    };
+
+    const onChangeObject = (selected) => {
+        setObject(selected);
+    };
+
+    const onChangeRelation = (selected) => {
+        setRelation(selected);
+    };
+
+    const onChangeUnit = (selected) => {
+        setUnit(selected);
+    };
+
+    const onChangeResponsible = (selected) => {
+        setResponsible(selected);
+    };
+
+    const onChangeCanal = (selected) => {
+        setCanal(selected);
+    };
+
+    const onChangeStatus = (selected) => {
+        setStatus(selected);
     };
 
     const arrayNumberPage = () => {
@@ -234,29 +388,47 @@ const ClaimReportingUemoaOne = (props) => {
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
-            endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
-            sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/global-state-report`;
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+                institution_id : institution ? institution.value : null,
+                claim_category_id: category ? category.value : null,
+                claim_object_id: object ? object.value : null,
+                request_channel_slug: canal ? canal.value : null,
+                unit_targeted_id: unit ? unit.value : null,
+                responsible_unit_id: responsible ? responsible.value : null,
+                account_type_id: clientType ? clientType.value : null,
+                status: status ? status.value : null,
+                relationship_id: relation ? relation.value : null,
+            };
         } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/global-state-report`;
-            sendData = {date_start: dateStart, date_end: dateEnd};
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+                claim_category_id: category ? category.value : null,
+                claim_object_id: object ? object.value : null,
+                request_channel_slug: canal ? canal.value : null,
+                unit_targeted_id: unit ? unit.value : null,
+                responsible_unit_id: responsible ? responsible.value : null,
+                account_type_id: clientType ? clientType.value : null,
+                status: status ? status.value : null,
+            };
         }
-
-        if (!institution)
-            delete sendData.institution_id;
 
         if (verifyTokenExpire()) {
             await axios({
                 method: 'post',
                 url: endpoint,
                 responseType: 'json',
-                data: sendData
+                data: removeNullValueInObject(sendData)
             })
                 .then(async ({data}) => {
-                    setError({
-                        date_start: [],
-                        date_end: [],
-                        institution_id: [],
-                    });
+                    setError(defaultError);
                     const downloadButton = document.getElementById("downloadButton");
                     downloadButton.href =`${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
                     downloadButton.click();
@@ -264,16 +436,70 @@ const ClaimReportingUemoaOne = (props) => {
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
-                    console.log("error:", {
-                        date_start: [],
-                        date_end: [],
-                        institution_id: [],
+                    setError({
+                        ...defaultError,
                         ...error.response.data.error
                     });
+                    console.log("Something is wrong");
+                    setLoadDownload(false);
+                })
+            ;
+        }
+    };
+
+    const downloadReportingPdf = async () => {
+        setLoadDownload(true);
+        let endpoint = "";
+        let sendData = {};
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report-pdf`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/global-state-report-pdf`;
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+                institution_id : institution ? institution.value : null,
+                claim_category_id: category ? category.value : null,
+                claim_object_id: object ? object.value : null,
+                request_channel_slug: canal ? canal.value : null,
+                unit_targeted_id: unit ? unit.value : null,
+                responsible_unit_id: responsible ? responsible.value : null,
+                account_type_id: clientType ? clientType.value : null,
+                status: status ? status.value : null,
+                relationship_id: relation ? relation.value : null,
+            };
+        } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+            endpoint = `${appConfig.apiDomaine}/my/uemoa/global-state-report-pdf`;
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+                claim_category_id: category ? category.value : null,
+                claim_object_id: object ? object.value : null,
+                request_channel_slug: canal ? canal.value : null,
+                unit_targeted_id: unit ? unit.value : null,
+                responsible_unit_id: responsible ? responsible.value : null,
+                account_type_id: clientType ? clientType.value : null,
+                status: status ? status.value : null,
+            };
+        }
+
+        if (verifyTokenExpire()) {
+            await axios({
+                method: 'post',
+                url: endpoint,
+                responseType: 'blob',
+                data: removeNullValueInObject(sendData)
+            })
+                .then(async ({data}) => {
+                    setError(defaultError);
+                    FileSaver.saveAs(data, `reporting_etat_global_${new Date().getFullYear()}.pdf`);
+                    setLoadDownload(false);
+                    // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
+                })
+                .catch(error => {
                     setError({
-                        date_start: [],
-                        date_end: [],
-                        institution_id: [],
+                        ...defaultError,
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
@@ -377,9 +603,15 @@ const ClaimReportingUemoaOne = (props) => {
                 {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                     <td>{claim.filiale ? claim.filiale : '-'}</td>
                 ) : null}
-                <td>{claim.typeClient ? claim.typeClient : "-"}</td>
-                <td>{claim.client ? claim.client : "-"}</td>
-                <td>{claim.account ? claim.account : "-"}</td>
+                {props.plan !== "HUB" ? (
+                    <>
+                        <td>{claim.typeClient ? claim.typeClient : "-"}</td>
+                        <td>{claim.client ? claim.client : "-"}</td>
+                        <td>{claim.account ? claim.account : "-"}</td>
+                    </>
+                ) : (
+                    <td>{claim.relationShip ? claim.relationShip : "-"}</td>
+                )}
                 <td>{claim.telephone ? claim.telephone : "-"}</td>
                 <td>{claim.agence ? claim.agence : "-"}</td>
                 <td>{claim.claimCategorie ? claim.claimCategorie : "-"}</td>
@@ -423,8 +655,8 @@ const ClaimReportingUemoaOne = (props) => {
                         <div className="kt-portlet__body">
                             <div className="row">
                                 {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                    <div className="col">
-                                        <div className={error.institution_id.length ? "form-group validated" : "form-group"}>
+                                    <div className="col-md-12">
+                                        <div className={error.institution_targeted_id.length ? "form-group validated" : "form-group"}>
                                             <label htmlFor="">Institution</label>
                                             <Select
                                                 isClearable
@@ -435,8 +667,8 @@ const ClaimReportingUemoaOne = (props) => {
                                             />
 
                                             {
-                                                error.institution_id.length ? (
-                                                    error.institution_id.map((error, index) => (
+                                                error.institution_targeted_id.length ? (
+                                                    error.institution_targeted_id.map((error, index) => (
                                                         <div key={index} className="invalid-feedback">
                                                             {error}
                                                         </div>
@@ -446,7 +678,205 @@ const ClaimReportingUemoaOne = (props) => {
                                         </div>
                                     </div>
                                 ) : null}
+                            </div>
 
+                            {props.plan !== "HUB" ? (
+                                <div className="row">
+                                    <div className="col">
+                                        <div className={error.account_type_id.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">Type de compte</label>
+                                            <Select
+                                                isClearable
+                                                value={clientType}
+                                                placeholder={"Veuillez sélectionner le type de compte"}
+                                                onChange={onChangeClientType}
+                                                options={clientTypes}
+                                            />
+
+                                            {
+                                                error.account_type_id.length ? (
+                                                    error.account_type_id.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : null}
+
+                            <div className="row">
+                                <div className="col">
+                                    <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="">Catégorie de réclamation</label>
+                                        <Select
+                                            isClearable
+                                            value={category}
+                                            placeholder={"Veuillez sélectionner la catégorie"}
+                                            onChange={onChangeCategory}
+                                            options={categories}
+                                        />
+
+                                        {
+                                            error.claim_category_id.length ? (
+                                                error.claim_category_id.map((error, index) => (
+                                                    <div key={index} className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
+
+                                <div className="col">
+                                    <div className={error.claim_object_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="">Objet de réclamation</label>
+                                        <Select
+                                            isClearable
+                                            value={object}
+                                            placeholder={"Veuillez sélectionner l'objet"}
+                                            onChange={onChangeObject}
+                                            options={objects}
+                                        />
+
+                                        {
+                                            error.claim_object_id.length ? (
+                                                error.claim_object_id.map((error, index) => (
+                                                    <div key={index} className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                {props.plan === "HUB" ? (
+                                    <div className="col">
+                                        <div className={error.relationShip.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">Relation</label>
+                                            <Select
+                                                isClearable
+                                                value={relation}
+                                                placeholder={"Veuillez sélectionner la relation"}
+                                                onChange={onChangeRelation}
+                                                options={relations}
+                                            />
+
+                                            {
+                                                error.relationShip.length ? (
+                                                    error.relationShip.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="col">
+                                        <div className={error.unit_targeted_id.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">Agences concernée</label>
+                                            <Select
+                                                isClearable
+                                                value={unit}
+                                                placeholder={"Veuillez sélectionner l'agence"}
+                                                onChange={onChangeUnit}
+                                                options={units}
+                                            />
+
+                                            {
+                                                error.unit_targeted_id.length ? (
+                                                    error.unit_targeted_id.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="col">
+                                    <div className={error.responsible_unit_id.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="">Fonction traitant</label>
+                                        <Select
+                                            isClearable
+                                            value={responsible}
+                                            placeholder={"Veuillez sélectionner la fonction traitant"}
+                                            onChange={onChangeResponsible}
+                                            options={responsibles}
+                                        />
+
+                                        {
+                                            error.responsible_unit_id.length ? (
+                                                error.responsible_unit_id.map((error, index) => (
+                                                    <div key={index} className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col">
+                                    <div className={error.request_channel_slug.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="">Canal de réception</label>
+                                        <Select
+                                            isClearable
+                                            value={canal}
+                                            placeholder={"Veuillez sélectionner le canal de réception"}
+                                            onChange={onChangeCanal}
+                                            options={canals}
+                                        />
+
+                                        {
+                                            error.request_channel_slug.length ? (
+                                                error.request_channel_slug.map((error, index) => (
+                                                    <div key={index} className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
+
+                                <div className="col">
+                                    <div className={error.status.length ? "form-group validated" : "form-group"}>
+                                        <label htmlFor="">Status</label>
+                                        <Select
+                                            isClearable
+                                            value={status}
+                                            placeholder={"Veuillez sélectionner le status"}
+                                            onChange={onChangeStatus}
+                                            options={statutes}
+                                        />
+
+                                        {
+                                            error.status.length ? (
+                                                error.status.map((error, index) => (
+                                                    <div key={index} className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
                                 <div className="col">
                                     <div className="form-group">
                                         <label htmlFor="">Date début</label>
@@ -497,7 +927,15 @@ const ClaimReportingUemoaOne = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>Télécharger le rapport</button>
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                        )}
+
+                                        {loadDownload ? (
+                                            <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
+                                                Chargement...
+                                            </button>
+                                        ) : (
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
                                         )}
                                     </div>
                                 </div>
@@ -533,15 +971,24 @@ const ClaimReportingUemoaOne = (props) => {
                                                                 Filiale
                                                             </th>
                                                         ) : null}
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Type Client
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Client
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            N° Compte
-                                                        </th>
+                                                        {props.plan !== "HUB" ? (
+                                                            <>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    Type Client
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    Client
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    N° Compte
+                                                                </th>
+                                                            </>
+                                                        ) : (
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                Relation
+                                                            </th>
+                                                        )}
+
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
                                                             Téléphone
                                                         </th>
@@ -576,9 +1023,15 @@ const ClaimReportingUemoaOne = (props) => {
                                                         {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                                                             <th rowSpan="1" colSpan="1">Filiale</th>
                                                         ) : null}
-                                                        <th rowSpan="1" colSpan="1">Type Client</th>
-                                                        <th rowSpan="1" colSpan="1">Client</th>
-                                                        <th rowSpan="1" colSpan="1">N° Compte</th>
+                                                        {props.plan !== "HUB" ? (
+                                                            <>
+                                                                <th rowSpan="1" colSpan="1">Type Client</th>
+                                                                <th rowSpan="1" colSpan="1">Client</th>
+                                                                <th rowSpan="1" colSpan="1">N° Compte</th>
+                                                            </>
+                                                        ) : (
+                                                            <th rowSpan="1" colSpan="1">Relation</th>
+                                                        )}
                                                         <th rowSpan="1" colSpan="1">Téléphone</th>
                                                         <th rowSpan="1" colSpan="1">Agence</th>
                                                         <th rowSpan="1" colSpan="1">Catégorie réclamation</th>
