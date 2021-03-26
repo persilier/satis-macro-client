@@ -81,7 +81,6 @@ import TreatmentPeriod from "../pages/TreatmentPeriod";
 import QualificationPeriodAdd from "../pages/QualificationPeriodAdd";
 import TreatmentPeriodAdd from "../pages/TreatmentPeriodAdd";
 import ParametersComponent from "../pages/ParametersComponent";
-// import ParametersComponentForm from "../components/ParametersComponentForm";
 import ParametersComponentEdit from "../components/ParametersComponentEdit";
 import UserEdit from "../pages/UserEdit";
 import ConfigCoefficient from "../components/ConfigCoefficient";

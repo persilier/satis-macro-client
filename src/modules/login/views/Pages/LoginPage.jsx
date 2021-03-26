@@ -5,7 +5,7 @@ import axios from "axios";
 import {connect} from 'react-redux';
 import {ToastBottomEnd} from "../../../../views/components/Toast";
 import {
-    BrowserRouter, Switch, Route,Link
+    BrowserRouter, Switch, Route, Link
 } from "react-router-dom";
 
 import {
@@ -24,7 +24,7 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 
 const LoginPage = (props) => {
-    const tokenData=getToken(window.location.href);
+    const tokenData = getToken(window.location.href);
 
     const defaultError = {
         username: "",
@@ -127,7 +127,7 @@ const LoginPage = (props) => {
 
                 setError({
                     username: "Email ou mot de passe incorrecte",
-                    password:  "Email ou mot de passe incorrecte"
+                    password: "Email ou mot de passe incorrecte"
                 });
                 if (error.response.data.code === 429) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Trop de tentative de connexion. Veuillez ressayer dans 5mn."));
@@ -156,11 +156,11 @@ const LoginPage = (props) => {
                                         className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
                                         <div
                                             className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                            style={{backgroundImage: `url(${componentData.params.fr.background.value!==null ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
+                                            style={{backgroundImage: `url(${componentData && componentData.params.fr.background.value !== null ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
                                             <div className="kt-grid__item">
                                             <span className="kt-login__logo">
                                                 <img
-                                                    src={componentData.params.fr.logo.value===null ? "/assets/images/satisLogo.png":appConfig.apiDomaine + componentData.params.fr.logo.value.url }/>
+                                                    src={componentData ? appConfig.apiDomaine + componentData.params.fr.logo.value.url: "/assets/images/satisLogo.png" }/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1em",
@@ -189,16 +189,17 @@ const LoginPage = (props) => {
                                             <div className="kt-login__body">
 
                                                 <Switch>
-                                                    <Route  exact path="/">
-                                                        <div className="kt-login__form" style={{paddingTop: '15px'}} >
+                                                    <Route exact path="/">
+                                                        <div className="kt-login__form" style={{paddingTop: '15px'}}>
 
                                                             <div className="kt-login__title">
-                                                                <div className="form-group row" style={{marginTop: '50px'}}>
+                                                                <div className="form-group row"
+                                                                     style={{marginTop: '50px'}}>
 
                                                                     <div className="col-lg-12 col-xl-6">
                                                                         <img
                                                                             id="Image1"
-                                                                            src={componentData.params.fr.owner_logo.value!==null ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
+                                                                            src={componentData && componentData.params.fr.owner_logo.value !== null ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
                                                                             alt="logo"
                                                                             style={{
                                                                                 maxWidth: "65px",
@@ -259,7 +260,7 @@ const LoginPage = (props) => {
                                                                 <div className="kt-login__extra text-right mt-2">
 
                                                                     <Link to="/login/forgot" id="forgot_btn">
-                                                                         Mot de passe oublié?
+                                                                        Mot de passe oublié?
                                                                     </Link>
                                                                 </div>
                                                                 <div className="kt-login__actions">
@@ -268,7 +269,8 @@ const LoginPage = (props) => {
                                                                             <button type="submit"
                                                                                     id="kt_login_signin_submit"
                                                                                     className="btn btn-primary btn-elevate kt-login__btn-primary"
-                                                                                    onClick={onClickConnectButton}> Se connecter
+                                                                                    onClick={onClickConnectButton}> Se
+                                                                                connecter
                                                                             </button>
                                                                         ) : (
                                                                             <button
@@ -283,11 +285,12 @@ const LoginPage = (props) => {
                                                             </form>
                                                         </div>
                                                     </Route>
-                                                    <Route  exact path="/login">
-                                                        <div className="kt-login__form" style={{paddingTop: '15px'}} >
+                                                    <Route exact path="/login">
+                                                        <div className="kt-login__form" style={{paddingTop: '15px'}}>
 
                                                             <div className="kt-login__title">
-                                                                <div className="form-group row" style={{marginTop: '50px'}}>
+                                                                <div className="form-group row"
+                                                                     style={{marginTop: '50px'}}>
 
                                                                     <div className="col-lg-12 col-xl-6">
                                                                         <img
@@ -353,7 +356,7 @@ const LoginPage = (props) => {
                                                                 <div className="kt-login__extra text-right mt-2">
 
                                                                     <Link to="/login/forgot" id="forgot_btn">
-                                                                         Mot de passe oublié?
+                                                                        Mot de passe oublié?
                                                                     </Link>
                                                                 </div>
                                                                 <div className="kt-login__actions">
@@ -362,7 +365,8 @@ const LoginPage = (props) => {
                                                                             <button type="submit"
                                                                                     id="kt_login_signin_submit"
                                                                                     className="btn btn-primary btn-elevate kt-login__btn-primary"
-                                                                                    onClick={onClickConnectButton}> Se connecter
+                                                                                    onClick={onClickConnectButton}> Se
+                                                                                connecter
                                                                             </button>
                                                                         ) : (
                                                                             <button
@@ -378,13 +382,13 @@ const LoginPage = (props) => {
                                                         </div>
                                                     </Route>
                                                     <Route exact path="/login/forgot">
-                                                       <ForgotForm/>
+                                                        <ForgotForm/>
                                                     </Route>
 
-                                                    <Route  exact path={`/forgot-password/${tokenData}`}>
-                                                       <ReinitialisationForm
-                                                       token={tokenData}
-                                                       />
+                                                    <Route exact path={`/forgot-password/${tokenData}`}>
+                                                        <ReinitialisationForm
+                                                            token={tokenData}
+                                                        />
                                                     </Route>
                                                 </Switch>
 
