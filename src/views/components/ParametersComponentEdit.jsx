@@ -17,14 +17,8 @@ axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
 const ParametersComponentEdit = (props) => {
     const {id} = useParams();
-    const defaultLogo={
-        params_logo:false,
-        params_owner_logo:false,
-        params_background:false
-    };
-
     const [dataType, setDataType] = useState({});
-    const [logo, setLogo] = useState(defaultLogo);
+    const [logo, setDataLogo] = useState({});
     const [data, setData] = useState({});
     const [error, setError] = useState({});
     const [startRequest, setStartRequest] = useState(false);
@@ -32,15 +26,18 @@ const ParametersComponentEdit = (props) => {
     const formatState = (params, paramData = null) => {
         const newState = {};
         const newDataType = {};
+        const newDatalogo = {};
         const newError = {};
         params.map(param => {
-            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? (paramData[param].value!== null?paramData[param].value.url:null) : paramData[param].value : "";
+            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? (paramData[param].value !== null ? paramData[param].value.url : null) : paramData[param].value : "";
             newDataType[`params_${param}`] = paramData ? paramData[param].type : "";
             newError[`params_${param}`] = [];
-
+            if (paramData) {
+                paramData[param].type === "image" ? newDatalogo[`params_${param}`] = false : delete newDatalogo[`params_${param}`]
+            }
         });
-        console.log(newDataType, "newDataType");
         setData(newState);
+        setDataLogo(newDatalogo);
         setDataType(newDataType);
         setError(newError);
     };
@@ -75,9 +72,9 @@ const ParametersComponentEdit = (props) => {
         setData(newData);
         console.log(Object.values(e.target.files)[0], "NEW_DATA");
         console.log(newData[param], 'new data param');
-        const newLogo={...logo};
-        newLogo[param]=true;
-        setLogo(newLogo);
+        const newLogo = {...logo};
+        newLogo[param] = true;
+        setDataLogo(newLogo);
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById(param);
@@ -109,9 +106,9 @@ const ParametersComponentEdit = (props) => {
         const formData = new FormData();
         formData.set("_method", "put");
         for (const key in newData) {
-            if (newType[key]==="image") {
+            if (newType[key] === "image") {
                 formData.append(key, newData[key]);
-            }else{
+            } else {
                 formData.set(key, newData[key]);
             }
         }
@@ -122,15 +119,18 @@ const ParametersComponentEdit = (props) => {
         e.preventDefault();
         const newData = {...data};
         const newType = {...dataType};
-        const newLogo={...logo};
-        if (newLogo.params_logo===false){
-            delete newData.params_logo;
-        }
-        if (newLogo.params_background===false){
-            delete newData.params_background
-        }
-        if (newLogo.params_owner_logo===false){
-            delete newData.params_owner_logo
+        const values = [];
+
+        const cle = Object.keys(logo);
+        const valeurs = Object.values(logo);
+
+        for (let i = 0; i < cle.length; i++) {
+            values.push({[cle[i]]: valeurs[i]});
+            values.map(param => (
+                (param[cle[i]] === false) ?
+                    delete newData[cle[i]]
+                    : ""
+            ))
         }
         // Debut de Log du contenu du formData
         let dataToSend = formatFormData(newData, newType);
@@ -179,7 +179,7 @@ const ParametersComponentEdit = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            {console.log(logo,"Logo_Data")}
+                                            {/*{console.log(logo, "Logo_Data")}*/}
                                             {
                                                 Object.keys(error).length ? (
                                                     Object.values(data).map((param, index) => (
@@ -239,7 +239,7 @@ const ParametersComponentEdit = (props) => {
                                                                         id={Object.keys(data)[index]}
                                                                         type={dataType[Object.keys(dataType)[index]]}
                                                                         className={error[Object.keys(error)[index]].length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={"Veuillez entrer"+ " " +(Object.keys(data)[index]).slice(7)}
+                                                                        placeholder={"Veuillez entrer" + " " + (Object.keys(data)[index]).slice(7)}
                                                                         value={data[Object.keys(data)[index]]}
                                                                         onChange={(e) => handleChange(e, Object.keys(data)[index])}
                                                                     />
