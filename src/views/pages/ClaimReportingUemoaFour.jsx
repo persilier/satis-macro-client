@@ -20,6 +20,7 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
+import FileSaver from "file-saver";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -52,7 +53,10 @@ const ClaimReportingUemoaThree = (props) => {
         let endpoint = "";
         let sendData = "";
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
-            endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/state-analytique`;
             sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
         }
         else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
@@ -94,17 +98,26 @@ const ClaimReportingUemoaThree = (props) => {
     }, [numberPerPage]);
 
     useEffect(() => {
+        var endpoint = "";
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
-            if (verifyTokenExpire()) {
-                axios.get(`${appConfig.apiDomaine}/any/uemoa/institution`)
-                    .then(response => {
-                        setInstitutions(formatSelectOption(response.data, "name", false));
-                    })
-                    .catch(error => {
-                        console.log("Something is wrong")
-                    })
-                ;
-            }
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+        }
+
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+            endpoint = `${appConfig.apiDomaine}/my/uemoa/data-filter`;
+
+        if (verifyTokenExpire()) {
+            axios.get(endpoint)
+                .then(response => {
+                    setInstitutions(formatSelectOption(response.data.institutions, "name", false));
+                })
+                .catch(error => {
+                    console.log("Something is wrong")
+                })
+            ;
         }
     }, []);
 
@@ -224,7 +237,10 @@ const ClaimReportingUemoaThree = (props) => {
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
-            endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/state-analytique`;
             sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
         } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/state-analytique`;
@@ -250,6 +266,56 @@ const ClaimReportingUemoaThree = (props) => {
                     const downloadButton = document.getElementById("downloadButton");
                     downloadButton.href =`${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
                     downloadButton.click();
+                    setLoadDownload(false);
+                    setLoadDownload(false);
+                    // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
+                })
+                .catch(error => {
+                    setError({
+                        date_start: '',
+                        date_end: '',
+                        institution_id: [],
+                        ...error.response.data.error
+                    });
+                    console.log("Something is wrong");
+                    setLoadDownload(false);
+                })
+            ;
+        }
+    };
+
+    const downloadReportingPdf = () => {
+        setLoadDownload(true);
+        let endpoint = "";
+        let sendData = {};
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique-pdf`;
+            else
+                endpoint = `${appConfig.apiDomaine}/without/uemoa/state-analytique-pdf`;
+            sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
+        } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+            endpoint = `${appConfig.apiDomaine}/my/uemoa/state-analytique-pdf`;
+            sendData = {date_start: dateStart, date_end: dateEnd};
+        }
+
+        if (!institution)
+            delete sendData.institution_id;
+
+        if (verifyTokenExpire()) {
+            axios({
+                method: 'post',
+                url: endpoint,
+                responseType: 'blob',
+                data: sendData
+            })
+                .then(({data}) => {
+                    setError({
+                        date_start: [],
+                        date_end: [],
+                        institution_id: []
+                    });
+                    FileSaver.saveAs(data, `reporting_etat_analytique_${new Date().getFullYear()}.pdf`);
                     setLoadDownload(false);
                     setLoadDownload(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
@@ -437,7 +503,15 @@ const ClaimReportingUemoaThree = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>Télécharger le rapport</button>
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                        )}
+
+                                        {loadDownload ? (
+                                            <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
+                                                Chargement...
+                                            </button>
+                                        ) : (
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
                                         )}
                                     </div>
                                 </div>
