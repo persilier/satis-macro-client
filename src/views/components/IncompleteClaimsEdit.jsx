@@ -177,7 +177,7 @@ const IncompleteClaimsEdit = props => {
                         response_channel_slug: response.data.claim.response_channel_slug,
                         claimer_expectation: response.data.claim.claimer_expectation === null ? "" : response.data.claim.claimer_expectation,
                         description: response.data.claim.description,
-                        lieu: response.data.claim.lieu!==null?response.data.claim.lieu:"",
+                        lieu: response.data.claim.lieu!==null?response.data.claim.lieu:undefined,
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
@@ -311,6 +311,7 @@ const IncompleteClaimsEdit = props => {
         setData(newData);
     };
     const onChangeLieu = (e) => {
+        console.log("e:", e.target.value);
         const newData = {...data};
         newData.Lieu = e.target.value;
         setData(newData);
