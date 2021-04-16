@@ -16,7 +16,7 @@ const ClaimObjectImportPage = (props) => {
                 submitEndpoint={`${appConfig.apiDomaine}/import-claim-objects`}
                 pageTitleLink="/settings/claim_objects"
                 pageTitle="Objet de réclamation"
-                panelTitle="Importation d'object de reclamation au format excel"
+                panelTitle="Importation d'object et catéborie de reclamation au format excel"
             />
         ) : null
     );

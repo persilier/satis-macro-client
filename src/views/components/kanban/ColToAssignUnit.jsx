@@ -24,7 +24,7 @@ const ColToAssignUnit = (props) => {
         currentFilterData = currentFilterData.filter(
             claim => {
                 if (claim.status === "full")
-                    return claim.created_by.institution_id.indexOf(props.filterInstitution.value) >= 0;
+                    return claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0;
                 else if (claim.status === "transferred_to_targeted_institution")
                     return claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0;
                 else
@@ -74,6 +74,7 @@ const ColToAssignUnit = (props) => {
                     currentFilterData.map((claim, index) => (
                         <KanbanElementDetail
                             key={index}
+                            onClick={props.onClick}
                             onShowDetail={props.onShowDetail}
                             claim={claim}
                             index={index}

@@ -7,7 +7,7 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditErrorMessageConfig, toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {formatSelectOption} from "../../helpers/function";
@@ -55,6 +55,7 @@ const FaqsForm = (props) => {
             if (editfaqid) {
                 axios.get(appConfig.apiDomaine + `/faqs/${editfaqid}`)
                     .then(response => {
+                        // console.log(response.data, "FAQS_Edit")
                         const newFaq = {
                             faq_category_id: response.data.faq_category.id,
                             question: response.data.question["fr"],
@@ -94,13 +95,12 @@ const FaqsForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
                     })
                 ;
             }else {
@@ -257,12 +257,12 @@ const FaqsForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Envoyer</button>
+                                                                                    className="btn btn-primary">{editfaqid?"Modifier":"Enregistrer"}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                Chargement...
                                                                             </button>
                                                                         )
                                                                     }

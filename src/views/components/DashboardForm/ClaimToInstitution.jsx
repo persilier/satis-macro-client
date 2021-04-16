@@ -35,38 +35,16 @@ const ClaimToInstitution = (props) => {
     };
 
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-            await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    if (!isCancelled) {
-                        // console.log(response.data, "ProcessEvolution");
-                        let institutionTarget = response.data.institutionsTargeted;
-                        let institutionData = [];
-                        for (const processus in institutionTarget) {
-                            institutionData.push(processus);
-                        }
-                        // console.log(institutionData,"institutionData");
-                        let newData = {...defaultData};
-                        newData.options.labels = institutionData;
-                        newData.series = Object.values(institutionTarget).map(serie => serie.allInstitution);
-                        // console.log(newData,"newData");
-                        setInstitutionData(newData);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                })
+        let institutionTarget = props.response.data.institutionsTargeted;
+        let institutionData = [];
+        for (const processus in institutionTarget) {
+            institutionData.push(processus);
         }
-
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
-        }
+        let newData = {...defaultData};
+        newData.options.labels = institutionData;
+        newData.series = Object.values(institutionTarget).map(serie => serie.allInstitution);
+        setInstitutionData(newData);
+        setLoad(false)
     }, []);
 
     return (

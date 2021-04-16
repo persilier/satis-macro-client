@@ -14,7 +14,7 @@ const ReasonSatisfaction = (props) => {
         unsatisfaction_reason: "",
     };
     const defaultError = {
-        is_claimer_satisfied:'',
+        is_claimer_satisfied: '',
         unsatisfaction_reason: "",
     };
     const [data, setData] = useState(defaultData);
@@ -26,10 +26,10 @@ const ReasonSatisfaction = (props) => {
         newData.unsatisfaction_reason = e.target.value;
         setData(newData);
     };
-
     const onChangeOption = (e) => {
         const newData = {...data};
-        newData.is_claimer_satisfied = e.target.value;
+        newData.is_claimer_satisfied = parseInt(e.target.value);
+
         setData(newData);
     };
 
@@ -44,7 +44,7 @@ const ReasonSatisfaction = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-                setError({...defaultError,...error.response.data.error});
+                setError({...defaultError, ...error.response.data.error});
                 ToastBottomEnd.fire(toastAddErrorMessageConfig);
             })
         ;
@@ -53,12 +53,12 @@ const ReasonSatisfaction = (props) => {
     return (
         <div>
             <div className={error.is_claimer_satisfied.length ? "form-group validated" : "form-group"}>
-                <label>Client Satisfait?  <InputRequire/></label>
+                <label>Client Satisfait? <InputRequire/></label>
                 <div className="kt-radio-inline">
 
                     <label className="kt-radio kt-radio--bold kt-radio--success">
                         <input
-                            className={error.is_claimer_satisfied.length? "form-control is-invalid" : "form-control"}
+                            className={error.is_claimer_satisfied.length ? "form-control is-invalid" : "form-control"}
                             type="radio"
                             name="radio6"
                             value={option1}
@@ -89,8 +89,9 @@ const ReasonSatisfaction = (props) => {
             </div>
             <div
                 className={error.unsatisfaction_reason.length ? "form-group row validated" : "form-group row"}>
-                <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="raison">Raison <InputRequire/></label>
+                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="raison">Raison
+                    {data.is_claimer_satisfied === 0 ? <InputRequire/> : ""}
+                </label>
                 <div className="col-lg-9 col-xl-6">
                     <textarea
                         id="measures"

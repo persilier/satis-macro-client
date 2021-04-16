@@ -57,7 +57,6 @@ const InstitutionForm = (props) => {
             if (verifyPermission(props.userPermissions, 'store-any-institution')) {
                 axios.get(appConfig.apiDomaine + '/any/institutions/create')
                     .then(response => {
-                        console.log(response.data, "DEVISE")
                         setDefaultCurrencyData(response.data.currencies.length ?
                             response.data.currencies.map((currencie) => ({
                                 value: currencie.slug,
@@ -72,7 +71,6 @@ const InstitutionForm = (props) => {
             if (id) {
                 axios.get(appConfig.apiDomaine + `/any/institutions/${id}`)
                     .then(response => {
-                        console.log(response, "GET_INSTITUTION");
                         const newInstitution = {
                             default_currency_slug: (response.data.default_currency_slug !== null) ? (response.data.default_currency_slug) : '',
                             name: response.data.name,
@@ -125,7 +123,6 @@ const InstitutionForm = (props) => {
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById('Image1');
-            console.log(image, 'image');
             image.src = e.target.result;
         };
         reader.readAsDataURL(newData.logo);
@@ -166,7 +163,7 @@ const InstitutionForm = (props) => {
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(error => {
-                        setError({defaultError, ...error.response.data.error});
+                        setError({...defaultError, ...error.response.data.error});
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     })
@@ -281,7 +278,6 @@ const InstitutionForm = (props) => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {console.log(defaultCurrencyData,"defaultCurrencyData")}
                                                                 {defaultCurrencyData ? (
                                                                     <div
                                                                         className={error.default_currency_slug.length ? "form-group row validated" : "form-group row"}>

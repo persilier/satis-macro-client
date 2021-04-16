@@ -57,39 +57,19 @@ const GraphChannel = (props) => {
 
 
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-           await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    // console.log(response.data, "CANAL_STAT")
-                    if (!isCancelled) {
-                        let channels = [];
-                        for (const channel in response.data.channelsUse) {
-                            channels.push(channel);
-                        }
-                        let newChannels = {...defaultData};
-                        newChannels.options.xaxis.categories = channels;
-                        if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
-                            newChannels.series[0].data = Object.values(response.data.channelsUse).map(serie => serie.allInstitution)
-                        } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
-                            newChannels.series[0].data = Object.values(response.data.channelsUse).map(serie => serie.myInstitution)
-                        }
-                        setChannelData(newChannels);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                })
+        let channels = [];
+        for (const channel in props.response.data.channelsUse) {
+            channels.push(channel);
         }
-
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
+        let newChannels = {...defaultData};
+        newChannels.options.xaxis.categories = channels;
+        if (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution")) {
+            newChannels.series[0].data = Object.values(props.response.data.channelsUse).map(serie => serie.allInstitution)
+        } else if (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) {
+            newChannels.series[0].data = Object.values(props.response.data.channelsUse).map(serie => serie.myInstitution)
         }
+        setChannelData(newChannels);
+        setLoad(false)
     }, []);
     return (
         (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||

@@ -84,7 +84,7 @@ const PositionForm = (props) => {
                     })
                 ;
             } else {
-                axios.fonction(`${appConfig.apiDomaine}/positions`, data)
+                axios.post(`${appConfig.apiDomaine}/positions`, data)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);

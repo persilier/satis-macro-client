@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
+import {forceRound, formatDateToTime, getLowerCaseString, loadCss, reduceCharacter} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
 import Pagination from "../components/Pagination";
@@ -34,7 +34,6 @@ const HistoricClaimsAdd = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/history/list-treat")
                 .then(response => {
-                    console.log(response.data,"DATA")
                     setLoad(false);
                     setClaimsAdd(response.data);
                     setShowList(response.data.slice(0, numberPerPage));
@@ -52,13 +51,11 @@ const HistoricClaimsAdd = (props) => {
         value = getLowerCaseString(value);
         let newClaimsAdd = [...claimsAdd];
         newClaimsAdd = newClaimsAdd.filter(el => (
+            getLowerCaseString(el.reference).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object ? el.claim_object.name.fr : "").indexOf(value) >= 0 ||
             getLowerCaseString(el.description).indexOf(value) >= 0 ||
-            getLowerCaseString(el.claimer.lastname).indexOf(value) >= 0 ||
-            getLowerCaseString(el.claimer.firstname).indexOf(value) >= 0 ||
-            getLowerCaseString(el.request_channel_slug).indexOf(value) >= 0 ||
-            getLowerCaseString(el.response_channel_slug).indexOf(value) >= 0
-        ));
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0
+    ));
 
         return newClaimsAdd;
     };
@@ -136,12 +133,27 @@ const HistoricClaimsAdd = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.claimer.lastname +" "+claim.claimer.firstname}</td>
-                <td>{claim.claim_object.name.fr}</td>
-                <td>{claim.description}</td>
-                <td>{claim.request_channel_slug}</td>
-                <td>{claim.response_channel_slug}</td>
+                <td>{claim.reference} </td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{claim.claim_object.name["fr"]}</td>
+                <td>{claim.description.length > 15 ? reduceCharacter(claim.description) : claim.description}</td>
+                <td>
+                    {
+                        (props.plan === 'PRO') ?
+                            (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
+                            : claim.institution_targeted.name
+                    }
+                </td>
+                <td style={{textAlign: "center"}}>
+                    {
+                        claim.status === "archived" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--dark">Archivé</span>
+                            : claim.status === "validated" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success">Traité</span>
+                            : <span className="kt-badge kt-badge--inline kt-badge--warning">En cours de traitement</span>
 
+                    }
+                </td>
             </tr>
         )
     };
@@ -205,6 +217,11 @@ const HistoricClaimsAdd = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Référence
+                                                        </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
@@ -215,26 +232,37 @@ const HistoricClaimsAdd = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Country: activate to sort column ascending">Objets de réclamation
+                                                            aria-label="Country: activate to sort column ascending">Objets
+                                                            de réclamation
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Country: activate to sort column ascending">Description de la Réclamation
+                                                            aria-label="Country: activate to sort column ascending">Description
+                                                            de la Réclamation
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">
+                                                            {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
+
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Canal de réception
+                                                            aria-label="Ship City: activate to sort column ascending">Statut
                                                         </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">Canal de réponse
-                                                        </th>
+
+                                                        {/*<th className="sorting" tabIndex="0"*/}
+                                                        {/*    aria-controls="kt_table_1"*/}
+                                                        {/*    rowSpan="1" colSpan="1" style={{width: "70.25px"}}*/}
+                                                        {/*    aria-label="Type: activate to sort column ascending">*/}
+                                                        {/*    Action*/}
+                                                        {/*</th>*/}
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -254,11 +282,14 @@ const HistoricClaimsAdd = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr style={{textAlign:"center"}}>
+                                                        <th rowSpan="1" colSpan="1">Référence</th>
                                                         <th rowSpan="1" colSpan="1">Réclamant</th>
                                                         <th rowSpan="1" colSpan="1">Objets de réclamtions</th>
-                                                        <th rowSpan="1" colSpan="1">Description de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Canal de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Canal de réponse</th>
+                                                        <th rowSpan="1" colSpan="1">Description</th>
+                                                        <th rowSpan="1"
+                                                            colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
+                                                        </th>
+                                                        <th rowSpan="1" colSpan="1">Statut</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -301,7 +332,8 @@ const HistoricClaimsAdd = (props) => {
 };
 const mapStateToProps = (state) => {
     return {
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        plan:state.plan.plan
     };
 };
 

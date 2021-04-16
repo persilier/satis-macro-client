@@ -23,7 +23,7 @@ const ColToTreat = (props) => {
     const filterByInstitution = () => {
         currentFilterData = currentFilterData.filter(claim => {
             if (props.plan === "MACRO" || props.plan === "PRO") {
-                return claim.active_treatment.responsible_unit.institution_id.indexOf(props.filterInstitution.value) >= 0;
+                return claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0;
             }
             else if(props.plan === "HUB")
                 return claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0;
@@ -90,6 +90,7 @@ const ColToTreat = (props) => {
                     currentFilterData.map((claim, index) => (
                         <KanbanElementDetail
                             key={index}
+                            onClick={props.onClick}
                             onShowDetail={props.onShowDetail}
                             claim={claim}
                             index={index}

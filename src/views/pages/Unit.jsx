@@ -73,6 +73,7 @@ const Unit = (props) => {
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                    console.log("data:", response.data);
                     setUnits(response.data);
                     setLoad(false);
                 })
@@ -100,8 +101,8 @@ const Unit = (props) => {
         newUnits = newUnits.filter(el => (
             getLowerCaseString(el.name["fr"]).indexOf(value) >= 0 ||
             getLowerCaseString(el.unit_type.name["fr"]).indexOf(value) >= 0 ||
-            getLowerCaseString(el.lead ? el.lead.identite ? el.lead.identite.lastname+" "+el.lead.identite.firstname : "Pas d'identite" : "Pas de responsable").indexOf(value) >= 0 ||
-            getLowerCaseString(verifyPermission(props.userPermissions, "list-any-unit") ? el.institution ? el.institution.name : "" : "").indexOf(value) >= 0
+            getLowerCaseString(el.lead ? el.lead.identite ? el.lead.identite.lastname+" "+el.lead.identite.firstname : "-" : "-").indexOf(value) >= 0 ||
+            getLowerCaseString(verifyPermission(props.userPermissions, "list-any-unit") ? el.institution ? el.institution.name : "-" : "-").indexOf(value) >= 0
         ));
 
         return newUnits;
@@ -221,8 +222,8 @@ const Unit = (props) => {
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>
                     {
                         unit.lead ?
-                            unit.lead.identite ? unit.lead.identite.lastname+" "+unit.lead.identite.firstname : "Pas d'identité"
-                            : "Pas de responsable"
+                            unit.lead.identite ? unit.lead.identite.lastname+" "+unit.lead.identite.firstname : "-"
+                            : "-"
                     }
                 </td>
                 {

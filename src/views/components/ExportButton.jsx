@@ -1,5 +1,6 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
+import InfoFormatExcel from "../../constants/InfoFormatExcel";
 
 const ExportButton = ({pageUrl, downloadLink}) => {
     return (
@@ -11,11 +12,12 @@ const ExportButton = ({pageUrl, downloadLink}) => {
                 <button className="btn btn-secondary buttons-copy buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
                     <span>Copy</span>
                 </button>*/}
-                <a href={downloadLink} download={true} className="btn btn-secondary buttons-copy buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
+                <InfoFormatExcel/>
+                <a href={downloadLink} download={true} className="btn mr-1 btn-secondary buttons-copy buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
                     <span>Télécharger le format</span>
                 </a>
 
-                <NavLink to={pageUrl} className="btn btn-secondary buttons-excel buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
+                <NavLink to={pageUrl} className="btn ml-1 btn-primary buttons-excel buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
                     <span>Importer via Excel</span>
                 </NavLink>
                 {/*<button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">

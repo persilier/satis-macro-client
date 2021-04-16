@@ -24,7 +24,7 @@ const ProfilePage = ({user}) => {
     const username = user.data.username;
     const formatRole = (rules) => {
         const newRules = [];
-        rules.map(r => newRules.push(r.name));
+        rules.map(r => newRules.push(r.description));
         return newRules.join(' / ');
     };
 

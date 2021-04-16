@@ -291,7 +291,7 @@ const ClaimListDetail = (props) => {
                                             <button
                                                 className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                 data-ktwizard-type="action-next">
-                                                SUIVANTE
+                                                SUIVANT
                                             </button>
                                         </div>
                                     </form>

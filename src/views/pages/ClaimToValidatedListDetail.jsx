@@ -190,11 +190,16 @@ const ClaimToValidatedListDetail = (props) => {
                                                                                                 <h5><strong>Traitement</strong></h5>
                                                                                             </div>
                                                                                             <div className="kt-wizard-v2__review-content">
-                                                                                                <strong>Statut</strong>: <span className="mx-2">Traité</span><br/>
-                                                                                                <strong>Montant retourné</strong>: <span className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "Pas de montant"}</span><br/>
-                                                                                                <strong>Solution</strong>: <span className="mx-2">{claim.active_treatment.solution ? claim.active_treatment.solution : "Pas de solution"}</span><br/>
-                                                                                                <strong>Commentaires</strong>: <span className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "Pas de commentaire"}</span><br/>
-                                                                                                <strong>Mésures préventives</strong>: <span className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "Pas de mésures préventives"}</span><br/>
+                                                                                                <strong>Statut</strong>:
+                                                                                                <span className="mx-2">Traité</span><br/>
+                                                                                                <strong>Montant retourné</strong>:
+                                                                                                <span className="mx-2">{claim.active_treatment.amount_returned ? claim.active_treatment.amount_returned : "-"}</span><br/>
+                                                                                                <strong>Solution</strong>:
+                                                                                                <span className="mx-2">{claim.active_treatment.solution ? claim.active_treatment.solution : "-"}</span><br/>
+                                                                                                <strong>Commentaires</strong>:
+                                                                                                <span className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "-"}</span><br/>
+                                                                                                <strong>Mésures préventives</strong>:
+                                                                                                <span className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "-"}</span><br/>
                                                                                             </div>
                                                                                         </div>
                                                                                         <div
@@ -280,7 +285,7 @@ const ClaimToValidatedListDetail = (props) => {
                                             <button
                                                 className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                 data-ktwizard-type="action-next">
-                                                SUIVANTE
+                                                SUIVANT
                                             </button>
                                         </div>
                                     </form>

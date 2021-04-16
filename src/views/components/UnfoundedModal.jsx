@@ -119,7 +119,7 @@ const UnfoundedModal = (props) => {
                                         <textarea
                                             id="description"
                                             className={error.solution_communicated.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la solution à communiquer"
+                                            placeholder="Message à communiquer au client"
                                             cols="30"
                                             rows="7"
                                             value={data.solution_communicated}

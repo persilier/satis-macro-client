@@ -22,9 +22,11 @@ const DashboardClaimsAll = (props) => {
             if (verifyTokenExpire()) {
                 axios.get(appConfig.apiDomaine + "/dashboard")
                     .then(response => {
+                        // console.log(response.data,"RESPONSE")
+                        console.log(response.data.statistics.totalRegistered.allInstitution,"RESPONSE")
                         if (!isCancelled) {
                             setData(response.data.statistics);
-                            setTotalData(response.data.totalClaimsRegisteredStatistics);
+                            setTotalData(response.data.statistics.totalRegistered.allInstitution);
                             setLoad(false)
                         }
                     })
