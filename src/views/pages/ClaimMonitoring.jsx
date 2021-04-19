@@ -4,9 +4,9 @@ import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {formatSelectOption, loadCss, loadScript} from "../../helpers/function";
 import Select from "react-select";
+import axios from "axios";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastInvalidPeriodMessageConfig, toastValidPeriodMessageConfig} from "../../config/toastConfig";
-import axios from "axios";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -18,6 +18,7 @@ import ColToValidate from "../components/kanban/ColToValidate";
 import ColToMeasure from "../components/kanban/ColToMeasure";
 import DetailModal from "../components/kanban/DetailModal";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import RelaunchModal from "../components/RelaunchModal";
 
 loadCss("/assets/plugins/custom/kanban/kanban.bundle.css");
 
@@ -67,6 +68,8 @@ const ClaimMonitoring = (props) => {
 
     const [claimSelected, setClaimSelected] = useState(null);
 
+    const [relaunchId, setRelaunchId] = useState('');
+
     useEffect(() => {
         async function fetchData () {
             let endpoint = "";
@@ -81,7 +84,6 @@ const ClaimMonitoring = (props) => {
                 endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
             await axios.get(endpoint)
                 .then(response => {
-                    console.log("response:", response.data);
                     setClaimsToComplete(response.data.incompletes);
                     setClaimsToAssignUnit(response.data.toAssignementToUnit);
                     setClaimsToAssignStaff(response.data.toAssignementToStaff);
@@ -244,6 +246,11 @@ const ClaimMonitoring = (props) => {
         document.getElementById("detailClaimButton").click();
     };
 
+    const showModal = async (id) => {
+        await setRelaunchId(id);
+        document.getElementById("relaunch").click();
+    };
+
     const handleTimeLimitChange = (e) => {
         setFilterTimeLimit(e.target.value);
     };
@@ -270,7 +277,7 @@ const ClaimMonitoring = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Cette interface vous permet d'effectuer le suivi de vos réclamations"}/>
+                    <InfirmationTable information={"Cette interface permet d'effectuer le suivi de vos réclamations"}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
@@ -322,7 +329,7 @@ const ClaimMonitoring = (props) => {
                                         {
                                             verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') ? (
                                                 <div className={"col"}>
-                                                    <label htmlFor="institution">Institution</label>
+                                                    <label htmlFor="institution">Institution concernée</label>
                                                     <Select
                                                         placeholder={"Veillez selectioner l'institution"}
                                                         isClearable
@@ -335,7 +342,7 @@ const ClaimMonitoring = (props) => {
                                         }
 
                                         <div className={"col"}>
-                                            <label htmlFor="unite">Unité</label>
+                                            <label htmlFor="unite">Unité en charge du traitement</label>
                                             <Select
                                                 isClearable
                                                 placeholder={"Veillez selectioner l'unité"}
@@ -346,7 +353,7 @@ const ClaimMonitoring = (props) => {
                                         </div>
 
                                         <div className={"col"}>
-                                            <label htmlFor="staff">Agent</label>
+                                            <label htmlFor="staff">Agent traitant</label>
                                             <Select
                                                 isClearable
                                                 placeholder={"Veillez selectioner l'agent"}
@@ -359,7 +366,7 @@ const ClaimMonitoring = (props) => {
 
                                     <div className="form-group row" style={{marginRight: "12px"}}>
                                         <div className="col">
-                                            <label htmlFor="category">Catégorie</label>
+                                            <label htmlFor="category">Catégorie de la réclamation traitée</label>
                                             <Select
                                                 value={category}
                                                 placeholder={"Veillez selectioner la catégorie"}
@@ -370,7 +377,7 @@ const ClaimMonitoring = (props) => {
                                         </div>
 
                                         <div className="col">
-                                            <label htmlFor="object">Objet</label>
+                                            <label htmlFor="object">Objet de la réclamation traitée</label>
                                             <Select
                                                 isClearable
                                                 value={object}
@@ -381,7 +388,7 @@ const ClaimMonitoring = (props) => {
                                         </div>
 
                                         <div className="col">
-                                            <label htmlFor="expireDate">Délai</label>
+                                            <label htmlFor="expireDate">Délai de traitement</label>
                                             <select name="" id="" className="form-control" value={filterTimeLimit} onChange={handleTimeLimitChange}>
                                                 <option value="all">Tout</option>
                                                 <option value="today">Expire aujourd'hui</option>
@@ -392,6 +399,9 @@ const ClaimMonitoring = (props) => {
                                     </div>
 
                                     <div className="form-group row" style={{marginRight: "12px"}}>
+                                        <div className="col-12">
+                                            <h6 className="text-center">Période de reception de la réclamation</h6>
+                                        </div>
                                         <div className={"col"}>
                                             <label htmlFor="startDate">Date début</label>
                                             <input type="date" className="w-100 form-control" value={startDate} onChange={e => onChangeStartDate(e)}/>
@@ -410,6 +420,7 @@ const ClaimMonitoring = (props) => {
                                     toComplete ? (
                                         <ColToComplete
                                             userPermissions={props.userPermissions}
+                                            onClick={showModal}
                                             onShowDetail={claim => showClaimDetail(claim, "toComplete")}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
@@ -431,8 +442,9 @@ const ClaimMonitoring = (props) => {
                                             onShowDetail={claim => showClaimDetail(claim, "toAssignUnit")}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
-                                            title="Affecter à une unité"
+                                            title="A affecter à une unité"
                                             claims={claimsToAssignUnit}
+                                            onClick={showModal}
                                             filterInstitution={institution}
                                             filterCategory={category}
                                             filterObject={object}
@@ -446,10 +458,11 @@ const ClaimMonitoring = (props) => {
                                     toAssignStaff ? (
                                         <ColToAssignStaff
                                             onShowDetail={claim => showClaimDetail(claim, "toAssignStaff")}
+                                            onClick={showModal}
                                             plan={props.plan}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
-                                            title="Affecter à un staff"
+                                            title="A affecter à un staff"
                                             claims={claimsToAssignStaff}
                                             filterInstitution={institution}
                                             filterUnit={unit}
@@ -465,6 +478,7 @@ const ClaimMonitoring = (props) => {
                                     toTreat ? (
                                         <ColToTreat
                                             onShowDetail={claim => showClaimDetail(claim, "toTreat")}
+                                            onClick={showModal}
                                             plan={props.plan}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
@@ -486,6 +500,7 @@ const ClaimMonitoring = (props) => {
                                         <ColToValidate
                                             userPermissions={props.userPermissions}
                                             onShowDetail={claim => showClaimDetail(claim, "toValidate")}
+                                            onClick={showModal}
                                             plan={props.plan}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
@@ -508,6 +523,7 @@ const ClaimMonitoring = (props) => {
                                         <ColToMeasure
                                             userPermissions={props.userPermissions}
                                             onShowDetail={claim => showClaimDetail(claim, "toMeasure")}
+                                            onClick={showModal}
                                             backgroundHeader="#CBD5E0"
                                             colorHeader="#4A5568"
                                             title="A Mesurer la satisfaction"
@@ -532,6 +548,8 @@ const ClaimMonitoring = (props) => {
                                         />
                                     ) : null
                                 }
+                                <button style={{display: "none"}} id={"relaunch"} type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4"/>
+                                <RelaunchModal id={relaunchId} onClose={() => setRelaunchId('')}/>
                             </div>
                         </div>
                     </div>

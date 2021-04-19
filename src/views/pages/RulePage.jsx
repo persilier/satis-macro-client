@@ -33,10 +33,11 @@ const RulePage = (props) => {
 
     const [load, setLoad] = useState(true);
     const [rules, setRulePages] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
+
 
     useEffect(() => {
         var endpoint = ``;
@@ -47,8 +48,8 @@ const RulePage = (props) => {
         async function fetchData () {
             await axios.get(endpoint)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
-                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));
                     setRulePages(response.data);
                     setLoad(false);
                 })
@@ -60,14 +61,14 @@ const RulePage = (props) => {
         }
         if (verifyTokenExpire())
             fetchData();
-    }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
+    }, []);
 
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
         let newRulePages = [...rules];
         newRulePages = newRulePages.filter(el => (
-            getLowerCaseString(el.name ? el.name["fr"] : "").indexOf(value) >= 0 ||
-            getLowerCaseString(el.description ? el.description["fr"] : "").indexOf(value) >= 0
+            getLowerCaseString(el.name ? el.name : "").indexOf(value) >= 0 ||
+            getLowerCaseString(el.description ? el.description: "").indexOf(value) >= 0
         ));
 
         return newRulePages;

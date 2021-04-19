@@ -382,9 +382,8 @@ const ConfirmClaimAddModal = props => {
     };
 
     return (
-        <div className="modal fade" id="kt_modal_4" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" role="dialog" data-backdrop="false"
-             style={{ display: "block", paddingRight: "17px"}} aria-modal="true">
-            <div className="modal-dialog modal-lg" role="document" style={{boxShadow: "0px 4px 23px 6px rgba(0,0,0,0.75)"}}>
+        <div className="modal fade" id="kt_modal_4_2" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{display: "none"}}>
+            <div className="modal-dialog modal-xl" role="document">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="exampleModalLabel">Enregistrement reclamation</h5>
@@ -907,7 +906,7 @@ const ConfirmClaimAddModal = props => {
                     <div className="modal-footer">
                         {
                             !startRequest ? (
-                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
+                                <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Valider</button>
                             ) : (
                                 <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                     Chargement...

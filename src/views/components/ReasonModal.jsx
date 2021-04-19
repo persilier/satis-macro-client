@@ -27,7 +27,11 @@ const ReasonModal = props => {
                     })
                     .catch(error => {
                         setStartRequest(false);
-                        setError(error.response.data.error.rejected_reason);
+                        if (error.response.data.code === 403) {
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Vous ne pouvez pas effectuer cette opération. Le nombre tolérable est dépassé.'))
+                        } else {
+                            setError(error.response.data.error.rejected_reason);
+                        }
                     })
                 ;
             } else if(props.action === "validateReject") {
@@ -83,6 +87,7 @@ const ReasonModal = props => {
                                 <textarea
                                     className={error.length ? "form-control is-invalid" : "form-control"}
                                     id="message-text"
+                                    placeholder="Veuillez entrer le message à communiquer au réclamant"
                                     onChange={e => setDescription(e.target.value)}
                                 />
                                 {

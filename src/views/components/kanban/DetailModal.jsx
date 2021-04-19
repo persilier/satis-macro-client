@@ -8,7 +8,7 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 const DetailModal = (props) => {
     return (
-        <div className="modal fade w-100" id="kt_modal_4_2" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal modal-sticky-lg fade w-100" id="kt_modal_4_2" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog modal-xl" role="document">
                 <div className="modal-content" style={{width: "1000px"}}>
                     <div className="modal-header">
@@ -20,7 +20,7 @@ const DetailModal = (props) => {
                         {
                             props.claim ? (
                                 <ClaimDetails claim={props.claim}/>
-                            ) : ""
+                            ) : null
                         }
                     </div>
                     <div className="modal-footer">

@@ -64,7 +64,6 @@ const TreatmentForm = (props) => {
     };
     const onClick = (e) => {
         e.preventDefault();
-        console.log(data, "data");
         setStartRequest(true);
         axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, data)
             .then(response => {
@@ -85,7 +84,7 @@ const TreatmentForm = (props) => {
                 props.amount_disputed ?
                     <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
                         <label className="col-xl-3 col-lg-3 col-form-label"
-                               htmlFor="name">Montant retourné
+                               htmlFor="name">Montant retourné en <strong>{props.currency}</strong>
                         </label>
                         <div className="col-lg-9 col-xl-6">
                             <input
@@ -119,7 +118,7 @@ const TreatmentForm = (props) => {
                                                                 <textarea
                                                                     id="solution"
                                                                     className={error.solution.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la solution"
+                                                                    placeholder="Veuillez entrer la solution proposée"
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.solution}
@@ -137,6 +136,34 @@ const TreatmentForm = (props) => {
                     }
                 </div>
             </div>
+
+            <div
+                className={error.preventive_measures.length ? "form-group row validated" : "form-group row"}>
+                <label className="col-xl-3 col-lg-3 col-form-label"
+                       htmlFor="description">Mesures préventives <InputRequire/></label>
+                <div className="col-lg-9 col-xl-6">
+                                                                <textarea
+                                                                    id="measures"
+                                                                    className={error.preventive_measures.length ? "form-control is-invalid" : "form-control"}
+                                                                    placeholder="Veillez entrer la mesure préventive"
+                                                                    cols="30"
+                                                                    rows="5"
+                                                                    value={data.preventive_measures}
+                                                                    onChange={(e) => onChangePreventiveMeasures(e)}
+                                                                />
+                    {
+                        error.preventive_measures.length ? (
+                            error.preventive_measures.map((error, index) => (
+                                <div key={index}
+                                     className="invalid-feedback">
+                                    {error}
+                                </div>
+                            ))
+                        ) : ""
+                    }
+                </div>
+            </div>
+
             <div
                 className={error.comments.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
@@ -163,32 +190,7 @@ const TreatmentForm = (props) => {
                     }
                 </div>
             </div>
-            <div
-                className={error.preventive_measures.length ? "form-group row validated" : "form-group row"}>
-                <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="description">Mesures préventives</label>
-                <div className="col-lg-9 col-xl-6">
-                                                                <textarea
-                                                                    id="measures"
-                                                                    className={error.preventive_measures.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la mesure préventive"
-                                                                    cols="30"
-                                                                    rows="5"
-                                                                    value={data.preventive_measures}
-                                                                    onChange={(e) => onChangePreventiveMeasures(e)}
-                                                                />
-                    {
-                        error.preventive_measures.length ? (
-                            error.preventive_measures.map((error, index) => (
-                                <div key={index}
-                                     className="invalid-feedback">
-                                    {error}
-                                </div>
-                            ))
-                        ) : ""
-                    }
-                </div>
-            </div>
+
 
             {
                 !startRequest ? (

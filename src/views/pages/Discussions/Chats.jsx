@@ -139,6 +139,7 @@ const Chats = (props) => {
                 .then(response => {
                     setListChatMessage(response.data.reverse());
                     document.getElementById('kt-scroll').scrollTo(0, 10000);
+                    document.getElementById("monChamp").focus();
                 })
                 .catch(error => {
                 });
@@ -551,7 +552,9 @@ const Chats = (props) => {
                                             }
 
                                             <textarea
+                                                id={"monChamp"}
                                                 style={{height: "35px"}}
+                                               autoFocus={true}
                                                 placeholder="Type here..."
                                                 value={data.text}
                                                 onChange={(e) => onChangeText(e)}
@@ -577,7 +580,7 @@ const Chats = (props) => {
                                                     !startRequest ? (
                                                         <button type="button"
                                                                 onClick={(e) => addItem(e)}
-                                                                className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply ">Répondre
+                                                                className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply ">Envoyer
                                                         </button>
                                                     ) : (
                                                         <button

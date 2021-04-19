@@ -94,7 +94,7 @@ const {id}=useParams();
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/treatment/chat" className="kt-subheader__breadcrumbs-link">
+                                <Link to="/chat" className="kt-subheader__breadcrumbs-link">
                                     Chat
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>

@@ -250,11 +250,6 @@ const ClaimCategory = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-
-                                            <ExportButton
-                                                downloadLink={`${appConfig.apiDomaine}/download-excel/categories`}
-                                                pageUrl={"/settings/claim_category/import"}
-                                            />
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">

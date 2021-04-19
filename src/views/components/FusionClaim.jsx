@@ -5,9 +5,8 @@ import {ToastBottomEnd} from "./Toast";
 import {
     toastErrorMessageWithParameterConfig,
     toastMergeSuccessMessageConfig,
-    toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
-import {debug, formatDateToTimeStampte} from "../../helpers/function";
+import {formatDateToTimeStampte} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const FusionClaim = props => {
@@ -59,7 +58,7 @@ const FusionClaim = props => {
     };
 
     return (
-        <div className="modal fade" id="kt_modal_4" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="kt_modal_4" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog modal-lg" role="document">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -79,38 +78,43 @@ const FusionClaim = props => {
                                 <tbody>
                                     <tr>
                                         <td><strong>Réclamant</strong></td>
-                                        <td>{props.claim.claimer ? `${props.claim.claimer.lastname} ${props.claim.claimer.firstname}` : "Pas de reclamant"}</td>
-                                        <td>{props.copyClaim.claimer ? `${props.copyClaim.claimer.lastname} ${props.copyClaim.claimer.firstname}` : "Pas de reclamant"}</td>
+                                        <td>{props.claim.claimer ? `${props.claim.claimer.lastname} ${props.claim.claimer.firstname}` : "-"}</td>
+                                        <td>{props.copyClaim.claimer ? `${props.copyClaim.claimer.lastname} ${props.copyClaim.claimer.firstname}` : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Montant réclamé</strong></td>
-                                        <td>{props.claim.amount_disputed ? `${props.claim.amount_disputed} ${props.claim.amount_currency ? props.claim.amount_currency.name["fr"] : ""}` : "Pas de montant"}</td>
-                                        <td>{props.copyClaim.amount_disputed ? `${props.copyClaim.amount_disputed} ${props.copyClaim.amount_currency ? props.copyClaim.amount_currency.name["fr"] : ""}` : "Pas de montant"}</td>
+                                        <td>{props.claim.amount_disputed ? `${props.claim.amount_disputed} ${props.claim.amount_currency ? props.claim.amount_currency.name["fr"] : ""}` : "-"}</td>
+                                        <td>{props.copyClaim.amount_disputed ? `${props.copyClaim.amount_disputed} ${props.copyClaim.amount_currency ? props.copyClaim.amount_currency.name["fr"] : ""}` : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Date de réception</strong></td>
-                                        <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "Pas de date de reclamation"}</td>
-                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "Pas de date de reclamation"}</td>
+                                        <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "-"}</td>
+                                        <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Date de l'évenement</strong></td>
-                                        <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "Pas de date"}</td>
-                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "Pas de date"}</td>
+                                        <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "-"}</td>
+                                        <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "-"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Catégorie de reclamation</strong></td>
+                                        <td>{props.claim.claim_object ? props.claim.claim_object.claim_category.name["fr"] : "-"}</td>
+                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.claim_category.name["fr"] : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Objet de reclamation</strong></td>
-                                        <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "Pas d'objet de Réclamation"}</td>
-                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "Pas d'objet de Réclamation"}</td>
+                                        <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "-"}</td>
+                                        <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Description</strong></td>
-                                        <td>{props.claim.description ? props.claim.description: "Pas de description"}</td>
-                                        <td>{props.copyClaim.description ? props.copyClaim.description : "Pas de description"}</td>
+                                        <td>{props.claim.description ? props.claim.description: "-"}</td>
+                                        <td>{props.copyClaim.description ? props.copyClaim.description : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Attente</strong></td>
-                                        <td>{props.claim.claimer_expectation ? props.claim.claimer_expectation : "Pas d'attente"}</td>
-                                        <td>{props.copyClaim.claimer_expectation ? props.copyClaim.claimer_expectation : "Pas d'attente"}</td>
+                                        <td>{props.claim.claimer_expectation ? props.claim.claimer_expectation : "-"}</td>
+                                        <td>{props.copyClaim.claimer_expectation ? props.copyClaim.claimer_expectation : "-"}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Choix</strong></td>
@@ -130,8 +134,8 @@ const FusionClaim = props => {
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="btn btn-secondary">Fermer</button>
-                        <button style={{display: "none"}} id={"close-button"} type="button" className="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                        <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="btn btn-secondary">Conserver les deux</button>
+                        <button style={{display: "none"}} id={"close-button"} type="button" className="btn btn-secondary" data-dismiss="modal">Conserver les deux</button>
                         {
                             !startRequest ? (
                                 <button type="button" className="btn btn-primary" onClick={() => onClickFusion()}>Fusioner</button>

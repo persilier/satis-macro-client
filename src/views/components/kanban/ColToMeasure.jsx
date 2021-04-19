@@ -21,7 +21,7 @@ const ColToMeasure = (props) => {
     };
 
     const filterByInstitution = () => {
-        currentFilterData = currentFilterData.filter(claim => claim.created_by.institution_id.indexOf(props.filterInstitution.label) >= 0);
+        currentFilterData = currentFilterData.filter(claim => claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0);
     };
 
     const filterByCategory = () => {
@@ -66,6 +66,7 @@ const ColToMeasure = (props) => {
                     currentFilterData.map((claim, index) => (
                         <KanbanElementDetail
                             key={index}
+                            onClick={props.onClick}
                             onShowDetail={props.onShowDetail}
                             claim={claim}
                             index={index}

@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
+import {Link, NavLink} from "react-router-dom";
 import moment from "moment";
 import 'moment/locale/fr';
 import * as LanguageAction from "../../store/actions/languageAction";
@@ -9,7 +10,6 @@ import appConfig from "../../config/appConfig";
 import {AUTH_TOKEN} from "../../constants/token";
 import {EventNotification, EventNotificationPath, RelaunchNotification} from "../../constants/notification";
 import EmptyNotification from "../components/EmptyNotification";
-import {Link, NavLink} from "react-router-dom";
 import {verifyPermission} from "../../helpers/permission";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
@@ -22,7 +22,10 @@ axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 const Nav = (props) => {
     const [eventNotification, setEventNotification] = useState([]);
     const [relaunchNotification, setRelaunchNotification] = useState([]);
+    const [loader, setLoader] = useState(false);
     const [startRead, setStartRead] = useState(false);
+    const [searchData, setSearchData] = useState(null);
+    var timer = null;
 
     const filterEventNotification = useCallback((notification) => {
         let notificationList;
@@ -108,6 +111,35 @@ const Nav = (props) => {
         }
     };
 
+    const searchClaim = (e) => {
+        var value = e.target.value;
+        var endpoint = "";
+        if (verifyPermission(props.userPermissions, 'search-claim-any-reference'))
+            endpoint = `${appConfig.apiDomaine}/any/search-claim/${value}`;
+        if (verifyPermission(props.userPermissions, 'search-claim-my-reference'))
+            endpoint = `${appConfig.apiDomaine}/my/search-claim/${value}`;
+        if (value) {
+            setLoader(true);
+            if (timer)
+                clearTimeout(timer);
+            timer = setTimeout(function(){
+                if (verifyTokenExpire()) {
+                    axios.get(endpoint)
+                        .then((response) => {
+                            setLoader(false);
+                            setSearchData(response.data);
+                        })
+                        .catch((error) => {
+                            setLoader(false);
+                            setSearchData([]);
+                            console.log("Something is wrong");
+                        })
+                    ;
+                }
+            }.bind(value), 5000);
+        }
+    };
+
     const showDetailNotification = useCallback((e, path, idNotification, relaunchNotification = false, notification = null) => {
         e.preventDefault();
         if (!startRead) {
@@ -144,6 +176,102 @@ const Nav = (props) => {
                 </div>
 
                 <div className="kt-header__topbar">
+                    <div className="kt-header__topbar-item kt-header__topbar-item--search dropdown"
+                         id="kt_quick_search_toggle">
+                        <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
+                            <span className="kt-header__topbar-icon"><i className="flaticon2-search-1"/></span>
+                        </div>
+                        <div
+                            className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-lg">
+                            <div className="kt-quick-search kt-quick-search--dropdown kt-quick-search--result-compact"
+                                 id="kt_quick_search_dropdown">
+                                <form method="get" className="kt-quick-search__form">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend"><span className="input-group-text"><i className="flaticon2-search-1"/></span></div>
+                                        <input type="text" onKeyUp={e => searchClaim(e)} className="form-control " placeholder="Search..."/>
+                                        {loader ? (
+                                            <div className="mr-5 input-group-append"><span className="input-group-text"><i className="kt-spinner kt-spinner--sm kt-spinner--brand" style={{display: "flex"}}/></span></div>
+                                        ) : null}
+                                    </div>
+                                </form>
+                                {searchData ? (
+                                    <div className={`kt-quick-search__wrapper kt-scroll ps ${true ? "ps--active-y" : ""}`} data-scroll="true" data-height="150" data-mobile-height="200" style={{height: "325px", overflow: "hidden", display: `${true ? "block" : "none"}`}}>
+                                        <div className="quick-search-result">
+                                            {!searchData.length ? (
+                                                <div className="font-size-sm text-primary font-weight-bolder text-uppercase mb-2">
+                                                    Aucun Enregistrement Trouvé
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="font-size-sm text-primary font-weight-bolder text-uppercase mb-2">
+                                                        Enregistrement Trouvé
+                                                    </div>
+
+                                                    <div className="mb-10">
+                                                        <div className="d-flex align-items-center flex-grow-1 mb-2">
+                                                            <div className="symbol symbol-30  flex-shrink-0">
+                                                                <div className="symbol-label" style={{backgroundImage: "url('https://preview.keenthemes.com/metronic/theme/html/demo1/dist/assets/media/users/300_20.jpg')"}}/>
+                                                            </div>
+                                                            <div className="d-flex flex-column ml-3 mt-2 mb-2">
+                                                                <a href={`/process/claims/${searchData[0].reference}/detail`} className="font-weight-bold text-dark text-hover-primary">
+                                                                    {searchData[0].reference}
+                                                                </a>
+                                                                <span className="font-size-sm font-weight-bold text-muted">
+                                                                    Reclamant: {searchData[0].claimer.lastname+" "+searchData[0].claimer.firstname}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : null}
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <div className="kt-header__topbar-item dropdown">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                             <span className="kt-header__topbar-icon">
@@ -294,9 +422,8 @@ const Nav = (props) => {
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-                        <span className="kt-header__topbar-icon">
-                            <img className="" src={props.language.countryLanguageImage[props.language.languageSelected]}
-                                 alt=""/>
+                        <span className="kt-header__topbar-icon text-white">
+                            {props.language.languageSelected.toUpperCase()}
                         </span>
                         </div>
                         <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
@@ -304,31 +431,16 @@ const Nav = (props) => {
                                 <li className="kt-nav__item kt-nav__item--active">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
-                                            <img src="/assets/media/flags/226-united-states.svg" alt=""/></span>
+                                            EN
+                                        </span>
                                         <span className="kt-nav__link-text">English</span>
-                                    </a>
-                                </li>
-                                <li className="kt-nav__item">
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "sp")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon">
-                                            <img src="/assets/media/flags/128-spain.svg" alt=""/>
-                                        </span>
-                                        <span className="kt-nav__link-text">Spanish</span>
-                                    </a>
-                                </li>
-                                <li className="kt-nav__item">
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "gm")} className="kt-nav__link">
-                                        <span className="kt-nav__link-icon">
-                                            <img src="/assets/media/flags/162-germany.svg" alt=""/>
-                                        </span>
-                                        <span className="kt-nav__link-text">German</span>
                                     </a>
                                 </li>
 
                                 <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
-                                            <img src="/personal/img/france.svg" alt=""/>
+                                            FR
                                         </span>
                                         <span className="kt-nav__link-text">Francais</span>
                                     </a>
@@ -357,33 +469,15 @@ const Nav = (props) => {
                                 <div className="kt-user-card__name">
                                     {props.user.lastName + " " + props.user.firstName}
                                 </div>
-                                {/*<div className="kt-user-card__badge">*/}
-                                {/*    <span*/}
-                                {/*        className="btn btn-label-primary btn-sm btn-bold btn-font-md">23 messages</span>*/}
-                                {/*</div>*/}
                             </div>
 
                             <div className="kt-notification">
-                                {/*    <a href="custom/apps/user/profile-1/personal-information.html" className="kt-notification__item">*/}
-                                {/*        <div className="kt-notification__item-icon">*/}
-                                {/*            <i className="flaticon2-calendar-3 kt-font-success"></i>*/}
-                                {/*        </div>*/}
-                                {/*        <div className="kt-notification__item-details">*/}
-                                {/*            <div className="kt-notification__item-title kt-font-bold">*/}
-                                {/*                My Profile*/}
-                                {/*            </div>*/}
-                                {/*            <div className="kt-notification__item-time">*/}
-                                {/*                Account settings and more*/}
-                                {/*            </div>*/}
-                                {/*        </div>*/}
-                                {/*    </a>*/}
-
                                 {
                                     verifyPermission(props.userPermissions, 'list-my-discussions') ||
                                     verifyPermission(props.userPermissions, 'contribute-discussion') ? (
                                             <Link to={"/chat"} className="kt-notification__item">
                                                 <div className="kt-notification__item-icon">
-                                                    <i className="flaticon2-mail kt-font-warning"></i>
+                                                    <i className="flaticon2-mail kt-font-warning"/>
                                                 </div>
                                                 <div className="kt-notification__item-details">
                                                     <div className="kt-notification__item-title kt-font-bold">
@@ -398,27 +492,14 @@ const Nav = (props) => {
                                         : null
                                 }
 
-                                {/*<Link to={"/feedback-channels"} className="kt-notification__item">*/}
-                                {/*    <div className="kt-notification__item-icon">*/}
-                                {/*        <i className="flaticon2-hourglass kt-font-brand"></i>*/}
-                                {/*    </div>*/}
-                                {/*    <div className="kt-notification__item-details">*/}
-                                {/*        <div className="kt-notification__item-title kt-font-bold">*/}
-                                {/*            Mes Canaux*/}
-                                {/*        </div>*/}
-                                {/*        <div className="kt-notification__item-time">*/}
-                                {/*           Les canaux du personnel*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*</Link>*/}
                                 <NavLink to={"/settings/account"}
                                    className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-calendar-3 kt-font-success"></i>
+                                        <i className="flaticon2-calendar-3 kt-font-success"/>
                                     </div>
                                     <div className="kt-notification__item-details">
                                         <div className="kt-notification__item-title kt-font-bold">
-                                            Mon profile
+                                            Mon profil
                                         </div>
                                         <div className="kt-notification__item-time">
                                             Paramètres de compte et plus

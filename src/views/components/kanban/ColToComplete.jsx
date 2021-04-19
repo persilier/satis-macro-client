@@ -21,7 +21,7 @@ const ColToComplete = (props) => {
     };
 
     const filterByInstitution = () => {
-        currentFilterData = currentFilterData.filter(claim => claim.created_by.institution_id.indexOf(props.filterInstitution.value) >= 0);
+        currentFilterData = currentFilterData.filter(claim => claim.institution_targeted_id.indexOf(props.filterInstitution.value) >= 0);
     };
 
     const filterByCategory = () => {
@@ -67,6 +67,7 @@ const ColToComplete = (props) => {
                         <KanbanElementDetail
                             key={index}
                             onShowDetail={props.onShowDetail}
+                            onClick={props.onClick}
                             claim={claim}
                             index={index}
                         />

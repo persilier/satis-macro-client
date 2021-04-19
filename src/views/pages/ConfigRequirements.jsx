@@ -315,7 +315,7 @@ const ConfigRequirements = () => {
                                                         rowSpan="1"
                                                         colSpan="1" style={{width: "100px"}}
                                                         aria-label="Ship City: activate to sort column ascending">Objets
-                                                        de plainte
+                                                        de réclamation
                                                     </th>
                                                     <th className="sorting" tabIndex="0"
                                                         aria-controls="kt_table_1"

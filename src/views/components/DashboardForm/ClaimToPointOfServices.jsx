@@ -34,37 +34,17 @@ const ClaimToInstitution = (props) => {
     };
 
     useEffect(() => {
-        let isCancelled = false;
-
-        async function fetchData() {
-          await axios.get(appConfig.apiDomaine + "/dashboard")
-                .then(response => {
-                    if (!isCancelled) {
-                        let pointOfService = response.data.pointOfServicesTargeted;
-                        let ServiceData = [];
-                        for (const processus in pointOfService) {
-                            ServiceData.push(processus);
-                        }
-                        let newData = {...defaultData};
-
-                        newData.options.labels = ServiceData;
-                        newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
-                        setPointOfServiceData(newData);
-                        setLoad(false)
-                    }
-                })
-                .catch(error => {
-                    setLoad(false);
-                    console.log("Something is wrong");
-                })
-            ;
+        let pointOfService = props.response.data.pointOfServicesTargeted;
+        let ServiceData = [];
+        for (const processus in pointOfService) {
+            ServiceData.push(processus);
         }
+        let newData = {...defaultData};
 
-        if (verifyTokenExpire())
-            fetchData();
-        return () => {
-            isCancelled = true;
-        }
+        newData.options.labels = ServiceData;
+        newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
+        setPointOfServiceData(newData);
+        setLoad(false)
     }, []);
 
     return (
@@ -72,7 +52,7 @@ const ClaimToInstitution = (props) => {
         <div>
             <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Statistique des points de services qui reçoivent plus de
+                    <h3 className="kt-portlet__head-title">Statistique les services techniques qui reçoivent plus de
                         réclamations sur les 30 derniers jours</h3>
                 </div>
             </div>

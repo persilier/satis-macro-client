@@ -21,12 +21,14 @@ import {verifyPermission} from "../../helpers/permission";
 import {RESPONSE_CHANNEL} from "../../constants/channel";
 import {ToastBottomEnd} from "../components/Toast";
 import {
+    toastAddErrorMessageConfig,
     toastEditErrorMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import InfirmationTable from "./InfirmationTable";
 import WithoutCode from "./WithoutCode";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import Loader from "./Loader";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -91,7 +93,8 @@ const IncompleteClaimsEdit = props => {
         relationship_id: null,
         event_occured_at: null,
         is_revival: 0,
-        file: []
+        file: [],
+        lieu: null
     };
     const defaultError = {
         firstname: [],
@@ -114,12 +117,14 @@ const IncompleteClaimsEdit = props => {
         relationship_id: [],
         event_occured_at: [],
         is_revival: [],
-        file: []
+        file: [],
+        lieu: []
     };
 
     const option1 = 1;
     const option2 = 0;
 
+    const [load, setLoad] = useState(true);
     const [claimObject, setClaimObject] = useState({});
     const [claimObjects, setClaimObjects] = useState([]);
     const [claimCategory, setClaimCategory] = useState({});
@@ -143,6 +148,8 @@ const IncompleteClaimsEdit = props => {
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [isRequire, setIsRequire] = useState(null);
+    const [componentData, setComponentData] = useState(undefined);
+
 
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 1);
@@ -154,7 +161,6 @@ const IncompleteClaimsEdit = props => {
                 .then(response => {
                     console.log(response.data, "GET_DATA");
                     const newIncompleteClaim = {
-
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
                         lastname: response.data.claim.claimer.lastname,
@@ -171,6 +177,7 @@ const IncompleteClaimsEdit = props => {
                         response_channel_slug: response.data.claim.response_channel_slug,
                         claimer_expectation: response.data.claim.claimer_expectation === null ? "" : response.data.claim.claimer_expectation,
                         description: response.data.claim.description,
+                        lieu: response.data.claim.lieu!==null?response.data.claim.lieu:undefined,
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
@@ -181,11 +188,14 @@ const IncompleteClaimsEdit = props => {
                     setIsRequire(response.data.requirements);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
+                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "number", false) : "");
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
-
+                    if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
+                        setUnits(formatSelectOption(response.data.units, "name", "fr"))
+                    }
                     setClaimCategories(formatSelectOption(response.data.claimCategories, "name", "fr"));
                     setCurrencies(formatSelectOption(response.data.currencies, "name", "fr", "slug"));
                     setChannels(formatSelectOption(response.data.channels, "name", "fr", "slug"));
@@ -245,7 +255,19 @@ const IncompleteClaimsEdit = props => {
                             label: response.data.claim.unit_targeted.name.fr
                         });
                     }
+                });
+            await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/register_claim")
+                .then(response => {
+                    console.log(response.data,"Component_DATA")
+                    setComponentData(response.data);
+                    setLoad(false);
                 })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+
         }
 
         if (verifyTokenExpire()) {
@@ -286,6 +308,12 @@ const IncompleteClaimsEdit = props => {
     const onChangeVille = (e) => {
         const newData = {...data};
         newData.ville = e.target.value;
+        setData(newData);
+    };
+    const onChangeLieu = (e) => {
+        console.log("e:", e.target.value);
+        const newData = {...data};
+        newData.Lieu = e.target.value;
         setData(newData);
     };
 
@@ -371,9 +399,14 @@ const IncompleteClaimsEdit = props => {
     };
 
     const onChangeAmountCurrency = selected => {
-        setCurrency(selected);
         const newData = {...data};
-        newData.amount_currency_slug = selected.value;
+        if (selected) {
+            setCurrency(selected);
+            newData.amount_currency_slug = selected.value;
+        } else {
+            setCurrency(null);
+            newData.amount_currency_slug = "";
+        }
         setData(newData);
     };
 
@@ -446,40 +479,49 @@ const IncompleteClaimsEdit = props => {
         if (verifyTokenExpire()) {
             axios.post(endPoint.update(`${id}`), formatFormData(newData))
                 .then((response) => {
-                    console.log(response.data, "response");
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de la complétion"));
                     window.location.href = "/process/incomplete_claims"
                 })
                 .catch((error) => {
-                    setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+
+                    if (error.response.data.code === 422) {
+                        setStartRequest(false);
+                        let fileErrors = [];
+                        let i = 0;
+                        for (const key in error.response.data.error) {
+                            if (key === `file.${i}`) {
+                                fileErrors = [...fileErrors, ...error.response.data.error[`file.${i}`]];
+                                i++;
+                            }
+                        }
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    } else {
+                        setStartRequest(false);
+                        // setError({...defaultError, ...error.response.data.error});
+                        // ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    }
+
                 })
             ;
         }
     };
 
     return (
-       ( verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
-        || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
-        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) && isRequire? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Collecte
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    Réclamations Incomplètes
-                                </a>
+        load ? (
+            <Loader/>
+        ) : (
+            (verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
+                || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
+                verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) && isRequire ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    Collecte
+                                </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
@@ -487,249 +529,150 @@ const IncompleteClaimsEdit = props => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        Complétion
+                                        Réclamations Incomplètes
                                     </a>
+                                    <span className="kt-subheader__separator kt-hidden"/>
+                                    <div className="kt-subheader__breadcrumbs">
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
+                                        <span className="kt-subheader__breadcrumbs-separator"/>
+                                        <a href="#button" onClick={e => e.preventDefault()}
+                                           className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                            Complétion
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
-                    />
-                    <div className="row">
-                        <div className="col">
-                            <div className="kt-portlet">
-                                <div className="kt-portlet__head">
-                                    <div className="kt-portlet__head-label">
-                                        <h3 className="kt-portlet__head-title">
-                                            Complétion de réclamation
-                                        </h3>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable
+                            information={"Formulaire d'enregistrement d'une réclamation. Utilisez ce formulaire pour completer les réclamations imcomplètes de vos clients."}
+                        />
+                        <div className="row">
+                            <div className="col">
+                                <div className="kt-portlet">
+                                    <div className="kt-portlet__head">
+                                        <div className="kt-portlet__head-label">
+                                            <h3 className="kt-portlet__head-title">
+                                                Complétion de réclamation
+                                            </h3>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <form method="POST" className="kt-form">
-                                    <div className="kt-portlet__body">
-                                        {
-                                            verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
-                                                <div
-                                                    className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                           htmlFor="institution">Institution
-                                                        concernée <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            isDisabled={!disabledInput}
-                                                            placeholder={"Veillez selectioner l'institution"}
-                                                            value={institution}
-                                                            options={institutions}
-                                                        />
-                                                        {
-                                                            error.institution_targeted_id.length ? (
-                                                                error.institution_targeted_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-                                            ) : null
-                                        }
-                                        {
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
-                                            verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ? (
-                                                <div className="kt-section kt-section--first">
-                                                    <div className="kt-section__body">
-                                                        <h3 className="kt-section__title kt-section__title-lg">
-                                                            Client:</h3>
-
-                                                        <div className="form-group row">
-                                                            <div
-                                                                className={error.lastname.length ? "col validated" : "col"}>
-                                                                <label htmlFor="lastname">Nom <InputRequire/></label>
-                                                                <input
-                                                                    disabled={!disabledInput}
-                                                                    id="lastname"
-                                                                    type="text"
-                                                                    className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer le nom de famille"
-                                                                    value={data.lastname}
-                                                                    onChange={(e) => onChangeLastName(e)}
-                                                                />
-                                                                {
-                                                                    error.lastname.length ? (
-                                                                        error.lastname.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-
-                                                            <div
-                                                                className={error.firstname.length ? "col validated" : "col"}>
-                                                                <label htmlFor="firstname">Prénom
-                                                                    (s) <InputRequire/></label>
-                                                                <input
-                                                                    disabled={!disabledInput}
-                                                                    id="firstname"
-                                                                    type="text"
-                                                                    className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer le prénom"
-                                                                    value={data.firstname}
-                                                                    onChange={(e) => onChangeFirstName(e)}
-                                                                />
-                                                                {
-                                                                    error.firstname.length ? (
-                                                                        error.firstname.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="form-group row">
-                                                            <div
-                                                                className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                                <label htmlFor="sexe">Sexe <InputRequire/></label>
-                                                                <select
-                                                                    disabled={!disabledInput}
-                                                                    id="sexe"
-                                                                    className={error.sexe.length ? "form-control is-invalid" : "form-control"}
-                                                                    value={data.sexe}
-                                                                    onChange={(e) => onChangeSexe(e)}
-                                                                >
-                                                                    <option value="" disabled={true}>Veillez choisir le
-                                                                        Sexe
-                                                                    </option>
-                                                                    <option value="F">Féminin</option>
-                                                                    <option value="M">Masculin</option>
-                                                                    <option value="A">Autres</option>
-                                                                </select>
-                                                                {
-                                                                    error.sexe.length ? (
-                                                                        error.sexe.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-                                                            <div
-                                                                className={error.ville.length ? "col validated" : "col"}>
-                                                                <label htmlFor="ville">Ville </label>
-                                                                <input
-                                                                    disabled={!disabledInput}
-                                                                    id="ville"
-                                                                    type="text"
-                                                                    className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer votre ville"
-                                                                    value={data.ville}
-                                                                    onChange={(e) => onChangeVille(e)}
-                                                                />
-                                                                {
-                                                                    error.ville.length ? (
-                                                                        error.ville.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="form-group row">
-                                                            <div
-                                                                className={error.telephone.length ? "col validated" : "col"}>
-                                                                <label htmlFor="telephone"> Téléphone(s)<WithoutCode/>
-                                                                    <InputRequire/></label>
-                                                                <TagsInput disabled={!disabledInput}
-                                                                           value={data.telephone}
-                                                                           onChange={onChangeTelephone}
-                                                                           inputProps={{
-                                                                               className: 'react-tagsinput-input',
-                                                                               placeholder: 'Numéro(s)'
-                                                                           }}
-                                                                />
-                                                                {
-                                                                    error.telephone.length ? (
-                                                                        error.telephone.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-
-                                                            <div
-                                                                className={error.email.length ? "col validated" : "col"}>
-                                                                <label htmlFor="email">Email(s) <InputRequire/></label>
-                                                                <TagsInput disabled={!disabledInput} value={data.email}
-                                                                           onChange={onChangeEmail} inputProps={{
-                                                                    className: 'react-tagsinput-input',
-                                                                    placeholder: 'Email(s)'
-                                                                }}/>
-                                                                {
-                                                                    error.email.length ? (
-                                                                        error.email.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-
+                                    <form method="POST" className="kt-form">
+                                        <div className="kt-portlet__body">
+                                            {
+                                                verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution') ||
+                                                verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
+                                                    <div
+                                                        className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label"
+                                                               htmlFor="institution">{componentData ? componentData.params.fr.institution.value:""}
+                                                            <InputRequire/></label>
+                                                        <div className="col-lg-9 col-xl-6">
+                                                            <Select
+                                                                classNamePrefix="select"
+                                                                className="basic-single"
+                                                                // isDisabled={!disabledInput}
+                                                                placeholder={componentData ? componentData.params.fr.institution_placeholder.value:""}
+                                                                value={institution}
+                                                                options={institutions}
+                                                            />
+                                                            {
+                                                                error.institution_targeted_id.length ? (
+                                                                    error.institution_targeted_id.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ) : null
-                                        }
+                                                ) : null
+                                            }
+                                            {
+                                                verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
+                                                verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ? (
+                                                    <div className="kt-section kt-section--first">
+                                                        <div className="kt-section__body">
+                                                            <h3 className="kt-section__title kt-section__title-lg">
+                                                                {componentData ? componentData.params.fr.info_cible.value+":":""}</h3>
 
-                                        <div
-                                            className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
-
-                                        <div className="kt-section">
-                                            <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg"> Réclamation:</h3>
-                                                {
-                                                    !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ?
-                                                        (
                                                             <div className="form-group row">
                                                                 <div
-                                                                    className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">Unité concernée {isRequire.unit_targeted_id?<InputRequire/>:""}</label>
-                                                                    <Select
-                                                                        classNamePrefix="select"
-                                                                        className="basic-single"
-                                                                        placeholder={"Veillez selectioner l'unité"}
-                                                                        value={unit}
-                                                                        onChange={onChangeUnit}
-                                                                        options={units}
+                                                                    className={error.lastname.length ? "col validated" : "col"}>
+                                                                    <label
+                                                                        htmlFor="lastname">{componentData ? componentData.params.fr.nom.value:""} <InputRequire/></label>
+                                                                    <input
+                                                                        // disabled={!disabledInput}
+                                                                        id="lastname"
+                                                                        type="text"
+                                                                        className={error.lastname.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder={componentData ? componentData.params.fr.nom_placeholder.value:""}
+                                                                        value={data.lastname}
+                                                                        onChange={(e) => onChangeLastName(e)}
                                                                     />
                                                                     {
-                                                                        error.unit_targeted_id.length ? (
-                                                                            error.unit_targeted_id.map((error, index) => (
+                                                                        error.lastname.length ? (
+                                                                            error.lastname.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                </div>
+
+                                                                <div
+                                                                    className={error.firstname.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value:""}
+                                                                        <InputRequire/></label>
+                                                                    <input
+                                                                        // disabled={!disabledInput}
+                                                                        id="firstname"
+                                                                        type="text"
+                                                                        className={error.firstname.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder={componentData ? componentData.params.fr.prenoms_placeholder.value:""}
+                                                                        value={data.firstname}
+                                                                        onChange={(e) => onChangeFirstName(e)}
+                                                                    />
+                                                                    {
+                                                                        error.firstname.length ? (
+                                                                            error.firstname.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="form-group row">
+                                                                <div
+                                                                    className={error.sexe.length ? "form-group col validated" : "form-group col"}>
+                                                                    <label htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value:""} <InputRequire/></label>
+                                                                    <select
+                                                                        // disabled={!disabledInput}
+                                                                        id="sexe"
+                                                                        className={error.sexe.length ? "form-control is-invalid" : "form-control"}
+                                                                        value={data.sexe}
+                                                                        onChange={(e) => onChangeSexe(e)}
+                                                                    >
+                                                                        <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value:""}
+                                                                        </option>
+                                                                        <option value="F">Féminin</option>
+                                                                        <option value="M">Masculin</option>
+                                                                        <option value="A">Autres</option>
+                                                                    </select>
+                                                                    {
+                                                                        error.sexe.length ? (
+                                                                            error.sexe.map((error, index) => (
                                                                                 <div key={index}
                                                                                      className="invalid-feedback">
                                                                                     {error}
@@ -739,20 +682,20 @@ const IncompleteClaimsEdit = props => {
                                                                     }
                                                                 </div>
                                                                 <div
-                                                                    className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="account">Numéro de compte
-                                                                        concerné {isRequire.account_targeted_id?<InputRequire/>:""}</label>
-                                                                    <Select
-                                                                        classNamePrefix="select"
-                                                                        className="basic-single"
-                                                                        placeholder={"Veillez selectioner le numéro"}
-                                                                        value={account}
-                                                                        onChange={onChangeAccount}
-                                                                        options={accounts}
+                                                                    className={error.ville.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="ville">{componentData ? componentData.params.fr.ville.value:""} </label>
+                                                                    <input
+                                                                        // disabled={!disabledInput}
+                                                                        id="ville"
+                                                                        type="text"
+                                                                        className={error.ville.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder={componentData ? componentData.params.fr.ville_placeholder.value:""}
+                                                                        value={data.ville}
+                                                                        onChange={(e) => onChangeVille(e)}
                                                                     />
                                                                     {
-                                                                        error.account_targeted_id.length ? (
-                                                                            error.account_targeted_id.map((error, index) => (
+                                                                        error.ville.length ? (
+                                                                            error.ville.map((error, index) => (
                                                                                 <div key={index}
                                                                                      className="invalid-feedback">
                                                                                     {error}
@@ -762,328 +705,479 @@ const IncompleteClaimsEdit = props => {
                                                                     }
                                                                 </div>
                                                             </div>
-                                                        )
-                                                        : null
-                                                }
 
-                                                <div className="form-group row">
-                                                    <div
-                                                        className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de
-                                                            réception <InputRequire/></label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le canal de réception"}
-                                                            value={receptionChannel}
-                                                            onChange={onChangeReceptionChannel}
-                                                            options={channels}
-                                                        />
-                                                        {
-                                                            error.request_channel_slug.length ? (
-                                                                error.request_channel_slug.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
+                                                            <div className="form-group row">
+                                                                <div
+                                                                    className={error.telephone.length ? "col validated" : "col"}>
+                                                                    <label
+                                                                        htmlFor="telephone"> {componentData ? componentData.params.fr.telephone.value:""}<WithoutCode/>
+                                                                        <InputRequire/></label>
+                                                                    <TagsInput
+                                                                        // disabled={!disabledInput}
+                                                                        value={data.telephone}
+                                                                        onChange={onChangeTelephone}
+                                                                        inputProps={{
+                                                                            className: 'react-tagsinput-input',
+                                                                            placeholder: componentData ? componentData.params.fr.telephone.value:""
+                                                                        }}
+                                                                    />
+                                                                    {
+                                                                        error.telephone.length ? (
+                                                                            error.telephone.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                </div>
 
-                                                    <div
-                                                        className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="responseChannel">Canal de
-                                                            réponse <InputRequire/></label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner le canal de réponse"}
-                                                            value={responseChannel}
-                                                            onChange={onChangeResponseChannel}
-                                                            options={responseChannels}
-                                                        />
-                                                        {
-                                                            error.response_channel_slug.length ? (
-                                                                error.response_channel_slug.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
+                                                                <div
+                                                                    className={error.email.length ? "col validated" : "col"}>
+                                                                    <label
+                                                                        htmlFor="email">{componentData ? componentData.params.fr.email.value:""} <InputRequire/></label>
+                                                                    <TagsInput
+                                                                        // disabled={!disabledInput}
+                                                                        value={data.email}
+                                                                        onChange={onChangeEmail}
+                                                                        inputProps={{
+                                                                            className: 'react-tagsinput-input',
+                                                                            placeholder: componentData ? componentData.params.fr.email_placeholder.value:""
+                                                                        }}/>
+                                                                    {
+                                                                        error.email.length ? (
+                                                                            error.email.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                </div>
 
-                                                <div className="form-group row">
-                                                    <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">Catégorie de réclamation</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner la catégorie de réclamation"}
-                                                            value={claimCategory}
-                                                            onChange={onChangeClaimCategory}
-                                                            options={claimCategories}
-                                                        />
-                                                    </div>
-
-                                                    <div
-                                                        className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de
-                                                            réclamation <InputRequire/></label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner l'objet de réclamation"}
-                                                            value={claimObject}
-                                                            onChange={onChangeClaimObject}
-                                                            options={claimObjects}
-                                                        />
-                                                        {
-                                                            error.claim_object_id.length ? (
-                                                                error.claim_object_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <div
-                                                        className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                        <label htmlFor="amount_claim">Montant réclamé {isRequire.amount_disputed?<InputRequire/>:""}</label>
-                                                        <input
-                                                            type={"number"}
-                                                            min="0"
-                                                            id="amount_claim"
-                                                            className={error.amount_disputed.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le Montant réclamé"
-                                                            value={data.amount_disputed}
-                                                            onChange={(e) => onChangeAmountDisputed(e)}
-                                                        />
-                                                        {
-                                                            error.amount_disputed.length ? (
-                                                                error.amount_disputed.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-
-                                                    <div
-                                                        className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="currency">Devise du montant réclamé {isRequire.amount_currency_slug?<InputRequire/>:""}</label>
-                                                        <Select
-                                                            classNamePrefix="select"
-                                                            className="basic-single"
-                                                            placeholder={"Veillez selectioner la devise du montant réclamé"}
-                                                            value={currency}
-                                                            onChange={onChangeAmountCurrency}
-                                                            options={currencies}
-                                                        />
-                                                        {
-                                                            error.amount_currency_slug.length ? (
-                                                                error.amount_currency_slug.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className="form-group row">
-
-                                                    <div
-                                                        className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de
-                                                            l'évènement <InputRequire/></label>
-                                                        <input
-                                                            type={"datetime-local"}
-                                                            id="date"
-                                                            className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la date de l'evernement"
-                                                            value={data.event_occured_at}
-                                                            max={maxDate}
-                                                            onChange={(e) => onChangeEventOccuredAt(e)}
-                                                        />
-                                                        {
-                                                            error.event_occured_at.length ? (
-                                                                error.event_occured_at.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                    {
-                                                        verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
-                                                            <div
-                                                                className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="relationship">Relation du reclamant avec
-                                                                    l'institution {isRequire.relationship_id?<InputRequire/>:""}</label>
-                                                                <Select
-                                                                    isClearable
-                                                                    value={relationship}
-                                                                    placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
-                                                                    onChange={onChangeRelationShip}
-                                                                    options={relationships}
-                                                                />
-                                                                {
-                                                                    error.relationship_id.length ? (
-                                                                        error.relationship_id.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
                                                             </div>
-                                                        ) : null
+                                                        </div>
+                                                    </div>
+                                                ) : null
+                                            }
+
+                                            <div
+                                                className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+
+                                            <div className="kt-section">
+                                                <div className="kt-section__body">
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.info_reclamation.value:""}</h3>
+                                                    {
+                                                        !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ?
+                                                            (
+                                                                <div className="form-group row">
+                                                                    <div
+                                                                        className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                        <label htmlFor="unit">{componentData ? componentData.params.fr.unite.value:""} {isRequire.unit_targeted_id ?
+                                                                                <InputRequire/> : ""}</label>
+                                                                        <Select
+                                                                            classNamePrefix="select"
+                                                                            className="basic-single"
+                                                                            placeholder={componentData ? componentData.params.fr.unite_placeholder.value:""}
+                                                                            value={unit}
+                                                                            onChange={onChangeUnit}
+                                                                            options={units}
+                                                                        />
+                                                                        {
+                                                                            error.unit_targeted_id.length ? (
+                                                                                error.unit_targeted_id.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
+                                                                    </div>
+                                                                    <div
+                                                                        className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                        <label htmlFor="account">{componentData ? componentData.params.fr.compte.value:""} {isRequire.account_targeted_id ?
+                                                                                <InputRequire/> : ""}</label>
+                                                                        <Select
+                                                                            classNamePrefix="select"
+                                                                            className="basic-single"
+                                                                            placeholder={componentData ? componentData.params.fr.compte_placeholder.value:""}
+                                                                            value={account}
+                                                                            onChange={onChangeAccount}
+                                                                            options={accounts}
+                                                                        />
+                                                                        {
+                                                                            error.account_targeted_id.length ? (
+                                                                                error.account_targeted_id.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                            : null
                                                     }
 
-                                                    <div className="col">
-                                                        <label htmlFor="file">Pièces jointes  {isRequire.file?<InputRequire/>:""}</label>
-                                                        <input
-                                                            onChange={onChangeFile}
-                                                            type="file"
-                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                            id="customFile"
-                                                            multiple={true}
-                                                        />
-                                                        {
-                                                            error.file.length ? (
-                                                                error.file.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
+                                                    <div className="form-group row">
+                                                        <div
+                                                            className={error.request_channel_slug.length ? "col validated" : "col"}>
+                                                            <label htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value:""} <InputRequire/></label>
+                                                            <Select
+                                                                classNamePrefix="select"
+                                                                className="basic-single"
+                                                                placeholder={componentData ? componentData.params.fr.canal_reception_placeholder.value:""}
+                                                                value={receptionChannel}
+                                                                onChange={onChangeReceptionChannel}
+                                                                options={channels}
+                                                            />
+                                                            {
+                                                                error.request_channel_slug.length ? (
+                                                                    error.request_channel_slug.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                        <div
+                                                            className={error.response_channel_slug.length ? "col validated" : "col"}>
+                                                            <label htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value:""} <InputRequire/></label>
+                                                            <Select
+                                                                classNamePrefix="select"
+                                                                className="basic-single"
+                                                                placeholder={componentData ? componentData.params.fr.canal_reponse_placeholder.value:""}
+                                                                value={responseChannel}
+                                                                onChange={onChangeResponseChannel}
+                                                                options={responseChannels}
+                                                            />
+                                                            {
+                                                                error.response_channel_slug.length ? (
+                                                                    error.response_channel_slug.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
                                                     </div>
 
-                                                </div>
+                                                    <div className="form-group row">
+                                                        <div className={"col"}>
+                                                            <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value:""}</label>
+                                                            <Select
+                                                                classNamePrefix="select"
+                                                                className="basic-single"
+                                                                placeholder={componentData ? componentData.params.fr.categorie_placeholder.value:""}
+                                                                value={claimCategory}
+                                                                onChange={onChangeClaimCategory}
+                                                                options={claimCategories}
+                                                            />
+                                                        </div>
 
-                                                <div className="form-group row">
-                                                    <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description {isRequire.description?<InputRequire/>:""}</label>
-                                                        <textarea
-                                                            rows="7"
-                                                            id="description"
-                                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la description"
-                                                            value={data.description}
-                                                            onChange={(e) => onChangeDescription(e)}
-                                                        />
-                                                        {
-                                                            error.description.length ? (
-                                                                error.description.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
+                                                        <div
+                                                            className={error.claim_object_id.length ? "col validated" : "col"}>
+                                                            <label htmlFor="claimObject">{componentData ? componentData.params.fr.object.value:""} <InputRequire/></label>
+                                                            <Select
+                                                                classNamePrefix="select"
+                                                                className="basic-single"
+                                                                placeholder={componentData ? componentData.params.fr.object_placeholder.value:""}
+                                                                value={claimObject}
+                                                                onChange={onChangeClaimObject}
+                                                                options={claimObjects}
+                                                            />
+                                                            {
+                                                                error.claim_object_id.length ? (
+                                                                    error.claim_object_id.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                        <div
+                                                            className={error.lieu.length ? "col validated" : "col"}>
+                                                            <label htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value:""} </label>
+                                                            <input
+                                                                // disabled={!disabledInput}
+                                                                id="lieu"
+                                                                type="text"
+                                                                className={error.lieu.length ? "form-control is-invalid" : "form-control"}
+                                                                placeholder={componentData ? componentData.params.fr.lieu_placeholder.value:""}
+                                                                value={data.lieu}
+                                                                onChange={(e) => onChangeLieu(e)}
+                                                            />
+                                                            {
+                                                                error.lieu.length ? (
+                                                                    error.lieu.map((error, index) => (
+                                                                        <div key={index}
+                                                                             className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <div
+                                                            className={error.amount_disputed.length ? "col validated" : "col"}>
+                                                            <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value:""} (<strong className="text-danger">Laisser vide si
+                                                                    pas de montant</strong>) {isRequire.amount_disputed ?
+                                                                    <InputRequire/> : ""}</label>
+                                                            <input
+                                                                type={"number"}
+                                                                min="0"
+                                                                id="amount_claim"
+                                                                className={error.amount_disputed.length ? "form-control is-invalid" : "form-control"}
+                                                                placeholder={componentData ? componentData.params.fr.montant_placeholder.value:""}
+                                                                value={data.amount_disputed}
+                                                                onChange={(e) => onChangeAmountDisputed(e)}
+                                                            />
+                                                            {
+                                                                error.amount_disputed.length ? (
+                                                                    error.amount_disputed.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                        <div
+                                                            className={error.amount_currency_slug.length ? "col validated" : "col"}>
+                                                            <label htmlFor="currency">{componentData ? componentData.params.fr.devise.value:""}
+                                                              {isRequire.amount_currency_slug ?
+                                                                    <InputRequire/> : ""}</label>
+                                                            <Select
+                                                                isClearable
+                                                                classNamePrefix="select"
+                                                                className="basic-single"
+                                                                placeholder={componentData ? componentData.params.fr.devise_placeholder.value:""}
+                                                                value={currency}
+                                                                onChange={onChangeAmountCurrency}
+                                                                options={currencies}
+                                                            />
+                                                            {
+                                                                error.amount_currency_slug.length ? (
+                                                                    error.amount_currency_slug.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
                                                     </div>
 
-                                                    <div
-                                                        className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimer_expectation">Attente {isRequire.claimer_expectation?<InputRequire/>:""} </label>
-                                                        <textarea
-                                                            rows="7"
-                                                            id="claimer_expectation"
-                                                            className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer l'attente du réclamant"
-                                                            value={data.claimer_expectation}
-                                                            onChange={(e) => onChangeClaimerExpectation(e)}
-                                                        />
+                                                    <div className="form-group row">
+
+                                                        <div
+                                                            className={error.event_occured_at.length ? "col validated" : "col"}>
+                                                            <label htmlFor="date">{componentData ? componentData.params.fr.date.value:""} <InputRequire/></label>
+                                                            <input
+                                                                type={"datetime-local"}
+                                                                id="date"
+                                                                className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
+                                                                placeholder={componentData ? componentData.params.fr.date_placeholder.value:""}
+                                                                value={data.event_occured_at}
+                                                                max={maxDate}
+                                                                onChange={(e) => onChangeEventOccuredAt(e)}
+                                                            />
+                                                            {
+                                                                error.event_occured_at.length ? (
+                                                                    error.event_occured_at.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
                                                         {
-                                                            error.claimer_expectation.length ? (
-                                                                error.claimer_expectation.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
+                                                            verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
+                                                                <div
+                                                                    className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                    <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value:""} {isRequire.relationship_id ?
+                                                                            <InputRequire/> : ""}</label>
+                                                                    <Select
+                                                                        isClearable
+                                                                        value={relationship}
+                                                                        placeholder={componentData ? componentData.params.fr.relation_placeholder.value:""}
+                                                                        onChange={onChangeRelationShip}
+                                                                        options={relationships}
+                                                                    />
+                                                                    {
+                                                                        error.relationship_id.length ? (
+                                                                            error.relationship_id.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                </div>
                                                             ) : null
                                                         }
+
+                                                        <div className="col">
+                                                            <label htmlFor="file">{componentData ? componentData.params.fr.piece.value:""} {isRequire.file ?
+                                                                <InputRequire/> : ""}</label>
+                                                            <input
+                                                                onChange={onChangeFile}
+                                                                type="file"
+                                                                className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                                placeholder={componentData ? componentData.params.fr.piece_placeholder.value:""}
+                                                                id="customFile"
+                                                                multiple={true}
+                                                            />
+                                                            {
+                                                                error.file.length ? (
+                                                                    error.file.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div className="form-group row">
+                                                        <div
+                                                            className={error.description.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="description">{componentData ? componentData.params.fr.description.value:""}
+                                                                {isRequire.description ?
+                                                                <InputRequire/> : ""}</label>
+                                                            <textarea
+                                                                rows="7"
+                                                                id="description"
+                                                                className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                                placeholder={componentData ? componentData.params.fr.description_placeholder.value:""}
+                                                                value={data.description}
+                                                                onChange={(e) => onChangeDescription(e)}
+                                                            />
+                                                            {
+                                                                error.description.length ? (
+                                                                    error.description.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
+                                                        <div
+                                                            className={error.claimer_expectation.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value:""}
+                                                                {isRequire.claimer_expectation ?
+                                                                <InputRequire/> : ""} </label>
+                                                            <textarea
+                                                                rows="7"
+                                                                id="claimer_expectation"
+                                                                className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
+                                                                placeholder={componentData ? componentData.params.fr.attente_placeholder.value:""}
+                                                                value={data.claimer_expectation}
+                                                                onChange={(e) => onChangeClaimerExpectation(e)}
+                                                            />
+                                                            {
+                                                                error.claimer_expectation.length ? (
+                                                                    error.claimer_expectation.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div
-                                            className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
-                                        <div className="kt-section">
-                                            <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance: <InputRequire/>
-                                                </h3>
+                                            <div
+                                                className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                            <div className="kt-section">
+                                                <div className="kt-section__body">
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value:""} <InputRequire/>
+                                                    </h3>
 
-                                                <div className="form-group row">
-                                                    <label className="col-3 col-form-label">Est-ce une relance ?</label>
-                                                    <div className="col-9">
-                                                        <div className="kt-radio-inline">
-                                                            <label className="kt-radio">
-                                                                <input type="radio" value={option1}
-                                                                       onChange={handleOptionChange}
-                                                                       checked={option1 === data.is_revival}/> Oui<span/>
-                                                            </label>
-                                                            <label className="kt-radio">
-                                                                <input type="radio" value={option2}
-                                                                       onChange={handleOptionChange}
-                                                                       checked={option2 === data.is_revival}/> Non<span/>
-                                                            </label>
+                                                    <div className="form-group row">
+                                                        <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value:""}</label>
+                                                        <div className="col-9">
+                                                            <div className="kt-radio-inline">
+                                                                <label className="kt-radio">
+                                                                    <input type="radio" value={option1}
+                                                                           onChange={handleOptionChange}
+                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value:""}<span/>
+                                                                </label>
+                                                                <label className="kt-radio">
+                                                                    <input type="radio" value={option2}
+                                                                           onChange={handleOptionChange}
+                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value:""}<span/>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="kt-portlet__foot">
-                                        <div className="kt-form__actions">
-                                            {
-                                                !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)}
-                                                            className="btn btn-primary">Modifier</button>
-                                                ) : (
-                                                    <button
-                                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                        type="button" disabled>
-                                                        Chargement...
-                                                    </button>
-                                                )
-                                            }
-                                            {
-                                                !startRequest ? (
-                                                    <Link to="/process/incomplete_claims"
-                                                          className="btn btn-secondary mx-2">
-                                                        Quitter
-                                                    </Link>
-                                                ) : (
-                                                    <Link to="/process/incomplete_claims"
-                                                          className="btn btn-secondary mx-2"
-                                                          disabled>
-                                                        Quitter
-                                                    </Link>
-                                                )
-                                            }
+                                        <div className="kt-portlet__foot">
+                                            <div className="kt-form__actions text-right">
+                                                {
+                                                    !startRequest ? (
+                                                        <button type="submit" onClick={(e) => onSubmit(e)}
+                                                                className="btn btn-primary">Modifier</button>
+                                                    ) : (
+                                                        <button
+                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                            type="button" disabled>
+                                                            Chargement...
+                                                        </button>
+                                                    )
+                                                }
+                                                {
+                                                    !startRequest ? (
+                                                        <Link to="/process/incomplete_claims"
+                                                              className="btn btn-secondary mx-2">
+                                                            Quitter
+                                                        </Link>
+                                                    ) : (
+                                                        <Link to="/process/incomplete_claims"
+                                                              className="btn btn-secondary mx-2"
+                                                              disabled>
+                                                            Quitter
+                                                        </Link>
+                                                    )
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        ) : null
+            ) : null
+        )
     );
 };
 
