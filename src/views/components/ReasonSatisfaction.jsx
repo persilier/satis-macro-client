@@ -10,12 +10,12 @@ const ReasonSatisfaction = (props) => {
     const option1 = 1;
     const option2 = 0;
     const defaultData = {
-        note:"",
+        note: "",
         is_claimer_satisfied: "",
         unsatisfaction_reason: "",
     };
     const defaultError = {
-        note:"",
+        note: "",
         is_claimer_satisfied: '',
         unsatisfaction_reason: "",
     };
@@ -94,28 +94,30 @@ const ReasonSatisfaction = (props) => {
                     ) : ""
                 }
             </div>
-
-            <div className="col-lg-9 col-xl-6">
-                <input
-                    id="note"
-                    type="number"
-                    min="0"
-                    max={5}
-                    className={error.note.length ? "form-control is-invalid" : "form-control"}
-                    placeholder="Veillez attribuer une note"
-                    value={data.note}
-                    onChange={(e) => onChangeNote(e)}
-                />
-                {
-                    error.note.length ? (
-                        error.note.map((error, index) => (
-                            <div key={index}
-                                 className="invalid-feedback">
-                                {error}
-                            </div>
-                        ))
-                    ) : ""
-                }
+            <div className={error.note.length ? "form-group row validated" : "form-group row"}>
+                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="raison">Note</label>
+                <div className="col-lg-9 col-xl-6">
+                    <input
+                        id="note"
+                        type="number"
+                        min={0}
+                        max={5}
+                        className={error.note.length ? "form-control is-invalid" : "form-control"}
+                        placeholder="Veillez attribuer une note"
+                        value={data.note}
+                        onChange={(e) => onChangeNote(e)}
+                    />
+                    {
+                        error.note.length ? (
+                            error.note.map((error, index) => (
+                                <div key={index}
+                                     className="invalid-feedback">
+                                    {error}
+                                </div>
+                            ))
+                        ) : ""
+                    }
+                </div>
             </div>
 
             <div
