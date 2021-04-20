@@ -8,7 +8,7 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardSummaryReport = (props) => {
     const [load, setLoad] = useState(true);
-
+console.log(props.response.data,"DATAReport")
     const reportColor = [
         {
             id: 0,

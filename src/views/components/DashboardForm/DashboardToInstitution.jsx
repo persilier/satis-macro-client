@@ -1,40 +1,51 @@
 import React, {useEffect, useState} from 'react';
 import Chart from "react-apexcharts";
 import LoadingTable from "../LoadingTable";
-
-import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
-import axios from "axios";
-import appConfig from "../../../config/appConfig";
-import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {percentage} from "../../../helpers/function";
 
 
-const ClaimToInstitution = (props) => {
+const DashboardToInstitution = (props) => {
+    console.log(props.response.data,"DATA")
     const [load, setLoad] = useState(true);
     const [institutionData, setInstitutionData] = useState("");
+    let totalData=props.response.data.totalClaimsRegisteredStatistics;
 
     const defaultData = {
         series: institutionData ? institutionData.series : [],
+
         options: {
             chart: {
-                width: 380,
-                type: 'pie',
+                height: 380,
+                type: 'radialBar',
             },
-            labels: institutionData ? institutionData.options.labels : [],
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        width: 200,
-                    },
+            plotOptions: {
+                radialBar: {
+                    dataLabels: {
+                        name: {
+                            fontSize: '22px',
+                        },
+                        value: {
+                            fontSize: '16px',
+                        },
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            formatter: function (w) {
+                                return totalData
 
-                    legend: {
-                        position: 'bottom'
+                            }
+                        }
                     }
                 }
-            }]
+            },
+            labels: institutionData ? institutionData.options.labels : [],
+
         },
+
+
     };
+
 
     useEffect(() => {
         let institutionTarget = props.response.data.institutionsTargeted;
@@ -44,7 +55,10 @@ const ClaimToInstitution = (props) => {
         }
         let newData = {...defaultData};
         newData.options.labels = institutionData;
-        newData.series = Object.values(institutionTarget).map(serie => serie.allInstitution);
+        newData.series = Object.values(institutionTarget).map(serie => percentage((serie.allInstitution), totalData));
+
+        console.log(newData,"NEWS")
+        console.log(totalData,"total")
         setInstitutionData(newData);
         setLoad(false)
     }, []);
@@ -63,7 +77,7 @@ const ClaimToInstitution = (props) => {
                     <LoadingTable/>
                 ) : (
                     <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
-                        <Chart options={institutionData.options} series={institutionData.series} type="pie"
+                        <Chart options={institutionData.options} series={institutionData.series} type="radialBar"
                                width={380}/>
 
                     </div>
@@ -77,4 +91,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(ClaimToInstitution);
+export default connect(mapStateToProps)(DashboardToInstitution);
