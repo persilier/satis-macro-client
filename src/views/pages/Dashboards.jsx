@@ -16,16 +16,26 @@ import {connect} from "react-redux";
 import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import LoadingTable from "../components/LoadingTable";
+import DashboardClaimToInstitution from "../components/DashboardForm/DashboardClaimToInstitution";
+import DashboardToInstitution from "../components/DashboardForm/DashboardToInstitution";
+import Select from "react-select";
+import {formatSelectOption} from "../../helpers/function";
 
 
 const Dashboards = (props) => {
     const [response, setResponse] = useState(null);
+    const [filterToInstitution, setFilterToInstitution] = useState("all");
+
     document.title = "Satis client - Dashboard";
 
+    const handleTimeLimitChange = (e) => {
+        setFilterToInstitution(e.target.value);
+    };
     useEffect(() => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/dashboard")
                 .then(response => {
+                    console.log(response, "DASHBORD");
                     setResponse(response);
                 })
                 .catch(error => console.log("Something is wrong"))
@@ -45,6 +55,23 @@ const Dashboards = (props) => {
                             Tableau de bord
                         </h3>
                     </div>
+                    <div className={"col-4"}>
+                        <label className={"col-form-label"} htmlFor="institution"><strong>Institutiton</strong> </label>
+                        <div>
+                            <select name="institution"
+                                    className={"form-control"}
+                                    id="institution" value={filterToInstitution} onChange={handleTimeLimitChange}>
+                                <option value="all">TOUT</option>
+                                <option value="satis">SATIS</option>
+                                <option value="dmd">DMD</option>
+                                <option value="oqsf">OQSF</option>
+                                <option value="bog">BOG</option>
+                            </select>
+                        </div>
+                    </div>
+                    {/*<pre className='pre'>*/}
+                    {/*    {JSON.stringify(response)}*/}
+                    {/* </pre>*/}
                 </div>
             </div>
 
@@ -55,33 +82,38 @@ const Dashboards = (props) => {
                         {
                             verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
                                 <div className="kt-portlet">
-                                    <DashboardClaimsAll response={response}/>
-                                </div>:null
+                                    <DashboardClaimsAll
+                                        response={response}
+                                    />
+                                </div> : null
                         }
 
                         {
                             verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
                                 <div className="kt-portlet">
                                     <DashboardClaimsMy response={response}/>
-                                </div>:null
+                                </div> : null
                         }
 
                         {
                             verifyPermission(props.userPermissions, "show-dashboard-data-my-unit") ?
                                 <div className="kt-portlet">
                                     <DashboardClaimsUnit response={response}/>
-                                </div>:null
+                                </div> : null
                         }
 
                         {
                             verifyPermission(props.userPermissions, "show-dashboard-data-my-activity") ?
                                 <div className="kt-portlet">
                                     <DashboardClaimsActivity response={response}/>
-                                </div>:null
+                                </div> : null
                         }
 
                         <div>
-                            <DashboardSummaryReport response={response}/>
+                            <DashboardSummaryReport
+                                response={response}
+                                filterToInstitution={filterToInstitution}
+                            />
                         </div>
 
                         <div>
@@ -101,17 +133,23 @@ const Dashboards = (props) => {
                                 verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                                 (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
                                     <div className="kt-portlet">
-                                        <ClaimToInstitution response={response}/>
+                                        <DashboardClaimToInstitution response={response}/>
+                                        {/*<ClaimToInstitution response={response}/>*/}
                                     </div> : null
                             }
                             {
-                                !verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
+                                verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                                 verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
                                     <div className="kt-portlet">
                                         <ClaimToPointOfServices response={response}/>
                                     </div> : null
                             }
-
+                            {/*<div className="kt-portlet">*/}
+                            {/*    <DashboardClaimToInstitution response={response}/>*/}
+                            {/*</div>*/}
+                            {/*<div className="kt-portlet">*/}
+                            {/*    <DashboardToInstitution response={response}/>*/}
+                            {/*</div>*/}
 
                         </div>
                     </div>
@@ -121,7 +159,8 @@ const Dashboards = (props) => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Statistiques des Réclamations de toutes les Institutions sur les 30 derniers jours
+                                        Statistiques des Réclamations de toutes les Institutions sur les 30 derniers
+                                        jours
                                     </h3>
                                 </div>
                             </div>
@@ -143,7 +182,8 @@ const Dashboards = (props) => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Statistique des cinq (05) plus fréquents Objets de Réclamations sur les 30 derniers jours
+                                        Statistique des cinq (05) plus fréquents Objets de Réclamations sur les 30
+                                        derniers jours
                                     </h3>
                                 </div>
                             </div>
@@ -187,7 +227,8 @@ const Dashboards = (props) => {
                             <div className="kt-portlet__head">
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
-                                        Satisfaction des institutions qui reçoivent plus de réclamations sur les 30 derniers jours
+                                        Satisfaction des institutions qui reçoivent plus de réclamations sur les 30
+                                        derniers jours
                                     </h3>
                                 </div>
                             </div>
