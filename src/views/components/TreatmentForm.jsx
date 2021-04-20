@@ -90,7 +90,7 @@ const TreatmentForm = (props) => {
                             <input
                                 id="amount"
                                 type="number"
-                                min="0"
+                                min={0}
                                 className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
                                 placeholder="Veillez entrer le montant à retourner"
                                 value={data.amount_returned}
