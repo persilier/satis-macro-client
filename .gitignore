@@ -5,6 +5,7 @@
 /node_modules
 /.pnp
 /src/config/appConfig.js
+/.eslintcache 
 .pnp.js
 
 # testing
