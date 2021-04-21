@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {verifyPermission} from "../../helpers/permission";
 import axios from "axios";
-import appConfig from "../../config/appConfig";
 import {connect} from "react-redux";
 import {percentageData} from "../../helpers/function";
 import LoadingTable from "../../views/components/LoadingTable";
@@ -17,24 +16,13 @@ const DashboardClaimsAll = (props) => {
 
     useEffect(() => {
         let isCancelled = false;
-
         async function fetchData() {
             if (verifyTokenExpire()) {
-                axios.get(appConfig.apiDomaine + "/dashboard")
-                    .then(response => {
-                        // console.log(response.data,"RESPONSE")
-                        console.log(response.data.statistics.totalRegistered.allInstitution,"RESPONSE")
-                        if (!isCancelled) {
-                            setData(response.data.statistics);
-                            setTotalData(response.data.statistics.totalRegistered.allInstitution);
-                            setLoad(false)
-                        }
-                    })
-                    .catch(error => {
-                        setLoad(false);
-                        console.log("Something is wrong");
-                    })
-                ;
+                if (!isCancelled) {
+                    setData(props.response.data.statistics);
+                    setTotalData(props.response.data.statistics.totalRegistered.allInstitution);
+                    setLoad(false);
+                }
             }
         }
 

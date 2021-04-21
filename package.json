@@ -12,6 +12,7 @@
         "apexcharts": "^3.20.0",
         "axios": "^0.19.2",
         "chart.js": "^2.9.3",
+        "devextreme": "^20.2.6",
         "file-saver": "^2.0.2",
         "fusioncharts": "^3.16.0",
         "jquery": "^3.5.0",
@@ -64,5 +65,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "devextreme-react": "^20.2.6"
     }
 }

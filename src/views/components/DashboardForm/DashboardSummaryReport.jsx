@@ -1,14 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import axios from "axios";
-import appConfig from "../../../config/appConfig";
+
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
-import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardSummaryReport = (props) => {
     const [load, setLoad] = useState(true);
-console.log(props.response.data,"DATAReport")
     const reportColor = [
         {
             id: 0,
