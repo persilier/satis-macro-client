@@ -2,7 +2,7 @@
     "name": "mon-app",
     "version": "0.1.0",
     "private": true,
-    "homepage": "http://satis.develop/",
+    "homepage": ".",
     "dependencies": {
         "@pathofdev/react-tag-input": "^1.0.7",
         "@sweetalert2/theme-dark": "^3.1.4",
