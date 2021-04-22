@@ -10,15 +10,18 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 
 const DashboardClaimsAll = (props) => {
 
+    const [componentData, setComponentData] = useState("");
     const [data, setData] = useState("");
     const [totalData, setTotalData] = useState("");
     const [load, setLoad] = useState(true);
 
     useEffect(() => {
         let isCancelled = false;
+
         async function fetchData() {
             if (verifyTokenExpire()) {
                 if (!isCancelled) {
+                    setComponentData(props.component);
                     setData(props.response.data.statistics);
                     setTotalData(props.response.data.statistics.totalRegistered.allInstitution);
                     setLoad(false);
@@ -39,7 +42,8 @@ const DashboardClaimsAll = (props) => {
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h5 className="kt-portlet__head-title">
-                                Statistiques des Réclamations de toutes les Institutions sur les 30 derniers jours
+                                {/*Statistiques des Réclamations de toutes les Institutions sur les 30 derniers jours*/}
+                                {componentData ? componentData.params.fr.title_all_institution.value : ""}
                             </h5>
                         </div>
                     </div>
@@ -54,7 +58,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations Enregistrées
+                                                        {/*Total Réclamations Enregistrées*/}
+                                                        {componentData ? componentData.params.fr.total_enreg.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc"></span>
                                                 </div>
@@ -69,7 +74,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations Incomplètes
+                                                        {/*Total Réclamations Incomplètes*/}
+                                                        {componentData ? componentData.params.fr.total_incomplete.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 									</span>
@@ -95,7 +101,6 @@ const DashboardClaimsAll = (props) => {
 									% Réclamations Incomplètes
 
 								</span>
-
                                                 {
                                                     data.totalIncomplete ?
                                                         <span className="kt-widget24__number">
@@ -112,7 +117,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations Complètes
+                                                        {/*Total Réclamations Complètes*/}
+                                                        {componentData ? componentData.params.fr.total_complet.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 									</span>
@@ -156,7 +162,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations Transférées à une Unité
+                                                        {/*Total Réclamations Transférées à une Unité*/}
+                                                        {componentData ? componentData.params.fr.total_to_unit.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 
@@ -200,7 +207,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations en Cours de Traitement
+                                                        {/*Total Réclamations en Cours de Traitement*/}
+                                                        {componentData ? componentData.params.fr.total_in_treatment.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 
@@ -244,7 +252,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations Traitées
+                                                        {/*Total Réclamations Traitées*/}
+                                                        {componentData ? componentData.params.fr.total_treat.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 
@@ -287,7 +296,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Réclamations Non Fondées
+                                                        {/*Total Réclamations Non Fondées*/}
+                                                        {componentData ? componentData.params.fr.total_unfound.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 
@@ -329,7 +339,8 @@ const DashboardClaimsAll = (props) => {
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
-                                                        Total Satisfaction Mesurée
+                                                        {/*Total Satisfaction Mesurée*/}
+                                                        {componentData ? componentData.params.fr.total_satisfated.value : ""}
                                                     </h5>
                                                     <span className="kt-widget24__desc">
 

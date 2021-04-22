@@ -29,10 +29,13 @@ const Dashboards = (props) => {
     const [institution, setInstitution] = useState([]);
     const [data, setData] = useState(defaultData);
     const [load, setLoad] = useState(true);
+    const [component, setComponent] = useState(undefined);
 
-    const getResponseAxios=(data)=>{
-        axios.post(appConfig.apiDomaine + "/dashboard",data)
+
+    const getResponseAxios = (data) => {
+        axios.post(appConfig.apiDomaine + "/dashboard", data)
             .then(response => {
+                console.log(response, "DATA")
                 setResponse(response);
                 setDataInstitution(response.data.institutions);
                 setLoad(false)
@@ -42,7 +45,18 @@ const Dashboards = (props) => {
     };
     useEffect(() => {
         async function fetchData() {
-            await getResponseAxios()
+            await getResponseAxios();
+            await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/dashboard-text")
+                .then(response => {
+                    console.log(response.data, "Component_DATA")
+                    setComponent(response.data);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
         }
 
         if (verifyTokenExpire())
@@ -56,11 +70,11 @@ const Dashboards = (props) => {
         if (selected) {
             newData.institution_targeted_id = selected.value;
             setInstitution(selected);
-           getResponseAxios(newData)
-        }else {
+            getResponseAxios(newData)
+        } else {
             newData.institution_targeted_id = "";
             setInstitution(null);
-           getResponseAxios()
+            getResponseAxios()
         }
         setData(newData);
     };
@@ -115,6 +129,7 @@ const Dashboards = (props) => {
                                         <div className="kt-portlet">
                                             <DashboardClaimsAll
                                                 response={response}
+                                                component={component}
                                             />
                                         </div> : null
                                 }
@@ -122,40 +137,59 @@ const Dashboards = (props) => {
                                 {
                                     verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
                                         <div className="kt-portlet">
-                                            <DashboardClaimsMy response={response}/>
+                                            <DashboardClaimsMy
+                                                response={response}
+                                                component={component}
+                                            />
                                         </div> : null
                                 }
 
                                 {
                                     verifyPermission(props.userPermissions, "show-dashboard-data-my-unit") ?
                                         <div className="kt-portlet">
-                                            <DashboardClaimsUnit response={response}/>
+                                            <DashboardClaimsUnit
+                                                response={response}
+                                                component={component}
+                                            />
                                         </div> : null
                                 }
 
                                 {
                                     verifyPermission(props.userPermissions, "show-dashboard-data-my-activity") ?
                                         <div className="kt-portlet">
-                                            <DashboardClaimsActivity response={response}/>
+                                            <DashboardClaimsActivity
+                                                response={response}
+                                                component={component}
+                                            />
                                         </div> : null
                                 }
 
                                 <div>
                                     <DashboardSummaryReport
                                         response={response}
+                                        component={component}
                                     />
                                 </div>
 
                                 <div>
-                                    <GraphChannel response={response}/>
+                                    <GraphChannel
+                                        response={response}
+                                        component={component}
+                                    />
                                 </div>
 
                                 <div>
-                                    <DashboardStatClaim response={response}/>
+                                    <DashboardStatClaim
+                                        response={response}
+                                        component={component}
+                                    />
                                 </div>
 
                                 <div>
-                                    <DashboardStatistic response={response}/>
+                                    <DashboardStatistic
+                                        response={response}
+                                        component={component}
+                                    />
                                 </div>
                                 {
                                     !data.institution_targeted_id ?
@@ -165,7 +199,9 @@ const Dashboards = (props) => {
                                                 (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
                                                     <div className="kt-portlet" id={"institution"}>
                                                         {/*<ClaimToInstitution response={response}/>*/}
-                                                        <DashboardPieChart response={response}/>
+                                                        <DashboardPieChart
+                                                            response={response}
+                                                            component={component}/>
 
                                                     </div> : null
                                             }

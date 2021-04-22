@@ -43,7 +43,7 @@ const DashboardPieChart = (props) => {
         <div>
             <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Satisfaction des institutions qui reçoivent plus de
+                    <h3 className="kt-portlet__head-title">Statistique des institutions qui reçoivent plus de
                         réclamations sur les 30 derniers jours</h3>
                 </div>
             </div>
