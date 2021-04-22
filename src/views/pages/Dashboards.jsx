@@ -8,7 +8,7 @@ import DashboardStatClaim from "../components/DashboardForm/DashboardStatClaim";
 import DashboardStatistic from "../components/DashboardForm/DashboardStatistic";
 import GraphChannel from "../components/DashboardForm/GraphChannel";
 import DashboardClaimsActivity from "../components/DashboardForm/DashboardClaimsActivity";
-import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
+// import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
 import ClaimToPointOfServices from "../components/DashboardForm/ClaimToPointOfServices";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
@@ -23,13 +23,11 @@ const Dashboards = (props) => {
     document.title = "Satis client - Dashboard";
 
     const defaultData = {institution_targeted_id: ""};
-    const defaultError = {institution_targeted_id: []};
 
     const [response, setResponse] = useState(null);
     const [dataInstitution, setDataInstitution] = useState([]);
     const [institution, setInstitution] = useState([]);
     const [data, setData] = useState(defaultData);
-    const [error, setError] = useState(defaultError);
     const [load, setLoad] = useState(true);
 
     const getResponseAxios=(data)=>{
@@ -80,7 +78,7 @@ const Dashboards = (props) => {
                         verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
                             <div className={"col-5"}>
                                 <div
-                                    className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
+                                    className={"form-group row"}>
                                     <label className="col-xl-2 col-lg-3 col-form-label"
                                            htmlFor="exampleSelect1">Institution</label>
                                     <div className="col-lg-9 col-xl-2">
@@ -88,7 +86,7 @@ const Dashboards = (props) => {
                                             <Select
                                                 isClearable
                                                 classNamePrefix="select"
-                                                placeholder={"Selectionnez une institution"}
+                                                placeholder={"Choisissez une institution pour le filtre"}
                                                 className="basic-single"
                                                 value={institution}
                                                 onChange={onChangeInstitution}
@@ -97,16 +95,6 @@ const Dashboards = (props) => {
                                         ) : ''
                                         }
 
-                                        {
-                                            error.institution_targeted_id.length ? (
-                                                error.institution_targeted_id.map((error, index) => (
-                                                    <div key={index}
-                                                         className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
                                     </div>
                                 </div>
                             </div>
@@ -170,7 +158,7 @@ const Dashboards = (props) => {
                                     <DashboardStatistic response={response}/>
                                 </div>
                                 {
-                                    !data ?
+                                    !data.institution_targeted_id ?
                                         <div>
                                             {
                                                 verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
