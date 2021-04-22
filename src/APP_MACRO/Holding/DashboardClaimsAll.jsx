@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import {percentageData} from "../../helpers/function";
 import LoadingTable from "../../views/components/LoadingTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {NavLink} from "react-router-dom";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -63,33 +64,36 @@ const DashboardClaimsAll = (props) => {
                                 <div className="row row-no-padding row-col-separator-sm">
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations Enregistrées
-                                                    </h5>
-                                                    <span className="kt-widget24__desc"></span>
+                                            <NavLink exact to="/process/total-claim-register">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations Enregistrées
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-brand">
+                                                    {data.totalRegistered ? data.totalRegistered.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-brand">
-									{data.totalRegistered ? data.totalRegistered.allInstitution : ""}
-								</span>
-                                            </div>
+                                            </NavLink>
                                         </div>
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations Incomplètes
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-									</span>
+                                            <NavLink exact to="/process/total-incomplete-claim">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations Incomplètes
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-danger">
+                                                    {data.totalIncomplete ? data.totalIncomplete.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-danger">
-									{data.totalIncomplete ? data.totalIncomplete.allInstitution : ""}
-								</span>
-                                            </div>
+                                            </NavLink>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalIncomplete ?
@@ -102,37 +106,33 @@ const DashboardClaimsAll = (props) => {
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-
-									% Réclamations Incomplètes
-
-								</span>
-
+                                                <span className="kt-widget24__change">% Réclamations Incomplètes</span>
                                                 {
                                                     data.totalIncomplete ?
                                                         <span className="kt-widget24__number">
-                                                {percentageData((data.totalIncomplete.allInstitution), totalData)}
-                                           </span>
+                                                            {percentageData((data.totalIncomplete.allInstitution), totalData)}
+                                                       </span>
                                                         : null
                                                 }
-
                                             </div>
                                         </div>
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations Complètes
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-									</span>
+                                            <NavLink exact to="/process/total-complete-claim">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations Complètes
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-success">
+                                                    {data.totalComplete ? data.totalComplete.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-success">
-									{data.totalComplete ? data.totalComplete.allInstitution : ""}
-								</span>
-                                            </div>
+                                            </NavLink>
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalComplete ?
@@ -165,19 +165,19 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations Transférées à une Unité
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            <NavLink exact to="/process/total-claim-transfer-to-unit">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations Transférées à une Unité
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-brand">{data.totalTransferredToUnit ? data.totalTransferredToUnit.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-brand">
-                                        {data.totalTransferredToUnit ? data.totalTransferredToUnit.allInstitution : ""}
-								</span>
-                                            </div>
+                                            </NavLink>
+
                                             <div className="progress progress--sm">
 
                                                 {
@@ -209,20 +209,20 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations en Cours de Traitement
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            <NavLink exact to="/process/total-claim-in-treatment">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations en Cours de Traitement
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-warning">
+                                                       {data.totalBeingProcess ? data.totalBeingProcess.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-warning">
-									   {data.totalBeingProcess ? data.totalBeingProcess.allInstitution : ""}
+                                            </NavLink>
 
-								</span>
-                                            </div>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalBeingProcess ?
@@ -253,19 +253,20 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations Traitées
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            <NavLink exact to="/process/total-claim-treat">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations Traitées
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-success">
+                                                    {data.totalTreated ? data.totalTreated.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-success">
-                                        {data.totalTreated ? data.totalTreated.allInstitution : ""}
-                                    </span>
-                                            </div>
+                                            </NavLink>
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalTreated ?
@@ -296,19 +297,20 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Réclamations Non Fondées
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            <NavLink exact to="/process/total-unfounded-claim">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Réclamations Non Fondées
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-success">
+                                                    {data.totalUnfounded ? data.totalUnfounded.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-success">
-                                        {data.totalUnfounded ? data.totalUnfounded.allInstitution : ""}
-								</span>
-                                            </div>
+                                            </NavLink>
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalUnfounded ?
@@ -338,20 +340,20 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        Total Satisfaction Mesurée
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            <NavLink exact to="/process/total-claim-satisfaction-measure">
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            Total Satisfaction Mesurée
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-danger">
+                                                    {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.allInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-danger">
-                                        {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.allInstitution : ""}
+                                            </NavLink>
 
-								</span>
-                                            </div>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalMeasuredSatisfaction ?

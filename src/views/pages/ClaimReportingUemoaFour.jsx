@@ -417,7 +417,7 @@ const ClaimReportingUemoaThree = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Rapport Etat analytique
+                            Etat complet de toutes les réclamations reçues sur une période donnée par objets de réclamations et par institution.
                         </div>
                     )}/>
 
