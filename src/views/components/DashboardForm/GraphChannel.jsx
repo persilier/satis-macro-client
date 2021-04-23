@@ -11,6 +11,7 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 
 const GraphChannel = (props) => {
 
+    const [componentData, setComponentData] = useState("");
     const [channelData, setChannelData] = useState("");
     const [load, setLoad] = useState(true);
 
@@ -69,6 +70,7 @@ const GraphChannel = (props) => {
             newChannels.series[0].data = Object.values(props.response.data.channelsUse).map(serie => serie.myInstitution)
         }
         setChannelData(newChannels);
+        setComponentData(props.component);
         setLoad(false)
     }, []);
     return (
@@ -77,7 +79,10 @@ const GraphChannel = (props) => {
             <div className="kt-portlet">
                 <div className="kt-portlet__head">
                     <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Total des Réclamations reçues par Canal sur les 30 derniers jours</h3>
+                        <h3 className="kt-portlet__head-title">
+                            {/*Total des Réclamations reçues par Canal sur les 30 derniers jours*/}
+                            {componentData ? componentData.params.fr.total_by_channel.value : ""}
+                        </h3>
                     </div>
                 </div>
                 {

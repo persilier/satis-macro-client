@@ -10,6 +10,7 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardStatClaim = (props) => {
 
+    const [componentData, setComponentData] = useState("");
     const [satisfactionData, setSatisfactionData] = useState("");
     const [load, setLoad] = useState(true);
 
@@ -106,6 +107,7 @@ const DashboardStatClaim = (props) => {
         }
         // console.log(newSatisfaction,"WITH_MONTH");
         setSatisfactionData(newSatisfaction);
+        setComponentData(props.component);
         setLoad(false)
     }, []);
 
@@ -115,18 +117,23 @@ const DashboardStatClaim = (props) => {
             <div className="kt-portlet">
                 <div className="kt-portlet__head">
                     <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Evolution de la satisfaction des réclamants sur les 11
-                            derniers mois</h3>
+                        <h3 className="kt-portlet__head-title">
+                            {/*Evolution de la satisfaction des réclamants sur les 11 derniers mois*/}
+                            {componentData ? componentData.params.fr.satisfaction_chart.value : ""}
+                        </h3>
                     </div>
                 </div>
                 {
+                    load ? (
+                        <LoadingTable/>
+                    ) : (
                     satisfactionData ?
                         <div id="chart" className="kt-portlet__body">
                             <Chart options={satisfactionData.options} series={satisfactionData.series} type="line"
                                    height={350}/>
                         </div>
                         : null
-                }
+                    )}
             </div>
             : null
     )
