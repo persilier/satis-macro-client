@@ -14,6 +14,7 @@ const DashboardPieChart = (props) => {
     const [load, setLoad] = useState(true);
     const [institutionData, setInstitutionData] = useState(undefined);
     const dataSource = institutionData ? institutionData : [];
+    const [componentData, setComponentData] = useState("");
 
     function customizeText(arg) {
         return `${arg.argumentText} (${arg.percentText})`;
@@ -36,6 +37,7 @@ const DashboardPieChart = (props) => {
             }
             setInstitutionData(newData);
         }
+        setComponentData(props.component);
         setLoad(false)
     }, []);
 
@@ -43,8 +45,10 @@ const DashboardPieChart = (props) => {
         <div>
             <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Statistique des institutions qui reçoivent plus de
-                        réclamations sur les 30 derniers jours</h3>
+                    <h3 className="kt-portlet__head-title">
+                        {/*Statistique des institutions qui reçoivent plus de réclamations sur les 30 derniers jours*/}
+                        {componentData ? componentData.params.fr.title_stat_institution.value : ""}
+                    </h3>
                 </div>
             </div>
             {

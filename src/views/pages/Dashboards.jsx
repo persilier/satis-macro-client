@@ -197,7 +197,7 @@ const Dashboards = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                                                 (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
-                                                    <div className="kt-portlet" id={"institution"}>
+                                                    <div className="kt-portlet" >
                                                         {/*<ClaimToInstitution response={response}/>*/}
                                                         <DashboardPieChart
                                                             response={response}
@@ -213,96 +213,17 @@ const Dashboards = (props) => {
                                         verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                                         verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
                                             <div className="kt-portlet">
-                                                <ClaimToPointOfServices response={response}/>
+                                                <ClaimToPointOfServices
+                                                    response={response}
+                                                    component={component}
+                                                />
                                             </div> : null
                                     }
                                 </div>
                             </div>
                         ) : (
-                            <div>
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Statistiques des Réclamations de toutes les Institutions sur les 30
-                                                derniers
-                                                jours
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
-
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Statistiques des Réclamations de mon Institution sur les 30 derniers
-                                                jours
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
-
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Statistique des cinq (05) plus fréquents Objets de Réclamations sur les
-                                                30
-                                                derniers jours
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
-
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Total des Réclamations reçues par Canal sur les 30 derniers jours
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
-
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Evolution de la satisfaction des réclamants sur les 11 derniers mois
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
-
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Evolution de la satisfaction des réclamations sur les 11 derniers mois
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
-
-                                <div className="kt-portlet">
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Satisfaction des institutions qui reçoivent plus de réclamations sur les
-                                                30
-                                                derniers jours
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <LoadingTable/>
-                                </div>
+                            <div className="d-flex justify-content-center">
+                                <span>Aucun élement retrouvé: Le tableau de bord est vide</span>
                             </div>
                         )}
                     </div>

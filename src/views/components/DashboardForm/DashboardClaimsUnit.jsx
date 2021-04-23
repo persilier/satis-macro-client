@@ -46,7 +46,6 @@ const DashboardClaimsUnit = (props) => {
                             <h5 className="kt-portlet__head-title">
                                 {/*Statistiques des Réclamations de mon Unité sur les 30 derniers jours*/}
                                 {componentData ? componentData.params.fr.title_unit.value : ""}
-
                             </h5>
                         </div>
                     </div>

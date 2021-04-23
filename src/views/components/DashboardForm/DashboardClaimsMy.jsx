@@ -181,7 +181,6 @@ const DashboardClaimsMy = (props) => {
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
-
                                                 {
                                                     data.totalTransferredToUnit ?
                                                         <div className="progress-bar kt-bg-brand" role="progressbar"
