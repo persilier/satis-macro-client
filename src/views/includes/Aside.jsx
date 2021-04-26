@@ -489,7 +489,7 @@ const Aside = (props) => {
                                                 </NavLink>
 
                                                 {
-                                                    verifyPermission(props.userPermissions, "list-faq")?
+                                                    verifyPermission(props.userPermissions, "store-faq")?
                                                         <NavLink exact to="/settings/faqs/add" className="kt-menu__item "
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">

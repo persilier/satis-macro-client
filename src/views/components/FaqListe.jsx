@@ -11,7 +11,7 @@ const FaqListe = () => {
 
     useEffect(() => {
 
-        axios.get(appConfig.apiDomaine + `/faq-categories`)
+        axios.get(appConfig.apiDomaine + `/category-faq`)
             .then(response => {
                 setLoad(false);
                 setCategory(response.data)
@@ -19,6 +19,7 @@ const FaqListe = () => {
 
         axios.get(appConfig.apiDomaine + `/faqs`)
             .then(response => {
+                console.log(response)
                 setLoad(false);
                 setData(response.data)
             })
