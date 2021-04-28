@@ -200,7 +200,6 @@ const Dashboards = (props) => {
                                                     <DashboardPieChart
                                                         response={response}
                                                         component={component}/>
-
                                                 </div> : null
                                         }
                                     </div>
