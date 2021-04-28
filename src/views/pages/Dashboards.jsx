@@ -120,7 +120,7 @@ const Dashboards = (props) => {
 
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 {
-                    response && !load ? (
+                    response && component && !load ? (
                         <div>
                             {
                                 verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
