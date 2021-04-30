@@ -64,7 +64,7 @@ const DashboardClaimsAll = (props) => {
                                 <div className="row row-no-padding row-col-separator-sm">
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-claim-register">
+                                            {/*<NavLink exact to="/process/total-claim-register">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -76,12 +76,12 @@ const DashboardClaimsAll = (props) => {
                                                     {data.totalRegistered ? data.totalRegistered.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
                                         </div>
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-incomplete-claim">
+                                            {/*<NavLink exact to="/process/total-incomplete-claim">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -93,7 +93,7 @@ const DashboardClaimsAll = (props) => {
                                                     {data.totalIncomplete ? data.totalIncomplete.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalIncomplete ?
@@ -119,7 +119,7 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-complete-claim">
+                                            {/*<NavLink exact to="/process/total-complete-claim">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -131,7 +131,7 @@ const DashboardClaimsAll = (props) => {
                                                     {data.totalComplete ? data.totalComplete.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
 
                                             <div className="progress progress--sm">
                                                 {
@@ -165,7 +165,7 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-claim-transfer-to-unit">
+                                            {/*<NavLink exact to="/process/total-claim-transfer-to-unit">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -176,7 +176,7 @@ const DashboardClaimsAll = (props) => {
                                                     <span className="kt-widget24__stats kt-font-brand">{data.totalTransferredToUnit ? data.totalTransferredToUnit.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
 
                                             <div className="progress progress--sm">
 
@@ -209,7 +209,7 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-claim-in-treatment">
+                                            {/*<NavLink exact to="/process/total-claim-in-treatment">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -221,7 +221,7 @@ const DashboardClaimsAll = (props) => {
                                                        {data.totalBeingProcess ? data.totalBeingProcess.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
 
                                             <div className="progress progress--sm">
                                                 {
@@ -253,7 +253,7 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-claim-treat">
+                                            {/*<NavLink exact to="/process/total-claim-treat">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -265,7 +265,7 @@ const DashboardClaimsAll = (props) => {
                                                     {data.totalTreated ? data.totalTreated.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
 
                                             <div className="progress progress--sm">
                                                 {
@@ -297,7 +297,7 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-unfounded-claim">
+                                            {/*<NavLink exact to="/process/total-unfounded-claim">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -309,7 +309,7 @@ const DashboardClaimsAll = (props) => {
                                                     {data.totalUnfounded ? data.totalUnfounded.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
 
                                             <div className="progress progress--sm">
                                                 {
@@ -340,7 +340,7 @@ const DashboardClaimsAll = (props) => {
                                     </div>
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <NavLink exact to="/process/total-claim-satisfaction-measure">
+                                            {/*<NavLink exact to="/process/total-claim-satisfaction-measure">*/}
                                                 <div className="kt-widget24__details">
                                                     <div className="kt-widget24__info">
                                                         <h5 className="kt-widget24__title">
@@ -352,7 +352,7 @@ const DashboardClaimsAll = (props) => {
                                                     {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.allInstitution : ""}
                                                 </span>
                                                 </div>
-                                            </NavLink>
+                                            {/*</NavLink>*/}
 
                                             <div className="progress progress--sm">
                                                 {
