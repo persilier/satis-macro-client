@@ -3,7 +3,6 @@ import {formatDateToTimeStampte} from "../../helpers/function";
 import TreatmentHistory from "./TreatmentHistory";
 
 const TreatmentButtonDetail = ({claim}) => {
-    console.log(claim,"claim")
     return (
         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
             <div className="kt-heading kt-heading--md">Information sur le Traitement Effectué</div>

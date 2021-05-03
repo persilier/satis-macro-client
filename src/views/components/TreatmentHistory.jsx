@@ -3,15 +3,13 @@ import {formatDateToTimeStampte} from "../../helpers/function";
 
 const TreatmentHistory = ({claim}) => {
     const treatments = claim ? (claim.active_treatment ? (claim.active_treatment.treatments ? claim.active_treatment.treatments : []) : [] ) : [];
-
-    console.log("treatments:", treatments);
     return (
         <>
             <div className="kt-heading kt-heading--md">Historique de traitement</div>
             {
                 treatments.map((item, index) => (
                     <div className="kt-wizard-v2__review-item mb-3" key={index}>
-                        {item.invalidated_reason ? (
+                        {!item.invalidated_reason ? (
                             <div className="kt-wizard-v2__review-title">
                                 <h5><strong>Traitement validé</strong></h5>
                             </div>
