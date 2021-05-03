@@ -24,7 +24,7 @@ const DashboardClaimsActivity = (props) => {
             if (!isCancelled) {
                 setComponentData(props.component);
                 setData(props.response.data.statistics);
-                setTotalData(props.response.data.statistics.totalRegistered.allInstitution);
+                setTotalData(props.response.data.statistics.totalRegistered.myActivity);
                 setLoad(false);
             }
         }

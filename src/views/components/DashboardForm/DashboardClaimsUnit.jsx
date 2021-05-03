@@ -24,7 +24,7 @@ const DashboardClaimsUnit = (props) => {
             if (!isCancelled) {
                 setComponentData(props.component);
                 setData(props.response.data.statistics);
-                setTotalData(props.response.data.statistics.totalRegistered.myInstitution);
+                setTotalData(props.response.data.statistics.totalRegistered.myUnit);
                 setLoad(false);
             }
         }
@@ -327,7 +327,7 @@ const DashboardClaimsUnit = (props) => {
                                             </div>
                                             <div className="kt-widget24__action">
 								<span className="kt-widget24__change">
-									% Réclamations Non Fondées
+									{/*% Réclamations Non Fondées*/}
                                     {componentData ? componentData.params.fr.pourcent_unfound.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
@@ -372,7 +372,7 @@ const DashboardClaimsUnit = (props) => {
                                             </div>
                                             <div className="kt-widget24__action">
 								<span className="kt-widget24__change">
-									% Satisfaction Mesurée
+									{/*% Satisfaction Mesurée*/}
                                     {componentData ? componentData.params.fr.pourcent_satisfated.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
