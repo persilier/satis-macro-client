@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import {percentageData} from "../../../helpers/function";
 import LoadingTable from "../LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {NavLink} from "react-router-dom";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -56,40 +57,42 @@ const DashboardClaimsMy = (props) => {
                                 <div className="row row-no-padding row-col-separator-lg">
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Réclamations Enregistrées*/}
-                                                        {componentData ? componentData.params.fr.total_enreg.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-claim-register">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Réclamations Enregistrées*/}
+                                                            {componentData ? componentData.params.fr.total_enreg.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-brand">
+                                                        {data.totalRegistered ? data.totalRegistered.myInstitution : ""}
+                                                    </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-brand">
-									{data.totalRegistered ? data.totalRegistered.myInstitution : ""}
-								</span>
-                                            </div>
+                                            {/*</NavLink>*/}
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Réclamations Incomplètes*/}
-                                                        {componentData ? componentData.params.fr.total_incomplete.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-incomplete-claim">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Réclamations Incomplètes*/}
+                                                            {componentData ? componentData.params.fr.total_incomplete.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-danger">
+                                                    {data.totalIncomplete ? data.totalIncomplete.myInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-danger">
-									{data.totalIncomplete ? data.totalIncomplete.myInstitution : ""}
-								</span>
-                                            </div>
+                                            {/*</NavLink>*/}
+
                                             <div className="progress progress--sm">
-                                                {console.log(percentageData((data.totalIncomplete.myInstitution), totalData),"TotalIncomp")}
-                                                {console.log(totalData,"Total")}
+
                                                 {
                                                     data.totalIncomplete ?
                                                         <div className="progress-bar kt-bg-danger" role="progressbar"
@@ -101,38 +104,38 @@ const DashboardClaimsMy = (props) => {
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-
-									% Réclamations Incomplètes
-
-								</span>
-
+                                                <span className="kt-widget24__change">
+                                                    {/*% Réclamations Incomplètes*/}
+                                                    {componentData ? componentData.params.fr.pourcent_incomplet.value : ""}
+                                                </span>
                                                 {
                                                     data.totalIncomplete ?
                                                         <span className="kt-widget24__number">
-                                                {percentageData((data.totalIncomplete.myInstitution), totalData)}
-                                           </span>
+                                                            {percentageData((data.totalIncomplete.myInstitution), totalData)}
+                                                        </span>
                                                         : null
                                                 }
-
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
+                                            {/*<NavLink exact to="/process/my-total-complete-claim">*/}
                                             <div className="kt-widget24__details">
                                                 <div className="kt-widget24__info">
                                                     <h5 className="kt-widget24__title">
                                                         {/*Total Réclamations Complètes*/}
                                                         {componentData ? componentData.params.fr.total_complet.value : ""}
                                                     </h5>
-                                                    <span className="kt-widget24__desc">
-									</span>
+                                                    <span className="kt-widget24__desc"/>
                                                 </div>
                                                 <span className="kt-widget24__stats ktkt-bg-success">
-									{data.totalComplete ? data.totalComplete.myInstitution : ""}
-								</span>
+                                                                {data.totalComplete ? data.totalComplete.myInstitution : ""}
+                                                            </span>
                                             </div>
+                                            {/*</NavLink>*/}
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalComplete ?
@@ -143,43 +146,43 @@ const DashboardClaimsMy = (props) => {
                                                         </div>
                                                         : null
                                                 }
-
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-
-									% Réclamations Complètes
-								</span>
+                                                        <span className="kt-widget24__change">
+                                                            {/*% Réclamations Complètes*/}
+                                                            {componentData ? componentData.params.fr.pourcent_complete.value : ""}
+                                                        </span>
 
                                                 <span className="kt-widget24__number">
-
-                                        {
-                                            data.totalComplete ?
-                                                <span className="kt-widget24__number">
-                                                {percentageData((data.totalComplete.myInstitution), totalData)}
-                                           </span>
-                                                : null
-                                        }
-								    </span>
+                                                            {
+                                                                data.totalComplete ?
+                                                                    <span className="kt-widget24__number">
+                                                                        {percentageData((data.totalComplete.myInstitution), totalData)}
+                                                                   </span>
+                                                                    : null
+                                                            }
+                                                        </span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Réclamations Transférées à une Unité*/}
-                                                        {componentData ? componentData.params.fr.total_to_unit.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-claim-transfer-to-unit">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Réclamations Transférées à une Unité*/}
+                                                            {componentData ? componentData.params.fr.total_to_unit.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-brand">
+                                                    {data.totalTransferredToUnit ? data.totalTransferredToUnit.myInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-brand">
-                                        {data.totalTransferredToUnit ? data.totalTransferredToUnit.myInstitution : ""}
-								</span>
-                                            </div>
+                                            {/*</NavLink>*/}
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalTransferredToUnit ?
@@ -193,38 +196,40 @@ const DashboardClaimsMy = (props) => {
 
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-									% Réclamations Transférées à une Unité
-								</span>
+                                                <span className="kt-widget24__change">
+                                                    {/*% Réclamations Transférées à une Unité*/}
+                                                    {componentData ? componentData.params.fr.pourcent_to_unit.value : ""}
+                                                </span>
                                                 <span className="kt-widget24__number">
-									{
-                                        data.totalTransferredToUnit ?
-                                            <span className="kt-widget24__number">
-                                                {percentageData((data.totalTransferredToUnit.myInstitution), totalData)}
-                                           </span>
-                                            : null
-                                    }
-								</span>
+                                                    {
+                                                        data.totalTransferredToUnit ?
+                                                            <span className="kt-widget24__number">
+                                                                {percentageData((data.totalTransferredToUnit.myInstitution), totalData)}
+                                                           </span>
+                                                            : null
+                                                    }
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Réclamations en Cours de Traitement*/}
-                                                        {componentData ? componentData.params.fr.total_in_treatment.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-claim-in-treatment">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Réclamations en Cours de Traitement*/}
+                                                            {componentData ? componentData.params.fr.total_in_treatment.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-warning">
+                                                    {data.totalBeingProcess ? data.totalBeingProcess.myInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-warning">
-									   {data.totalBeingProcess ? data.totalBeingProcess.myInstitution : ""}
+                                            {/*</NavLink>*/}
 
-								</span>
-                                            </div>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalBeingProcess ?
@@ -238,36 +243,40 @@ const DashboardClaimsMy = (props) => {
 
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-									% Réclamations en Cours de Traitement
-								</span>
+                                                <span className="kt-widget24__change">
+                                                    {/*% Réclamations en Cours de Traitement*/}
+                                                    {componentData ? componentData.params.fr.pourcent_in_treatment.value : ""}
+                                                </span>
                                                 <span className="kt-widget24__number">
-									{
-                                        data.totalBeingProcess ?
-                                            <span className="kt-widget24__number">
-                                                {percentageData((data.totalBeingProcess.myInstitution), totalData)}
-                                           </span>
-                                            : null
-                                    }
-								</span>
+                                                    {
+                                                        data.totalBeingProcess ?
+                                                            <span className="kt-widget24__number">
+                                                                {percentageData((data.totalBeingProcess.myInstitution), totalData)}
+                                                           </span>
+                                                            : null
+                                                    }
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Réclamations Traitées*/}
-                                                        {componentData ? componentData.params.fr.total_treat.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-claim-treat">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Réclamations Traitées*/}
+                                                            {componentData ? componentData.params.fr.total_treat.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-success">
+                                                    {data.totalTreated ? data.totalTreated.myInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-success">
-                                        {data.totalTreated ? data.totalTreated.myInstitution : ""}
-                                    </span>
-                                            </div>
+                                            {/*</NavLink>*/}
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalTreated ?
@@ -278,40 +287,42 @@ const DashboardClaimsMy = (props) => {
                                                         </div>
                                                         : ''
                                                 }
-
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-									% Réclamations Traitées
-								</span>
+                                                <span className="kt-widget24__change">
+                                                    {/*% Réclamations Traitées*/}
+                                                    {componentData ? componentData.params.fr.pourcent_treat.value : ""}
+                                                </span>
                                                 <span className="kt-widget24__number">
-									{
-                                        data.totalTreated ?
-                                            <span className="kt-widget24__number">
-                                                {percentageData((data.totalTreated.myInstitution), totalData)}
-                                           </span>
-                                            : null
-                                    }
-								</span>
+                                                    {
+                                                        data.totalTreated ?
+                                                            <span className="kt-widget24__number">
+                                                                {percentageData((data.totalTreated.myInstitution), totalData)}
+                                                           </span>
+                                                            : null
+                                                    }
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Réclamations Non Fondées*/}
-                                                        {componentData ? componentData.params.fr.total_unfound.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-unfounded-claim">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Réclamations Non Fondées*/}
+                                                            {componentData ? componentData.params.fr.total_unfound.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-success">
+                                                    {data.totalUnfounded ? data.totalUnfounded.myInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-success">
-                                        {data.totalUnfounded ? data.totalUnfounded.myInstitution : ""}
-								</span>
-                                            </div>
+                                            {/*</NavLink>*/}
+
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalUnfounded ?
@@ -324,38 +335,40 @@ const DashboardClaimsMy = (props) => {
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-									% Réclamations Non Fondées
-								</span>
+                                                <span className="kt-widget24__change">
+                                                    {/*% Réclamations Non Fondées*/}
+                                                    {componentData ? componentData.params.fr.pourcent_unfound.value : ""}
+                                                </span>
                                                 <span className="kt-widget24__number">
-									{
-                                        data.totalUnfounded ?
-                                            <span className="kt-widget24__number">
-                                                {percentageData((data.totalUnfounded.myInstitution), totalData)}
-                                           </span>
-                                            : null
-                                    }
-								</span>
+                                                    {
+                                                        data.totalUnfounded ?
+                                                            <span className="kt-widget24__number">
+                                                                {percentageData((data.totalUnfounded.myInstitution), totalData)}
+                                                           </span>
+                                                            : null
+                                                    }
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="col-md-12 col-lg-3 col-xl-3">
                                         <div className="kt-widget24">
-                                            <div className="kt-widget24__details">
-                                                <div className="kt-widget24__info">
-                                                    <h5 className="kt-widget24__title">
-                                                        {/*Total Satisfaction Mesurée*/}
-                                                        {componentData ? componentData.params.fr.total_satisfated.value : ""}
-                                                    </h5>
-                                                    <span className="kt-widget24__desc">
-
-									</span>
+                                            {/*<NavLink exact to="/process/my-total-claim-satisfaction-measure">*/}
+                                                <div className="kt-widget24__details">
+                                                    <div className="kt-widget24__info">
+                                                        <h5 className="kt-widget24__title">
+                                                            {/*Total Satisfaction Mesurée*/}
+                                                            {componentData ? componentData.params.fr.total_satisfated.value : ""}
+                                                        </h5>
+                                                        <span className="kt-widget24__desc"/>
+                                                    </div>
+                                                    <span className="kt-widget24__stats kt-font-danger">
+                                                    {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.myInstitution : ""}
+                                                </span>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-danger">
-                                        {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.myInstitution : ""}
+                                            {/*</NavLink>*/}
 
-								</span>
-                                            </div>
                                             <div className="progress progress--sm">
                                                 {
                                                     data.totalMeasuredSatisfaction ?
@@ -368,18 +381,19 @@ const DashboardClaimsMy = (props) => {
                                                 }
                                             </div>
                                             <div className="kt-widget24__action">
-								<span className="kt-widget24__change">
-									% Satisfaction Mesurée
-								</span>
+                                                <span className="kt-widget24__change">
+                                                    {/*% Satisfaction Mesurée*/}
+                                                    {componentData ? componentData.params.fr.pourcent_satisfated.value : ""}
+                                                </span>
                                                 <span className="kt-widget24__number">
-									{
-                                        data.totalMeasuredSatisfaction ?
-                                            <span className="kt-widget24__number">
-                                                {percentageData((data.totalMeasuredSatisfaction.myInstitution), totalData)}
-                                           </span>
-                                            : null
-                                    }
-								</span>
+                                                    {
+                                                        data.totalMeasuredSatisfaction ?
+                                                            <span className="kt-widget24__number">
+                                                                {percentageData((data.totalMeasuredSatisfaction.myInstitution), totalData)}
+                                                           </span>
+                                                            : null
+                                                    }
+								                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -387,12 +401,11 @@ const DashboardClaimsMy = (props) => {
                             </div>
                         )
                     }
-
                 </div>
 
             ) : null
-    )
-};
+        )
+    };
 
 const mapStateToProps = (state) => {
     return {

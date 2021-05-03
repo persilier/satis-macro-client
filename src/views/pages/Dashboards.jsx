@@ -8,7 +8,7 @@ import DashboardStatClaim from "../components/DashboardForm/DashboardStatClaim";
 import DashboardStatistic from "../components/DashboardForm/DashboardStatistic";
 import GraphChannel from "../components/DashboardForm/GraphChannel";
 import DashboardClaimsActivity from "../components/DashboardForm/DashboardClaimsActivity";
-// import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
+import ClaimToInstitution from "../components/DashboardForm/ClaimToInstitution";
 import ClaimToPointOfServices from "../components/DashboardForm/ClaimToPointOfServices";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
@@ -35,7 +35,7 @@ const Dashboards = (props) => {
     const getResponseAxios = (data) => {
         axios.post(appConfig.apiDomaine + "/dashboard", data)
             .then(response => {
-                console.log(response, "DATA")
+                console.log(response.data, "Dashboard");
                 setResponse(response);
                 setDataInstitution(response.data.institutions);
                 setLoad(false)
@@ -48,7 +48,7 @@ const Dashboards = (props) => {
             await getResponseAxios();
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/dashboard-text")
                 .then(response => {
-                    console.log(response.data, "Component_DATA")
+                    console.log(response.data, "Component_DATA");
                     setComponent(response.data);
                     setLoad(false);
                 })
@@ -117,117 +117,114 @@ const Dashboards = (props) => {
 
                 </div>
             </div>
-            {
-                load ? (
-                    <LoadingTable/>
-                ) : (
-                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                        {response ? (
+
+            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                {
+                    response && component && !load ? (
+                        <div>
+                            {
+                                verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
+                                    <div className="kt-portlet">
+                                        <DashboardClaimsAll
+                                            response={response}
+                                            component={component}
+                                        />
+                                    </div> : null
+                            }
+
+                            {
+                                verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
+                                    <div className="kt-portlet">
+                                        <DashboardClaimsMy
+                                            response={response}
+                                            component={component}
+                                        />
+                                    </div> : null
+                            }
+
+                            {
+                                verifyPermission(props.userPermissions, "show-dashboard-data-my-unit") ?
+                                    <div className="kt-portlet">
+                                        <DashboardClaimsUnit
+                                            response={response}
+                                            component={component}
+                                        />
+                                    </div> : null
+                            }
+
+                            {
+                                verifyPermission(props.userPermissions, "show-dashboard-data-my-activity") ?
+                                    <div className="kt-portlet">
+                                        <DashboardClaimsActivity
+                                            response={response}
+                                            component={component}
+                                        />
+                                    </div> : null
+                            }
+
+                            <div>
+                                <DashboardSummaryReport
+                                    response={response}
+                                    component={component}
+                                />
+                            </div>
+
+                            <div>
+                                <GraphChannel
+                                    response={response}
+                                    component={component}
+                                />
+                            </div>
+
+                            <div>
+                                <DashboardStatClaim
+                                    response={response}
+                                    component={component}
+                                />
+                            </div>
+
+                            <div>
+                                <DashboardStatistic
+                                    response={response}
+                                    component={component}
+                                />
+                            </div>
+                            {
+                                !data.institution_targeted_id ?
+                                    <div>
+                                        {
+                                            verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
+                                            (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
+                                                <div className="kt-portlet">
+                                                    {/*<ClaimToInstitution response={response}/>*/}
+                                                    <DashboardPieChart
+                                                        response={response}
+                                                        component={component}/>
+                                                </div> : null
+                                        }
+                                    </div>
+                                    : ""
+                            }
                             <div>
                                 {
-                                    verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ?
-                                        <div className="kt-portlet">
-                                            <DashboardClaimsAll
-                                                response={response}
-                                                component={component}
-                                            />
-                                        </div> : null
-                                }
-
-                                {
+                                    !verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
                                     verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
                                         <div className="kt-portlet">
-                                            <DashboardClaimsMy
+                                            <ClaimToPointOfServices
                                                 response={response}
                                                 component={component}
                                             />
                                         </div> : null
                                 }
-
-                                {
-                                    verifyPermission(props.userPermissions, "show-dashboard-data-my-unit") ?
-                                        <div className="kt-portlet">
-                                            <DashboardClaimsUnit
-                                                response={response}
-                                                component={component}
-                                            />
-                                        </div> : null
-                                }
-
-                                {
-                                    verifyPermission(props.userPermissions, "show-dashboard-data-my-activity") ?
-                                        <div className="kt-portlet">
-                                            <DashboardClaimsActivity
-                                                response={response}
-                                                component={component}
-                                            />
-                                        </div> : null
-                                }
-
-                                <div>
-                                    <DashboardSummaryReport
-                                        response={response}
-                                        component={component}
-                                    />
-                                </div>
-
-                                <div>
-                                    <GraphChannel
-                                        response={response}
-                                        component={component}
-                                    />
-                                </div>
-
-                                <div>
-                                    <DashboardStatClaim
-                                        response={response}
-                                        component={component}
-                                    />
-                                </div>
-
-                                <div>
-                                    <DashboardStatistic
-                                        response={response}
-                                        component={component}
-                                    />
-                                </div>
-                                {
-                                    !data.institution_targeted_id ?
-                                        <div>
-                                            {
-                                                verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
-                                                (verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
-                                                    <div className="kt-portlet" >
-                                                        {/*<ClaimToInstitution response={response}/>*/}
-                                                        <DashboardPieChart
-                                                            response={response}
-                                                            component={component}/>
-
-                                                    </div> : null
-                                            }
-                                        </div>
-                                        : ""
-                                }
-                                <div>
-                                    {
-                                        verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") &&
-                                        verifyPermission(props.userPermissions, "show-dashboard-data-my-institution") ?
-                                            <div className="kt-portlet">
-                                                <ClaimToPointOfServices
-                                                    response={response}
-                                                    component={component}
-                                                />
-                                            </div> : null
-                                    }
-                                </div>
                             </div>
-                        ) : (
-                            <div className="d-flex justify-content-center">
-                                <span>Aucun élement retrouvé: Le tableau de bord est vide</span>
-                            </div>
-                        )}
-                    </div>
-                )}
+                        </div>
+                    ) : (
+
+                        <LoadingTable/>
+
+                    )}
+            </div>
+
         </div>
 
     );

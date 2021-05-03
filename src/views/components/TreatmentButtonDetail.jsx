@@ -1,11 +1,11 @@
 import React from "react";
 import {formatDateToTimeStampte} from "../../helpers/function";
+import TreatmentHistory from "./TreatmentHistory";
 
 const TreatmentButtonDetail = ({claim}) => {
     console.log(claim,"claim")
     return (
-        <div className="kt-wizard-v2__content"
-             data-ktwizard-type="step-content">
+        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
             <div className="kt-heading kt-heading--md">Information sur le Traitement Effectué</div>
             <div className="kt-form__section kt-form__section--first">
                 {claim && !claim.active_treatment ? (
@@ -62,60 +62,18 @@ const TreatmentButtonDetail = ({claim}) => {
                                     <div className="kt-wizard-v2__review-content">
                                         <strong>Nom:</strong>
                                         <span className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.identite.lastname + "  " + claim.active_treatment.responsible_staff.identite.firstname : "-"}</span><br/>
-                                        <strong>Institution:</strong>
-                                        <span className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.institution.name : '-'}</span>
+                                        {/*<strong>Institution:</strong>*/}
+                                        {/*<span className="mx-2">{claim.active_treatment.responsible_staff ? claim.active_treatment.responsible_staff.institution.name : '-'}</span>*/}
                                     </div>
                                 )
                             }
                         </div>
                     ) : null}
 
+
                     {claim && claim.active_treatment && (claim.active_treatment.declared_unfounded_at || claim.active_treatment.solved_at) ? (
                         <div className="kt-wizard-v2__review-item">
-                            <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>Traitement effectué</span></div>
-                            <div className="kt-wizard-v2__review-content">
-                                <strong>Est-ce une réclamation fondée ?:</strong>
-                                <span className="mx-2">{claim.active_treatment.declared_unfounded_at ? "NON" : claim.active_treatment.solved_at ? "OUI" : "-"}</span><br/>
-
-                                {claim.active_treatment.declared_unfounded_at ? (
-                                    <>
-                                        <strong>Raison du non fondé:</strong>
-                                        <span className="mx-2">{claim.active_treatment.declared_unfounded_at ? claim.active_treatment.unfounded_reason : "-"}</span><br/>
-                                    </>
-                                ) : null}
-
-                                {claim.amount_disputed && claim.active_treatment.solved_at ? (
-                                    <>
-                                        <strong>Montant retourné:</strong>
-                                        {console.log("claim:", claim)}
-                                        <span className="mx-2">{claim.active_treatment.amount_returned ? `${claim.active_treatment.amount_returned} ${claim.amount_currency ? claim.amount_currency.name["fr"] : ''}` : "-"}</span><br/>
-                                    </>
-                                ) : null}
-
-                                {claim.active_treatment.solved_at ? (
-                                    <>
-                                        <strong>Solution:</strong>
-                                        <span className="mx-2">{claim.active_treatment.solution ? claim.active_treatment.solution : "-"}</span><br/>
-                                    </>
-                                ) : null}
-
-                                {claim.active_treatment.solved_at ? (
-                                    <>
-                                        <strong>Mesures préventives:</strong>
-                                        <span className="mx-2">{claim.active_treatment.preventive_measures ? claim.active_treatment.preventive_measures : "-"}</span><br/>
-                                    </>
-                                ) : null}
-
-                                {claim.active_treatment.solved_at ? (
-                                    <>
-                                        <strong>Commentaires:</strong>
-                                        <span className="mx-2">{claim.active_treatment.comments ? claim.active_treatment.comments : "-"}</span><br/>
-                                    </>
-                                ) : null}
-
-                                <strong>Date du traitement:</strong>
-                                <span className="mx-2">{claim.active_treatment.declared_unfounded_at ? formatDateToTimeStampte(claim.active_treatment.declared_unfounded_at) : claim.active_treatment.solved_at ? formatDateToTimeStampte(claim.active_treatment.solved_at) : "-"}</span><br/>
-                            </div>
+                            <TreatmentHistory claim={claim}/>
                         </div>
                     ) : null}
 

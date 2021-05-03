@@ -293,7 +293,7 @@ const ClaimAssignDetail = (props) => {
                                                                 <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>Rejet</span></h5></div>
                                                                 <div className="kt-wizard-v2__review-content">
                                                                     <strong>Raison du rejet:</strong>
-                                                                    <span className="mx-2">{claim.active_treatment.rejected_reason}</span><br/>
+                                                                    <span className="mx-2 text-danger">{claim.active_treatment.rejected_reason}</span><br/>
                                                                     <strong>Date de rejet:</strong>
                                                                     <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.rejected_at)}</span><br/>
                                                                     <strong>Nombre de rejet:</strong>

@@ -107,6 +107,22 @@ import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
 import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
 import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
+import TotalClaimRegister from "../pages/TotalClaimRegister";
+import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
+import TotalCompleteClaim from "../pages/TotalCompleteClaim";
+import TotalClaimForUnit from "../pages/TotalClaimForUnit";
+import TotalClaimInTreatment from "../pages/TotalClaimInTreatment";
+import TotalClaimToTreat from "../pages/TotalClaimToTreat";
+import TotalUnfoundedClaim from "../pages/TotalUnfoundedClaim";
+import TotalClaimMeasure from "../pages/TotalClaimMeasure";
+import MyTotalClaimRegister from "../pages/MyTotalClaimRegister";
+import MyTotalIncompleteClaim from "../pages/MyTotalIncompleteClaim";
+import MyTotalCompleteClaim from "../pages/MyTotalCompleteClaim";
+import MyTotalClaimForUnit from "../pages/MyTotalClaimForUnit";
+import MyTotalClaimInTreatment from "../pages/MyTotalClaimInTreatment";
+import MyTotalCompleteTreat from "../pages/MyTotalCompleteTreat";
+import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
+import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 
 const Body = () => {
     return (
@@ -624,6 +640,70 @@ const Body = () => {
 
             <Route exact path="/settings/percentage-min-fusion">
                 <PercentageMinFusion/>
+            </Route>
+
+            <Route exact path="/process/total-claim-register">
+                <TotalClaimRegister/>
+            </Route>
+
+            <Route exact path="/process/total-incomplete-claim">
+                <TotalIncompleteClaim/>
+            </Route>
+
+            <Route exact path="/process/total-complete-claim">
+                <TotalCompleteClaim/>
+            </Route>
+
+            <Route exact path="/process/total-claim-transfer-to-unit">
+                <TotalClaimForUnit/>
+            </Route>
+
+            <Route exact path="/process/total-claim-in-treatment">
+                <TotalClaimInTreatment/>
+            </Route>
+
+            <Route exact path="/process/total-claim-treat">
+                <TotalClaimToTreat/>
+            </Route>
+
+            <Route exact path="/process/total-unfounded-claim">
+                <TotalUnfoundedClaim/>
+            </Route>
+
+            <Route exact path="/process/total-claim-satisfaction-measure">
+                <TotalClaimMeasure/>
+            </Route>
+
+            <Route exact path="/process/my-total-claim-register">
+                <MyTotalClaimRegister/>
+            </Route>
+
+            <Route exact path="/process/my-total-incomplete-claim">
+                <MyTotalIncompleteClaim/>
+            </Route>
+
+            <Route exact path="/process/my-total-complete-claim">
+                <MyTotalCompleteClaim/>
+            </Route>
+
+            <Route exact path="/process/my-total-claim-transfer-to-unit">
+                <MyTotalClaimForUnit/>
+            </Route>
+
+            <Route exact path="/process/my-total-claim-in-treatment">
+                <MyTotalClaimInTreatment/>
+            </Route>
+
+            <Route exact path="/process/my-total-claim-treat">
+                <MyTotalCompleteTreat/>
+            </Route>
+
+            <Route exact path="/process/my-total-unfounded-claim">
+                <MyTotalUnfoundedClaim/>
+            </Route>
+
+            <Route exact path="/process/my-total-claim-satisfaction-measure">
+                <MyTotalClaimMeasure/>
             </Route>
 
             <Route path={"*"}>

@@ -20,6 +20,7 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ConfirmClaimAddModal = props => {
+    const componentData = props.componentData;
     const defaultData = {
         firstname: props.firstname,
         lastname: props.lastname,
@@ -27,6 +28,7 @@ const ConfirmClaimAddModal = props => {
         telephone: JSON.parse(props.telephone),
         email: JSON.parse(props.email),
         ville: props.ville,
+        lieu: props.lieu,
         unit_targeted_id: props.unit_targeted_id,
         institution_targeted_id: props.institution_targeted_id,
         account_targeted_id: props.account_targeted_id,
@@ -50,6 +52,7 @@ const ConfirmClaimAddModal = props => {
         telephone: [],
         email: [],
         ville: [],
+        lieu: [],
         unit_targeted_id: [],
         institution_targeted_id: [],
         account_targeted_id: [],
@@ -113,6 +116,12 @@ const ConfirmClaimAddModal = props => {
     const onChangeVille = (e) => {
         const newData = {...data};
         newData.ville = e.target.value;
+        setData(newData);
+    };
+
+    const onChangeLieu = e => {
+        const newData = {...data};
+        newData.lieu = e.target.value;
         setData(newData);
     };
 
@@ -402,13 +411,13 @@ const ConfirmClaimAddModal = props => {
                                         {
                                             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                 <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution concernée <InputRequire/></label>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">{componentData ? componentData.params.fr.institution.value : ""} <InputRequire/></label>
                                                     <div className="col-lg-9 col-xl-6">
                                                         <Select
                                                             isClearable
                                                             isDisabled={true}
                                                             value={institution}
-                                                            placeholder={"Veillez selectioner l'institution"}
+                                                            placeholder={componentData ? componentData.params.fr.institution_placeholder.value : ""}
                                                             onChange={onChangeInstitution}
                                                             options={institutions}
                                                         />
@@ -428,7 +437,7 @@ const ConfirmClaimAddModal = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations Client:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.info_cible.value : ""}</h3>
 
                                                 {
                                                     !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
@@ -468,13 +477,13 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Nom <InputRequire/></label>
+                                                        <label htmlFor="lastname">{componentData ? componentData.params.fr.nom.value : ""} <InputRequire/></label>
                                                         <input
                                                             disabled={true}
                                                             id="lastname"
                                                             type="text"
                                                             className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le nom de famille"
+                                                            placeholder={componentData ? componentData.params.fr.nom_placeholder.value : ""}
                                                             value={data.lastname}
                                                             onChange={(e) => onChangeLastName(e)}
                                                         />
@@ -490,13 +499,13 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Prénom(s) <InputRequire/></label>
+                                                        <label htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value : ""} <InputRequire/></label>
                                                         <input
                                                             disabled={true}
                                                             id="firstname"
                                                             type="text"
                                                             className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le prénom"
+                                                            placeholder={componentData ? componentData.params.fr.prenoms_placeholder.value : ""}
                                                             value={data.firstname}
                                                             onChange={(e) => onChangeFirstName(e)}
                                                         />
@@ -513,8 +522,8 @@ const ConfirmClaimAddModal = props => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Sexe <InputRequire/></label>
+                                                    <div className={error.sexe.length ? "form-group col validated" : "form-group col"}>
+                                                        <label htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value : ""} <InputRequire/></label>
                                                         <select
                                                             disabled={true}
                                                             id="sexe"
@@ -522,9 +531,10 @@ const ConfirmClaimAddModal = props => {
                                                             value={data.sexe}
                                                             onChange={(e) => onChangeSexe(e)}
                                                         >
-                                                            <option value="" disabled={true}>Veillez choisir le Sexe</option>
+                                                            <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
                                                             <option value="F">Féminin</option>
                                                             <option value="M">Masculin</option>
+                                                            <option value="A">Autres</option>
                                                         </select>
                                                         {
                                                             error.sexe.length ? (
@@ -538,13 +548,13 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.ville.length ? "col validated" : "col"}>
-                                                        <label htmlFor="ville">Votre ville</label>
+                                                        <label htmlFor="ville">{componentData ? componentData.params.fr.ville.value : ""}</label>
                                                         <input
                                                             disabled={true}
                                                             id="ville"
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer votre ville"
+                                                            placeholder={componentData ? componentData.params.fr.ville_placeholder.value : ""}
                                                             value={data.ville === null ? "" : data.ville}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
@@ -562,8 +572,16 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/> <InputRequire/></label>
-                                                        <TagsInput disabled={true} value={data.telephone} onChange={onChangeTelephone} />
+                                                        <label htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/> <InputRequire/></label>
+                                                        <TagsInput
+                                                            disabled={true}
+                                                            value={data.telephone}
+                                                            onChange={onChangeTelephone}
+                                                            inputProps={{
+                                                                className: 'react-tagsinput-input',
+                                                                placeholder: componentData ? componentData.params.fr.telephone_placeholder.value : ""
+                                                            }}
+                                                        />
                                                         {
                                                             error.telephone.length ? (
                                                                 error.telephone.map((error, index) => (
@@ -576,8 +594,16 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.email.length ? "col validated" : "col"}>
-                                                        <label htmlFor="email">Email(s) <InputRequire/></label>
-                                                        <TagsInput disabled={true} value={data.email} onChange={onChangeEmail} />
+                                                        <label htmlFor="email">{componentData ? componentData.params.fr.email.value : ""} <InputRequire/></label>
+                                                        <TagsInput
+                                                            disabled={true}
+                                                            value={data.email}
+                                                            onChange={onChangeEmail}
+                                                            inputProps={{
+                                                                className: 'react-tagsinput-input',
+                                                                placeholder: componentData ? componentData.params.fr.email_placeholder.value : ""
+                                                            }}
+                                                        />
                                                         {
                                                             error.email.length ? (
                                                                 error.email.map((error, index) => (
@@ -596,16 +622,16 @@ const ConfirmClaimAddModal = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations Réclamation:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.info_reclamation.value : ""}</h3>
 
                                                 {
                                                     !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                         <div className="form-group row">
                                                             <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="unit">Unité concèrner</label>
+                                                                <label htmlFor="unit">{componentData ? componentData.params.fr.unite.value : ""}</label>
                                                                 <Select
                                                                     isClearable
-                                                                    placeholder={"Veillez selectioner l'unité"}
+                                                                    placeholder={componentData ? componentData.params.fr.unite_placeholder.value : ""}
                                                                     value={unit}
                                                                     onChange={onChangeUnit}
                                                                     options={units}
@@ -622,10 +648,10 @@ const ConfirmClaimAddModal = props => {
                                                             </div>
 
                                                             <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="account">Numéro de compte concèrner</label>
+                                                                <label htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
                                                                 <Select
                                                                     isClearable
-                                                                    placeholder={"Veillez selectioner le numéro"}
+                                                                    placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
                                                                     value={account}
                                                                     onChange={onChangeAccount}
                                                                     options={accounts}
@@ -646,10 +672,10 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="receptionChannel">Canal de réception <InputRequire/></label>
+                                                        <label htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value : ""} <InputRequire/></label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner le canal de réception"}
+                                                            placeholder={componentData ? componentData.params.fr.canal_reception_placeholder.value : ""}
                                                             value={receptionChannel}
                                                             onChange={onChangeReceptionChannel}
                                                             options={channels}
@@ -666,10 +692,10 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="responseChannel">Canal de réponse <InputRequire/></label>
+                                                        <label htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value : ""} <InputRequire/></label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner le canal de réponse"}
+                                                            placeholder={componentData ? componentData.params.fr.canal_reponse_placeholder.value : ""}
                                                             value={responseChannel}
                                                             onChange={onChangeResponseChannel}
                                                             options={responseChannels}
@@ -688,10 +714,10 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">Catégorie de réclamation</label>
+                                                        <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} </label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner la catégorie de réclamation"}
+                                                            placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}
                                                             value={claimCategory}
                                                             onChange={onChangeClaimCategory}
                                                             options={claimCategories}
@@ -699,10 +725,10 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimObject">Objet de réclammation</label>
+                                                        <label htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""} <InputRequire/></label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner l'objet de réclamation"}
+                                                            placeholder={componentData ? componentData.params.fr.object_placeholder.value : ""}
                                                             value={claimObject}
                                                             onChange={onChangeClaimObject}
                                                             options={claimObjects}
@@ -717,16 +743,38 @@ const ConfirmClaimAddModal = props => {
                                                             ) : null
                                                         }
                                                     </div>
+
+                                                    <div
+                                                        className={error.lieu.length ? "col validated" : "col"}>
+                                                        <label htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""}</label>
+                                                        <input
+                                                            type={"text"}
+                                                            id="lieu"
+                                                            className={error.lieu.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder={componentData ? componentData.params.fr.lieu_placeholder.value : ""}
+                                                            value={data.lieu}
+                                                            onChange={(e) => onChangeLieu(e)}
+                                                        />
+                                                        {
+                                                            error.lieu.length ? (
+                                                                error.lieu.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
                                                 </div>
 
                                                 <div className="form-group row">
                                                     <div className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                        <label htmlFor="amount_claim">Montant réclamé</label>
+                                                        <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong className="text-danger">Laisser vide si pas de montant</strong>)</label>
                                                         <input
                                                             type={"number"}
                                                             id="amount_claim"
                                                             className={error.amount_disputed.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le Montant réclamé"
+                                                            placeholder={componentData ? componentData.params.fr.montant_placeholder.value : ""}
                                                             value={data.amount_disputed}
                                                             onChange={(e) => onChangeAmountDisputed(e)}
                                                         />
@@ -742,10 +790,10 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                        <label htmlFor="currency">Devise du montant réclamé</label>
+                                                        <label htmlFor="currency">{componentData ? componentData.params.fr.devise.value : ""}</label>
                                                         <Select
                                                             isClearable
-                                                            placeholder={"Veillez selectioner la devise du montant réclamé"}
+                                                            placeholder={componentData ? componentData.params.fr.devise_placeholder.value : ""}
                                                             value={currency}
                                                             onChange={onChangeAmountCurrency}
                                                             options={currencies}
@@ -764,12 +812,12 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                        <label htmlFor="date">Date de l'évernement <InputRequire/></label>
+                                                        <label htmlFor="date">{componentData ? componentData.params.fr.date.value : ""} <InputRequire/></label>
                                                         <input
                                                             type={"datetime-local"}
                                                             id="date"
                                                             className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la date de l'evernement"
+                                                            placeholder={componentData ? componentData.params.fr.date_placeholder.value : ""}
                                                             value={data.event_occured_at}
                                                             onChange={(e) => onChangeEventOccuredAt(e)}
                                                         />
@@ -785,7 +833,7 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className="col">
-                                                        <label htmlFor="file">Pièces jointes</label>
+                                                        <label htmlFor="file">{componentData ? componentData.params.fr.piece.value : ""}</label>
                                                         <input
                                                             onChange={onChangeFile}
                                                             type="file"
@@ -807,10 +855,10 @@ const ConfirmClaimAddModal = props => {
                                                     {
                                                         verifyPermission(props.userPermissions, "store-claim-without-client") ? (
                                                             <div className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="relationship">Relation du reclamant avec l'institution</label>
+                                                                <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} avec l'institution <InputRequire/></label>
                                                                 <Select
                                                                     isClearable
-                                                                    placeholder={"Veillez selectioner la relation du reclamant avec l'institution"}
+                                                                    placeholder={componentData ? componentData.params.fr.relation_placeholder.value : ""}
                                                                     value={relationship}
                                                                     onChange={onChangeRelationShip}
                                                                     options={relationships}
@@ -833,12 +881,12 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={error.description.length ? "col validated" : "col"}>
-                                                        <label htmlFor="description">Description <InputRequire/></label>
+                                                        <label htmlFor="description">{componentData ? componentData.params.fr.description.value : ""} <InputRequire/></label>
                                                         <textarea
                                                             rows="7"
                                                             id="description"
                                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer la description"
+                                                            placeholder={componentData ? componentData.params.fr.description_placeholder.value : ""}
                                                             value={data.description}
                                                             onChange={(e) => onChangeDescription(e)}
                                                         />
@@ -854,12 +902,12 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                        <label htmlFor="claimer_expectation">Attente du réclamant</label>
+                                                        <label htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value : ""}</label>
                                                         <textarea
                                                             rows="7"
                                                             id="claimer_expectation"
                                                             className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer l'attente du réclamant"
+                                                            placeholder={componentData ? componentData.params.fr.attente_placeholder.value : ""}
                                                             value={data.claimer_expectation}
                                                             onChange={(e) => onChangeClaimerExpectation(e)}
                                                         />
@@ -881,17 +929,17 @@ const ConfirmClaimAddModal = props => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Relance:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""} <InputRequire/></h3>
 
                                                 <div className="form-group row">
-                                                    <label className="col-3 col-form-label">Est-ce une relance ?</label>
+                                                    <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
                                                     <div className="col-9">
                                                         <div className="kt-radio-inline">
                                                             <label className="kt-radio">
-                                                                <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_revival}/> Oui<span/>
+                                                                <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                             </label>
                                                             <label className="kt-radio">
-                                                                <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_revival}/> Non<span/>
+                                                                <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                             </label>
                                                         </div>
                                                     </div>
