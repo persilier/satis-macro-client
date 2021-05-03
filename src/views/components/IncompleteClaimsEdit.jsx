@@ -258,7 +258,6 @@ const IncompleteClaimsEdit = props => {
                 });
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/register_claim")
                 .then(response => {
-                    console.log(response.data,"Component_DATA")
                     setComponentData(response.data);
                     setLoad(false);
                 })

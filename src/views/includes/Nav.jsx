@@ -16,6 +16,7 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import {debug} from "../../helpers/function";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {ERROR_401} from "../../config/errorPage";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -113,11 +114,13 @@ const Nav = (props) => {
 
     const searchClaim = (e) => {
         var value = e.target.value;
-        var endpoint = "";
+        var endpoint = null;
         if (verifyPermission(props.userPermissions, 'search-claim-any-reference'))
             endpoint = `${appConfig.apiDomaine}/any/search-claim/${value}`;
         if (verifyPermission(props.userPermissions, 'search-claim-my-reference'))
             endpoint = `${appConfig.apiDomaine}/my/search-claim/${value}`;
+            /*if (!endpoint)
+                window.location.href = ERROR_401;*/
         if (value) {
             setLoader(true);
             if (timer)
