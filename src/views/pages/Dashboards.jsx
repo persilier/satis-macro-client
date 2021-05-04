@@ -35,7 +35,6 @@ const Dashboards = (props) => {
     const getResponseAxios = (data) => {
         axios.post(appConfig.apiDomaine + "/dashboard", data)
             .then(response => {
-                console.log(response.data, "Dashboard");
                 setResponse(response);
                 setDataInstitution(response.data.institutions);
                 setLoad(false)
@@ -48,7 +47,6 @@ const Dashboards = (props) => {
             await getResponseAxios();
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/dashboard-text")
                 .then(response => {
-                    console.log(response.data, "Component_DATA");
                     setComponent(response.data);
                     setLoad(false);
                 })

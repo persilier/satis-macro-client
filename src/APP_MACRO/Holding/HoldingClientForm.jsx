@@ -33,7 +33,7 @@ const endPointConfig = {
     PRO: {
         plan: "PRO",
         store: `${appConfig.apiDomaine}/my/clients`,
-        storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
+        storeAccount: id => `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
         update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
         create: `${appConfig.apiDomaine}/my/clients/create`,
         edit: id => `${appConfig.apiDomaine}/my/clients/${id}`
@@ -41,14 +41,14 @@ const endPointConfig = {
     MACRO: {
         holding: {
             store: `${appConfig.apiDomaine}/any/clients`,
-            storeAccount: id=> `${appConfig.apiDomaine}/any/accounts/${id}/clients`,
+            storeAccount: id => `${appConfig.apiDomaine}/any/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/any/clients/${id}`,
             create: `${appConfig.apiDomaine}/any/clients/create`,
             edit: id => `${appConfig.apiDomaine}/any/clients/${id}`
         },
         filial: {
             store: `${appConfig.apiDomaine}/my/clients`,
-            storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
+            storeAccount: id => `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
             create: `${appConfig.apiDomaine}/my/clients/create`,
             edit: id => `${appConfig.apiDomaine}/my/clients/${id}`
@@ -123,7 +123,7 @@ const HoldingClientForm = (props) => {
             axios.get(endPoint.create)
                 .then(response => {
                     // console.log(response.data,"RESPONSE")
-                    if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')){
+                    if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')) {
                         const options =
                             response.data.institutions.length ? response.data.institutions.map((institution) => ({
                                 value: institution.id,
@@ -162,8 +162,8 @@ const HoldingClientForm = (props) => {
                         };
                         setData(newClient);
                         setType({
-                            value: response.data.account_type?response.data.account_type.id:"",
-                            label: response.data.account_type?response.data.account_type.name.fr:""
+                            value: response.data.account_type ? response.data.account_type.id : "",
+                            label: response.data.account_type ? response.data.account_type.name.fr : ""
                         });
                         setCategory({
                             value: response.data.client_institution.category_client ? response.data.client_institution.category_client.id : "",
@@ -308,8 +308,9 @@ const HoldingClientForm = (props) => {
                     .catch((errorRequest) => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        if (error.response.data.error)
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.message));
+
+                        if (errorRequest.response.data.error.message)
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.message));
                         else
                             ToastBottomEnd.fire(toastEditErrorMessageConfig);
                     })
@@ -419,72 +420,72 @@ const HoldingClientForm = (props) => {
                                         <h5 className="kt-section__title kt-section__title-lg">Identité:</h5>
                                         {
                                             !id ?
-                                                <div className="form-group row">
-                                                    {
-                                                        verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
-                                                            <div
-                                                                className={error.institution_id.length ? "col validated" : "col"}>
-                                                                <label htmlFor="exampleSelect1"> Institution <span
-                                                                    style={{color: "red"}}>*</span></label>
-                                                                {institutionData ? (
-                                                                    <Select
-                                                                        value={institution}
-                                                                        placeholder={"Veillez selectionner l'institution"}
-                                                                        onChange={onChangeInstitution}
-                                                                        options={institutionData ? institutionData.map(name => name) : ''}
-                                                                    />
-                                                                ) : (
-                                                                    <select name="institution"
-                                                                            className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
-                                                                            id="institution">
-                                                                        <option value=""/>
-                                                                    </select>
-                                                                )
-                                                                }
+                                                verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
 
-                                                                {
-                                                                    error.institution_id.length ? (
-                                                                        error.institution_id.map((error, index) => (
-                                                                            <div key={index}
-                                                                                 className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-                                                            : null
-                                                    }
-                                                    <div
-                                                        className={error.client_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="exampleSelect1"> Client</label>
-                                                        {/*{console.log(nameClient,"NAME")}*/}
-                                                        {nameClient ? (
-                                                            <Select
+                                                    <div className="form-group row">
+                                                        <div
+                                                            className={error.institution_id.length ? "col validated" : "col"}>
+                                                            <label htmlFor="exampleSelect1"> Institution <span
+                                                                style={{color: "red"}}>*</span></label>
+                                                            {institutionData ? (
+                                                                <Select
+                                                                    value={institution}
+                                                                    placeholder={"Veillez selectionner l'institution"}
+                                                                    onChange={onChangeInstitution}
+                                                                    options={institutionData ? institutionData.map(name => name) : ''}
+                                                                />
+                                                            ) : (
+                                                                <select name="institution"
+                                                                        className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                                        id="institution">
+                                                                    <option value=""/>
+                                                                </select>
+                                                            )
+                                                            }
 
-                                                                placeholder={"Veillez selectionner le client"}
-                                                                value={client}
-                                                                onChange={onChangeClient}
-                                                                options={nameClient ? nameClient.map(name => name) : ''}
-                                                            />
-                                                        ) : (<select name="client"
-                                                                     className={error.client_id.length ? "form-control is-invalid" : "form-control"}
-                                                                     id="client">
-                                                            <option value=""/>
-                                                        </select>)
-                                                        }
+                                                            {
+                                                                error.institution_id.length ? (
+                                                                    error.institution_id.map((error, index) => (
+                                                                        <div key={index}
+                                                                             className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
 
-                                                        {
-                                                            error.client_id.length ? (
-                                                                error.client_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
+                                                        <div
+                                                            className={error.client_id.length ? "col validated" : "col"}>
+                                                            <label htmlFor="exampleSelect1"> Client</label>
+                                                            {/*{console.log(nameClient,"NAME")}*/}
+                                                            {nameClient ? (
+                                                                <Select
+
+                                                                    placeholder={"Veillez selectionner le client"}
+                                                                    value={client}
+                                                                    onChange={onChangeClient}
+                                                                    options={nameClient ? nameClient.map(name => name) : ''}
+                                                                />
+                                                            ) : (<select name="client"
+                                                                         className={error.client_id.length ? "form-control is-invalid" : "form-control"}
+                                                                         id="client">
+                                                                <option value=""/>
+                                                            </select>)
+                                                            }
+
+                                                            {
+                                                                error.client_id.length ? (
+                                                                    error.client_id.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                    : null
                                                 : null
                                         }
                                         <div className="form-group row">
@@ -752,11 +753,12 @@ const HoldingClientForm = (props) => {
                                                 </Link>
                                             )
                                         }
-                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm"
+                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button"
+                                                className="btn btn-bold btn-label-brand btn-sm"
                                                 data-toggle="modal" data-target="#kt_modal_4">Launch Modal
                                         </button>
                                         {
-                                            foundIdentity? (
+                                            foundIdentity ? (
                                                 <ConfirmClientSaveForm
                                                     plan={props.plan}
                                                     userPermissions={props.userPermissions}
@@ -777,7 +779,7 @@ const HoldingClientForm = (props) => {
                                                     number={data.number}
                                                     resetFoundIdentity={() => setFoundIdentity({})}
                                                 />
-                                            ) :  null
+                                            ) : null
                                         }
                                     </div>
                                 </div>

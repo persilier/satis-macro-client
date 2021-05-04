@@ -54,12 +54,12 @@ const ConfirmClientSaveForm = (props) => {
 
 
     const defaultData = {
-        firstname: props.identite.identite.identite.firstname,
-        lastname: props.identite.identite.identite.lastname,
-        sexe: props.identite.identite.identite.sexe,
-        telephone: (props.identite.identite.identite.telephone),
-        email: (props.identite.identite.identite.email),
-        ville: props.identite.identite.identite.ville === null ? "" : props.identite.identite.identite.ville,
+        firstname: props.identite.identite.firstname,
+        lastname: props.identite.identite.lastname,
+        sexe: props.identite.identite.sexe,
+        telephone: JSON.parse(props.identite.identite.telephone),
+        email: JSON.parse(props.identite.identite.email),
+        ville: props.identite.identite.ville === null ? "" : props.identite.identite.ville,
         number:props.number,
         account_type_id: props.account_type_id,
         client_id: props.client_id,
@@ -149,7 +149,7 @@ const ConfirmClientSaveForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
-        axios.post(endPoint.confirm(props.identite.identite.identites_id), data)
+        axios.post(endPoint.confirm(props.identite.identite.id), data)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                 await setStartRequest(false);
