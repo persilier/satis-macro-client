@@ -29,7 +29,6 @@ const TreatmentButtonDetail = ({claim}) => {
                             <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>Unité de traitement</span></div>
                             <div className="kt-wizard-v2__review-content">
                                 <strong>Unité:</strong>
-                                {console.log("claim:", claim)}
                                 <span className="mx-2">{claim.active_treatment.responsible_unit ? claim.active_treatment.responsible_unit.name.fr : "-"}</span><br/>
                                 <strong>Date de transfert:</strong>
                                 <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.transferred_to_unit_at)}</span>

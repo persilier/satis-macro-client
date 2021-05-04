@@ -81,7 +81,6 @@ const FilialeInstitutionForm = (props) => {
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById('Image1');
-            console.log(image, 'image');
             image.src = e.target.result;
         };
         if (newData.logo) {
@@ -116,6 +115,7 @@ const FilialeInstitutionForm = (props) => {
             ;
         }
     };
+
     const printJsx = () => {
         return (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -171,9 +171,7 @@ const FilialeInstitutionForm = (props) => {
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <div className="kt-avatar kt-avatar--outline"
                                                                              id="kt_user_add_avatar">
-                                                                            <div className="kt-avatar__holder"
-                                                                                 style={{textAlign: 'center'}}>
-
+                                                                            <div className="kt-avatar__holder" style={{textAlign: 'center'}}>
                                                                                 <img
                                                                                     id="Image1"
                                                                                     src={data.logo}
@@ -184,32 +182,20 @@ const FilialeInstitutionForm = (props) => {
                                                                                         textAlign: 'center'
                                                                                     }}
                                                                                 />
-
                                                                             </div>
-                                                                            <label className="kt-avatar__upload"
-                                                                                   id="files"
-                                                                                   data-toggle="kt-tooltip"
-                                                                                   title="Change avatar">
-                                                                                <i className="fa fa-pen"></i>
-                                                                                <input type="file"
-                                                                                       id="file"
-                                                                                       name="kt_user_add_user_avatar"
-                                                                                       onChange={(e) => onChangeFile(e)}
-                                                                                />
+                                                                            <label className="kt-avatar__upload" id="files" data-toggle="kt-tooltip" title="Change avatar">
+                                                                                <i className="fa fa-pen"/>
+                                                                                <input type="file" id="file" name="kt_user_add_user_avatar" onChange={(e) => onChangeFile(e)}/>
                                                                             </label>
-                                                                            <span className="kt-avatar__cancel"
-                                                                                  data-toggle="kt-tooltip"
-                                                                                  title="Cancel avatar">
-                                                                            <i className="fa fa-times"></i>
+                                                                            <span className="kt-avatar__cancel" data-toggle="kt-tooltip" title="Cancel avatar">
+                                                                            <i className="fa fa-times"/>
                                                                         </span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
-                                                                <div
-                                                                    className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name"> Nom <span style={{color:"red"}}>*</span></label>
+                                                                <div className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name"> Nom <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
@@ -232,10 +218,8 @@ const FilialeInstitutionForm = (props) => {
                                                                     </div>
                                                                 </div>
 
-                                                                <div
-                                                                    className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="Acronyme">Acronyme <span style={{color:"red"}}>*</span></label>
+                                                                <div className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="Acronyme">Acronyme <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
@@ -260,8 +244,7 @@ const FilialeInstitutionForm = (props) => {
 
                                                                 <div
                                                                     className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="value">Code Iso <span style={{color:"red"}}>*</span></label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">Code Iso <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="value"
@@ -283,7 +266,6 @@ const FilialeInstitutionForm = (props) => {
                                                                         }
                                                                     </div>
                                                                 </div>
-
                                                             </div>
                                                             <div className="kt-portlet__foot">
                                                                 <div className="kt-form__actions text-right">
@@ -300,12 +282,9 @@ const FilialeInstitutionForm = (props) => {
                                                                             </button>
                                                                         )
                                                                     }
-
-                                                                    <Link to={'/setting/dashboard'}
-                                                                          className="btn btn-secondary mx-2">
+                                                                    {/*<Link to={'/setting/dashboard'} className="btn btn-secondary mx-2">
                                                                         Quitter
-                                                                    </Link>
-
+                                                                    </Link>*/}
                                                                 </div>
                                                             </div>
                                                         </div>
