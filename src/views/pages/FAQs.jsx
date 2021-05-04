@@ -28,7 +28,7 @@ axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 const FAQs = (props) => {
     document.title = "Satis client - Paramètre FAQs";
 
-    if (!verifyPermission(props.userPermissions, "list-faq"))
+    if (!verifyPermission(props.userPermissions, "store-faq"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
