@@ -110,7 +110,7 @@ const FilialeInstitutionForm = (props) => {
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    setError({...defaultError});
+                    setError({...defaultError, ...error.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
                 })
             ;
