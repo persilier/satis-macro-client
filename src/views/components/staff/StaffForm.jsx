@@ -357,7 +357,6 @@ const StaffForm = (props) => {
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(async (errorRequest) => {
-                        console.log("data:", errorRequest.response.data.error);
                         if (errorRequest.response.data.error.identite)
                         {
                             // Existing entity
@@ -663,9 +662,7 @@ const StaffForm = (props) => {
                                                     </Link>
                                                 )
                                             }
-                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm"
-                                                    data-toggle="modal" data-target="#kt_modal_4">Launch Modal
-                                            </button>
+                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4">Launch Modal</button>
                                         </div>
                                     </div>
                                 </form>
