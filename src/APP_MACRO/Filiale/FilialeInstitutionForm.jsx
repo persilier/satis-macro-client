@@ -108,6 +108,7 @@ const FilialeInstitutionForm = (props) => {
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                 })
                 .catch(error => {
+                    console.log(error.response.data.error)
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig);
@@ -165,9 +166,9 @@ const FilialeInstitutionForm = (props) => {
                                                     <div className="kt-form__body">
                                                         <div className="kt-section kt-section--first">
                                                             <div className="kt-section__body">
-                                                                <div className="form-group row">
-                                                                    <label
-                                                                        className="col-xl-3 col-lg-3 col-form-label">Logo</label>
+
+                                                                <div className={error.logo.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label">Logo</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <div className="kt-avatar kt-avatar--outline"
                                                                              id="kt_user_add_avatar">
@@ -189,8 +190,18 @@ const FilialeInstitutionForm = (props) => {
                                                                             </label>
                                                                             <span className="kt-avatar__cancel" data-toggle="kt-tooltip" title="Cancel avatar">
                                                                             <i className="fa fa-times"/>
-                                                                        </span>
+                                                                            </span>
                                                                         </div>
+                                                                        {
+                                                                            error.logo.length ? (
+                                                                                error.logo.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
                                                                     </div>
                                                                 </div>
 
@@ -273,7 +284,7 @@ const FilialeInstitutionForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Envoyer</button>
+                                                                                    className="btn btn-primary">Modifier</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
