@@ -147,6 +147,7 @@ const RemoveChats = (props) => {
             })
         ;
     };
+
     const arrayNumberPage = () => {
         const pages = [];
         for (let i = 0; i < numberPage; i++) {

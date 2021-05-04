@@ -185,7 +185,7 @@ const Participants = (props) => {
                                 <i className="la la-user-times fa-2x"/>
                             </button>
                         </td>
-                        : ""
+                        : null
                 }
 
 
@@ -284,8 +284,9 @@ const Participants = (props) => {
                                                             colSpan="1" style={{width: "150px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Email
                                                         </th>
-
+                                                        {console.log(responseData,"created_by")}
                                                         {
+                                                            responseData?
                                                             userDataJson.staff.id === responseData.created_by.id ?
                                                                 <th className="sorting" tabIndex="0"
                                                                     aria-controls="kt_table_1"
@@ -294,6 +295,7 @@ const Participants = (props) => {
                                                                     Action
                                                                 </th>
                                                                 : <th style={{display:"none"}}/>
+                                                                :null
                                                         }
 
                                                     </tr>

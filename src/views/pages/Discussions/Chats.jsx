@@ -164,6 +164,30 @@ const Chats = (props) => {
         return formData;
     };
 
+    const deleteContributor = (chatsId, index) => {
+        console.log(index,"index")
+        console.log(chatsId,"chatsId")
+        DeleteConfirmation.fire(confirmDeleteConfig)
+            .then((result) => {
+                if (result.value) {
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/discussions/${chatsId}`)
+                            .then(response => {
+                                const newChats = [...listChat];
+                                newChats.splice(index, 1);
+                                setListChat(newChats);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
+                }
+            })
+        ;
+    };
+
     const addItem = (e) => {
 
         e.preventDefault();
@@ -303,7 +327,7 @@ const Chats = (props) => {
                                                                                 <div className="kt-widget__info">
                                                                                     <div className="kt-widget__section">
                                                                                         <a href={"#messageList"}
-                                                                                           activeClassName="kt-menu__item--active"
+                                                                                           activeclassname="kt-menu__item--active"
                                                                                            aria-haspopup="true"
                                                                                            onClick={(e) => onChangeDiscussion(chat.id)}
                                                                                            className="kt-widget__username">{chat.name}
@@ -321,8 +345,8 @@ const Chats = (props) => {
 																		</span>
                                                                                 </div>
                                                                                 <div className="kt-widget__action">
-                                                                <span
-                                                                    className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
+                                                                        <span
+                                                                                    className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
                                                                                     {idChat === chat.id}
                                                                                     {/*<span*/}
                                                                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
@@ -377,14 +401,17 @@ const Chats = (props) => {
                                                                                                 {/*                                    </li>*/}
 
                                                                                                 {
-                                                                                                    userDataJson.staff.id === listChat.created_by ?
+                                                                                                    userDataJson.staff.id === chat.created_by ?
                                                                                                         <li className="kt-nav__item">
-                                                                                                            <Link to={"/treatment/chat/remove_chat"}
-                                                                                                                  className="kt-nav__link">
+                                                                                                            <a
+                                                                                                                href="#remove_chat"
+                                                                                                                className="kt-nav__link"
+                                                                                                                onClick={(e) => deleteContributor(chat.id, i)}
+                                                                                                            >
                                                                                                                 <i className="kt-nav__link-icon flaticon-delete"></i>
                                                                                                                 <span
                                                                                                                     className="kt-nav__link-text">Supprimer un Tchat</span>
-                                                                                                            </Link>
+                                                                                                            </a>
                                                                                                         </li>
                                                                                                         :null
                                                                                                 }
