@@ -111,7 +111,6 @@ const LoginPage = (props) => {
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
                     const user = response.data;
                     localStorage.setItem("userData", JSON.stringify(response.data));
-                    localStorage.setItem("staffData", response.data.staff.identite_id);
                     localStorage.setItem('token', token);
                     localStorage.setItem('expire_in', expire_in);
                     var date = new Date();

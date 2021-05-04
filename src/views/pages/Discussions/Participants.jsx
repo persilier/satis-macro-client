@@ -44,8 +44,6 @@ const Participants = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
                 .then(response => {
-                    // console.log(response.data, 'DONNEES');
-                    // console.log(localStorage.getItem("staffData"), 'STAFF');
                     setLoad(false);
                     setResponseData(response.data);
                     setContributor(response.data.staff);
@@ -284,7 +282,7 @@ const Participants = (props) => {
                                                             colSpan="1" style={{width: "150px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Email
                                                         </th>
-                                                        {console.log(responseData,"created_by")}
+
                                                         {
                                                             responseData?
                                                             userDataJson.staff.id === responseData.created_by.id ?

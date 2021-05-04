@@ -165,8 +165,6 @@ const Chats = (props) => {
     };
 
     const deleteContributor = (chatsId, index) => {
-        console.log(index,"index")
-        console.log(chatsId,"chatsId")
         DeleteConfirmation.fire(confirmDeleteConfig)
             .then((result) => {
                 if (result.value) {
