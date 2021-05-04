@@ -40,7 +40,6 @@ const {id}=useParams();
         if (verifyTokenExpire()) {
             axios.get(`${appConfig.apiDomaine}/discussions/${id}/staff/create`)
                 .then(response => {
-                    console.log(response.data, "PARTICIPANT");
                     let newStaffs=Object.values(response.data.staff).map(staff=>(
                         {value:staff.id, label:staff.identite.lastname+" "+staff.identite.firstname}
                     ));

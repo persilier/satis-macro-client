@@ -8,7 +8,8 @@ export default function MessageList(props) {
     // const [messages,setMessage] = useState([]);
     const messages = props.getMessage.length ? props.getMessage : [];
 
-    const MY_USER_ID = localStorage.getItem("staffData");
+    let userDataJson = JSON.parse(localStorage.getItem("userData"));
+    let MY_USER_ID = userDataJson.staff.identite_id;
 
 const deletedMessage=(key)=>{
     props.deletedItem(key)

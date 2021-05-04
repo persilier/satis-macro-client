@@ -47,6 +47,8 @@ const Chats = (props) => {
     const [load, setLoad] = useState(true);
     const [activeChat, setActiveChat] = useState(false);
 
+    let userDataJson = JSON.parse(localStorage.getItem("userData"));
+
     useEffect(() => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/discussions")
@@ -160,6 +162,28 @@ const Chats = (props) => {
                 formData.set(key, newData[key]);
         }
         return formData;
+    };
+
+    const deleteContributor = (chatsId, index) => {
+        DeleteConfirmation.fire(confirmDeleteConfig)
+            .then((result) => {
+                if (result.value) {
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/discussions/${chatsId}`)
+                            .then(response => {
+                                const newChats = [...listChat];
+                                newChats.splice(index, 1);
+                                setListChat(newChats);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
+                }
+            })
+        ;
     };
 
     const addItem = (e) => {
@@ -301,7 +325,7 @@ const Chats = (props) => {
                                                                                 <div className="kt-widget__info">
                                                                                     <div className="kt-widget__section">
                                                                                         <a href={"#messageList"}
-                                                                                           activeClassName="kt-menu__item--active"
+                                                                                           activeclassname="kt-menu__item--active"
                                                                                            aria-haspopup="true"
                                                                                            onClick={(e) => onChangeDiscussion(chat.id)}
                                                                                            className="kt-widget__username">{chat.name}
@@ -319,8 +343,8 @@ const Chats = (props) => {
 																		</span>
                                                                                 </div>
                                                                                 <div className="kt-widget__action">
-                                                                <span
-                                                                    className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
+                                                                        <span
+                                                                                    className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
                                                                                     {idChat === chat.id}
                                                                                     {/*<span*/}
                                                                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
@@ -374,14 +398,22 @@ const Chats = (props) => {
                                                                                                 {/*                                        </Link>*/}
                                                                                                 {/*                                    </li>*/}
 
-                                                                                                <li className="kt-nav__item">
-                                                                                                    <Link to={"/treatment/chat/remove_chat"}
-                                                                                                        className="kt-nav__link">
-                                                                                                        <i className="kt-nav__link-icon flaticon-delete"></i>
-                                                                                                        <span
-                                                                                                            className="kt-nav__link-text">Supprimer un Tchat</span>
-                                                                                                    </Link>
-                                                                                                </li>
+                                                                                                {
+                                                                                                    userDataJson.staff.id === chat.created_by ?
+                                                                                                        <li className="kt-nav__item">
+                                                                                                            <a
+                                                                                                                href="#remove_chat"
+                                                                                                                className="kt-nav__link"
+                                                                                                                onClick={(e) => deleteContributor(chat.id, i)}
+                                                                                                            >
+                                                                                                                <i className="kt-nav__link-icon flaticon-delete"></i>
+                                                                                                                <span
+                                                                                                                    className="kt-nav__link-text">Supprimer un Tchat</span>
+                                                                                                            </a>
+                                                                                                        </li>
+                                                                                                        :null
+                                                                                                }
+
 
                                                                                             </ul>
                                                                                         </div>
