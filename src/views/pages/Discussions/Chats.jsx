@@ -47,6 +47,8 @@ const Chats = (props) => {
     const [load, setLoad] = useState(true);
     const [activeChat, setActiveChat] = useState(false);
 
+    let userDataJson = JSON.parse(localStorage.getItem("userData"));
+
     useEffect(() => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/discussions")
@@ -374,14 +376,19 @@ const Chats = (props) => {
                                                                                                 {/*                                        </Link>*/}
                                                                                                 {/*                                    </li>*/}
 
-                                                                                                <li className="kt-nav__item">
-                                                                                                    <Link to={"/treatment/chat/remove_chat"}
-                                                                                                        className="kt-nav__link">
-                                                                                                        <i className="kt-nav__link-icon flaticon-delete"></i>
-                                                                                                        <span
-                                                                                                            className="kt-nav__link-text">Supprimer un Tchat</span>
-                                                                                                    </Link>
-                                                                                                </li>
+                                                                                                {
+                                                                                                    userDataJson.staff.id === listChat.created_by ?
+                                                                                                        <li className="kt-nav__item">
+                                                                                                            <Link to={"/treatment/chat/remove_chat"}
+                                                                                                                  className="kt-nav__link">
+                                                                                                                <i className="kt-nav__link-icon flaticon-delete"></i>
+                                                                                                                <span
+                                                                                                                    className="kt-nav__link-text">Supprimer un Tchat</span>
+                                                                                                            </Link>
+                                                                                                        </li>
+                                                                                                        :null
+                                                                                                }
+
 
                                                                                             </ul>
                                                                                         </div>
