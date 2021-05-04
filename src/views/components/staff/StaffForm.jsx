@@ -302,6 +302,19 @@ const StaffForm = (props) => {
         }
     };
 
+    const resetFoundData = async () => {
+        setError(defaultError);
+        setData(defaultData);
+        await setInstitution(null);
+        await setUnit(null);
+        await setPosition(null);
+        setFoundData({});
+    };
+
+    const closeModal = () => {
+        setFoundData({});
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
@@ -344,17 +357,13 @@ const StaffForm = (props) => {
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(async (errorRequest) => {
+                        console.log("data:", errorRequest.response.data.error);
                         if (errorRequest.response.data.error.identite)
                         {
                             // Existing entity
                             await setFoundData(errorRequest.response.data.error);
                             await document.getElementById("confirmSaveForm").click();
-                            await setInstitution(null);
-                            await setUnit(null);
-                            await setPosition(null);
                             setStartRequest(false);
-                            setError(defaultError);
-                            setData(defaultData);
                         } else if (errorRequest.response.data.error.staff) {
                             // Existing staff
                             setStartRequest(false);
@@ -675,7 +684,8 @@ const StaffForm = (props) => {
                                             institutions={institutions}
                                             unit_id={data.unit_id}
                                             position_id={data.position_id}
-                                            resetFoundData={() => setFoundData({})}
+                                            closeModal={closeModal}
+                                            resetFoundData={resetFoundData}
                                         />
                                     ) : null
                                 }

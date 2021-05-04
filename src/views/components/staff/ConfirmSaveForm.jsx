@@ -148,6 +148,16 @@ const ConfirmSaveForm = (props) => {
         setData(newData);
     };
 
+    const resetData = async () => {
+        await setStartRequest(false);
+        await setError(defaultError);
+        await setUnits([]);
+        await setPositions([]);
+        await setInstitution({});
+        await setUnit({});
+        await setPosition({});
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
 
@@ -155,13 +165,7 @@ const ConfirmSaveForm = (props) => {
         axios.post(endPoint.confirm(props.identite.id), data)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                await setStartRequest(false);
-                await setError(defaultError);
-                await setUnits([]);
-                await setPositions([]);
-                await setInstitution({});
-                await setUnit({});
-                await setPosition({});
+                await resetData();
                 document.getElementById("closeConfirmSaveForm").click();
                 await props.resetFoundData();
             })
@@ -174,15 +178,9 @@ const ConfirmSaveForm = (props) => {
     };
 
     const onClickClose = async (e) => {
-        await setStartRequest(false);
-        await setError(defaultError);
-        await setUnits([]);
-        await setPositions([]);
-        await setInstitution({});
-        await setUnit({});
-        await setPosition({});
+        await resetData();
         await document.getElementById("closeButton").click();
-        await props.resetFoundData();
+        await props.closeModal();
     };
 
     return (
