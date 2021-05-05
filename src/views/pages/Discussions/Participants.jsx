@@ -176,12 +176,17 @@ const Participants = (props) => {
                 {
                     userDataJson.staff.id === responseData.created_by.id ?
                         <td style={{textAlign: 'center'}}>
-                            <button
-                                onClick={(e) => deleteContributor(user.id, index)}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Retirer du Tchat">
-                                <i className="la la-user-times fa-2x"/>
-                            </button>
+                            {
+                                user.id === responseData.created_by.id ?
+                                    null :
+                                    <button
+                                        onClick={(e) => deleteContributor(user.id, index)}
+                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                        title="Retirer du Tchat">
+                                        <i className="la la-user-times fa-2x"/>
+                                    </button>
+                            }
+
                         </td>
                         : null
                 }
@@ -284,16 +289,16 @@ const Participants = (props) => {
                                                         </th>
 
                                                         {
-                                                            responseData?
-                                                            userDataJson.staff.id === responseData.created_by.id ?
-                                                                <th className="sorting" tabIndex="0"
-                                                                    aria-controls="kt_table_1"
-                                                                    rowSpan="1" colSpan="1" style={{width: "50px"}}
-                                                                    aria-label="Type: activate to sort column ascending">
-                                                                    Action
-                                                                </th>
-                                                                : <th style={{display:"none"}}/>
-                                                                :null
+                                                            responseData ?
+                                                                userDataJson.staff.id === responseData.created_by.id ?
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1" colSpan="1" style={{width: "50px"}}
+                                                                        aria-label="Type: activate to sort column ascending">
+                                                                        Action
+                                                                    </th>
+                                                                    : <th style={{display: "none"}}/>
+                                                                : null
                                                         }
 
                                                     </tr>
