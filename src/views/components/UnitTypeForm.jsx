@@ -10,7 +10,7 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
@@ -104,8 +104,12 @@ const UnitTypeForm = (props) => {
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
-                        setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        if (errorRequest.response.data.error.is_editable)
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.is_editable[0]));
+                        else {
+                            setError({...defaultError, ...errorRequest.response.data.error});
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        }
                     })
                 ;
             } else {
