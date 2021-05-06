@@ -492,7 +492,43 @@ const HoldingClientForm = (props) => {
                                                 </div>
                                                 : null
                                         }
-                                        {console.log(props.getDisable,"GETDISABLE")}
+                                        
+                                        <div className="form-group row">
+                                            <div
+                                                className={error.category_client_id.length ? "col validated" : "col"}>
+                                                <label htmlFor="exampleSelect1">Catégorie
+                                                    Client <InputRequire/></label>
+
+                                                {categoryClient ? (
+                                                    <Select
+                                                        placeholder={"Veillez selectionner la catégorie client"}
+                                                        value={category}
+                                                        onChange={onChangeCategoryClient}
+                                                        options={formatSelectOption(categoryClient, 'name', 'fr')}
+                                                        isDisabled={props.getDisable ? props.getDisable : disableInput}
+                                                    />
+                                                ) : (
+                                                    <select name="category"
+                                                            className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
+                                                            id="category"
+                                                    >
+                                                        <option value=""/>
+                                                    </select>
+                                                )
+                                                }
+
+                                                {
+                                                    error.category_client_id.length ? (
+                                                        error.category_client_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+
                                         <div className="form-group row">
                                             <div className={error.lastname.length ? "col validated" : "col"}>
                                                 <label htmlFor="lastname">Nom<span style={{color: "red"}}>*</span>
@@ -676,42 +712,6 @@ const HoldingClientForm = (props) => {
                                                     ) : null
                                                 }
                                             </div>
-                                            <div
-                                                className={error.category_client_id.length ? "col validated" : "col"}>
-                                                <label htmlFor="exampleSelect1">Catégorie
-                                                    Client <InputRequire/></label>
-
-                                                {categoryClient ? (
-                                                    <Select
-                                                        placeholder={"Veillez selectionner la catégorie client"}
-                                                        value={category}
-                                                        onChange={onChangeCategoryClient}
-                                                        options={formatSelectOption(categoryClient, 'name', 'fr')}
-                                                        isDisabled={props.getDisable ? props.getDisable : disableInput}
-                                                    />
-                                                ) : (
-                                                    <select name="category"
-                                                            className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
-                                                            id="category"
-                                                    >
-                                                        <option value=""/>
-                                                    </select>
-                                                )
-                                                }
-
-                                                {
-                                                    error.category_client_id.length ? (
-                                                        error.category_client_id.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : null
-                                                }
-                                            </div>
-                                        </div>
-
-                                        <div className="form-group row">
                                             <div className={error.number.length ? "col validated" : "col"}>
                                                 <label htmlFor="number">Numero de Compte <InputRequire/></label>
                                                 <input
@@ -732,8 +732,8 @@ const HoldingClientForm = (props) => {
                                                     ) : null
                                                 }
                                             </div>
-
                                         </div>
+
                                     </div>
                                 </div>
                                 <div className="kt-portlet__foot">
