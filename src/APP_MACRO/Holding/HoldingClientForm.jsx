@@ -268,7 +268,6 @@ const HoldingClientForm = (props) => {
             if (verifyTokenExpire()) {
                 axios.post(endPoint.update(`${newData.client_id}`),newData)
                     .then(response => {
-                        console.log(response.data,"DATA")
                         const newIdentity = {
                             firstname: response.data.client.identite.firstname,
                             lastname: response.data.client.identite.lastname,
@@ -688,12 +687,13 @@ const HoldingClientForm = (props) => {
                                                         value={category}
                                                         onChange={onChangeCategoryClient}
                                                         options={formatSelectOption(categoryClient, 'name', 'fr')}
-                                                        disabled={props.getDisable ? props.getDisable : disableInput}
+                                                        isDisabled={props.getDisable ? props.getDisable : disableInput}
                                                     />
                                                 ) : (
                                                     <select name="category"
                                                             className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
-                                                            id="category">
+                                                            id="category"
+                                                    >
                                                         <option value=""/>
                                                     </select>
                                                 )
