@@ -65,7 +65,7 @@ const Chats = (props) => {
 
     useEffect(() => {
         if (localStorage.getItem("staffData") && idChat) {
-            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${localStorage.getItem("staffData")}`)
+            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${userDataJson.staff.id}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (notification.discussion.id===idChat){

@@ -492,7 +492,7 @@ const HoldingClientForm = (props) => {
                                                 </div>
                                                 : null
                                         }
-                                        
+
                                         <div className="form-group row">
                                             <div
                                                 className={error.category_client_id.length ? "col validated" : "col"}>
