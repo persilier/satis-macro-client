@@ -33,25 +33,25 @@ const endPointConfig = {
     PRO: {
         plan: "PRO",
         store: `${appConfig.apiDomaine}/my/clients`,
-        storeAccount: id => `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
+        storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
         update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
         create: `${appConfig.apiDomaine}/my/clients/create`,
-        edit: id => `${appConfig.apiDomaine}/my/clients/${id}`
+        edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
     },
     MACRO: {
         holding: {
             store: `${appConfig.apiDomaine}/any/clients`,
-            storeAccount: id => `${appConfig.apiDomaine}/any/accounts/${id}/clients`,
+            storeAccount: id=> `${appConfig.apiDomaine}/any/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/any/clients/${id}`,
             create: `${appConfig.apiDomaine}/any/clients/create`,
-            edit: id => `${appConfig.apiDomaine}/any/clients/${id}`
+            edit: id => `${appConfig.apiDomaine}/any/clients/${id}/edit`
         },
         filial: {
             store: `${appConfig.apiDomaine}/my/clients`,
-            storeAccount: id => `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
+            storeAccount: id=> `${appConfig.apiDomaine}/my/accounts/${id}/clients`,
             update: id => `${appConfig.apiDomaine}/my/clients/${id}`,
             create: `${appConfig.apiDomaine}/my/clients/create`,
-            edit: id => `${appConfig.apiDomaine}/my/clients/${id}`
+            edit: id => `${appConfig.apiDomaine}/my/clients/${id}/edit`
         }
     },
 };
@@ -114,7 +114,7 @@ const HoldingClientForm = (props) => {
     const [client, setClient] = useState([]);
     const [institutionData, setInstitutionData] = useState(undefined);
     const [institution, setInstitution] = useState([]);
-    const [disableInput, setDisableInput] = useState(true);
+    const [disableInput, setDisableInput] = useState(false);
     const [foundIdentity, setFoundIdentity] = useState(undefined);
 
 
@@ -123,7 +123,7 @@ const HoldingClientForm = (props) => {
             axios.get(endPoint.create)
                 .then(response => {
                     // console.log(response.data,"RESPONSE")
-                    if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')) {
+                    if (verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')){
                         const options =
                             response.data.institutions.length ? response.data.institutions.map((institution) => ({
                                 value: institution.id,
@@ -162,8 +162,8 @@ const HoldingClientForm = (props) => {
                         };
                         setData(newClient);
                         setType({
-                            value: response.data.account_type ? response.data.account_type.id : "",
-                            label: response.data.account_type ? response.data.account_type.name.fr : ""
+                            value: response.data.account_type?response.data.account_type.id:"",
+                            label: response.data.account_type?response.data.account_type.name.fr:""
                         });
                         setCategory({
                             value: response.data.client_institution.category_client ? response.data.client_institution.category_client.id : "",
@@ -262,11 +262,13 @@ const HoldingClientForm = (props) => {
     const onChangeClient = (selected) => {
         const newData = {...data};
         newData.client_id = selected.value;
+        console.log( newData.client_id,"SELECT_ID")
         setClient(selected);
         if (newData.client_id) {
             if (verifyTokenExpire()) {
-                axios.get(endPoint.update(`${newData.client_id}`))
+                axios.post(endPoint.update(`${newData.client_id}`),newData)
                     .then(response => {
+                        console.log(response.data,"DATA")
                         const newIdentity = {
                             firstname: response.data.client.identite.firstname,
                             lastname: response.data.client.identite.lastname,
@@ -283,10 +285,13 @@ const HoldingClientForm = (props) => {
                             value: response.data.category_client ? response.data.category_client.id : "",
                             label: response.data.category_client ? response.data.category_client.name.fr : ""
                         });
-                    })
+                    }).catch((error)=>{
+                        console.log(error.response.data,"ERROR")
+                })
                 ;
             }
         }
+        setDisableInput(true)
 
     };
 
@@ -420,74 +425,75 @@ const HoldingClientForm = (props) => {
                                         <h5 className="kt-section__title kt-section__title-lg">Identité:</h5>
                                         {
                                             !id ?
-                                                verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
+                                                <div className="form-group row">
+                                                    {
+                                                        verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
+                                                            <div
+                                                                className={error.institution_id.length ? "col validated" : "col"}>
+                                                                <label htmlFor="exampleSelect1"> Institution <span
+                                                                    style={{color: "red"}}>*</span></label>
+                                                                {institutionData ? (
+                                                                    <Select
+                                                                        value={institution}
+                                                                        placeholder={"Veillez selectionner l'institution"}
+                                                                        onChange={onChangeInstitution}
+                                                                        options={institutionData ? institutionData.map(name => name) : ''}
+                                                                    />
+                                                                ) : (
+                                                                    <select name="institution"
+                                                                            className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                                            id="institution">
+                                                                        <option value=""/>
+                                                                    </select>
+                                                                )
+                                                                }
 
-                                                    <div className="form-group row">
-                                                        <div
-                                                            className={error.institution_id.length ? "col validated" : "col"}>
-                                                            <label htmlFor="exampleSelect1"> Institution <span
-                                                                style={{color: "red"}}>*</span></label>
-                                                            {institutionData ? (
-                                                                <Select
-                                                                    value={institution}
-                                                                    placeholder={"Veillez selectionner l'institution"}
-                                                                    onChange={onChangeInstitution}
-                                                                    options={institutionData ? institutionData.map(name => name) : ''}
-                                                                />
-                                                            ) : (
-                                                                <select name="institution"
-                                                                        className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
-                                                                        id="institution">
-                                                                    <option value=""/>
-                                                                </select>
-                                                            )
-                                                            }
+                                                                {
+                                                                    error.institution_id.length ? (
+                                                                        error.institution_id.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
+                                                            : null
+                                                    }
+                                                    <div
+                                                        className={error.client_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="exampleSelect1"> Client</label>
+                                                        {/*{console.log(nameClient,"NAME")}*/}
+                                                        {nameClient ? (
+                                                            <Select
 
-                                                            {
-                                                                error.institution_id.length ? (
-                                                                    error.institution_id.map((error, index) => (
-                                                                        <div key={index}
-                                                                             className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
-                                                        </div>
+                                                                placeholder={"Veillez selectionner le client"}
+                                                                value={client}
+                                                                onChange={onChangeClient}
+                                                                options={nameClient ? nameClient.map(name => name) : ''}
+                                                            />
+                                                        ) : (<select name="client"
+                                                                     className={error.client_id.length ? "form-control is-invalid" : "form-control"}
+                                                                     id="client">
+                                                            <option value=""/>
+                                                        </select>)
+                                                        }
 
-                                                        <div
-                                                            className={error.client_id.length ? "col validated" : "col"}>
-                                                            <label htmlFor="exampleSelect1"> Client</label>
-                                                            {/*{console.log(nameClient,"NAME")}*/}
-                                                            {nameClient ? (
-                                                                <Select
-
-                                                                    placeholder={"Veillez selectionner le client"}
-                                                                    value={client}
-                                                                    onChange={onChangeClient}
-                                                                    options={nameClient ? nameClient.map(name => name) : ''}
-                                                                />
-                                                            ) : (<select name="client"
-                                                                         className={error.client_id.length ? "form-control is-invalid" : "form-control"}
-                                                                         id="client">
-                                                                <option value=""/>
-                                                            </select>)
-                                                            }
-
-                                                            {
-                                                                error.client_id.length ? (
-                                                                    error.client_id.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
-                                                        </div>
+                                                        {
+                                                            error.client_id.length ? (
+                                                                error.client_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
                                                     </div>
-                                                    : null
+                                                </div>
                                                 : null
                                         }
+                                        {console.log(props.getDisable,"GETDISABLE")}
                                         <div className="form-group row">
                                             <div className={error.lastname.length ? "col validated" : "col"}>
                                                 <label htmlFor="lastname">Nom<span style={{color: "red"}}>*</span>
@@ -499,7 +505,7 @@ const HoldingClientForm = (props) => {
                                                     placeholder="Veillez entrer le nom de famille"
                                                     value={data.lastname}
                                                     onChange={(e) => onChangeLastName(e)}
-                                                    disabled={props.getDisable ? props.getDisable : false}
+                                                    disabled={props.getDisable ? props.getDisable : disableInput}
                                                 />
                                                 {
                                                     error.lastname.length ? (
@@ -522,6 +528,7 @@ const HoldingClientForm = (props) => {
                                                     placeholder="Veillez entrer le prénom"
                                                     value={data.firstname}
                                                     onChange={(e) => onChangeFirstName(e)}
+                                                    disabled={props.getDisable ? props.getDisable : disableInput}
                                                 />
                                                 {
                                                     error.firstname.length ? (
@@ -544,6 +551,7 @@ const HoldingClientForm = (props) => {
                                                     className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                     value={data.sexe}
                                                     onChange={(e) => onChangeSexe(e)}
+                                                    disabled={props.getDisable ? props.getDisable : disableInput}
                                                 >
                                                     <option value="" disabled={true}>Veillez choisir le Sexe
                                                     </option>
@@ -591,7 +599,7 @@ const HoldingClientForm = (props) => {
                                                 <TagsInput
                                                     value={data.telephone}
                                                     onChange={onChangeTelephone}
-                                                    disabled={props.getDisable ? props.getDisable : false}
+                                                    disabled={props.getDisable ? props.getDisable : disableInput}
                                                     inputProps={{
                                                         className: "react-tagsinput-input",
                                                         placeholder: "Numéro(s)"
@@ -613,7 +621,7 @@ const HoldingClientForm = (props) => {
                                                 <TagsInput
                                                     value={data.email}
                                                     onChange={onChangeEmail}
-                                                    // disabled={props.getDisable ? props.getDisable : false}
+                                                    disabled={props.getDisable ? props.getDisable : disableInput}
                                                     inputProps={{
                                                         className: "react-tagsinput-input",
                                                         placeholder: "Email(s)"
@@ -680,6 +688,7 @@ const HoldingClientForm = (props) => {
                                                         value={category}
                                                         onChange={onChangeCategoryClient}
                                                         options={formatSelectOption(categoryClient, 'name', 'fr')}
+                                                        disabled={props.getDisable ? props.getDisable : disableInput}
                                                     />
                                                 ) : (
                                                     <select name="category"
@@ -753,12 +762,11 @@ const HoldingClientForm = (props) => {
                                                 </Link>
                                             )
                                         }
-                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button"
-                                                className="btn btn-bold btn-label-brand btn-sm"
+                                        <button style={{display: "none"}} id="confirmClientSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm"
                                                 data-toggle="modal" data-target="#kt_modal_4">Launch Modal
                                         </button>
                                         {
-                                            foundIdentity ? (
+                                            foundIdentity? (
                                                 <ConfirmClientSaveForm
                                                     plan={props.plan}
                                                     userPermissions={props.userPermissions}
@@ -779,7 +787,7 @@ const HoldingClientForm = (props) => {
                                                     number={data.number}
                                                     resetFoundIdentity={() => setFoundIdentity({})}
                                                 />
-                                            ) : null
+                                            ) :  null
                                         }
                                     </div>
                                 </div>
