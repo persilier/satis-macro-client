@@ -13,7 +13,7 @@ import {
 } from "../../../config/toastConfig";
 import {DeleteConfirmation} from "../../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../../config/confirmConfig";
-import {filterDiscussionBySearchValue} from "../../../helpers/function";
+import {debug, filterDiscussionBySearchValue} from "../../../helpers/function";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import LoadingTable from "../../components/LoadingTable";
@@ -48,7 +48,6 @@ const Chats = (props) => {
     const [activeChat, setActiveChat] = useState(false);
 
     let userDataJson = JSON.parse(localStorage.getItem("userData"));
-
     useEffect(() => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/discussions")
@@ -64,8 +63,8 @@ const Chats = (props) => {
     }, []);
 
     useEffect(() => {
-        if (userDataJson.staff.id && idChat) {
-            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${userDataJson.staff.id}`)
+        if (userDataJson.staff.identite_id && idChat) {
+            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${userDataJson.staff.identite_id}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (notification.discussion.id===idChat){
@@ -75,7 +74,7 @@ const Chats = (props) => {
                     }
                 });
         }
-    }, [localStorage.getItem("staffData"),idChat]);
+    }, [userDataJson.staff.identite_id ,idChat]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
