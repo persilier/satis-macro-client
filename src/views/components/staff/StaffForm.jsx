@@ -258,7 +258,6 @@ const StaffForm = (props) => {
                             setUnits(formatUnits(response.data.units));
                         })
                         .catch(errorRequest => {
-                            console.log(errorRequest.response.data);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
                         })
                     ;
