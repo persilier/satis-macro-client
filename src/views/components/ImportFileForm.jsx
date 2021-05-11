@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
+import {ToastBottomEnd} from "./Toast";
 import {
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
