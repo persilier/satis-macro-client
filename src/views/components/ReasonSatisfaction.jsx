@@ -30,8 +30,11 @@ const ReasonSatisfaction = (props) => {
     };
     const onChangeNote = (e) => {
         const newData = {...data};
-        newData.note = e.target.value;
-        setData(newData);
+        if(e.target.value<=5){
+            newData.note = e.target.value;
+            setData(newData);
+        }
+
     };
     const onChangeOption = (e) => {
         const newData = {...data};
