@@ -156,12 +156,12 @@ const ImportInstitutionForm = (props) => {
                                             }
                                             {
                                                 !startRequest ? (
-                                                    <Link to="/settings/clients"
+                                                    <Link to="/settings/institution"
                                                           className="btn btn-secondary mx-2">
                                                         Quitter
                                                     </Link>
                                                 ) : (
-                                                    <Link to="/settings/clients"
+                                                    <Link to="/settings/institution"
                                                           className="btn btn-secondary mx-2" disabled>
                                                         Quitter
                                                     </Link>
