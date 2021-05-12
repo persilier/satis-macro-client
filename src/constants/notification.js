@@ -57,5 +57,6 @@ export const EventNotificationPath = {
 export const RelaunchNotification = [
     "ReminderBeforeDeadline",
     "ReminderAfterDeadline",
-    "Recurrence"
+    "Recurrence",
+    "RegisterAClaimHighForcefulness"
 ];
