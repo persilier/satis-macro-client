@@ -19,7 +19,3 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .eslintcache
-
-# other
-/src/config/appConfig.js
-
