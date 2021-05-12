@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Chart from "react-apexcharts";
 import LoadingTable from "../LoadingTable";
+
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import axios from "axios";
@@ -13,19 +14,20 @@ const ClaimToInstitution = (props) => {
     const [institutionData, setInstitutionData] = useState("");
 
     const defaultData = {
-        series: institutionData?institutionData.series:[],
+        series: institutionData ? institutionData.series : [],
         options: {
             chart: {
                 width: 380,
                 type: 'pie',
             },
-            labels: institutionData?institutionData.options.labels:[],
+            labels: institutionData ? institutionData.options.labels : [],
             responsive: [{
                 breakpoint: 480,
                 options: {
                     chart: {
-                        width: 200
+                        width: 200,
                     },
+
                     legend: {
                         position: 'bottom'
                     }
@@ -49,23 +51,24 @@ const ClaimToInstitution = (props) => {
 
     return (
 
-                <div>
-                    <div className="kt-portlet__head">
-                        <div className="kt-portlet__head-label">
-                            <h3 className="kt-portlet__head-title">Satisfaction des institutions qui reçoivent plus de
-                                réclamations sur les 30 derniers jours</h3>
-                        </div>
-                    </div>
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
-                            <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
-                                <Chart options={institutionData.options} series={institutionData.series} type="pie"
-                                       width={380}/>
-                            </div>
-                        )}
+        <div>
+            <div className="kt-portlet__head">
+                <div className="kt-portlet__head-label">
+                    <h3 className="kt-portlet__head-title">Satisfaction des institutions qui reçoivent plus de
+                        réclamations sur les 30 derniers jours</h3>
                 </div>
+            </div>
+            {
+                load ? (
+                    <LoadingTable/>
+                ) : (
+                    <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
+                        <Chart options={institutionData.options} series={institutionData.series} type="pie"
+                               width={380}/>
+
+                    </div>
+                )}
+        </div>
     );
 };
 const mapStateToProps = (state) => {

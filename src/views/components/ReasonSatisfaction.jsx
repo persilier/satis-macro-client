@@ -10,10 +10,12 @@ const ReasonSatisfaction = (props) => {
     const option1 = 1;
     const option2 = 0;
     const defaultData = {
+        note: "",
         is_claimer_satisfied: "",
         unsatisfaction_reason: "",
     };
     const defaultError = {
+        note: "",
         is_claimer_satisfied: '',
         unsatisfaction_reason: "",
     };
@@ -25,6 +27,14 @@ const ReasonSatisfaction = (props) => {
         const newData = {...data};
         newData.unsatisfaction_reason = e.target.value;
         setData(newData);
+    };
+    const onChangeNote = (e) => {
+        const newData = {...data};
+        if(e.target.value<=5){
+            newData.note = e.target.value;
+            setData(newData);
+        }
+
     };
     const onChangeOption = (e) => {
         const newData = {...data};
@@ -87,6 +97,32 @@ const ReasonSatisfaction = (props) => {
                     ) : ""
                 }
             </div>
+            <div className={error.note.length ? "form-group row validated" : "form-group row"}>
+                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="raison">Note</label>
+                <div className="col-lg-9 col-xl-6">
+                    <input
+                        id="note"
+                        type="number"
+                        min={0}
+                        max={5}
+                        className={error.note.length ? "form-control is-invalid" : "form-control"}
+                        placeholder="Veillez attribuer une note"
+                        value={data.note}
+                        onChange={(e) => onChangeNote(e)}
+                    />
+                    {
+                        error.note.length ? (
+                            error.note.map((error, index) => (
+                                <div key={index}
+                                     className="invalid-feedback">
+                                    {error}
+                                </div>
+                            ))
+                        ) : ""
+                    }
+                </div>
+            </div>
+
             <div
                 className={error.unsatisfaction_reason.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="raison">Raison

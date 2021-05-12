@@ -10,6 +10,7 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 const ClaimToInstitution = (props) => {
     const [load, setLoad] = useState(true);
     const [pointOfServiceData, setPointOfServiceData] = useState("");
+    const [componentData, setComponentData] = useState("");
 
     const defaultData = {
         series: pointOfServiceData ? pointOfServiceData.series : [],
@@ -44,6 +45,7 @@ const ClaimToInstitution = (props) => {
         newData.options.labels = ServiceData;
         newData.series = Object.values(pointOfService).map(serie => serie.myInstitution);
         setPointOfServiceData(newData);
+        setComponentData(props.component);
         setLoad(false)
     }, []);
 
@@ -52,8 +54,11 @@ const ClaimToInstitution = (props) => {
         <div>
             <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Statistique les services techniques qui reçoivent plus de
-                        réclamations sur les 30 derniers jours</h3>
+                    <h3 className="kt-portlet__head-title">
+                        {/*Statistique les services techniques qui reçoivent plus de réclamations sur les 30 derniers jours*/}
+                        {componentData ? componentData.params.fr.title_stat_service.value : ""}
+
+                    </h3>
                 </div>
             </div>
             {

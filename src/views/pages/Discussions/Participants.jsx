@@ -29,6 +29,8 @@ const Participants = (props) => {
     if (!verifyPermission(props.userPermissions, "list-discussion-contributors"))
         window.location.href = ERROR_401;
 
+    let userDataJson = JSON.parse(localStorage.getItem("userData"));
+
     const [load, setLoad] = useState(true);
     const [contributor, setContributor] = useState([]);
     const [responseData, setResponseData] = useState(null);
@@ -42,7 +44,6 @@ const Participants = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + `/discussions/${id}/staff`)
                 .then(response => {
-                    console.log(response.data, 'DONNEES');
                     setLoad(false);
                     setResponseData(response.data);
                     setContributor(response.data.staff);
@@ -172,24 +173,24 @@ const Participants = (props) => {
                         index === user.identite.email.length - 1 ? mail : mail + " " + <br/> + " "
                     )) : null
                 }</td>
-
                 {
-                    verifyPermission(props.userPermissions, "remove-discussion-contributor") ?
-                    <td style={{textAlign: 'center'}}>
-                        {
-                            user.id === responseData.created_by.id?
-                        "":
-                            <button
-                                onClick={(e) => deleteContributor(user.id, index)}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Retirer du Tchat">
-                                <i className="la la-user-times fa-2x"/>
-                            </button>
-                        }
+                    userDataJson.staff.id === responseData.created_by.id ?
+                        <td style={{textAlign: 'center'}}>
+                            {
+                                user.id === responseData.created_by.id ?
+                                    null :
+                                    <button
+                                        onClick={(e) => deleteContributor(user.id, index)}
+                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                        title="Retirer du Tchat">
+                                        <i className="la la-user-times fa-2x"/>
+                                    </button>
+                            }
 
-                    </td>
-                    : null
+                        </td>
+                        : null
                 }
+
 
             </tr>
         )
@@ -230,7 +231,7 @@ const Participants = (props) => {
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"A common UI paradigm to use with interactive tables is to present buttons that will trigger some action. See official documentation"}/>
+                        information={"Liste des Participants"}/>
 
                     <div className="kt-portlet">
 
@@ -268,7 +269,6 @@ const Participants = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
@@ -287,15 +287,18 @@ const Participants = (props) => {
                                                             colSpan="1" style={{width: "150px"}}
                                                             aria-label="Ship City: activate to sort column ascending">Email
                                                         </th>
+
                                                         {
-                                                            verifyPermission(props.userPermissions, "remove-discussion-contributor") ?
-                                                                <th className="sorting" tabIndex="0"
-                                                                    aria-controls="kt_table_1"
-                                                                    rowSpan="1" colSpan="1" style={{width: "50px"}}
-                                                                    aria-label="Type: activate to sort column ascending">
-                                                                    Action
-                                                                </th>
-                                                                :""
+                                                            responseData ?
+                                                                userDataJson.staff.id === responseData.created_by.id ?
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1" colSpan="1" style={{width: "50px"}}
+                                                                        aria-label="Type: activate to sort column ascending">
+                                                                        Action
+                                                                    </th>
+                                                                    : <th style={{display: "none"}}/>
+                                                                : null
                                                         }
 
                                                     </tr>

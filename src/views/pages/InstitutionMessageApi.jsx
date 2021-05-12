@@ -246,7 +246,7 @@ const InstitutionMessageApi = props => {
                                                         </button>
                                                     )
                                                 }
-                                                {
+                                                {/*{
                                                     !startRequest ? (
                                                         <Link to="/settings/institution" className="btn btn-secondary mx-2">
                                                             Quitter
@@ -256,7 +256,7 @@ const InstitutionMessageApi = props => {
                                                             Quitter
                                                         </Link>
                                                     )
-                                                }
+                                                }*/}
                                             </div>
                                         </div>
                                     </div>

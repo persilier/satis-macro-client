@@ -28,7 +28,7 @@ axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 const FAQs = (props) => {
     document.title = "Satis client - Paramètre FAQs";
 
-    if (!verifyPermission(props.userPermissions, "list-faq"))
+    if (!verifyPermission(props.userPermissions, "store-faq"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
@@ -134,7 +134,7 @@ const FAQs = (props) => {
                     if (verifyTokenExpire()) {
                         axios.delete(appConfig.apiDomaine + `/faqs/${faqId}`)
                             .then(response => {
-                                console.log(response, "OK");
+                                // console.log(response, "OK");
                                 const newFaq = [...faqs];
                                 newFaq.splice(index, 1);
                                 setFaqs(newFaq);

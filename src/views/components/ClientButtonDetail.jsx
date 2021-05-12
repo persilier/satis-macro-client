@@ -66,6 +66,21 @@ const ClientButtonDetail = ({claim}) => {
                                                     {claim.claimer.ville && claim.claimer.ville !== "null" ? claim.claimer.ville : "-"}
                                                 </span>
                                             </div>
+
+                                            {console.log("claimer:", claim)}
+                                            <div className="kt-widget__info">
+                                                <span>Numero de compte:</span>
+                                                <span className="kt-widget__data">
+                                                    {claim ? (claim.account_targeted ? claim.account_targeted.number : '-') : '-'}
+                                                </span>
+                                            </div>
+
+                                            <div className="kt-widget__info">
+                                                <span>Type de compte:</span>
+                                                <span className="kt-widget__data">
+                                                    {claim ?  claim.accountType : '-'}
+                                                </span>
+                                            </div>
                                         </div>
                                     )
                                 }

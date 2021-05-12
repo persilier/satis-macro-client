@@ -183,7 +183,6 @@ const ClaimAdd = props => {
                 });
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/register_claim")
                 .then(response => {
-                    console.log(response.data, "Component_DATA")
                     setComponentData(response.data);
                     setLoad(false);
                 })
@@ -436,7 +435,6 @@ const ClaimAdd = props => {
     };
 
     const onChangeLieu = e => {
-        console.log("e:", e.target.value);
         const newData = {...data};
         newData.lieu = e.target.value;
         setData(newData);
@@ -891,8 +889,7 @@ const ClaimAdd = props => {
                                                                 value={data.sexe}
                                                                 onChange={(e) => onChangeSexe(e)}
                                                             >
-                                                                <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}
-                                                                </option>
+                                                                <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
                                                                 <option value="F">Féminin</option>
                                                                 <option value="M">Masculin</option>
                                                                 <option value="A">Autres</option>
@@ -969,8 +966,6 @@ const ClaimAdd = props => {
                                                                 ) : null
                                                             }
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -1134,9 +1129,7 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                            <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong
-                                                                className="text-danger">Laisser vide si pas de
-                                                                montant</strong>)</label>
+                                                            <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong className="text-danger">Laisser vide si pas de montant</strong>)</label>
                                                             <input
                                                                 type={"number"}
                                                                 id="amount_claim"
@@ -1207,9 +1200,7 @@ const ClaimAdd = props => {
                                                             verifyPermission(props.userPermissions, "store-claim-without-client") ? (
                                                                 <div
                                                                     className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""}
-                                                                        avec
-                                                                        l'institution <InputRequire/></label>
+                                                                    <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} avec l'institution <InputRequire/></label>
                                                                     <Select
                                                                         isClearable
                                                                         value={relationship}
@@ -1255,8 +1246,7 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.description.length ? "col validated" : "col"}>
-                                                            <label
-                                                                htmlFor="description">{componentData ? componentData.params.fr.description.value : ""} <InputRequire/></label>
+                                                            <label htmlFor="description">{componentData ? componentData.params.fr.description.value : ""} <InputRequire/></label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="description"
@@ -1306,23 +1296,17 @@ const ClaimAdd = props => {
 
                                             <div className="kt-section">
                                                 <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""} <InputRequire/>
-                                                    </h3>
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""} <InputRequire/></h3>
 
                                                     <div className="form-group row">
-                                                        <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}
-                                                            </label>
+                                                        <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
                                                         <div className="col-9">
                                                             <div className="kt-radio-inline">
                                                                 <label className="kt-radio">
-                                                                    <input type="radio" value={option1}
-                                                                           onChange={handleOptionChange}
-                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                    <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
-                                                                    <input type="radio" value={option2}
-                                                                           onChange={handleOptionChange}
-                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                    <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -1396,6 +1380,7 @@ const ClaimAdd = props => {
                                     {
                                         foundData.entity ? (
                                             <ConfirmClaimAddModal
+                                                componentData={componentData}
                                                 message={foundData.message}
                                                 id={foundData.entity.id}
                                                 firstname={foundData.entity.firstname}

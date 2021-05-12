@@ -13,7 +13,6 @@ import EmptyNotification from "../components/EmptyNotification";
 import {verifyPermission} from "../../helpers/permission";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
-import {debug} from "../../helpers/function";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
@@ -66,7 +65,6 @@ const Nav = (props) => {
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props.user.identite_id}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
-                        debug(notification, "notification");
                         if (window.location.pathname !== "chat#messageList")
                             ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(notification.text.length > 40 ? notification.text.substr(0, 40)+"..." : notification.text));
                     } else {
@@ -97,7 +95,6 @@ const Nav = (props) => {
         if (verifyTokenExpire()) {
             await axios.put(`${appConfig.apiDomaine}/unread-notifications`, readNotification)
                 .then(({data}) => {
-                    debug(data, "data");
                     setStartRead(false);
                     if (data.canReload) {
                         window.location.href = path;
@@ -113,7 +110,7 @@ const Nav = (props) => {
 
     const searchClaim = (e) => {
         var value = e.target.value;
-        var endpoint = "";
+        var endpoint = null;
         if (verifyPermission(props.userPermissions, 'search-claim-any-reference'))
             endpoint = `${appConfig.apiDomaine}/any/search-claim/${value}`;
         if (verifyPermission(props.userPermissions, 'search-claim-my-reference'))

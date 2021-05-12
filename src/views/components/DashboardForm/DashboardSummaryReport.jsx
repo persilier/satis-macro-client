@@ -1,14 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import axios from "axios";
-import appConfig from "../../../config/appConfig";
+
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
-import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardSummaryReport = (props) => {
     const [load, setLoad] = useState(true);
-
     const reportColor = [
         {
             id: 0,
@@ -39,7 +36,7 @@ const DashboardSummaryReport = (props) => {
     ];
 
     const [data, setData] = useState("");
-
+    const [componentData, setComponentData] = useState("");
 
     useEffect(() => {
         let claimObjects = props.response.data.claimObjectsUse;
@@ -59,6 +56,7 @@ const DashboardSummaryReport = (props) => {
             return newData.indexOf(event) < 5
         });
         setData(result);
+        setComponentData(props.component);
         setLoad(false)
     }, []);
     return (
@@ -68,7 +66,8 @@ const DashboardSummaryReport = (props) => {
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h3 className="kt-portlet__head-title">
-                                Statistique des cinq (05) plus fréquents Objets de Réclamations sur les 30 derniers jours
+                                {/*Statistique des cinq (05) plus fréquents Objets de Réclamations sur les 30 derniers jours*/}
+                                {componentData ? componentData.params.fr.stat_object.value : ""}
                             </h3>
                         </div>
                     </div>

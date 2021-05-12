@@ -183,30 +183,36 @@ const UnitType = (props) => {
     const printBodyTable = (unitType, index) => {
         return (
             <tr key={index} role="row" className="odd">
+                {console.log("unitType:", unitType)}
                 <td>{unitType.name ? unitType.name["fr"] : "-"}</td>
                 <td>{unitType.can_be_target ? "Oui" : "Non"}</td>
                 <td>{unitType.can_treat ? "Oui" : "Non"}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : "-"}</td>
                 <td>
-                    {
-                        verifyPermission(props.userPermissions, 'update-unit-type') ? (
-                            <Link to={`/settings/unit_type/${unitType.id}/edit`}
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
-                                <i className="la la-edit"/>
-                            </Link>
-                        ) : null
-                    }
-                    {
-                        verifyPermission(props.userPermissions, 'destroy-unit-type') ? (
-                            <button
-                                onClick={(e) => deleteUnitType(unitType.id, index)}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
-                                <i className="la la-trash"/>
-                            </button>
-                        ) : null
-                    }
+                    {unitType.is_editable === 1 ? (
+                        <>
+                            {
+                                verifyPermission(props.userPermissions, 'update-unit-type') ? (
+                                    <Link to={`/settings/unit_type/${unitType.id}/edit`}
+                                          className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                          title="Modifier">
+                                        <i className="la la-edit"/>
+                                    </Link>
+                                ) : null
+                            }
+
+                            {
+                                verifyPermission(props.userPermissions, 'destroy-unit-type') ? (
+                                    <button
+                                        onClick={(e) => deleteUnitType(unitType.id, index)}
+                                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                        title="Supprimer">
+                                        <i className="la la-trash"/>
+                                    </button>
+                                ) : null
+                            }
+                        </>
+                    ) : null}
                 </td>
             </tr>
         );

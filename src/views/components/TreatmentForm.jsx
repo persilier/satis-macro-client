@@ -78,10 +78,11 @@ const TreatmentForm = (props) => {
             })
         ;
     };
+    console.log("props:", props);
     return (
         <div>
             {
-                props.amount_disputed ?
+                props.amount_disputed >= 0 ?
                     <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
                         <label className="col-xl-3 col-lg-3 col-form-label"
                                htmlFor="name">Montant retourné en <strong>{props.currency}</strong>
@@ -90,7 +91,7 @@ const TreatmentForm = (props) => {
                             <input
                                 id="amount"
                                 type="number"
-                                min="0"
+                                min={0}
                                 className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
                                 placeholder="Veillez entrer le montant à retourner"
                                 value={data.amount_returned}
@@ -108,22 +109,22 @@ const TreatmentForm = (props) => {
                             }
                         </div>
                     </div>
-                    : ""
+                    : null
             }
             <div
                 className={error.solution.length ? "form-group row validated" : "form-group row"}>
                 <label className="col-xl-3 col-lg-3 col-form-label"
                        htmlFor="description">Solution <InputRequire/></label>
                 <div className="col-lg-9 col-xl-6">
-                                                                <textarea
-                                                                    id="solution"
-                                                                    className={error.solution.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veuillez entrer la solution proposée"
-                                                                    cols="30"
-                                                                    rows="5"
-                                                                    value={data.solution}
-                                                                    onChange={(e) => onChangeSolution(e)}
-                                                                />
+                    <textarea
+                        id="solution"
+                        className={error.solution.length ? "form-control is-invalid" : "form-control"}
+                        placeholder="Veuillez entrer la solution proposée"
+                        cols="30"
+                        rows="5"
+                        value={data.solution}
+                        onChange={(e) => onChangeSolution(e)}
+                    />
                     {
                         error.solution.length ? (
                             error.solution.map((error, index) => (
@@ -132,25 +133,24 @@ const TreatmentForm = (props) => {
                                     {error}
                                 </div>
                             ))
-                        ) : ""
+                        ) : null
                     }
                 </div>
             </div>
 
             <div
                 className={error.preventive_measures.length ? "form-group row validated" : "form-group row"}>
-                <label className="col-xl-3 col-lg-3 col-form-label"
-                       htmlFor="description">Mesures préventives <InputRequire/></label>
+                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Mesures préventives <InputRequire/></label>
                 <div className="col-lg-9 col-xl-6">
-                                                                <textarea
-                                                                    id="measures"
-                                                                    className={error.preventive_measures.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la mesure préventive"
-                                                                    cols="30"
-                                                                    rows="5"
-                                                                    value={data.preventive_measures}
-                                                                    onChange={(e) => onChangePreventiveMeasures(e)}
-                                                                />
+                    <textarea
+                        id="measures"
+                        className={error.preventive_measures.length ? "form-control is-invalid" : "form-control"}
+                        placeholder="Veillez entrer la mesure préventive"
+                        cols="30"
+                        rows="5"
+                        value={data.preventive_measures}
+                        onChange={(e) => onChangePreventiveMeasures(e)}
+                    />
                     {
                         error.preventive_measures.length ? (
                             error.preventive_measures.map((error, index) => (
@@ -159,7 +159,7 @@ const TreatmentForm = (props) => {
                                     {error}
                                 </div>
                             ))
-                        ) : ""
+                        ) : null
                     }
                 </div>
             </div>
@@ -169,15 +169,15 @@ const TreatmentForm = (props) => {
                 <label className="col-xl-3 col-lg-3 col-form-label"
                        htmlFor="description">Commentaires</label>
                 <div className="col-lg-9 col-xl-6">
-                                                                <textarea
-                                                                    id="comments"
-                                                                    className={error.comments.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer un commentaire"
-                                                                    cols="30"
-                                                                    rows="5"
-                                                                    value={data.comments}
-                                                                    onChange={(e) => onChangeComments(e)}
-                                                                />
+                    <textarea
+                        id="comments"
+                        className={error.comments.length ? "form-control is-invalid" : "form-control"}
+                        placeholder="Veillez entrer un commentaire"
+                        cols="30"
+                        rows="5"
+                        value={data.comments}
+                        onChange={(e) => onChangeComments(e)}
+                    />
                     {
                         error.comments.length ? (
                             error.comments.map((error, index) => (
@@ -186,7 +186,7 @@ const TreatmentForm = (props) => {
                                     {error}
                                 </div>
                             ))
-                        ) : ""
+                        ) : null
                     }
                 </div>
             </div>

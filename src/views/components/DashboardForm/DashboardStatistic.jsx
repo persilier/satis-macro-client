@@ -9,6 +9,7 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 const DashboardStatistic = (props) => {
     const [data, setProcessData] = useState("");
+    const [componentData, setComponentData] = useState("");
     const [load, setLoad] = useState(true);
 
     const tooltipHoverFormatter = (val, opts) => {
@@ -123,6 +124,7 @@ const DashboardStatistic = (props) => {
         }
         // console.log(newProcess,"WITH_MONTH");
         setProcessData(newProcess);
+        setComponentData(props.component);
         setLoad(false)
     }, []);
 
@@ -132,8 +134,10 @@ const DashboardStatistic = (props) => {
             <div className="kt-portlet">
                 <div className="kt-portlet__head">
                     <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">Evolution de la satisfaction des réclamations sur les 11
-                            derniers mois</h3>
+                        <h3 className="kt-portlet__head-title">
+                            {/*Evolution de la satisfaction des réclamations sur les 11 derniers mois*/}
+                            {componentData ? componentData.params.fr.title_satisfaction_of_process.value : ""}
+                        </h3>
                     </div>
                 </div>
 

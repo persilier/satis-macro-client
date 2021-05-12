@@ -72,6 +72,7 @@ const ConfirmSaveForm = (props) => {
         ville: [],
         unit_id: [],
         position_id: [],
+        institution_id: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -140,12 +141,21 @@ const ConfirmSaveForm = (props) => {
                     setUnits(formatUnits(response.data.units));
                 })
                 .catch(errorRequest => {
-                    console.log(errorRequest.response.data);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
                 })
             ;
         }
         setData(newData);
+    };
+
+    const resetData = async () => {
+        await setStartRequest(false);
+        await setError(defaultError);
+        await setUnits([]);
+        await setPositions([]);
+        await setInstitution({});
+        await setUnit({});
+        await setPosition({});
     };
 
     const onSubmit = (e) => {
@@ -155,13 +165,7 @@ const ConfirmSaveForm = (props) => {
         axios.post(endPoint.confirm(props.identite.id), data)
             .then(async (response) => {
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
-                await setStartRequest(false);
-                await setError(defaultError);
-                await setUnits([]);
-                await setPositions([]);
-                await setInstitution({});
-                await setUnit({});
-                await setPosition({});
+                await resetData();
                 document.getElementById("closeConfirmSaveForm").click();
                 await props.resetFoundData();
             })
@@ -174,15 +178,9 @@ const ConfirmSaveForm = (props) => {
     };
 
     const onClickClose = async (e) => {
-        await setStartRequest(false);
-        await setError(defaultError);
-        await setUnits([]);
-        await setPositions([]);
-        await setInstitution({});
-        await setUnit({});
-        await setPosition({});
+        await resetData();
         await document.getElementById("closeButton").click();
-        await props.resetFoundData();
+        await props.closeModal();
     };
 
     return (
@@ -350,16 +348,18 @@ const ConfirmSaveForm = (props) => {
                                             </div>
                                         </div>
 
-                                        <div className={error.unit_id.length ? "form-group row validated" : "form-group row"}>
+                                        <div className={"form-group row"}>
                                             {
                                                 verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
                                                     <div className="col">
                                                         <label htmlFor="institution">Institution</label>
-                                                        <Select
-                                                            value={institution}
-                                                            onChange={onChangeInstitution}
-                                                            options={formatSelectOption(formatInstitutions(institutions), "name", false)}
-                                                        />
+                                                        <div className={error.institution_id.length ? 'is-invalid' : ''}>
+                                                            <Select
+                                                                value={institution}
+                                                                onChange={onChangeInstitution}
+                                                                options={formatSelectOption(formatInstitutions(institutions), "name", false)}
+                                                            />
+                                                        </div>
                                                         {
                                                             error.institution_id.length ? (
                                                                 error.institution_id.map((error, index) => (
@@ -375,11 +375,13 @@ const ConfirmSaveForm = (props) => {
 
                                             <div className="col">
                                                 <label htmlFor="unit">Unité</label>
-                                                <Select
-                                                    value={unit}
-                                                    onChange={onChangeUnit}
-                                                    options={formatSelectOption(units, "name", "fr")}
-                                                />
+                                                <div className={error.unit_id.length ? 'is-invalid' : ''}>
+                                                    <Select
+                                                        value={unit}
+                                                        onChange={onChangeUnit}
+                                                        options={formatSelectOption(units, "name", "fr")}
+                                                    />
+                                                </div>
                                                 {
                                                     error.unit_id.length ? (
                                                         error.unit_id.map((error, index) => (

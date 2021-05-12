@@ -258,7 +258,6 @@ const StaffForm = (props) => {
                             setUnits(formatUnits(response.data.units));
                         })
                         .catch(errorRequest => {
-                            console.log(errorRequest.response.data);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
                         })
                     ;
@@ -286,20 +285,37 @@ const StaffForm = (props) => {
     };
 
     const handleOptionChange = (e) => {
-        const value = parseInt(e.target.value);
-        if (parseInt(e.target.value) === 1) {
-            if (unit.lead) {
-                if (!!Object.keys(unit.lead).length) {
-                    confirmIsLead(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`), value);
+        if (unit) {
+            const value = parseInt(e.target.value);
+            if (parseInt(e.target.value) === 1) {
+                if (unit.lead) {
+                    if (!!Object.keys(unit.lead).length) {
+                        confirmIsLead(confirmLeadConfig(`${unit.lead.identite.lastname} ${unit.lead.identite.firstname}`), value);
+                    } else {
+                        changeOption(parseInt(e.target.value));
+                    }
                 } else {
-                    changeOption(parseInt(e.target.value));
+                    confirmIsLead(confirmLeadConfig(null), value);
                 }
             } else {
-                confirmIsLead(confirmLeadConfig(null), value);
+                changeOption(parseInt(e.target.value));
             }
         } else {
-            changeOption(parseInt(e.target.value));
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Veillez choisir une unité'))
         }
+    };
+
+    const resetFoundData = async () => {
+        setError(defaultError);
+        setData(defaultData);
+        await setInstitution(null);
+        await setUnit(null);
+        await setPosition(null);
+        setFoundData({});
+    };
+
+    const closeModal = () => {
+        setFoundData({});
     };
 
     const onSubmit = (e) => {
@@ -349,12 +365,7 @@ const StaffForm = (props) => {
                             // Existing entity
                             await setFoundData(errorRequest.response.data.error);
                             await document.getElementById("confirmSaveForm").click();
-                            await setInstitution(null);
-                            await setUnit(null);
-                            await setPosition(null);
                             setStartRequest(false);
-                            setError(defaultError);
-                            setData(defaultData);
                         } else if (errorRequest.response.data.error.staff) {
                             // Existing staff
                             setStartRequest(false);
@@ -612,21 +623,17 @@ const StaffForm = (props) => {
                                                         }
                                                     </div>
 
-                                                    {
-                                                        unit ? (
-                                                            <div  className={error.unit_id.length ? "row col validated" : "row col"}>
-                                                                <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">Responsable de l'unité <InputRequire/></label>
-                                                                <div className="col-lg-6 col-xl-6 kt-radio-inline">
-                                                                    <label className="kt-radio mt-4">
-                                                                        <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> OUI<span/>
-                                                                    </label>
-                                                                    <label className="kt-radio">
-                                                                        <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> NON<span/>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        ) : null
-                                                    }
+                                                    <div  className={error.unit_id.length ? "row col validated" : "row col"}>
+                                                        <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">Responsable de l'unité <InputRequire/></label>
+                                                        <div className="col-lg-6 col-xl-6 kt-radio-inline">
+                                                            <label className="kt-radio mt-4">
+                                                                <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> OUI<span/>
+                                                            </label>
+                                                            <label className="kt-radio">
+                                                                <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> NON<span/>
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -654,9 +661,7 @@ const StaffForm = (props) => {
                                                     </Link>
                                                 )
                                             }
-                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm"
-                                                    data-toggle="modal" data-target="#kt_modal_4">Launch Modal
-                                            </button>
+                                            <button style={{display: "none"}} id="confirmSaveForm" type="button" className="btn btn-bold btn-label-brand btn-sm" data-toggle="modal" data-target="#kt_modal_4">Launch Modal</button>
                                         </div>
                                     </div>
                                 </form>
@@ -675,7 +680,8 @@ const StaffForm = (props) => {
                                             institutions={institutions}
                                             unit_id={data.unit_id}
                                             position_id={data.position_id}
-                                            resetFoundData={() => setFoundData({})}
+                                            closeModal={closeModal}
+                                            resetFoundData={resetFoundData}
                                         />
                                     ) : null
                                 }

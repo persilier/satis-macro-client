@@ -200,6 +200,13 @@ export const percentageData = (data, total) => {
     else return 0 + "%"
 
 };
+// export const percentage = (data, total) => {
+//
+//     if (total !== 0)
+//         return Math.round((data * 100) / total) ;
+//     else return 0
+//
+// };
 
 export const formatToTimeStamp = dateTime => {
     if (dateTime.length)

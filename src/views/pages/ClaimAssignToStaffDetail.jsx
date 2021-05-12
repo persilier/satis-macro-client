@@ -19,6 +19,7 @@ import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import TreatmentHistory from "../components/TreatmentHistory";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -157,32 +158,13 @@ const ClaimAssignToStaffDetail = (props) => {
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
-                                        <div className="kt-wizard-v2__content"
-                                             data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Traitement de la
-                                                réclamation
-                                            </div>
-                                            {
-                                                claim ? (
-                                                    claim.active_treatment ? (
-                                                        claim.active_treatment.validated_at && claim.active_treatment.invalidated_reason ? (
-                                                            <div className="kt-wizard-v2__review-item mb-4">
-                                                                <div className="kt-wizard-v2__review-title">
-                                                                    <h5><strong className="text-danger">Traitement rejeté</strong></h5>
-                                                                </div>
-                                                                <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Motif</strong>: <span className="mx-2">{claim.active_treatment.invalidated_reason ? claim.active_treatment.invalidated_reason : "Pas de raison"}</span><br/>
-                                                                    <hr/>
-                                                                </div>
-                                                            </div>
-                                                        ) : null
-                                                    ) : null
-                                                ) : null
-                                            }
+                                        <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
+                                            <TreatmentHistory claim={claim}/>
+                                            <hr/>
+                                            <div className="kt-heading kt-heading--md">Traitement de la réclamation</div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     <div className="kt-wizard-v2__review-content">
-                                                        {console.log(claim ,"claim_treatment" )}
                                                         {
                                                             claim ? (
                                                                 <TreatmentForm
@@ -206,7 +188,6 @@ const ClaimAssignToStaffDetail = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
 
                                         <div className="kt-form__actions">

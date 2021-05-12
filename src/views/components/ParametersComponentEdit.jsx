@@ -93,6 +93,7 @@ const ParametersComponentEdit = (props) => {
                     window.location.href = "/settings/config"
                 })
                 .catch(errorRequest => {
+                    setError({...error,...errorRequest.response.data.error});
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);
                 })
@@ -179,7 +180,7 @@ const ParametersComponentEdit = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            {/*{console.log(logo, "Logo_Data")}*/}
+                                            {/*{console.log(Object.keys(error), "ErrorData")}*/}
                                             {
                                                 Object.keys(error).length ? (
                                                     Object.values(data).map((param, index) => (
@@ -226,6 +227,7 @@ const ParametersComponentEdit = (props) => {
                                                                         </span>
                                                                     </div>
                                                                 </div>
+
                                                             </div>
                                                             :
                                                             <div key={index}
@@ -258,6 +260,7 @@ const ParametersComponentEdit = (props) => {
                                                     ))
                                                 ) : null
                                             }
+
                                         </div>
                                         <div className="kt-portlet__foot">
                                             <div className="kt-form__actions text-right">
