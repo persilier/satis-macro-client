@@ -13,7 +13,7 @@ import {
     toastConnectErrorMessageConfig,
     toastConnectSuccessMessageConfig,
 } from "../../../../config/toastConfig";
-import {listConnectData} from "../../../../constants/userClient";
+// import {listConnectData} from "../../../../config/appConfig";
 import Loader from "../../../../views/components/Loader";
 import "./LoginCss.css"
 import ForgotForm from "./ForgotForm";
@@ -87,10 +87,11 @@ const LoginPage = (props) => {
     const onClickConnectButton = async (e) => {
         e.preventDefault(e);
         setStartRequest(true);
+
         const formData = {
-            grant_type: listConnectData[props.plan].grant_type,
-            client_id: listConnectData[props.plan].client_id,
-            client_secret: listConnectData[props.plan].client_secret,
+            grant_type: appConfig.listConnectData[props.plan].grant_type,
+            client_id: appConfig.listConnectData[props.plan].client_id,
+            client_secret: appConfig.listConnectData[props.plan].client_secret,
             username: data.username,
             password: data.password
         };
