@@ -60,7 +60,8 @@ const ImportFileForm = (props) => {
                 })
                 .catch(({response}) => {
                     setStartRequest(false);
-                    setError({...defaultError, ...response.data.error});
+                    if (response.data.code === 422)
+                        setError({...defaultError, ...response.data.error});
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
                 })
             ;
@@ -69,7 +70,7 @@ const ImportFileForm = (props) => {
 
     return (
         <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div className="kt-subinstitutionheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">

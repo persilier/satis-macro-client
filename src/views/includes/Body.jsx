@@ -123,6 +123,7 @@ import MyTotalClaimInTreatment from "../pages/MyTotalClaimInTreatment";
 import MyTotalCompleteTreat from "../pages/MyTotalCompleteTreat";
 import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
+import UnitImportPage from "../pages/UnitImportPage";
 
 const Body = () => {
     return (
@@ -348,6 +349,10 @@ const Body = () => {
 
             <Route exact path="/settings/claim_objects/import">
                 <ClaimObjectImportPage/>
+            </Route>
+
+            <Route exact path="/settings/unit/import">
+                <UnitImportPage/>
             </Route>
 
             <Route exact path="/settings/staffs">
