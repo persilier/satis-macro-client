@@ -20,6 +20,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import ExportButton from "../components/ExportButton";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -86,14 +87,6 @@ const Unit = (props) => {
         if (verifyTokenExpire())
             fetchData();
     }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
-
-    {/*<tr key={index} role="row" className="odd">
-        {
-            verifyPermission(props.userPermissions, 'list-any-unit') ? (
-                <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.institution ? unit.institution.name : null}</td>
-            ) : : null
-        }
-    </tr>*/}
 
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
@@ -302,7 +295,13 @@ const Unit = (props) => {
                                                 </label>
                                                 </div>
                                             </div>
+
+                                            <ExportButton
+                                                downloadLink={`${appConfig.apiDomaine}/download-excel/units`}
+                                                pageUrl={"/settings/unit/import"}
+                                            />
                                         </div>
+
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
