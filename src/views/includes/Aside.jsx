@@ -215,7 +215,7 @@ const Aside = (props) => {
                                         ) : null
                                     }
 
-                                    {
+                                    {/*{
                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
                                             <NavLink exact to="/monitoring/claims/reporting" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                 <li className="kt-menu__link ">
@@ -224,7 +224,7 @@ const Aside = (props) => {
                                                 </li>
                                             </NavLink>
                                         ) : null
-                                    }
+                                    }*/}
 
                                     <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                                         data-ktmenu-submenu-toggle="hover">
