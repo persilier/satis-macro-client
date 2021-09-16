@@ -635,6 +635,10 @@ const Body = () => {
                 <ProfilePage/>
             </Route>
 
+            <Route exact path="/settings/account/channel">
+                <ProfilePage/>
+            </Route>
+
             <Route exact path="/settings/recurence">
                 <RecurencePage/>
             </Route>
