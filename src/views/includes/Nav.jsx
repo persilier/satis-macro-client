@@ -504,20 +504,6 @@ const Nav = (props) => {
                                     </div>
                                 </NavLink>
 
-                                <NavLink to={"/feedback-channels"}
-                                   className="kt-notification__item">
-                                    <div className="kt-notification__item-icon">
-                                        <i className="flaticon2-calendar-3 kt-font-success"/>
-                                    </div>
-                                    <div className="kt-notification__item-details">
-                                        <div className="kt-notification__item-title kt-font-bold">
-                                            Canal
-                                        </div>
-                                        <div className="kt-notification__item-time">
-                                            Cannaux de préferences
-                                        </div>
-                                    </div>
-                                </NavLink>
                                 <div className="kt-notification__custom kt-space-between">
                                     <a href="/logout" onClick={onClickLogoutLink} target="_blank"
                                        className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
