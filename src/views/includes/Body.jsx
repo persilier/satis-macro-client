@@ -124,6 +124,7 @@ import MyTotalCompleteTreat from "../pages/MyTotalCompleteTreat";
 import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 import UnitImportPage from "../pages/UnitImportPage";
+import EmailConfig from "../pages/EmailConfig";
 
 const Body = () => {
     return (
@@ -649,6 +650,10 @@ const Body = () => {
 
             <Route exact path="/settings/percentage-min-fusion">
                 <PercentageMinFusion/>
+            </Route>
+
+            <Route exact path="/settings/config-mail">
+                <EmailConfig/>
             </Route>
 
             <Route exact path="/process/total-claim-register">
