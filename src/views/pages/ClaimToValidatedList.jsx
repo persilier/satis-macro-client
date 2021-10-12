@@ -18,6 +18,8 @@ import {
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -33,6 +35,7 @@ const ClaimToValidatedList = (props) => {
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
+    const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
         let endpoint = "";
@@ -145,6 +148,11 @@ const ClaimToValidatedList = (props) => {
 
     const pages = arrayNumberPage();
 
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
@@ -158,7 +166,11 @@ const ClaimToValidatedList = (props) => {
                     </strong>
                 </td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{truncateString(claim.description, 37)}</td>
+                <td style={{textAlign: 'center'}}>
+                    <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
+                </td>
+
+                {/*<td>{truncateString(claim.description, 37)}</td>*/}
                 {
                     verifyPermission(props.userPermissions, "show-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, "show-claim-awaiting-validation-my-institution") ? (
                         <td>
@@ -287,6 +299,8 @@ const ClaimToValidatedList = (props) => {
                                                     </tr>
                                                     </tfoot>
                                                 </table>
+                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                             </div>
                                         </div>
                                         <div className="row">
