@@ -11,6 +11,8 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -29,6 +31,7 @@ const HistoricClaimsAdd = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -131,13 +134,21 @@ const HistoricClaimsAdd = (props) => {
 
     const pages = arrayNumberPage();
 
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} </td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
-                <td>{claim.description.length > 15 ? reduceCharacter(claim.description) : claim.description}</td>
+                <td style={{textAlign: 'center'}}>
+                    <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
+                </td>
+                {/*<td>{claim.description.length > 15 ? reduceCharacter(claim.description) : claim.description}</td>*/}
                 <td>
                     {
                         (props.plan === 'PRO') ?
@@ -300,6 +311,8 @@ const HistoricClaimsAdd = (props) => {
                                                 </tr>
                                                 </tfoot>
                                             </table>
+                                            <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                            <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                         </div>
                                     </div>
                                     <div className="row">
