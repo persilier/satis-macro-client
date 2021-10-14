@@ -1,8 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import {connect} from "react-redux";
 import {formatDateToTimeStampte} from "../../helpers/function";
+import HtmlDescription from "./DescriptionDetail/HtmlDescription";
+import HtmlDescriptionModal from "./DescriptionDetail/HtmlDescriptionModal";
 
 const ClaimButtonDetail = ({claim, plan}) => {
+
+    const [currentMessage, setCurrentMessage] = useState("");
+
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
     return (
         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
             <div className="kt-heading kt-heading--md">Détails de la réclamation</div>
@@ -34,13 +44,19 @@ const ClaimButtonDetail = ({claim, plan}) => {
                                     <strong>Montant réclamé:</strong>
                                     <span className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency ? claim.amount_currency.name["fr"] : ''}` : "-"}</span><br/>
                                     <strong>Description:</strong>
-                                    <span className="mx-2">{claim.description ? claim.description : "-"}</span><br/>
+                                    <span className="mx-2">
+                                        <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
+                                    </span>
+                                    {/*<span className="mx-2">{claim.description ? claim.description : "-"}</span>*/}
+                                    <br/>
                                     <strong>Attente:</strong>
                                     <span className="mx-2">{claim.claimer_expectation ? claim.claimer_expectation : "-"}</span><br/>
                                     <strong>Est-ce une relance ?:</strong>
                                     <span className="mx-2">{claim.is_revival ? "Oui" : "Non"}</span><br/>
                                 </div>
                             )}
+                            <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                            <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                         </div>
 
                         <div className="kt-wizard-v2__review-item">

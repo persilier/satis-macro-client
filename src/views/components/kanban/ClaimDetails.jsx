@@ -1,9 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {formatDateToTimeStampte, loadCss, loadScript} from "../../../helpers/function";
 import {AUTH_TOKEN} from "../../../constants/token";
 import appConfig from "../../../config/appConfig";
 import Loader from "../Loader";
+import HtmlDescriptionModal from "../DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "../DescriptionDetail/HtmlDescription";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -66,6 +68,19 @@ const ClaimDetails = (props) => {
         else if (third === "current")
             onClickLast()
     };
+    const elements = useRef(null);
+
+    useEffect(() => {
+        elements.current.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        elements.current.appendChild(iframe);
+        iframe.width = "100%";
+        iframe.height = "100%"
+        iframe.setAttribute("style","overflow-y: auto");
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(claim.description);
+        iframe.contentWindow.document.close();
+    }, [claim.description]);
 
     return (
         <div className="kt-portlet__body kt-portlet__body--fit w-100">
@@ -275,9 +290,10 @@ const ClaimDetails = (props) => {
                                                     <br/>
                                                     <strong>Date de l'évernement</strong>: <span className="mx-2">{claim.event_occured_at ? formatDateToTimeStampte(claim.event_occured_at) : "-"}</span><br/>
                                                     <br/>
-                                                    <strong>Description:</strong> <span
-                                                    className="mx-2">{claim.description ? claim.description : "-"}</span><br/>
-                                                    <br/>
+                                                    <strong>Description:</strong>
+                                                    <span className="mx-2" ref={elements}></span>
+                                                    {/*<span className="mx-2">{claim.description ? claim.description : "-"}</span><br/>*/}
+                                                    <br/><br/>
                                                     <strong>Attente:</strong> <span
                                                     className="mx-2">{claim.claimer_expectation ? claim.claimer_expectation : "-"}</span><br/>
                                                 </div>

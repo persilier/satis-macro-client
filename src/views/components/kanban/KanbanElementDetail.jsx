@@ -62,7 +62,8 @@ const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) =>
             <div className="kt-portlet__body kt-portlet__body--fit-top">
                 <p style={{textAlign: "left"}}>
                     La reclamation dont l'objet est <strong>{claim.claim_object.name["fr"]}</strong> est <br/> reçu le <strong>{moment(new Date(claim.created_at)).format("DD/MM/YYYY")}</strong> <br/>
-                    voici la description: {claim.description.length > 34 ? claim.description.substring(0, 34)+"..." : claim.description}
+                    {/*voici la description: {claim.description.length > 34 ? claim.description.substring(0, 34)+"..." : claim.description}*/}
+                    Cliquer pour voir les details
                 </p>
                 {(verifyPermission(userPermissions, 'revoke-claim') && ['incomplete', 'full'].includes(claim.status)) && (
                     <>
