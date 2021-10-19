@@ -171,13 +171,13 @@ const IncompleteClaims = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference}</td>
-                <td>{claim.claimer.lastname}&ensp;{claim.claimer.firstname}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{claim.reference ? claim.reference : ''}</td>
+                <td>{claim.claimer ? claim.claimer.lastname : ''}&ensp;{claim.claimer ? claim.claimer.firstname : ""}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
                 <td>
                     {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                         verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                            claim.institution_targeted.name
+                            (claim.institution_targeted ? claim.institution_targeted.name : '')
                             : (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
 
                     }
@@ -187,7 +187,7 @@ const IncompleteClaims = (props) => {
                         <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + claim.timeExpire}</span> :
                         <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>}
                 </td>
-                <td>{claim.claim_object.name.fr}</td>
+                <td>{claim.claim_object ? claim.claim_object.name.fr : ''}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                     {/*{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}*/}
