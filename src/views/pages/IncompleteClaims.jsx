@@ -177,8 +177,8 @@ const IncompleteClaims = (props) => {
                     {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                         verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                            (claim.institution_targeted ? claim.institution_targeted.name : '')
-                            : (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
+                            (claim.institution_targeted ? (claim.institution_targeted.name ? claim.institution_targeted.name : '') : '')
+                            : (claim.unit_targeted ? (claim.unit_targed.name ? claim.unit_targeted.name.fr : '') : "-")
 
                     }
                 </td>
@@ -187,13 +187,12 @@ const IncompleteClaims = (props) => {
                         <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + claim.timeExpire}</span> :
                         <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>}
                 </td>
-                <td>{claim.claim_object ? claim.claim_object.name.fr : ''}</td>
+                <td>{claim.claim_object ? (claim.claim_object.name ? claim.claim_object.name.fr : '') : ''}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                     {/*{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}*/}
                 </td>
                 <td style={{textAlign: 'center'}}>
-
                     {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ||
