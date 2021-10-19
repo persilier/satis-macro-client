@@ -125,6 +125,7 @@ import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 import UnitImportPage from "../pages/UnitImportPage";
 import EmailConfig from "../pages/EmailConfig";
+import RoleImportPage from "../pages/RoleImportPage";
 
 const Body = () => {
     return (
@@ -414,6 +415,10 @@ const Body = () => {
 
             <Route exact path="/process/claims/import">
                 <ClaimImportPage/>
+            </Route>
+
+            <Route exact path="/setting/role/import">
+                <RoleImportPage/>
             </Route>
 
             <Route exact path="/process/incomplete_claims">

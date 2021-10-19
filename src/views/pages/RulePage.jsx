@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import {
-    Link
+    Link, NavLink
 } from "react-router-dom";
 import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
@@ -22,6 +22,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import InfoFormatExcel from "../../constants/InfoFormatExcel";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -56,8 +57,7 @@ const RulePage = (props) => {
                 .catch(error => {
                     setLoad(false);
                     console.log("Something is wrong");
-                })
-            ;
+                });
         }
         if (verifyTokenExpire())
             fetchData();
@@ -260,6 +260,20 @@ const RulePage = (props) => {
                                                         Recherche:
                                                         <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
+                                                </div>
+                                            </div>
+                                            <div className="kt-portlet__head-toolbar col-sm-6 text-right">
+                                                <div className="kt-portlet__head-wrapper">&nbsp;
+                                                    <div className="dropdown dropdown-inline">
+                                                        <InfoFormatExcel/>
+                                                        <a href={`${appConfig.apiDomaine}/download-excel/add-profils`}
+                                                           download={true} className="btn mr-1 btn-secondary"> Télécharger le format
+                                                        </a>
+                                                        <NavLink to={"/setting/role/import"}
+                                                                 className="btn ml-1 btn-primary"> Importer via excel
+                                                        </NavLink>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

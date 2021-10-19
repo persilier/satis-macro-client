@@ -70,7 +70,7 @@ const ImportFileForm = (props) => {
 
     return (
         <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subinstitutionheader   kt-grid__item" id="kt_subheader">
+            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
@@ -91,7 +91,6 @@ const ImportFileForm = (props) => {
                     </div>
                 </div>
             </div>
-
             <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                 <div className="row">
                     <div className="col">
