@@ -189,7 +189,7 @@ const IncompleteClaims = (props) => {
                             <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>
                     )}
                 </td>
-                <td>{claim.claim_object ? (claim.claim_object.name ? claim.claim_object.name.fr : '') : ''}</td>
+                <td>{claim.claim_object ? (claim.claim_object.name ? claim.claim_object.name.fr : '-    ') : '- '}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                     {/*{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}*/}
