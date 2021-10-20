@@ -159,7 +159,6 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
-                    console.log(response.data, "GET_DATA");
                     const newIncompleteClaim = {
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
@@ -181,7 +180,7 @@ const IncompleteClaimsEdit = props => {
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
-                        is_revival: response.data.claim.is_revival,
+                        is_revival: response.data.claim.is_revival ? response.data.claim.is_revival : 0,
                         // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : null
                     };
                     setData(newIncompleteClaim);
@@ -310,7 +309,6 @@ const IncompleteClaimsEdit = props => {
         setData(newData);
     };
     const onChangeLieu = (e) => {
-        console.log("e:", e.target.value);
         const newData = {...data};
         newData.Lieu = e.target.value;
         setData(newData);
@@ -470,7 +468,6 @@ const IncompleteClaimsEdit = props => {
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
 
-        console.log('Coucou', 'COUCOU')
         debug(endPoint.update(`${id}`), "endpoint");
         for (var value of formatFormData(newData).values()) {
             debug(value, "value");
