@@ -61,7 +61,7 @@ const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) =>
             </div>
             <div className="kt-portlet__body kt-portlet__body--fit-top">
                 <p style={{textAlign: "left"}}>
-                    La reclamation dont l'objet est <strong>{claim.claim_object.name["fr"]}</strong> est <br/> reçu le <strong>{moment(new Date(claim.created_at)).format("DD/MM/YYYY")}</strong> <br/>
+                    La reclamation dont l'objet est <strong>{claim.claim_object ? (claim.claim_object ? claim.claim_object.name["fr"] : '-') : '-'}</strong> est <br/> reçu le <strong>{moment(new Date(claim.created_at)).format("DD/MM/YYYY")}</strong> <br/>
                     {/*voici la description: {claim.description.length > 34 ? claim.description.substring(0, 34)+"..." : claim.description}*/}
                     Cliquer pour voir les details
                 </p>
