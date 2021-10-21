@@ -174,13 +174,11 @@ const IncompleteClaims = (props) => {
                 <td>{claim.reference ? claim.reference : ''}</td>
                 <td>{claim.claimer ? claim.claimer.lastname : ''}&ensp;{claim.claimer ? claim.claimer.firstname : ""}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
                 <td>
-                    {
-                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
-                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                            (claim.institution_targeted ? (claim.institution_targeted.name ? claim.institution_targeted.name : '') : '')
-                            : (claim.unit_targeted ? (claim.unit_targed.name ? claim.unit_targeted.name.fr : '') : "-")
-
-                    }
+                    {verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') || verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ? (
+                        claim.institution_targeted ? (claim.institution_targeted.name !== null ? claim.institution_targeted.name : '') : '-'
+                    ) : (
+                        claim.unit_targeted ? (claim.unit_targeted.name !== null ? claim.unit_targeted.name.fr : '') : '-'
+                    )}
                 </td>
                 <td>{formatDateToTime(claim.created_at)} <br/>
                     {claim.timeExpire !== null && (

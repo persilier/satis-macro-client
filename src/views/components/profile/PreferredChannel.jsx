@@ -67,6 +67,7 @@ const PreferredChannel = () => {
             ;
         }
     };
+
     return (
         <div className="kt-portlet">
             <div className="kt-portlet__head">
