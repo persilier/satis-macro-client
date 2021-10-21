@@ -25,7 +25,7 @@ const RoleImportPage = (props) => {
             pageTitleLink="/settings/rules/add"
             pageTitle="Enregistrement role"
             panelTitle="Importation de role au format excel"
-            claimImport={true}
+            claimImport={false}
         />
     );
 };
