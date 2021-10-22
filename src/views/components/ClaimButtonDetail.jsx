@@ -102,11 +102,11 @@ const ClaimButtonDetail = ({claim, plan}) => {
                             {!claim ? null : (
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Nom:</strong>
-                                    <span className="mx-2">{`${claim.created_by.identite ? claim.created_by.identite.firstname+" "+claim.created_by.identite.lastname : "-"} `}</span><br/>
+                                    <span className="mx-2">{`${(claim.created_by && claim.created_by.identite) ? claim.created_by.identite.firstname+" "+claim.created_by.identite.lastname : "-"} `}</span><br/>
                                     <strong>Point de service:</strong>
-                                    <span className="mx-2">{claim.created_by.unit ? claim.created_by.unit.name["fr"] : "-"}</span><br/>
+                                    <span className="mx-2">{(claim.created_by && claim.created_by.unit) ? claim.created_by.unit.name["fr"] : "-"}</span><br/>
                                     <strong>Institution:</strong>
-                                    <span className="mx-2">{claim.created_by.institution ? claim.created_by.institution.name : "-"}</span><br/>
+                                    <span className="mx-2">{(claim.created_by && claim.created_by.institution) ? claim.created_by.institution.name : "-"}</span><br/>
                                     <strong>Date de réception:</strong>
                                     <span className="mx-2">{claim.created_at ? formatDateToTimeStampte(claim.created_at) : "-"}</span><br/>
                                 </div>
