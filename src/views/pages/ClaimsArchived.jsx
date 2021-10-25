@@ -16,6 +16,8 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -61,6 +63,7 @@ const ClaimsArchived = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -161,6 +164,10 @@ const ClaimsArchived = (props) => {
 
     const pages = arrayNumberPage();
 
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
     const printBodyTable = (archived, index) => {
         return (
             <tr key={index} role="row" className="odd">
@@ -174,7 +181,10 @@ const ClaimsArchived = (props) => {
                     }
                 </td>
                 <td>{archived.claim_object.name["fr"]}</td>
-                <td>{archived.description.length > 15 ? reduceCharacter(archived.description) : archived.description}</td>
+                <td style={{textAlign: 'center'}}>
+                    <HtmlDescription onClick={() => showModal(archived.description ? archived.description : '-')}/>
+                </td>
+                {/*<td>{archived.description.length > 15 ? reduceCharacter(archived.description) : archived.description}</td>*/}
                 <td style={{textAlign: 'center'}}>{archived.claim_object.time_limit}</td>
                 <td style={{textAlign: 'center'}}>
                     {
@@ -353,6 +363,8 @@ const ClaimsArchived = (props) => {
                                                 </tr>
                                                 </tfoot>
                                             </table>
+                                            <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                            <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                         </div>
                                     </div>
                                     <div className="row">

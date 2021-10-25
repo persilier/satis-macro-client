@@ -19,6 +19,8 @@ import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -61,6 +63,8 @@ const IncompleteClaims = (props) => {
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
+    const [currentMessage, setCurrentMessage] = useState("");
+
 
     let endPoint = "";
     if (props.plan === "MACRO") {
@@ -159,37 +163,41 @@ const IncompleteClaims = (props) => {
 
     const pages = arrayNumberPage();
 
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference}</td>
-                <td>{claim.claimer.lastname}&ensp;{claim.claimer.firstname}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{claim.reference ? claim.reference : ''}</td>
+                <td>{claim.claimer ? claim.claimer.lastname : ''}&ensp;{claim.claimer ? claim.claimer.firstname : ""}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
                 <td>
-                    {
-                        verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
-                        verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                            claim.institution_targeted.name
-                            : (claim.unit_targeted ? claim.unit_targeted.name.fr : "-")
-
-                    }
+                    {verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') || verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ? (
+                        claim.institution_targeted ? (claim.institution_targeted.name !== null ? claim.institution_targeted.name : '') : '-'
+                    ) : (
+                        claim.unit_targeted ? (claim.unit_targeted.name !== null ? claim.unit_targeted.name.fr : '') : '-'
+                    )}
                 </td>
                 <td>{formatDateToTime(claim.created_at)} <br/>
-                    {claim.timeExpire >= 0 ?
-                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + claim.timeExpire}</span> :
-                        <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>}
+                    {claim.timeExpire !== null && (
+                        claim.timeExpire >= 0 ?
+                            <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + claim.timeExpire}</span> :
+                            <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>
+                    )}
                 </td>
-                <td>{claim.claim_object.name.fr}</td>
-                <td>{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}</td>
+                <td>{claim.claim_object ? (claim.claim_object.name ? claim.claim_object.name.fr : '-    ') : '- '}</td>
                 <td style={{textAlign: 'center'}}>
-
+                    <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
+                    {/*{claim.description.length > 30 ? reduceCharacter(claim.description) : claim.description}*/}
+                </td>
+                <td style={{textAlign: 'center'}}>
                     {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ||
                         verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                            <Link
-                                to={`/process/incomplete_claims/edit/${claim.id}`}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Complèter">
+                            <Link to={`/process/incomplete_claims/edit/${claim.id}`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Complèter">
                                 <i className="la la-edit"/>
                             </Link>
                             : null
@@ -361,6 +369,8 @@ const IncompleteClaims = (props) => {
                                                     </tr>
                                                     </tfoot>
                                                 </table>
+                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                             </div>
                                         </div>
                                         <div className="row">

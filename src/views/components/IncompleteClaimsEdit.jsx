@@ -159,14 +159,13 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
-                    console.log(response.data, "GET_DATA");
                     const newIncompleteClaim = {
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
                         lastname: response.data.claim.claimer.lastname,
-                        sexe: response.data.claim.claimer.sexe,
-                        telephone: response.data.claim.claimer.telephone,
-                        email: response.data.claim.claimer.email,
+                        sexe: response.data.claim.claimer.sexe !== null ? response.data.claim.claimer.sexe : "",
+                        telephone: response.data.claim.claimer.telephone !== null ? response.data.claim.claimer.telephone : [],
+                        email: response.data.claim.claimer.email === null ? [] : response.data.claim.claimer.email,
                         ville: response.data.claim.claimer.ville === null ? "" : response.data.claim.claimer.ville,
                         unit_targeted_id: response.data.claim.unit_targeted_id,
                         relationship_id: response.data.claim.relationship_id,
@@ -177,11 +176,11 @@ const IncompleteClaimsEdit = props => {
                         response_channel_slug: response.data.claim.response_channel_slug,
                         claimer_expectation: response.data.claim.claimer_expectation === null ? "" : response.data.claim.claimer_expectation,
                         description: response.data.claim.description,
-                        lieu: response.data.claim.lieu!==null?response.data.claim.lieu:undefined,
+                        lieu: response.data.claim.lieu !== null ? response.data.claim.lieu : undefined,
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
-                        is_revival: response.data.claim.is_revival,
+                        is_revival: response.data.claim.is_revival ? response.data.claim.is_revival : 0,
                         // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : null
                     };
                     setData(newIncompleteClaim);
@@ -219,7 +218,7 @@ const IncompleteClaimsEdit = props => {
                             label: response.data.claim.claim_object.name.fr
                         });
                     }
-                    if (response.data.claim.claim_object.claim_category !== null) {
+                    if (response.data.claim.claim_object && response.data.claim.claim_object.claim_category !== null) {
                         setClaimCategory({
                             value: response.data.claim.claim_object.claim_category.id,
                             label: response.data.claim.claim_object.claim_category.name.fr
@@ -310,7 +309,6 @@ const IncompleteClaimsEdit = props => {
         setData(newData);
     };
     const onChangeLieu = (e) => {
-        console.log("e:", e.target.value);
         const newData = {...data};
         newData.Lieu = e.target.value;
         setData(newData);
@@ -470,7 +468,6 @@ const IncompleteClaimsEdit = props => {
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
 
-        console.log('Coucou', 'COUCOU')
         debug(endPoint.update(`${id}`), "endpoint");
         for (var value of formatFormData(newData).values()) {
             debug(value, "value");
@@ -568,14 +565,14 @@ const IncompleteClaimsEdit = props => {
                                                     <div
                                                         className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
                                                         <label className="col-xl-3 col-lg-3 col-form-label"
-                                                               htmlFor="institution">{componentData ? componentData.params.fr.institution.value:""}
+                                                               htmlFor="institution">{componentData ? componentData.params.fr.institution.value : ""}
                                                             <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
                                                                 // isDisabled={!disabledInput}
-                                                                placeholder={componentData ? componentData.params.fr.institution_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.institution_placeholder.value : ""}
                                                                 value={institution}
                                                                 options={institutions}
                                                             />
@@ -598,19 +595,20 @@ const IncompleteClaimsEdit = props => {
                                                     <div className="kt-section kt-section--first">
                                                         <div className="kt-section__body">
                                                             <h3 className="kt-section__title kt-section__title-lg">
-                                                                {componentData ? componentData.params.fr.info_cible.value+":":""}</h3>
+                                                                {componentData ? componentData.params.fr.info_cible.value + ":" : ""}</h3>
 
                                                             <div className="form-group row">
                                                                 <div
                                                                     className={error.lastname.length ? "col validated" : "col"}>
                                                                     <label
-                                                                        htmlFor="lastname">{componentData ? componentData.params.fr.nom.value:""} <InputRequire/></label>
+                                                                        htmlFor="lastname">{componentData ? componentData.params.fr.nom.value : ""}
+                                                                        <InputRequire/></label>
                                                                     <input
                                                                         // disabled={!disabledInput}
                                                                         id="lastname"
                                                                         type="text"
                                                                         className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={componentData ? componentData.params.fr.nom_placeholder.value:""}
+                                                                        placeholder={componentData ? componentData.params.fr.nom_placeholder.value : ""}
                                                                         value={data.lastname}
                                                                         onChange={(e) => onChangeLastName(e)}
                                                                     />
@@ -628,14 +626,15 @@ const IncompleteClaimsEdit = props => {
 
                                                                 <div
                                                                     className={error.firstname.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value:""}
+                                                                    <label
+                                                                        htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value : ""}
                                                                         <InputRequire/></label>
                                                                     <input
                                                                         // disabled={!disabledInput}
                                                                         id="firstname"
                                                                         type="text"
                                                                         className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={componentData ? componentData.params.fr.prenoms_placeholder.value:""}
+                                                                        placeholder={componentData ? componentData.params.fr.prenoms_placeholder.value : ""}
                                                                         value={data.firstname}
                                                                         onChange={(e) => onChangeFirstName(e)}
                                                                     />
@@ -655,7 +654,9 @@ const IncompleteClaimsEdit = props => {
                                                             <div className="form-group row">
                                                                 <div
                                                                     className={error.sexe.length ? "form-group col validated" : "form-group col"}>
-                                                                    <label htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value:""} <InputRequire/></label>
+                                                                    <label
+                                                                        htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value : ""}
+                                                                        <InputRequire/></label>
                                                                     <select
                                                                         // disabled={!disabledInput}
                                                                         id="sexe"
@@ -663,7 +664,8 @@ const IncompleteClaimsEdit = props => {
                                                                         value={data.sexe}
                                                                         onChange={(e) => onChangeSexe(e)}
                                                                     >
-                                                                        <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value:""}
+                                                                        <option value=""
+                                                                                disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}
                                                                         </option>
                                                                         <option value="F">Féminin</option>
                                                                         <option value="M">Masculin</option>
@@ -682,13 +684,14 @@ const IncompleteClaimsEdit = props => {
                                                                 </div>
                                                                 <div
                                                                     className={error.ville.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="ville">{componentData ? componentData.params.fr.ville.value:""} </label>
+                                                                    <label
+                                                                        htmlFor="ville">{componentData ? componentData.params.fr.ville.value : ""} </label>
                                                                     <input
                                                                         // disabled={!disabledInput}
                                                                         id="ville"
                                                                         type="text"
                                                                         className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={componentData ? componentData.params.fr.ville_placeholder.value:""}
+                                                                        placeholder={componentData ? componentData.params.fr.ville_placeholder.value : ""}
                                                                         value={data.ville}
                                                                         onChange={(e) => onChangeVille(e)}
                                                                     />
@@ -709,7 +712,7 @@ const IncompleteClaimsEdit = props => {
                                                                 <div
                                                                     className={error.telephone.length ? "col validated" : "col"}>
                                                                     <label
-                                                                        htmlFor="telephone"> {componentData ? componentData.params.fr.telephone.value:""}<WithoutCode/>
+                                                                        htmlFor="telephone"> {componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
                                                                         <InputRequire/></label>
                                                                     <TagsInput
                                                                         // disabled={!disabledInput}
@@ -717,7 +720,7 @@ const IncompleteClaimsEdit = props => {
                                                                         onChange={onChangeTelephone}
                                                                         inputProps={{
                                                                             className: 'react-tagsinput-input',
-                                                                            placeholder: componentData ? componentData.params.fr.telephone.value:""
+                                                                            placeholder: componentData ? componentData.params.fr.telephone.value : ""
                                                                         }}
                                                                     />
                                                                     {
@@ -735,14 +738,15 @@ const IncompleteClaimsEdit = props => {
                                                                 <div
                                                                     className={error.email.length ? "col validated" : "col"}>
                                                                     <label
-                                                                        htmlFor="email">{componentData ? componentData.params.fr.email.value:""} <InputRequire/></label>
+                                                                        htmlFor="email">{componentData ? componentData.params.fr.email.value : ""}
+                                                                        <InputRequire/></label>
                                                                     <TagsInput
                                                                         // disabled={!disabledInput}
                                                                         value={data.email}
                                                                         onChange={onChangeEmail}
                                                                         inputProps={{
                                                                             className: 'react-tagsinput-input',
-                                                                            placeholder: componentData ? componentData.params.fr.email_placeholder.value:""
+                                                                            placeholder: componentData ? componentData.params.fr.email_placeholder.value : ""
                                                                         }}/>
                                                                     {
                                                                         error.email.length ? (
@@ -767,19 +771,20 @@ const IncompleteClaimsEdit = props => {
 
                                             <div className="kt-section">
                                                 <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.info_reclamation.value:""}</h3>
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.info_reclamation.value : ""}</h3>
                                                     {
                                                         !verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ?
                                                             (
                                                                 <div className="form-group row">
                                                                     <div
                                                                         className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                        <label htmlFor="unit">{componentData ? componentData.params.fr.unite.value:""} {isRequire.unit_targeted_id ?
-                                                                                <InputRequire/> : ""}</label>
+                                                                        <label
+                                                                            htmlFor="unit">{componentData ? componentData.params.fr.unite.value : ""} {isRequire.unit_targeted_id ?
+                                                                            <InputRequire/> : ""}</label>
                                                                         <Select
                                                                             classNamePrefix="select"
                                                                             className="basic-single"
-                                                                            placeholder={componentData ? componentData.params.fr.unite_placeholder.value:""}
+                                                                            placeholder={componentData ? componentData.params.fr.unite_placeholder.value : ""}
                                                                             value={unit}
                                                                             onChange={onChangeUnit}
                                                                             options={units}
@@ -797,12 +802,13 @@ const IncompleteClaimsEdit = props => {
                                                                     </div>
                                                                     <div
                                                                         className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                        <label htmlFor="account">{componentData ? componentData.params.fr.compte.value:""} {isRequire.account_targeted_id ?
-                                                                                <InputRequire/> : ""}</label>
+                                                                        <label
+                                                                            htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""} {isRequire.account_targeted_id ?
+                                                                            <InputRequire/> : ""}</label>
                                                                         <Select
                                                                             classNamePrefix="select"
                                                                             className="basic-single"
-                                                                            placeholder={componentData ? componentData.params.fr.compte_placeholder.value:""}
+                                                                            placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
                                                                             value={account}
                                                                             onChange={onChangeAccount}
                                                                             options={accounts}
@@ -826,11 +832,13 @@ const IncompleteClaimsEdit = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value:""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
-                                                                placeholder={componentData ? componentData.params.fr.canal_reception_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.canal_reception_placeholder.value : ""}
                                                                 value={receptionChannel}
                                                                 onChange={onChangeReceptionChannel}
                                                                 options={channels}
@@ -848,11 +856,13 @@ const IncompleteClaimsEdit = props => {
 
                                                         <div
                                                             className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value:""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
-                                                                placeholder={componentData ? componentData.params.fr.canal_reponse_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.canal_reponse_placeholder.value : ""}
                                                                 value={responseChannel}
                                                                 onChange={onChangeResponseChannel}
                                                                 options={responseChannels}
@@ -871,11 +881,12 @@ const IncompleteClaimsEdit = props => {
 
                                                     <div className="form-group row">
                                                         <div className={"col"}>
-                                                            <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value:""}</label>
+                                                            <label
+                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}</label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
-                                                                placeholder={componentData ? componentData.params.fr.categorie_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}
                                                                 value={claimCategory}
                                                                 onChange={onChangeClaimCategory}
                                                                 options={claimCategories}
@@ -884,11 +895,13 @@ const IncompleteClaimsEdit = props => {
 
                                                         <div
                                                             className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                            <label htmlFor="claimObject">{componentData ? componentData.params.fr.object.value:""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
-                                                                placeholder={componentData ? componentData.params.fr.object_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.object_placeholder.value : ""}
                                                                 value={claimObject}
                                                                 onChange={onChangeClaimObject}
                                                                 options={claimObjects}
@@ -906,13 +919,14 @@ const IncompleteClaimsEdit = props => {
 
                                                         <div
                                                             className={error.lieu.length ? "col validated" : "col"}>
-                                                            <label htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value:""} </label>
+                                                            <label
+                                                                htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""} </label>
                                                             <input
                                                                 // disabled={!disabledInput}
                                                                 id="lieu"
                                                                 type="text"
                                                                 className={error.lieu.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.lieu_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.lieu_placeholder.value : ""}
                                                                 value={data.lieu}
                                                                 onChange={(e) => onChangeLieu(e)}
                                                             />
@@ -932,15 +946,17 @@ const IncompleteClaimsEdit = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                            <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value:""} (<strong className="text-danger">Laisser vide si
-                                                                    pas de montant</strong>) {isRequire.amount_disputed ?
-                                                                    <InputRequire/> : ""}</label>
+                                                            <label
+                                                                htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong
+                                                                className="text-danger">Laisser vide si
+                                                                pas de montant</strong>) {isRequire.amount_disputed ?
+                                                                <InputRequire/> : ""}</label>
                                                             <input
                                                                 type={"number"}
                                                                 min="0"
                                                                 id="amount_claim"
                                                                 className={error.amount_disputed.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.montant_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.montant_placeholder.value : ""}
                                                                 value={data.amount_disputed}
                                                                 onChange={(e) => onChangeAmountDisputed(e)}
                                                             />
@@ -957,14 +973,15 @@ const IncompleteClaimsEdit = props => {
 
                                                         <div
                                                             className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="currency">{componentData ? componentData.params.fr.devise.value:""}
-                                                              {isRequire.amount_currency_slug ?
+                                                            <label
+                                                                htmlFor="currency">{componentData ? componentData.params.fr.devise.value : ""}
+                                                                {isRequire.amount_currency_slug ?
                                                                     <InputRequire/> : ""}</label>
                                                             <Select
                                                                 isClearable
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
-                                                                placeholder={componentData ? componentData.params.fr.devise_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.devise_placeholder.value : ""}
                                                                 value={currency}
                                                                 onChange={onChangeAmountCurrency}
                                                                 options={currencies}
@@ -985,12 +1002,14 @@ const IncompleteClaimsEdit = props => {
 
                                                         <div
                                                             className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                            <label htmlFor="date">{componentData ? componentData.params.fr.date.value:""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="date">{componentData ? componentData.params.fr.date.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 type={"datetime-local"}
                                                                 id="date"
                                                                 className={error.event_occured_at.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.date_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.date_placeholder.value : ""}
                                                                 value={data.event_occured_at}
                                                                 max={maxDate}
                                                                 onChange={(e) => onChangeEventOccuredAt(e)}
@@ -1009,12 +1028,13 @@ const IncompleteClaimsEdit = props => {
                                                             verifyPermission(props.userPermissions, "update-claim-incomplete-without-client") ? (
                                                                 <div
                                                                     className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value:""} {isRequire.relationship_id ?
-                                                                            <InputRequire/> : ""}</label>
+                                                                    <label
+                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} {isRequire.relationship_id ?
+                                                                        <InputRequire/> : ""}</label>
                                                                     <Select
                                                                         isClearable
                                                                         value={relationship}
-                                                                        placeholder={componentData ? componentData.params.fr.relation_placeholder.value:""}
+                                                                        placeholder={componentData ? componentData.params.fr.relation_placeholder.value : ""}
                                                                         onChange={onChangeRelationShip}
                                                                         options={relationships}
                                                                     />
@@ -1033,13 +1053,14 @@ const IncompleteClaimsEdit = props => {
                                                         }
 
                                                         <div className="col">
-                                                            <label htmlFor="file">{componentData ? componentData.params.fr.piece.value:""} {isRequire.file ?
+                                                            <label
+                                                                htmlFor="file">{componentData ? componentData.params.fr.piece.value : ""} {isRequire.file ?
                                                                 <InputRequire/> : ""}</label>
                                                             <input
                                                                 onChange={onChangeFile}
                                                                 type="file"
                                                                 className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.piece_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.piece_placeholder.value : ""}
                                                                 id="customFile"
                                                                 multiple={true}
                                                             />
@@ -1060,14 +1081,14 @@ const IncompleteClaimsEdit = props => {
                                                         <div
                                                             className={error.description.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="description">{componentData ? componentData.params.fr.description.value:""}
+                                                                htmlFor="description">{componentData ? componentData.params.fr.description.value : ""}
                                                                 {isRequire.description ?
-                                                                <InputRequire/> : ""}</label>
+                                                                    <InputRequire/> : ""}</label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="description"
                                                                 className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.description_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.description_placeholder.value : ""}
                                                                 value={data.description}
                                                                 onChange={(e) => onChangeDescription(e)}
                                                             />
@@ -1085,14 +1106,14 @@ const IncompleteClaimsEdit = props => {
                                                         <div
                                                             className={error.claimer_expectation.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value:""}
+                                                                htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value : ""}
                                                                 {isRequire.claimer_expectation ?
-                                                                <InputRequire/> : ""} </label>
+                                                                    <InputRequire/> : ""} </label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="claimer_expectation"
                                                                 className={error.claimer_expectation.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.attente_placeholder.value:""}
+                                                                placeholder={componentData ? componentData.params.fr.attente_placeholder.value : ""}
                                                                 value={data.claimer_expectation}
                                                                 onChange={(e) => onChangeClaimerExpectation(e)}
                                                             />
@@ -1114,22 +1135,24 @@ const IncompleteClaimsEdit = props => {
                                                 className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
                                             <div className="kt-section">
                                                 <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value:""} <InputRequire/>
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""}
+                                                        <InputRequire/>
                                                     </h3>
 
                                                     <div className="form-group row">
-                                                        <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value:""}</label>
+                                                        <label
+                                                            className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
                                                         <div className="col-9">
                                                             <div className="kt-radio-inline">
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option1}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value:""}<span/>
+                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option2}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value:""}<span/>
+                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>

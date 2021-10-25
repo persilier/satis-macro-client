@@ -124,6 +124,8 @@ import MyTotalCompleteTreat from "../pages/MyTotalCompleteTreat";
 import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 import UnitImportPage from "../pages/UnitImportPage";
+import EmailConfig from "../pages/EmailConfig";
+import RoleImportPage from "../pages/RoleImportPage";
 
 const Body = () => {
     return (
@@ -415,6 +417,10 @@ const Body = () => {
                 <ClaimImportPage/>
             </Route>
 
+            <Route exact path="/setting/role/import">
+                <RoleImportPage/>
+            </Route>
+
             <Route exact path="/process/incomplete_claims">
                 <IncompleteClaims/>
             </Route>
@@ -649,6 +655,10 @@ const Body = () => {
 
             <Route exact path="/settings/percentage-min-fusion">
                 <PercentageMinFusion/>
+            </Route>
+
+            <Route exact path="/settings/config-mail">
+                <EmailConfig/>
             </Route>
 
             <Route exact path="/process/total-claim-register">
