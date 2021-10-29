@@ -126,6 +126,8 @@ import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 import UnitImportPage from "../pages/UnitImportPage";
 import EmailConfig from "../pages/EmailConfig";
 import RoleImportPage from "../pages/RoleImportPage";
+import TypeCompte from "../pages/TypeCompte";
+import TypeCompteForm from "../components/TypeCompteForm";
 
 const Body = () => {
     return (
@@ -163,6 +165,18 @@ const Body = () => {
 
             <Route exact path="/settings/clients/type/add">
                 <TypeClientForm/>
+            </Route>
+
+            <Route exact path="/settings/accounts/type">
+                <TypeCompte/>
+            </Route>
+
+            <Route exact path="/settings/accounts/type/add">
+                <TypeCompteForm/>
+            </Route>
+
+            <Route exact path="/settings/accounts/type/edit/:edittypeid">
+                <TypeCompteForm/>
             </Route>
 
             <Route exact path="/settings/faqs/add">

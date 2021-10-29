@@ -296,6 +296,8 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "update-min-fusion-percent-parameters")
         || verifyPermission(userPermissions, "update-components-parameters")
         || verifyPermission(userPermissions, "update-relance-parameters")
+        || verifyPermission(userPermissions, "list-account-type")
+        || true
     );
 };
 
@@ -322,8 +324,10 @@ export const seeTreatment = (userPermissions) => {
     return (verifyPermission(userPermissions, "show-claim-awaiting-assignment")
         || verifyPermission(userPermissions, 'list-claim-awaiting-treatment')
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-my-institution')
-        || verifyPermission(userPermissions, 'list-claim-satisfaction-measured')
-        || verifyPermission(userPermissions, 'list-claim-archived')
+        || verifyPermission(userPermissions, 'list-satisfaction-measured-any-claim')
+        || verifyPermission(userPermissions, 'list-satisfaction-measured-my-claim')
+        || verifyPermission(userPermissions, 'list-my-claim-archived')
+        || verifyPermission(userPermissions, 'list-any-claim-archived')
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
         || verifyPermission(userPermissions, 'list-claim-assignment-to-staff')
         || verifyPermission(userPermissions, 'list-claim-satisfaction-measured')
