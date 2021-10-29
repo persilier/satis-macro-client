@@ -740,6 +740,17 @@ const Aside = (props) => {
                                                         : null
                                                 }
                                                 {
+                                                    verifyPermission(props.userPermissions, "list-account-type") ?
+                                                        <NavLink to="/settings/accounts/type" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Type Compte </span>
+                                                            </li>
+                                                        </NavLink>
+                                                        : null
+                                                }
+                                                {
                                                     verifyPermission(props.userPermissions, "list-relationship") ?
                                                         <NavLink exact to="/settings/relationship" className="kt-menu__item "
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
