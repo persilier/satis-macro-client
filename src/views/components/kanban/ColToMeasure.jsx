@@ -25,11 +25,11 @@ const ColToMeasure = (props) => {
     };
 
     const filterByCategory = () => {
-        currentFilterData = currentFilterData.filter(claim => claim.claim_object.claim_category_id.indexOf(props.filterCategory.value) >= 0);
+        currentFilterData = currentFilterData.filter(claim => (claim.claim_object !== null && claim.claim_object.claim_category_id !== null) ? claim.claim_object.claim_category_id.indexOf(props.filterCategory.value) >= 0 : false);
     };
 
     const filterByObject = () => {
-        currentFilterData = currentFilterData.filter(claim => claim.claim_object_id.indexOf(props.filterObject.value) >= 0);
+        currentFilterData = currentFilterData.filter(claim => claim.claim_object_id !== null ? claim.claim_object_id.indexOf(props.filterObject.value) >= 0 : false);
     };
 
     const filterByPeriod = () => {

@@ -39,7 +39,6 @@ const ClaimAssign = (props) => {
         async function fetchData() {
             axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
                 .then(response => {
-                    console.log(response.data, "DATA")
                     setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
