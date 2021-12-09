@@ -81,7 +81,7 @@ const TypeCompteForm = (props) => {
                     })
                     .catch(error => {
                         setStartRequest(false);
-                        setError({...defaultError});
+                        setError({...defaultError, ...error.response.data.error});
                         ToastBottomEnd.fire(toastEditErrorMessageConfig);
                     })
                 ;
@@ -95,7 +95,7 @@ const TypeCompteForm = (props) => {
                     })
                     .catch(error => {
                         setStartRequest(false);
-                        setError({...defaultError});
+                        setError({...defaultError, ...error.response.data.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     })
                 ;
