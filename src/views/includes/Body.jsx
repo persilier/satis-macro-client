@@ -128,6 +128,7 @@ import EmailConfig from "../pages/EmailConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
+import ConfigConnexion from "../pages/ConfigConnexion";
 
 const Body = () => {
     return (
@@ -421,6 +422,10 @@ const Body = () => {
 
             <Route exact path="/settings/channels/:id/edit">
                 <ChannelForm/>
+            </Route>
+
+            <Route exact path="/settings/connexion">
+                <ConfigConnexion/>
             </Route>
 
             <Route exact path="/process/claims/add">
