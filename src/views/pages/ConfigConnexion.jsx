@@ -24,6 +24,9 @@ const ConfigConnexion = (props) => {
         days_before_expiration: 0,
         msg_imminent_password_expiration: "",
         msg_for_password_expiration: "",
+        max_missing_attempts: 0,
+        max_time_between_attempts: 0,
+        waiting_time_after_max_attempts: 0,
     };
     const defaultError = {
         inactivity_time: [],
@@ -32,14 +35,20 @@ const ConfigConnexion = (props) => {
         days_before_expiration: [],
         msg_imminent_password_expiration: [],
         msg_for_password_expiration: [],
+        max_missing_attempts: [],
+        max_time_between_attempts: [],
+        waiting_time_after_max_attempts: [],
 
     };
 
     const [load, setLoad] = useState(false);
+    const [startRequest, setStartRequest] = useState(false);
+
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [isInactivityTime, setIsInactivityTime] = useState(false);
     const [isPasswordExpiration, setIsPasswordExpiration] = useState(false);
+    const [isMissingLoginAttempts, setIsMissingLoginAttempts] = useState(false);
 
     // Begin Inactivity
 
@@ -99,6 +108,35 @@ const ConfigConnexion = (props) => {
         setData(newData);
     }
 
+    // Begin Missing Login Attempts
+
+    const onChangeIsMissingLoginAttempts = (e) => {
+        const newData = {...data};
+        newData.max_missing_attempts = 0;
+        newData.max_time_between_attempts = 0;
+        newData.waiting_time_after_max_attempts = 0;
+        setData(newData);
+        setIsMissingLoginAttempts(e.target.checked);
+    }
+
+    const onChangeMaxMissingAttempts = (e) => {
+        const newData = {...data};
+        newData.max_missing_attempts = e.target.value;
+        setData(newData);
+    }
+
+    const onChangeMaxTimeBetweenAttempts = (e) => {
+        const newData = {...data};
+        newData.max_time_between_attempts = e.target.value;
+        setData(newData);
+    }
+
+    const onChangeWaitingTimeAfterMaxAttempts = (e) => {
+        const newData = {...data};
+        newData.waiting_time_after_max_attempts = e.target.value;
+        setData(newData);
+    }
+
     return (
         load ? (
             <Loader/>
@@ -145,6 +183,7 @@ const ConfigConnexion = (props) => {
                                     </div>
 
                                     <div className="kt-form">
+
                                         <div className="kt-portlet__body">
 
                                             <div className="kt-section">
@@ -152,7 +191,7 @@ const ConfigConnexion = (props) => {
                                                     <h3 className="kt-section__title kt-section__title-lg">Temps d'inactivité</h3>
 
                                                     <div className="form-group row">
-                                                        <label className="col-3 col-form-label">Contrôle du temps d'inactivité <InputRequire/></label>
+                                                        <label className="col-4 col-form-label">Contrôle du temps d'inactivité <InputRequire/></label>
                                                         <div className="col-3">
                                                             <span className="kt-switch">
                                                                 <label>
@@ -202,7 +241,7 @@ const ConfigConnexion = (props) => {
                                                     <h3 className="kt-section__title kt-section__title-lg">Expiration du mot de passe</h3>
 
                                                     <div className="form-group row">
-                                                        <label className="col-3 col-form-label">Expiration du mot de passe <InputRequire/></label>
+                                                        <label className="col-4 col-form-label">Expiration du mot de passe <InputRequire/></label>
                                                         <div className="col-3">
                                                             <span className="kt-switch">
                                                                 <label>
@@ -342,7 +381,128 @@ const ConfigConnexion = (props) => {
                                                 </div>
                                             </div>
 
+                                            <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+
+                                            <div className="kt-section">
+                                                <div className="kt-section__body">
+                                                    <h3 className="kt-section__title kt-section__title-lg">Tentatives de connexion</h3>
+
+                                                    <div className="form-group row">
+                                                        <label className="col-4 col-form-label">Tentatives de connexion manquées <InputRequire/></label>
+                                                        <div className="col-3">
+                                                            <span className="kt-switch">
+                                                                <label>
+                                                                    <input
+                                                                        id="is_missing_login_attempts"
+                                                                        type="checkbox"
+                                                                        value={isMissingLoginAttempts}
+                                                                        onChange={(e => onChangeIsMissingLoginAttempts(e))}
+                                                                    />
+                                                                    <span />
+                                                                </label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={error.max_missing_attempts.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_missing_attempts">Nombre maximal de tentatives manquées tolérable <InputRequire/></label>
+                                                        <div className="col-lg-8 col-xl-6">
+                                                            <input
+                                                                disabled={!isMissingLoginAttempts}
+                                                                required={isMissingLoginAttempts}
+                                                                id="max_missing_attempts"
+                                                                type="number"
+                                                                className={error.max_missing_attempts.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.max_missing_attempts}
+                                                                onChange={(e => onChangeMaxMissingAttempts(e))}
+                                                            />
+                                                            {
+                                                                error.max_missing_attempts.length ? (
+                                                                    error.max_missing_attempts.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={error.max_time_between_attempts.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_time_between_attempts">Durée maximale requise entre deux tentatives  <InputRequire/></label>
+                                                        <div className="col-lg-8 col-xl-6">
+                                                            <input
+                                                                disabled={!isMissingLoginAttempts}
+                                                                required={isMissingLoginAttempts}
+                                                                id="max_time_between_attempts"
+                                                                type="number"
+                                                                className={error.max_time_between_attempts.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.max_time_between_attempts}
+                                                                onChange={(e => onChangeMaxTimeBetweenAttempts(e))}
+                                                            />
+                                                            {
+                                                                error.max_time_between_attempts.length ? (
+                                                                    error.max_time_between_attempts.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={error.waiting_time_after_max_attempts ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="waiting_time_after_max_attempts">Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable <InputRequire/></label>
+                                                        <div className="col-lg-8 col-xl-6">
+                                                            <input
+                                                                disabled={!isMissingLoginAttempts}
+                                                                required={isMissingLoginAttempts}
+                                                                id="waiting_time_after_max_attempts"
+                                                                type="number"
+                                                                className={error.waiting_time_after_max_attempts.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.waiting_time_after_max_attempts}
+                                                                onChange={(e => onChangeWaitingTimeAfterMaxAttempts(e))}
+                                                            />
+                                                            {
+                                                                error.waiting_time_after_max_attempts.length ? (
+                                                                    error.waiting_time_after_max_attempts.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
                                         </div>
+
+                                        <div className="kt-portlet__foot">
+                                            <div className="kt-form__actions">
+                                                {
+                                                    !startRequest ? (
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-primary"
+                                                        >
+                                                            Enregistrer
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                            type="button" disabled>
+                                                            Chargement...
+                                                        </button>
+                                                    )
+                                                }
+
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                 </div>
