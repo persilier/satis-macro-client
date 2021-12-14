@@ -128,6 +128,7 @@ import EmailConfig from "../pages/EmailConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
+import Logs from "../pages/Logs";
 
 const Body = () => {
     return (
@@ -137,6 +138,10 @@ const Body = () => {
             </Route>*/}
             <Route exact path="/settings/config">
                 <ParametersComponent/>
+            </Route>
+
+            <Route exact path="/settings/logs">
+                <Logs/>
             </Route>
 
             <Route exact path="/historic/claims/add">

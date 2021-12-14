@@ -177,8 +177,7 @@ const ParametersComponent = (props) => {
                     </div>
 
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                        <InfirmationTable
-                            information={"Configuration des formulaires"}/>
+                        <InfirmationTable information={"Configuration des formulaires"}/>
 
                         <div className="kt-portlet">
 
