@@ -6,6 +6,11 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import Loader from "../components/Loader";
 import InputRequire from "../components/InputRequire";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
+import axios from "axios";
+import appConfig from "../../config/appConfig";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
 
 
 
@@ -49,6 +54,60 @@ const ConfigConnexion = (props) => {
     const [isInactivityTime, setIsInactivityTime] = useState(false);
     const [isPasswordExpiration, setIsPasswordExpiration] = useState(false);
     const [isMissingLoginAttempts, setIsMissingLoginAttempts] = useState(false);
+
+    // Begin useEffect
+
+    useEffect(() => {
+        async function fetchData () {
+            setLoad(true);
+            await axios.get(`${appConfig.apiDomaine}/configurations/reject-unit-transfer-limitation`)
+                .then(response => {
+                    setData({
+                        inactivity_time: 0,
+                        password_expiration_time: 0,
+                        history_max_passwords: 0,
+                        days_before_expiration: 0,
+                        msg_imminent_password_expiration: "",
+                        msg_for_password_expiration: "",
+                        max_missing_attempts: 0,
+                        max_time_between_attempts: 0,
+                        waiting_time_after_max_attempts: 0,
+                    })
+                    console.log(response);
+                    setLoad(false);
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                    setLoad(false);
+                })
+        }
+
+        if (verifyTokenExpire())
+            fetchData();
+    }, [])
+
+    // Begin On Submit
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        const sendData = {...data};
+        setStartRequest(true);
+
+        if (verifyTokenExpire()) {
+            await axios.put(`${appConfig.apiDomaine}/configurations/`, sendData)
+                .then(response => {
+                    setStartRequest(false);
+                    setError(defaultError);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                })
+                .catch(errorRequest => {
+                    setStartRequest(false);
+                    setError({...defaultError, ...errorRequest.response.data.error});
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                })
+            ;
+        }
+
+    }
 
     // Begin Inactivity
 
