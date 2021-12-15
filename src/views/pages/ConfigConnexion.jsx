@@ -23,26 +23,32 @@ const ConfigConnexion = (props) => {
         window.location.href = ERROR_401;
 
     const defaultData = {
-        inactivity_time: 0,
-        password_expiration_time: 0,
-        history_max_passwords: 0,
-        days_before_expiration: 0,
-        msg_imminent_password_expiration: "",
-        msg_for_password_expiration: "",
-        max_missing_attempts: 0,
-        max_time_between_attempts: 0,
-        waiting_time_after_max_attempts: 0,
+        id: 0,
+        inactivity_control: false,
+        inactivity_time_limit: 0,
+        password_expiration_control: false,
+        password_lifetime: 0,
+        max_password_histories: 0,
+        password_notif_delay: 0,
+        password_notif_msg: "",
+        password_expiration_msg: "",
+        block_attempt_control: false,
+        max_attempt: 0,
+        attempt_delay: 0,
+        attempt_waiting_time: 0,
     };
     const defaultError = {
-        inactivity_time: [],
-        password_expiration_time: [],
-        history_max_passwords: [],
-        days_before_expiration: [],
-        msg_imminent_password_expiration: [],
-        msg_for_password_expiration: [],
-        max_missing_attempts: [],
-        max_time_between_attempts: [],
-        waiting_time_after_max_attempts: [],
+        id: [],
+        inactivity_control: [],
+        inactivity_time_limit: [],
+        password_lifetime: [],
+        max_password_histories: [],
+        password_notif_delay: [],
+        password_notif_msg: [],
+        password_expiration_msg: [],
+        max_attempt: [],
+        attempt_delay: [],
+        attempt_waiting_time: [],
 
     };
 
@@ -51,29 +57,30 @@ const ConfigConnexion = (props) => {
 
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
-    const [isInactivityTime, setIsInactivityTime] = useState(false);
-    const [isPasswordExpiration, setIsPasswordExpiration] = useState(false);
-    const [isMissingLoginAttempts, setIsMissingLoginAttempts] = useState(false);
 
     // Begin useEffect
 
     useEffect(() => {
         async function fetchData () {
             setLoad(true);
-            await axios.get(`${appConfig.apiDomaine}/configurations/reject-unit-transfer-limitation`)
-                .then(response => {
+            await axios.get(`${appConfig.apiDomaine}/auth-config`)
+                .then(({data}) => {
                     setData({
-                        inactivity_time: 0,
-                        password_expiration_time: 0,
-                        history_max_passwords: 0,
-                        days_before_expiration: 0,
-                        msg_imminent_password_expiration: "",
-                        msg_for_password_expiration: "",
-                        max_missing_attempts: 0,
-                        max_time_between_attempts: 0,
-                        waiting_time_after_max_attempts: 0,
+                        id: data.id ? data.id: 0,
+                        inactivity_control: JSON.parse(data.data.fr).inactivity_control,
+                        inactivity_time_limit: JSON.parse(data.data.fr).inactivity_time_limit,
+                        password_expiration_control: JSON.parse(data.data.fr).password_expiration_control,
+                        password_lifetime: JSON.parse(data.data.fr).password_lifetime,
+                        max_password_histories: JSON.parse(data.data.fr).max_password_histories,
+                        password_notif_delay: JSON.parse(data.data.fr).password_notif_delay,
+                        password_notif_msg: JSON.parse(data.data.fr).password_notif_msg,
+                        password_expiration_msg: JSON.parse(data.data.fr).password_expiration_msg,
+                        block_attempt_control: JSON.parse(data.data.fr).block_attempt_control,
+                        max_attempt: JSON.parse(data.data.fr).max_attempt,
+                        attempt_delay: JSON.parse(data.data.fr).attempt_delay,
+                        attempt_waiting_time: JSON.parse(data.data.fr).attempt_waiting_time,
                     })
-                    console.log(response);
+                    console.log(JSON.parse(data.data.fr));
                     setLoad(false);
                 })
                 .catch(error => {
@@ -90,10 +97,28 @@ const ConfigConnexion = (props) => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const sendData = {...data};
+
+        if (!sendData.inactivity_control)
+            delete sendData.inactivity_time_limit;
+
+        if (!sendData.password_expiration_control) {
+            delete sendData.password_lifetime;
+            delete sendData.password_notif_delay;
+            delete sendData.max_password_histories;
+            delete sendData.password_expiration_msg;
+            delete sendData.password_notif_msg;
+        }
+
+        if (!sendData.block_attempt_control) {
+            delete sendData.attempt_delay;
+            delete sendData.attempt_waiting_time;
+            delete sendData.max_attempt;
+        }
+
         setStartRequest(true);
 
         if (verifyTokenExpire()) {
-            await axios.put(`${appConfig.apiDomaine}/configurations/`, sendData)
+            await axios.put(`${appConfig.apiDomaine}/auth-config`, sendData)
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
@@ -103,96 +128,90 @@ const ConfigConnexion = (props) => {
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
                     ToastBottomEnd.fire(toastEditErrorMessageConfig);
-                })
-            ;
+                });
         }
 
     }
 
     // Begin Inactivity
 
-    const onChangeIsInactivityTime = (e) => {
+    const onChangeInactivityControl = (e) => {
         const newData = {...data};
-        newData.inactivity_time = 0;
+        newData.inactivity_control = e.target.checked;
+
         setData(newData);
-        setIsInactivityTime(e.target.checked);
     }
 
     const onChangeInactivityTime = (e) => {
         const newData = {...data};
-        newData.inactivity_time = e.target.value;
+        newData.inactivity_time_limit = e.target.value;
         setData(newData);
     }
 
     // Begin Password Expiration
 
-    const onChangeIsPasswordExpiration = (e) => {
+    const onChangePasswordExpirationControl = (e) => {
         const newData = {...data};
-        newData.password_expiration_time = 0;
-        newData.history_max_passwords = 0;
-        newData.days_before_expiration = 0;
-        newData.msg_imminent_password_expiration = "";
-        newData.msg_for_password_expiration = "";
+        newData.password_expiration_control = e.target.checked;
+
         setData(newData);
-        setIsPasswordExpiration(e.target.checked);
     }
 
     const onChangePasswordExpirationTime = (e) => {
         const newData = {...data};
-        newData.password_expiration_time = e.target.value;
+        newData.password_lifetime = e.target.value;
         setData(newData);
     }
 
     const onChangeHistoryMaxPasswords = (e) => {
         const newData = {...data};
-        newData.history_max_passwords = e.target.value;
+        newData.max_password_histories = e.target.value;
         setData(newData);
     }
 
     const onChangeDaysBeforeExpiration = (e) => {
         const newData = {...data};
-        newData.days_before_expiration = e.target.value;
+        newData.password_notif_delay = e.target.value;
         setData(newData);
     }
 
     const onChangeMessageImminentPasswordExpiration = (e) => {
         const newData = {...data};
-        newData.msg_imminent_password_expiration = e.target.value;
+        newData.password_notif_msg = e.target.value;
         setData(newData);
     }
 
     const onChangeMessageForPasswordExpiration = (e) => {
         const newData = {...data};
-        newData.msg_for_password_expiration = e.target.value;
+        newData.password_expiration_msg = e.target.value;
         setData(newData);
     }
 
     // Begin Missing Login Attempts
 
-    const onChangeIsMissingLoginAttempts = (e) => {
+    const onChangeBlockAttempt = (e) => {
         const newData = {...data};
-        newData.max_missing_attempts = 0;
-        newData.max_time_between_attempts = 0;
-        newData.waiting_time_after_max_attempts = 0;
+
+        newData.block_attempt_control = e.target.checked;
+
         setData(newData);
-        setIsMissingLoginAttempts(e.target.checked);
     }
 
     const onChangeMaxMissingAttempts = (e) => {
         const newData = {...data};
-        newData.max_missing_attempts = e.target.value;
+        newData.max_attempt = e.target.value;
         setData(newData);
     }
 
     const onChangeMaxTimeBetweenAttempts = (e) => {
         const newData = {...data};
-        newData.max_time_between_attempts = e.target.value;
+        newData.attempt_delay = e.target.value;
         setData(newData);
     }
 
     const onChangeWaitingTimeAfterMaxAttempts = (e) => {
         const newData = {...data};
-        newData.waiting_time_after_max_attempts = e.target.value;
+        newData.attempt_waiting_time = e.target.value;
         setData(newData);
     }
 
@@ -255,10 +274,10 @@ const ConfigConnexion = (props) => {
                                                             <span className="kt-switch">
                                                                 <label>
                                                                     <input
-                                                                        id="is_inactivity_time"
+                                                                        id="inactivity_control"
                                                                         type="checkbox"
-                                                                        value={isInactivityTime}
-                                                                        onChange={(e => onChangeIsInactivityTime(e))}
+                                                                        checked={data.inactivity_control}
+                                                                        onChange={(e => onChangeInactivityControl(e))}
                                                                     />
                                                                     <span />
                                                                 </label>
@@ -266,21 +285,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.inactivity_time.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactivity_time">Durée d'inactivité maximale tolérée <InputRequire/></label>
+                                                    <div className={error.inactivity_time_limit.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactivity_time_limit">Durée d'inactivité maximale tolérée en jours <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isInactivityTime}
-                                                                required={isInactivityTime}
-                                                                id="inactivity_time"
+                                                                disabled={!data.inactivity_control}
+                                                                required={data.inactivity_control}
+                                                                id="inactivity_time_limit"
                                                                 type="number"
-                                                                className={error.inactivity_time.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.inactivity_time}
+                                                                className={error.inactivity_time_limit.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.inactivity_time_limit}
                                                                 onChange={(e => onChangeInactivityTime(e))}
                                                             />
                                                             {
-                                                                error.inactivity_time.length ? (
-                                                                    error.inactivity_time.map((error, index) => (
+                                                                error.inactivity_time_limit.length ? (
+                                                                    error.inactivity_time_limit.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -307,8 +326,8 @@ const ConfigConnexion = (props) => {
                                                                     <input
                                                                         id="is_password_expiration"
                                                                         type="checkbox"
-                                                                        value={isPasswordExpiration}
-                                                                        onChange={(e => onChangeIsPasswordExpiration(e))}
+                                                                        checked={data.password_expiration_control}
+                                                                        onChange={(e => onChangePasswordExpirationControl(e))}
                                                                     />
                                                                     <span />
                                                                 </label>
@@ -316,21 +335,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.password_expiration_time.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_expiration_time">Durée de vie d'un mot de passe <InputRequire/></label>
+                                                    <div className={error.password_lifetime.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_lifetime">Durée de vie d'un mot de passe en jours <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isPasswordExpiration}
-                                                                required={isPasswordExpiration}
-                                                                id="password_expiration_time"
+                                                                disabled={!data.password_expiration_control}
+                                                                required={data.password_expiration_control}
+                                                                id="password_lifetime"
                                                                 type="number"
-                                                                className={error.password_expiration_time.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.password_expiration_time}
+                                                                className={error.password_lifetime.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.password_lifetime}
                                                                 onChange={(e => onChangePasswordExpirationTime(e))}
                                                             />
                                                             {
-                                                                error.password_expiration_time.length ? (
-                                                                    error.password_expiration_time.map((error, index) => (
+                                                                error.password_lifetime.length ? (
+                                                                    error.password_lifetime.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -340,21 +359,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.history_max_passwords.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="history_max_passwords">Nombre maximal de mot de passe dans l'historique des mot de passe  <InputRequire/></label>
+                                                    <div className={error.max_password_histories.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_password_histories">Nombre maximal de mot de passe dans l'historique des mot de passe  <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isPasswordExpiration}
-                                                                required={isPasswordExpiration}
-                                                                id="history_max_passwords"
+                                                                disabled={!data.password_expiration_control}
+                                                                required={data.password_expiration_control}
+                                                                id="max_password_histories"
                                                                 type="number"
-                                                                className={error.history_max_passwords.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.history_max_passwords}
+                                                                className={error.max_password_histories.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.max_password_histories}
                                                                 onChange={(e => onChangeHistoryMaxPasswords(e))}
                                                             />
                                                             {
-                                                                error.history_max_passwords.length ? (
-                                                                    error.history_max_passwords.map((error, index) => (
+                                                                error.max_password_histories.length ? (
+                                                                    error.max_password_histories.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -364,21 +383,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.days_before_expiration.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="days_before_expiration">Nombre de jours restants avant expiration du mot de passe à partir duquel on peut notifier l'utilisateur <InputRequire/></label>
+                                                    <div className={error.password_notif_delay.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_notif_delay">Nombre de jours restants avant expiration du mot de passe à partir duquel on peut notifier l'utilisateur <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isPasswordExpiration}
-                                                                required={isPasswordExpiration}
-                                                                id="days_before_expiration"
+                                                                disabled={!data.password_expiration_control}
+                                                                required={data.password_expiration_control}
+                                                                id="password_notif_delay"
                                                                 type="number"
-                                                                className={error.days_before_expiration.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.days_before_expiration}
+                                                                className={error.password_notif_delay.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.password_notif_delay}
                                                                 onChange={(e => onChangeDaysBeforeExpiration(e))}
                                                             />
                                                             {
-                                                                error.days_before_expiration.length ? (
-                                                                    error.days_before_expiration.map((error, index) => (
+                                                                error.password_notif_delay.length ? (
+                                                                    error.password_notif_delay.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -388,21 +407,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.msg_imminent_password_expiration.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="imminent_password_expiration">Message texte à envoyer à l'utilisateur pour le notifier que l'expiration de son mot de passe est imminent <InputRequire/></label>
+                                                    <div className={error.password_notif_msg.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="imminent_password_expiration">Message à envoyer à l'utilisateur pour le notifier que l'expiration de son mot de passe est imminent <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <textarea
-                                                                disabled={!isPasswordExpiration}
-                                                                required={isPasswordExpiration}
+                                                                disabled={!data.password_expiration_control}
+                                                                required={data.password_expiration_control}
                                                                 rows="7"
                                                                 id="imminent_password_expiration"
-                                                                className={error.msg_imminent_password_expiration.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.msg_imminent_password_expiration}
+                                                                className={error.password_notif_msg.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.password_notif_msg}
                                                                 onChange={(e) => onChangeMessageImminentPasswordExpiration(e)}
                                                             />
                                                             {
-                                                                error.msg_imminent_password_expiration.length ? (
-                                                                    error.msg_imminent_password_expiration.map((error, index) => (
+                                                                error.password_notif_msg.length ? (
+                                                                    error.password_notif_msg.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -412,21 +431,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.msg_for_password_expiration.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="for_password_expiration">Message texte à envoyer à l'utilisateur le jour de l'expiration de son mot de passe <InputRequire/></label>
+                                                    <div className={error.password_expiration_msg.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="for_password_expiration">Message à envoyer à l'utilisateur le jour de l'expiration de son mot de passe <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <textarea
-                                                                disabled={!isPasswordExpiration}
-                                                                required={isPasswordExpiration}
+                                                                disabled={!data.password_expiration_control}
+                                                                required={data.password_expiration_control}
                                                                 rows="7"
                                                                 id="for_password_expiration"
-                                                                className={error.msg_for_password_expiration.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.msg_for_password_expiration}
+                                                                className={error.password_expiration_msg.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.password_expiration_msg}
                                                                 onChange={(e) => onChangeMessageForPasswordExpiration(e)}
                                                             />
                                                             {
-                                                                error.msg_for_password_expiration.length ? (
-                                                                    error.msg_for_password_expiration.map((error, index) => (
+                                                                error.password_expiration_msg.length ? (
+                                                                    error.password_expiration_msg.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -454,8 +473,8 @@ const ConfigConnexion = (props) => {
                                                                     <input
                                                                         id="is_missing_login_attempts"
                                                                         type="checkbox"
-                                                                        value={isMissingLoginAttempts}
-                                                                        onChange={(e => onChangeIsMissingLoginAttempts(e))}
+                                                                        checked={data.block_attempt_control}
+                                                                        onChange={(e => onChangeBlockAttempt(e))}
                                                                     />
                                                                     <span />
                                                                 </label>
@@ -463,21 +482,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.max_missing_attempts.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_missing_attempts">Nombre maximal de tentatives manquées tolérable <InputRequire/></label>
+                                                    <div className={error.max_attempt.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_attempt">Nombre maximal de tentatives manquées tolérable <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isMissingLoginAttempts}
-                                                                required={isMissingLoginAttempts}
-                                                                id="max_missing_attempts"
+                                                                disabled={!data.block_attempt_control}
+                                                                required={data.block_attempt_control}
+                                                                id="max_attempt"
                                                                 type="number"
-                                                                className={error.max_missing_attempts.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.max_missing_attempts}
+                                                                className={error.max_attempt.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.max_attempt}
                                                                 onChange={(e => onChangeMaxMissingAttempts(e))}
                                                             />
                                                             {
-                                                                error.max_missing_attempts.length ? (
-                                                                    error.max_missing_attempts.map((error, index) => (
+                                                                error.max_attempt.length ? (
+                                                                    error.max_attempt.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -487,21 +506,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.max_time_between_attempts.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_time_between_attempts">Durée maximale requise entre deux tentatives  <InputRequire/></label>
+                                                    <div className={error.attempt_delay.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_delay">Durée maximale requise entre deux tentatives en minutes <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isMissingLoginAttempts}
-                                                                required={isMissingLoginAttempts}
-                                                                id="max_time_between_attempts"
+                                                                disabled={!data.block_attempt_control}
+                                                                required={data.block_attempt_control}
+                                                                id="attempt_delay"
                                                                 type="number"
-                                                                className={error.max_time_between_attempts.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.max_time_between_attempts}
+                                                                className={error.attempt_delay.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.attempt_delay}
                                                                 onChange={(e => onChangeMaxTimeBetweenAttempts(e))}
                                                             />
                                                             {
-                                                                error.max_time_between_attempts.length ? (
-                                                                    error.max_time_between_attempts.map((error, index) => (
+                                                                error.attempt_delay.length ? (
+                                                                    error.attempt_delay.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -511,21 +530,21 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.waiting_time_after_max_attempts ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="waiting_time_after_max_attempts">Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable <InputRequire/></label>
+                                                    <div className={error.attempt_waiting_time ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_waiting_time">Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable en minutes <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
-                                                                disabled={!isMissingLoginAttempts}
-                                                                required={isMissingLoginAttempts}
-                                                                id="waiting_time_after_max_attempts"
+                                                                disabled={!data.block_attempt_control}
+                                                                required={data.block_attempt_control}
+                                                                id="attempt_waiting_time"
                                                                 type="number"
-                                                                className={error.waiting_time_after_max_attempts.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.waiting_time_after_max_attempts}
+                                                                className={error.attempt_waiting_time.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.attempt_waiting_time}
                                                                 onChange={(e => onChangeWaitingTimeAfterMaxAttempts(e))}
                                                             />
                                                             {
-                                                                error.waiting_time_after_max_attempts.length ? (
-                                                                    error.waiting_time_after_max_attempts.map((error, index) => (
+                                                                error.attempt_waiting_time.length ? (
+                                                                    error.attempt_waiting_time.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -547,6 +566,7 @@ const ConfigConnexion = (props) => {
                                                         <button
                                                             type="submit"
                                                             className="btn btn-primary"
+                                                            onClick={e => {onSubmit(e)}}
                                                         >
                                                             Enregistrer
                                                         </button>
