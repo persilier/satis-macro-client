@@ -136,24 +136,18 @@ const ClaimButtonDetail = ({claim, plan}) => {
                                 </div>
                                 <div className="kt-wizard-v2__review-content">
                                     <strong>Nom:</strong>
-
-                                    <span
-                                        className="mx-2">{`${(claim.completed_by && claim.completed_by.identite) ? claim.completed_by.identite.firstname + " " + claim.completed_by.identite.lastname : "-"} `}</span>
-
+                                    <span className="mx-2">{`${(claim.completed_by && claim.completed_by.identite) ? claim.completed_by.identite.firstname + " " + claim.completed_by.identite.lastname : "-"} `}</span>
                                     <br/>
                                     <strong>Point de service:</strong>
 
-                                    <span
-                                        className="mx-2">{(claim.completed_by && claim.completed_by.unit) ? claim.completed_by.unit.name["fr"] : "-"}</span>
+                                    <span className="mx-2">{(claim.completed_by && claim.completed_by.unit) ? claim.completed_by.unit.name["fr"] : "-"}</span>
                                     <br/>
                                     <strong>Institution:</strong>
 
-                                    <span
-                                        className="mx-2">{(claim.completed_by && claim.completed_by.institution) ? claim.completed_by.institution.name : "-"}</span>
+                                    <span className="mx-2">{(claim.completed_by && claim.completed_by.institution) ? claim.completed_by.institution.name : "-"}</span>
                                     <br/>
                                     <strong>Date de complétion:</strong>
-                                    <span
-                                        className="mx-2">{claim.completed_at ? formatDateToTimeStampte(claim.completed_at) : "-"}</span><br/>
+                                    <span className="mx-2">{claim.completed_at ? formatDateToTimeStampte(claim.completed_at) : "-"}</span><br/>
                                 </div>
                             </div>
                         ) : null}

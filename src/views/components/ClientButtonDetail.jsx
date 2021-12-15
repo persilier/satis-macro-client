@@ -2,6 +2,8 @@ import React from "react";
 import Loader from "./Loader";
 
 const ClientButtonDetail = ({claim}) => {
+    console.log("claim:", claim);
+
     return (
         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content"
              data-ktwizard-state="current">
@@ -44,9 +46,9 @@ const ClientButtonDetail = ({claim}) => {
                                                 <span className="fa fa-envelope" style={{fontSize: "1.5rem"}}/>
                                                 <span className="kt-widget__data">
                                                     {
-                                                        claim.claimer.email.map((mail, index) => (
+                                                        (claim.claimer && claim.claimer.email) ? claim.claimer.email.map((mail, index) => (
                                                             index === claim.claimer.email.length - 1 ? mail : mail + "/ "
-                                                        ))
+                                                        )) : null
                                                     }
                                                 </span>
                                             </div>
