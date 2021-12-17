@@ -1,92 +1,59 @@
 import React, {useState, useEffect, useMemo, useRef} from "react";
 import {connect} from "react-redux";
+import Select from "react-select";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
-import {forceRound} from "../../helpers/function";
+import {forceRound, formatDateToTimeStampte} from "../../helpers/function";
+import axios from "axios";
+import appConfig from "../../config/appConfig";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const Logs = (props) => {
     document.title = "Satis Paramètre - Logs";
     const [logs, setLogs] = useState([]);
-    const actor = useRef(null);
-    const action = useRef(null);
+    const [actor, setActor] = useState(null);
+    const [actors, setActors] = useState([]);
+    const [action, setAction] = useState(null);
+    const [actions, setActions] = useState([]);
     const startDate = useRef(null);
     const endDate = useRef(null);
-    const onePageNumber = 2;
+    const onePageNumber = 10;
     const [endIndex, setEndIndex] = useState(onePageNumber);
     const [loadMore, setLoadMore] = useState(false);
     const [loadFilter, setLoadFilter] = useState(false);
+    const [nextUrl, setNextUrl] = useState(null);
 
     useEffect(() => {
-        setLogs([
-            {
-                user: 'Lewhe Onesine',
-                action: 'Connexion',
-                date: '12/05/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Sogbossi Marielle',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Lewhe Adrielle',
-                action: 'Deconnexion',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Lewhe Carine',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Lewhe Eunice',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Hounssou Romaric',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Lewhe Carine',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Hachemin Loïc',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Aghuia Goodwin',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Hounpkonou Loïc',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-            {
-                user: 'Houndolo Elodie',
-                action: 'Traitement de réclamation',
-                date: '12/10/2021',
-                ip: '120.36.52.125'
-            },
-        ]);
+        async function fetchData() {
+            axios.get(`${appConfig.apiDomaine}/activity-log/create`)
+                .then(response => {
+                    const logData = response.data.logs
+                    setNextUrl(logData.next_page_url);
+                    setLogs(logData.data);
+                    setActors(response.data.filters.causers.map(item => {
+                        return {
+                            value: item.id,
+                            label: item.identite.lastname+" "+item.identite.firstname
+                        }
+                    }));
+                    const logActions = response.data.filters.log_actions;
+                    setActions(Object.keys(logActions).map(item => {
+                        return {
+                            value: item,
+                            label: logActions[item]
+                        }
+                    }));
+                })
+                .catch(error => {
+                    console.log("Something is wrong");
+                })
+            ;
+        }
+
+        if (verifyTokenExpire())
+            fetchData();
     }, []);
 
     if (!verifyPermission(props.userPermissions, "update-components-parameters"))
@@ -100,45 +67,58 @@ const Logs = (props) => {
         if ((endIndex / onePageNumber) < forceRound(logs.length / onePageNumber) - 1) {
             setEndIndex(i => i+onePageNumber);
         } else {
-            setLoadMore(true);
-            setTimeout(() => {
-                setLogs(l => {
-                    return [
-                        ...l,
-                        {
-                            user: 'Zannou Jean',
-                            action: 'Traitement de réclamation',
-                            date: '12/10/2021',
-                            ip: '120.36.52.125'
-                        },
-                        {
-                            user: 'Dossou Christian ',
-                            action: 'Traitement de réclamation',
-                            date: '12/10/2021',
-                            ip: '120.36.52.125'
-                        },
-                    ]
-                });
-                setEndIndex(i => i+onePageNumber);
-
-                setLoadMore(false);
-            }, 5000);
+            if (verifyTokenExpire()) {
+                if (nextUrl !== null) {
+                    setLoadMore(true);
+                    axios.get(`${nextUrl}`)
+                        .then(response => {
+                            setNextUrl("");
+                            const newLogs = [];
+                            setLogs(l => {
+                                return [
+                                    ...l,
+                                    ...newLogs
+                                ]
+                            });
+                            setEndIndex(i => i+onePageNumber);
+                            setLoadMore(false);
+                        })
+                        .catch(error => {
+                            console.log("Something is wrong");
+                        })
+                    ;
+                }
+            }
         }
     };
 
     const filterLogs = e => {
         e.preventDefault();
         setLoadFilter(true);
-        setTimeout(() => {
-            setLoadFilter(false);
-            setEndIndex(onePageNumber);
-            console.log("filterData:", {
-                actor: actor.current.value,
-                action: action.current.value,
-                startDate: startDate.current.value,
-                endDate: endDate.current.value
-            });
-        }, 5000);
+        if (verifyTokenExpire()) {
+            setTimeout(() => {
+                setLoadFilter(false);
+                setEndIndex(onePageNumber);
+                const sendData = {
+                    actor: actor ? actor.value : '',
+                    action: action ? action.value : '',
+                    startDate: startDate.current.value,
+                    endDate: endDate.current.value
+                };
+            }, 5000);
+        }
+    };
+
+    const showAction = key => {
+        let result = "";
+        actions.forEach(item => {
+            if (item.value === key) {
+                result = item.value
+            }
+            console.log("key:", key);
+            console.log("item:", item);
+        });
+        return result
     };
 
     return (
@@ -181,21 +161,23 @@ const Logs = (props) => {
                                             <div className="form-group row">
                                                 <div className="col">
                                                     <label htmlFor="actor">Acteur</label>
-                                                    <input
-                                                        ref={actor}
-                                                        type="text"
-                                                        placeholder="Veillez entrer l'acteur"
-                                                        className="form-control "
+                                                    <Select
+                                                        options={actors}
+                                                        value={actor}
+                                                        onChange={value => setActor(value)}
+                                                        placeholder={"Veillez selectioner l'acteur"}
+                                                        isClearable
                                                     />
                                                 </div>
 
                                                 <div className="col">
                                                     <label htmlFor="actor">Action</label>
-                                                    <input
-                                                        ref={action}
-                                                        type="text"
-                                                        placeholder="Veillez entrer l'action"
-                                                        className="form-control "
+                                                    <Select
+                                                        options={actions}
+                                                        value={action}
+                                                        onChange={value => setAction(value)}
+                                                        placeholder={"Veillez selectionner l'action"}
+                                                        isClearable
                                                     />
                                                 </div>
                                             </div>
@@ -238,19 +220,26 @@ const Logs = (props) => {
                                 <div className="position-relative">
                                     {showElements.map((item, index) => (
                                         <div key={index}>
+                                            {console.log("item:", item)}
                                             <div className="tab-content">
                                                 <div className="d-flex justify-content-between">
-                                                    <h5>{item.user}</h5>
-                                                    <span>{item.date}</span>
+                                                    <h5>
+                                                        {
+                                                            item.causer ? (
+                                                                item.causer.identite ? item.causer.identite.lastname+" "+item.causer.identite.firstname : ''
+                                                            ) : ''
+                                                        }
+                                                    </h5>
+                                                    <span>{formatDateToTimeStampte(item.created_at)}</span>
                                                 </div>
                                                 <div style={{marginTop: "1%"}}>
                                                     <strong>Action: </strong>
-                                                    <span className="mx-2">{item.action}</span>
+                                                    <span className="mx-2">{showAction(item.log_action)}</span>
                                                 </div>
 
                                                 <div style={{marginTop: "1%"}}>
                                                     <strong>IP: </strong>
-                                                    <span className="mx-2">{item.ip}</span>
+                                                    <span className="mx-2">{item.ip_address}</span>
                                                 </div>
                                             </div>
                                             <div className="kt-separator kt-separator--space-md kt-separator--border-dashed"/>
