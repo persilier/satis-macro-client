@@ -125,6 +125,13 @@ const ReinitialisationForm = (props) => {
                                 value={getDataReset.email}
                                 onChange={e => onChangeEmail(e)}
                             />
+                            {
+                                error.email.length ? (
+                                    <div className="invalid-feedback">
+                                        {error.email}
+                                    </div>
+                                ) : null
+                            }
                         </div>
                         <div
                             className={error.current_password.length ? "form-group row input_container validated" : "form-group row input_container"}>
