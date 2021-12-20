@@ -98,7 +98,6 @@ const LoginPage = (props) => {
         };
         await axios.post(appConfig.apiDomaine + `/login`, formData)
             .then(response => {
-
                 const token = response.data.access_token;
                 const refresh_token = response.data.refresh_token;
                 const expire_in = response.data.expires_in;
