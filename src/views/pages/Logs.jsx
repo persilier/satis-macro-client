@@ -144,7 +144,7 @@ const Logs = (props) => {
         let result = "";
         actions.forEach(item => {
             if (item.value === key) {
-                result = item.value
+                result = item.label
             }
         });
         return result
