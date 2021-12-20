@@ -98,7 +98,7 @@ const LoginPage = (props) => {
             username: data.username,
             password: data.password
         };
-        await axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
+        await axios.post(appConfig.apiDomaine + `/login`, formData)
             .then(response => {
 
                 const token = response.data.access_token;
@@ -144,11 +144,7 @@ const LoginPage = (props) => {
                        })
                 }
                 else {
-                    // ToastBottomEnd.fire(toastConnectErrorMessageConfig);
-                    PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
-                        .then(response =>{
-                            window.location.pathname(`/forgot-password/${tokenData}`)
-                        })
+                    ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
 
             })
@@ -207,7 +203,6 @@ const LoginPage = (props) => {
                                                 <Switch>
                                                     <Route exact path="/">
                                                         <ConnexionForm
-                                                            tokenData={tokenData}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -220,7 +215,6 @@ const LoginPage = (props) => {
                                                     </Route>
                                                     <Route exact path="/login">
                                                         <ConnexionForm
-                                                            tokenData={tokenData}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -235,7 +229,7 @@ const LoginPage = (props) => {
                                                         <ForgotForm/>
                                                     </Route>
 
-                                                    <Route exact path={`/forgot-password/${tokenData}`}>
+                                                    <Route exact path={`/reset-password`}>
                                                         <ReinitialisationForm
                                                             token={tokenData}
                                                         />

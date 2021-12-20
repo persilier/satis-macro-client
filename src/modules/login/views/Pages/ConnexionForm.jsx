@@ -2,7 +2,7 @@ import React from 'react';
 import appConfig from "../../../../config/appConfig";
 import {Link, Route} from "react-router-dom";
 
-const ConnexionForm =({tokenData,componentData,data,error,startRequest,onChangeUserName,onViewPassword,onChangePassword,onClickConnectButton})=>{
+const ConnexionForm =({componentData,data,error,startRequest,onChangeUserName,onViewPassword,onChangePassword,onClickConnectButton})=>{
         return (
             <div className="kt-login__form" style={{paddingTop: '15px'}}>
 
@@ -75,9 +75,6 @@ const ConnexionForm =({tokenData,componentData,data,error,startRequest,onChangeU
 
                         <Link to="/login/forgot" id="forgot_btn">
                             Mot de passe oublié?
-                        </Link>
-                        <Link to={`/forgot-password/${tokenData}`} id="forgot_btn">
-                            Mot de passe expiré?
                         </Link>
                     </div>
                     <div className="kt-login__actions">
