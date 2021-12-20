@@ -19,7 +19,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const ConfigConnexion = (props) => {
     document.title = "Satis client - Paramètre Connexion";
 
-    if (!verifyPermission(props.userPermissions, "update-components-parameters"))
+    if (!(verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config")))
         window.location.href = ERROR_401;
 
     const defaultData = {
@@ -219,7 +219,7 @@ const ConfigConnexion = (props) => {
         load ? (
             <Loader/>
         ) : (
-            verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters') ? (
+            verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">

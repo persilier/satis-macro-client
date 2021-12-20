@@ -96,7 +96,7 @@ const LoginPage = (props) => {
             username: data.username,
             password: data.password
         };
-        await axios.post(appConfig.apiDomaine + `/oauth/token`, formData)
+        await axios.post(appConfig.apiDomaine + `/login`, formData)
             .then(response => {
 
                 const token = response.data.access_token;

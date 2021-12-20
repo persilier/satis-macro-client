@@ -490,7 +490,7 @@ const Aside = (props) => {
                                                     ) : null
                                                 }
                                                 {
-                                                    verifyPermission(props.userPermissions, "update-min-fusion-percent-parameters") ? (
+                                                    verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
                                                         <NavLink exact to="/settings/connexion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
