@@ -4,14 +4,12 @@ import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import {connect} from 'react-redux';
 import {ToastBottomEnd} from "../../../../views/components/Toast";
-import {
-    BrowserRouter, Switch, Route, Link
-} from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 
 import {
-    toastErrorMessageWithParameterConfig,
     toastConnectErrorMessageConfig,
     toastConnectSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig,
 } from "../../../../config/toastConfig";
 // import {listConnectData} from "../../../../config/appConfig";
 import Loader from "../../../../views/components/Loader";
@@ -28,7 +26,6 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 const LoginPage = (props) => {
     const tokenData = getToken(window.location.href);
-
     const defaultError = {
         username: "",
         password: ""
@@ -45,11 +42,11 @@ const LoginPage = (props) => {
 
     useEffect(() => {
         let mounted = true;
+        // let invitation = localStorage.getItem("successInvitation")
 
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    // console.log(response.data,"DATA")
                     setComponentData(response.data);
                     setLoad(false);
                 })
@@ -135,15 +132,14 @@ const LoginPage = (props) => {
 
                 if (error.response.data.status === 403) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
-                }  else if (error.response.data.status === 451) {
+                } else if (error.response.data.status === 451) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
                 } else if (error.response.data.status === 423) {
-                   PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
-                       .then(response =>{
-                           window.location.pathname(`/forgot-password/${tokenData}`)
-                       })
-                }
-                else {
+                    PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
+                        .then(response => {
+                            window.location.pathname = (`/reset-password`)
+                        })
+                } else {
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
 
@@ -196,6 +192,7 @@ const LoginPage = (props) => {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div
                                             className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
                                             <div className="kt-login__body">
@@ -203,6 +200,7 @@ const LoginPage = (props) => {
                                                 <Switch>
                                                     <Route exact path="/">
                                                         <ConnexionForm
+                                                            alert={localStorage.getItem('successInvitation')}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -215,6 +213,7 @@ const LoginPage = (props) => {
                                                     </Route>
                                                     <Route exact path="/login">
                                                         <ConnexionForm
+                                                            alert={localStorage.getItem('successInvitation')}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -231,7 +230,6 @@ const LoginPage = (props) => {
 
                                                     <Route exact path={`/reset-password`}>
                                                         <ReinitialisationForm
-                                                            token={tokenData}
                                                         />
                                                     </Route>
                                                 </Switch>
