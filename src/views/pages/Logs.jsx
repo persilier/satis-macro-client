@@ -131,7 +131,6 @@ const Logs = (props) => {
                 })
                 .catch(error => {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec du filtrage'))
-                    console.log("error:", error.response.data.error);
                     setError({...defaultErrors, ...error.response.data.error});
                     console.log("Something is wrong");
                 })
@@ -282,6 +281,11 @@ const Logs = (props) => {
                                                 <div style={{marginTop: "1%"}}>
                                                     <strong>IP: </strong>
                                                     <span className="mx-2">{item.ip_address}</span>
+                                                </div>
+
+                                                <div style={{marginTop: "1%"}}>
+                                                    <strong>Description: </strong>
+                                                    <span className="mx-2">{item.description}</span>
                                                 </div>
                                             </div>
                                             <div className="kt-separator kt-separator--space-md kt-separator--border-dashed"/>
