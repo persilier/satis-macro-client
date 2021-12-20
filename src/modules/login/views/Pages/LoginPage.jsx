@@ -19,6 +19,8 @@ import "./LoginCss.css"
 import ForgotForm from "./ForgotForm";
 import ReinitialisationForm from "./ReinitialisationForm";
 import ConnexionForm from "./ConnexionForm";
+import {PasswordConfirmation} from "../../../../views/components/ConfirmationAlert";
+import {passwordExpireConfig} from "../../../../config/confirmConfig";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
@@ -130,13 +132,23 @@ const LoginPage = (props) => {
                     username: "Email ou mot de passe incorrecte",
                     password: "Email ou mot de passe incorrecte"
                 });
+
                 if (error.response.data.status === 403) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
                 }  else if (error.response.data.status === 451) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
+                } else if (error.response.data.status === 423) {
+                   PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
+                       .then(response =>{
+                           window.location.pathname(`/forgot-password/${tokenData}`)
+                       })
                 }
                 else {
-                    ToastBottomEnd.fire(toastConnectErrorMessageConfig);
+                    // ToastBottomEnd.fire(toastConnectErrorMessageConfig);
+                    PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
+                        .then(response =>{
+                            window.location.pathname(`/forgot-password/${tokenData}`)
+                        })
                 }
 
             })
@@ -195,6 +207,7 @@ const LoginPage = (props) => {
                                                 <Switch>
                                                     <Route exact path="/">
                                                         <ConnexionForm
+                                                            tokenData={tokenData}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -207,6 +220,7 @@ const LoginPage = (props) => {
                                                     </Route>
                                                     <Route exact path="/login">
                                                         <ConnexionForm
+                                                            tokenData={tokenData}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}

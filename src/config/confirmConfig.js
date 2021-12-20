@@ -1,3 +1,14 @@
+export const passwordExpireConfig =(message)=>  {
+    return{
+        title: 'Attention!',
+        text: message,
+        icon: 'warring',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Réinitialiser',
+    }
+};
+
+
 export const confirmDeleteConfig =  {
     title: 'Êtes-vous sûr?',
     text: "Vous ne pourrez pas revenir en arrière!",
