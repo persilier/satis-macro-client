@@ -130,9 +130,12 @@ const LoginPage = (props) => {
                     username: "Email ou mot de passe incorrecte",
                     password: "Email ou mot de passe incorrecte"
                 });
-                if (error.response.data.code === 429) {
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Trop de tentative de connexion. Veuillez ressayer dans 5mn."));
-                } else {
+                if (error.response.data.status === 403) {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
+                }  else if (error.response.data.status === 451) {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
+                }
+                else {
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
 
