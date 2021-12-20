@@ -173,8 +173,8 @@ const CategoryClient = (props) => {
     const printBodyTable = (category, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{category.name.fr===null?"":category.name.fr}</td>
-                <td>{category.description.fr===null?"":category.description.fr}</td>
+                <td>{(category && category.name && category.name.fr) ? category.name.fr : ""}</td>
+                <td>{(category && category.description && category.description.fr) ? category.description.fr : ""}</td>
                 <td style={{textAlign:'center'}}>
                     {/*<Link to="/settings/clients/category/detail"*/}
                     {/*      className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
