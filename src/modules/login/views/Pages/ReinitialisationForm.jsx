@@ -16,12 +16,14 @@ const ReinitialisationForm = (props) => {
         email: "",
         token: props.token,
         password: "",
+        password_old: "",
         password_confirmation: ""
     };
     const defaultError = {
         email: "",
         token: "",
         password: "",
+        password_old: "",
         password_confirmation: ""
     };
     const [load, setLoad] = useState(true);
@@ -53,7 +55,16 @@ const ReinitialisationForm = (props) => {
 
         }
     }, []);
-
+    const onChangeEmail = (e) => {
+        const newData = {...getTokenData};
+        newData.email = e.target.value;
+        setGetTokenData(newData);
+    };
+    const onChangePasswordOld = (e) => {
+        const newData = {...getTokenData};
+        newData.password_old = e.target.value;
+        setGetTokenData(newData);
+    };
     const onChangePassword = (e) => {
         const newData = {...getTokenData};
         newData.password = e.target.value;
@@ -88,6 +99,7 @@ const ReinitialisationForm = (props) => {
                 setError(defaultError);
                 setGetTokenData(defaultData);
                 ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                window.location.href='/login';
             })
             .catch(error => {
                 console.log(error.response.data.error, "error");
@@ -97,12 +109,12 @@ const ReinitialisationForm = (props) => {
             })
         ;
     };
-
     return (
-        getTokenData.token === props.token ?
+        // getTokenData.token === props.token ?
+        props.token === props.token ?
             <div>
                 <div className="kt-login__form "
-                     style={{paddingTop: "100px"}}>
+                     style={{paddingTop: "30px"}}>
                     <div className="kt-login__head">
                         <h3 className="kt-login__title">Réinitialisation du Mot de Passe </h3>
                         <div className="kt-login__desc text-center">Entrer votre nouveau mot de passe:
@@ -129,10 +141,28 @@ const ReinitialisationForm = (props) => {
                         </div>
                         <div
                             className={error.password.length ? "form-group row input_container validated" : "form-group row input_container"}>
-                             <span className="input_icon">
+                            {/*  <span className="input_icon">
                                  <i id="icon" className="fa fa-eye-slash" aria-hidden="true"
                                     onClick={(e) => onViewPassword(e)}></i>
-                             </span>
+                             </span>*/}
+
+                            <input
+                                id="email"
+                                className="form-control"
+                                type="email"
+                                placeholder="Email"
+                                value={getTokenData.email}
+                                onChange={e => onChangeEmail(e)}
+                            />
+
+                            <input
+                                id="password_old"
+                                className="form-control"
+                                type="password"
+                                placeholder="Ancien mot de passe"
+                                value={getTokenData.password_old}
+                                onChange={e => onChangePasswordOld(e)}
+                            />
                             <input
                                 id="password"
                                 className="form-control"
@@ -167,7 +197,7 @@ const ReinitialisationForm = (props) => {
                                     <button type="submit"
                                             id="kt_login_forgot_submit"
                                             className="btn btn-brand btn-pill btn-elevate"
-                                            onClick={onClick}>Envoyer
+                                            onClick={onClick}>Modifier
                                     </button>
                                 ) : (
                                     <button
