@@ -9,17 +9,26 @@ import {forceRound, formatDateToTimeStampte} from "../../helpers/function";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
 const Logs = (props) => {
     document.title = "Satis Paramètre - Logs";
     const [logs, setLogs] = useState([]);
+    const defaultErrors = {
+        causer_id: [],
+        log_action: [],
+        date_start: [],
+        date_end: []
+    };
+    const [error, setError] = useState(defaultErrors);
     const [actor, setActor] = useState(null);
     const [actors, setActors] = useState([]);
     const [action, setAction] = useState(null);
     const [actions, setActions] = useState([]);
     const startDate = useRef(null);
     const endDate = useRef(null);
-    const onePageNumber = 10;
+    const onePageNumber = 50;
     const [endIndex, setEndIndex] = useState(onePageNumber);
     const [loadMore, setLoadMore] = useState(false);
     const [loadFilter, setLoadFilter] = useState(false);
@@ -56,7 +65,7 @@ const Logs = (props) => {
             fetchData();
     }, []);
 
-    if (!verifyPermission(props.userPermissions, "update-components-parameters"))
+    if (!verifyPermission(props.userPermissions, "activity-log"))
         window.location.href = ERROR_401;
 
     const showElements = useMemo(() => {
@@ -72,16 +81,15 @@ const Logs = (props) => {
                     setLoadMore(true);
                     axios.get(`${nextUrl}`)
                         .then(response => {
-                            setNextUrl("");
-                            const newLogs = [];
+                            setLoadMore(false);
+                            setNextUrl(response.data.logs.next_page_url);
                             setLogs(l => {
                                 return [
                                     ...l,
-                                    ...newLogs
+                                    ...response.data.logs.data
                                 ]
                             });
                             setEndIndex(i => i+onePageNumber);
-                            setLoadMore(false);
                         })
                         .catch(error => {
                             console.log("Something is wrong");
@@ -96,16 +104,39 @@ const Logs = (props) => {
         e.preventDefault();
         setLoadFilter(true);
         if (verifyTokenExpire()) {
-            setTimeout(() => {
-                setLoadFilter(false);
-                setEndIndex(onePageNumber);
-                const sendData = {
-                    actor: actor ? actor.value : '',
-                    action: action ? action.value : '',
-                    startDate: startDate.current.value,
-                    endDate: endDate.current.value
-                };
-            }, 5000);
+            const sendData = {
+                causer_id: actor !== null ? actor.value : '',
+                log_action: action !== null ? action.value : '',
+                date_start: startDate.current.value,
+                date_end: endDate.current.value
+            };
+            if (!sendData.date_end)
+                delete sendData.date_end;
+            if (!sendData.date_start)
+                delete sendData.date_start;
+            if (!sendData.causer_id)
+                delete sendData.causer_id;
+            if (!sendData.log_action)
+                delete sendData.log_action;
+            axios.get(`${appConfig.apiDomaine}/activity-log`, {params: sendData})
+                .then(response => {
+                    setNextUrl(response.data.next_page_url);
+                    setLogs(response.data.data);
+                    setEndIndex(onePageNumber);
+
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Success du filtrage'));
+                    setLoadFilter(false);
+                    setError(defaultErrors);
+                    setEndIndex(onePageNumber);
+                })
+                .catch(error => {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec du filtrage'))
+                    console.log("error:", error.response.data.error);
+                    setError({...defaultErrors, ...error.response.data.error});
+                    console.log("Something is wrong");
+                })
+                .finally(() => {setLoadFilter(false);})
+            ;
         }
     };
 
@@ -115,14 +146,12 @@ const Logs = (props) => {
             if (item.value === key) {
                 result = item.value
             }
-            console.log("key:", key);
-            console.log("item:", item);
         });
         return result
     };
 
     return (
-        verifyPermission(props.userPermissions, 'update-components-parameters') && (
+        verifyPermission(props.userPermissions, 'activity-log') && (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -188,8 +217,15 @@ const Logs = (props) => {
                                                     <input
                                                         ref={startDate}
                                                         type="date"
-                                                        className="form-control"
+                                                        className={`form-control ${error.date_start.length ? 'is-invalid' : ''}`}
                                                     />
+                                                    {error.date_start.length !== 0 && (
+                                                        <>
+                                                            {error.date_start.map((item, index) => (
+                                                                <p key={index} className="invalid-feedback">{item}</p>
+                                                            ))}
+                                                        </>
+                                                    )}
                                                 </div>
 
                                                 <div className="col">
@@ -197,8 +233,15 @@ const Logs = (props) => {
                                                     <input
                                                         ref={endDate}
                                                         type="date"
-                                                        className="form-control"
+                                                        className={`form-control ${error.date_end.length ? 'is-invalid' : ''}`}
                                                     />
+                                                    {error.date_end.length !== 0 && (
+                                                        <>
+                                                            {error.date_end.map((item, index) => (
+                                                                <p key={index} className="invalid-feedback">{item}</p>
+                                                            ))}
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -220,7 +263,6 @@ const Logs = (props) => {
                                 <div className="position-relative">
                                     {showElements.map((item, index) => (
                                         <div key={index}>
-                                            {console.log("item:", item)}
                                             <div className="tab-content">
                                                 <div className="d-flex justify-content-between">
                                                     <h5>

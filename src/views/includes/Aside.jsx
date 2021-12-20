@@ -804,7 +804,7 @@ const Aside = (props) => {
                                                     ) : null
                                                 }
                                                 {
-                                                    (verifyPermission(props.userPermissions, "my-email-claim-configuration") || verifyPermission(props.userPermissions, "any-email-claim-configuration")) ? (
+                                                    (verifyPermission(props.userPermissions, "activity-log")) ? (
                                                         <NavLink exact to="/settings/logs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
