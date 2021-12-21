@@ -125,14 +125,16 @@ const LoginPage = (props) => {
                 setStartRequest(false);
 
                 setError({
-                    username: "Email ou mot de passe incorrecte",
-                    password: "Email ou mot de passe incorrecte"
+                    username: "Email ou mot de passe incorrect",
+                    password: "Email ou mot de passe incorrect"
                 });
 
                 if (error.response.data.status === 403) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
-                } else if (error.response.data.status === 451) {
+                } else if (error.response.data.status === 400) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
+                } else if (error.response.data.status === 401) {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Email ou mot de passe incorrect"));
                 } else if (error.response.data.status === 423) {
                     PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
                         .then(response => {
