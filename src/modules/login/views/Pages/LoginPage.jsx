@@ -4,14 +4,12 @@ import appConfig from "../../../../config/appConfig";
 import axios from "axios";
 import {connect} from 'react-redux';
 import {ToastBottomEnd} from "../../../../views/components/Toast";
-import {
-    BrowserRouter, Switch, Route, Link
-} from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 
 import {
-    toastErrorMessageWithParameterConfig,
     toastConnectErrorMessageConfig,
     toastConnectSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig,
 } from "../../../../config/toastConfig";
 // import {listConnectData} from "../../../../config/appConfig";
 import Loader from "../../../../views/components/Loader";
@@ -19,6 +17,8 @@ import "./LoginCss.css"
 import ForgotForm from "./ForgotForm";
 import ReinitialisationForm from "./ReinitialisationForm";
 import ConnexionForm from "./ConnexionForm";
+import {PasswordConfirmation} from "../../../../views/components/ConfirmationAlert";
+import {passwordExpireConfig} from "../../../../config/confirmConfig";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
@@ -26,7 +26,6 @@ loadScript("/assets/js/pages/custom/login/login-1.js");
 
 const LoginPage = (props) => {
     const tokenData = getToken(window.location.href);
-
     const defaultError = {
         username: "",
         password: ""
@@ -43,11 +42,11 @@ const LoginPage = (props) => {
 
     useEffect(() => {
         let mounted = true;
+        // let invitation = localStorage.getItem("successInvitation")
 
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    // console.log(response.data,"DATA")
                     setComponentData(response.data);
                     setLoad(false);
                 })
@@ -129,8 +128,16 @@ const LoginPage = (props) => {
                     username: "Email ou mot de passe incorrecte",
                     password: "Email ou mot de passe incorrecte"
                 });
-                if (error.response.data.code === 429) {
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Trop de tentative de connexion. Veuillez ressayer dans 5mn."));
+
+                if (error.response.data.status === 403) {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
+                } else if (error.response.data.status === 451) {
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
+                } else if (error.response.data.status === 423) {
+                    PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
+                        .then(response => {
+                            window.location.pathname = (`/reset-password`)
+                        })
                 } else {
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
@@ -184,6 +191,7 @@ const LoginPage = (props) => {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div
                                             className="kt-grid__item kt-grid__item--fluid kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
                                             <div className="kt-login__body">
@@ -191,6 +199,7 @@ const LoginPage = (props) => {
                                                 <Switch>
                                                     <Route exact path="/">
                                                         <ConnexionForm
+                                                            alert={localStorage.getItem('successInvitation')}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -203,6 +212,7 @@ const LoginPage = (props) => {
                                                     </Route>
                                                     <Route exact path="/login">
                                                         <ConnexionForm
+                                                            alert={localStorage.getItem('successInvitation')}
                                                             componentData={componentData}
                                                             data={data}
                                                             error={error}
@@ -217,9 +227,8 @@ const LoginPage = (props) => {
                                                         <ForgotForm/>
                                                     </Route>
 
-                                                    <Route exact path={`/forgot-password/${tokenData}`}>
+                                                    <Route exact path={`/reset-password`}>
                                                         <ReinitialisationForm
-                                                            token={tokenData}
                                                         />
                                                     </Route>
                                                 </Switch>
