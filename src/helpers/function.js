@@ -297,6 +297,8 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "update-components-parameters")
         || verifyPermission(userPermissions, "update-relance-parameters")
         || verifyPermission(userPermissions, "list-account-type")
+        || verifyPermission(userPermissions, "list-auth-config")
+        || verifyPermission(userPermissions, "update-auth-config")
         || verifyPermission(userPermissions, "activity-log")
         || true
     );

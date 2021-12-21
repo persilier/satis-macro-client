@@ -19,13 +19,14 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const ConfigConnexion = (props) => {
     document.title = "Satis client - Paramètre Connexion";
 
-    if (!verifyPermission(props.userPermissions, "update-components-parameters"))
+    if (!(verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config")))
         window.location.href = ERROR_401;
 
     const defaultData = {
         id: 0,
         inactivity_control: false,
         inactivity_time_limit: 0,
+        inactive_account_msg: "",
         password_expiration_control: false,
         password_lifetime: 0,
         max_password_histories: 0,
@@ -36,11 +37,13 @@ const ConfigConnexion = (props) => {
         max_attempt: 0,
         attempt_delay: 0,
         attempt_waiting_time: 0,
+        account_blocked_msg: "",
     };
     const defaultError = {
         id: [],
         inactivity_control: [],
         inactivity_time_limit: [],
+        inactive_account_msg: [],
         password_lifetime: [],
         max_password_histories: [],
         password_notif_delay: [],
@@ -49,6 +52,7 @@ const ConfigConnexion = (props) => {
         max_attempt: [],
         attempt_delay: [],
         attempt_waiting_time: [],
+        account_blocked_msg: [],
 
     };
 
@@ -69,6 +73,7 @@ const ConfigConnexion = (props) => {
                         id: data.id ? data.id: 0,
                         inactivity_control: JSON.parse(data.data.fr).inactivity_control,
                         inactivity_time_limit: JSON.parse(data.data.fr).inactivity_time_limit,
+                        inactive_account_msg: JSON.parse(data.data.fr).inactive_account_msg,
                         password_expiration_control: JSON.parse(data.data.fr).password_expiration_control,
                         password_lifetime: JSON.parse(data.data.fr).password_lifetime,
                         max_password_histories: JSON.parse(data.data.fr).max_password_histories,
@@ -79,6 +84,7 @@ const ConfigConnexion = (props) => {
                         max_attempt: JSON.parse(data.data.fr).max_attempt,
                         attempt_delay: JSON.parse(data.data.fr).attempt_delay,
                         attempt_waiting_time: JSON.parse(data.data.fr).attempt_waiting_time,
+                        account_blocked_msg: JSON.parse(data.data.fr).account_blocked_msg,
                     })
                     console.log(JSON.parse(data.data.fr));
                     setLoad(false);
@@ -98,8 +104,10 @@ const ConfigConnexion = (props) => {
         e.preventDefault();
         const sendData = {...data};
 
-        if (!sendData.inactivity_control)
+        if (!sendData.inactivity_control) {
             delete sendData.inactivity_time_limit;
+            delete sendData.inactive_account_msg;
+        }
 
         if (!sendData.password_expiration_control) {
             delete sendData.password_lifetime;
@@ -113,6 +121,7 @@ const ConfigConnexion = (props) => {
             delete sendData.attempt_delay;
             delete sendData.attempt_waiting_time;
             delete sendData.max_attempt;
+            delete sendData.account_blocked_msg;
         }
 
         setStartRequest(true);
@@ -145,6 +154,12 @@ const ConfigConnexion = (props) => {
     const onChangeInactivityTime = (e) => {
         const newData = {...data};
         newData.inactivity_time_limit = e.target.value;
+        setData(newData);
+    }
+
+    const onChangeInactiveAccountMsg = (e) => {
+        const newData = {...data};
+        newData.inactive_account_msg = e.target.value;
         setData(newData);
     }
 
@@ -215,11 +230,17 @@ const ConfigConnexion = (props) => {
         setData(newData);
     }
 
+    const onChangeAccountBlockedMsg = (e) => {
+        const newData = {...data};
+        newData.account_blocked_msg = e.target.value;
+        setData(newData);
+    }
+
     return (
         load ? (
             <Loader/>
         ) : (
-            verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters') ? (
+            verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
@@ -300,6 +321,30 @@ const ConfigConnexion = (props) => {
                                                             {
                                                                 error.inactivity_time_limit.length ? (
                                                                     error.inactivity_time_limit.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={error.inactive_account_msg.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactive_account_msg">Message à envoyer à l'utilisateur à la désactivation de son compte <InputRequire/></label>
+                                                        <div className="col-lg-8 col-xl-6">
+                                                            <textarea
+                                                                disabled={!data.inactivity_control}
+                                                                required={data.inactivity_control}
+                                                                rows="7"
+                                                                id="inactive_account_msg"
+                                                                className={error.inactive_account_msg.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.inactive_account_msg}
+                                                                onChange={(e) => onChangeInactiveAccountMsg(e)}
+                                                            />
+                                                            {
+                                                                error.inactive_account_msg.length ? (
+                                                                    error.inactive_account_msg.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -530,7 +575,7 @@ const ConfigConnexion = (props) => {
                                                         </div>
                                                     </div>
 
-                                                    <div className={error.attempt_waiting_time ? "form-group row validated" : "form-group row"}>
+                                                    <div className={error.attempt_waiting_time.length ? "form-group row validated" : "form-group row"}>
                                                         <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_waiting_time">Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable en minutes <InputRequire/></label>
                                                         <div className="col-lg-8 col-xl-6">
                                                             <input
@@ -545,6 +590,30 @@ const ConfigConnexion = (props) => {
                                                             {
                                                                 error.attempt_waiting_time.length ? (
                                                                     error.attempt_waiting_time.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={error.account_blocked_msg.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="account_blocked_msg">Message à envoyer à l'utilisateur après avoir manquer le nombre maximal de tentatives <InputRequire/></label>
+                                                        <div className="col-lg-8 col-xl-6">
+                                                            <textarea
+                                                                disabled={!data.block_attempt_control}
+                                                                required={data.block_attempt_control}
+                                                                rows="7"
+                                                                id="account_blocked_msg"
+                                                                className={error.account_blocked_msg.length ? "form-control is-invalid" : "form-control"}
+                                                                value={data.account_blocked_msg}
+                                                                onChange={(e) => onChangeAccountBlockedMsg(e)}
+                                                            />
+                                                            {
+                                                                error.account_blocked_msg.length ? (
+                                                                    error.account_blocked_msg.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
