@@ -2,7 +2,7 @@ import React from 'react';
 import appConfig from "../../../../config/appConfig";
 import {Link, Switch} from "react-router-dom";
 
-const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserName, onViewPassword, onChangePassword, onClickConnectButton, alert}) => {
+const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserName, onViewPassword, onChangePassword, onClickConnectButton, alert, expires_in}) => {
     return (
         <div className="kt-login__form" style={{paddingTop: '15px'}}>
             <div className="kt-login__title">
@@ -111,11 +111,14 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                             </button>
                         )
                     }
-
-
                 </div>
 
-                Votre compte a été désactivé, réessayez ultérieurement dans 5 minutes !
+                { expires_in !== null && (
+                    <div className="alert alert-solid-brand alert-bold" role="alert">
+                        <div className="alert-text">Votre compte a été désactivé, réessayez ultérieurement dans {expires_in} minutes !</div>
+                    </div>
+                )}
+
 
             </form>
         </div>

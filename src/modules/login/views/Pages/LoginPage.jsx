@@ -39,6 +39,7 @@ const LoginPage = (props) => {
     const [componentData, setComponentData] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+    const [expiresIn, setExpireIn] = useState(null);
 
     useEffect(() => {
         let mounted = true;
@@ -128,8 +129,10 @@ const LoginPage = (props) => {
                     username: "Email ou mot de passe incorrect",
                     password: "Email ou mot de passe incorrect"
                 });
+                setExpireIn(null);
 
                 if (error.response.data.status === 403) {
+                    setExpireIn(error.response.data.expire_in);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
                 } else if (error.response.data.status === 400) {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
@@ -210,6 +213,7 @@ const LoginPage = (props) => {
                                                             onViewPassword={onViewPassword}
                                                             onChangePassword={onChangePassword}
                                                             onClickConnectButton={onClickConnectButton}
+                                                            expires_in={expiresIn}
                                                         />
                                                     </Route>
                                                     <Route exact path="/login">
@@ -223,6 +227,7 @@ const LoginPage = (props) => {
                                                             onViewPassword={onViewPassword}
                                                             onChangePassword={onChangePassword}
                                                             onClickConnectButton={onClickConnectButton}
+                                                            expires_in={expiresIn}
                                                         />
                                                     </Route>
                                                     <Route exact path="/login/forgot">
