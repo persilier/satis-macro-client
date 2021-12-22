@@ -82,7 +82,17 @@ const Nav = (props) => {
 
     const onClickLogoutLink = useCallback((e) => {
         e.preventDefault();
-        props.logoutUser();
+        axios.get(`${appConfig.apiDomaine}/logout`)
+            .then(response => {
+                console.log('response:', response.data);
+                props.logoutUser();
+            })
+            .catch(error => {
+                console.log("")
+                console.log("Something is wrong");
+            })
+        ;
+
     }, [props.logoutUser]);
 
     const getNotificationLink = useCallback((type, data) => {
