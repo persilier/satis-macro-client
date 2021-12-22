@@ -1,6 +1,6 @@
 import React from 'react';
 import appConfig from "../../../../config/appConfig";
-import {Link} from "react-router-dom";
+import {Link, Switch} from "react-router-dom";
 
 const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserName, onViewPassword, onChangePassword, onClickConnectButton, alert}) => {
     return (
@@ -92,7 +92,9 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                         Mot de passe oublié?
                     </Link>
                 </div>
+
                 <div className="kt-login__actions">
+
                     {
                         !startRequest ? (
                             <button type="submit"
@@ -110,7 +112,11 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                         )
                     }
 
+
                 </div>
+
+                Votre compte a été désactivé, réessayez ultérieurement dans 5 minutes !
+
             </form>
         </div>
 
