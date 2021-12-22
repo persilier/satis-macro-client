@@ -92,7 +92,6 @@ const Nav = (props) => {
                 console.log("Something is wrong");
             })
         ;
-
     }, [props.logoutUser]);
 
     const getNotificationLink = useCallback((type, data) => {
