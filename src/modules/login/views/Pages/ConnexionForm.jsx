@@ -41,35 +41,36 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                 ) : null
 
             }
-            <form className="kt-form" id="kt_login__form"
-                  style={{marginBottom: '90px'}}>
-                <div
-                    className={error.username.length ? "form-group row validated" : "form-group row"}>
+            <form className="kt-form" id="kt_login__form" style={{marginBottom: '90px'}}>
+                {
+                    error.password.length ? (
+                        <div className="alert alert-danger alert-bold" role="alert">
+                            <div className="alert-text text-center">{error.password}</div>
+                        </div>
+                    ) : null
+                }
+                { (expires_in !== null) && (
+                    <div className="alert alert-dark" role="alert">
+                    <div className="alert-text ">Votre compte a été désactivé, réessayez ultérieurement dans <b> {expires_in.minute < 10 ? 0 : null}{expires_in.minute}:{expires_in.second < 10 ? 0 : null}{expires_in.second} </b> </div>
+                    </div>
+                )}
 
+                <div className={"form-group row"}>
                     <input
-                        className={error.username.length ? "form-control is-invalid" : "form-control"}
+                        className={"form-control"}
                         type="email"
                         placeholder="Votre Email"
                         name="username"
                         onChange={(e) => onChangeUserName(e)}
                         value={data.username}
                     />
-                    {
-                        error.username.length ? (
-                            <div className="invalid-feedback">
-                                {error.username}
-                            </div>
-                        ) : null
-                    }
                 </div>
-                <div
-                    className={error.password.length ? "form-group row validated input_container" : "form-group row input_container"}>
-                                                        <span className="input_icon">
-                                                            <i id="icon" className="fa fa-eye-slash" aria-hidden="true"
-                                                               onClick={(e) => onViewPassword(e)}></i>
-                                                        </span>
+                <div className={"form-group row input_container"}>
+                    <span className="input_icon">
+                        <i id="icon" className="fa fa-eye-slash" aria-hidden="true" onClick={(e) => onViewPassword(e)}/>
+                    </span>
                     <input
-                        className={error.password.length ? "form-control is-invalid" : "form-control"}
+                        className={"form-control"}
                         type="password"
                         id="password"
                         placeholder="Votre Mot de Passe"
@@ -77,13 +78,6 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                         onChange={(e) => onChangePassword(e)}
                         value={data.password}
                     />
-                    {
-                        error.password.length ? (
-                            <div className="invalid-feedback">
-                                {error.password}
-                            </div>
-                        ) : null
-                    }
                 </div>
 
                 <div className="kt-login__extra text-right mt-2">
@@ -112,14 +106,6 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                         )
                     }
                 </div>
-
-                { expires_in !== null && (
-                    <div className="alert alert-solid-brand alert-bold" role="alert">
-                        <div className="alert-text">Votre compte a été désactivé, réessayez ultérieurement dans {expires_in} minutes !</div>
-                    </div>
-                )}
-
-
             </form>
         </div>
 
