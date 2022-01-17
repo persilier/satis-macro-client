@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Suspense} from 'react';
 import {BrowserRouter as Router} from "react-router-dom";
 import LoginPage from "./modules/login/views/Pages/LoginPage.jsx";
 import App from "./views/layouts/App";
@@ -17,11 +17,11 @@ class RouteApp extends Component {
 
         return (
             <Router>
-                {
-                    !this.props.user.token ? (
-                        <LoginPage/>
-                    ) : <App />
-                }
+                    {
+                        !this.props.user.token ? (
+                            <LoginPage/>
+                            ) : <App />
+                    }
             </Router>
         );
     }

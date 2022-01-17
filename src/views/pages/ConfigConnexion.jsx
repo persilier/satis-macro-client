@@ -12,6 +12,8 @@ import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
 
+// react-i18n
+import { useTranslation } from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -56,6 +58,8 @@ const ConfigConnexion = (props) => {
 
     };
 
+    const {t, ready} = useTranslation();
+
     const [load, setLoad] = useState(false);
     const [startRequest, setStartRequest] = useState(false);
 
@@ -86,7 +90,6 @@ const ConfigConnexion = (props) => {
                         attempt_waiting_time: JSON.parse(data.data.fr).attempt_waiting_time,
                         account_blocked_msg: JSON.parse(data.data.fr).account_blocked_msg,
                     })
-                    console.log(JSON.parse(data.data.fr));
                     setLoad(false);
                 })
                 .catch(error => {
@@ -256,7 +259,7 @@ const ConfigConnexion = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
-                                        Configurer connexion
+                                        {t('Welcome to React')}
                                     </a>
                                 </div>
                             </div>

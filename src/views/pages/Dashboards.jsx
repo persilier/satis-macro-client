@@ -19,8 +19,12 @@ import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
 import DashboardPieChart from "../components/DashboardForm/DashboardPieChart";
 
+import { useTranslation } from "react-i18next";
+
 const Dashboards = (props) => {
     document.title = "Satis client - Dashboard";
+
+    const {t, ready} = useTranslation();
 
     const defaultData = {institution_targeted_id: ""};
 
@@ -83,7 +87,7 @@ const Dashboards = (props) => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Tableau de bord
+                            {t("Tableau de bord")}
                         </h3>
                     </div>
                     {

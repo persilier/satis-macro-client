@@ -16,9 +16,14 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
+import { useTranslation } from "react-i18next";
+
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const Nav = (props) => {
+
+    const {t, i18n} = useTranslation();
+
     const [eventNotification, setEventNotification] = useState([]);
     const [relaunchNotification, setRelaunchNotification] = useState([]);
     const [loader, setLoader] = useState(false);
@@ -78,6 +83,7 @@ const Nav = (props) => {
     const onClickLanguage = useCallback((e, lang) => {
         e.preventDefault();
         props.changeLanguage(lang);
+        i18n.changeLanguage(lang);
     }, [props.changeLanguage]);
 
     const onClickLogoutLink = useCallback((e) => {
@@ -205,12 +211,12 @@ const Nav = (props) => {
                                         <div className="quick-search-result">
                                             {!searchData.length ? (
                                                 <div className="font-size-sm text-primary font-weight-bolder text-uppercase mb-2">
-                                                    Aucun Enregistrement Trouvé
+                                                    {t("Aucun Enregistrement Trouvé")}
                                                 </div>
                                             ) : (
                                                 <>
                                                     <div className="font-size-sm text-primary font-weight-bolder text-uppercase mb-2">
-                                                        Enregistrement Trouvé
+                                                        {t("Enregistrement Trouvé")}
                                                     </div>
 
                                                     <div className="mb-10">
@@ -223,7 +229,7 @@ const Nav = (props) => {
                                                                     {searchData[0].reference}
                                                                 </a>
                                                                 <span className="font-size-sm font-weight-bold text-muted">
-                                                                    Reclamant: {searchData[0].claimer.lastname+" "+searchData[0].claimer.firstname}
+                                                                    {t("Reclamant") + ":" + searchData[0].claimer.lastname+" "+searchData[0].claimer.firstname}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -312,22 +318,22 @@ const Nav = (props) => {
                             <form>
                                 <div className="kt-head kt-head--skin-light kt-head--fit-x kt-head--fit-b">
                                     <h3 className="kt-head__title">
-                                        Notifications
+                                        {t("Notifications")}
                                         &nbsp;
                                         <span
-                                            className="btn btn-label-primary btn-sm btn-bold btn-font-md">{notificationCount} nouveau</span>
+                                            className="btn btn-label-primary btn-sm btn-bold btn-font-md">{notificationCount} {t("nouveau")}</span>
                                     </h3>
                                     <ul className="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand  kt-notification-item-padding-x"
                                         role="tablist">
                                         <li className="nav-item">
                                             <a className="nav-link active show" data-toggle="tab"
                                                href="#topbar_notifications_notifications" role="tab"
-                                               aria-selected="true">Alertes</a>
+                                               aria-selected="true">{t("Alertes")}</a>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" data-toggle="tab"
                                                href="#topbar_notifications_events" role="tab"
-                                               aria-selected="false">Relances</a>
+                                               aria-selected="false">{t("Relances")}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -416,7 +422,7 @@ const Nav = (props) => {
                                                     }
                                                 </div>
                                             ) : (
-                                                <EmptyNotification/>
+                                                <EmptyNotification trans={t}/>
                                             )
                                         }
 
@@ -434,7 +440,7 @@ const Nav = (props) => {
                         </div>
                         <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                             <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                <li className="kt-nav__item kt-nav__item--active">
+                                <li className={`kt-nav__item ${props.language.languageSelected === "en" && "kt-nav__item--active"}`}>
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             EN
@@ -443,7 +449,7 @@ const Nav = (props) => {
                                     </a>
                                 </li>
 
-                                <li className="kt-nav__item">
+                                <li className={`kt-nav__item ${props.language.languageSelected === "fr" && "kt-nav__item--active"}`}>
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             FR
@@ -457,7 +463,7 @@ const Nav = (props) => {
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-                            <span className="kt-header__topbar-welcome kt-visible-desktop">Salut,</span>
+                            <span className="kt-header__topbar-welcome kt-visible-desktop">{t("Salut")},</span>
                             <span className="kt-header__topbar-username kt-visible-desktop">
                                 {props.user.firstName}
                             </span>
@@ -487,10 +493,10 @@ const Nav = (props) => {
                                                 </div>
                                                 <div className="kt-notification__item-details">
                                                     <div className="kt-notification__item-title kt-font-bold">
-                                                        Mes Disccussions
+                                                        {t("Mes Discussions")}
                                                     </div>
                                                     <div className="kt-notification__item-time">
-                                                        Acceder à la liste
+                                                        {t("Acceder à la liste")}
                                                     </div>
                                                 </div>
                                             </Link>
@@ -505,17 +511,17 @@ const Nav = (props) => {
                                     </div>
                                     <div className="kt-notification__item-details">
                                         <div className="kt-notification__item-title kt-font-bold">
-                                            Mon profil
+                                            {t("Mon profil")}
                                         </div>
                                         <div className="kt-notification__item-time">
-                                            Paramètres de compte et plus
+                                            {t("Paramètres de compte et plus")}
                                         </div>
                                     </div>
                                 </NavLink>
 
                                 <div className="kt-notification__custom kt-space-between">
                                     <a href="/logout" onClick={onClickLogoutLink} target="_blank"
-                                       className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
+                                       className="btn btn-label btn-label-brand btn-sm btn-bold">{t("Déconnexion")}</a>
                                     {/*<a href="custom/user/login-v2.html" target="_blank"*/}
                                     {/*   className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>*/}
                                 </div>

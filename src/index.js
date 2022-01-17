@@ -12,6 +12,9 @@ import treatmentReducer from "./store/reducers/treatmentReducer";
 import yearReducer from "./store/reducers/yearReducer";
 import AppContainer from "./AppContainer";
 
+//i18n
+import './i18n';
+
 const rootReducer = combineReducers({
     identity: identityReducer,
     language: languageReducer,

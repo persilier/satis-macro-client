@@ -8,9 +8,11 @@ import LoadingTable from "../LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {NavLink} from "react-router-dom";
 
+
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const DashboardClaimsMy = (props) => {
+
 
     const [data, setData] = useState("");
     const [totalData, setTotalData] = useState("");

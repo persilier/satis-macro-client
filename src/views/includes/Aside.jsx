@@ -6,17 +6,22 @@ import {connect} from "react-redux";
 import {verifyPermission} from "../../helpers/permission";
 import {seeCollect, seeHistorique, seeMonitoring, seeParameters, seeTreatment} from "../../helpers/function";
 
+// react-i18n
+import { useTranslation } from "react-i18next";
+
 const Aside = (props) => {
+
+    const {t, ready} = useTranslation();
+
     return (
-        <div className="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop"
-             id="kt_aside">
+        <div className="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop" id="kt_aside">
             <div className="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
                 <div id="kt_aside_menu" className="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1">
                     <ul className="kt-menu__nav ">
                         <li className="kt-menu__item " aria-haspopup="true">
                             <NavLink exact to="/dashboard" className="kt-menu__link" activeClassName="kt-menu__item--active">
                                 <i className="kt-menu__link-icon flaticon2-architecture-and-city"/>
-                                <span className="kt-menu__link-text">Tableau de bord</span>
+                                <span className="kt-menu__link-text">{t("Tableau de bord")}</span>
                             </NavLink>
                         </li>
 
@@ -350,23 +355,23 @@ const Aside = (props) => {
 
                         {
                             !seeParameters(props.userPermissions) ? null : (
-                                <>
+                                ready ? <>
                                     <li className="kt-menu__section ">
-                                        <h4 className="kt-menu__section-text">Paramètres</h4>
+                                        <h4 className="kt-menu__section-text">{t("Paramètres")}</h4>
                                         <i className="kt-menu__section-icon flaticon-more-v2"/>
                                     </li>
                                     <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
                                         <a href="#parameter" onClick={e => e.preventDefault()}
                                            className="kt-menu__link kt-menu__toggle">
                                             <i className="kt-menu__link-icon flaticon-settings"/>
-                                            <span className="kt-menu__link-text">Paramètres</span>
+                                            <span className="kt-menu__link-text">{t("Paramètres")}</span>
                                             <i className="kt-menu__ver-arrow la la-angle-right"/>
                                         </a>
                                         <div className="kt-menu__submenu "><span className="kt-menu__arrow"/>
                                             <ul className="kt-menu__subnav">
                                                 <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
                                                     <span className="kt-menu__link">
-                                                        <span className="kt-menu__link-text">Paramètres</span>
+                                                        <span className="kt-menu__link-text">{t("Paramètres")}</span>
                                                     </span>
                                                 </li>
 
@@ -376,7 +381,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Agent</span>
+                                                                <span className="kt-menu__link-text">{t("Agent")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -387,7 +392,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Canaux</span>
+                                                                <span className="kt-menu__link-text">{t("Canaux")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -398,7 +403,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Catégorie Clients </span>
+                                                                <span className="kt-menu__link-text">{t("Catégorie Clients")} </span>
                                                             </li>
                                                         </NavLink>
                                                         : null
@@ -409,7 +414,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Catégorie de réclamation</span>
+                                                                <span className="kt-menu__link-text">{t("Catégorie de réclamation")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -420,7 +425,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Catégorie FAQs</span>
+                                                                <span className="kt-menu__link-text">{t("Catégorie FAQs")}</span>
                                                             </li>
                                                         </NavLink>
                                                         :null
@@ -432,7 +437,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Compte Clients</span>
+                                                                <span className="kt-menu__link-text">{t("Compte Clients")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -443,7 +448,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configuration</span>
+                                                                <span className="kt-menu__link-text">{t("Configuration")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ):null
@@ -454,7 +459,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configuration de Relance</span>
+                                                                <span className="kt-menu__link-text">{t("Configuration de Relance")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ): null
@@ -464,7 +469,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/recurence" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configuration des alerts de recurences</span>
+                                                                <span className="kt-menu__link-text">{t("Configuration des alerts de recurences")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -474,7 +479,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/reject-limit" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configuration limitation rejet</span>
+                                                                <span className="kt-menu__link-text">{t("Configuration limitation rejet")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -484,7 +489,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/percentage-min-fusion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configuration pourcentage minimum fusion</span>
+                                                                <span className="kt-menu__link-text">{t("Configuration pourcentage minimum fusion")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -494,7 +499,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/connexion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Configurer connexion</span>
+                                                                <span className="kt-menu__link-text">{t("Configurer connexion")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -504,7 +509,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/qualification-period" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Delai qualification</span>
+                                                                <span className="kt-menu__link-text">{t("Delai qualification")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -515,7 +520,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/treatment-period" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Delai traitement</span>
+                                                                <span className="kt-menu__link-text">{t("Delai traitement")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -526,7 +531,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Devise</span>
+                                                                <span className="kt-menu__link-text">{t("Devise")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -537,7 +542,7 @@ const Aside = (props) => {
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Editer FAQs</span>
+                                                                <span className="kt-menu__link-text">{t("Editer FAQs")}</span>
                                                             </li>
                                                         </NavLink> :null
                                                 }
@@ -826,7 +831,7 @@ const Aside = (props) => {
                                             </ul>
                                         </div>
                                     </li>
-                                </>
+                                </> : null
                             )
                         }
                     </ul>
