@@ -22,7 +22,7 @@ axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const Nav = (props) => {
 
-    const {t, i18n} = useTranslation();
+    const {t, i18n, ready} = useTranslation();
 
     const [eventNotification, setEventNotification] = useState([]);
     const [relaunchNotification, setRelaunchNotification] = useState([]);
@@ -177,7 +177,8 @@ const Nav = (props) => {
     return (
         <div id="kt_header" className="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on"
              style={{position: "sticky", top: 0, zIndex: 2}}>
-            <div className="kt-container  kt-container--fluid ">
+
+            {ready ? (<div className="kt-container  kt-container--fluid ">
                 <div className="kt-header__brand " id="kt_header_brand">
                     <div className="kt-header__brand-logo">
                         <a href="index.html">
@@ -505,7 +506,7 @@ const Nav = (props) => {
                                 }
 
                                 <NavLink to={"/settings/account"}
-                                   className="kt-notification__item">
+                                         className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-calendar-3 kt-font-success"/>
                                     </div>
@@ -529,7 +530,9 @@ const Nav = (props) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>) : null}
+
+
         </div>
     );
 };

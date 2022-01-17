@@ -82,7 +82,7 @@ const Dashboards = (props) => {
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        ready ? (<div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
@@ -96,13 +96,13 @@ const Dashboards = (props) => {
                                 <div
                                     className={"form-group row"}>
                                     <label className="col-xl-2 col-lg-3 col-form-label"
-                                           htmlFor="exampleSelect1">Institution</label>
+                                           htmlFor="exampleSelect1">{t("Institution")}</label>
                                     <div className="col-lg-9 col-xl-2">
                                         {dataInstitution ? (
                                             <Select
                                                 isClearable
                                                 classNamePrefix="select"
-                                                placeholder={"Choisissez une institution pour le filtre"}
+                                                placeholder={t("Choisissez une institution pour le filtre")}
                                                 className="basic-single"
                                                 value={institution}
                                                 onChange={onChangeInstitution}
@@ -227,7 +227,7 @@ const Dashboards = (props) => {
                     )}
             </div>
 
-        </div>
+        </div>) : null
 
     );
 
