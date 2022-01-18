@@ -39,6 +39,7 @@ const LoginPage = (props) => {
     const [componentData, setComponentData] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
+    const [expiresIn, setExpireIn] = useState(null);
 
     useEffect(() => {
         let mounted = true;
@@ -59,6 +60,13 @@ const LoginPage = (props) => {
 
         fetchData();
         return () => mounted = false;
+    }, []);
+
+    useEffect(() => {
+        const decount = JSON.parse(localStorage.getItem('decount'));
+        if (decount) {
+            startDecounter(decount.minute, decount.second);
+        }
     }, []);
 
     const onChangeUserName = (e) => {
@@ -82,6 +90,41 @@ const LoginPage = (props) => {
             input.type = "password";
             icon.className = "fa fa-eye-slash"
         }
+    };
+
+    const startDecounter = (minute, second = 0) => {
+        setExpireIn({
+            minute: minute,
+            second: second
+        });
+        localStorage.setItem('decount', JSON.stringify({
+            minute: minute,
+            second: second
+        }));
+
+        window.timeIntervale = setInterval(() => {
+            const decount = JSON.parse(localStorage.getItem('decount'));
+            if (decount) {
+                if (decount.second === 0 && decount.minute === 0) {
+                    setExpireIn(null);
+                    localStorage.removeItem('decount');
+                    clearInterval(window.timeIntervale);
+                } else {
+                    if (decount.second === 0) {
+                        decount.minute = decount.minute - 1;
+                        decount.second = 59;
+                    } else {
+                        decount.second = decount.second - 1;
+                    }
+                    setExpireIn(decount);
+                    localStorage.setItem('decount', JSON.stringify(decount));
+                }
+            } else {
+                localStorage.removeItem('decount');
+                setExpireIn(null);
+                clearInterval(window.timeIntervale);
+            }
+        }, 1000);
     };
 
     const onClickConnectButton = async (e) => {
@@ -123,24 +166,32 @@ const LoginPage = (props) => {
             })
             .catch(error => {
                 setStartRequest(false);
-
-                setError({
-                    username: "Email ou mot de passe incorrect",
-                    password: "Email ou mot de passe incorrect"
-                });
-
+                setError(defaultError);
                 if (error.response.data.status === 403) {
+                    localStorage.removeItem('decount');
+                    if (window.timeIntervale) {
+                        clearInterval(window.timeIntervale);
+                    }
+                    startDecounter(Math.trunc(error.response.data.expire_in/60), error.response.data.expire_in%60);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
                 } else if (error.response.data.status === 400) {
+                    setExpireIn(null);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
-                } else if (error.response.data.status === 401) {
+                } else if (error.response.status === 401) {
+                    setExpireIn(null);
+                    setError({
+                        username: "Email ou mot de passe incorrect",
+                        password: "Email ou mot de passe incorrect"
+                    });
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Email ou mot de passe incorrect"));
                 } else if (error.response.data.status === 423) {
+                    setExpireIn(null);
                     PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))
                         .then(response => {
                             window.location.pathname = (`/reset-password`)
                         })
                 } else {
+                    setExpireIn(null);
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
 
@@ -210,6 +261,7 @@ const LoginPage = (props) => {
                                                             onViewPassword={onViewPassword}
                                                             onChangePassword={onChangePassword}
                                                             onClickConnectButton={onClickConnectButton}
+                                                            expires_in={expiresIn}
                                                         />
                                                     </Route>
                                                     <Route exact path="/login">
@@ -223,6 +275,7 @@ const LoginPage = (props) => {
                                                             onViewPassword={onViewPassword}
                                                             onChangePassword={onChangePassword}
                                                             onClickConnectButton={onClickConnectButton}
+                                                            expires_in={expiresIn}
                                                         />
                                                     </Route>
                                                     <Route exact path="/login/forgot">
