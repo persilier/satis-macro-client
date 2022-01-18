@@ -211,7 +211,7 @@ const Channel = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-channel') ? (
+        ready ? ( verifyPermission(props.userPermissions, 'list-channel') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -338,7 +338,7 @@ const Channel = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : ""
     );
 };
 

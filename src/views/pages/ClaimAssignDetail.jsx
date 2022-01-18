@@ -27,6 +27,7 @@ import DoubleButtonDetail from "../components/DoubleButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import UnfoundedModal from "../components/UnfoundedModal";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
@@ -54,7 +55,11 @@ const endPointConfig = {
 
 
 const ClaimAssignDetail = (props) => {
-    document.title = "Satis client - Détail réclamation";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client -" + ready ? t("Détails réclamation") : "";
     const {id} = useParams();
 
     if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot))
@@ -158,14 +163,14 @@ const ClaimAssignDetail = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
+        ready ? (        verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
                  id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Traitement
+                                {t("Traitement")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -176,7 +181,7 @@ const ClaimAssignDetail = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/claim-assign"
                                           className="kt-subheader__breadcrumbs-link">
-                                        Réclamation à Transférer
+                                        {t("Réclamations à transférer")}
                                     </Link>
                                 </div>
                             </div>
@@ -189,7 +194,7 @@ const ClaimAssignDetail = (props) => {
                                 <a href="#detail" onClick={e => e.preventDefault()}
                                    style={{cursor: "default"}}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Détail
+                                    {t("Détails")}
                                 </a>
                             </div>
                         </div>
@@ -208,7 +213,7 @@ const ClaimAssignDetail = (props) => {
                                                 claim ? (
                                                     claim.active_treatment && claim.active_treatment.rejected_reason && claim.active_treatment.rejected_at ? (
                                                         <div className="d-flex justify-content-start">
-                                                            <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>RECLAMATION  REJETEE</span>
+                                                            <span className="kt-badge kt-badge--danger kt-badge--inline" style={{fontWeight: "bold"}}>{t("RECLAMATION  REJETÉE")}</span>
                                                         </div>
                                                     ) : null
                                                 ) : null
@@ -226,8 +231,8 @@ const ClaimAssignDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-body">
                                                     <div className="kt-wizard-v2__nav-icon"><i className="flaticon-truck"/></div>
                                                     <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">Transfert</div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">Transferer la réclamation</div>
+                                                        <div className="kt-wizard-v2__nav-label-title">{t("Transfert")}</div>
+                                                        <div className="kt-wizard-v2__nav-label-desc">{t("Transférer la réclamation")}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -241,7 +246,7 @@ const ClaimAssignDetail = (props) => {
                                             verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment") ? (
                                                 <div className="d-flex justify-content-md-end">
                                                     <button type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#exampleModal" className="btn btn-danger">
-                                                        NON FONDÉE
+                                                        {t("Non fondée").toUpperCase()}
                                                     </button>
                                                     {
                                                         claim ? (
@@ -271,17 +276,17 @@ const ClaimAssignDetail = (props) => {
 
                                         <AttachmentsButtonDetail claim={claim}/>
 
-                                            <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>
+                                        <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div className="kt-heading kt-heading--md">Transfert de la réclamation</div>
+                                            <div className="kt-heading kt-heading--md">{t("Transfert de la réclamation")}</div>
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     {claim && claim.active_treatment && claim.active_treatment.rejected_at ? (
                                                         <div className="kt-wizard-v2__review-item">
-                                                            <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>Unité de traitement</span></h5></div>
+                                                            <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>{t("Unité de traitement")}</span></h5></div>
                                                             <div className="kt-wizard-v2__review-content">
-                                                                <strong>Unité:</strong>
+                                                                <strong>{t("Unité")}:</strong>
                                                                 <span className="mx-2">{claim.active_treatment.responsible_unit.name["fr"]}</span><br/>
                                                             </div>
                                                         </div>
@@ -290,13 +295,13 @@ const ClaimAssignDetail = (props) => {
                                                     {
                                                         claim && claim.active_treatment && claim.active_treatment.rejected_at ? (
                                                             <div className="kt-wizard-v2__review-item">
-                                                                <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>Rejet</span></h5></div>
+                                                                <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>{t("Rejet")}</span></h5></div>
                                                                 <div className="kt-wizard-v2__review-content">
-                                                                    <strong>Raison du rejet:</strong>
+                                                                    <strong>{t("Raison du rejet")}:</strong>
                                                                     <span className="mx-2 text-danger">{claim.active_treatment.rejected_reason}</span><br/>
-                                                                    <strong>Date de rejet:</strong>
+                                                                    <strong>{t("Date de rejet")}:</strong>
                                                                     <span className="mx-2">{formatDateToTimeStampte(claim.active_treatment.rejected_at)}</span><br/>
-                                                                    <strong>Nombre de rejet:</strong>
+                                                                    <strong>{t("Nombre de rejet")}:</strong>
                                                                     <span className="mx-2">{claim.active_treatment.number_reject}</span><br/>
                                                                 </div>
                                                             </div>
@@ -309,7 +314,7 @@ const ClaimAssignDetail = (props) => {
                                                                 <div
                                                                     className="kt-wizard-v2__review-content"
                                                                     style={{fontSize: "15px"}}>
-                                                                    <label className="col-xl-6 col-lg-6 col-form-label"><strong>Institution concernée</strong></label>
+                                                                    <label className="col-xl-6 col-lg-6 col-form-label"><strong>{t("Institution concernée")}</strong></label>
                                                                     <span className="kt-widget__data">{dataId}</span>
                                                                 </div>
                                                                 <div className="modal-footer">
@@ -318,36 +323,36 @@ const ClaimAssignDetail = (props) => {
                                                                             <button
                                                                                 className="btn btn-outline-success"
                                                                                 onClick={onClickToTranfertInstitution}>
-                                                                                TRANSFÉRER A L'INSTITUTION
+                                                                                {t("Transférer a l'institution").toUpperCase()}
                                                                             </button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
 
                                                                 </div>
                                                             </div>
-                                                    ) : null}
+                                                        ) : null}
 
                                                     {
                                                         verifyPermission(props.userPermissions, "transfer-claim-to-circuit-unit") || verifyPermission(props.userPermissions, "transfer-claim-to-unit") ? (
                                                             <div className="kt-wizard-v2__review-item">
-                                                                <div className="kt-wizard-v2__review-title">Tranferer à une unité</div>
+                                                                <div className="kt-wizard-v2__review-title">{t("Transférer à une unité")}</div>
                                                                 <div
                                                                     className="kt-wizard-v2__review-content">
                                                                     <div
                                                                         className={error.unit_id.length ? "form-group validated" : "form-group"}>
-                                                                        <label>Unité</label>
+                                                                        <label>{t("Unité")}</label>
                                                                         <Select
                                                                             isClearable
                                                                             value={unit}
                                                                             onChange={onChangeUnits}
                                                                             options={unitsData}
-                                                                            placeholder={"Veuillez sélectionner l'unité de traitement"}
+                                                                            placeholder={t("Veuillez sélectionner l'unité de traitement")}
                                                                         />
                                                                         {
                                                                             error.unit_id.length ? (
@@ -367,31 +372,31 @@ const ClaimAssignDetail = (props) => {
                                                                             <button
                                                                                 className="btn btn-outline-success"
                                                                                 onClick={onClickToTranfert}>
-                                                                                TRANSFÉRER A UNE UNITÉ
+                                                                                {t("Transférer à une unité")}
                                                                             </button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
 
                                                                 </div>
                                                             </div>
-                                                    ) : null}
+                                                        ) : null}
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="kt-form__actions">
                                             <button className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-prev">
-                                                PRÉCÉDENT
+                                                {t("Précédent").toUpperCase()}
                                             </button>
 
                                             <button className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
-                                                SUIVANT
+                                                {t("Suivant").toUpperCase()}
                                             </button>
                                         </div>
                                     </form>
@@ -418,7 +423,7 @@ const ClaimAssignDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : null
     );
 };
 
