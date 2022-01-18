@@ -128,5 +128,28 @@
   "Supprimer le Tchat": "Delete the chat",
   "Suppression": "Deletion",
   "Suppression de Discussion": "Delete discussion",
-  "Nom du Tchat": "Name of the chat"
+  "Nom du Tchat": "Name of the chat",
+
+  "Paramètre pilote actif": "Active pilot setting",
+  "Veillez choisir le pilote actif": "Please choose the active pilot",
+  "Enregistrer": "Register",
+
+  "Paramètre categorie client": "Client category setting",
+  "Client": "Client",
+  "Catégorie client": "Client category",
+  "Liste des catégories client": "List of client categories",
+  "Recherche": "Search",
+  "Nom": "Name",
+  "Description": "Description",
+  "Action": "Action",
+
+  "Paramètre Categorie FAQs": "FAQs category setting",
+  "Liste des catégories de FAQs": "List of FAQs categories",
+  "Ajouter une catégorie FAQ": "Add a FAQ category",
+  "Libellé": "Label",
+  "Slug": "Slug",
+  "Canal de réponse": "Response Channel",
+
+  "Canal": "Channel"
+
 }
