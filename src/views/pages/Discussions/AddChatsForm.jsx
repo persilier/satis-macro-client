@@ -15,6 +15,7 @@ import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {formatSelectOption} from "../../../helpers/function";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -32,6 +33,9 @@ const AddChatsForm = (props) => {
         name: [],
         claim_id: [],
     };
+
+    const {t, ready} = useTranslation();
+
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -90,12 +94,12 @@ const AddChatsForm = (props) => {
     };
     const printJsx = () => {
         return (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            ready ? (<div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Traitement
+                                {t("Traitement")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -103,13 +107,13 @@ const AddChatsForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/chat" className="kt-subheader__breadcrumbs-link">
-                                    Chat
+                                    {t("Tchat")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     {
-                                        "Ajout"
+                                        t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -125,7 +129,7 @@ const AddChatsForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                "Ajout de nouvelle discussion"
+                                                t("Ajout de nouvelle discussion")
                                             }
                                         </h3>
                                     </div>
@@ -142,8 +146,7 @@ const AddChatsForm = (props) => {
                                                                 <div
                                                                     className={error.claim_id.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Référence
-                                                                        Réclamation</label>
+                                                                           htmlFor="exampleSelect1">{t("Référence réclamation")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         {claimIdData ? (
                                                                             <Select
@@ -171,13 +174,13 @@ const AddChatsForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Nom de Discussion</label>
+                                                                           htmlFor="name">{t("Nom de Discussion")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom"
+                                                                            placeholder={t("Veillez entrer le nom")}
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -201,12 +204,12 @@ const AddChatsForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Ajouter</button>
+                                                                                    className="btn btn-primary">{t("Ajouter")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -214,13 +217,13 @@ const AddChatsForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/chat"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/chat"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -238,7 +241,7 @@ const AddChatsForm = (props) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>) : null
         );
     };
 
