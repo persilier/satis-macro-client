@@ -2,9 +2,14 @@ import React from 'react';
 import appConfig from "../../../../config/appConfig";
 import {Link, Switch} from "react-router-dom";
 
+import { useTranslation } from "react-i18next";
+
 const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserName, onViewPassword, onChangePassword, onClickConnectButton, alert, expires_in}) => {
+
+    const {t, ready} = useTranslation();
+
     return (
-        <div className="kt-login__form" style={{paddingTop: '15px'}}>
+        ready ? (<div className="kt-login__form" style={{paddingTop: '15px'}}>
             <div className="kt-login__title">
                 <div className="form-group row"
                      style={{marginTop: '50px'}}>
@@ -30,7 +35,7 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                 alert ? (
                     <div className="alert alert-outline-warning fade show" role="alert">
                         <div className="alert-icon"><i className="flaticon-warning"></i></div>
-                        <div className="alert-text">Veuillez vous connecter avec votre nouveau mot de passe!</div>
+                        <div className="alert-text">{t("Veuillez vous connecter avec votre nouveau mot de passe")}!</div>
                         <div className="alert-close">
                             <button type="button" className="close" data-dismiss="alert"
                                     aria-label="Close">
@@ -51,7 +56,7 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                 }
                 { (expires_in !== null) && (
                     <div className="alert alert-dark" role="alert">
-                    <div className="alert-text ">Votre compte a été désactivé, réessayez ultérieurement dans <b> {expires_in.minute < 10 ? 0 : null}{expires_in.minute}:{expires_in.second < 10 ? 0 : null}{expires_in.second} </b> </div>
+                        <div className="alert-text ">{t("Votre compte a été désactivé, réessayez ultérieurement dans")} <b> {expires_in.minute < 10 ? 0 : null}{expires_in.minute}:{expires_in.second < 10 ? 0 : null}{expires_in.second} </b> </div>
                     </div>
                 )}
 
@@ -59,7 +64,7 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                     <input
                         className={"form-control"}
                         type="email"
-                        placeholder="Votre Email"
+                        placeholder={t("Votre Email")}
                         name="username"
                         onChange={(e) => onChangeUserName(e)}
                         value={data.username}
@@ -73,7 +78,7 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                         className={"form-control"}
                         type="password"
                         id="password"
-                        placeholder="Votre Mot de Passe"
+                        placeholder={t("Votre Mot de Passe")}
                         name="password"
                         onChange={(e) => onChangePassword(e)}
                         value={data.password}
@@ -83,7 +88,7 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                 <div className="kt-login__extra text-right mt-2">
 
                     <Link to="/login/forgot" id="forgot_btn">
-                        Mot de passe oublié?
+                        {t("Mot de passe oublié")}?
                     </Link>
                 </div>
 
@@ -94,20 +99,20 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                             <button type="submit"
                                     id="kt_login_signin_submit"
                                     className="btn btn-primary btn-elevate kt-login__btn-primary"
-                                    onClick={onClickConnectButton}> Se
-                                connecter
+                                    onClick={onClickConnectButton}>
+                                {t("Se connecter")}
                             </button>
                         ) : (
                             <button
                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                 type="button" disabled>
-                                Chargement...
+                                {t("Chargement")}...
                             </button>
                         )
                     }
                 </div>
             </form>
-        </div>
+        </div>) : null
 
     );
 };

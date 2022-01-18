@@ -1,4 +1,21 @@
 {
+  "Veuillez vous connecter avec votre nouveau mot de passe": "Veuillez vous connecter avec votre nouveau mot de passe",
+  "Votre compte a été désactivé, réessayez ultérieurement dans": "Votre compte a été désactivé, réessayez ultérieurement dans",
+  "Votre Email": "Votre Email",
+  "Votre Mot de Passe": "Votre Mot de Passe",
+  "Mot de passe oublié": "Mot de passe oublié",
+  "Se connecter": "Se connecter",
+  "Chargement": "Chargement",
+  "Entrer votre email pour récupérer votre mot de passe": "Entrer votre email pour récupérer votre mot de passe",
+  "Quitter": "Quitter",
+  "Envoyer": "Envoyer",
+  "Réinitialisation du Mot de Passe": "Réinitialisation du Mot de Passe",
+  "Entrer votre nouveau mot de passe": "Entrer votre nouveau mot de passe",
+  "Ancien mot de passe": "Ancien mot de passe",
+  "Nouveau mot de passe": "Nouveau mot de passe",
+  "Confirmer le nouveau mot de passe": "Confirmer le nouveau mot de passe",
+  "Modifier": "Modifier",
+
   "Salut": "Salut",
   "Aucun Enregistrement Trouvé": "Aucun Enregistrement Trouvé",
   "Enregistrement Trouvé": "Enregistrement Trouvé",
@@ -81,5 +98,7 @@
   "Unité": "Unité",
   "Utilisateur": "Utilisateur",
   "Email Configuration": "Email Configuration",
-  "Logs": "Logs"
+  "Logs": "Logs",
+
+  "Choisissez une institution pour le filtre": "Choisissez une institution pour le filtre"
 }

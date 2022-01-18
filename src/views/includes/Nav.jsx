@@ -84,6 +84,7 @@ const Nav = (props) => {
         e.preventDefault();
         props.changeLanguage(lang);
         i18n.changeLanguage(lang);
+        localStorage.setItem('i18nextLng', lang);
     }, [props.changeLanguage]);
 
     const onClickLogoutLink = useCallback((e) => {

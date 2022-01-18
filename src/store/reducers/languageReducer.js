@@ -1,7 +1,7 @@
 import {CHANGE_LANGUAGE} from "../actions/languageAction";
 
 const initialState = {
-    languageSelected: "fr",
+    languageSelected: localStorage.getItem('i18nextLng') ? (localStorage.getItem('i18nextLng')).slice(0, 2) : 'fr',
     countryLanguageImage: {
         "fr": "/personal/img/france.svg",
         "en": "/assets/media/flags/226-united-states.svg",
