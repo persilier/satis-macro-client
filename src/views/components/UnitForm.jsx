@@ -80,15 +80,23 @@ const HoldingUnitForm = (props) => {
     const [institution, setInstitution] = useState(null);
     const [leads, setLeads] = useState([]);
     const [lead, setLead] = useState(null);
+    const [countries, setCountries] = useState([]);
+    const [countrie, setCountrie] = useState(null);
+    const [States, setStates] = useState([]);
+    const [state, setState] = useState(null);
 
     const defaultData = {
         name: "",
         unit_type_id: unitTypes.length ? unitTypes[0].id : "",
+        country_id: countries.length ? countries[0].id : "",
+        state_id: countries.length ? countries[0].id : "",
         lead_id: "",
         institution_id: institutions.length ? institutions[0].id : "",
     };
     const defaultError = {
         name: [],
+        country_id: [],
+        state_id: [],
         unit_type_id: [],
         lead_id: [],
         institution_id: []
@@ -110,14 +118,30 @@ const HoldingUnitForm = (props) => {
             if (id) {
                 await axios.get(endPoint.edit(id))
                     .then(response => {
+                        console.log("DATA:",response.data)
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
+                            state_id: response.data.unit.state_id,
                             institution_id: response.data.unit.institution ? response.data.unit.institution_id ? response.data.unit.institution_id : "" : "",
                         };
+                         axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
+                            .then(response => {
+                                setStates(formatSelectOption(response.data, "name"));
+                            })
+                            .catch(error => {
+                                console.log("something is wrong");
+                            })
+                        ;
                         setData(newData);
+                        setState(response.data.unit.state ? {value: response.data.unit.state.id, label: response.data.unit.state.name} : {value: "", label: ""});
                         setUnitType({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+
+                        setCountries(formatSelectOption(response.data.countries, "name"));
+                        setCountrie(
+                            response.data.unit.state.country ? {value: response.data.unit.state.country.id, label: response.data.unit.state.country.name} : {value: "", label: ""}
+                        );
 
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
@@ -138,6 +162,7 @@ const HoldingUnitForm = (props) => {
                 await axios.get(endPoint.create)
                     .then(response => {
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+                        setCountries(formatSelectOption(response.data.countries, "name"));
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     })
@@ -162,6 +187,28 @@ const HoldingUnitForm = (props) => {
         newData.unit_type_id = selected ? selected.value : "";
         setUnitType(selected);
         setData(newData);
+    };
+
+    const onChangeStates = (selected) => {
+        const newData = {...data};
+        newData.state_id = selected ? selected.value : "";
+        setState(selected);
+        setData(newData);
+    };
+
+    const onChangeCountries = (selected) => {
+        const newData = {...data};
+        newData.countrie_id = selected ? selected.value : "";
+        setCountrie(selected);
+        axios.get(`${appConfig.apiDomaine}/country/${newData.countrie_id}/states`,)
+            .then(response => {
+                setStates(formatSelectOption(response.data, "name"));
+                })
+            .catch(error => {
+                console.log("something is wrong");
+            })
+        ;
+        // setData(newData);
     };
 
     const onChangeLead = (selected) => {
@@ -372,6 +419,51 @@ const HoldingUnitForm = (props) => {
                                                     }
                                                 </div>
                                             </div>
+
+                                            <div className={error.country_id.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Pays <InputRequire/></label>
+                                                <div className="col-lg-9 col-xl-6">
+                                                    <Select
+                                                        isClearable
+                                                        value={countrie}
+                                                        placeholder={"Benin"}
+                                                        onChange={onChangeCountries}
+                                                        options={countries}
+                                                    />
+                                                    {
+                                                        error.country_id.length ? (
+                                                            error.country_id.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className={error.state_id.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Zones <InputRequire/></label>
+                                                <div className="col-lg-9 col-xl-6">
+                                                    <Select
+                                                        isClearable
+                                                        value={state}
+                                                        placeholder={"Cotonou"}
+                                                        onChange={onChangeStates}
+                                                        options={States}
+                                                    />
+                                                    {
+                                                        error.state_id.length ? (
+                                                            error.state_id.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <div className="kt-portlet__foot">
                                             <div className="kt-form__actions text-right">
