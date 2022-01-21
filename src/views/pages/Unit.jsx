@@ -74,7 +74,7 @@ const Unit = (props) => {
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-                    console.log("data:", response.data);
+
                     setUnits(response.data);
                     setLoad(false);
                 })

@@ -159,6 +159,7 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
+                    console.log(response.data, "DATA")
                     const newIncompleteClaim = {
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
@@ -187,7 +188,7 @@ const IncompleteClaimsEdit = props => {
                     setIsRequire(response.data.requirements);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
-                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "number", false) : "");
+                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "account_number", false) : "");
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
@@ -245,7 +246,7 @@ const IncompleteClaimsEdit = props => {
                     if (response.data.claim.account_targeted !== null) {
                         setAccount({
                             value: response.data.claim.account_targeted.id,
-                            label: response.data.claim.account_targeted.number
+                            label: response.data.claim.account_targeted.account_number
                         });
                     }
                     if (response.data.claim.unit_targeted !== null) {
