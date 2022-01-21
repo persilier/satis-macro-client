@@ -22,6 +22,9 @@ function ResetPassword() {
     if (!state.new_password) {
       _err.new_password = "Champs réquis !";
     }
+    if(state?.new_password?.length < 6){
+      _err.new_password = "Au moins 6 caractères !";
+    }
     if (!state.new_password_confirmation) {
       _err.new_password_confirmation = "Champs réquis !";
     }
@@ -52,12 +55,15 @@ function ResetPassword() {
       })
       .catch((err) => {
         setIsloading(false);
-        ToastBottomEnd.fire({
-          background: "#3c3e40",
-          icon: "error",
-          title:
-            "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Échec de l'opération !</strong>",
-        });
+        if(err.response.status == 422){
+          ToastBottomEnd.fire({
+            background: "#3c3e40",
+            icon: "error",
+            title:
+              "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Mot de passe erroné !</strong>",
+          });
+        }
+      
         console.log("err", err);
       });
   };
@@ -141,7 +147,7 @@ function ResetPassword() {
                                 className="col-xl-3 col-lg-3 col-form-label"
                                 htmlFor="new_password"
                               >
-                                Nouveau mot de passe *
+                                Nouveau mot de passe * (Min )
                               </label>
                               <div className="col-lg-9 col-xl-6">
                                 <input
