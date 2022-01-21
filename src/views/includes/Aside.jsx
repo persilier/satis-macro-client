@@ -828,7 +828,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/logs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Journalisation des activitées</span>
+                                                                <span className="kt-menu__link-text">Journal des activitées</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
