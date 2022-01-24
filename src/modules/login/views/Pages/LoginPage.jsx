@@ -165,8 +165,9 @@ const LoginPage = (props) => {
 
             })
             .catch(error => {
-                setStartRequest(false);
+               setStartRequest(false);
                 setError(defaultError);
+                console.log({error})
                 if (error.response.data.status === 403) {
                     localStorage.removeItem('decount');
                     if (window.timeIntervale) {
@@ -190,11 +191,22 @@ const LoginPage = (props) => {
                         .then(response => {
                             window.location.pathname = (`/reset-password`)
                         })
-                } else {
+                } else if (error.response.data.status === 406) {
                     setExpireIn(null);
+                    console.log("debug");
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Désolé, vous etes déjà connecté sur un autre appareil"));
+                }
+                else {
+                    setExpireIn(null);
+                    if (data.username === "" || data.password === "") {
+                        setError({
+                            username: "Email ou mot de passe incorrect",
+                            password: "Email ou mot de passe incorrect"
+                        });
+                    }
+                    console.log(error.response.data)
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
-
             })
         ;
     };
@@ -214,13 +226,18 @@ const LoginPage = (props) => {
 
                                     <div
                                         className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
-                                        <div
-                                            className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                            style={{backgroundImage: `url(${componentData && componentData.params.fr.background.value !== null ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
+                                        <div className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
+                                            style={
+                                                {
+                                                    backgroundImage: `url(${(componentData && componentData.params.fr.background.value) ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`
+                                                }
+                                            }>
                                             <div className="kt-grid__item">
                                             <span className="kt-login__logo">
                                                 <img
-                                                    src={componentData ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : "/assets/images/satisLogo.png"}/>
+                                                    src={
+                                                        (componentData && componentData.params.fr.logo.value) ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : "/assets/images/satisLogo.png"
+                                                    }/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1em",

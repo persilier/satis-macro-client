@@ -14,7 +14,7 @@ const Aside = (props) => {
                 <div id="kt_aside_menu" className="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1">
                     <ul className="kt-menu__nav ">
                         <li className="kt-menu__item " aria-haspopup="true">
-                            <NavLink exact to="/dashboard" className="kt-menu__link" activeClassName="kt-menu__item--active">
+                            <NavLink exact to="/dashboard" clas sName="kt-menu__link" activeClassName="kt-menu__item--active">
                                 <i className="kt-menu__link-icon flaticon2-architecture-and-city"/>
                                 <span className="kt-menu__link-text">Tableau de bord</span>
                             </NavLink>
@@ -369,6 +369,17 @@ const Aside = (props) => {
                                                         <span className="kt-menu__link-text">Paramètres</span>
                                                     </span>
                                                 </li>
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "list-staff-from-any-unit") || verifyPermission(props.userPermissions, 'list-staff-from-my-unit') || verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
+                                                        <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">Preuve d'accusé de réception</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
 
                                                 {
                                                     verifyPermission(props.userPermissions, "list-staff-from-any-unit") || verifyPermission(props.userPermissions, 'list-staff-from-my-unit') || verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
