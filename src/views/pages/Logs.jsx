@@ -167,7 +167,7 @@ const Logs = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
-                                        Logs
+                                        Journal des activitées
                                     </a>
                                 </div>
                             </div>
@@ -176,10 +176,10 @@ const Logs = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Historique des Logs"}/>
+                    <InfirmationTable information={"Historique des activitées du système"}/>
 
                     <div className="kt-portlet">
-                        <HeaderTablePage title={"Logs"}/>
+                        <HeaderTablePage title={"Journal des activitées"}/>
 
                         <div className="kt-portlet__body">
                             <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">

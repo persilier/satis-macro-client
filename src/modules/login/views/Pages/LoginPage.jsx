@@ -11,7 +11,6 @@ import {
     toastConnectSuccessMessageConfig,
     toastErrorMessageWithParameterConfig,
 } from "../../../../config/toastConfig";
-// import {listConnectData} from "../../../../config/appConfig";
 import Loader from "../../../../views/components/Loader";
 import "./LoginCss.css"
 import ForgotForm from "./ForgotForm";
@@ -22,7 +21,6 @@ import {passwordExpireConfig} from "../../../../config/confirmConfig";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
-
 
 const LoginPage = (props) => {
     const tokenData = getToken(window.location.href);
@@ -148,7 +146,6 @@ const LoginPage = (props) => {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
-
                     setError(defaultError);
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
@@ -162,12 +159,10 @@ const LoginPage = (props) => {
                     localStorage.setItem('refresh_token', refresh_token);
                     window.location.href = "/dashboard";
                 });
-
             })
             .catch(error => {
-               setStartRequest(false);
+                setStartRequest(false);
                 setError(defaultError);
-                console.log({error})
                 if (error.response.data.status === 403) {
                     localStorage.removeItem('decount');
                     if (window.timeIntervale) {
@@ -193,10 +188,8 @@ const LoginPage = (props) => {
                         })
                 } else if (error.response.data.status === 406) {
                     setExpireIn(null);
-                    console.log("debug");
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Désolé, vous etes déjà connecté sur un autre appareil"));
-                }
-                else {
+                } else {
                     setExpireIn(null);
                     if (data.username === "" || data.password === "") {
                         setError({
@@ -204,7 +197,6 @@ const LoginPage = (props) => {
                             password: "Email ou mot de passe incorrect"
                         });
                     }
-                    console.log(error.response.data)
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
             })

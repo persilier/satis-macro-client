@@ -9,7 +9,7 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 const UpdatePassword = () => {
     const [startRequest, setStartRequest] = useState(false);
 
-    const defaultData = {
+    const defaultData = { 
         "current_password": "",
         "new_password": "",
         "new_password_confirmation": ""
@@ -46,7 +46,7 @@ const UpdatePassword = () => {
         setStartRequest(true);
         e.preventDefault();
 
-        await axios.post(`${appConfig.apiDomaine}/change-password`, data)
+        await axios.put(`${appConfig.apiDomaine}/change-password`, data)
             .then(() => {
                 setStartRequest(false);
                 setError({...defaultError});
