@@ -7,13 +7,13 @@ export default function setupAxios(axios, store) {
   axios.interceptors.request.use(
     (config) => {
       if (isTimeOut()) {
-        logoutUser()
+        /*logoutUser()
           .then(({ data }) => {
             console.log(data);
             console.log("TIME_IS_OUT!!!!");
             logout();
           })
-          .catch(console.log);
+          .catch(console.log);*/
       }
       const token = localStorage.getItem("token");
       config.baseURL = appConfig.apiDomaine;
