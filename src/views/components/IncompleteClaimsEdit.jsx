@@ -163,7 +163,7 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
-                    console.log(response.data, "DATA")
+                    // console.log(response.data, "DATA")
                     const newIncompleteClaim = {
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
@@ -1094,15 +1094,15 @@ const IncompleteClaimsEdit = props => {
                                                                 htmlFor="description">{componentData ? componentData.params.fr.description.value : ""}
                                                                 {isRequire.description ?
                                                                     <InputRequire/> : ""}</label>
-                                                            {console.log(data.description)}
+
                                                             {
-                                                                data.request_channel_slug ="email"?(
-                                                                    <div>
-                                                                        <HtmlDescription onClick={e => {
-                                                                            e.preventDefault()
-                                                                            showModal(data.description ? data.description : '-')
-                                                                        }}/>
-                                                                    </div>
+                                                                data.request_channel_slug ==="email"?(
+                                                                        <div>
+                                                                            <HtmlDescription onClick={e => {
+                                                                                e.preventDefault()
+                                                                                showModal(data.description ? data.description : '-')
+                                                                            }}/>
+                                                                        </div>
                                                                     ):
                                                                     (
                                                                         <textarea

@@ -4,3 +4,7 @@ import axios from "axios";
 export function resetPassword(input) {
 	return axios.put(`/change-password`, input);
 }
+
+export function logoutUser(){
+	return axios.get(`/logout`)
+}
