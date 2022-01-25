@@ -173,7 +173,7 @@ const LoginPage = (props) => {
                 } else if (error.response.data.status === 400) {
                     setExpireIn(null);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.message));
-                } else if (error.response.status === 401) {
+                } else if (error.response.status === 401 || error.response.status === 422) {
                     setExpireIn(null);
                     setError({
                         username: "Email ou mot de passe incorrect",
