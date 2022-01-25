@@ -15,10 +15,15 @@ import Select from "react-select";
 import {debug} from "../../helpers/function";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const InstitutionMessageApi = props => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(props.userPermissions, 'update-institution-message-api'))
@@ -152,7 +157,7 @@ const InstitutionMessageApi = props => {
             else
                 executeSave(`${appConfig.apiDomaine}/my/institutions/message-apis`, sendData);
         } else
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez renseigner les informations"));
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez renseigner les informations")));
     };
 
 
@@ -163,14 +168,14 @@ const InstitutionMessageApi = props => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Fournisseur SMS
+                                    {t("Fournisseur SMS")}
                                 </a>
                             </div>
                         </div>
@@ -184,7 +189,7 @@ const InstitutionMessageApi = props => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Modification Fournisseur SMS
+                                            {t("Modification Fournisseur SMS")}
                                         </h3>
                                     </div>
                                 </div>
@@ -194,7 +199,7 @@ const InstitutionMessageApi = props => {
                                         <div className="kt-portlet__body">
 
                                             <div className={"form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Fournisseur SMS <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Fournisseur SMS")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
@@ -239,10 +244,10 @@ const InstitutionMessageApi = props => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => saveData(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => saveData(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
@@ -270,13 +275,15 @@ const InstitutionMessageApi = props => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-institution-message-api') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'update-my-institution-message-api') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-institution-message-api') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'update-my-institution-message-api') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

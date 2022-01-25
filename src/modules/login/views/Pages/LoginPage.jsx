@@ -18,11 +18,15 @@ import ReinitialisationForm from "./ReinitialisationForm";
 import ConnexionForm from "./ConnexionForm";
 import {PasswordConfirmation} from "../../../../views/components/ConfirmationAlert";
 import {passwordExpireConfig} from "../../../../config/confirmConfig";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
 
 const LoginPage = (props) => {
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     const tokenData = getToken(window.location.href);
     const defaultError = {
         username: "",
@@ -176,10 +180,10 @@ const LoginPage = (props) => {
                 } else if (error.response.status === 401 || error.response.status === 422) {
                     setExpireIn(null);
                     setError({
-                        username: "Email ou mot de passe incorrect",
-                        password: "Email ou mot de passe incorrect"
+                        username: ready ? t("Email ou mot de passe incorrect") : "",
+                        password: ready ? t("Email ou mot de passe incorrect") : ""
                     });
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Email ou mot de passe incorrect"));
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Email ou mot de passe incorrect")));
                 } else if (error.response.data.status === 423) {
                     setExpireIn(null);
                     PasswordConfirmation.fire(passwordExpireConfig(error.response.data.message))

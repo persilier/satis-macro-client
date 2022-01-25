@@ -16,6 +16,7 @@ import {verifyPermission} from "../../helpers/permission";
 import Select from "react-select";
 import TagsInput from "react-tagsinput";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
@@ -36,6 +37,10 @@ const endPointConfig = {
 };
 
 const ConfigRapportAutoForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
 
     let endPoint = "";
@@ -174,7 +179,7 @@ const ConfigRapportAutoForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -182,13 +187,13 @@ const ConfigRapportAutoForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/clients/category" className="kt-subheader__breadcrumbs-link">
-                                    Rapport Automatique
+                                    {t("Rapport Automatique")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -204,7 +209,7 @@ const ConfigRapportAutoForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification des rapports automatiques" : "Ajout des rapports automatiques"
+                                                id ? t("Modification des rapports automatiques") : t("Ajout des rapports automatiques")
                                             }
                                         </h3>
                                     </div>
@@ -226,12 +231,12 @@ const ConfigRapportAutoForm = (props) => {
                                                                             type="checkbox"
                                                                             value={disabledInput}
                                                                             onChange={handleDisabledInputChange}/>
-                                                                        <span/>    Toutes les institutions<span/></label>
+                                                                        <span/> {t("Toutes les institutions")}<span/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <Select
                                                                             isClearable
                                                                             isDisabled={disabledInput}
-                                                                            placeholder={"Veuillez sélectionner une institution"}
+                                                                            placeholder={t("Veuillez sélectionner une institution")}
                                                                             value={institution}
                                                                             onChange={onChangeInstitution}
                                                                             options={institutions?institutions.map(institution=>institution):""}
@@ -242,7 +247,7 @@ const ConfigRapportAutoForm = (props) => {
                                                                 <div
                                                                     className={error.period.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Période(s)</label>
+                                                                           htmlFor="exampleSelect1">{t("Période(s)")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                             <Select
                                                                                 value={period}
@@ -265,7 +270,7 @@ const ConfigRapportAutoForm = (props) => {
                                                                 <div
                                                                     className={error.email.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="email">Votre Email(s)</label>
+                                                                           htmlFor="email">{t("Votre Email(s)")}</label>
                                                                     <div className=" col-lg-9 col-xl-6">
                                                                         <TagsInput
                                                                             value={data.email}
@@ -295,12 +300,12 @@ const ConfigRapportAutoForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Enregistrer</button>
+                                                                                    className="btn btn-primary">{t("Enregistrer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -308,13 +313,13 @@ const ConfigRapportAutoForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/settings/rapport-auto"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/settings/rapport-auto"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -337,8 +342,10 @@ const ConfigRapportAutoForm = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ? (
-            printJsx()
+        ready ? (
+            verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ? (
+                printJsx()
+            ) : null
         ) : null
     );
 

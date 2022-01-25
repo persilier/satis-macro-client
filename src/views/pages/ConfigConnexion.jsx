@@ -12,12 +12,18 @@ import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../config/toastConfig";
 
+// react-i18n
+import { useTranslation } from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ConfigConnexion = (props) => {
-    document.title = "Satis client - Paramètre Connexion";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + (ready ? t("Paramètre connexion") : "");
 
     if (!(verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config")))
         window.location.href = ERROR_401;
@@ -56,6 +62,7 @@ const ConfigConnexion = (props) => {
 
     };
 
+
     const [load, setLoad] = useState(false);
     const [startRequest, setStartRequest] = useState(false);
 
@@ -86,7 +93,6 @@ const ConfigConnexion = (props) => {
                         attempt_waiting_time: JSON.parse(data.data.fr).attempt_waiting_time,
                         account_blocked_msg: JSON.parse(data.data.fr).account_blocked_msg,
                     })
-                    console.log(JSON.parse(data.data.fr));
                     setLoad(false);
                 })
                 .catch(error => {
@@ -237,61 +243,62 @@ const ConfigConnexion = (props) => {
     }
 
     return (
-        load ? (
-            <Loader/>
-        ) : (
-            verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
-                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        ready ? (
+            load ? (
+                <Loader/>
+            ) : (
+                verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
+                    <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
 
-                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                        <div className="kt-container  kt-container--fluid ">
-                            <div className="kt-subheader__main">
-                                <h3 className="kt-subheader__title">
-                                    Paramètres
-                                </h3>
-                                <span className="kt-subheader__separator kt-hidden"/>
-                                <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
-                                    <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link">
-                                        Configurer connexion
-                                    </a>
+                        <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                            <div className="kt-container  kt-container--fluid ">
+                                <div className="kt-subheader__main">
+                                    <h3 className="kt-subheader__title">
+                                        {t("Paramètres")}
+                                    </h3>
+                                    <span className="kt-subheader__separator kt-hidden"/>
+                                    <div className="kt-subheader__breadcrumbs">
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
+                                        <span className="kt-subheader__breadcrumbs-separator"/>
+                                        <a href="#button" onClick={e => e.preventDefault()}
+                                           className="kt-subheader__breadcrumbs-link">
+                                            {t("Configurer connexion")}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
 
-                        <InfirmationTable
-                            information={"Configuration du processus de connexion"}
-                        />
+                            <InfirmationTable
+                                information={t("Configuration du processus de connexion")}
+                            />
 
-                        <div className="row">
-                            <div className="col">
-                                <div className="kt-portlet">
+                            <div className="row">
+                                <div className="col">
+                                    <div className="kt-portlet">
 
-                                    <div className="kt-portlet__head">
-                                        <div className="kt-portlet__head-label">
-                                            <h3 className="kt-portlet__head-title">
-                                                Configurer connexion
-                                            </h3>
+                                        <div className="kt-portlet__head">
+                                            <div className="kt-portlet__head-label">
+                                                <h3 className="kt-portlet__head-title">
+                                                    {t("Configurer connexion")}
+                                                </h3>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="kt-form">
+                                        <div className="kt-form">
 
-                                        <div className="kt-portlet__body">
+                                            <div className="kt-portlet__body">
 
-                                            <div className="kt-section">
-                                                <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">Temps d'inactivité</h3>
+                                                <div className="kt-section">
+                                                    <div className="kt-section__body">
+                                                        <h3 className="kt-section__title kt-section__title-lg">{t("Temps d'inactivité")}</h3>
 
-                                                    <div className="form-group row">
-                                                        <label className="col-4 col-form-label">Contrôle du temps d'inactivité <InputRequire/></label>
-                                                        <div className="col-3">
+                                                        <div className="form-group row">
+                                                            <label className="col-4 col-form-label">{t("Contrôle du temps d'inactivité")} <InputRequire/></label>
+                                                            <div className="col-3">
                                                             <span className="kt-switch">
                                                                 <label>
                                                                     <input
@@ -303,36 +310,36 @@ const ConfigConnexion = (props) => {
                                                                     <span />
                                                                 </label>
                                                             </span>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.inactivity_time_limit.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactivity_time_limit">Durée d'inactivité maximale tolérée en jours <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.inactivity_control}
-                                                                required={data.inactivity_control}
-                                                                id="inactivity_time_limit"
-                                                                type="number"
-                                                                className={error.inactivity_time_limit.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.inactivity_time_limit}
-                                                                onChange={(e => onChangeInactivityTime(e))}
-                                                            />
-                                                            {
-                                                                error.inactivity_time_limit.length ? (
-                                                                    error.inactivity_time_limit.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.inactivity_time_limit.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactivity_time_limit">{t("Durée d'inactivité maximale tolérée en jours")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.inactivity_control}
+                                                                    required={data.inactivity_control}
+                                                                    id="inactivity_time_limit"
+                                                                    type="number"
+                                                                    className={error.inactivity_time_limit.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.inactivity_time_limit}
+                                                                    onChange={(e => onChangeInactivityTime(e))}
+                                                                />
+                                                                {
+                                                                    error.inactivity_time_limit.length ? (
+                                                                        error.inactivity_time_limit.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.inactive_account_msg.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactive_account_msg">Message à envoyer à l'utilisateur à la désactivation de son compte <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
+                                                        <div className={error.inactive_account_msg.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="inactive_account_msg">{t("Message à envoyer à l'utilisateur à la désactivation de son compte")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
                                                             <textarea
                                                                 disabled={!data.inactivity_control}
                                                                 required={data.inactivity_control}
@@ -342,30 +349,30 @@ const ConfigConnexion = (props) => {
                                                                 value={data.inactive_account_msg}
                                                                 onChange={(e) => onChangeInactiveAccountMsg(e)}
                                                             />
-                                                            {
-                                                                error.inactive_account_msg.length ? (
-                                                                    error.inactive_account_msg.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                                {
+                                                                    error.inactive_account_msg.length ? (
+                                                                        error.inactive_account_msg.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
+
                                                     </div>
-
                                                 </div>
-                                            </div>
 
-                                            <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                                <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
-                                            <div className="kt-section">
-                                                <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">Expiration du mot de passe</h3>
+                                                <div className="kt-section">
+                                                    <div className="kt-section__body">
+                                                        <h3 className="kt-section__title kt-section__title-lg">{t("Expiration du mot de passe")}</h3>
 
-                                                    <div className="form-group row">
-                                                        <label className="col-4 col-form-label">Expiration du mot de passe <InputRequire/></label>
-                                                        <div className="col-3">
+                                                        <div className="form-group row">
+                                                            <label className="col-4 col-form-label">{t("Expiration du mot de passe")} <InputRequire/></label>
+                                                            <div className="col-3">
                                                             <span className="kt-switch">
                                                                 <label>
                                                                     <input
@@ -377,84 +384,84 @@ const ConfigConnexion = (props) => {
                                                                     <span />
                                                                 </label>
                                                             </span>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.password_lifetime.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_lifetime">Durée de vie d'un mot de passe en jours <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.password_expiration_control}
-                                                                required={data.password_expiration_control}
-                                                                id="password_lifetime"
-                                                                type="number"
-                                                                className={error.password_lifetime.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.password_lifetime}
-                                                                onChange={(e => onChangePasswordExpirationTime(e))}
-                                                            />
-                                                            {
-                                                                error.password_lifetime.length ? (
-                                                                    error.password_lifetime.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.password_lifetime.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_lifetime">{t("Durée de vie d'un mot de passe en jours")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.password_expiration_control}
+                                                                    required={data.password_expiration_control}
+                                                                    id="password_lifetime"
+                                                                    type="number"
+                                                                    className={error.password_lifetime.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.password_lifetime}
+                                                                    onChange={(e => onChangePasswordExpirationTime(e))}
+                                                                />
+                                                                {
+                                                                    error.password_lifetime.length ? (
+                                                                        error.password_lifetime.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.max_password_histories.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_password_histories">Nombre maximal de mot de passe dans l'historique des mot de passe  <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.password_expiration_control}
-                                                                required={data.password_expiration_control}
-                                                                id="max_password_histories"
-                                                                type="number"
-                                                                className={error.max_password_histories.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.max_password_histories}
-                                                                onChange={(e => onChangeHistoryMaxPasswords(e))}
-                                                            />
-                                                            {
-                                                                error.max_password_histories.length ? (
-                                                                    error.max_password_histories.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.max_password_histories.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_password_histories">{t("Nombre maximal de mot de passe dans l'historique des mot de passe")}  <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.password_expiration_control}
+                                                                    required={data.password_expiration_control}
+                                                                    id="max_password_histories"
+                                                                    type="number"
+                                                                    className={error.max_password_histories.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.max_password_histories}
+                                                                    onChange={(e => onChangeHistoryMaxPasswords(e))}
+                                                                />
+                                                                {
+                                                                    error.max_password_histories.length ? (
+                                                                        error.max_password_histories.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.password_notif_delay.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_notif_delay">Nombre de jours restants avant expiration du mot de passe à partir duquel on peut notifier l'utilisateur <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.password_expiration_control}
-                                                                required={data.password_expiration_control}
-                                                                id="password_notif_delay"
-                                                                type="number"
-                                                                className={error.password_notif_delay.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.password_notif_delay}
-                                                                onChange={(e => onChangeDaysBeforeExpiration(e))}
-                                                            />
-                                                            {
-                                                                error.password_notif_delay.length ? (
-                                                                    error.password_notif_delay.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.password_notif_delay.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="password_notif_delay">{t("Nombre de jours restants avant expiration du mot de passe à partir duquel on peut notifier l'utilisateur")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.password_expiration_control}
+                                                                    required={data.password_expiration_control}
+                                                                    id="password_notif_delay"
+                                                                    type="number"
+                                                                    className={error.password_notif_delay.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.password_notif_delay}
+                                                                    onChange={(e => onChangeDaysBeforeExpiration(e))}
+                                                                />
+                                                                {
+                                                                    error.password_notif_delay.length ? (
+                                                                        error.password_notif_delay.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.password_notif_msg.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="imminent_password_expiration">Message à envoyer à l'utilisateur pour le notifier que l'expiration de son mot de passe est imminent <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
+                                                        <div className={error.password_notif_msg.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="imminent_password_expiration">{t("Message à envoyer à l'utilisateur pour le notifier que l'expiration de son mot de passe est imminent")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
                                                             <textarea
                                                                 disabled={!data.password_expiration_control}
                                                                 required={data.password_expiration_control}
@@ -464,21 +471,21 @@ const ConfigConnexion = (props) => {
                                                                 value={data.password_notif_msg}
                                                                 onChange={(e) => onChangeMessageImminentPasswordExpiration(e)}
                                                             />
-                                                            {
-                                                                error.password_notif_msg.length ? (
-                                                                    error.password_notif_msg.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                                {
+                                                                    error.password_notif_msg.length ? (
+                                                                        error.password_notif_msg.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.password_expiration_msg.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="for_password_expiration">Message à envoyer à l'utilisateur le jour de l'expiration de son mot de passe <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
+                                                        <div className={error.password_expiration_msg.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="for_password_expiration">{t("Message à envoyer à l'utilisateur le jour de l'expiration de son mot de passe")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
                                                             <textarea
                                                                 disabled={!data.password_expiration_control}
                                                                 required={data.password_expiration_control}
@@ -488,31 +495,31 @@ const ConfigConnexion = (props) => {
                                                                 value={data.password_expiration_msg}
                                                                 onChange={(e) => onChangeMessageForPasswordExpiration(e)}
                                                             />
-                                                            {
-                                                                error.password_expiration_msg.length ? (
-                                                                    error.password_expiration_msg.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                                {
+                                                                    error.password_expiration_msg.length ? (
+                                                                        error.password_expiration_msg.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
+
+
                                                     </div>
-
-
                                                 </div>
-                                            </div>
 
-                                            <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                                <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
-                                            <div className="kt-section">
-                                                <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">Tentatives de connexion</h3>
+                                                <div className="kt-section">
+                                                    <div className="kt-section__body">
+                                                        <h3 className="kt-section__title kt-section__title-lg">{t("Tentatives de connexion")}</h3>
 
-                                                    <div className="form-group row">
-                                                        <label className="col-4 col-form-label">Tentatives de connexion manquées <InputRequire/></label>
-                                                        <div className="col-3">
+                                                        <div className="form-group row">
+                                                            <label className="col-4 col-form-label">{t("Tentatives de connexion manquées")} <InputRequire/></label>
+                                                            <div className="col-3">
                                                             <span className="kt-switch">
                                                                 <label>
                                                                     <input
@@ -524,84 +531,84 @@ const ConfigConnexion = (props) => {
                                                                     <span />
                                                                 </label>
                                                             </span>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.max_attempt.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_attempt">Nombre maximal de tentatives manquées tolérable <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.block_attempt_control}
-                                                                required={data.block_attempt_control}
-                                                                id="max_attempt"
-                                                                type="number"
-                                                                className={error.max_attempt.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.max_attempt}
-                                                                onChange={(e => onChangeMaxMissingAttempts(e))}
-                                                            />
-                                                            {
-                                                                error.max_attempt.length ? (
-                                                                    error.max_attempt.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.max_attempt.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="max_attempt">{t("Nombre maximal de tentatives manquées tolérable")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.block_attempt_control}
+                                                                    required={data.block_attempt_control}
+                                                                    id="max_attempt"
+                                                                    type="number"
+                                                                    className={error.max_attempt.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.max_attempt}
+                                                                    onChange={(e => onChangeMaxMissingAttempts(e))}
+                                                                />
+                                                                {
+                                                                    error.max_attempt.length ? (
+                                                                        error.max_attempt.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.attempt_delay.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_delay">Durée maximale requise entre deux tentatives en minutes <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.block_attempt_control}
-                                                                required={data.block_attempt_control}
-                                                                id="attempt_delay"
-                                                                type="number"
-                                                                className={error.attempt_delay.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.attempt_delay}
-                                                                onChange={(e => onChangeMaxTimeBetweenAttempts(e))}
-                                                            />
-                                                            {
-                                                                error.attempt_delay.length ? (
-                                                                    error.attempt_delay.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.attempt_delay.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_delay">{t("Durée maximale requise entre deux tentatives en minutes")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.block_attempt_control}
+                                                                    required={data.block_attempt_control}
+                                                                    id="attempt_delay"
+                                                                    type="number"
+                                                                    className={error.attempt_delay.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.attempt_delay}
+                                                                    onChange={(e => onChangeMaxTimeBetweenAttempts(e))}
+                                                                />
+                                                                {
+                                                                    error.attempt_delay.length ? (
+                                                                        error.attempt_delay.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.attempt_waiting_time.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_waiting_time">Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable en minutes <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
-                                                            <input
-                                                                disabled={!data.block_attempt_control}
-                                                                required={data.block_attempt_control}
-                                                                id="attempt_waiting_time"
-                                                                type="number"
-                                                                className={error.attempt_waiting_time.length ? "form-control is-invalid" : "form-control"}
-                                                                value={data.attempt_waiting_time}
-                                                                onChange={(e => onChangeWaitingTimeAfterMaxAttempts(e))}
-                                                            />
-                                                            {
-                                                                error.attempt_waiting_time.length ? (
-                                                                    error.attempt_waiting_time.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                        <div className={error.attempt_waiting_time.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="attempt_waiting_time">{t("Temps d'attente après atteinte du nombre maximal de tentatives manquées tolérable en minutes")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
+                                                                <input
+                                                                    disabled={!data.block_attempt_control}
+                                                                    required={data.block_attempt_control}
+                                                                    id="attempt_waiting_time"
+                                                                    type="number"
+                                                                    className={error.attempt_waiting_time.length ? "form-control is-invalid" : "form-control"}
+                                                                    value={data.attempt_waiting_time}
+                                                                    onChange={(e => onChangeWaitingTimeAfterMaxAttempts(e))}
+                                                                />
+                                                                {
+                                                                    error.attempt_waiting_time.length ? (
+                                                                        error.attempt_waiting_time.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className={error.account_blocked_msg.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="account_blocked_msg">Message à envoyer à l'utilisateur après avoir manquer le nombre maximal de tentatives <InputRequire/></label>
-                                                        <div className="col-lg-8 col-xl-6">
+                                                        <div className={error.account_blocked_msg.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-4 col-form-label" htmlFor="account_blocked_msg">{t("Message à envoyer à l'utilisateur après avoir manquer le nombre maximal de tentatives")} <InputRequire/></label>
+                                                            <div className="col-lg-8 col-xl-6">
                                                             <textarea
                                                                 disabled={!data.block_attempt_control}
                                                                 required={data.block_attempt_control}
@@ -611,57 +618,58 @@ const ConfigConnexion = (props) => {
                                                                 value={data.account_blocked_msg}
                                                                 onChange={(e) => onChangeAccountBlockedMsg(e)}
                                                             />
-                                                            {
-                                                                error.account_blocked_msg.length ? (
-                                                                    error.account_blocked_msg.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
-                                                                            {error}
-                                                                        </div>
-                                                                    ))
-                                                                ) : null
-                                                            }
+                                                                {
+                                                                    error.account_blocked_msg.length ? (
+                                                                        error.account_blocked_msg.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
                                                         </div>
+
                                                     </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div className="kt-portlet__foot">
+                                                <div className="kt-form__actions">
+                                                    {
+                                                        !startRequest ? (
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-primary"
+                                                                onClick={e => {onSubmit(e)}}
+                                                            >
+                                                                {t("Enregistrer")}
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                type="button" disabled>
+                                                                {t("Chargement")}...
+                                                            </button>
+                                                        )
+                                                    }
 
                                                 </div>
                                             </div>
 
                                         </div>
 
-                                        <div className="kt-portlet__foot">
-                                            <div className="kt-form__actions">
-                                                {
-                                                    !startRequest ? (
-                                                        <button
-                                                            type="submit"
-                                                            className="btn btn-primary"
-                                                            onClick={e => {onSubmit(e)}}
-                                                        >
-                                                            Enregistrer
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                            type="button" disabled>
-                                                            Chargement...
-                                                        </button>
-                                                    )
-                                                }
-
-                                            </div>
-                                        </div>
-
                                     </div>
-
                                 </div>
                             </div>
+
                         </div>
 
                     </div>
-
-                </div>
-            ) : null
-        )
+                ) : null
+            )
+        ) : null
     )
 }
 

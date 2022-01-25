@@ -1,8 +1,13 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 import {month} from "../../../constants/date";
+import {useTranslation} from "react-i18next";
 
 const FourModel = ({data, type}) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     var categories = [];
     var newSeries = {
         claims_received: [],
@@ -50,11 +55,11 @@ const FourModel = ({data, type}) => {
 
     const series = [
         {
-            name: 'Réclamtions réçues',
+            name: t('Réclamations réçues'),
             data: newSeries.claims_received
         },
         {
-            name: 'Réclamations résolues',
+            name: t('Réclamations résolues'),
             data: newSeries.claims_resolved
         }
     ];
@@ -81,14 +86,16 @@ const FourModel = ({data, type}) => {
     };
 
     return (
-        <div id="chart" style={{position: "relative", zIndex: 0}}>
-            <div className="row d-flex justify-content-center">
-                <div id="graphTwo" className="col-10">
-                    <ReactApexChart options={options} series={series} type="area" height={350} />
+        ready ? (
+            <div id="chart" style={{position: "relative", zIndex: 0}}>
+                <div className="row d-flex justify-content-center">
+                    <div id="graphTwo" className="col-10">
+                        <ReactApexChart options={options} series={series} type="area" height={350} />
+                    </div>
                 </div>
+                <h5 className="text-center">{t("Évolution des réclamations")}</h5>
             </div>
-            <h5 className="text-center">Evolution des réclamations</h5>
-        </div>
+        ) : null
     )
 };
 

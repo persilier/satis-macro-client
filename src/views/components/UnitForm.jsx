@@ -20,6 +20,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -56,6 +57,10 @@ const endPointConfig = {
 };
 
 const HoldingUnitForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (!id) {
         if (!(verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'store-without-link-unit')))
@@ -285,19 +290,19 @@ const HoldingUnitForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/unit" className="kt-subheader__breadcrumbs-link">
-                                    Unité
+                                    {t("Unité")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -313,7 +318,7 @@ const HoldingUnitForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification d'unité" : "Ajout d'unité"
+                                                id ? t("Modification d'unité") : t("Ajout d'unité")
                                             }
                                         </h3>
                                     </div>
@@ -322,7 +327,7 @@ const HoldingUnitForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Unité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -347,7 +352,7 @@ const HoldingUnitForm = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit') ? (
                                                     <div className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Institution <InputRequire/></label>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">{t("Institution")} <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             <Select
                                                                 isClearable
@@ -374,7 +379,7 @@ const HoldingUnitForm = (props) => {
                                                 id ? (
                                                     verifyPermission(props.userPermissions, 'update-any-unit') ? (
                                                         <div className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
-                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">Responsable</label>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">{t("Responsable")}</label>
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <Select
                                                                     isClearable
@@ -399,12 +404,12 @@ const HoldingUnitForm = (props) => {
                                             }
 
                                             <div className={error.unit_type_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Type d'unité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
                                                         value={unitType}
-                                                        placeholder={"Guichet"}
+                                                        placeholder={t("Guichet")}
                                                         onChange={onChangeUnitType}
                                                         options={unitTypes}
                                                     />
@@ -469,21 +474,21 @@ const HoldingUnitForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/unit" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/unit" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -500,14 +505,16 @@ const HoldingUnitForm = (props) => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-any-unit') || verifyPermission(props.userPermissions, 'update-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
-                printJsx()
-            ) : null
-        :
-            verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-any-unit') || verifyPermission(props.userPermissions, 'update-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
+                    printJsx()
+                ) : null
+                :
+                verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

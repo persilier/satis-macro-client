@@ -8,8 +8,13 @@ import {
 } from "../../config/toastConfig";
 import {formatDateToTimeStampte} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const FusionClaim = props => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const [startRequest, setStartRequest] = useState(false);
     const [choice, setChoice] = useState({
         original: false,
@@ -20,7 +25,7 @@ const FusionClaim = props => {
         if (choice.original || choice.duplicate) {
             setStartRequest(true);
             if (choice.original && choice.duplicate)
-                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez choisir une seule réclamation."));
+                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez choisir une seule réclamation")));
             else {
                 setStartRequest(true);
                 if (verifyTokenExpire()) {
@@ -41,7 +46,7 @@ const FusionClaim = props => {
                 }
             }
         } else
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez choisir la réclamation à conserver."));
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veillez choisir la réclamation à conserver")));
     };
 
     const handleChoiceChange = (e) => {
@@ -58,66 +63,67 @@ const FusionClaim = props => {
     };
 
     return (
-        <div className="modal fade" id="kt_modal_4" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog modal-lg" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Fusion de réclamation</h5>
-                        <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="close"/>
-                    </div>
-                    <div className="modal-body">
-                        <form>
-                            <table className="table table-bordered text-center">
-                                <thead>
+        ready ? (
+            <div className="modal fade" id="kt_modal_4" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-lg" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">{t("Fusion de réclamation")}</h5>
+                            <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="close"/>
+                        </div>
+                        <div className="modal-body">
+                            <form>
+                                <table className="table table-bordered text-center">
+                                    <thead>
                                     <tr>
-                                        <th><strong>Paramètre</strong></th>
-                                        <th style={{width: "40%"}}><strong>Réclamation</strong></th>
-                                        <th style={{width: "40%"}}><strong>Doublon</strong></th>
+                                        <th><strong>{t("Paramètre")}</strong></th>
+                                        <th style={{width: "40%"}}><strong>{t("Réclamation")}</strong></th>
+                                        <th style={{width: "40%"}}><strong>{t("Doublon")}</strong></th>
                                     </tr>
-                                </thead>
-                                <tbody>
+                                    </thead>
+                                    <tbody>
                                     <tr>
-                                        <td><strong>Réclamant</strong></td>
+                                        <td><strong>{t("Réclamant")}</strong></td>
                                         <td>{props.claim.claimer ? `${props.claim.claimer.lastname} ${props.claim.claimer.firstname}` : "-"}</td>
                                         <td>{props.copyClaim.claimer ? `${props.copyClaim.claimer.lastname} ${props.copyClaim.claimer.firstname}` : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Montant réclamé</strong></td>
+                                        <td><strong>{t("Montant réclamé")}</strong></td>
                                         <td>{props.claim.amount_disputed ? `${props.claim.amount_disputed} ${props.claim.amount_currency ? props.claim.amount_currency.name["fr"] : ""}` : "-"}</td>
                                         <td>{props.copyClaim.amount_disputed ? `${props.copyClaim.amount_disputed} ${props.copyClaim.amount_currency ? props.copyClaim.amount_currency.name["fr"] : ""}` : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Date de réception</strong></td>
+                                        <td><strong>{t("Date de réception")}</strong></td>
                                         <td>{props.claim.created_at ? formatDateToTimeStampte(props.claim.created_at) : "-"}</td>
                                         <td>{props.copyClaim.created_at ? formatDateToTimeStampte(props.copyClaim.created_at) : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Date de l'évenement</strong></td>
+                                        <td><strong>{t("Date de l'évenement")}</strong></td>
                                         <td>{props.claim.event_occured_at ? formatDateToTimeStampte(props.claim.event_occured_at) : "-"}</td>
                                         <td>{props.copyClaim.event_occured_at ? formatDateToTimeStampte(props.copyClaim.event_occured_at) : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Catégorie de reclamation</strong></td>
+                                        <td><strong>{t("Catégorie de réclamation")}</strong></td>
                                         <td>{props.claim.claim_object ? props.claim.claim_object.claim_category.name["fr"] : "-"}</td>
                                         <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.claim_category.name["fr"] : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Objet de reclamation</strong></td>
+                                        <td><strong>{t("Objet de réclamation")}</strong></td>
                                         <td>{props.claim.claim_object ? props.claim.claim_object.name["fr"] : "-"}</td>
                                         <td>{props.copyClaim.claim_object ? props.copyClaim.claim_object.name["fr"] : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Description</strong></td>
+                                        <td><strong>{t("Description")}</strong></td>
                                         <td>{props.claim.description ? props.claim.description: "-"}</td>
                                         <td>{props.copyClaim.description ? props.copyClaim.description : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Attente</strong></td>
+                                        <td><strong>{t("Attente")}</strong></td>
                                         <td>{props.claim.claimer_expectation ? props.claim.claimer_expectation : "-"}</td>
                                         <td>{props.copyClaim.claimer_expectation ? props.copyClaim.claimer_expectation : "-"}</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Choix</strong></td>
+                                        <td><strong>{t("Choix")}</strong></td>
                                         <td>
                                             <label className="kt-checkbox">
                                                 <input id={"original"} type="checkbox" checked={choice.original} onChange={handleChoiceChange}/><span/>
@@ -129,26 +135,27 @@ const FusionClaim = props => {
                                             </label>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                        </form>
-                    </div>
-                    <div className="modal-footer">
-                        <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="btn btn-secondary">Conserver les deux</button>
-                        <button style={{display: "none"}} id={"close-button"} type="button" className="btn btn-secondary" data-dismiss="modal">Conserver les deux</button>
-                        {
-                            !startRequest ? (
-                                <button type="button" className="btn btn-primary" onClick={() => onClickFusion()}>Fusioner</button>
-                            ) : (
-                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                    Chargement...
-                                </button>
-                            )
-                        }
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <div className="modal-footer">
+                            <button disabled={startRequest} onClick={() => onClickCloseButton()} type="button" className="btn btn-secondary">{t("Conserver les deux")}</button>
+                            <button style={{display: "none"}} id={"close-button"} type="button" className="btn btn-secondary" data-dismiss="modal">{t("Conserver les deux")}</button>
+                            {
+                                !startRequest ? (
+                                    <button type="button" className="btn btn-primary" onClick={() => onClickFusion()}>{t("Fusioner")}</button>
+                                ) : (
+                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                        {t("Chargement")}...
+                                    </button>
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        ) : null
     );
 };
 

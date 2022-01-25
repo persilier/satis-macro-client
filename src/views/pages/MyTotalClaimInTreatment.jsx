@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import ModelNumberToClaimList from "../components/ModelNumberToClaimList";
 import {verifyPermission} from "../../helpers/permission"
 import appConfig from "../../config/appConfig";
+import {useTranslation} from "react-i18next";
 
 const endPointConfig = {
     PRO: {
@@ -24,7 +25,11 @@ const endPointConfig = {
 };
 
 const MyTotalClaimInTreatment = (props) => {
-    document.title = "Satis client - Les réclamation en cours de traitement";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + (ready ? t("Les réclamation en cours de traitement") : "");
     let endPoint = "";
 
     if (props.plan === "MACRO") {
@@ -35,14 +40,16 @@ const MyTotalClaimInTreatment = (props) => {
     } else
         endPoint = endPointConfig[props.plan];
     return (
-        <ModelNumberToClaimList
-            navigationTitle={"Les réclamations en cours de traitement au niveau de mon institution"}
-            description={'La liste des réclamations en cours de traitement au niveau de mon institution'}
-            title={'Les reclamations en cours de traitement au niveau de mon institution'}
-            endpoint={endPoint}
-            userPermissions={props.userPermissions}
-            plan={props.plan}
-        />
+        ready ? (
+            <ModelNumberToClaimList
+                navigationTitle={t("Les réclamations en cours de traitement au niveau de mon institution")}
+                description={t('La liste des réclamations en cours de traitement au niveau de mon institution')}
+                title={t("Les réclamations en cours de traitement au niveau de mon institution")}
+                endpoint={endPoint}
+                userPermissions={props.userPermissions}
+                plan={props.plan}
+            />
+        ) : null
     );
 };
 

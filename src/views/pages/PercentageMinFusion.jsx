@@ -11,9 +11,14 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const PercentageMinFusion = (props) => {
-    document.title = "Satis client - Paramètre pourcentage minimum fusion";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Paramètre pourcentage minimum fusion") : "");
     if (!verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters'))
         window.location.href = ERROR_401;
 
@@ -72,86 +77,88 @@ const PercentageMinFusion = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètre
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#link" className="kt-subheader__breadcrumbs-home">
-                                    <i className="flaticon2-shelter"/>
-                                </a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#link" className="kt-subheader__breadcrumbs-link">
-                                    Pourcentage mininum fusion
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètre")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#link" className="kt-subheader__breadcrumbs-home">
+                                        <i className="flaticon2-shelter"/>
+                                    </a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#link" className="kt-subheader__breadcrumbs-link">
+                                        {t("Pourcentage mininum fusion")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="row">
-                        <div className="col">
-                            <div className="kt-portlet">
-                                <div className="kt-portlet__head">
-                                    <div className="kt-portlet__head-label">
-                                        <h3 className="kt-portlet__head-title">
-                                            Pourcentage minimum de fusion de réclamation
-                                        </h3>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="row">
+                            <div className="col">
+                                <div className="kt-portlet">
+                                    <div className="kt-portlet__head">
+                                        <div className="kt-portlet__head-label">
+                                            <h3 className="kt-portlet__head-title">
+                                                {t("Pourcentage minimum de fusion de réclamation")}
+                                            </h3>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <form method="POST" className="kt-form">
-                                    <div className="kt-form kt-form--label-right">
-                                        <div className="kt-portlet__body">
-                                            <div className={error.min_fusion_percent.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="min_fusion_percent">Pourcentage <InputRequire/></label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        id="min_fusion_percent"
-                                                        type="number"
-                                                        className={error.min_fusion_percent.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="0"
-                                                        value={data.min_fusion_percent}
-                                                        onChange={(e) => handleRecurencePeriod(e)}
-                                                    />
+                                    <form method="POST" className="kt-form">
+                                        <div className="kt-form kt-form--label-right">
+                                            <div className="kt-portlet__body">
+                                                <div className={error.min_fusion_percent.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="min_fusion_percent">{t("Pourcentage")} <InputRequire/></label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            id="min_fusion_percent"
+                                                            type="number"
+                                                            className={error.min_fusion_percent.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder="0"
+                                                            value={data.min_fusion_percent}
+                                                            onChange={(e) => handleRecurencePeriod(e)}
+                                                        />
+                                                        {
+                                                            error.min_fusion_percent.length ? (
+                                                                error.min_fusion_percent.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="kt-portlet__foot">
+                                                <div className="kt-form__actions text-right">
                                                     {
-                                                        error.min_fusion_percent.length ? (
-                                                            error.min_fusion_percent.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
+                                                        !startRequest ? (
+                                                            <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Enregistrer")}</button>
+                                                        ) : (
+                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                                {t("Chargement")}...
+                                                            </button>
+                                                        )
                                                     }
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="kt-portlet__foot">
-                                            <div className="kt-form__actions text-right">
-                                                {
-                                                    !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
-                                                    ) : (
-                                                        <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
-                                                        </button>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

@@ -17,6 +17,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const endPointConfig = {
     PRO: {
@@ -43,6 +44,10 @@ const endPointConfig = {
 };
 
 const SeverityLevelForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (!id) {
         if (!verifyPermission(props.userPermissions, 'store-severity-level'))
@@ -157,19 +162,19 @@ const SeverityLevelForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/severities" className="kt-subheader__breadcrumbs-link">
-                                    Niveau de gravité
+                                    {t("Niveau de gravité")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -185,7 +190,7 @@ const SeverityLevelForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification d'un niveau de gravité" : "Ajout d'un niveau de gravité"
+                                                id ? t("Modification d'un niveau de gravité") : t("Ajout d'un niveau de gravité")
                                             }
                                         </h3>
                                     </div>
@@ -195,13 +200,13 @@ const SeverityLevelForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Niveau de gravité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Niveau de gravité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom de la gravité"
+                                                        placeholder={t("Veuillez entrer le nom de la gravité")}
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -218,13 +223,13 @@ const SeverityLevelForm = (props) => {
                                             </div>
 
                                             <div className={error.color.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="color">Couleur <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="color">{t("Couleur")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="color"
                                                         type="color"
                                                         className={error.color.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez choisir la couleur représentative du niveau de gravité"
+                                                        placeholder={t("Veuillez choisir la couleur représentative du niveau de gravité")}
                                                         value={data.color}
                                                         onChange={(e) => onChangeColor(e)}
                                                     />
@@ -241,12 +246,12 @@ const SeverityLevelForm = (props) => {
                                             </div>
 
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">{t("Description")}</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"
                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
+                                                    placeholder={t("Veuillez entrer la description")}
                                                     cols="30"
                                                     rows="5"
                                                     value={data.description}
@@ -268,21 +273,21 @@ const SeverityLevelForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/severities" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/severities" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -299,15 +304,17 @@ const SeverityLevelForm = (props) => {
     };
 
     return (
-        id ? (
-            verifyPermission(props.userPermissions, 'update-severity-level') ? (
-                printJsx()
-            ) : null
-        ) : (
-            verifyPermission(props.userPermissions, 'store-severity-level') ? (
-                printJsx()
-            ) : null
-        )
+        ready ? (
+            id ? (
+                verifyPermission(props.userPermissions, 'update-severity-level') ? (
+                    printJsx()
+                ) : null
+            ) : (
+                verifyPermission(props.userPermissions, 'store-severity-level') ? (
+                    printJsx()
+                ) : null
+            )
+        ) : null
     );
 };
 

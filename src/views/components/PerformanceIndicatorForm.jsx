@@ -17,8 +17,13 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const PerformanceIndicatorForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(props.userPermissions, 'update-performance-indicator'))
@@ -133,19 +138,19 @@ const PerformanceIndicatorForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/performance_indicator" className="kt-subheader__breadcrumbs-link">
-                                    Indicateur de performance
+                                    {t("Indicateur de performance")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -161,7 +166,7 @@ const PerformanceIndicatorForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification d'indicateur de performance" : "Ajout d'un indicateur de performance"
+                                                id ? t("Modification d'indicateur de performance") : t("Ajout d'un indicateur de performance")
                                             }
                                         </h3>
                                     </div>
@@ -171,13 +176,13 @@ const PerformanceIndicatorForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Indicateur <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Indicateur")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom de l'indicateur"
+                                                        placeholder={t("Veuillez entrer le nom de l'indicateur")}
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -194,13 +199,13 @@ const PerformanceIndicatorForm = (props) => {
                                             </div>
 
                                             <div className={error.value.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">Valeur <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">{t("Valeur")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="value"
                                                         type="number"
                                                         className={error.value.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer la valeur"
+                                                        placeholder={t("Veuillez entrer la valeur")}
                                                         value={data.value}
                                                         onChange={(e) => onChangeValue(e)}
                                                     />
@@ -217,13 +222,13 @@ const PerformanceIndicatorForm = (props) => {
                                             </div>
 
                                             <div className={error.mesure_unit.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="mesure_unit">Unité de mésure <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="mesure_unit">{t("Unité de mesure")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="mesure_unit"
                                                         type="text"
                                                         className={error.mesure_unit.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer l'unité de mésure"
+                                                        placeholder={t("Veuillez entrer l'unité de mesure")}
                                                         value={data.mesure_unit}
                                                         onChange={(e) => onChangeMesureUnit(e)}
                                                     />
@@ -240,12 +245,12 @@ const PerformanceIndicatorForm = (props) => {
                                             </div>
 
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">{t("Description")}</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"
                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
+                                                    placeholder={t("Veuillez entrer la description")}
                                                     cols="30"
                                                     rows="5"
                                                     value={data.description}
@@ -267,21 +272,21 @@ const PerformanceIndicatorForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/performance_indicator" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/performance_indicator" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -298,15 +303,17 @@ const PerformanceIndicatorForm = (props) => {
     };
 
     return (
-        id ? (
-            verifyPermission(props.userPermissions, "update-performance-indicator") ? (
-                printJsx()
-            ) : null
-        ) : (
-            verifyPermission(props.userPermissions, "store-performance-indicator") ? (
-                printJsx()
-            ) : null
-        )
+        ready ? (
+            id ? (
+                verifyPermission(props.userPermissions, "update-performance-indicator") ? (
+                    printJsx()
+                ) : null
+            ) : (
+                verifyPermission(props.userPermissions, "store-performance-indicator") ? (
+                    printJsx()
+                ) : null
+            )
+        ) : null
     );
 };
 

@@ -11,9 +11,14 @@ import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import {Link} from "react-router-dom";
 import ImportFileForm from "../components/ImportFileForm";
+import {useTranslation} from "react-i18next";
 
 const ClaimImportPage = (props) => {
-    document.title = "Satis client - Importation reclamation";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Importation réclamations") : "";
 
     let endpoint = "";
     if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
@@ -27,13 +32,15 @@ const ClaimImportPage = (props) => {
         endpoint = `${appConfig.apiDomaine}/without-client/import-claim`;
 
     return (
-        <ImportFileForm
-            submitEndpoint={endpoint}
-            pageTitleLink="/process/claims/add"
-            pageTitle="Enregistrement reclamation"
-            panelTitle="Importation de reclamation au format excel"
-            claimImport={true}
-        />
+        ready ? (
+            <ImportFileForm
+                submitEndpoint={endpoint}
+                pageTitleLink="/process/claims/add"
+                pageTitle={t("Enregistrement réclamation")}
+                panelTitle={t("Importation de réclamation au format excel")}
+                claimImport={true}
+            />
+        ) : null
     );
 };
 

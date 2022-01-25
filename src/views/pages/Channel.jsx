@@ -21,11 +21,16 @@ import {AUTH_TOKEN} from "../../constants/token";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Channel = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!verifyPermission(props.userPermissions, "list-channel"))
         window.location.href = ERROR_401;
 
@@ -185,7 +190,7 @@ const Channel = (props) => {
                         verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable ? (
                             <Link to={`/settings/channels/${channel.id}/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                         ) : null
@@ -195,7 +200,7 @@ const Channel = (props) => {
                             <button
                                 onClick={(e) => deleteChannel(channel.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
+                                title={t("Supprimer")}>
                                 <i className="la la-trash"/>
                             </button>
                         ) : null
@@ -206,20 +211,20 @@ const Channel = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-channel') ? (
+        ready ? ( verifyPermission(props.userPermissions, 'list-channel') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Canal
+                                    {t("Canal")}
                                 </a>
                             </div>
                         </div>
@@ -230,8 +235,8 @@ const Channel = (props) => {
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-channel"}
-                            title={"Canal"}
-                            addText={"Ajouter"}
+                            title={t("Canal")}
+                            addText={t("Ajouter")}
                             addLink={"/settings/channels/add"}
                         />
 
@@ -245,7 +250,7 @@ const Channel = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input
                                                             id="myInput"
                                                             type="text"
@@ -267,14 +272,14 @@ const Channel = (props) => {
                                                     <tr role="row">
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
+                                                            aria-label="Country: activate to sort column ascending">{t("Nom")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                             colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Canale de reponse
+                                                            aria-label="Country: activate to sort column ascending">{t("Canal de réponse")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -295,9 +300,9 @@ const Channel = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Canale de reponse</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Canal de réponse")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -306,7 +311,7 @@ const Channel = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {channels.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {channels.length} {t("données")}
                                                 </div>
                                             </div>
                                             {
@@ -333,7 +338,7 @@ const Channel = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : ""
     );
 };
 

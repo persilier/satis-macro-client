@@ -7,6 +7,9 @@ import setupAxios from "./http/axiosConfig";
 import axios from "axios";
 import store from "./store";
 
+//i18n
+import './i18n';
+
 setupAxios(axios, store);
 
 ReactDOM.render(

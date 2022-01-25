@@ -20,11 +20,16 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimToValidatedList = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!((verifyPermission(props.userPermissions, "list-claim-awaiting-validation-any-institution") || verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution')) && props.activePilot))
         window.location.href = ERROR_401;
 
@@ -176,7 +181,7 @@ const ClaimToValidatedList = (props) => {
                         <td>
                             <a href={`/process/claim-to-validated/${claim.id}/detail`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                               title="Détail">
+                               title={t("Détails")}>
                                 <i className="la la-eye"/>
                             </a>
                         </td>
@@ -193,14 +198,14 @@ const ClaimToValidatedList = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                               Processus
+                                {t("Processus")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                   Traitement
+                                    {t("Traitement")}
                                 </a>
                             </div>
                             <span className="kt-subheader__separator kt-hidden"/>
@@ -208,7 +213,7 @@ const ClaimToValidatedList = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Réclamations à valider
+                                    {t("Réclamations à valider")}
                                 </a>
                             </div>
                         </div>
@@ -216,11 +221,11 @@ const ClaimToValidatedList = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des réclamations à valider"}/>
+                    <InfirmationTable information={t("Liste des réclamations à valider")}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Liste des réclamations"}
+                            title={t("Liste des réclamations")}
                         />
 
                         {
@@ -233,7 +238,7 @@ const ClaimToValidatedList = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Search:
+                                                        {t("Recherche")}:
                                                         <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
@@ -248,25 +253,25 @@ const ClaimToValidatedList = (props) => {
                                                     <thead>
                                                     <tr role="row">
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Référence
+                                                            {t("Référence")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Réclamant
+                                                            {t("Réclamant")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
-                                                            {props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}
+                                                            {props.plan === "PRO" ? t("Point de service visé") : t("Institution ciblée")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Date de réception
+                                                            {t("Date de réception")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Objet de réclamation
+                                                            {t("Objet de réclamation")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
-                                                            Description
+                                                            {t("Description")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -289,24 +294,24 @@ const ClaimToValidatedList = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Référence</th>
-                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}</th>
-                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation </th>
-                                                        <th rowSpan="1" colSpan="1">Description </th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
+                                                        <th rowSpan="1" colSpan="1">{props.plan === "PRO" ? t("Point de service visé") : t("Institution ciblée")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Description")} </th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
                                                 <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
+                                                <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
                                             </div>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {claims.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
                                                 </div>
                                             </div>
                                             {

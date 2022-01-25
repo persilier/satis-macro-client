@@ -1,11 +1,17 @@
 import React from "react";
+import {useTranslation} from "react-i18next";
 
 const HtmlDescription = ({onClick}) => {
 
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     return (
-        <>
-            <button className="btn btn-secondary" onClick={onClick}>Afficher</button>
-        </>
+        ready ? (
+            <>
+                <button className="btn btn-secondary" onClick={onClick}>{t("Afficher")}</button>
+            </>
+        ) : null
     );
 };
 

@@ -5,9 +5,13 @@ import {Link} from "react-router-dom";
 import {ToastBottomEnd} from "../../../../views/components/Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig,} from "../../../../config/toastConfig";
 import "./LoginCss.css"
+import {useTranslation} from "react-i18next";
 
 
 const ReinitialisationForm = (props) => {
+
+    const {t, ready} = useTranslation();
+
     const defaultData = {
         email: "",
         current_password: "",
@@ -84,11 +88,10 @@ const ReinitialisationForm = (props) => {
     };
     return (
         <div>
-            <div className="kt-login__form "
-                 style={{paddingTop: "30px"}}>
+            {ready ? (<div className="kt-login__form " style={{paddingTop: "30px"}}>
                 <div className="kt-login__head">
-                    <h3 className="kt-login__title">Réinitialisation du Mot de Passe </h3>
-                    <div className="kt-login__desc text-center">Entrer votre nouveau mot de passe:
+                    <h3 className="kt-login__title">{t("Réinitialisation du Mot de Passe")} </h3>
+                    <div className="kt-login__desc text-center">{t("Entrer votre nouveau mot de passe")}:
                     </div>
                 </div>
                 <form className="kt-form" id="kt_login__form" style={{marginBottom: '90px'}}>
@@ -116,7 +119,7 @@ const ReinitialisationForm = (props) => {
                             id="password"
                             className="form-control"
                             type="password"
-                            placeholder="Ancien mot de passe"
+                            placeholder={t("Ancien mot de passe")}
                             value={getDataReset.current_password}
                             onChange={e => onChangePassword(e)}
                         />
@@ -135,7 +138,7 @@ const ReinitialisationForm = (props) => {
                             id="new_password"
                             className="form-control"
                             type="password"
-                            placeholder="Nouveau mot de passe"
+                            placeholder={t("Nouveau mot de passe")}
                             value={getDataReset.new_password}
                             onChange={e => onChangePasswordOld(e)}
                         />
@@ -154,7 +157,7 @@ const ReinitialisationForm = (props) => {
                             id="password_confirm"
                             className="form-control"
                             type="password"
-                            placeholder="Confirmer le nouveau mot de passe"
+                            placeholder={t("Confirmer le nouveau mot de passe")}
                             value={getDataReset.new_password_confirmation}
                             onChange={e => onChangePasswordConfirm(e)}
                         />
@@ -173,23 +176,23 @@ const ReinitialisationForm = (props) => {
                                 <button type="submit"
                                         id="kt_login_forgot_submit"
                                         className="btn btn-brand btn-pill btn-elevate"
-                                        onClick={onClick}>Modifier
+                                        onClick={onClick}>{t("Modifier")}
                                 </button>
                             ) : (
                                 <button
                                     className="btn btn-primary btn-pill btn-elevate kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                     type="button" disabled>
-                                    Chargement...
+                                    {t("Chargement")}...
                                 </button>
                             )
                         }
                         <Link to={"/login"} id="kt_login_forgot_cancel"
-                              className="btn btn-outline-brand btn-pill">Quitter
+                              className="btn btn-outline-brand btn-pill">{t("Quitter")}
                         </Link>
                     </div>
 
                 </form>
-            </div>
+            </div>) : null}
         </div>
     );
 

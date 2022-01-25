@@ -14,11 +14,16 @@ import {connect} from "react-redux";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const ImportInstitutionForm = (props) => {
-    document.title = "Satis institution - Importation de fichier excel";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
+    document.title = (ready ? t("Satis institution - Importation de fichier excel") : "");
 
     if (!verifyPermission(props.userPermissions, 'store-any-institution'))
         window.location.href = ERROR_401;
@@ -85,7 +90,7 @@ const ImportInstitutionForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -93,7 +98,7 @@ const ImportInstitutionForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Importation
+                                    {t("Importation")}
                                 </a>
                             </div>
                         </div>
@@ -107,7 +112,7 @@ const ImportInstitutionForm = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Importation de clients
+                                            {t("Importation de clients")}
                                         </h3>
                                     </div>
                                 </div>
@@ -118,13 +123,13 @@ const ImportInstitutionForm = (props) => {
                                         <div
                                             className={error.file.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label"
-                                                   htmlFor="file">Fichier <InputRequire/></label>
+                                                   htmlFor="file">{t("Fichier")} <InputRequire/></label>
                                             <div className="col-md-9 mb-3">
                                                 <input
                                                     id="file"
                                                     type="file"
                                                     className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez télécharger le fichier excel"
+                                                    placeholder={t("Veuillez télécharger le fichier excel")}
                                                     onChange={(e) => onChangeFile(e)}
                                                 />
                                                 {
@@ -145,12 +150,12 @@ const ImportInstitutionForm = (props) => {
                                             {
                                                 !startRequest ? (
                                                     <button type="submit" onClick={(e) => onSubmit(e)}
-                                                            className="btn btn-primary">Enregistrer</button>
+                                                            className="btn btn-primary">{t("Enregistrer")}</button>
                                                 ) : (
                                                     <button
                                                         className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                         type="button" disabled>
-                                                        Chargement...
+                                                        {t("Chargement")}...
                                                     </button>
                                                 )
                                             }
@@ -158,12 +163,12 @@ const ImportInstitutionForm = (props) => {
                                                 !startRequest ? (
                                                     <Link to="/settings/institution"
                                                           className="btn btn-secondary mx-2">
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 ) : (
                                                     <Link to="/settings/institution"
                                                           className="btn btn-secondary mx-2" disabled>
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 )
                                             }
@@ -179,9 +184,11 @@ const ImportInstitutionForm = (props) => {
         );
     };
     return (
-        verifyPermission(props.userPermissions, 'store-any-institution') ?
-            printJsx()
-            : null
+        ready ? (
+            verifyPermission(props.userPermissions, 'store-any-institution') ?
+                printJsx()
+                : null
+        ) : null
     );
 };
 

@@ -15,6 +15,7 @@ import Select from "react-select";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
@@ -30,6 +31,10 @@ const {id}=useParams();
     const defaultError = {
         staff_id: [],
     };
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -86,7 +91,7 @@ const {id}=useParams();
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Traitement
+                                {t("Traitement")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -94,13 +99,13 @@ const {id}=useParams();
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/chat" className="kt-subheader__breadcrumbs-link">
-                                    Chat
+                                    {t("Tchat")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     {
-                                        "Ajout"
+                                        t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -116,7 +121,7 @@ const {id}=useParams();
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                "Ajout des Participants"
+                                                t("Ajout des Participants")
                                             }
                                         </h3>
                                     </div>
@@ -133,7 +138,7 @@ const {id}=useParams();
                                                                 <div
                                                                     className={error.staff_id.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Participants</label>
+                                                                           htmlFor="exampleSelect1">{t("Participants")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         {staffIdData ? (
                                                                             <Select
@@ -166,12 +171,12 @@ const {id}=useParams();
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Ajouter</button>
+                                                                                    className="btn btn-primary">{t("Ajouter")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -179,13 +184,13 @@ const {id}=useParams();
                                                                         !startRequest ? (
                                                                             <Link to="/chat"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/chat"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -208,9 +213,9 @@ const {id}=useParams();
     };
 
     return (
-        verifyPermission(props.userPermissions, 'add-discussion-contributor') ? (
+        ready ? (verifyPermission(props.userPermissions, 'add-discussion-contributor') ? (
             printJsx()
-        ) : null
+        ) : null) : null
     );
 
 };

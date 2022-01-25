@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import { ToastBottomEnd } from "../Toast";
+import {useTranslation} from "react-i18next";
 import {
   toastEditErrorMessageConfig,
   toastEditSuccessMessageConfig,
@@ -16,6 +17,10 @@ axios.defaults.headers.common["Authorization"] =
   "Bearer " + localStorage.getItem("token");
 
 const UpdatePassword = () => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
   const [startRequest, setStartRequest] = useState(false);
   const [viewPassword, setViewPassword] = useState(false);
   const [viewNewPassword, setViewNewPassword] = useState(false);
@@ -73,232 +78,234 @@ const UpdatePassword = () => {
   };
 
   return (
-    <div className="kt-portlet">
-      <div className="kt-portlet__head">
-        <div className="kt-portlet__head-label">
-          <h3 className="kt-portlet__head-title">Changer le mot de passe</h3>
-        </div>
-      </div>
-      <form className="kt-form kt-form--label-right">
-        <div className="kt-portlet__body">
-          <div className="kt-section kt-section--first">
-            <div className="kt-section__body">
-              <div className="row">
-                <label className="col-xl-3" />
-                <div className="col-lg-9 col-xl-6">
-                  <h3 className="kt-section__title kt-section__title-sm">
-                    Changer ou récupérer votre mot de passe:
-                  </h3>
-                </div>
-              </div>
-
-              <div
-                className={
-                  error.current_password.length
-                    ? "form-group row validated"
-                    : "form-group row"
-                }
-              >
-                <label className="col-xl-3 col-lg-3 col-form-label">
-                  Ancien
-                </label>
-                <div className="col-lg-9 col-xl-6">
-                  <div
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      justifyContent: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: 15,
-                        padding: 5,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <i
-                        id="icon"
-                        className={
-                          viewPassword ? "fa fa-eye" : "fa fa-eye-slash"
-                        }
-                        aria-hidden="true"
-                        onClick={(e) => setViewPassword(!viewPassword)}
-                      />
-                    </div>
-                    <input
-                      className={"form-control"}
-                      type={viewPassword ? "text" : "password"}
-                      id="password"
-                      onChange={(e) =>
-                        handleChangeCurrentPassword(e.target.value)
-                      }
-                      value={data.current_password}
-                      placeholder="**************"
-                    />
-
-                    {error.current_password.length
-                      ? error.current_password.map((error, index) => (
-                          <div key={index} className="invalid-feedback">
-                            {error}
-                          </div>
-                        ))
-                      : null}
+      ready ? (
+          <div className="kt-portlet">
+              <div className="kt-portlet__head">
+                  <div className="kt-portlet__head-label">
+                      <h3 className="kt-portlet__head-title">{t("Changer le mot de passe")}</h3>
                   </div>
-                </div>
               </div>
+              <form className="kt-form kt-form--label-right">
+                  <div className="kt-portlet__body">
+                      <div className="kt-section kt-section--first">
+                          <div className="kt-section__body">
+                              <div className="row">
+                                  <label className="col-xl-3" />
+                                  <div className="col-lg-9 col-xl-6">
+                                      <h3 className="kt-section__title kt-section__title-sm">
+                                          {t("Changer ou récupérer votre mot de passe")}:
+                                      </h3>
+                                  </div>
+                              </div>
 
-              <div
-                className={
-                  error.new_password.length
-                    ? "form-group row validated"
-                    : "form-group row"
-                }
-              >
-                <label className="col-xl-3 col-lg-3 col-form-label">
-                  Nouveau
-                </label>
-                <div className="col-lg-9 col-xl-6">
-                  <div
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      justifyContent: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: 15,
-                        padding: 5,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <i
-                        id="icon"
-                        className={
-                          viewNewPassword ? "fa fa-eye" : "fa fa-eye-slash"
-                        }
-                        aria-hidden="true"
-                        onClick={(e) => setViewNewPassword(!viewNewPassword)}
-                      />
-                    </div>
-                    <input
-                      className={"form-control"}
-                      type={viewNewPassword ? "text" : "password"}
-                      id="password"
-                      onChange={(e) => handleNewPassword(e.target.value)}
-                      value={data.new_password}
-                      placeholder="**************"
-                    />
+                              <div
+                                  className={
+                                      error.current_password.length
+                                          ? "form-group row validated"
+                                          : "form-group row"
+                                  }
+                              >
+                                  <label className="col-xl-3 col-lg-3 col-form-label">
+                                      {t("Ancien")}
+                                  </label>
+                                  <div className="col-lg-9 col-xl-6">
+                                      <div
+                                          style={{
+                                              position: "relative",
+                                              display: "flex",
+                                              justifyContent: "row",
+                                              alignItems: "center",
+                                          }}
+                                      >
+                                          <div
+                                              style={{
+                                                  position: "absolute",
+                                                  right: 15,
+                                                  padding: 5,
+                                                  cursor: "pointer",
+                                              }}
+                                          >
+                                              <i
+                                                  id="icon"
+                                                  className={
+                                                      viewPassword ? "fa fa-eye" : "fa fa-eye-slash"
+                                                  }
+                                                  aria-hidden="true"
+                                                  onClick={(e) => setViewPassword(!viewPassword)}
+                                              />
+                                          </div>
+                                          <input
+                                              className={"form-control"}
+                                              type={viewPassword ? "text" : "password"}
+                                              id="password"
+                                              onChange={(e) =>
+                                                  handleChangeCurrentPassword(e.target.value)
+                                              }
+                                              value={data.current_password}
+                                              placeholder="**************"
+                                          />
 
-                    {error.new_password.length
-                      ? error.new_password.map((error, index) => (
-                          <div key={index} className="invalid-feedback">
-                            {error}
+                                          {error.current_password.length
+                                              ? error.current_password.map((error, index) => (
+                                                  <div key={index} className="invalid-feedback">
+                                                      {error}
+                                                  </div>
+                                              ))
+                                              : null}
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div
+                                  className={
+                                      error.new_password.length
+                                          ? "form-group row validated"
+                                          : "form-group row"
+                                  }
+                              >
+                                  <label className="col-xl-3 col-lg-3 col-form-label">
+                                      {t("Nouveau")}
+                                  </label>
+                                  <div className="col-lg-9 col-xl-6">
+                                      <div
+                                          style={{
+                                              position: "relative",
+                                              display: "flex",
+                                              justifyContent: "row",
+                                              alignItems: "center",
+                                          }}
+                                      >
+                                          <div
+                                              style={{
+                                                  position: "absolute",
+                                                  right: 15,
+                                                  padding: 5,
+                                                  cursor: "pointer",
+                                              }}
+                                          >
+                                              <i
+                                                  id="icon"
+                                                  className={
+                                                      viewNewPassword ? "fa fa-eye" : "fa fa-eye-slash"
+                                                  }
+                                                  aria-hidden="true"
+                                                  onClick={(e) => setViewNewPassword(!viewNewPassword)}
+                                              />
+                                          </div>
+                                          <input
+                                              className={"form-control"}
+                                              type={viewNewPassword ? "text" : "password"}
+                                              id="password"
+                                              onChange={(e) => handleNewPassword(e.target.value)}
+                                              value={data.new_password}
+                                              placeholder="**************"
+                                          />
+
+                                          {error.new_password.length
+                                              ? error.new_password.map((error, index) => (
+                                                  <div key={index} className="invalid-feedback">
+                                                      {error}
+                                                  </div>
+                                              ))
+                                              : null}
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div
+                                  className={
+                                      error.new_password_confirmation.length
+                                          ? "form-group row validated"
+                                          : "form-group row"
+                                  }
+                              >
+                                  <label className="col-xl-3 col-lg-3 col-form-label">
+                                      {t("Confirmation")}
+                                  </label>
+                                  <div className="col-lg-9 col-xl-6">
+                                      <div
+                                          style={{
+                                              position: "relative",
+                                              display: "flex",
+                                              justifyContent: "row",
+                                              alignItems: "center",
+                                          }}
+                                      >
+                                          <div
+                                              style={{
+                                                  position: "absolute",
+                                                  right: 15,
+                                                  padding: 5,
+                                                  cursor: "pointer",
+                                              }}
+                                          >
+                                              <i
+                                                  id="icon"
+                                                  className={
+                                                      viewConfirmNewPassword
+                                                          ? "fa fa-eye"
+                                                          : "fa fa-eye-slash"
+                                                  }
+                                                  aria-hidden="true"
+                                                  onClick={(e) =>
+                                                      setViewConfirmNewPassword(!viewConfirmNewPassword)
+                                                  }
+                                              />
+                                          </div>
+                                          <input
+                                              className={"form-control"}
+                                              type={viewConfirmNewPassword ? "text" : "password"}
+                                              id="password"
+                                              onChange={(e) =>
+                                                  handleNewPasswordConfirmation(e.target.value)
+                                              }
+                                              value={data.new_password_confirmation}
+                                              placeholder="**************"
+                                          />
+
+                                          {error.new_password_confirmation.length
+                                              ? error.new_password_confirmation.map((error, index) => (
+                                                  <div key={index} className="invalid-feedback">
+                                                      {error}
+                                                  </div>
+                                              ))
+                                              : null}
+                                      </div>
+                                  </div>
+                              </div>
                           </div>
-                        ))
-                      : null}
+                      </div>
                   </div>
-                </div>
-              </div>
 
-              <div
-                className={
-                  error.new_password_confirmation.length
-                    ? "form-group row validated"
-                    : "form-group row"
-                }
-              >
-                <label className="col-xl-3 col-lg-3 col-form-label">
-                  Confirmation
-                </label>
-                <div className="col-lg-9 col-xl-6">
-                  <div
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      justifyContent: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: 15,
-                        padding: 5,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <i
-                        id="icon"
-                        className={
-                          viewConfirmNewPassword
-                            ? "fa fa-eye"
-                            : "fa fa-eye-slash"
-                        }
-                        aria-hidden="true"
-                        onClick={(e) =>
-                          setViewConfirmNewPassword(!viewConfirmNewPassword)
-                        }
-                      />
-                    </div>
-                    <input
-                      className={"form-control"}
-                      type={viewConfirmNewPassword ? "text" : "password"}
-                      id="password"
-                      onChange={(e) =>
-                        handleNewPasswordConfirmation(e.target.value)
-                      }
-                      value={data.new_password_confirmation}
-                      placeholder="**************"
-                    />
-
-                    {error.new_password_confirmation.length
-                      ? error.new_password_confirmation.map((error, index) => (
-                          <div key={index} className="invalid-feedback">
-                            {error}
+                  <div className="kt-portlet__foot">
+                      <div className="kt-form__actions">
+                          <div className="row">
+                              <div className="col-lg-3 col-xl-3"></div>
+                              <div className="col-lg-9 col-xl-9">
+                                  {!startRequest ? (
+                                      <button
+                                          type="submit"
+                                          onClick={(e) => updatePassword(e)}
+                                          className="btn btn-primary"
+                                      >
+                                          {t("Modifier")}
+                                      </button>
+                                  ) : (
+                                      <button
+                                          className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                          type="button"
+                                          disabled
+                                      >
+                                          {t("Chargement")}...
+                                      </button>
+                                  )}
+                              </div>
                           </div>
-                        ))
-                      : null}
+                      </div>
                   </div>
-                </div>
-              </div>
-            </div>
+              </form>
           </div>
-        </div>
-
-        <div className="kt-portlet__foot">
-          <div className="kt-form__actions">
-            <div className="row">
-              <div className="col-lg-3 col-xl-3"></div>
-              <div className="col-lg-9 col-xl-9">
-                {!startRequest ? (
-                  <button
-                    type="submit"
-                    onClick={(e) => updatePassword(e)}
-                    className="btn btn-primary"
-                  >
-                    Modifier
-                  </button>
-                ) : (
-                  <button
-                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                    type="button"
-                    disabled
-                  >
-                    Chargement...
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+      ) : null
   );
 };
 

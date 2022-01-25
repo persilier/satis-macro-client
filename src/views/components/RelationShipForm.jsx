@@ -14,11 +14,16 @@ import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
 
 const RelationShipForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (!id) {
         if (!verifyPermission(props.userPermissions, 'store-relationship'))
@@ -110,7 +115,7 @@ const RelationShipForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -118,12 +123,12 @@ const RelationShipForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/relationship" className="kt-subheader__breadcrumbs-link">
-                                    Relation client
+                                    {t("Relation client")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -140,7 +145,7 @@ const RelationShipForm = (props) => {
                                         <h3 className="kt-portlet__head-title">
                                             {
                                                 id ?
-                                                    "Modification d'un type de relation client" : " Ajout de relation client"
+                                                    t("Modification d'un type de relation client") : t("Ajout de relation client")
                                             }
                                         </h3>
                                     </div>
@@ -157,13 +162,13 @@ const RelationShipForm = (props) => {
 
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Relation <InputRequire/></label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Relation")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom de la relation"
+                                                                            placeholder={t("Veuillez entrer le nom de la relation")}
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -182,12 +187,12 @@ const RelationShipForm = (props) => {
 
                                                                 <div
                                                                     className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description <InputRequire/></label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">{t("Description")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <textarea
                                                                             id="description"
                                                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer la description"
+                                                                            placeholder={t("Veuillez entrer la description")}
                                                                             cols="30"
                                                                             rows="5"
                                                                             value={data.description}
@@ -212,12 +217,12 @@ const RelationShipForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Envoyer</button>
+                                                                                    className="btn btn-primary">{t("Envoyer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -225,13 +230,13 @@ const RelationShipForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/settings/relationship"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/settings/relationship"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -253,13 +258,15 @@ const RelationShipForm = (props) => {
         );
     };
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-relationship') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-relationship') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-relationship') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-relationship') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 
 };
