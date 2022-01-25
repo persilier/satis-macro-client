@@ -29,6 +29,9 @@ import InfirmationTable from "./InfirmationTable";
 import WithoutCode from "./WithoutCode";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import Loader from "./Loader";
+import HtmlDescriptionModal from "./DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "./DescriptionDetail/HtmlDescription";
+
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -149,6 +152,7 @@ const IncompleteClaimsEdit = props => {
     const [startRequest, setStartRequest] = useState(false);
     const [isRequire, setIsRequire] = useState(null);
     const [componentData, setComponentData] = useState(undefined);
+    const [currentMessage, setCurrentMessage] = useState("");
 
 
     const currentDate = new Date();
@@ -159,6 +163,7 @@ const IncompleteClaimsEdit = props => {
         async function fetchData() {
             await axios.get(endPoint.edit(`${id}`))
                 .then(response => {
+                    // console.log(response.data, "DATA")
                     const newIncompleteClaim = {
                         claimer_id: response.data.claim.claimer_id,
                         firstname: response.data.claim.claimer.firstname,
@@ -187,7 +192,7 @@ const IncompleteClaimsEdit = props => {
                     setIsRequire(response.data.requirements);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
-                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "number", false) : "");
+                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "account_number", false) : "");
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
@@ -245,7 +250,7 @@ const IncompleteClaimsEdit = props => {
                     if (response.data.claim.account_targeted !== null) {
                         setAccount({
                             value: response.data.claim.account_targeted.id,
-                            label: response.data.claim.account_targeted.number
+                            label: response.data.claim.account_targeted.account_number
                         });
                     }
                     if (response.data.claim.unit_targeted !== null) {
@@ -272,6 +277,11 @@ const IncompleteClaimsEdit = props => {
             fetchData();
         }
     }, [endPoint, props.userPermissions, id]);
+
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
 
     const onChangeRelationShip = selected => {
         const newData = {...data};
@@ -1084,14 +1094,28 @@ const IncompleteClaimsEdit = props => {
                                                                 htmlFor="description">{componentData ? componentData.params.fr.description.value : ""}
                                                                 {isRequire.description ?
                                                                     <InputRequire/> : ""}</label>
-                                                            <textarea
-                                                                rows="7"
-                                                                id="description"
-                                                                className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.description_placeholder.value : ""}
-                                                                value={data.description}
-                                                                onChange={(e) => onChangeDescription(e)}
-                                                            />
+
+                                                            {
+                                                                data.request_channel_slug ==="email"?(
+                                                                        <div>
+                                                                            <HtmlDescription onClick={e => {
+                                                                                e.preventDefault()
+                                                                                showModal(data.description ? data.description : '-')
+                                                                            }}/>
+                                                                        </div>
+                                                                    ):
+                                                                    (
+                                                                        <textarea
+                                                                            rows="7"
+                                                                            id="description"
+                                                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                                            placeholder={componentData ? componentData.params.fr.description_placeholder.value : ""}
+                                                                            value={data.description}
+                                                                            onChange={(e) => onChangeDescription(e)}
+                                                                        />
+                                                                    )
+                                                            }
+
                                                             {
                                                                 error.description.length ? (
                                                                     error.description.map((error, index) => (
@@ -1102,7 +1126,6 @@ const IncompleteClaimsEdit = props => {
                                                                 ) : null
                                                             }
                                                         </div>
-
                                                         <div
                                                             className={error.claimer_expectation.length ? "col validated" : "col"}>
                                                             <label
@@ -1128,6 +1151,8 @@ const IncompleteClaimsEdit = props => {
                                                             }
                                                         </div>
                                                     </div>
+                                                    <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                    <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                                 </div>
                                             </div>
 
