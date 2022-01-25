@@ -6,8 +6,8 @@ import {
   toastEditErrorMessageConfig,
   toastEditSuccessMessageConfig,
 } from "../../../config/toastConfig";
-import { resetPassword } from "http/crud";
-import {isTimeOut} from "helpers";
+import { resetPassword } from "../../../http/crud";
+import {isTimeOut} from "../../../helpers";
 
 const moment =  require("moment");
 
