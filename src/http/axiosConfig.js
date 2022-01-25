@@ -6,15 +6,7 @@ import { logoutUser } from "./crud";
 export default function setupAxios(axios, store) {
   axios.interceptors.request.use(
     (config) => {
-      if (isTimeOut()) {
-        /*logoutUser()
-          .then(({ data }) => {
-            console.log(data);
-            console.log("TIME_IS_OUT!!!!");
-            logout();
-          })
-          .catch(console.log);*/
-      }
+     
       const token = localStorage.getItem("token");
       config.baseURL = appConfig.apiDomaine;
       config.headers.post["Content-Type"] = "application/json";
@@ -29,6 +21,15 @@ export default function setupAxios(axios, store) {
 
   axios.interceptors.response.use(
     (response) => {
+      if (isTimeOut()) {
+        logoutUser()
+          .then(({ data }) => {
+            console.log(data);
+            console.log("TIME_IS_OUT!!!!");
+            logout();
+          }).catch(console.log);
+          return;
+      }
       return response;
     },
     (error) => {
