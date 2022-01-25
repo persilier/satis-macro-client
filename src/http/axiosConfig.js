@@ -6,7 +6,6 @@ import { logoutUser } from "./crud";
 export default function setupAxios(axios, store) {
   axios.interceptors.request.use(
     (config) => {
-     
       const token = localStorage.getItem("token");
       config.baseURL = appConfig.apiDomaine;
       config.headers.post["Content-Type"] = "application/json";
@@ -14,10 +13,10 @@ export default function setupAxios(axios, store) {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
-            return config;
-        },
-        (err) => Promise.reject(err)
-    );
+      return config;
+    },
+    (err) => Promise.reject(err)
+  );
 
   axios.interceptors.response.use(
     (response) => {
@@ -27,17 +26,27 @@ export default function setupAxios(axios, store) {
             console.log(data);
             console.log("TIME_IS_OUT!!!!");
             logout();
-          }).catch(console.log);
-          return;
+          })
+          .catch(console.log);
+        return;
       }
       return response;
     },
     (error) => {
+      if (isTimeOut()) {
+        logoutUser()
+          .then(({ data }) => {
+            console.log(data);
+            console.log("TIME_IS_OUT!!!!");
+            logout();
+          })
+          .catch(console.log);
+        return;
+      }
       if (401 === error.response.status || 498 === error.response.status) {
         console.log("CHECK WITH BACKEND EXPIRED TOKEN CODE");
-      } else {
-        return Promise.reject(error);
       }
+      return Promise.reject(error);
     }
   );
 }
