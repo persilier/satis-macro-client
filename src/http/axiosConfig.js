@@ -1,9 +1,14 @@
 import appConfig from "../config/appConfig";
 import { logout } from "../helpers/function";
+import {isTimeOut} from "../helpers";
 
 export default function setupAxios(axios, store) {
   axios.interceptors.request.use(
     (config) => {
+      if(isTimeOut()){
+        console.log("TIME_IS_OUT!!!!")
+        logout();
+      }
       const token = localStorage.getItem("token");
       config.baseURL = appConfig.apiDomaine;
       config.headers.post["Content-Type"] = "application/json";
@@ -21,9 +26,7 @@ export default function setupAxios(axios, store) {
       return response;
     },
     (error) => {
-      if (new Date() > new Date(localStorage.getItem("date_expire"))) {
-        logout();
-      }
+    
       if (401 === error.response.status || 498 === error.response.status) {
         console.log("CHECK WITH BACKEND EXPIRED TOKEN CODE");
       } else {

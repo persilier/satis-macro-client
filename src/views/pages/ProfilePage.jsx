@@ -22,14 +22,14 @@ const ProfilePage = ({user}) => {
 
     const [data, setData] = useState(defaultData);
 
-    const username = user.data.username;
+    const username = user?.data?.username;
     const formatRole = (rules) => {
         const newRules = [];
-        rules.map(r => newRules.push(r.description));
+        rules?.map(r => newRules.push(r.description));
         return newRules.join(' / ');
     };
 
-    const role = formatRole(user.data.roles);
+    const role = formatRole(user?.data?.roles);
 
     useEffect(() => {
         async function fetchData() {

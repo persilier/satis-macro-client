@@ -132,11 +132,11 @@ const LoginPage = (props) => {
         setStartRequest(true);
 
         const formData = {
-            grant_type: appConfig.listConnectData[props.plan].grant_type,
-            client_id: appConfig.listConnectData[props.plan].client_id,
-            client_secret: appConfig.listConnectData[props.plan].client_secret,
-            username: data.username,
-            password: data.password
+            grant_type: appConfig.listConnectData[props.plan]?.grant_type,
+            client_id: appConfig.listConnectData[props.plan]?.client_id,
+            client_secret: appConfig.listConnectData[props.plan]?.client_secret,
+            username: data?.username,
+            password: data?.password
         };
         await axios.post(appConfig.apiDomaine + `/login`, formData)
             .then(response => {

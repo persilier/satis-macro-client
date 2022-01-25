@@ -848,9 +848,9 @@ const Aside = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot,
-        lead: state.user.user.staff.is_lead,
+        userPermissions: state?.user?.user?.permissions || null,
+        activePilot: state?.user?.user?.staff?.is_active_pilot || false,
+        lead: state?.user?.user?.staff?.is_lead || false,
     };
 };
 

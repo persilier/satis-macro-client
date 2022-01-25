@@ -394,6 +394,7 @@ export const logout = () => {
     const plan = localStorage.getItem('plan');
     localStorage.clear();
     localStorage.setItem('plan', plan);
+    localStorage.removeItem("DTimeout");
     window.location.href = "/login";
 };
 
