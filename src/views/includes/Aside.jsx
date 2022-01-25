@@ -371,7 +371,7 @@ const Aside = (props) => {
                                                 </li>
 
                                                 {
-                                                    verifyPermission(props.userPermissions, "list-staff-from-any-unit") || verifyPermission(props.userPermissions, 'list-staff-from-my-unit') || verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
+                                                    verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
                                                         <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>

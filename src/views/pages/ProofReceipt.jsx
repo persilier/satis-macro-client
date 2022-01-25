@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
+import Select from "react-select";
 import axios from "axios";
 import {
     forceRound,
@@ -25,7 +26,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const   ProofReceipt = (props) => {
-    if (!(verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'list-any-notification-proof')) )
+    if (!(verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'list-any-notification-proof')))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -54,17 +55,33 @@ const   ProofReceipt = (props) => {
         end_date: ''
     });
     const [startFilter, setStartFilter] = useState(false);
+    const [expeditors, setExpeditors] = useState([]);
+    const [expeditor, setExpeditor] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
             const sendData = null
             await axios.post(appConfig.apiDomaine+endPoint, sendData)
                 .then(response => {
-                    console.log("response:", response.data);
-                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
-                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-                    setProofs(response.data);
                     setLoad(false);
+                    if (verifyPermission(props.userPermissions, 'list-notification-proof')) {
+                        setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                        setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                        setProofs(response.data);
+                    }
+
+                    if (verifyPermission(props.userPermissions, 'list-any-notification-proof')) {
+                        setExpeditors(response.data['filter-data'].map(item => {
+                            return {
+                                value: item.id,
+                                label: item.name
+                            }
+                        }));
+                        setNumberPage(forceRound(response.data.proofs.length/NUMBER_ELEMENT_PER_PAGE));
+                        setShowList(response.data.proofs.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                        setProofs(response.data.proofs);
+                        setLoad(false);
+                    }
                 })
                 .catch(error => {
                     setLoad(false);
@@ -89,12 +106,12 @@ const   ProofReceipt = (props) => {
         let newProofs = [...staffs];
         newProofs = newProofs.filter(el => (
             getLowerCaseString(`${el.to ? el.to.firstname+" "+el.to.lastname : ''} / ${el.to ? (el.channel === 'sms' ? el.to.telephone[0] : el.to.email[0]) : ''}`).indexOf(value) >= 0 ||
+            getLowerCaseString(el.institution ? el.institution.name : '').indexOf(value) >= 0 ||
             getLowerCaseString(el.channel).indexOf(value) >= 0 ||
             getLowerCaseString(el.message).indexOf(value) >= 0 ||
             getLowerCaseString(formatDateToTimeStampte(el.created_at)).indexOf(value) >= 0 ||
             getLowerCaseString(el.status).indexOf(value) >= 0
         ));
-
         return newProofs;
     };
 
@@ -170,8 +187,8 @@ const   ProofReceipt = (props) => {
     const printBodyTable = (proof, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                {verifyPermission('list-any-notification-proof') && (
-                    <td>{proof.sent_at}</td>
+                {verifyPermission(props.userPermissions, 'list-any-notification-proof') && (
+                    <td>{proof.institution ? proof.institution.name : ''}</td>
                 )}
                 <td>
                     {proof.to ? proof.to.firstname+" "+proof.to.lastname : ''} / {proof.to ? (proof.channel === 'sms' ? proof.to.telephone[0] : proof.to.email[0]) : ''}
@@ -209,7 +226,8 @@ const   ProofReceipt = (props) => {
         const sendData = {
             channel: filterData.chanel,
             date_start: filterData.start_date,
-            date_end: filterData.end_date
+            date_end: filterData.end_date,
+            institution_id: filterData.sender ? filterData.sender.value : ''
         };
         if (!sendData.channel)
             delete sendData.channel;
@@ -217,14 +235,26 @@ const   ProofReceipt = (props) => {
             delete sendData.date_start;
         if (!sendData.date_end)
             delete sendData.date_end;
+        if (!sendData.institution_id)
+            delete sendData.institution_id;
 
         await axios.post(appConfig.apiDomaine+endPoint, sendData)
             .then(response => {
-                setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
-                setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-                setProofs(response.data);
-                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de l'opération"));
-                setErrorFilterData(defautFilterDataError);
+                if (verifyPermission(props.userPermissions, 'list-any-notification-proof')) {
+                    setNumberPage(forceRound(response.data['proofs'].length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data['proofs'].slice(0, NUMBER_ELEMENT_PER_PAGE));
+                    setProofs(response.data['proofs']);
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de l'opération"));
+                    setErrorFilterData(defautFilterDataError);
+                }
+
+                if (verifyPermission(props.userPermissions, 'list-notification-proof')) {
+                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                    setProofs(response.data);
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succès de l'opération"));
+                    setErrorFilterData(defautFilterDataError);
+                }
             })
             .catch(error => {
                 console.log("Something is wrong");
@@ -235,8 +265,10 @@ const   ProofReceipt = (props) => {
                             ...defautFilterDataError,
                             end_date: errorData.date_end ? errorData.date_end : [],
                             start_date: errorData.date_start ? errorData.date_start : [],
-                            chanel: errorData.channel ? errorData.channel : []
-                        });
+                            chanel: errorData.channel ? errorData.channel : [],
+                            sender: errorData.institution_id ? errorData.institution_id : []
+                        }
+                    );
                 }
             })
             .finally(() => {setStartFilter(false);})
@@ -244,7 +276,7 @@ const   ProofReceipt = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-staff-from-any-unit') || verifyPermission(props.userPermissions, 'list-staff-from-my-unit') || verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? (
+        verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -278,20 +310,19 @@ const   ProofReceipt = (props) => {
                                 <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
-                                            {verifyPermission('list-any-notification-proof') && (
+                                            {verifyPermission(props.userPermissions, 'list-any-notification-proof') && (
                                                 <div className="form-group col-6">
                                                     <label htmlFor="sender">Expediteur</label>
-                                                    <input
-                                                        id="sender"
-                                                        type="text"
-                                                        className={`form-control ${errorFilterData.sender.length ? 'is-invalid' : ''}`}
-                                                        placeholder="Veuillez entrer l'expediteur"
-                                                        value={filterData.sender}
-                                                        onChange={handleChange}
+                                                    <Select
+                                                        isClearable={true}
+                                                        placeholder="Veuillez selectioner l'expediteur"
+                                                        onChange={value => setExpeditor(value)}
+                                                        options={expeditors}
+                                                        value={expeditor}
                                                     />
                                                     {errorFilterData.sender.length > 0 && (
                                                         errorFilterData.sender.map((item, index) => (
-                                                            <div key={index} className="invalid-feedback">
+                                                            <div key={index} className="text-danger text-sm">
                                                                 {item}
                                                             </div>
                                                         ))
@@ -299,7 +330,7 @@ const   ProofReceipt = (props) => {
                                                 </div>
                                             )}
 
-                                            <div className={`form-group ${verifyPermission('list-any-notification-proof') ? 'col-6' : 'col-12'}`}>
+                                            <div className={`form-group ${verifyPermission(props.userPermissions, 'list-any-notification-proof') ? 'col-6' : 'col-12'}`}>
                                                 <label htmlFor="chanel">Canal</label>
                                                 <select id="chanel"
                                                     className={`form-control ${errorFilterData.chanel.length ? 'is-invalid' : ''}`}
@@ -389,7 +420,7 @@ const   ProofReceipt = (props) => {
                                                     style={{ width: "952px" }}>
                                                     <thead>
                                                     <tr role="row">
-                                                        {verifyPermission('list-any-notification-proof') && (
+                                                        {verifyPermission(props.userPermissions, 'list-any-notification-proof') && (
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px" }}
                                                                 aria-label="Country: activate to sort column ascending">Expediteur
