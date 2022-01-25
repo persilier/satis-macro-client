@@ -28,7 +28,7 @@ export default function setupAxios(axios, store) {
             logout();
           })
           .catch(console.log);
-        return;
+          return response;
       }
       return response;
     },
@@ -41,7 +41,7 @@ export default function setupAxios(axios, store) {
             logout();
           })
           .catch(console.log);
-        return;
+          return Promise.reject(error);
       }
       if (401 === error.response.status || 498 === error.response.status) {
         console.log("CHECK WITH BACKEND EXPIRED TOKEN CODE");
