@@ -11,7 +11,6 @@ import {
     toastConnectSuccessMessageConfig,
     toastErrorMessageWithParameterConfig,
 } from "../../../../config/toastConfig";
-// import {listConnectData} from "../../../../config/appConfig";
 import Loader from "../../../../views/components/Loader";
 import "./LoginCss.css"
 import ForgotForm from "./ForgotForm";
@@ -22,7 +21,6 @@ import {passwordExpireConfig} from "../../../../config/confirmConfig";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
-
 
 const LoginPage = (props) => {
     const tokenData = getToken(window.location.href);
@@ -132,11 +130,11 @@ const LoginPage = (props) => {
         setStartRequest(true);
 
         const formData = {
-            grant_type: appConfig.listConnectData[props.plan]?.grant_type,
-            client_id: appConfig.listConnectData[props.plan]?.client_id,
-            client_secret: appConfig.listConnectData[props.plan]?.client_secret,
-            username: data?.username,
-            password: data?.password
+            grant_type: appConfig.listConnectData[props.plan].grant_type,
+            client_id: appConfig.listConnectData[props.plan].client_id,
+            client_secret: appConfig.listConnectData[props.plan].client_secret,
+            username: data.username,
+            password: data.password
         };
         await axios.post(appConfig.apiDomaine + `/login`, formData)
             .then(response => {
@@ -148,7 +146,6 @@ const LoginPage = (props) => {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
-
                     setError(defaultError);
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
@@ -162,7 +159,6 @@ const LoginPage = (props) => {
                     localStorage.setItem('refresh_token', refresh_token);
                     window.location.href = "/dashboard";
                 });
-
             })
             .catch(error => {
                 setStartRequest(false);
@@ -190,11 +186,19 @@ const LoginPage = (props) => {
                         .then(response => {
                             window.location.pathname = (`/reset-password`)
                         })
+                } else if (error.response.data.status === 406) {
+                    setExpireIn(null);
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Désolé, vous etes déjà connecté sur un autre appareil"));
                 } else {
                     setExpireIn(null);
+                    if (data.username === "" || data.password === "") {
+                        setError({
+                            username: "Email ou mot de passe incorrect",
+                            password: "Email ou mot de passe incorrect"
+                        });
+                    }
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);
                 }
-
             })
         ;
     };
@@ -214,13 +218,18 @@ const LoginPage = (props) => {
 
                                     <div
                                         className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">
-                                        <div
-                                            className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
-                                            style={{backgroundImage: `url(${componentData && componentData.params.fr.background.value !== null ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`}}>
+                                        <div className="kt-grid__item kt-grid__item--order-tablet-and-mobile-2 kt-grid kt-grid--hor kt-login__aside"
+                                             style={
+                                                 {
+                                                     backgroundImage: `url(${(componentData && componentData.params.fr.background.value) ? appConfig.apiDomaine + componentData.params.fr.background.value.url : " "})`
+                                                 }
+                                             }>
                                             <div className="kt-grid__item">
                                             <span className="kt-login__logo">
                                                 <img
-                                                    src={componentData ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : "/assets/images/satisLogo.png"}/>
+                                                    src={
+                                                        (componentData && componentData.params.fr.logo.value) ? appConfig.apiDomaine + componentData.params.fr.logo.value.url : "/assets/images/satisLogo.png"
+                                                    }/>
                                                 <span style={{
                                                     color: "white",
                                                     fontSize: "1em",

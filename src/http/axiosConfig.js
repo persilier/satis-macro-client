@@ -22,10 +22,10 @@ export default function setupAxios(axios, store) {
         config.headers.Authorization = `Bearer ${token}`;
       }
 
-      return config;
-    },
-    (err) => Promise.reject(err)
-  );
+            return config;
+        },
+        (err) => Promise.reject(err)
+    );
 
   axios.interceptors.response.use(
     (response) => {

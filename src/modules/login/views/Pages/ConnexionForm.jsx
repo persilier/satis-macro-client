@@ -1,6 +1,8 @@
 import React from 'react';
 import appConfig from "../../../../config/appConfig";
 import {Link, Switch} from "react-router-dom";
+import {ToastBottomEnd} from "../../../../views/components/Toast";
+import {toastErrorMessageWithParameterConfig} from "../../../../config/toastConfig";
 
 const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserName, onViewPassword, onChangePassword, onClickConnectButton, alert, expires_in}) => {
     return (
@@ -12,7 +14,7 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
                     <div className="col-lg-12 col-xl-6">
                         <img
                             id="Image1"
-                            src={componentData && componentData.params.fr.owner_logo.value !== null ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
+                            src={componentData && componentData.params.fr.owner_logo.value ? appConfig.apiDomaine + componentData.params.fr.owner_logo.value.url : null}
                             alt="logo"
                             style={{
                                 maxWidth: "65px",
