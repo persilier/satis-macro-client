@@ -1,10 +1,18 @@
 import React from "react";
+import {useTranslation} from "react-i18next";
 
 const WithoutCode = () => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     return (
-        <>
-            (<strong className="text-danger">sans indicatif</strong>)
-        </>
+        ready ? (
+            <>
+                (<strong className="text-danger">{t("sans indicatif")}</strong>)
+            </>
+        ) : null
+
     );
 };
 

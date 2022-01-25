@@ -21,10 +21,15 @@ import {AUTH_TOKEN} from "../../../constants/token";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const EditClients = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (!id) {
         if (!verifyPermission(props.userPermissions, 'store-client-from-my-institution'))
@@ -202,188 +207,190 @@ const EditClients = (props) => {
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
-                            <a href="#" className="kt-subheader__breadcrumbs-home"><i
-                                className="flaticon2-shelter"/></a>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <Link to="/settings/clients" className="kt-subheader__breadcrumbs-link">
-                                Client
-                            </Link>
-                            <span className="kt-subheader__breadcrumbs-separator"/>
-                            <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                {
-                                    id ? "Modification" : "Ajout"
-                                }
-                            </a>
+        ready ? (
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                {t("Paramètres")}
+                            </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
+                            <div className="kt-subheader__breadcrumbs">
+                                <a href="#" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <Link to="/settings/clients" className="kt-subheader__breadcrumbs-link">
+                                    {t("Client")}
+                                </Link>
+                                <span className="kt-subheader__breadcrumbs-separator"/>
+                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                    {
+                                        id ? t("Modification") : t("Ajout")
+                                    }
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <div className="row">
-                    <div className="col">
-                        <div className="kt-portlet">
-                            <div className="kt-portlet__head">
-                                <div className="kt-portlet__head-label">
-                                    <h3 className="kt-portlet__head-title">
-                                        {
-                                            id ?
-                                                "Modification de Clients" : " Ajout de Clients"
-                                        }
-                                    </h3>
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <div className="row">
+                        <div className="col">
+                            <div className="kt-portlet">
+                                <div className="kt-portlet__head">
+                                    <div className="kt-portlet__head-label">
+                                        <h3 className="kt-portlet__head-title">
+                                            {
+                                                id ?
+                                                    t("Modification de Clients") : t("Ajout de Clients")
+                                            }
+                                        </h3>
+                                    </div>
                                 </div>
-                            </div>
-                            <form method="POST" className="kt-form">
+                                <form method="POST" className="kt-form">
 
-                                <div className="kt-portlet">
+                                    <div className="kt-portlet">
 
-                                    {
+                                        {
 
-                                        !id ? (
-                                            <IdentityForm/>
+                                            !id ? (
+                                                <IdentityForm/>
 
-                                        ) : (
-                                            identity ?
-                                                <IdentityForm
-                                                    getIdentite={identity}
-                                                    getLoading={true}
-                                                />
-                                                : null
-                                        )
-                                    }
-
-                                    <div className="kt-portlet__body">
-                                        <div className="kt-section kt-section--first">
-                                            <h5 className="kt-section__title kt-section__title-lg">
-                                                Informations Techniques
-                                            </h5>
-
-                                            <div className="form-group row">
-                                                <div className={error.account_type_id.length ? "col validated" : "col"}>
-                                                    <label htmlFor="exampleSelect1">Type de Compte</label>
-                                                    {accountType ? (
-                                                        <Select
-                                                            value={type}
-                                                            onChange={onChangeAccountType}
-                                                            placeholder={"Veillez selectionner le type de compte"}
-                                                            options={formatSelectOption(accountType, 'name', 'fr')}
-                                                        />
-                                                    ) : (<select name="typeClient"
-                                                                 className={error.account_type_id.length ? "form-control is-invalid" : "form-control"}
-                                                                 id="typeClient">
-                                                        <option value=""/>
-                                                    </select>)
-                                                    }
-
-                                                    {
-                                                        error.account_type_id.length ? (
-                                                            error.account_type_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                                <div
-                                                    className={error.category_client_id.length ? "col validated" : "col"}>
-                                                    <label htmlFor="exampleSelect1">Catégorie Client</label>
-
-                                                    {categoryClient ? (
-                                                        <Select
-                                                            value={category}
-                                                            onChange={onChangeCategoryClient}
-                                                            placeholder={"Veillez selectionner la catégorie client"}
-                                                            options={formatSelectOption(categoryClient, 'name', 'fr')}
-                                                        />
-                                                    ) : (<select name="category"
-                                                                 className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
-                                                                 id="category">
-                                                        <option value=""/>
-                                                    </select>)
-                                                    }
-
-                                                    {
-                                                        error.category_client_id.length ? (
-                                                            error.category_client_id.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </div>
-
-                                            <div className="form-group row">
-
-                                                <div className={error.number.length ? "col validated" : "col"}>
-                                                    <label htmlFor="number">Numero de Compte</label>
-                                                    <input
-                                                        id="number"
-                                                        type="text"
-                                                        className={error.number.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le numero de compte"
-                                                        value={data.number}
-                                                        onChange={(e) => onChangeAccount(e)}
+                                            ) : (
+                                                identity ?
+                                                    <IdentityForm
+                                                        getIdentite={identity}
+                                                        getLoading={true}
                                                     />
-                                                    {
-                                                        error.number.length ? (
-                                                            error.number.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
+                                                    : null
+                                            )
+                                        }
+
+                                        <div className="kt-portlet__body">
+                                            <div className="kt-section kt-section--first">
+                                                <h5 className="kt-section__title kt-section__title-lg">
+                                                    {t("Informations Techniques")}
+                                                </h5>
+
+                                                <div className="form-group row">
+                                                    <div className={error.account_type_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="exampleSelect1">{t("Type de Compte")}</label>
+                                                        {accountType ? (
+                                                            <Select
+                                                                value={type}
+                                                                onChange={onChangeAccountType}
+                                                                placeholder={t("Veuillez selectionner le type de compte")}
+                                                                options={formatSelectOption(accountType, 'name', 'fr')}
+                                                            />
+                                                        ) : (<select name="typeClient"
+                                                                     className={error.account_type_id.length ? "form-control is-invalid" : "form-control"}
+                                                                     id="typeClient">
+                                                            <option value=""/>
+                                                        </select>)
+                                                        }
+
+                                                        {
+                                                            error.account_type_id.length ? (
+                                                                error.account_type_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                    <div
+                                                        className={error.category_client_id.length ? "col validated" : "col"}>
+                                                        <label htmlFor="exampleSelect1">{t("Catégorie Client")}</label>
+
+                                                        {categoryClient ? (
+                                                            <Select
+                                                                value={category}
+                                                                onChange={onChangeCategoryClient}
+                                                                placeholder={t("Veuillez selectionner la catégorie client")}
+                                                                options={formatSelectOption(categoryClient, 'name', 'fr')}
+                                                            />
+                                                        ) : (<select name="category"
+                                                                     className={error.category_client_id.length ? "form-control is-invalid" : "form-control"}
+                                                                     id="category">
+                                                            <option value=""/>
+                                                        </select>)
+                                                        }
+
+                                                        {
+                                                            error.category_client_id.length ? (
+                                                                error.category_client_id.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <div className="form-group row">
+
+                                                    <div className={error.number.length ? "col validated" : "col"}>
+                                                        <label htmlFor="number">{t("Numéro de Compte")}</label>
+                                                        <input
+                                                            id="number"
+                                                            type="text"
+                                                            className={error.number.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder={t("Veuillez entrer le numero de compte")}
+                                                            value={data.number}
+                                                            onChange={(e) => onChangeAccount(e)}
+                                                        />
+                                                        {
+                                                            error.number.length ? (
+                                                                error.number.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="kt-portlet__foot">
-                                    <div className="kt-form__actions text-right">
-                                        {
-                                            !startRequest ? (
-                                                <button type="submit" onClick={(e) => onSubmit(e)}
-                                                        className="btn btn-primary">Envoyer</button>
-                                            ) : (
-                                                <button
-                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                    type="button" disabled>
-                                                    Loading...
-                                                </button>
-                                            )
-                                        }
-                                        {
-                                            !startRequest ? (
-                                                <Link to="/settings/clients" className="btn btn-secondary mx-2">
-                                                    Quitter
-                                                </Link>
-                                            ) : (
-                                                <Link to="/settings/clients" className="btn btn-secondary mx-2"
-                                                      disabled>
-                                                    Quitter
-                                                </Link>
-                                            )
-                                        }
+                                    <div className="kt-portlet__foot">
+                                        <div className="kt-form__actions text-right">
+                                            {
+                                                !startRequest ? (
+                                                    <button type="submit" onClick={(e) => onSubmit(e)}
+                                                            className="btn btn-primary">{t("Envoyer")}</button>
+                                                ) : (
+                                                    <button
+                                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                        type="button" disabled>
+                                                        {t("Chargement")}...
+                                                    </button>
+                                                )
+                                            }
+                                            {
+                                                !startRequest ? (
+                                                    <Link to="/settings/clients" className="btn btn-secondary mx-2">
+                                                        {t("Quitter")}
+                                                    </Link>
+                                                ) : (
+                                                    <Link to="/settings/clients" className="btn btn-secondary mx-2"
+                                                          disabled>
+                                                        {t("Quitter")}
+                                                    </Link>
+                                                )
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        ) : null
     );
 };
 const mapStateToProps = state => {

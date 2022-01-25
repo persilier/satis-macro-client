@@ -18,10 +18,15 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UnitTypeForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(props.userPermissions, 'update-unit-type'))
@@ -138,19 +143,19 @@ const UnitTypeForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/unit_type" className="kt-subheader__breadcrumbs-link">
-                                    Type d'unité
+                                    {t("Type d'unité")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -166,7 +171,7 @@ const UnitTypeForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de type d'unité" : "Ajout d'un type d'unité"
+                                                id ? t("Modification de type d'unité") : t("Ajout d'un type d'unité")
                                             }
                                         </h3>
                                     </div>
@@ -176,11 +181,11 @@ const UnitTypeForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.can_be_target.length || error.can_treat.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Unité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <div className="kt-checkbox-inline">
                                                         <label className="kt-checkbox">
-                                                            <input type="checkbox" checked={data.can_be_target} onChange={handleCanBeTargetChange}/> Peut-être visé par une réclamation ?
+                                                            <input type="checkbox" checked={data.can_be_target} onChange={handleCanBeTargetChange}/> {t("Peut - être visé par une réclamation ?")}
                                                             <span/>
                                                             {
                                                                 error.can_be_target.length ? (
@@ -193,7 +198,7 @@ const UnitTypeForm = (props) => {
                                                             }
                                                         </label>
                                                         <label className="kt-checkbox">
-                                                            <input type="checkbox" checked={data.can_treat} onChange={handleCanTreatChange}/> Peut résoudre une réclamation ?
+                                                            <input type="checkbox" checked={data.can_treat} onChange={handleCanTreatChange}/> {t("Peut résoudre une réclamation ?")}
                                                             <span/>
                                                             {
                                                                 error.can_treat.length ? (
@@ -210,13 +215,13 @@ const UnitTypeForm = (props) => {
                                             </div>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Unité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom du type d'unité"
+                                                        placeholder={t("Veuillez entrer le nom du type d'unité")}
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -233,12 +238,12 @@ const UnitTypeForm = (props) => {
                                             </div>
 
                                             <div className={error.description.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Description</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">{t("Description")}</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                 <textarea
                                                     id="description"
                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
+                                                    placeholder={t("Veuillez entrer la description")}
                                                     cols="30"
                                                     rows="5"
                                                     value={data.description}
@@ -260,21 +265,21 @@ const UnitTypeForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Envoyer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Envoyer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/unit_type" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/unit_type" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -291,13 +296,15 @@ const UnitTypeForm = (props) => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-unit-type') ? (
-                printJsx()
-            ) : null
-        : verifyPermission(props.userPermissions, 'store-unit-type') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-unit-type') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-unit-type') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

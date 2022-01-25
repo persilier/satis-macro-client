@@ -333,8 +333,7 @@ const CategoryClient = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">{t("Affichage de")} 1
-                                                    {t("à")} {numberPerPage} {t("sur")} {categoryClient.length} {t("données")}
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {categoryClient.length} {t("données")}
                                                 </div>
                                             </div>
                                             {

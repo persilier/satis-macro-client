@@ -11,11 +11,16 @@ import {Link, useParams} from "react-router-dom";
 import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
 const ParametersComponentEdit = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     const [dataType, setDataType] = useState({});
     const [logo, setDataLogo] = useState({});
@@ -149,7 +154,7 @@ const ParametersComponentEdit = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -158,7 +163,7 @@ const ParametersComponentEdit = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Configuration
+                                    {t("Configuration")}
                                 </a>
                             </div>
                         </div>
@@ -172,7 +177,7 @@ const ParametersComponentEdit = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Modification Configuration
+                                            {t("Modification Configuration")}
                                         </h3>
                                     </div>
                                 </div>
@@ -241,7 +246,7 @@ const ParametersComponentEdit = (props) => {
                                                                         id={Object.keys(data)[index]}
                                                                         type={dataType[Object.keys(dataType)[index]]}
                                                                         className={error[Object.keys(error)[index]].length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder={"Veuillez entrer" + " " + (Object.keys(data)[index]).slice(7)}
+                                                                        placeholder={t("Veuillez entrer") + " " + (Object.keys(data)[index]).slice(7)}
                                                                         value={data[Object.keys(data)[index]]}
                                                                         onChange={(e) => handleChange(e, Object.keys(data)[index])}
                                                                     />
@@ -267,12 +272,12 @@ const ParametersComponentEdit = (props) => {
                                                 {
                                                     !startRequest ? (
                                                         <button type="submit" onClick={(e) => saveData(e)}
-                                                                className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                                className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button
                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                             type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
@@ -280,12 +285,12 @@ const ParametersComponentEdit = (props) => {
                                                     !startRequest ? (
                                                         <Link to="/settings/config"
                                                               className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/config"
                                                               className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -302,7 +307,9 @@ const ParametersComponentEdit = (props) => {
     };
 
     return (
-        printJsx()
+        ready ? (
+            printJsx()
+        ) : null
     );
 };
 

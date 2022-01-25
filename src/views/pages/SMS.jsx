@@ -11,11 +11,16 @@ import FormInformation from "../components/FormInformation";
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const SMS = (props) => {
-    document.title = "Satis client - Paramètre SMS";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Paramètre SMS") : "");
     if (!verifyPermission(props.userPermissions, 'update-sms-parameters'))
         window.location.href = ERROR_401;
 
@@ -110,177 +115,179 @@ const SMS = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'update-sms-parameters') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètre
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#link" className="kt-subheader__breadcrumbs-home">
-                                    <i className="flaticon2-shelter"/>
-                                </a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#link" className="kt-subheader__breadcrumbs-link">
-                                    SMS
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="row">
-                        <div className="col">
-                            <div className="kt-portlet">
-                                <div className="kt-portlet__head">
-                                    <div className="kt-portlet__head-label">
-                                        <h3 className="kt-portlet__head-title">
-                                            SMS
-                                        </h3>
-                                    </div>
+        ready ? (
+            verifyPermission(props.userPermissions, 'update-sms-parameters') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètre")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#link" className="kt-subheader__breadcrumbs-home">
+                                        <i className="flaticon2-shelter"/>
+                                    </a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#link" className="kt-subheader__breadcrumbs-link">
+                                        SMS
+                                    </a>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <form method="POST" className="kt-form">
-                                    <div className="kt-form kt-form--label-right">
-                                        <div className="kt-portlet__body">
-                                            <FormInformation information={"Configuration SMS."}/>
-
-                                            <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Identifiant Expéditeur</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        id="senderID"
-                                                        type="text"
-                                                        className={error.senderID.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer l'identifiant de l'expéditeur"
-                                                        value={data.senderID}
-                                                        onChange={(e) => onChangeSenderID(e)}
-                                                    />
-                                                    {
-                                                        error.senderID.length ? (
-                                                            error.senderID.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className={error.username.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="username">Votre nom</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        id="username"
-                                                        type="text"
-                                                        className={error.username.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer votre nom"
-                                                        value={data.username}
-                                                        onChange={(e) => onChangeUsername(e)}
-                                                    />
-                                                    {
-                                                        error.username.length ? (
-                                                            error.username.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className={error.password.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">Mot de passe</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        type="password"
-                                                        className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                        id="password"
-                                                        placeholder=". . . . . . . . . "
-                                                        value={data.password}
-                                                        onChange={(e) => onChangePassword(e)}
-                                                    />
-                                                    {
-                                                        error.password.length ? (
-                                                            error.password.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className={error.indicatif.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="indicatif">Indicatif Pays</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        type="number"
-                                                        className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
-                                                        id="indicatif"
-                                                        placeholder="Veillez entrer l'indicatif"
-                                                        value={data.indicatif}
-                                                        onChange={(e) => onChangeIndicatif(e)}
-                                                    />
-                                                    {
-                                                        error.indicatif.length ? (
-                                                            error.indicatif.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-                                            <div className={error.api.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="api">API</label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        type="text"
-                                                        className={error.api.length ? "form-control is-invalid" : "form-control"}
-                                                        id="api"
-                                                        placeholder="Veillez entrer l'API"
-                                                        value={data.api}
-                                                        onChange={(e) => onChangeApi(e)}
-                                                    />
-                                                    {
-                                                        error.api.length ? (
-                                                            error.api.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : ""
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="kt-portlet__foot">
-                                            <div className="kt-form__actions text-right">
-                                                {
-                                                    !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
-                                                    ) : (
-                                                        <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
-                                                        </button>
-                                                    )
-                                                }
-                                            </div>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="row">
+                            <div className="col">
+                                <div className="kt-portlet">
+                                    <div className="kt-portlet__head">
+                                        <div className="kt-portlet__head-label">
+                                            <h3 className="kt-portlet__head-title">
+                                                SMS
+                                            </h3>
                                         </div>
                                     </div>
-                                </form>
+
+                                    <form method="POST" className="kt-form">
+                                        <div className="kt-form kt-form--label-right">
+                                            <div className="kt-portlet__body">
+                                                <FormInformation information={"Configuration SMS."}/>
+
+                                                <div className={error.senderID.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">{t("Identifiant Expéditeur")}</label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            id="senderID"
+                                                            type="text"
+                                                            className={error.senderID.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder="Veillez entrer l'identifiant de l'expéditeur"
+                                                            value={data.senderID}
+                                                            onChange={(e) => onChangeSenderID(e)}
+                                                        />
+                                                        {
+                                                            error.senderID.length ? (
+                                                                error.senderID.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div className={error.username.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="username">{t("Votre nom")}</label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            id="username"
+                                                            type="text"
+                                                            className={error.username.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder={t("Veuillez entrer votre nom")}
+                                                            value={data.username}
+                                                            onChange={(e) => onChangeUsername(e)}
+                                                        />
+                                                        {
+                                                            error.username.length ? (
+                                                                error.username.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div className={error.password.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password">{t("Mot de passe")}</label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            type="password"
+                                                            className={error.password.length ? "form-control is-invalid" : "form-control"}
+                                                            id="password"
+                                                            placeholder=". . . . . . . . . "
+                                                            value={data.password}
+                                                            onChange={(e) => onChangePassword(e)}
+                                                        />
+                                                        {
+                                                            error.password.length ? (
+                                                                error.password.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div className={error.indicatif.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="indicatif">{t("Indicatif Pays")}</label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            type="number"
+                                                            className={error.indicatif.length ? "form-control is-invalid" : "form-control"}
+                                                            id="indicatif"
+                                                            placeholder={t("Veuillez entrer l'indicatif")}
+                                                            value={data.indicatif}
+                                                            onChange={(e) => onChangeIndicatif(e)}
+                                                        />
+                                                        {
+                                                            error.indicatif.length ? (
+                                                                error.indicatif.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div className={error.api.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="api">API</label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            type="text"
+                                                            className={error.api.length ? "form-control is-invalid" : "form-control"}
+                                                            id="api"
+                                                            placeholder={("Veuillez entrer l'API")}
+                                                            value={data.api}
+                                                            onChange={(e) => onChangeApi(e)}
+                                                        />
+                                                        {
+                                                            error.api.length ? (
+                                                                error.api.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : ""
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="kt-portlet__foot">
+                                                <div className="kt-form__actions text-right">
+                                                    {
+                                                        !startRequest ? (
+                                                            <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Enregistrer")}</button>
+                                                        ) : (
+                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                                {t("Chargement")}...
+                                                            </button>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        ) : ""
+            ) : ""
+        ) : null
     );
 };
 

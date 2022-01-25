@@ -11,9 +11,14 @@ import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+import {useTranslation} from "react-i18next";
 
 const Logs = (props) => {
-    document.title = "Satis Paramètre - Logs";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis Paramètre - " + (ready ? t("Logs") : "");
     const [logs, setLogs] = useState([]);
     const defaultErrors = {
         causer_id: [],
@@ -124,13 +129,13 @@ const Logs = (props) => {
                     setLogs(response.data.data);
                     setEndIndex(onePageNumber);
 
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Success du filtrage'));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Succès du filtrage')));
                     setLoadFilter(false);
                     setError(defaultErrors);
                     setEndIndex(onePageNumber);
                 })
                 .catch(error => {
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec du filtrage'))
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t('Echec du filtrage')))
                     setError({...defaultErrors, ...error.response.data.error});
                     console.log("Something is wrong");
                 })
@@ -150,164 +155,166 @@ const Logs = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'activity-log') && (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
+        ready ? (
+            verifyPermission(props.userPermissions, 'activity-log') && (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
-                                    <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link">
-                                        Logs
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Historique des Logs"}/>
-
-                    <div className="kt-portlet">
-                        <HeaderTablePage title={"Logs"}/>
-
-                        <div className="kt-portlet__body">
-                            <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                <form className="kt-form kt-form--fit kt-margin-b-20" onSubmit={filterLogs}>
-                                    <div className="form-group row bg-light pb-3 pt-3 rounded">
-                                        <div className="col">
-                                            <div className="form-group row">
-                                                <div className="col">
-                                                    <label htmlFor="actor">Acteur</label>
-                                                    <Select
-                                                        options={actors}
-                                                        value={actor}
-                                                        onChange={value => setActor(value)}
-                                                        placeholder={"Veillez selectioner l'acteur"}
-                                                        isClearable
-                                                    />
-                                                </div>
-
-                                                <div className="col">
-                                                    <label htmlFor="actor">Action</label>
-                                                    <Select
-                                                        options={actions}
-                                                        value={action}
-                                                        onChange={value => setAction(value)}
-                                                        placeholder={"Veillez selectionner l'action"}
-                                                        isClearable
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="form-group row">
-                                                <div className="col">
-                                                    <label htmlFor="actor">Date de debut</label>
-                                                    <input
-                                                        ref={startDate}
-                                                        type="date"
-                                                        className={`form-control ${error.date_start.length ? 'is-invalid' : ''}`}
-                                                    />
-                                                    {error.date_start.length !== 0 && (
-                                                        <>
-                                                            {error.date_start.map((item, index) => (
-                                                                <p key={index} className="invalid-feedback">{item}</p>
-                                                            ))}
-                                                        </>
-                                                    )}
-                                                </div>
-
-                                                <div className="col">
-                                                    <label htmlFor="actor">Date de fin</label>
-                                                    <input
-                                                        ref={endDate}
-                                                        type="date"
-                                                        className={`form-control ${error.date_end.length ? 'is-invalid' : ''}`}
-                                                    />
-                                                    {error.date_end.length !== 0 && (
-                                                        <>
-                                                            {error.date_end.map((item, index) => (
-                                                                <p key={index} className="invalid-feedback">{item}</p>
-                                                            ))}
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="kt-form__actions text-center">
-                                                {loadFilter ? (
-                                                    <button className="btn btn-primary kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light">
-                                                        Filtrer
-                                                    </button>
-                                                ) : (
-                                                    <button type="submit" className="btn btn-primary">Filtrer</button>
-                                                )}
-                                            </div>
-                                        </div>
+                                    <span className="kt-subheader__separator kt-hidden"/>
+                                    <div className="kt-subheader__breadcrumbs">
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
+                                        <span className="kt-subheader__breadcrumbs-separator"/>
+                                        <a href="#button" onClick={e => e.preventDefault()}
+                                           className="kt-subheader__breadcrumbs-link">
+                                            {t("Logs")}
+                                        </a>
                                     </div>
-                                </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div className="kt-separator kt-separator--space-md"/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable information={t("Historique des Logs")}/>
 
-                                <div className="position-relative">
-                                    {showElements.map((item, index) => (
-                                        <div key={index}>
-                                            <div className="tab-content">
-                                                <div className="d-flex justify-content-between">
-                                                    <h5>
-                                                        {
-                                                            item.causer ? (
-                                                                item.causer.identite ? item.causer.identite.lastname+" "+item.causer.identite.firstname : ''
-                                                            ) : ''
-                                                        }
-                                                    </h5>
-                                                    <span>{formatDateToTimeStampte(item.created_at)}</span>
+                        <div className="kt-portlet">
+                            <HeaderTablePage title={t("Logs")}/>
+
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <form className="kt-form kt-form--fit kt-margin-b-20" onSubmit={filterLogs}>
+                                        <div className="form-group row bg-light pb-3 pt-3 rounded">
+                                            <div className="col">
+                                                <div className="form-group row">
+                                                    <div className="col">
+                                                        <label htmlFor="actor">{t("Acteur")}</label>
+                                                        <Select
+                                                            options={actors}
+                                                            value={actor}
+                                                            onChange={value => setActor(value)}
+                                                            placeholder={t("Veuillez sélectionner l'acteur")}
+                                                            isClearable
+                                                        />
+                                                    </div>
+
+                                                    <div className="col">
+                                                        <label htmlFor="actor">{t("Action")}</label>
+                                                        <Select
+                                                            options={actions}
+                                                            value={action}
+                                                            onChange={value => setAction(value)}
+                                                            placeholder={t("Veuillez sélectionner l'action")}
+                                                            isClearable
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div style={{marginTop: "1%"}}>
-                                                    <strong>Action: </strong>
-                                                    <span className="mx-2">{showAction(item.log_action)}</span>
+
+                                                <div className="form-group row">
+                                                    <div className="col">
+                                                        <label htmlFor="actor">{t("Date de début")}</label>
+                                                        <input
+                                                            ref={startDate}
+                                                            type="date"
+                                                            className={`form-control ${error.date_start.length ? 'is-invalid' : ''}`}
+                                                        />
+                                                        {error.date_start.length !== 0 && (
+                                                            <>
+                                                                {error.date_start.map((item, index) => (
+                                                                    <p key={index} className="invalid-feedback">{item}</p>
+                                                                ))}
+                                                            </>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="col">
+                                                        <label htmlFor="actor">{t("Date de fin")}</label>
+                                                        <input
+                                                            ref={endDate}
+                                                            type="date"
+                                                            className={`form-control ${error.date_end.length ? 'is-invalid' : ''}`}
+                                                        />
+                                                        {error.date_end.length !== 0 && (
+                                                            <>
+                                                                {error.date_end.map((item, index) => (
+                                                                    <p key={index} className="invalid-feedback">{item}</p>
+                                                                ))}
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
 
-                                                <div style={{marginTop: "1%"}}>
-                                                    <strong>IP: </strong>
-                                                    <span className="mx-2">{item.ip_address}</span>
-                                                </div>
-
-                                                <div style={{marginTop: "1%"}}>
-                                                    <strong>Description: </strong>
-                                                    <span className="mx-2">{item.description}</span>
+                                                <div className="kt-form__actions text-center">
+                                                    {loadFilter ? (
+                                                        <button className="btn btn-primary kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light">
+                                                            {t("Filtrer")}
+                                                        </button>
+                                                    ) : (
+                                                        <button type="submit" className="btn btn-primary">{t("Filtrer")}</button>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <div className="kt-separator kt-separator--space-md kt-separator--border-dashed"/>
                                         </div>
-                                    ))}
-                                </div>
+                                    </form>
 
-                                <div className="text-center">
-                                    {loadMore ? (
-                                        <button className="btn btn-primary kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light">
-                                            Voire Plus
-                                        </button>
-                                    ) : (
-                                        <button onClick={showMore} className="btn btn-primary">Voire Plus</button>
-                                    )}
+                                    <div className="kt-separator kt-separator--space-md"/>
+
+                                    <div className="position-relative">
+                                        {showElements.map((item, index) => (
+                                            <div key={index}>
+                                                <div className="tab-content">
+                                                    <div className="d-flex justify-content-between">
+                                                        <h5>
+                                                            {
+                                                                item.causer ? (
+                                                                    item.causer.identite ? item.causer.identite.lastname+" "+item.causer.identite.firstname : ''
+                                                                ) : ''
+                                                            }
+                                                        </h5>
+                                                        <span>{formatDateToTimeStampte(item.created_at)}</span>
+                                                    </div>
+                                                    <div style={{marginTop: "1%"}}>
+                                                        <strong>{t("Action")}: </strong>
+                                                        <span className="mx-2">{showAction(item.log_action)}</span>
+                                                    </div>
+
+                                                    <div style={{marginTop: "1%"}}>
+                                                        <strong>IP: </strong>
+                                                        <span className="mx-2">{item.ip_address}</span>
+                                                    </div>
+
+                                                    <div style={{marginTop: "1%"}}>
+                                                        <strong>{t("Description")}: </strong>
+                                                        <span className="mx-2">{item.description}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="kt-separator kt-separator--space-md kt-separator--border-dashed"/>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="text-center">
+                                        {loadMore ? (
+                                            <button className="btn btn-primary kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light">
+                                                {t("Voir plus")}
+                                            </button>
+                                        ) : (
+                                            <button onClick={showMore} className="btn btn-primary">{t("Voir plus")}</button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        ) : null
     );
 };
 

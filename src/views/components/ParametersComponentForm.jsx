@@ -12,12 +12,16 @@ import {
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {debug} from "../../helpers/function";
+import {useTranslation} from "react-i18next";
 
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 
 const ParametersComponentForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
 
     const {id} = useParams();
     const defaultData = {
@@ -26,11 +30,11 @@ const ParametersComponentForm = (props) => {
             type: "image"
         },
         title:{
-            value:"Bienvenue sur",
+            value:t("Bienvenue sur"),
             type: "text"
         },
         description:{
-            value: "Votre nouvel outil de gestion des Réclamations",
+            value: t("Votre nouvel outil de gestion des Réclamations"),
             type:"text"
         },
         background: {
@@ -42,7 +46,7 @@ const ParametersComponentForm = (props) => {
             type:"text"
         },
         name: {
-            value:"CONNEXION",
+            value: t("CONNEXION"),
             type:"text"
         },
     };
@@ -185,14 +189,14 @@ const ParametersComponentForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 {/*<span className="kt-subheader__breadcrumbs-separator"/>*/}
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Connexion
+                                    {t("Connexion")}
                                 </a>
                             </div>
                         </div>
@@ -206,7 +210,7 @@ const ParametersComponentForm = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Paramétrage de la connexion
+                                            {t("Paramétrage de la connexion")}
                                         </h3>
                                     </div>
                                 </div>
@@ -261,8 +265,7 @@ const ParametersComponentForm = (props) => {
 
                                                                 <div className="form-group row">
                                                                     <label
-                                                                        className="col-xl-3 col-lg-3 col-form-label">Arrière
-                                                                        plan</label>
+                                                                        className="col-xl-3 col-lg-3 col-form-label">{t("Arrière plan")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <div className="kt-avatar kt-avatar--outline"
                                                                              id="kt_user_add_avatar">
@@ -303,13 +306,13 @@ const ParametersComponentForm = (props) => {
                                                                 <div
                                                                     className={error.version.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="version">Version</label>
+                                                                           htmlFor="version">{t("Version")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="version"
                                                                             type="text"
                                                                             className={error.version.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer la version"
+                                                                            placeholder={t("Veuillez entrer la version")}
                                                                             value={data.version.value}
                                                                             onChange={(e) => onChangeVersion(e)}
                                                                         />
@@ -329,13 +332,13 @@ const ParametersComponentForm = (props) => {
                                                                 <div
                                                                     className={error.title.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="title">Titre</label>
+                                                                           htmlFor="title">{t("Titre")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="title"
                                                                             type="text"
                                                                             className={error.title.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le titre"
+                                                                            placeholder={t("Veuillez entrer le titre")}
                                                                             value={data.title.value}
                                                                             onChange={(e) => onChangeTitle(e)}
                                                                         />
@@ -355,13 +358,13 @@ const ParametersComponentForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Libellé</label>
+                                                                           htmlFor="name">{t("Libellé")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom"
+                                                                            placeholder={t("Veuillez entrer le nom")}
                                                                             value={data.name.value}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -381,12 +384,12 @@ const ParametersComponentForm = (props) => {
                                                                 <div
                                                                     className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="description">Description</label>
+                                                                           htmlFor="description">{t("Description")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="description"
                                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la description"
+                                                                    placeholder={t("Veuillez entrer la description")}
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.description.value}
@@ -411,12 +414,12 @@ const ParametersComponentForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Enregistrer</button>
+                                                                                    className="btn btn-primary">{t("Enregistrer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -424,13 +427,13 @@ const ParametersComponentForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/settings/clients/category"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/settings/clients/category"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -453,8 +456,9 @@ const ParametersComponentForm = (props) => {
     };
 
     return (
-
-        printJsx()
+        ready ? (
+            printJsx()
+        ) : null
 
     );
 

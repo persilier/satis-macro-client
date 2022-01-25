@@ -1,7 +1,12 @@
 import React, {useState} from "react";
 import ReactApexChart from "react-apexcharts";
+import {useTranslation} from "react-i18next";
 
 const FiveModel = props => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const data = {
         prices: [100, 200, 500, 1000, 2000, 3000],
         dates: ["25 Jun", "15 Jul", "10 Aug", "8 Sep", "5 Oct", "5 Dec"]
@@ -9,7 +14,7 @@ const FiveModel = props => {
 
     const [series, setSeries] = useState([
         {
-            name: "Plaintes",
+            name: t("Plaintes"),
             data: data.prices
         }
     ]);
@@ -28,11 +33,11 @@ const FiveModel = props => {
             curve: 'straight'
         },
         title: {
-            text: 'Suivi des plaintes',
+            text: t('Suivi des plaintes'),
             align: 'left'
         },
         subtitle: {
-            text: 'Evolution des plaintes réçues',
+            text: t('Evolution des plaintes réçues'),
             align: 'left'
         },
         labels: data.dates,
@@ -48,10 +53,12 @@ const FiveModel = props => {
     });
 
     return (
-        <div>
-            <h2>Modèle 5</h2>
-            <ReactApexChart options={options} series={series} type="area" height={350} />
-        </div>
+        ready ? (
+            <div>
+                <h2>{t("Modèle 5")}</h2>
+                <ReactApexChart options={options} series={series} type="area" height={350} />
+            </div>
+        ) : null
     )
 };
 

@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 
 const Aside = (props) => {
 
+    //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
     return (

@@ -19,10 +19,15 @@ import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimObject = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!verifyPermission(props.userPermissions, 'list-claim-object'))
         window.location.href = ERROR_401;
 
@@ -184,7 +189,7 @@ const ClaimObject = (props) => {
                             <div className="p-2 text-center" style={{backgroundColor: claimObject.severity_level.color, color: claimObject.severity_level.color === "#ffffff" ? "black" : "white"}}>
                                 {
                                     claimObject.severity_level.color ? (
-                                            `${claimObject.severity_level.color} ${claimObject.severity_level.color === "#ffffff" ? " Blanc" : ''}`
+                                            `${claimObject.severity_level.color} ${claimObject.severity_level.color === "#ffffff" ? " " + t("Blanc") : ''}`
                                         )
                                         : (
                                             <strong style={{color: "black"}}>-</strong>
@@ -199,7 +204,7 @@ const ClaimObject = (props) => {
                         verifyPermission(props.userPermissions, 'update-claim-category') ? (
                             <Link to={`/settings/claim_objects/${claimObject.id}/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                         ) : null
@@ -209,7 +214,7 @@ const ClaimObject = (props) => {
                             <button
                                 onClick={(e) => deleteClaimObject(claimObject.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
+                                title={t("Supprimer")}>
                                 <i className="la la-trash"/>
                             </button>
                         ) : null
@@ -226,14 +231,14 @@ const ClaimObject = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Objet de réclamation
+                                    {t("Objet de réclamation")}
                                 </a>
                             </div>
                         </div>
@@ -244,8 +249,8 @@ const ClaimObject = (props) => {
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-claim-object"}
-                            title={"Objet de réclamation"}
-                            addText={"Ajouter"}
+                            title={t("Objet de réclamation")}
+                            addText={t("Ajouter")}
                             addLink={"/settings/claim_objects/add"}
                         />
 
@@ -259,7 +264,7 @@ const ClaimObject = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
@@ -280,26 +285,26 @@ const ClaimObject = (props) => {
                                                         <tr role="row">
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px" }}
-                                                                aria-label="Country: activate to sort column ascending">Nom
+                                                                aria-label="Country: activate to sort column ascending">{t("Nom")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "250px" }}
-                                                                aria-label="Ship City: activate to sort column ascending">Description
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Description")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70px" }}
-                                                                aria-label="Country: activate to sort column ascending">Nom de la catégorie
+                                                                aria-label="Country: activate to sort column ascending">{t("Nom de la catégorie")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70px" }}
-                                                                aria-label="Country: activate to sort column ascending">Temps limite
+                                                                aria-label="Country: activate to sort column ascending">{t("Temps limite")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70px" }}
-                                                                aria-label="Country: activate to sort column ascending">Niveau de gravité
+                                                                aria-label="Country: activate to sort column ascending">{t("Niveau de gravité")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                                Action
+                                                                {t("Action")}
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -320,12 +325,12 @@ const ClaimObject = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Nom de la catégorie</th>
-                                                        <th rowSpan="1" colSpan="1">Temps limite</th>
-                                                        <th rowSpan="1" colSpan="1">Niveau de gravité</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Nom de la catégorie")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Temps limite")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Niveau de gravité")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -334,7 +339,7 @@ const ClaimObject = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {claimObjects.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {claimObjects.length} {t("données")}
                                                 </div>
                                             </div>
                                             {

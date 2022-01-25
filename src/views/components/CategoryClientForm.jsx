@@ -15,11 +15,16 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
 
 const CategoryClientForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {editcategoryid} = useParams();
 
     if (!editcategoryid) {
@@ -114,7 +119,7 @@ const CategoryClientForm = (props) => {
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Paramètres
+                            {t("Paramètres")}
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
@@ -122,12 +127,12 @@ const CategoryClientForm = (props) => {
                                 className="flaticon2-shelter"/></a>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <Link to="/settings/clients/category" className="kt-subheader__breadcrumbs-link">
-                                Catégorie Client
+                                {t("Catégorie Client")}
                             </Link>
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                 {
-                                    editcategoryid ? "Modification" : "Ajout"
+                                    editcategoryid ? t("Modification") : t("Ajout")
                                 }
                             </a>
                         </div>
@@ -143,7 +148,7 @@ const CategoryClientForm = (props) => {
                                 <div className="kt-portlet__head-label">
                                     <h3 className="kt-portlet__head-title">
                                         {
-                                            editcategoryid ? "Modification Catégorie Client" : "Ajout de Catégorie Client"
+                                            editcategoryid ? t("Modification Catégorie Client") : t("Ajout de Catégorie Client")
                                         }
                                     </h3>
                                 </div>
@@ -161,13 +166,13 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="name">Libellé <InputRequire/></label>
+                                                                       htmlFor="name">{t("Libellé")} <InputRequire/></label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                     <input
                                                                         id="name"
                                                                         type="text"
                                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                        placeholder="Veillez entrer le nom"
+                                                                        placeholder={t("Veuillez entrer le nom")}
                                                                         value={data.name}
                                                                         onChange={(e) => onChangeName(e)}
                                                                     />
@@ -187,12 +192,12 @@ const CategoryClientForm = (props) => {
                                                             <div
                                                                 className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                 <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                       htmlFor="description">Description </label>
+                                                                       htmlFor="description">{t("Description")} </label>
                                                                 <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="description"
                                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la description"
+                                                                    placeholder={t("Veuillez entrer la description")}
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.description}
@@ -217,12 +222,12 @@ const CategoryClientForm = (props) => {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">Enregistrer</button>
+                                                                                className="btn btn-primary">{t("Enregistrer")}</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                             type="button" disabled>
-                                                                            Loading...
+                                                                            {t("Chargement")}...
                                                                         </button>
                                                                     )
                                                                 }
@@ -230,13 +235,13 @@ const CategoryClientForm = (props) => {
                                                                     !startRequest ? (
                                                                         <Link to="/settings/clients/category"
                                                                               className="btn btn-secondary mx-2">
-                                                                            Quitter
+                                                                            {t("Quitter")}
                                                                         </Link>
                                                                     ) : (
                                                                         <Link to="/settings/clients/category"
                                                                               className="btn btn-secondary mx-2"
                                                                               disabled>
-                                                                            Quitter
+                                                                            {t("Quitter")}
                                                                         </Link>
                                                                     )
                                                                 }
@@ -259,13 +264,15 @@ const CategoryClientForm = (props) => {
     };
 
     return (
-        editcategoryid ?
-            verifyPermission(props.userPermissions, 'update-category-client') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-category-client') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            editcategoryid ?
+                verifyPermission(props.userPermissions, 'update-category-client') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-category-client') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 
 };

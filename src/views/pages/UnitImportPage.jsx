@@ -4,9 +4,14 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import ImportFileForm from "../components/ImportFileForm";
+import {useTranslation} from "react-i18next";
 
 const ClaimObjectImportPage = (props) => {
-    document.title = "Satis client - Importation unité";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Importation unité") : "");
     if (!(verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'store-without-link-unit')))
         window.location.href = ERROR_401;
 
@@ -23,13 +28,15 @@ const ClaimObjectImportPage = (props) => {
     }
 
     return (
-        verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'store-without-link-unit') ? (
-            <ImportFileForm
-                submitEndpoint={endpoint}
-                pageTitleLink="/settings/unit"
-                pageTitle="Unité"
-                panelTitle="Importation d'unité au format excel"
-            />
+        ready ? (
+            verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'store-my-unit') || verifyPermission(props.userPermissions, 'store-without-link-unit') ? (
+                <ImportFileForm
+                    submitEndpoint={endpoint}
+                    pageTitleLink="/settings/unit"
+                    pageTitle={t("Unité")}
+                    panelTitle={t("Importation d'unité au format excel")}
+                />
+            ) : null
         ) : null
     );
 };

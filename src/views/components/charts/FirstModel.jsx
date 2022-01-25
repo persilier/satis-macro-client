@@ -1,12 +1,17 @@
 import React, {useState} from "react";
 import {Bar, Line, Pie} from "react-chartjs-2";
+import {useTranslation} from "react-i18next";
 
 const FirstModel = props => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const [chartData, setChartData] = useState({
         labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
         datasets: [
             {
-                label: 'Population',
+                label: t('Population'),
                 data: [
                     617594,
                     181045,
@@ -34,22 +39,25 @@ const FirstModel = props => {
     };
 
     return (
-        <div className="chart">
-            <Bar
-                data={chartData}
-                options={{
-                    title: {
-                        display: props.displayTitle,
-                        text: 'Modèle 1',
-                        fontSize: 25
-                    },
-                    legend: {
-                        display: props.displayLegend,
-                        position: props.legentPosition
-                    }
-                }}
-            />
-        </div>
+        ready ? (
+            <div className="chart">
+                <Bar
+                    data={chartData}
+                    options={{
+                        title: {
+                            display: props.displayTitle,
+                            text: t('Modèle 1'),
+                            fontSize: 25
+                        },
+                        legend: {
+                            display: props.displayLegend,
+                            position: props.legentPosition
+                        }
+                    }}
+                />
+            </div>
+        ) : null
+
     );
 };
 
