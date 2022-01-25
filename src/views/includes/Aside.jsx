@@ -813,7 +813,7 @@ const Aside = (props) => {
                                                         </NavLink>
                                                     ) : null
                                                 }
-                                                {
+                                                {/*
                                                     (verifyPermission(props.userPermissions, "activity-log")) ? (
                                                         <NavLink exact to="/settings/reset-password" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
@@ -821,7 +821,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text">Changer le mot de passe</span>
                                                             </li>
                                                         </NavLink>
-                                                    ) : null
+                                                    ) : null*/
                                                 }
                                                 {
                                                     (verifyPermission(props.userPermissions, "activity-log")) ? (

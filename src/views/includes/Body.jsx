@@ -142,9 +142,10 @@ const Body = () => {
         <Logs />
       </Route>
 
+      {/**
       <Route exact path="/settings/reset-password">
         <ResetPassword />
-      </Route>
+      </Route> */}
 
       <Route exact path="/historic/claims/add">
         <HistoricClaimsAdd />
