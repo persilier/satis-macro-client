@@ -62,7 +62,7 @@ const Nav = (props) => {
 
     useEffect(() => {
         if (props.user) {
-            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props.user.identite_id}`)
+            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props?.user?.identite_id}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (window.location.pathname !== "chat#messageList")
@@ -73,7 +73,7 @@ const Nav = (props) => {
                 })
             ;
         }
-    }, [props.user.identite]);
+    }, [props?.user?.identite]);
 
     const onClickLanguage = useCallback((e, lang) => {
         e.preventDefault();
@@ -534,9 +534,9 @@ const mapStateToProps = (state) => {
         language: state.language,
         plan: state.plan.plan,
         user: {
-            lastName: state.user.user.data.identite.lastname,
-            firstName: state.user.user.data.identite.firstname,
-            identite_id: state.user.user.data.identite.id
+            lastName: state?.user?.user?.data?.identite?.lastname,
+            firstName: state?.user?.user?.data?.identite?.firstname,
+            identite_id: state?.user?.user?.data?.identite?.id
         }
     };
 };

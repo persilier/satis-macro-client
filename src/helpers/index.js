@@ -1,24 +1,12 @@
 import moment from "moment";
 
-export const isTimeOut = () => {
+export const isTimeOut = (timeout = process.env.REACT_APP_SESSION_TIMEOUT) => {
   let savedTimeout =
-    parseInt(localStorage.getItem("DTimeout")) ||
-    moment()
-      .add(120, "seconds")
-      .format("x");
-      
-  console.log("savedTimeout", savedTimeout);
+    parseInt(localStorage.getItem("DTimeout")) || moment().format("x");
   let currentTimeOut = moment().format("x");
-  console.log("currentTimeOut", currentTimeOut);
-  if (savedTimeout > currentTimeOut && savedTimeout - currentTimeOut > 60000) {
-    localStorage.setItem(
-      "DTimeout",
-      moment(savedTimeout, "x")
-        .add(60, "seconds")
-        .format("x")
-    );
+  if (currentTimeOut - savedTimeout < timeout) {
+    localStorage.setItem("DTimeout", moment().format("x"));
     return false;
-  } else {
-    return true;
-  }
+  }   
+  return true;
 };
