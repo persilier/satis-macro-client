@@ -433,17 +433,6 @@ const Aside = (props) => {
                                                             </NavLink>
                                                             :null
                                                     }
-                                                {
-                                                    verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
-                                                        <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                            <li className="kt-menu__link ">
-                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">{t("Preuve d'accusé de réception")}</span>
-                                                            </li>
-                                                        </NavLink>
-                                                    ) : null
-                                                }
-
                                                     {
                                                         verifyPermission(props.userPermissions, "list-client-from-any-institution") || verifyPermission(props.userPermissions, "list-client-from-my-institution") ? (
                                                             <NavLink exact to="/settings/clients" className="kt-menu__item "
@@ -730,6 +719,17 @@ const Aside = (props) => {
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                     <span className="kt-menu__link-text">{t("Pilote actif")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
+                                                            <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Preuve d'accusé de réception")}</span>
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
