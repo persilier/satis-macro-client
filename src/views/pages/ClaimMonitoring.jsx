@@ -228,9 +228,9 @@ const ClaimMonitoring = (props) => {
     const onChangeStartDate = e => {
         if (endDate && e.target.value) {
             if (!(new Date(endDate) >= new Date(e.target.value)))
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             else
-                ToastBottomEnd.fire(toastValidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastValidPeriodMessageConfig());
         }
         setStartDate(e.target.value)
     };
@@ -238,9 +238,9 @@ const ClaimMonitoring = (props) => {
     const onChangeEndDate = e => {
         if (startDate && e.target.value) {
             if (!(new Date(startDate) <= new Date(e.target.value)))
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             else
-                ToastBottomEnd.fire(toastValidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastValidPeriodMessageConfig());
         }
         setEndDate(e.target.value)
     };

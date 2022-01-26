@@ -105,7 +105,7 @@ const ChannelForms = (props) => {
                         redirectError401Page(errorRequest.response.data.code);
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }

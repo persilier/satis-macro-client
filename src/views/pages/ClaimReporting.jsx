@@ -272,9 +272,9 @@ const ClaimReporting = props => {
     const handleStartDateChange = e => {
         if (endDate && e.target.value) {
             if (!(new Date(endDate) > new Date(e.target.value)))
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             else
-                ToastBottomEnd.fire(toastValidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastValidPeriodMessageConfig());
         }
         setStartDate(e.target.value);
     };
@@ -282,9 +282,9 @@ const ClaimReporting = props => {
     const handleEndDateChange = e => {
         if (startDate && e.target.value) {
             if (!(new Date(startDate) < new Date(e.target.value)))
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             else
-                ToastBottomEnd.fire(toastValidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastValidPeriodMessageConfig());
         }
         setEndDate(e.target.value);
     };
@@ -335,24 +335,24 @@ const ClaimReporting = props => {
         if (institution && startDate && endDate) {
             if (startDate && endDate) {
                 if (!(new Date(startDate) <= new Date(endDate)))
-                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
                 else {
                     filterRequest()
                 }
             } else {
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             }
         } else if (institution && !startDate && !endDate) {
             filterRequest();
         } else if (!institution && startDate && endDate) {
             if (startDate && endDate) {
                 if (!(new Date(startDate) <= new Date(endDate)))
-                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
                 else {
                     filterRequest()
                 }
             } else {
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             }
         } else {
             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veillez renseigner les paramètres correctement")))

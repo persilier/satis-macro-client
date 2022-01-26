@@ -26,7 +26,7 @@ const ForgotForm = () => {
             })
             .catch(error => {
                 setStartRequestForgot(false);
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastAddErrorMessageConfig());
             })
         ;
     };

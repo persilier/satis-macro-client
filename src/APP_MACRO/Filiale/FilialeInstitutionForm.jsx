@@ -115,7 +115,7 @@ const FilialeInstitutionForm = (props) => {
                     console.log(error.response.data.error)
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }

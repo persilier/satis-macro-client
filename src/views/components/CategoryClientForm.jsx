@@ -92,7 +92,7 @@ const CategoryClientForm = (props) => {
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             } else {
@@ -106,7 +106,7 @@ const CategoryClientForm = (props) => {
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }

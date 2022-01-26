@@ -63,7 +63,7 @@ const UnfoundedModal = (props) => {
                     }).catch(error => {
                     setStartRequest(false);
                     setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             }else{
                 axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
@@ -74,7 +74,7 @@ const UnfoundedModal = (props) => {
                     }).catch(error => {
                     setStartRequest(false);
                     setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             }
         }
