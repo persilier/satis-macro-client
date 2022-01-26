@@ -31,7 +31,7 @@ const FusionClaim = props => {
                 if (verifyTokenExpire()) {
                     axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {keep_claim: !choice.original && !choice.duplicate ? null : choice.original})
                         .then(response => {
-                            ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
+                            ToastBottomEnd.fire(toastMergeSuccessMessageConfig());
                             setStartRequest(false);
                             document.getElementById("close-button").click();
                             window.location.href = `/process/claim-assign/${response.data.id}/detail`;

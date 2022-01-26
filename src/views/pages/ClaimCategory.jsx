@@ -154,7 +154,7 @@ const ClaimCategory = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
                                 if (error.response.data.error)
@@ -162,7 +162,7 @@ const ClaimCategory = (props) => {
                                         toastErrorMessageWithParameterConfig(error.response.data.error)
                                     );
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }

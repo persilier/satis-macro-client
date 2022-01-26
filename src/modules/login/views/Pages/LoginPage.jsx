@@ -192,13 +192,13 @@ const LoginPage = (props) => {
                         })
                 } else if (error.response.data.status === 406) {
                     setExpireIn(null);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Désolé, vous etes déjà connecté sur un autre appareil"));
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Désolé, vous etes déjà connecté sur un autre appareil")));
                 } else {
                     setExpireIn(null);
                     if (data.username === "" || data.password === "") {
                         setError({
-                            username: "Email ou mot de passe incorrect",
-                            password: "Email ou mot de passe incorrect"
+                            username: ready ? t("Email ou mot de passe incorrect") : "",
+                            password: ready ? t("Email ou mot de passe incorrect") : ""
                         });
                     }
                     ToastBottomEnd.fire(toastConnectErrorMessageConfig);

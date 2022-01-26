@@ -238,13 +238,13 @@ const EmailConfig = (props) => {
                     setError(defaultErrorEmail);
                     const newData = {...data};
                     setData(newData);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     setReload(!reload);
                 })
                 .catch(errorRequest => {
                     setLoadingEmail(false);
                     setError({...defaultErrorEmail, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }

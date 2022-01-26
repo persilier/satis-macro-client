@@ -94,13 +94,13 @@ const ParametersComponentEdit = (props) => {
             axios.post(url, saveData)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     window.location.href = "/settings/config"
                 })
                 .catch(errorRequest => {
                     setError({...error,...errorRequest.response.data.error});
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }

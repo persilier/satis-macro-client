@@ -63,12 +63,12 @@ const ConfigCoefficient = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }

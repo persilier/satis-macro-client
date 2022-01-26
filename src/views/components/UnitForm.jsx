@@ -253,13 +253,13 @@ const HoldingUnitForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         debug({...defaultError, ...errorRequest.response.data.error}, "error");
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {

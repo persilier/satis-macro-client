@@ -86,7 +86,7 @@ const ClaimListDetail = (props) => {
                     if (response.value) {
                         axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/self-assignment`, {})
                             .then(response => {
-                                ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig());
                                 window.location.href = "/process/unit-claims";
                             })
                             .catch(error => console.log("Something is wrong"))
@@ -101,7 +101,7 @@ const ClaimListDetail = (props) => {
         if (verifyTokenExpire()) {
             axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/assignment`, {staff_id: staff ? staff.value : null})
                 .then(response => {
-                    ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig());
                     setStartRequest(false);
                     setStaff(null);
                     setErrors([]);

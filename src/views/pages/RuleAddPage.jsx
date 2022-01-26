@@ -366,12 +366,12 @@ const RuleAddPage = (props) => {
                     .then(() => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(({response}) => {
                         setError({...defaultError, ...response.data.error});
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {

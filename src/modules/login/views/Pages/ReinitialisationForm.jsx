@@ -73,7 +73,7 @@ const ReinitialisationForm = (props) => {
             .then(response => {
                 setStartRequestForgot(false);
                 setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 invitation = true
                 localStorage.setItem("successInvitation", invitation)
                 window.location.href = '/login';
@@ -81,7 +81,7 @@ const ReinitialisationForm = (props) => {
             .catch(error => {
                 setStartRequestForgot(false);
                 setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastEditErrorMessageConfig());
             })
         ;
 

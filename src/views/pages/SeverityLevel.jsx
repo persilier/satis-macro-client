@@ -174,14 +174,14 @@ const SeverityLevel = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
                                 console.log(error.response.data);
                                 if (error.response.data.error)
                                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }

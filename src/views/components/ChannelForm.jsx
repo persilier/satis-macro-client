@@ -90,7 +90,7 @@ const ChannelForms = (props) => {
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {
@@ -99,7 +99,7 @@ const ChannelForms = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         redirectError401Page(errorRequest.response.data.code);

@@ -178,10 +178,10 @@ const Chats = (props) => {
                                 const newChats = [...listChat];
                                 newChats.splice(index, 1);
                                 setListChat(newChats);
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -230,10 +230,10 @@ const Chats = (props) => {
                                 getListMessage(idChat);
                                 const filteredItems = listChatMessages.filter(item => item.key !== key);
                                 setListChatMessage(filteredItems);
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }

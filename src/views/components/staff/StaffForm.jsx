@@ -306,7 +306,7 @@ const StaffForm = (props) => {
                 changeOption(parseInt(e.target.value));
             }
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Veillez choisir une unité'))
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t('Veuillez choisir une unité')))
         }
     };
 
@@ -337,7 +337,7 @@ const StaffForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
@@ -349,7 +349,7 @@ const StaffForm = (props) => {
                             );
                         } else {
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig());
                         }
                     })
                 ;

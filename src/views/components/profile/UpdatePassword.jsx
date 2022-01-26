@@ -68,12 +68,12 @@ const UpdatePassword = () => {
         setStartRequest(false);
         setError({ ...defaultError });
         setData(defaultData);
-        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
       })
       .catch(({ response }) => {
         setStartRequest(false);
         setError({ ...defaultError, ...(response?.data?.error || {}) });
-        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+        ToastBottomEnd.fire(toastEditErrorMessageConfig());
       });
   };
 

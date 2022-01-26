@@ -320,7 +320,7 @@ const HoldingClientForm = (props) => {
                         if (errorRequest.response.data.error.message)
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.message));
                         else
-                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {

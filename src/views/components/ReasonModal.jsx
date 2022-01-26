@@ -27,7 +27,7 @@ const ReasonModal = props => {
                 axios.put(`${appConfig.apiDomaine}/claim-awaiting-treatment/${props.id}/rejected`, {rejected_reason: description})
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig());
                         window.location.href = `/process/unit-claims`
                     })
                     .catch(error => {
@@ -48,7 +48,7 @@ const ReasonModal = props => {
                 axios.put(endpoint, {invalidated_reason: description})
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastRejectTreatmentClaimSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastRejectTreatmentClaimSuccessMessageConfig());
                         window.location.href = `/process/claim-to-validated`
                     })
                     .catch(error => {
@@ -65,7 +65,7 @@ const ReasonModal = props => {
                 axios.put(endpoint, {solution_communicated: description})
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastValidateTreatmentClaimSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastValidateTreatmentClaimSuccessMessageConfig());
                         window.location.href = `/process/claim-to-validated`
                     })
                     .catch(error => {

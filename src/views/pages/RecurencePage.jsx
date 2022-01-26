@@ -74,12 +74,12 @@ const RecurencePage = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }

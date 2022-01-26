@@ -150,13 +150,13 @@ const QualificationPeriod = props => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
                                 if (error.response.data.error)
                                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }

@@ -161,7 +161,7 @@ const Currency = (props) => {
                                 if (error.response.data.error)
                                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }

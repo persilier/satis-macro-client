@@ -74,7 +74,7 @@ const ClaimDetail = (props) => {
                         axios.put(`${appConfig.apiDomaine}/revoke-claim/${claim.id}`)
                             .then(response => {
                                 setRevokeLoad(false);
-                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Réclamation revoquer avec succès'));
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Réclamation revoquer avec succès')));
                                 setTimeout(() => {
                                     if (document.referrer)
                                         window.location.href = document.referrer;
@@ -84,7 +84,7 @@ const ClaimDetail = (props) => {
                             })
                             .catch(error => {
                                 setRevokeLoad(false);
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec de revocation de la réclamation'));
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t('Echec de revocation de la réclamation')));
                                 console.log("Something is wrong");
                             })
                     }

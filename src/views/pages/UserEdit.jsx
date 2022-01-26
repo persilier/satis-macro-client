@@ -131,13 +131,13 @@ const UserEdit = (props) => {
                     newData.new_password_confirmation = "";
                     setError(defaultError);
                     setData(newData);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     console.log(errorRequest.response.data.error,"ERROR")
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }

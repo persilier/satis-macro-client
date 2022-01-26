@@ -201,11 +201,11 @@ const ConfigRequirements = () => {
             axios.put(appConfig.apiDomaine + `/claim-object-requirements`, values)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }

@@ -104,12 +104,12 @@ const SMS = (props) => {
                 const newData = {...data};
                 newData.password = "";
                 setData(newData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig());
             })
             .catch(errorRequest => {
                 setStartRequest(false);
                 setError({...defaultError, ...errorRequest.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastEditErrorMessageConfig());
             })
         ;
     };

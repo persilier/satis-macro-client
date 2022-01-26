@@ -36,13 +36,13 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
             .then(({data}) => {
                 setStartRequest(false);
                 setError(defaultError);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 return true
             })
             .catch(({response}) => {
                 setStartRequest(false);
                 setError({...defaultError, ...response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 return false
             })
         ;

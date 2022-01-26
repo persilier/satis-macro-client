@@ -83,7 +83,7 @@ const ClaimCategoryForm = (props) => {
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {

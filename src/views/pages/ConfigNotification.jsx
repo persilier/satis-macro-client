@@ -80,7 +80,7 @@ const ConfigNotification = (props) => {
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de la modification")));
                 })
                 .catch(({response}) => {
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     setError({...error, ...response.data.error});
                     setStartUpdate(false);
                     console.log("error", response.data.error)

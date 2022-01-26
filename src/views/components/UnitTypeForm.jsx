@@ -105,7 +105,7 @@ const UnitTypeForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
@@ -113,7 +113,7 @@ const UnitTypeForm = (props) => {
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.is_editable[0]));
                         else {
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig());
                         }
                     })
                 ;
