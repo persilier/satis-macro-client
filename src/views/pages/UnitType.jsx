@@ -136,7 +136,7 @@ const UnitType = (props) => {
     };
 
     const deleteUnitType = (unitTypeId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {

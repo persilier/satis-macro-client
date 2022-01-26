@@ -24,7 +24,7 @@ const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) =>
 
     const revoke = e => {
         e.stopPropagation();
-        DeleteConfirmation.fire(confirmRevokeConfig)
+        DeleteConfirmation.fire(confirmRevokeConfig())
             .then(result => {
                 if (result.value) {
                     setRevokeLoad(true);

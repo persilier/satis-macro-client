@@ -138,7 +138,7 @@ const EditClients = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch((errorRequest) => {
                         setStartRequest(false);
@@ -159,7 +159,7 @@ const EditClients = (props) => {
                             setType({});
                             setCategory({});
                             setIdentity({});
-                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         })
                         .catch((errorRequest) => {
                             setStartRequest(false);
@@ -176,7 +176,7 @@ const EditClients = (props) => {
                             setType({});
                             setCategory({});
                             setIdentity({});
-                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         })
                         .catch(async (errorRequest) => {
 
@@ -188,7 +188,7 @@ const EditClients = (props) => {
                                         setStartRequest(false);
                                         setError(defaultError);
                                         setData(defaultData);
-                                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                                     })
                             } else if (errorRequest.response.data.client) {
                                 setStartRequest(false);

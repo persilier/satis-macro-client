@@ -173,13 +173,13 @@ const ClaimArchivedDetail = (props) => {
                                                 <button
                                                     className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                     data-ktwizard-type="action-prev">
-                                                    {t("Précédent").toUpperCase()}
+                                                    {t("PRÉCÉDENT")}
                                                 </button>
 
                                                 <button
                                                     className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                     data-ktwizard-type="action-next">
-                                                    {t("Suivant").toUpperCase()}
+                                                    {t("SUIVANT")}
                                                 </button>
                                             </div>
                                         </form>

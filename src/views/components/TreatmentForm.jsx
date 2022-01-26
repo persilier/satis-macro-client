@@ -73,13 +73,13 @@ const TreatmentForm = (props) => {
         axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, data)
             .then(response => {
                 setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 window.location.href = "/process/claim-assign/to-staff";
             })
             .catch(error => {
                 setStartRequest(false);
                 setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastAddErrorMessageConfig());
             })
         ;
     };

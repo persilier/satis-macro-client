@@ -137,14 +137,14 @@ const SeverityLevelForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         console.log(errorRequest.response.data);
                         setStartRequest(false);
                         if (errorRequest.response.data.code === 422) {
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig());
                         } else {
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error));
                         }

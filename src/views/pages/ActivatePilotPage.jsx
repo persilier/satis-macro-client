@@ -78,7 +78,7 @@ const ActivatePilotPage = (props) => {
             axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${props.activeUserInstitution}`, {staff_id: staff ? staff.value : ""})
                 .then( async () => {
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
 
                         if (props.user.staff.is_active_pilot) {
                             await axios.get(`${appConfig.apiDomaine}/login`)
@@ -94,7 +94,7 @@ const ActivatePilotPage = (props) => {
                 .catch(errorRequest => {
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }

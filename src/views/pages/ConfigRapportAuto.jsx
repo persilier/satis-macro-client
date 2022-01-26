@@ -165,7 +165,7 @@ const ConfigRapportAuto = (props) => {
     };
 
     const deleteCategoryClient = (rapportAutoId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {

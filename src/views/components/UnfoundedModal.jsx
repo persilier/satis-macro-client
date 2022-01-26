@@ -58,7 +58,7 @@ const UnfoundedModal = (props) => {
                 axios.put(appConfig.apiDomaine + `/claim-awaiting-assignment/${props.getId}/unfounded`, data)
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         window.location.href="/process/claim-assign"
                     }).catch(error => {
                     setStartRequest(false);
@@ -69,7 +69,7 @@ const UnfoundedModal = (props) => {
                 axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         window.location.href="/process/claim-assign/to-staff"
                     }).catch(error => {
                     setStartRequest(false);

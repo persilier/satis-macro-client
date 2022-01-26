@@ -210,14 +210,14 @@ const EmailConfig = (props) => {
                     setError(defaultErrorEmail);
                     const newData = {...data};
                     setData(newData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     setReload(!reload);
                 })
                     .catch(errorRequest => {
                     setLoadingEmail(false);
                     setData(sendData);
                     setError({...defaultErrorEmail, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
                 ;
         }

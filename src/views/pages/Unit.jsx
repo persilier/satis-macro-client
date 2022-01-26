@@ -166,7 +166,7 @@ const Unit = (props) => {
     };
 
     const deleteUnit = (unitId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {
@@ -277,7 +277,7 @@ const Unit = (props) => {
                     </div>
 
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                        <InfirmationTable information={t("Liste des services, agences, etc...")}/>
+                        <InfirmationTable information={t("Liste des services, agences, etc") + '...'}/>
 
                         <div className="kt-portlet">
                             <HeaderTablePage

@@ -362,7 +362,7 @@ const StaffForm = (props) => {
                         setPosition(null);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(async (errorRequest) => {
                         if (errorRequest.response.data.error.identite)
@@ -381,7 +381,7 @@ const StaffForm = (props) => {
                             // Validation errors
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig());
                         }
                     })
                 ;

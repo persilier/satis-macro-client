@@ -152,7 +152,7 @@ const LoginPage = (props) => {
                 }).then(response => {
                     setError(defaultError);
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastConnectSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastConnectSuccessMessageConfig());
                     const user = response.data;
                     localStorage.setItem("userData", JSON.stringify(response.data));
                     localStorage.setItem('token', token);
@@ -201,7 +201,7 @@ const LoginPage = (props) => {
                             password: ready ? t("Email ou mot de passe incorrect") : ""
                         });
                     }
-                    ToastBottomEnd.fire(toastConnectErrorMessageConfig);
+                    ToastBottomEnd.fire(toastConnectErrorMessageConfig());
                 }
             })
         ;

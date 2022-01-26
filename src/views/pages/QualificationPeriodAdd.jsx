@@ -118,7 +118,7 @@ const QualificationPeriodAdd = (props) => {
                         setError(defaultError);
                         setData(defaultError);
                         setInfinite(false);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig)
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig())
                     })
                     .catch(({response}) => {
                         setStartRequest(false);

@@ -298,13 +298,13 @@ const RuleAddPage = (props) => {
                     setStartRequest(false);
                     setError(defaultError);
                     setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(({response}) => {
                     console.log("errors:", {...defaultError, ...response.data.error});
                     setError({...defaultError, ...response.data.error});
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 });
         }
     };

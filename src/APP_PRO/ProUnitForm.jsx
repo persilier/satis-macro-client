@@ -131,7 +131,7 @@ const ProUnitForm = () => {
                     setUnitType({});
                     setError(defaultError);
                     setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);

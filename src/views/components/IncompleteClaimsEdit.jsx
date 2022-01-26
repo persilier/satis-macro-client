@@ -507,7 +507,7 @@ const IncompleteClaimsEdit = props => {
                             }
                         }
                         setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     } else {
                         setStartRequest(false);
                         // setError({...defaultError, ...error.response.data.error});

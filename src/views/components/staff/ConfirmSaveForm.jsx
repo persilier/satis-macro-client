@@ -169,7 +169,7 @@ const ConfirmSaveForm = (props) => {
         setStartRequest(true);
         axios.post(endPoint.confirm(props.identite.id), data)
             .then(async (response) => {
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 await resetData();
                 document.getElementById("closeConfirmSaveForm").click();
                 await props.resetFoundData();

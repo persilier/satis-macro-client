@@ -438,7 +438,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Preuve d'accusé de réception</span>
+                                                                <span className="kt-menu__link-text">{t("Preuve d'accusé de réception")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -847,7 +847,7 @@ const Aside = (props) => {
                                                             <NavLink exact to="/settings/logs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">Journal des activitées</span>
+                                                                    <span className="kt-menu__link-text">{t("Journal des activitées")}</span>
                                                                 </li>
                                                             </NavLink>
                                                         ) : null

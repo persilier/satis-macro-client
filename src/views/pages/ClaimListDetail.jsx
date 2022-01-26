@@ -80,7 +80,7 @@ const ClaimListDetail = (props) => {
     };
 
     const selfAssign = () => {
-        AssignClaimConfirmation.fire(confirmAssignConfig)
+        AssignClaimConfirmation.fire(confirmAssignConfig())
             .then(response => {
                 if (verifyTokenExpire()) {
                     if (response.value) {
@@ -291,13 +291,13 @@ const ClaimListDetail = (props) => {
                                                 <button
                                                     className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                     data-ktwizard-type="action-prev">
-                                                    PRÉCÉDENT
+                                                    {t("PRÉCÉDENT")}
                                                 </button>
 
                                                 <button
                                                     className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                     data-ktwizard-type="action-next">
-                                                    SUIVANT
+                                                    {t("SUIVANT")}
                                                 </button>
                                             </div>
                                         </form>

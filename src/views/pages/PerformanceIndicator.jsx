@@ -129,7 +129,7 @@ const PerformanceIndicator = (props) => {
     };
 
     const deletePerformanceIndicator = (performanceId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {

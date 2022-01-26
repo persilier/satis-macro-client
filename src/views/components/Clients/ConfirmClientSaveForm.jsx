@@ -155,7 +155,7 @@ const ConfirmClientSaveForm = (props) => {
         setStartRequest(true);
         axios.post(endPoint.confirm(props.identite.identite.id), data)
             .then(async (response) => {
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 await setStartRequest(false);
                 await setError(defaultError);
                 await setTypes([]);

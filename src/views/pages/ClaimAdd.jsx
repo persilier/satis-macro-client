@@ -584,7 +584,7 @@ const ClaimAdd = props => {
             axios.post(endPoint.store, formatFormData(newData))
                 .then(async (response) => {
                     setDisabledInput(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     resetAllData();
                     document.getElementById("customFile").value = "";
                     if (response.data.errors)
@@ -611,7 +611,7 @@ const ClaimAdd = props => {
                             }
                         }
                         setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     }
                 })
             ;

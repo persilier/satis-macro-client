@@ -54,13 +54,13 @@ const ReasonSatisfaction = (props) => {
         axios.put(props.getEndPoint + `/${props.getId}`, data)
             .then(response => {
                 setStartRequest(false);
-                ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 window.location.href = "/process/claim_measure";
             })
             .catch(error => {
                 setStartRequest(false);
                 setError({...defaultError, ...error.response.data.error});
-                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                ToastBottomEnd.fire(toastAddErrorMessageConfig());
             })
         ;
     };

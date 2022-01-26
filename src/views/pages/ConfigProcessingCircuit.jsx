@@ -277,11 +277,11 @@ const ConfigProcessingCircuit = (props) => {
             axios.put(newEndPoint, values)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }

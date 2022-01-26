@@ -148,7 +148,7 @@ const ConfigNotification = (props) => {
                                                 {
                                                     data.map((el, index) => (
                                                         <div key={index} className={Object.keys(error).length && error[`notifications.${el.event}`].length ? "col-6 form-group validated" : "col-6 form-group"}>
-                                                            <label htmlFor={el.event}>{notificationConfig[el.event]} <InputRequire/></label>
+                                                            <label htmlFor={el.event}>{notificationConfig()[el.event]} <InputRequire/></label>
                                                             <textarea
                                                                 id={el.event}
                                                                 cols="30"

@@ -131,7 +131,7 @@ const CategoryFAQs = (props) => {
     };
 
     const deleteCategoryFaqs = (categoryId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {

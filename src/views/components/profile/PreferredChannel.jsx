@@ -62,12 +62,12 @@ const PreferredChannel = () => {
             axios.put(appConfig.apiDomaine + "/feedback-channels", data)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
                     console.log("something is wrong");
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }

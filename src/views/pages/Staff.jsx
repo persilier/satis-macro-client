@@ -175,7 +175,7 @@ const   Staff = (props) => {
     };
 
     const deleteStaff = (staffId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {

@@ -359,7 +359,7 @@ const ConfirmClaimAddModal = props => {
         if (verifyTokenExpire()) {
             axios.post(props.endPoint.storeKnowingIdentity(props.id), formatFormData(newData))
                 .then(async (response) => {
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     await setInstitution(null);
                     await setClaimCategory(null);
                     await setCurrency(null);

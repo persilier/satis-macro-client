@@ -38,7 +38,7 @@ const CurrencyForm = () => {
             window.location.href = ERROR_401;
     }
 
-    const [listCurrency, setListCurrency] = useState(currencies);
+    const [listCurrency, setListCurrency] = useState(currencies());
     const [currency, setCurrency] = useState(null);
 
     const defaultData = {
@@ -130,13 +130,13 @@ const CurrencyForm = () => {
                         setData(defaultData);
                         setCurrency(null);
                         setListCurrency(filterCurrency([data]));
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         redirectError401Page(errorRequest.response.data.code);
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }

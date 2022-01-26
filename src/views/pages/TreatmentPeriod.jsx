@@ -128,7 +128,7 @@ const TreatmentPeriod = props => {
     };
 
     const deletePeriod = (TreatmentPeriodId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {

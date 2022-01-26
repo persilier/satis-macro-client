@@ -152,12 +152,12 @@ const ClaimReporting = props => {
 
         const formatCategoriesMouths = () => {
             for (var i = 0; i < categories.length; i++)
-                categories[i] = `${ month[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
+                categories[i] = `${ month()[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
         };
 
         const formatCategoriesDays = () => {
             for (var i = 0; i < categories.length; i++) {
-                categories[i] = `${ categories[i].split("-")[2] } ${ month[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
+                categories[i] = `${ categories[i].split("-")[2] } ${ month()[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
             }
         };
 
@@ -165,8 +165,8 @@ const ClaimReporting = props => {
             var start = "";
             var end = "";
             for (var i = 0; i < categories.length; i++) {
-                start = `${categories[i].replace(/\s/g, '').split("-")[2]} ${month[categories[i].replace(/\s/g, '').split("-")[1]]} ${categories[i].replace(/\s/g, '').split("-")[0][2]}${categories[i].replace(/\s/g, '').split("-")[0][3]}`;
-                end = `${categories[i].replace(/\s/g, '').split("-")[5]} ${month[categories[i].replace(/\s/g, '').split("-")[4]]} ${categories[i].replace(/\s/g, '').split("-")[3][2]}${categories[i].replace(/\s/g, '').split("-")[3][3]}`;
+                start = `${categories[i].replace(/\s/g, '').split("-")[2]} ${month()[categories[i].replace(/\s/g, '').split("-")[1]]} ${categories[i].replace(/\s/g, '').split("-")[0][2]}${categories[i].replace(/\s/g, '').split("-")[0][3]}`;
+                end = `${categories[i].replace(/\s/g, '').split("-")[5]} ${month()[categories[i].replace(/\s/g, '').split("-")[4]]} ${categories[i].replace(/\s/g, '').split("-")[3][2]}${categories[i].replace(/\s/g, '').split("-")[3][3]}`;
                 categories[i] = `${start} - ${end}`;
             }
         };

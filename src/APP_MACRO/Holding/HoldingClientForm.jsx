@@ -311,7 +311,7 @@ const HoldingClientForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch((errorRequest) => {
                         setStartRequest(false);
@@ -335,12 +335,12 @@ const HoldingClientForm = (props) => {
                             setInstitution(null);
                             setType(null);
                             setCategory(null);
-                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         })
                         .catch((errorRequest) => {
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig());
                         })
                     ;
                 } else {
@@ -352,7 +352,7 @@ const HoldingClientForm = (props) => {
                             setType(null);
                             setCategory(null);
                             setInstitution(null);
-                            ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         })
                         .catch(async (errorRequest) => {
                             if (errorRequest.response.data.error.identite) {
@@ -372,7 +372,7 @@ const HoldingClientForm = (props) => {
                             } else {
                                 setStartRequest(false);
                                 setError({...defaultError, ...errorRequest.response.data.error});
-                                ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                                ToastBottomEnd.fire(toastAddErrorMessageConfig());
                             }
                         });
                 }

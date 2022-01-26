@@ -116,12 +116,12 @@ const ClaimAssignDetail = (props) => {
             await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     window.location.href = "/process/claim-assign";
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig)
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig())
                 })
             ;
         }
@@ -135,12 +135,12 @@ const ClaimAssignDetail = (props) => {
             await axios.put(endPoint.update(`${id}`), data)
                 .then(response => {
                     setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     window.location.href = "/process/claim-assign";
                 })
                 .catch(error => {
                     setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig)
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig())
                 })
             ;
         }
@@ -392,11 +392,11 @@ const ClaimAssignDetail = (props) => {
 
                                         <div className="kt-form__actions">
                                             <button className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-prev">
-                                                {t("Précédent").toUpperCase()}
+                                                {t("PRÉCÉDENT")}
                                             </button>
 
                                             <button className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" data-ktwizard-type="action-next">
-                                                {t("Suivant").toUpperCase()}
+                                                {t("SUIVANT")}
                                             </button>
                                         </div>
                                     </form>

@@ -132,7 +132,7 @@ const InstitutionMessageApi = props => {
                 .then(() => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);

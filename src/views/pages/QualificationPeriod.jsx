@@ -126,7 +126,7 @@ const QualificationPeriod = props => {
     };
 
     const deletePeriod = (qualificationPeriodId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {

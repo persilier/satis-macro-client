@@ -150,7 +150,7 @@ const SeverityLevel = (props) => {
     };
 
     const deleteSeverityLevel = (severityLevelId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {

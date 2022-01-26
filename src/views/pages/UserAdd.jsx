@@ -196,7 +196,7 @@ const UserAdd = (props) => {
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                         return false;
                     })
                 ;
@@ -226,7 +226,7 @@ const UserAdd = (props) => {
                         }
                     } else {
                         setIdentity(null);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig)
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig())
                     }
                     window.location.reload();
                 }
@@ -243,14 +243,14 @@ const UserAdd = (props) => {
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                         return false;
                     })
                 ;
 
                 if (addUser) {
                     setIdentity(null);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     window.location.reload();
                 }
             }

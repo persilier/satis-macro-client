@@ -115,7 +115,7 @@ const HubUnitForm = () => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
@@ -131,7 +131,7 @@ const HubUnitForm = () => {
                     setUnitType({});
                     setError(defaultError);
                     setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);

@@ -133,7 +133,7 @@ const Institution = (props) => {
     };
 
     const deleteInstitution = (institutionId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {

@@ -139,7 +139,7 @@ const RulePage = (props) => {
     };
 
     const deleteRulePage = (ruleId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {
