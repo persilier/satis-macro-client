@@ -1095,14 +1095,27 @@ const IncompleteClaimsEdit = props => {
                                                                 htmlFor="description">{componentData ? componentData.params.fr.description.value : ""}
                                                                 {isRequire.description ?
                                                                     <InputRequire/> : ""}</label>
-                                                            <textarea
-                                                                rows="7"
-                                                                id="description"
-                                                                className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                                placeholder={componentData ? componentData.params.fr.description_placeholder.value : ""}
-                                                                value={data.description}
-                                                                onChange={(e) => onChangeDescription(e)}
-                                                            />
+                                                            {
+                                                                data.request_channel_slug ==="email"?(
+                                                                        <div>
+                                                                            <HtmlDescription onClick={e => {
+                                                                                e.preventDefault()
+                                                                                showModal(data.description ? data.description : '-')
+                                                                            }}/>
+                                                                        </div>
+                                                                    ):
+                                                                    (
+                                                                        <textarea
+                                                                            rows="7"
+                                                                            id="description"
+                                                                            className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                                            placeholder={componentData ? componentData.params.fr.description_placeholder.value : ""}
+                                                                            value={data.description}
+                                                                            onChange={(e) => onChangeDescription(e)}
+                                                                        />
+                                                                    )
+                                                            }
+
                                                             {
                                                                 error.description.length ? (
                                                                     error.description.map((error, index) => (
@@ -1139,6 +1152,8 @@ const IncompleteClaimsEdit = props => {
                                                             }
                                                         </div>
                                                     </div>
+                                                    <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                    <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                                 </div>
                                             </div>
 
