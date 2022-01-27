@@ -29,6 +29,10 @@ import InfirmationTable from "./InfirmationTable";
 import WithoutCode from "./WithoutCode";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import Loader from "./Loader";
+import HtmlDescriptionModal from "./DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "./DescriptionDetail/HtmlDescription";
+
+
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -149,6 +153,7 @@ const IncompleteClaimsEdit = props => {
     const [startRequest, setStartRequest] = useState(false);
     const [isRequire, setIsRequire] = useState(null);
     const [componentData, setComponentData] = useState(undefined);
+    const [currentMessage, setCurrentMessage] = useState("");
 
 
     const currentDate = new Date();
@@ -272,6 +277,12 @@ const IncompleteClaimsEdit = props => {
             fetchData();
         }
     }, [endPoint, props.userPermissions, id]);
+
+
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
 
     const onChangeRelationShip = selected => {
         const newData = {...data};
