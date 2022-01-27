@@ -196,12 +196,12 @@ const   ProofReceipt = (props) => {
                     <td>{proof.institution ? proof.institution.name : ''}</td>
                 )}
                 <td>
-                    {proof.to ? proof.to.firstname+" "+proof.to.lastname : ''} / {proof.to ? (proof.channel === 'sms' ? proof.to.telephone[0] : proof.to.email[0]) : ''}
+                    {proof.to ? `${proof.to.firstname ? proof.to.firstname : ''} ${proof.to.lastname ? proof.to.lastname : ''}` : ''} / {proof.to ? (proof.channel === 'sms' ? `${(proof.to.telephone && proof.to.telephone[0]) ? proof.to.telephone[0] : ''}` : `${(proof.to.email && proof.to.email[0]) ? proof.to.email[0] : ''}`) : ''}
                 </td>
-                <td>{proof.channel}</td>
-                <td>{proof.message}</td>
+                <td>{proof.channel ? proof.channel : ''}</td>
+                <td>{proof.message ? proof.message : ''}</td>
                 <td>{formatDateToTimeStampte(proof.created_at)}</td>
-                <td>{proof.status}</td>
+                <td>{proof.status ? proof.status : ''}</td>
             </tr>
         );
     };
