@@ -31,13 +31,13 @@ const   ProofReceipt = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'list-any-notification-proof')))
+    if (!(verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')))
         window.location.href = ERROR_401;
 
     let endPoint = "";
-    if (verifyPermission(props.userPermissions, 'list-notification-proof'))
+    if (verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-notification-proof'))
         endPoint = '/my/notifications/proofs';
-    else if (verifyPermission(props.userPermissions, 'list-any-notification-proof'))
+    else if (verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof'))
         endPoint = '/notifications/proofs';
 
     const [load, setLoad] = useState(true);
@@ -69,13 +69,13 @@ const   ProofReceipt = (props) => {
             await axios.post(appConfig.apiDomaine+endPoint, sendData)
                 .then(response => {
                     setLoad(false);
-                    if (verifyPermission(props.userPermissions, 'list-notification-proof')) {
+                    if (verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-notification-proof')) {
                         setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                         setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                         setProofs(response.data);
                     }
 
-                    if (verifyPermission(props.userPermissions, 'list-any-notification-proof')) {
+                    else if (verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) {
                         setExpeditors(response.data['filter-data'].map(item => {
                             return {
                                 value: item.id,
@@ -192,7 +192,7 @@ const   ProofReceipt = (props) => {
     const printBodyTable = (proof, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                {verifyPermission(props.userPermissions, 'list-any-notification-proof') && (
+                {(verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) && (
                     <td>{proof.institution ? proof.institution.name : ''}</td>
                 )}
                 <td>
@@ -245,7 +245,7 @@ const   ProofReceipt = (props) => {
 
         await axios.post(appConfig.apiDomaine+endPoint, sendData)
             .then(response => {
-                if (verifyPermission(props.userPermissions, 'list-any-notification-proof')) {
+                if (verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) {
                     setNumberPage(forceRound(response.data['proofs'].length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data['proofs'].slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setProofs(response.data['proofs']);
@@ -253,7 +253,7 @@ const   ProofReceipt = (props) => {
                     setErrorFilterData(defautFilterDataError);
                 }
 
-                if (verifyPermission(props.userPermissions, 'list-notification-proof')) {
+                if (verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-notification-proof')) {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setProofs(response.data);
@@ -282,7 +282,7 @@ const   ProofReceipt = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
+            verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, "pilot-list-notification-proof") || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -316,7 +316,7 @@ const   ProofReceipt = (props) => {
                                     <div className="kt-portlet__body">
                                         <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                             <div className="row">
-                                                {verifyPermission(props.userPermissions, 'list-any-notification-proof') && (
+                                                {(verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) && (
                                                     <div className="form-group col-6">
                                                         <label htmlFor="sender">{t("Expediteur")}</label>
                                                         <Select
@@ -336,7 +336,7 @@ const   ProofReceipt = (props) => {
                                                     </div>
                                                 )}
 
-                                                <div className={`form-group ${verifyPermission(props.userPermissions, 'list-any-notification-proof') ? 'col-6' : 'col-12'}`}>
+                                                <div className={`form-group ${(verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) ? 'col-6' : 'col-12'}`}>
                                                     <label htmlFor="chanel">{t("Canal")}</label>
                                                     <select id="chanel"
                                                             className={`form-control ${errorFilterData.chanel.length ? 'is-invalid' : ''}`}
@@ -426,7 +426,7 @@ const   ProofReceipt = (props) => {
                                                         style={{ width: "952px" }}>
                                                         <thead>
                                                         <tr role="row">
-                                                            {verifyPermission(props.userPermissions, 'list-any-notification-proof') && (
+                                                            {(verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) && (
                                                                 <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                     colSpan="1" style={{ width: "70.25px" }}
                                                                     aria-label="Country: activate to sort column ascending">{t("Expediteur")}
@@ -476,7 +476,7 @@ const   ProofReceipt = (props) => {
                                                             <th rowSpan="1" colSpan="1">{t("Email")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Unité")}</th>
                                                             {
-                                                                verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
+                                                                (verifyPermission(props.userPermissions, 'list-staff-from-any-unit') || verifyPermission(props.userPermissions, 'pilot-list-staff-from-any-unit')) ? (
                                                                     <th rowSpan="1" colSpan="1">{t("Institution")}</th>
                                                                 ) : <th style={{display: "none"}}/>
                                                             }
@@ -524,6 +524,7 @@ const   ProofReceipt = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
+        activePilot: state?.user?.user?.staff?.is_active_pilot || false,
         plan: state.plan.plan
     };
 };

@@ -252,7 +252,13 @@ const ClaimCategory = (props) => {
                                                     <div id="kt_table_1_filter" className="dataTables_filter">
                                                         <label>
                                                             {t("Recherche")}:
-                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                            <input
+                                                                id="myInput"
+                                                                type="text"
+                                                                onKeyUp={(e) => searchElement(e)}
+                                                                className="form-control form-control-sm"
+                                                                placeholder=""
+                                                                aria-controls="kt_table_1"/>
                                                         </label>
                                                     </div>
                                                 </div>

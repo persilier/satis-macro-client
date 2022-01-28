@@ -369,7 +369,6 @@ const ConfigProcessingCircuit = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
                         information={t("Paramètre de configuration des entités de traitement")}/>
-
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={""}
