@@ -306,7 +306,7 @@ const IncompleteClaims = (props) => {
                                                                     verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                                                                     verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
                                                                         t("Institution concernée")
-                                                                        : t("Pointde service visé")
+                                                                        : t("Point de service visé")
                                                                 }
                                                             </th>
 
