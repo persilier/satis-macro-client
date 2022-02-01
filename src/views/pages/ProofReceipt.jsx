@@ -110,11 +110,11 @@ const   ProofReceipt = (props) => {
         value = getLowerCaseString(value);
         let newProofs = [...staffs];
         newProofs = newProofs.filter(el => (
-            getLowerCaseString(`${el.to ? el.to.firstname+" "+el.to.lastname : ''} / ${el.to ? (el.channel === 'sms' ? el.to.telephone[0] : el.to.email[0]) : ''}`).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.to ? el.to.firstname + " " + el.to.lastname : ''} / ${el.to ? (el.channel === 'sms' ? (el.to.telephone ? el.to.telephone[0] : '') : (el.to.email ? el.to.email[0] : '')) : ''}`).indexOf(value) >= 0 ||
             getLowerCaseString(el.institution ? el.institution.name : '').indexOf(value) >= 0 ||
             getLowerCaseString(el.channel).indexOf(value) >= 0 ||
             getLowerCaseString(el.message).indexOf(value) >= 0 ||
-            getLowerCaseString(formatDateToTimeStampte(el.created_at)).indexOf(value) >= 0 ||
+            getLowerCaseString(formatDateToTimeStampte(el.sent_at)).indexOf(value) >= 0 ||
             getLowerCaseString(el.status).indexOf(value) >= 0
         ));
         return newProofs;
@@ -200,7 +200,7 @@ const   ProofReceipt = (props) => {
                 </td>
                 <td>{proof.channel ? proof.channel : ''}</td>
                 <td>{proof.message ? proof.message : ''}</td>
-                <td>{formatDateToTimeStampte(proof.created_at)}</td>
+                <td>{proof.sent_at ? formatDateToTimeStampte(proof.sent_at) : ''}</td>
                 <td>{proof.status ? proof.status : ''}</td>
             </tr>
         );
