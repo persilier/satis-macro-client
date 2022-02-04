@@ -38,15 +38,18 @@ const ClientButtonDetail = ({claim}) => {
                                         <div className="kt-widget__content">
                                             <div className="kt-widget__info">
                                                 <span className="fa fa-venus-mars" style={{fontSize: "1.5rem"}}/>
-                                                <span className="kt-widget__data">{claim.claimer.sexe === 'F' ? "Féminin" : "Masculin"}</span>
+                                                <span
+                                                    className="kt-widget__data">{claim.claimer.sexe === 'F' ? "Féminin" : "Masculin"}</span>
                                             </div>
                                             <div className="kt-widget__info">
                                                 <span className="fa fa-envelope" style={{fontSize: "1.5rem"}}/>
                                                 <span className="kt-widget__data">
+                                                    {console.log("Claimer", claim.claimer)}
                                                     {
-                                                        claim.claimer.email.map((mail, index) => (
-                                                            index === claim.claimer.email.length - 1 ? mail : mail + "/ "
-                                                        ))
+                                                        claim.claimer.email ?
+                                                            claim.claimer.email.map((mail, index) => (
+                                                                index === claim.claimer.email.length - 1 ? mail : mail + "/ "
+                                                            )) : null
                                                     }
                                                 </span>
                                             </div>
@@ -54,9 +57,10 @@ const ClientButtonDetail = ({claim}) => {
                                                 <span className="fa fa-phone-alt" style={{fontSize: "1.5rem"}}/>
                                                 <span className="kt-widget__data">
                                                     {
-                                                        claim.claimer.telephone.map((telephone, index) => (
-                                                            index === claim.claimer.telephone.length - 1 ? telephone : telephone + "/ "
-                                                        ))
+                                                        claim.claimer.telephone ?
+                                                            claim.claimer.telephone.map((telephone, index) => (
+                                                                index === claim.claimer.telephone.length - 1 ? telephone : telephone + "/ "
+                                                            )) : null
                                                     }
                                                 </span>
                                             </div>
@@ -78,7 +82,7 @@ const ClientButtonDetail = ({claim}) => {
                                             <div className="kt-widget__info">
                                                 <span>Type de compte:</span>
                                                 <span className="kt-widget__data">
-                                                    {claim ?  claim.accountType : '-'}
+                                                    {claim ? claim.accountType : '-'}
                                                 </span>
                                             </div>
                                         </div>
