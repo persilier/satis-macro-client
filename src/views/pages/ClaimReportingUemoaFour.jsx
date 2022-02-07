@@ -21,6 +21,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
 import FileSaver from "file-saver";
+import moment from "moment";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -36,7 +37,7 @@ const ClaimReportingUemoaThree = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
-    const [dateEnd, setDateEnd] = useState("2021-02-01");
+    const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
     const [error, setError] = useState({
         date_start: [],
         date_end: [],
@@ -407,7 +408,7 @@ const ClaimReportingUemoaThree = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Etat  Retard de +30
+                                    Etat  Analytique
                                 </a>
                             </div>
                         </div>
