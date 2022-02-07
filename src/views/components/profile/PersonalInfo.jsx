@@ -58,7 +58,7 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                             <div className="row">
                                 <label className="col-xl-3"/>
                                 <div className="col-lg-9 col-xl-6">
-                                    <h3 className="kt-section__title kt-section__title-sm">Information identité:</h3>
+                                    <h3 className="kt-section__title kt-section__title-sm">Information identité</h3>
                                 </div>
                             </div>
                             {/*<div className="form-group row">
@@ -110,7 +110,7 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                             <div className="row">
                                 <label className="col-xl-3"/>
                                 <div className="col-lg-9 col-xl-6">
-                                    <h3 className="kt-section__title kt-section__title-sm">Informations de contact:</h3>
+                                    <h3 className="kt-section__title kt-section__title-sm">Informations de contact</h3>
                                 </div>
                             </div>
                             <div className={error.telephone.length ? "form-group row validated" : "form-group row"}>
