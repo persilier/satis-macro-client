@@ -17,8 +17,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const MessageAPIForm = props => {
     const {id} = useParams();
     if (id) {

@@ -12,8 +12,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const SMS = (props) => {
     document.title = "Satis client - Paramètre SMS";
     if (!verifyPermission(props.userPermissions, 'update-sms-parameters'))

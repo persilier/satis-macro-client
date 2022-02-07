@@ -22,7 +22,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const MessageApi = props => {
     if (!verifyPermission(props.userPermissions, "list-message-apis"))

@@ -23,7 +23,6 @@ import Select from "react-select";
 import FileSaver from "file-saver";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReportingUemoaThree = (props) => {
     if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))

@@ -18,7 +18,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+
 
 const PositionForm = (props) => {
     const {id} = useParams();

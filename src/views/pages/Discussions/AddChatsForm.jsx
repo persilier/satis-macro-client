@@ -17,8 +17,6 @@ import {formatSelectOption} from "../../../helpers/function";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const AddChatsForm = (props) => {
 
     if (!verifyPermission(props.userPermissions, 'store-discussion'))

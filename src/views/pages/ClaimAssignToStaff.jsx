@@ -21,7 +21,6 @@ import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptio
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssignToStaff = (props) => {
     document.title = "Satis client - Détail réclamation";

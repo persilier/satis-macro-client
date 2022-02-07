@@ -15,7 +15,6 @@ import InputRequire from "../components/InputRequire";
 import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ActivatePilotPage = (props) => {
     document.title = "Satis client - Paramètre pilote actif";

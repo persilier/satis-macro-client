@@ -16,8 +16,6 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const Nav = (props) => {
     const [eventNotification, setEventNotification] = useState([]);
     const [relaunchNotification, setRelaunchNotification] = useState([]);

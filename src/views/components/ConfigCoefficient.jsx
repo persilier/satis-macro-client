@@ -14,8 +14,6 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {connect} from "react-redux";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const ConfigCoefficient = (props) => {
 
     if (!verifyPermission(props.userPermissions, "update-relance-parameters"))

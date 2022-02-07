@@ -14,9 +14,6 @@ import appConfig from "../../config/appConfig";
 import {debug} from "../../helpers/function";
 
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
-
 const ParametersComponentForm = (props) => {
 
     const {id} = useParams();

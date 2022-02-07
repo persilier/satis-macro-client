@@ -17,8 +17,6 @@ import Select from "react-select";
 import TagsInput from "react-tagsinput";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const endPointConfig = {
     PRO: {
         plan: "PRO",

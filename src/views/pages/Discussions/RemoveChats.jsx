@@ -17,8 +17,6 @@ import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 

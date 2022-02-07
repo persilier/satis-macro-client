@@ -17,8 +17,6 @@ import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
-
 const FaqsForm = (props) => {
 
     const defaultData = {

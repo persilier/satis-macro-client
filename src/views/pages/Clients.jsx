@@ -26,7 +26,6 @@ import ExportButton from "../components/ExportButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const endPointConfig = {
     PRO: {

@@ -4,7 +4,6 @@ import appConfig from "../../../config/appConfig";
 import {ToastBottomEnd} from "../Toast";
 import {toastEditErrorMessageConfig, toastEditSuccessMessageConfig} from "../../../config/toastConfig";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const UpdatePassword = () => {
     const [startRequest, setStartRequest] = useState(false);

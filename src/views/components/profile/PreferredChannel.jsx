@@ -10,7 +10,6 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {Link} from "react-router-dom";
 import LoadingTable from "../LoadingTable";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const PreferredChannel = () => {
     const defaultData = {

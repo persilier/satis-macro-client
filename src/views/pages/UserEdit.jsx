@@ -15,8 +15,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const UserEdit = (props) => {
     const {id} = useParams();
 

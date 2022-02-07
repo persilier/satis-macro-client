@@ -20,7 +20,6 @@ import {
     toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const RuleAddPage = (props) => {
     const {id} = useParams();

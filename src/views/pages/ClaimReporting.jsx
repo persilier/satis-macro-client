@@ -21,7 +21,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import {month} from "../../constants/date";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReporting = props => {
     document.title = "Satis client - Reporting";

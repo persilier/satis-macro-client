@@ -21,7 +21,6 @@ import {
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const User = (props) => {
     if (!(verifyPermission(props.userPermissions, "list-user-any-institution") || (verifyPermission(props.userPermissions, "list-user-my-institution"))))

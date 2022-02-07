@@ -16,7 +16,6 @@ import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ConfigNotification = (props) => {
     if (!verifyPermission(props.userPermissions, "update-notifications"))

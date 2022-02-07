@@ -25,7 +25,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import InfoFormatExcel from "../../constants/InfoFormatExcel";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const RulePage = (props) => {
     document.title = "Satis client - Paramètre role";

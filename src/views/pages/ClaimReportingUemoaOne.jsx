@@ -23,7 +23,6 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReportingUemoaOne = (props) => {
     if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))
