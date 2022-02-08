@@ -1,7 +1,4 @@
 import appConfig from "../config/appConfig";
-import { logout } from "../helpers/function";
-import { isTimeOut } from "../helpers";
-import { logoutUser } from "./crud";
 
 export default function setupAxios(axios, store) {
     axios.interceptors.request.use(
