@@ -16,36 +16,4 @@ export default function setupAxios(axios, store) {
         },
         (err) => Promise.reject(err)
     );
-
-/*    axios.interceptors.response.use(
-        (response) => {
-            if (isTimeOut()) {
-                logoutUser()
-                    .then(({ data }) => {
-                        console.log(data);
-                        console.log("TIME_IS_OUT!!!!");
-                        logout();
-                    })
-                    .catch(console.log);
-                return response;
-            }
-            return response;
-        },
-        (error) => {
-            if (isTimeOut()) {
-                logoutUser()
-                    .then(({ data }) => {
-                        console.log(data);
-                        console.log("TIME_IS_OUT!!!!");
-                        logout();
-                    })
-                    .catch(console.log);
-                return Promise.reject(error);
-            }
-            if (401 === error.response.status || 498 === error.response.status) {
-                console.log("CHECK WITH BACKEND EXPIRED TOKEN CODE");
-            }
-            return Promise.reject(error);
-        }
-    );*/
 }
