@@ -22,7 +22,6 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimAssignToStaff = (props) => {
 

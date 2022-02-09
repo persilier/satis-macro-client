@@ -8,7 +8,6 @@ import {percentageData} from "../../../helpers/function";
 import LoadingTable from "../LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const DashboardClaimsUnit = (props) => {
 

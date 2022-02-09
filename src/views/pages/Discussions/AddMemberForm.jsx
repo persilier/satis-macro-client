@@ -18,8 +18,6 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const AddMemberForm = (props) => {
 const {id}=useParams();
     if (!verifyPermission(props.userPermissions, 'add-discussion-contributor'))

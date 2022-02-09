@@ -13,8 +13,6 @@ import {isTimeOut} from "../../../helpers";
 const moment =  require("moment");
 
 
-axios.defaults.headers.common["Authorization"] =
-  "Bearer " + localStorage.getItem("token");
 
 const UpdatePassword = () => {
 

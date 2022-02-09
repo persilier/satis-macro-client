@@ -21,7 +21,6 @@ import {
 } from "../../config/toastConfig";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const RuleAddPage = (props) => {
 

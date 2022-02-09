@@ -18,7 +18,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 import { useTranslation } from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const Nav = (props) => {
 
@@ -451,7 +450,7 @@ const Nav = (props) => {
                                     </a>
                                 </li>
 
-                                <li className={`kt-nav__item ${props.language.languageSelected === "fr" && "kt-nav__item--active"}`}>
+                                <li className="kt-nav__item">
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             FR

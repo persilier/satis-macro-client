@@ -4,7 +4,6 @@ import axios from 'axios'
 import moment from "moment";
 import {Link} from "react-router-dom";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const ListChats = (props) => {
     const listChat=props.getList!==null?props.getList:"";

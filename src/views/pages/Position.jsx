@@ -23,7 +23,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const Position = (props) => {
 

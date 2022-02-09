@@ -25,7 +25,6 @@ import {useTranslation} from "react-i18next";
 import moment from "moment";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReportingUemoaTwo = (props) => {
 

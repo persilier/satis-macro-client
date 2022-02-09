@@ -17,7 +17,6 @@ import {verifyPermission} from "../../helpers/permission";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ModelNumberToClaimList = (props) => {

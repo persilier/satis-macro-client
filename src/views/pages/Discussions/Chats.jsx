@@ -20,8 +20,6 @@ import LoadingTable from "../../components/LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const Chats = (props) => {
 
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))

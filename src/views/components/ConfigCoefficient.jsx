@@ -15,8 +15,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {connect} from "react-redux";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const ConfigCoefficient = (props) => {
 
     //usage of useTranslation i18n

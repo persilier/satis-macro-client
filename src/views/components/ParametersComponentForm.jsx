@@ -15,9 +15,6 @@ import {debug} from "../../helpers/function";
 import {useTranslation} from "react-i18next";
 
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
-
 const ParametersComponentForm = (props) => {
 
     //usage of useTranslation i18n

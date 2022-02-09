@@ -23,7 +23,6 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const MessageApi = props => {
 

@@ -15,8 +15,6 @@ import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
-
 
 const TypeClientForm = (props) => {
 

@@ -11,7 +11,6 @@ import {Link} from "react-router-dom";
 import LoadingTable from "../LoadingTable";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const PreferredChannel = () => {
 

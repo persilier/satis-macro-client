@@ -22,7 +22,6 @@ import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const TypeCompte = (props) => {
 

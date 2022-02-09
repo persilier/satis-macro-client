@@ -13,8 +13,6 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const SMS = (props) => {
 
     //usage of useTranslation i18n

@@ -13,7 +13,6 @@ import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
 const ParametersComponentEdit = (props) => {

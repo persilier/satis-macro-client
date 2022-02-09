@@ -10,8 +10,6 @@ import {
 } from "../../../config/toastConfig";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handleTelephoneChange, handleEmailChange, handleVilleChange}) => {
 
     //usage of useTranslation i18n

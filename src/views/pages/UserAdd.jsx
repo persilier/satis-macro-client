@@ -18,7 +18,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UserAdd = (props) => {
 

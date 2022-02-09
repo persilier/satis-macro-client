@@ -34,7 +34,6 @@ import HtmlDescription from "./DescriptionDetail/HtmlDescription";
 import {useTranslation} from "react-i18next";
 
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const endPointConfig = {
     PRO: {
