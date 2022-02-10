@@ -46,9 +46,9 @@ export default function setupAxios(axios, store) {
                     .catch(console.log);
                 return Promise.reject(error);
             }
-            if (401 === error.response.status || 498 === error.response.status) {
+           /* if (401 === error.response.status || 498 === error.response.status) {
                 console.log("CHECK WITH BACKEND EXPIRED TOKEN CODE");
-            }
+            }*/
             return Promise.reject(error);
         }
     );
