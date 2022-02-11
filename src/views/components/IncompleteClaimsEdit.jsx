@@ -32,10 +32,6 @@ import Loader from "./Loader";
 import HtmlDescriptionModal from "./DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "./DescriptionDetail/HtmlDescription";
 
-
-
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const endPointConfig = {
     PRO: {
         plan: "PRO",

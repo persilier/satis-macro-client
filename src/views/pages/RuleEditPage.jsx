@@ -16,7 +16,6 @@ import {formatSelectOption} from "../../helpers/function";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastAddErrorMessageConfig, toastAddSuccessMessageConfig} from "../../config/toastConfig";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const RuleAddPage = (props) => {
     const {id} = useParams();

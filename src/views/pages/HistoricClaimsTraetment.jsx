@@ -14,7 +14,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 

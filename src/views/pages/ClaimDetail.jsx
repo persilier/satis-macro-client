@@ -23,7 +23,6 @@ import {confirmRevokeConfig} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 loadScript("/assets/js/pages/custom/chat/chat.js");

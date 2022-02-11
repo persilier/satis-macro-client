@@ -21,7 +21,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const TypeClient = (props) => {
     document.title = "Satis client - Paramètre Type client";

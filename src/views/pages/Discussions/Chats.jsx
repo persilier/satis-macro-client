@@ -19,8 +19,6 @@ import {ERROR_401} from "../../../config/errorPage";
 import LoadingTable from "../../components/LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const Chats = (props) => {
 
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))

@@ -15,11 +15,9 @@ import {
 import appConfig from "../../config/appConfig";
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UnitTypeForm = (props) => {
     const {id} = useParams();

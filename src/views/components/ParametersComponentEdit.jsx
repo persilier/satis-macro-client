@@ -12,7 +12,6 @@ import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
 const ParametersComponentEdit = (props) => {

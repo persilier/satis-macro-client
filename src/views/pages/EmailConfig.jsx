@@ -16,7 +16,6 @@ import {
 } from "../../config/toastConfig";
 import Select from "react-select";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const endPointConfig = {
     PRO: {

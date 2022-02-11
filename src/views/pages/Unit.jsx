@@ -23,7 +23,6 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import ExportButton from "../components/ExportButton";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const endPointConfig = {
     PRO: {

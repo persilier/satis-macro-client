@@ -16,7 +16,6 @@ import {debug} from "../../helpers/function";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const InstitutionMessageApi = props => {
     const {id} = useParams();

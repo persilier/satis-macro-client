@@ -22,8 +22,6 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const EditClients = (props) => {
     const {id} = useParams();
     if (!id) {

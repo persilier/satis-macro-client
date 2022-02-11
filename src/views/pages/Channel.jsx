@@ -22,7 +22,6 @@ import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Channel = (props) => {

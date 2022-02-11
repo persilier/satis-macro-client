@@ -7,7 +7,6 @@ import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const GraphChannel = (props) => {
 

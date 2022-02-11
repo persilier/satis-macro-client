@@ -9,8 +9,6 @@ import {
     toastEditSuccessMessageConfig
 } from "../../../config/toastConfig";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handleTelephoneChange, handleEmailChange, handleVilleChange}) => {
     const [startRequest, setStartRequest] = useState(false);
 

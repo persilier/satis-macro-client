@@ -24,7 +24,6 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UnitType = (props) => {
     document.title = "Satis client - Paramètre type d'unité";

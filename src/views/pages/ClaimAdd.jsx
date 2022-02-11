@@ -28,8 +28,6 @@ import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-
 const endPointConfig = {
     PRO: {
         plan: "PRO",

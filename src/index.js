@@ -11,6 +11,8 @@ import planReducer from "./store/reducers/planReducer";
 import treatmentReducer from "./store/reducers/treatmentReducer";
 import yearReducer from "./store/reducers/yearReducer";
 import AppContainer from "./AppContainer";
+import setupAxios from "./http/axiosConfig";
+import axios from "axios";
 
 const rootReducer = combineReducers({
     identity: identityReducer,
@@ -23,6 +25,9 @@ const rootReducer = combineReducers({
 
 
 const store = createStore(rootReducer, composeWithDevTools());
+
+setupAxios(axios, store);
+
 
 ReactDOM.render(
     <Provider store={store}>

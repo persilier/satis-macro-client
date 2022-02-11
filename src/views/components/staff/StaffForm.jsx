@@ -30,7 +30,6 @@ import {ConfirmLead} from "../ConfirmationAlert";
 import WithoutCode from "../WithoutCode";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const endPointConfig = {
     PRO: {

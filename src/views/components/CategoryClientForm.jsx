@@ -16,7 +16,6 @@ import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer "+localStorage.getItem('token');
 
 
 const CategoryClientForm = (props) => {

@@ -15,7 +15,6 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const ImportInstitutionForm = (props) => {
     document.title = "Satis institution - Importation de fichier excel";

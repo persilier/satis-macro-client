@@ -17,8 +17,6 @@ import {connect} from "react-redux";
 import InputRequire from "../InputRequire";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 
 const InstitutionForm = (props) => {
     const {id} = useParams();

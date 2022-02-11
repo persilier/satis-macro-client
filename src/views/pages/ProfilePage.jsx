@@ -8,7 +8,6 @@ import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import PreferredChannel from "../components/profile/PreferredChannel";
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 
 const ProfilePage = ({user}) => {
     const defaultData = {

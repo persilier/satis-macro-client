@@ -17,7 +17,6 @@ import {formatSelectOption} from "../../helpers/function";
 import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const UserAdd = (props) => {
     document.title = "Satis client - Paramètre Envoie de mail";

@@ -17,8 +17,6 @@ import {verifyPermission} from "../../../helpers/permission";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 
 
-axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
-
 const AddMemberForm = (props) => {
 const {id}=useParams();
     if (!verifyPermission(props.userPermissions, 'add-discussion-contributor'))

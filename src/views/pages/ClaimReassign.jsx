@@ -20,7 +20,6 @@ import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const ClaimReassign = (props) => {
     if (!(verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") && props.lead))
