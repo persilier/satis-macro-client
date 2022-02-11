@@ -132,15 +132,15 @@ const ProfilePage = ({user}) => {
                                     <div className="kt-widget__body">
                                         <div className="kt-widget__content">
                                             <div className="kt-widget__info">
-                                                <span className="kt-widget__label">Username:</span>
+                                                <span className="kt-widget__label">Username :</span>
                                                 <a href="#" className="kt-widget__data">{username}</a>
                                             </div>
                                             <div className="kt-widget__info">
-                                                <span className="kt-widget__label">Téléphone:</span>
+                                                <span className="kt-widget__label">Téléphone :</span>
                                                 <a href="#" className="kt-widget__data">{data.telephone.join("/")}</a>
                                             </div>
                                             <div className="kt-widget__info">
-                                                <span className="kt-widget__label">Roles:</span>
+                                                <span className="kt-widget__label">Roles :</span>
                                                 <span className="kt-widget__data">{role}</span>
                                             </div>
                                         </div>

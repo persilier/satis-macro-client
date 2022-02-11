@@ -10,7 +10,7 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {
-    forceRound, formatSelectOption, formatStatus,
+    forceRound, formatSelectOption, formatStatus, getCurrentDate,
     getLowerCaseString,
     loadCss, removeNullValueInObject,
 } from "../../helpers/function";
@@ -21,6 +21,7 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
 import FileSaver from "file-saver";
+import moment from "moment";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -35,7 +36,9 @@ const ClaimReportingUemoaThree = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
-    const [dateEnd, setDateEnd] = useState("2021-02-01");
+    const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+
+
     const defaultError = {
         date_start: [],
         date_end: [],
