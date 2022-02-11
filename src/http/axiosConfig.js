@@ -5,6 +5,7 @@ import { logoutUser } from "./crud";
 
 
 export default function setupAxios(axios, store) {
+    axios.defaults.withCredentials = true;
     axios.interceptors.request.use(
         (config) => {
             const token = localStorage.getItem("token");
