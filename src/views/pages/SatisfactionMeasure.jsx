@@ -17,6 +17,8 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 
 axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('token');
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -63,6 +65,8 @@ const SatisfactionMeasure = (props) => {
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
+    const [currentMessage, setCurrentMessage] = useState("");
+
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -150,6 +154,11 @@ const SatisfactionMeasure = (props) => {
 
     const pages = arrayNumberPage();
 
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
     const printBodyTable = (measure, index) => {
         return (
             <tr key={index} role="row" className="odd">
@@ -167,7 +176,11 @@ const SatisfactionMeasure = (props) => {
                         <span style={{color: "red", fontWeight:"bold"}}>{"J" + measure.timeExpire}</span>}
                 </td>
                 <td>{measure.claim_object.name["fr"]}</td>
-                <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
+                <td>
+                    <HtmlDescription onClick={() => showModal(measure.description ? measure.description : '-')}/>
+
+                    {/*{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}*/}
+                </td>
                 <td>{`${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.lastname : ""} ${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.firstname : ""}/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
                 {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
@@ -339,6 +352,8 @@ const SatisfactionMeasure = (props) => {
                                                 </tr>
                                                 </tfoot>
                                             </table>
+                                            <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                            <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                         </div>
                                     </div>
                                     <div className="row">
