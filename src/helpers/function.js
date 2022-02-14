@@ -297,6 +297,10 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "update-components-parameters")
         || verifyPermission(userPermissions, "update-relance-parameters")
         || verifyPermission(userPermissions, "list-account-type")
+        || verifyPermission(userPermissions, "list-notification-proof")
+        || verifyPermission(userPermissions, "pilot-list-notification-proof")
+        || verifyPermission(userPermissions, "list-any-notification-proof")
+        || verifyPermission(userPermissions, "pilot-list-any-notification-proof")
         || true
     );
 };
