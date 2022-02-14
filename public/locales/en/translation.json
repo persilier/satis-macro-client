@@ -1014,5 +1014,6 @@
     "Destinataire": "Recipient",
     "Contenu/message": "Content/message",
     "Date": "Date",
-    "Liste des services, agences, etc": "List of services, agencies, etc"
+    "Liste des services, agences, etc": "List of services, agencies, etc",
+    "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter": "You have been logged out of your account for inactivity, please log back in"
 }

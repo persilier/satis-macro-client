@@ -4,6 +4,7 @@ import { isTimeOut } from "../helpers";
 import { logoutUser } from "./crud";
 import {ExpirationConfirmation} from "../views/components/ConfirmationAlert";
 import {ExpireConfig} from "../config/confirmConfig";
+import i18n from "i18next";
 
 
 export default function setupAxios(axios, store) {
@@ -29,12 +30,12 @@ export default function setupAxios(axios, store) {
             if (window.location.href !== "/login") {
                 if (localStorage.getItem('userData') !== null) {
                     if (isTimeOut()) {
-                        ExpirationConfirmation.fire(ExpireConfig("Veuillez vous reconnecter pour durer d'inactivité de votre compte"))
                         logoutUser()
                             .then(({ data }) => {
-                                console.log(data);
-                                console.log("TIME_IS_OUT!!!!");
-                                logout();
+                                ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")));
+                                setTimeout(() => {
+                                    logout();
+                                }, 30000)
                             })
                             .catch(console.log);
                         return response;
