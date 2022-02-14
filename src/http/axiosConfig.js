@@ -2,6 +2,8 @@ import appConfig from "../config/appConfig";
 import { logout } from "../helpers/function";
 import { isTimeOut } from "../helpers";
 import { logoutUser } from "./crud";
+import {ExpirationConfirmation} from "../views/components/ConfirmationAlert";
+import {ExpireConfig} from "../config/confirmConfig";
 
 
 export default function setupAxios(axios, store) {
@@ -27,6 +29,7 @@ export default function setupAxios(axios, store) {
             if (window.location.href !== "/login") {
                 if (localStorage.getItem('userData') !== null) {
                     if (isTimeOut()) {
+                        ExpirationConfirmation.fire(ExpireConfig("Veuillez vous reconnecter pour durer d'inactivité de votre compte"))
                         logoutUser()
                             .then(({ data }) => {
                                 console.log(data);

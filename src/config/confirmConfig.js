@@ -14,6 +14,20 @@ export const passwordExpireConfig = (message)=>  {
     )
 };
 
+export const ExpireConfig = (message)=>  {
+    return (
+        i18n.isInitialized ? (
+            {
+                title: i18n.t('Information!'),
+                text: message,
+                icon: 'warring',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: i18n.t('Reconnexion'),
+            }
+        ) : null
+    )
+};
+
 
 export const confirmDeleteConfig = () => {
     return (
