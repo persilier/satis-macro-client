@@ -8,7 +8,6 @@ import {ToastBottomEnd} from "../../views/components/Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
-    toastDeleteErrorMessageConfig,
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig,
     toastErrorMessageWithParameterConfig,
@@ -18,7 +17,6 @@ import '../../views/components/staff/react-tagsinput.css';
 import Select from "react-select";
 import {formatSelectOption} from "../../helpers/function";
 import {connect} from "react-redux";
-import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import TagsInput from "react-tagsinput";

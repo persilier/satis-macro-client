@@ -13,7 +13,6 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 

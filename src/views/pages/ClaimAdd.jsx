@@ -5,7 +5,6 @@ import axios from "axios";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import InfoFormatExcel from "../../constants/InfoFormatExcel";
 import {
     filterChannel,

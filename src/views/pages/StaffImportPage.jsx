@@ -10,7 +10,6 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
-import {AUTH_TOKEN} from "../../constants/token";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
 const StaffImportPage = (props) => {

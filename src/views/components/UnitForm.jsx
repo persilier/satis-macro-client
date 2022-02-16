@@ -17,7 +17,6 @@ import {debug, formatSelectOption} from "../../helpers/function";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 

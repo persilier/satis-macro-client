@@ -8,7 +8,6 @@ import {
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import {
     debug,
     filterChannel,

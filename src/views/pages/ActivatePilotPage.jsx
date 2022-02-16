@@ -10,7 +10,6 @@ import {ToastBottomEnd} from "../../views/components/Toast";
 import Select from "react-select";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";

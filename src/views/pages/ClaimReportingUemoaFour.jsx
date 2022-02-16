@@ -14,7 +14,6 @@ import {
     getLowerCaseString,
     loadCss,
 } from "../../helpers/function";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";

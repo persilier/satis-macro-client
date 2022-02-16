@@ -8,7 +8,6 @@ import {
     toastEditSuccessMessageConfig,
 } from "../../config/toastConfig";
 import {Link, useParams} from "react-router-dom";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
