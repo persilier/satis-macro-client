@@ -317,7 +317,7 @@ const IncompleteClaimsEdit = props => {
     };
     const onChangeLieu = (e) => {
         const newData = {...data};
-        newData.Lieu = e.target.value;
+        newData.lieu = e.target.value;
         setData(newData);
     };
 
@@ -935,7 +935,7 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.lieu.length ? "form-control is-invalid" : "form-control"}
                                                                 placeholder={componentData ? componentData.params.fr.lieu_placeholder.value : ""}
                                                                 value={data.lieu}
-                                                                onChange={(e) => onChangeLieu(e)}
+                                                                onChange={e=>onChangeLieu(e)}
                                                             />
                                                             {
                                                                 error.lieu.length ? (
