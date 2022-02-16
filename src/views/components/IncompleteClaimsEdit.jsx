@@ -475,10 +475,10 @@ const IncompleteClaimsEdit = props => {
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
 
-        debug(endPoint.update(`${id}`), "endpoint");
+/*        debug(endPoint.update(`${id}`), "endpoint");
         for (var value of formatFormData(newData).values()) {
             debug(value, "value");
-        }
+        }*/
         if (verifyTokenExpire()) {
             axios.post(endPoint.update(`${id}`), formatFormData(newData))
                 .then((response) => {

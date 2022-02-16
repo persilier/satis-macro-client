@@ -575,6 +575,8 @@ const ClaimAdd = props => {
             delete newData.amount_disputed;
         if (!newData.amount_currency_slug)
             delete newData.amount_currency_slug;
+        if (!newData.claimer_id)
+            delete newData.claimer_id;
         if (props.plan !== "HUB")
             delete newData.relationship_id;
         if (verifyTokenExpire()) {
