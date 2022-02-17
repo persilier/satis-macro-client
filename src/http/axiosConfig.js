@@ -30,34 +30,40 @@ export default function setupAxios(axios, store) {
             if (window.location.href !== "/login") {
                 if (localStorage.getItem('userData') !== null) {
                     if (isTimeOut()) {
-                        logoutUser()
-                            .then(({ data }) => {
-                                ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")));
-                                setTimeout(() => {
+                        ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
+                            .then(res => {
+                                if(res.value){
                                     logout();
-                                }, 30000)
+                                }
                             })
-                            .catch(console.log);
-                        return response;
+                        ;
                     }
+
+                    return response;
                 }
             }
             return response;
         },
         (error) => {
-            if (isTimeOut()) {
-                logoutUser()
-                    .then(({ data }) => {
-                        console.log(data);
-                        console.log("TIME_IS_OUT!!!!");
-                        logout();
-                    })
-                    .catch(console.log);
-                return Promise.reject(error);
+            if (window.location.href !== "/login") {
+                if (localStorage.getItem('userData') !== null) {
+                    if (isTimeOut()) {
+                        logoutUser()
+                            .then(({ data }) => {
+                                ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
+                                    .then(res => {
+                                        if (res.value) {
+                                            logout();
+                                        }
+                                    })
+                                ;
+                            })
+                            .catch(console.log);
+                        return Promise.reject(error);
+                    }
+                }
             }
-           /* if (401 === error.response.status || 498 === error.response.status) {
-                console.log("CHECK WITH BACKEND EXPIRED TOKEN CODE");
-            }*/
+
             return Promise.reject(error);
         }
     );
