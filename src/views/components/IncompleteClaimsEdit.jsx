@@ -317,7 +317,7 @@ const IncompleteClaimsEdit = props => {
     };
     const onChangeLieu = (e) => {
         const newData = {...data};
-        newData.Lieu = e.target.value;
+        newData.lieu = e.target.value;
         setData(newData);
     };
 
