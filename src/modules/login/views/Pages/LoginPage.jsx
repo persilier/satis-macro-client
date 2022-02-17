@@ -52,9 +52,11 @@ const LoginPage = (props) => {
                 .then(response => {
                     setComponentData(response.data);
                     setLoad(false);
+                    localStorage.removeItem("Dtimeout")
                 })
                 .catch(error => {
                     setLoad(false);
+                    localStorage.removeItem("Dtimeout")
                     console.log("Something is wrong");
                 })
             ;
