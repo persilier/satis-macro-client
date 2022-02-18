@@ -63,9 +63,12 @@ const TreatmentForm = (props) => {
         props.addTreatment(newData)
     };
     const onClick = (e) => {
+        const newData = {...data};
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, data)
+        if (!newData.amount_returned)
+            delete  newData.amount_returned;
+        axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, newData)
             .then(response => {
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig);
