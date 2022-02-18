@@ -66,8 +66,8 @@ const TreatmentForm = (props) => {
         const newData = {...data};
         e.preventDefault();
         setStartRequest(true);
-        if (!newData.amount_disputed)
-            delete  newData.amount_disputed;
+        if (!newData.amount_returned)
+            delete  newData.amount_returned;
         axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, newData)
             .then(response => {
                 setStartRequest(false);
