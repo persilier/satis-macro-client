@@ -18,6 +18,8 @@ import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -66,6 +68,8 @@ const SatisfactionMeasure = (props) => {
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [search, setSearch] = useState(false);
+    const [currentMessage, setCurrentMessage] = useState("");
+
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -153,11 +157,16 @@ const SatisfactionMeasure = (props) => {
 
     const pages = arrayNumberPage();
 
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
     const printBodyTable = (measure, index) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{measure.reference === null ? "" : measure.reference}</td>
-                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${measure.account_targeted ? " / "+measure.account_targeted.number : ""}`}</td>
+                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${measure.account_targeted ? " / " + measure.account_targeted.number : ""}`}</td>
                 <td>
                     {
                         (props.plan === 'PRO') ?
@@ -166,11 +175,16 @@ const SatisfactionMeasure = (props) => {
                     }
                 </td>
                 <td>{formatDateToTime(measure.created_at)} <br/>
-                    {measure.timeExpire >= 0 ? <span style={{color: "forestgreen", fontWeight:"bold"}}>{"J+" + measure.timeExpire}</span> :
-                        <span style={{color: "red", fontWeight:"bold"}}>{"J" + measure.timeExpire}</span>}
+                    {measure.timeExpire >= 0 ?
+                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + measure.timeExpire}</span> :
+                        <span style={{color: "red", fontWeight: "bold"}}>{"J" + measure.timeExpire}</span>}
                 </td>
                 <td>{measure.claim_object.name["fr"]}</td>
-                <td>{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}</td>
+                <td>
+                    <HtmlDescription onClick={() => showModal(measure.description ? measure.description : '-')}/>
+
+                    {/*{measure.description.length >= 15 ? reduceCharacter(measure.description) : measure.description}*/}
+                </td>
                 <td>{`${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.lastname : ""} ${measure.active_treatment.responsible_staff ? measure.active_treatment.responsible_staff.identite.firstname : ""}/${measure.active_treatment.responsible_staff.unit.name["fr"]}`}</td>
                 {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
@@ -321,6 +335,7 @@ const SatisfactionMeasure = (props) => {
                                                                     printBodyTable(measure, index)
                                                                 ))
                                                             )
+
                                                         ) : (
                                                             <EmptyTable/>
                                                         )
@@ -328,43 +343,55 @@ const SatisfactionMeasure = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">{t("Référence")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
+                                                        <th rowSpan="1" colSpan="1">Référence</th>
+                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
                                                         <th rowSpan="1"
-                                                            colSpan="1">{(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
+                                                            colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
                                                         </th>
-                                                        <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Description")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Agent traiteur")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
+                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
+                                                        <th rowSpan="1" colSpan="1">Description</th>
+                                                        <th rowSpan="1" colSpan="1">Agent traiteur</th>
+                                                        <th rowSpan="1" colSpan="1">Action</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
+                                                <button id="button_modal" type="button"
+                                                        className="btn btn-secondary btn-icon-sm d-none"
+                                                        data-toggle="modal" data-target="#message_email"/>
+                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
                                             </div>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {satisfactionMeasure.length} {t("données")}
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {satisfactionMeasure.length} données
                                                 </div>
                                             </div>
-                                            {
-                                                !search ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {satisfactionMeasure.length} {t("données")}
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                                {
+                                                    !search ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

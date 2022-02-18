@@ -580,6 +580,9 @@ const ClaimAdd = props => {
             delete newData.amount_disputed;
         if (!newData.amount_currency_slug)
             delete newData.amount_currency_slug;
+
+        if (!newData.claimer_id)
+            delete newData.claimer_id;
         if (props.plan !== "HUB")
             delete newData.relationship_id;
         if (verifyTokenExpire()) {
@@ -658,7 +661,7 @@ const ClaimAdd = props => {
 
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                         <InfirmationTable
-                            information= {componentData ? componentData.params.fr.info_page.value : ""}
+                            information={componentData ? componentData.params.fr.info_page.value : ""}
                         />
                         <div className="row">
                             <div className="col">
@@ -675,7 +678,8 @@ const ClaimAdd = props => {
                                                 <div className="dropdown dropdown-inline">
                                                     <InfoFormatExcel/>
                                                     <a href={`${appConfig.apiDomaine}/download-excel/claims`}
-                                                       download={true} className="btn mr-1 btn-secondary">  {componentData ? componentData.params.fr.telecharger.value : ""}
+                                                       download={true}
+                                                       className="btn mr-1 btn-secondary">  {componentData ? componentData.params.fr.telecharger.value : ""}
                                                     </a>
                                                     <NavLink to={"/process/claims/import"}
                                                              className="btn ml-1 btn-primary"> {componentData ? componentData.params.fr.importer.value : ""}
@@ -839,7 +843,9 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.lastname.length ? "col validated" : "col"}>
-                                                            <label htmlFor="lastname">{componentData ? componentData.params.fr.nom.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="lastname">{componentData ? componentData.params.fr.nom.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 disabled={disabledInput}
                                                                 id="lastname"
@@ -862,8 +868,9 @@ const ClaimAdd = props => {
 
                                                         <div
                                                             className={error.firstname.length ? "col validated" : "col"}>
-                                                            <label htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value : ""}
-                                                                  <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 disabled={disabledInput}
                                                                 id="firstname"
@@ -888,7 +895,9 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.sexe.length ? "form-group col validated" : "form-group col"}>
-                                                            <label htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value : ""}
+                                                                <InputRequire/></label>
                                                             <select
                                                                 disabled={disabledInput}
                                                                 id="sexe"
@@ -896,7 +905,8 @@ const ClaimAdd = props => {
                                                                 value={data.sexe}
                                                                 onChange={(e) => onChangeSexe(e)}
                                                             >
-                                                                <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
+                                                                <option value=""
+                                                                        disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
                                                                 <option value="F">{t("Féminin")}</option>
                                                                 <option value="M">{t("Masculin")}</option>
                                                                 <option value="A">{t("Autres")}</option>
@@ -912,7 +922,8 @@ const ClaimAdd = props => {
                                                             }
                                                         </div>
                                                         <div className={error.ville.length ? "col validated" : "col"}>
-                                                            <label htmlFor="ville">{componentData ? componentData.params.fr.ville.value : ""}</label>
+                                                            <label
+                                                                htmlFor="ville">{componentData ? componentData.params.fr.ville.value : ""}</label>
                                                             <input
                                                                 disabled={disabledInput}
                                                                 id="ville"
@@ -937,7 +948,8 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.telephone.length ? "col validated" : "col"}>
-                                                            <label htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
+                                                            <label
+                                                                htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
                                                                 <InputRequire/></label>
                                                             <TagsInput disabled={disabledInput} value={data.telephone}
                                                                        onChange={onChangeTelephone} inputProps={{
@@ -956,7 +968,8 @@ const ClaimAdd = props => {
                                                         </div>
 
                                                         <div className={error.email.length ? "col validated" : "col"}>
-                                                            <label htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel ?
+                                                            <label
+                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel ?
                                                                 <InputRequire/> : null}</label>
                                                             <TagsInput disabled={disabledInput} value={data.email}
                                                                        onChange={onChangeEmail} inputProps={{
@@ -988,7 +1001,8 @@ const ClaimAdd = props => {
                                                             <div className="form-group row">
                                                                 <div
                                                                     className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">{componentData ? componentData.params.fr.unite.value : ""}</label>
+                                                                    <label
+                                                                        htmlFor="unit">{componentData ? componentData.params.fr.unite.value : ""}</label>
                                                                     <Select
                                                                         value={unit}
                                                                         isClearable
@@ -1010,7 +1024,8 @@ const ClaimAdd = props => {
 
                                                                 <div
                                                                     className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
+                                                                    <label
+                                                                        htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
                                                                     <Select
                                                                         isClearable
                                                                         value={account}
@@ -1036,7 +1051,9 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 value={receptionChannel}
@@ -1057,7 +1074,9 @@ const ClaimAdd = props => {
 
                                                         <div
                                                             className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.canal_reponse_placeholder.value : ""}
@@ -1079,7 +1098,9 @@ const ClaimAdd = props => {
 
                                                     <div className="form-group row">
                                                         <div className={"col"}>
-                                                            <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}
@@ -1091,7 +1112,9 @@ const ClaimAdd = props => {
 
                                                         <div
                                                             className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                            <label htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.object_placeholder.value : ""}
@@ -1112,7 +1135,8 @@ const ClaimAdd = props => {
 
                                                         <div
                                                             className={error.lieu.length ? "col validated" : "col"}>
-                                                            <label htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""}</label>
+                                                            <label
+                                                                htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""}</label>
                                                             <input
                                                                 type={"text"}
                                                                 id="lieu"
@@ -1136,7 +1160,10 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                            <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong className="text-danger">Laisser vide si pas de montant</strong>)</label>
+                                                            <label
+                                                                htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong
+                                                                className="text-danger">Laisser vide si pas de
+                                                                montant</strong>)</label>
                                                             <input
                                                                 type={"number"}
                                                                 id="amount_claim"
@@ -1159,7 +1186,8 @@ const ClaimAdd = props => {
 
                                                         <div
                                                             className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="currency">{componentData ? componentData.params.fr.devise.value : ""}</label>
+                                                            <label
+                                                                htmlFor="currency">{componentData ? componentData.params.fr.devise.value : ""}</label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.devise_placeholder.value : ""}
@@ -1182,7 +1210,9 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                            <label htmlFor="date">{componentData ? componentData.params.fr.date.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="date">{componentData ? componentData.params.fr.date.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 type={"datetime-local"}
                                                                 id="date"
@@ -1207,7 +1237,9 @@ const ClaimAdd = props => {
                                                             verifyPermission(props.userPermissions, "store-claim-without-client") ? (
                                                                 <div
                                                                     className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} {t("avec l'institution")} <InputRequire/></label>
+                                                                    <label
+                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} {t("avec l'institution")}
+                                                                        <InputRequire/></label>
                                                                     <Select
                                                                         isClearable
                                                                         value={relationship}
@@ -1230,7 +1262,8 @@ const ClaimAdd = props => {
                                                         }
 
                                                         <div className="col">
-                                                            <label htmlFor="file">{componentData ? componentData.params.fr.piece.value : ""}</label>
+                                                            <label
+                                                                htmlFor="file">{componentData ? componentData.params.fr.piece.value : ""}</label>
                                                             <input
                                                                 onChange={onChangeFile}
                                                                 type="file"
@@ -1253,7 +1286,9 @@ const ClaimAdd = props => {
                                                     <div className="form-group row">
                                                         <div
                                                             className={error.description.length ? "col validated" : "col"}>
-                                                            <label htmlFor="description">{componentData ? componentData.params.fr.description.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="description">{componentData ? componentData.params.fr.description.value : ""}
+                                                                <InputRequire/></label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="description"
@@ -1275,7 +1310,8 @@ const ClaimAdd = props => {
 
                                                         <div
                                                             className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                            <label htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value : ""}</label>
+                                                            <label
+                                                                htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value : ""}</label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="claimer_expectation"
@@ -1303,17 +1339,23 @@ const ClaimAdd = props => {
 
                                             <div className="kt-section">
                                                 <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""} <InputRequire/></h3>
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""}
+                                                        <InputRequire/></h3>
 
                                                     <div className="form-group row">
-                                                        <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
+                                                        <label
+                                                            className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
                                                         <div className="col-9">
                                                             <div className="kt-radio-inline">
                                                                 <label className="kt-radio">
-                                                                    <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                    <input type="radio" value={option1}
+                                                                           onChange={handleOptionChange}
+                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
-                                                                    <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                    <input type="radio" value={option2}
+                                                                           onChange={handleOptionChange}
+                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>

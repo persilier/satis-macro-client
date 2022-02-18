@@ -352,6 +352,10 @@ const ConfirmClaimAddModal = props => {
 
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!newData.amount_disputed)
+            delete  newData.amount_disputed;
+        if (!newData.amount_currency_slug)
+            delete newData.amount_currency_slug;
         if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
             delete newData.relationship_id;
         if (verifyTokenExpire()) {
