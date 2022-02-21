@@ -889,7 +889,7 @@ const IncompleteClaimsEdit = props => {
                                                     <div className="form-group row">
                                                         <div className={"col"}>
                                                             <label
-                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}</label>
+                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}<InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
@@ -903,8 +903,7 @@ const IncompleteClaimsEdit = props => {
                                                         <div
                                                             className={error.claim_object_id.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}
-                                                                <InputRequire/></label>
+                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}<InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"

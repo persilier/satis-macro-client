@@ -716,7 +716,7 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} </label>
+                                                        <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}

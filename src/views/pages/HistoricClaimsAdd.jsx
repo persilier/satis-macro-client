@@ -300,7 +300,7 @@ const HistoricClaimsAdd = (props) => {
                                                 <tr style={{textAlign: "center"}}>
                                                     <th rowSpan="1" colSpan="1">Référence</th>
                                                     <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                    <th rowSpan="1" colSpan="1">Objets de réclamtions</th>
+                                                    <th rowSpan="1" colSpan="1">Objets de réclamations</th>
                                                     <th rowSpan="1" colSpan="1">Description</th>
                                                     <th rowSpan="1"
                                                         colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}

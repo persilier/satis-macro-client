@@ -174,7 +174,7 @@ const UnitTypeForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.can_be_target.length || error.can_treat.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Type d'unité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <div className="kt-checkbox-inline">
                                                         <label className="kt-checkbox">
@@ -208,13 +208,13 @@ const UnitTypeForm = (props) => {
                                             </div>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Unité <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Type d'unité <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom du type d'unité"
+                                                        placeholder="Veuillez entrer le nom du type d'unité"
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -236,7 +236,7 @@ const UnitTypeForm = (props) => {
                                                 <textarea
                                                     id="description"
                                                     className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer la description"
+                                                    placeholder="Veuillez entrer la description"
                                                     cols="30"
                                                     rows="5"
                                                     value={data.description}
