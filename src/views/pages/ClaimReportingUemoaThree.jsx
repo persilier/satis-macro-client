@@ -37,6 +37,7 @@ const ClaimReportingUemoaThree = (props) => {
     const [dateStart, setDateStart] = useState('2020-01-01');
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
 
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
 
     const defaultError = {
         date_start: [],
@@ -448,7 +449,7 @@ const ClaimReportingUemoaThree = (props) => {
     };
 
     const downloadReportingPdf = async () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -494,7 +495,7 @@ const ClaimReportingUemoaThree = (props) => {
                 .then(async ({data}) => {
                     setError(defaultError);
                     FileSaver.saveAs(data, `reporting_etat_hors_delai_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -503,7 +504,7 @@ const ClaimReportingUemoaThree = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -633,7 +634,7 @@ const ClaimReportingUemoaThree = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Retard de +30
+                                    Etat Hors Délais
                                 </a>
                             </div>
                         </div>
@@ -649,7 +650,7 @@ const ClaimReportingUemoaThree = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Rapport Retard de 30 jours"}
+                            title={"Rapport Etat Hors Délais"}
                         />
 
                         <div className="kt-portlet__body">
@@ -919,7 +920,7 @@ const ClaimReportingUemoaThree = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>Filtrer le rapport</button>
+                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>Filtrer le rapport</button>
                                         )}
 
                                         {loadDownload ? (
@@ -927,15 +928,15 @@ const ClaimReportingUemoaThree = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
                                         )}
 
-                                        {loadDownload ? (
+                                        {loadDownloadPdf ? (
                                             <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownload)}>PDF</button>
                                         )}
                                     </div>
                                 </div>

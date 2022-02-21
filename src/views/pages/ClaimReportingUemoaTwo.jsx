@@ -52,6 +52,7 @@ const ClaimReportingUemoaTwo = (props) => {
     const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
 
@@ -446,7 +447,7 @@ const ClaimReportingUemoaTwo = (props) => {
     };
 
     const downloadReportingPdf = async () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -490,9 +491,10 @@ const ClaimReportingUemoaTwo = (props) => {
                 data: removeNullValueInObject(sendData)
             })
                 .then(async ({data}) => {
+                    console.log("data:", data )
                     setError(defaultError);
                     FileSaver.saveAs(data, `reporting_retard_30_jours_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -501,7 +503,7 @@ const ClaimReportingUemoaTwo = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -631,7 +633,7 @@ const ClaimReportingUemoaTwo = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Etat  Retard de +30
+                                    Etat Retard de +30 jours
                                 </a>
                             </div>
                         </div>
@@ -647,7 +649,7 @@ const ClaimReportingUemoaTwo = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Rapport Etat Retard de 30 jours"}
+                            title={"Rapport Etat Retard de +30 Jours"}
                         />
 
                         <div className="kt-portlet__body">
@@ -917,7 +919,7 @@ const ClaimReportingUemoaTwo = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>Filtrer le rapport</button>
+                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>Filtrer le rapport</button>
                                         )}
 
                                         {loadDownload ? (
@@ -925,15 +927,15 @@ const ClaimReportingUemoaTwo = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
                                         )}
 
-                                        {loadDownload ? (
+                                        {loadDownloadPdf ? (
                                             <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownload)}>PDF</button>
                                         )}
                                     </div>
                                 </div>

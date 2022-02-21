@@ -43,6 +43,7 @@ const ClaimReportingUemoaThree = (props) => {
     });
     const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
 
@@ -284,7 +285,7 @@ const ClaimReportingUemoaThree = (props) => {
     };
 
     const downloadReportingPdf = () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -315,8 +316,8 @@ const ClaimReportingUemoaThree = (props) => {
                         institution_id: []
                     });
                     FileSaver.saveAs(data, `reporting_etat_analytique_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
+                   // setLoadDownload(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -327,7 +328,7 @@ const ClaimReportingUemoaThree = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -494,7 +495,7 @@ const ClaimReportingUemoaThree = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>Filtrer le rapport</button>
+                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>Filtrer le rapport</button>
                                         )}
 
                                         {loadDownload ? (
@@ -502,15 +503,15 @@ const ClaimReportingUemoaThree = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
                                         )}
 
-                                        {loadDownload ? (
+                                        {loadDownloadPdf ? (
                                             <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownload)}>PDF</button>
                                         )}
                                     </div>
                                 </div>

@@ -110,7 +110,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Traitement de la réclamtion
+                                                            Traitement de la réclamation
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
                                                             Procédez au traitement de la réclamation
