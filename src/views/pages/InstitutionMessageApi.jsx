@@ -10,7 +10,6 @@ import {
     toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import {Link, useParams} from "react-router-dom";
-import {AUTH_TOKEN} from "../../constants/token";
 import Select from "react-select";
 import {debug} from "../../helpers/function";
 import InputRequire from "../components/InputRequire";

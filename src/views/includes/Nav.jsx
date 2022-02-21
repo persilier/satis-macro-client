@@ -7,7 +7,6 @@ import 'moment/locale/fr';
 import * as LanguageAction from "../../store/actions/languageAction";
 import * as authActions from "../../store/actions/authActions";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import {EventNotification, EventNotificationPath, RelaunchNotification} from "../../constants/notification";
 import EmptyNotification from "../components/EmptyNotification";
 import {verifyPermission} from "../../helpers/permission";

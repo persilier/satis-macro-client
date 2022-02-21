@@ -23,7 +23,6 @@ import appConfig from "../../../config/appConfig";
 import ConfirmSaveForm from "./ConfirmSaveForm";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
-import {AUTH_TOKEN} from "../../../constants/token";
 import InputRequire from "../InputRequire";
 import {confirmLeadConfig} from "../../../config/confirmConfig";
 import {ConfirmLead} from "../ConfirmationAlert";

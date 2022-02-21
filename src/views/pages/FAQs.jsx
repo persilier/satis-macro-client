@@ -17,7 +17,6 @@ import InfirmationTable from "../components/InfirmationTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 

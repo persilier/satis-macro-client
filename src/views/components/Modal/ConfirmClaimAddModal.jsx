@@ -5,7 +5,6 @@ import FormInformation from "../../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../../config/appConfig";
-import {AUTH_TOKEN} from "../../../constants/token";
 import {formatSelectOption, formatToTimeStamp} from "../../../helpers/function";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
