@@ -84,7 +84,6 @@ const TreatmentForm = (props) => {
     console.log("props:", props);
     return (
         <div>
-            {console.log("props:", props.currency)}
             {
                 props.amount_disputed >= 0 ?
                     <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
