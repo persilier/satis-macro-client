@@ -88,7 +88,7 @@ const TreatmentForm = (props) => {
                 props.amount_disputed >= 0 ?
                     <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
                         <label className="col-xl-3 col-lg-3 col-form-label"
-                               htmlFor="name">Montant retourné en <strong>{props.currency}</strong>
+                               htmlFor="name">Montant retourné {props.currency? ("en" + <strong>{props.currency}</strong>):""}
                         </label>
                         <div className="col-lg-9 col-xl-6">
                             <input
@@ -143,7 +143,9 @@ const TreatmentForm = (props) => {
 
             <div
                 className={error.preventive_measures.length ? "form-group row validated" : "form-group row"}>
-                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Mesures préventives <InputRequire/></label>
+                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">Mesures préventives
+                    {/*<InputRequire/>*/}
+                </label>
                 <div className="col-lg-9 col-xl-6">
                     <textarea
                         id="measures"
