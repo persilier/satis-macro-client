@@ -9,7 +9,6 @@ import {loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import ReasonModal from "../components/ReasonModal";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";

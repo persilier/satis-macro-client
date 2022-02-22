@@ -5,7 +5,6 @@ import axios from "axios";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import InfoFormatExcel from "../../constants/InfoFormatExcel";
 import {
     filterChannel,
@@ -526,13 +525,15 @@ const ClaimAdd = props => {
                 if (institution) {
                     startSearchClient();
                 } else
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veillez selectioner une institution")))
+
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectioner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
                 startSearchClient();
             }
 
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veillez renseigner le champ de recherche")))
+
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez renseigner le champ de recherche")))
         }
     };
 
@@ -1098,9 +1099,7 @@ const ClaimAdd = props => {
 
                                                     <div className="form-group row">
                                                         <div className={"col"}>
-                                                            <label
-                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
-                                                                <InputRequire/></label>
+                                                            <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}

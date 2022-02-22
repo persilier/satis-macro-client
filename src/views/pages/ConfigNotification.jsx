@@ -10,7 +10,6 @@ import {
     toastEditErrorMessageConfig,
     toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";

@@ -24,7 +24,7 @@ const HistoricClaimsAdd = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    document.title = "Satis client - "+ (ready ? t("Paramètre Historique") : "");
+    document.title = "Satis client - " + (ready ? t("Paramètre Historique") : "");
 
     if (!verifyPermission(props.userPermissions, "history-list-create-claim")) {
         window.location.href = ERROR_401;
@@ -61,7 +61,7 @@ const HistoricClaimsAdd = (props) => {
             getLowerCaseString(el.reference).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object ? el.claim_object.name.fr : "").indexOf(value) >= 0 ||
             getLowerCaseString(el.description).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`).indexOf(value) >= 0
 
         ));
 
@@ -166,12 +166,14 @@ const HistoricClaimsAdd = (props) => {
                             <span className="kt-badge kt-badge--inline kt-badge--dark">{t("Archivé")}</span>
                             : claim.status === "validated" ?
                             <span className="kt-badge kt-badge--inline kt-badge--success">{t("Traité")}</span>
-                            : <span className="kt-badge kt-badge--inline kt-badge--warning">{t("En cours de traitement")}</span>
+                            : <span
+                                className="kt-badge kt-badge--inline kt-badge--warning">{t("En cours de traitement")}</span>
 
                     }
                 </td>
                 <td>
-                    <a href={`/process/claims/${claim.reference}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
+                    <a href={`/process/claims/${claim.reference}/detail`}
+                       className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -313,8 +315,19 @@ const HistoricClaimsAdd = (props) => {
                                                     </tr>
                                                     </tfoot>
                                                 </table>
-                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
+                                                <button id="button_modal" type="button"
+                                                        className="btn btn-secondary btn-icon-sm d-none"
+                                                        data-toggle="modal" data-target="#message_email"/>
+                                                <HtmlDescriptionModal title={t("Description")}
+                                                                      message={currentMessage}/>
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-5">
+                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {claimsAdd.length} données
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="row">

@@ -17,7 +17,6 @@ import Select from "react-select";
 import {formatSelectOption} from "../../../helpers/function";
 import {connect} from "react-redux";
 import {addIdentity} from "../../../store/actions/IdentityAction";
-import {AUTH_TOKEN} from "../../../constants/token";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";

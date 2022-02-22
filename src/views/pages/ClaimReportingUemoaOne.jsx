@@ -15,7 +15,6 @@ import {
     getLowerCaseString,
     loadCss, removeNullValueInObject,
 } from "../../helpers/function";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
@@ -23,6 +22,7 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
 import {useTranslation} from "react-i18next";
 import moment from "moment";
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -35,17 +35,21 @@ const ClaimReportingUemoaOne = (props) => {
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
+    const [loadFilter, setLoadFilter] = useState(false);
+
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
+
     const [claims, setClaims] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
-    const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+    const [dateEnd, setDateEnd] = useState("2021-02-01");
     const defaultError = {
         date_start: [],
         date_end: [],
-        institution_targeted_id : [],
+        institution_targeted_id: [],
         claim_category_id: [],
         claim_object_id: [],
         request_channel_slug: [],
@@ -56,7 +60,6 @@ const ClaimReportingUemoaOne = (props) => {
         relationShip: [],
     };
     const [error, setError] = useState(defaultError);
-    const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
@@ -102,7 +105,7 @@ const ClaimReportingUemoaOne = (props) => {
             sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
-                institution_id : institution ? institution.value : null,
+                institution_id: institution ? institution.value : null,
                 claim_category_id: category ? category.value : null,
                 claim_object_id: object ? object.value : null,
                 request_channel_slug: canal ? canal.value : null,
@@ -113,7 +116,7 @@ const ClaimReportingUemoaOne = (props) => {
                 relationship_id: relation ? relation.value : null,
             };
             if (props.plan === "HUB") {
-                delete  sendData.unit_targeted_id;
+                delete sendData.unit_targeted_id;
                 delete sendData.account_type_id;
             } else
                 delete sendData.relationShip
@@ -400,7 +403,7 @@ const ClaimReportingUemoaOne = (props) => {
             sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
-                institution_id : institution ? institution.value : null,
+                institution_id: institution ? institution.value : null,
                 claim_category_id: category ? category.value : null,
                 claim_object_id: object ? object.value : null,
                 request_channel_slug: canal ? canal.value : null,
@@ -435,7 +438,7 @@ const ClaimReportingUemoaOne = (props) => {
                 .then(async ({data}) => {
                     setError(defaultError);
                     const downloadButton = document.getElementById("downloadButton");
-                    downloadButton.href =`${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
+                    downloadButton.href = `${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
                     downloadButton.click();
                     setLoadDownload(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
@@ -453,7 +456,7 @@ const ClaimReportingUemoaOne = (props) => {
     };
 
     const downloadReportingPdf = async () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -464,7 +467,7 @@ const ClaimReportingUemoaOne = (props) => {
             sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
-                institution_id : institution ? institution.value : null,
+                institution_id: institution ? institution.value : null,
                 claim_category_id: category ? category.value : null,
                 claim_object_id: object ? object.value : null,
                 request_channel_slug: canal ? canal.value : null,
@@ -499,7 +502,7 @@ const ClaimReportingUemoaOne = (props) => {
                 .then(async ({data}) => {
                     setError(defaultError);
                     FileSaver.saveAs(data, `reporting_etat_global_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -508,7 +511,7 @@ const ClaimReportingUemoaOne = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -520,10 +523,11 @@ const ClaimReportingUemoaOne = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>
-                    <button className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split" title={t("Détails")} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split"
+                            title={t("Détails")} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {/*<i className="flaticon2-down"/>*/}
                     </button>
-                    <div className="dropdown-menu px-5" style={{ width: "550px" }}>
+                    <div className="dropdown-menu px-5" style={{width: "550px"}}>
                         <div className="d-flex justify-content-between">
                             <strong>{t("Objet de réclamation")}</strong>
                             <p className="ml-5">{claim.claimObject ? claim.claimObject : "-"}</p>
@@ -636,9 +640,11 @@ const ClaimReportingUemoaOne = (props) => {
                                 </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                         {t("Etat global")}
                                     </a>
                                 </div>
@@ -662,7 +668,8 @@ const ClaimReportingUemoaOne = (props) => {
                                 <div className="row">
                                     {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                                         <div className="col-md-12">
-                                            <div className={error.institution_targeted_id.length ? "form-group validated" : "form-group"}>
+                                            <div
+                                                className={error.institution_targeted_id.length ? "form-group validated" : "form-group"}>
                                                 <label htmlFor="">Institution</label>
                                                 <Select
                                                     isClearable
@@ -689,7 +696,8 @@ const ClaimReportingUemoaOne = (props) => {
                                 {props.plan !== "HUB" ? (
                                     <div className="row">
                                         <div className="col">
-                                            <div className={error.account_type_id.length ? "form-group validated" : "form-group"}>
+                                            <div
+                                                className={error.account_type_id.length ? "form-group validated" : "form-group"}>
                                                 <label htmlFor="">{t("Type de compte")}</label>
                                                 <Select
                                                     isClearable
@@ -715,7 +723,8 @@ const ClaimReportingUemoaOne = (props) => {
 
                                 <div className="row">
                                     <div className="col">
-                                        <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
+                                        <div
+                                            className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
                                             <label htmlFor="">{t("Catégorie de réclamation")}</label>
                                             <Select
                                                 isClearable
@@ -738,7 +747,8 @@ const ClaimReportingUemoaOne = (props) => {
                                     </div>
 
                                     <div className="col">
-                                        <div className={error.claim_object_id.length ? "form-group validated" : "form-group"}>
+                                        <div
+                                            className={error.claim_object_id.length ? "form-group validated" : "form-group"}>
                                             <label htmlFor="">{t("Objet de réclamation")}</label>
                                             <Select
                                                 isClearable
@@ -764,7 +774,8 @@ const ClaimReportingUemoaOne = (props) => {
                                 <div className="row">
                                     {props.plan === "HUB" ? (
                                         <div className="col">
-                                            <div className={error.relationShip.length ? "form-group validated" : "form-group"}>
+                                            <div
+                                                className={error.relationShip.length ? "form-group validated" : "form-group"}>
                                                 <label htmlFor="">{t("Relation")}</label>
                                                 <Select
                                                     isClearable
@@ -787,7 +798,8 @@ const ClaimReportingUemoaOne = (props) => {
                                         </div>
                                     ) : (
                                         <div className="col">
-                                            <div className={error.unit_targeted_id.length ? "form-group validated" : "form-group"}>
+                                            <div
+                                                className={error.unit_targeted_id.length ? "form-group validated" : "form-group"}>
                                                 <label htmlFor="">{t("Agences concernée")}</label>
                                                 <Select
                                                     isClearable
@@ -811,7 +823,8 @@ const ClaimReportingUemoaOne = (props) => {
                                     )}
 
                                     <div className="col">
-                                        <div className={error.responsible_unit_id.length ? "form-group validated" : "form-group"}>
+                                        <div
+                                            className={error.responsible_unit_id.length ? "form-group validated" : "form-group"}>
                                             <label htmlFor="">{t("Fonction traitant")}</label>
                                             <Select
                                                 isClearable
@@ -836,7 +849,8 @@ const ClaimReportingUemoaOne = (props) => {
 
                                 <div className="row">
                                     <div className="col">
-                                        <div className={error.request_channel_slug.length ? "form-group validated" : "form-group"}>
+                                        <div
+                                            className={error.request_channel_slug.length ? "form-group validated" : "form-group"}>
                                             <label htmlFor="">{t("Canal de réception")}</label>
                                             <Select
                                                 isClearable
@@ -886,7 +900,9 @@ const ClaimReportingUemoaOne = (props) => {
                                     <div className="col">
                                         <div className="form-group">
                                             <label htmlFor="">{t("Date de début")}</label>
-                                            <input type="date" onChange={handleDateStartChange} className={error.date_start.length ? "form-control is-invalid" : "form-control"} value={dateStart}/>
+                                            <input type="date" onChange={handleDateStartChange}
+                                                   className={error.date_start.length ? "form-control is-invalid" : "form-control"}
+                                                   value={dateStart}/>
 
                                             {
                                                 error.date_start.length ? (
@@ -903,7 +919,9 @@ const ClaimReportingUemoaOne = (props) => {
                                     <div className="col">
                                         <div className="form-group">
                                             <label htmlFor="">{t("Date de fin")}</label>
-                                            <input type="date" onChange={handleDateEndChange} className={error.date_end.length ? "form-control is-invalid" : "form-control"} value={dateEnd}/>
+                                            <input type="date" onChange={handleDateEndChange}
+                                                   className={error.date_end.length ? "form-control is-invalid" : "form-control"}
+                                                   value={dateEnd}/>
 
                                             {
                                                 error.date_end.length ? (
@@ -919,29 +937,40 @@ const ClaimReportingUemoaOne = (props) => {
 
                                     <div className="col-md-12">
                                         <div className="form-group d-flex justify-content-end">
-                                            <a className="d-none" href="#" id="downloadButton" download={true}>downloadButton</a>
+                                            <a className="d-none" href="#" id="downloadButton"
+                                               download={true}>downloadButton</a>
                                             {loadFilter ? (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    {t("Chargement")}...
+                                                <button
+                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                    type="button" disabled>
+                                                    {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>{t("Filtrer le rapport")}</button>
+                                                <button onClick={filterReporting} className="btn btn-primary"
+                                                        disabled={(loadDownload || loadDownloadPdf)}>{t("Filtrer le rapport")}</button>
                                             )}
 
                                             {loadDownload ? (
-                                                <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                    {t("Chargement")}...
+                                                <button
+                                                    className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
+                                                    type="button" disabled>
+                                                    {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                                <button onClick={downloadReporting} className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
                                             )}
 
-                                            {loadDownload ? (
-                                                <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                    {t("Chargement")}...
+                                            {loadDownloadPdf ? (
+                                                <button
+                                                    className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
+                                                    type="button" disabled>
+                                                    {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
+                                                <button onClick={downloadReportingPdf}
+                                                        className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter || loadDownload)}>PDF</button>
                                             )}
                                         </div>
                                     </div>
@@ -959,49 +988,82 @@ const ClaimReportingUemoaOne = (props) => {
                                                     <div id="kt_table_1_filter" className="dataTables_filter">
                                                         <label>
                                                             {t("Rechercher")}:
-                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                            <input id="myInput" type="text"
+                                                                   onKeyUp={(e) => searchElement(e)}
+                                                                   className="form-control form-control-sm"
+                                                                   placeholder="" aria-controls="kt_table_1"/>
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col-sm-12">
-                                                    <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{width: "952px"}}>
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{width: "952px"}}>
                                                         <thead>
                                                         <tr role="row">
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Détails")}
                                                             </th>
                                                             {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                    style={{width: "70.25px"}}
+                                                                    aria-label="Country: activate to sort column ascending">
                                                                     {t("Filiale")}
                                                                 </th>
                                                             ) : null}
                                                             {props.plan !== "HUB" ? (
                                                                 <>
-                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1" rowSpan="1"
+                                                                        colSpan="1" style={{width: "70.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
                                                                         {t("Type de client")}
                                                                     </th>
-                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1" rowSpan="1"
+                                                                        colSpan="1" style={{width: "70.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
                                                                         {t("Client")}
                                                                     </th>
-                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1" rowSpan="1"
+                                                                        colSpan="1" style={{width: "70.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
                                                                         N° {t("Compte")}
                                                                     </th>
                                                                 </>
                                                             ) : (
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                    style={{width: "70.25px"}}
+                                                                    aria-label="Country: activate to sort column ascending">
                                                                     {t("Relation")}
                                                                 </th>
                                                             )}
 
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Téléphone")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Agence")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Catégorie de réclamation")}
                                                             </th>
                                                         </tr>
@@ -1031,7 +1093,8 @@ const ClaimReportingUemoaOne = (props) => {
                                                             ) : null}
                                                             {props.plan !== "HUB" ? (
                                                                 <>
-                                                                    <th rowSpan="1" colSpan="1">{t("Type de client")}</th>
+                                                                    <th rowSpan="1"
+                                                                        colSpan="1">{t("Type de client")}</th>
                                                                     <th rowSpan="1" colSpan="1">{t("Client")}</th>
                                                                     <th rowSpan="1" colSpan="1">N° {t("Compte")}</th>
                                                                 </>
@@ -1040,7 +1103,8 @@ const ClaimReportingUemoaOne = (props) => {
                                                             )}
                                                             <th rowSpan="1" colSpan="1">{t("Téléphone")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Agence")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Catégorie de réclamation")}</th>
+                                                            <th rowSpan="1"
+                                                                colSpan="1">{t("Catégorie de réclamation")}</th>
                                                         </tr>
                                                         </tfoot>
                                                     </table>

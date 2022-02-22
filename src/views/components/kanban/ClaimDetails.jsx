@@ -1,7 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import axios from "axios";
 import {formatDateToTimeStampte, loadCss, loadScript} from "../../../helpers/function";
-import {AUTH_TOKEN} from "../../../constants/token";
 import appConfig from "../../../config/appConfig";
 import Loader from "../Loader";
 import HtmlDescriptionModal from "../DescriptionDetail/HtmlDescriptionModal";

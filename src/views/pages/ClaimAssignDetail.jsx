@@ -10,7 +10,6 @@ import {formatDateToTimeStampte, formatSelectOption, loadCss, loadScript} from "
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import FusionClaim from "../components/FusionClaim";
 import {ToastBottomEnd} from "../components/Toast";
 import {

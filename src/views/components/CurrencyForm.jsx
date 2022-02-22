@@ -17,7 +17,6 @@ import {
 import {ERROR_401, redirectError401Page} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import currencies from "../../constants/currencyContry";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
