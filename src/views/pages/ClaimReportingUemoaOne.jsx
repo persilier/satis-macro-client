@@ -15,13 +15,11 @@ import {
     getLowerCaseString,
     loadCss, removeNullValueInObject,
 } from "../../helpers/function";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
-import moment from "moment";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -30,13 +28,17 @@ const ClaimReportingUemoaOne = (props) => {
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
+    const [loadFilter, setLoadFilter] = useState(false);
+
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
+
     const [claims, setClaims] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(0);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
-    const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+    const [dateEnd, setDateEnd] = useState("2021-02-01");
     const defaultError = {
         date_start: [],
         date_end: [],
@@ -51,7 +53,6 @@ const ClaimReportingUemoaOne = (props) => {
         relationShip: [],
     };
     const [error, setError] = useState(defaultError);
-    const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
@@ -448,7 +449,7 @@ const ClaimReportingUemoaOne = (props) => {
     };
 
     const downloadReportingPdf = async () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -494,7 +495,7 @@ const ClaimReportingUemoaOne = (props) => {
                 .then(async ({data}) => {
                     setError(defaultError);
                     FileSaver.saveAs(data, `reporting_etat_global_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -503,7 +504,7 @@ const ClaimReportingUemoaOne = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -919,7 +920,7 @@ const ClaimReportingUemoaOne = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>Filtrer le rapport</button>
+                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>Filtrer le rapport</button>
                                         )}
 
                                         {loadDownload ? (
@@ -927,15 +928,15 @@ const ClaimReportingUemoaOne = (props) => {
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
                                         )}
 
-                                        {loadDownload ? (
+                                        {loadDownloadPdf ? (
                                             <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
                                                 Chargement...
                                             </button>
                                         ) : (
-                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownload)}>PDF</button>
                                         )}
                                     </div>
                                 </div>

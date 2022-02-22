@@ -259,7 +259,7 @@ const Aside = (props) => {
                                                         <NavLink exact to="/monitoring/claims/uemoa/reporting-two" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">Etat Retard de +30</span>
+                                                                <span className="kt-menu__link-text">Etat Retard de +30 jours</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
@@ -706,6 +706,29 @@ const Aside = (props) => {
                                                         </NavLink>
                                                     ) : null
                                                 }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "list-notification-proof") || verifyPermission(props.userPermissions, 'list-any-notification-proof') ? (
+                                                        <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{"Preuve d'accusé de réception"}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    ((verifyPermission(props.userPermissions, "pilot-list-notification-proof") || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')) && props.activePilot) ? (
+                                                        <NavLink exact to="/settings/proof-of-receipt" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{"Preuve d'accusé de réception"}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
                                                 {
                                                     verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
                                                     verifyPermission(props.userPermissions, "config-reporting-claim-my-institution")?

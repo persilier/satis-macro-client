@@ -8,7 +8,7 @@ import {
     loadCss,
     filterDataTableBySearchValue,
     forceRound,
-    formatDateToTime, reduceCharacter
+    formatDateToTime, reduceCharacter, getLowerCaseString, truncateString
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -21,6 +21,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -93,14 +94,32 @@ const IncompleteClaims = (props) => {
 
     }, []);
 
+
+    const filterShowListBySearchValue = (value) => {
+        value = getLowerCaseString(value);
+        let newClaims = [...incompleteClaims];
+        newClaims = newClaims.filter(el => {
+            return (
+                getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+                getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+                getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
+                getLowerCaseString((el.claim_object && el.claim_object.name["fr"]) ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
+                getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
+                getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
+            )
+        });
+
+        return newClaims;
+    };
+
     const searchElement = async (e) => {
         if (e.target.value) {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            await setSearch(true);
-            filterDataTableBySearchValue(e);
-            setSearch(false);
+            setNumberPage(forceRound(incompleteClaims.length/NUMBER_ELEMENT_PER_PAGE));
+            setShowList(incompleteClaims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setActiveNumberPage(0);
         }
     };
 
@@ -239,13 +258,13 @@ const IncompleteClaims = (props) => {
 
                 <div className="kt-container  kt-container--fluid kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"Liste des réclamations imcomplètes"}/>
+                        information={"Liste des réclamations incomplètes"}/>
 
                     <div className="kt-portlet">
 
                         <HeaderTablePage
                             addPermission={""}
-                            title={"Réclamations Imcomplètes"}
+                            title={"Réclamations Incomplètes"}
                             addText={"Ajouter de réclamations"}
                             addLink={"/settings/claims/add"}
                         />

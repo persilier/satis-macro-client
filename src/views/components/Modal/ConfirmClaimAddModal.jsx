@@ -5,7 +5,6 @@ import FormInformation from "../../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../../config/appConfig";
-import {AUTH_TOKEN} from "../../../constants/token";
 import {formatSelectOption, formatToTimeStamp} from "../../../helpers/function";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
@@ -716,7 +715,7 @@ const ConfirmClaimAddModal = props => {
 
                                                 <div className="form-group row">
                                                     <div className={"col"}>
-                                                        <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} </label>
+                                                        <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}

@@ -128,6 +128,7 @@ import EmailConfig from "../pages/EmailConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
+import ProofReceipt from "../pages/ProofReceipt";
 
 const Body = () => {
     return (
@@ -369,6 +370,10 @@ const Body = () => {
 
             <Route exact path="/settings/unit/import">
                 <UnitImportPage/>
+            </Route>
+
+            <Route exact path="/settings/proof-of-receipt">
+                <ProofReceipt/>
             </Route>
 
             <Route exact path="/settings/staffs">

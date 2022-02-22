@@ -9,7 +9,6 @@ import {loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import UnfoundedModal from "../components/UnfoundedModal";
 import TreatmentForm from "../components/TreatmentForm";
 import ClientButtonDetail from "../components/ClientButtonDetail";
@@ -111,7 +110,7 @@ const ClaimAssignToStaffDetail = (props) => {
                                                     </div>
                                                     <div className="kt-wizard-v2__nav-label">
                                                         <div className="kt-wizard-v2__nav-label-title">
-                                                            Traitement de la réclamtion
+                                                            Traitement de la réclamation
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label-desc">
                                                             Procédez au traitement de la réclamation

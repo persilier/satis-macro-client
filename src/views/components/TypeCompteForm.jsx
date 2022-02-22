@@ -13,6 +13,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import InputRequire from "./InputRequire";
 
 
 const TypeCompteForm = (props) => {
@@ -155,13 +156,13 @@ const TypeCompteForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Nom</label>
+                                                                           htmlFor="name">Nom <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom"
+                                                                            placeholder="Veuillez entrer le nom"
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -186,7 +187,7 @@ const TypeCompteForm = (props) => {
                                         <textarea
                                             id="description"
                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veillez entrer la description"
+                                            placeholder="Veuillez entrer la description"
                                             cols="30"
                                             rows="5"
                                             value={data.description}

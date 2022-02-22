@@ -1,11 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
-import axios from "axios";
 import {formatDateToTimeStampte, loadCss, loadScript} from "../../../helpers/function";
-import {AUTH_TOKEN} from "../../../constants/token";
 import appConfig from "../../../config/appConfig";
 import Loader from "../Loader";
-import HtmlDescriptionModal from "../DescriptionDetail/HtmlDescriptionModal";
-import HtmlDescription from "../DescriptionDetail/HtmlDescription";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");

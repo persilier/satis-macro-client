@@ -9,7 +9,6 @@ import Select from "react-select";
 import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {AUTH_TOKEN} from "../../constants/token";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {formatPermissions, formatSelectOption} from "../../helpers/function";

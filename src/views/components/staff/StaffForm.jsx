@@ -12,6 +12,7 @@ import {
     toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig,
+    toastMessageConsoleWithParameterConfig,
     toastErrorMessageWithParameterConfig
 } from "../../../config/toastConfig";
 import {ToastBottomEnd} from "../Toast";
@@ -23,7 +24,6 @@ import appConfig from "../../../config/appConfig";
 import ConfirmSaveForm from "./ConfirmSaveForm";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
-import {AUTH_TOKEN} from "../../../constants/token";
 import InputRequire from "../InputRequire";
 import {confirmLeadConfig} from "../../../config/confirmConfig";
 import {ConfirmLead} from "../ConfirmationAlert";
@@ -335,13 +335,21 @@ const StaffForm = (props) => {
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
+                        console.log("data-56465:",errorRequest.response.data)
+
+                        if (errorRequest.response.status === 409) {
+                            setStartRequest(false);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.message))
+                        }
+
                         if (errorRequest.response.data.error.staff) {
                             // Existing staff
                             setStartRequest(false);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(
                                 errorRequest.response.data.error.staff.identite.lastname+" "+errorRequest.response.data.error.staff.identite.firstname+": "+errorRequest.response.data.error.message)
                             );
-                        } else {
+                        }
+                        if(errorRequest.response.status === 422){
                             setError({...defaultError, ...errorRequest.response.data.error});
                             ToastBottomEnd.fire(toastEditErrorMessageConfig);
                         }
@@ -436,7 +444,7 @@ const StaffForm = (props) => {
                                                             id="lastname"
                                                             type="text"
                                                             className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le nom"
+                                                            placeholder="Veuillez entrer le nom"
                                                             value={data.lastname}
                                                             onChange={(e) => onChangeLastName(e)}
                                                         />
@@ -457,7 +465,7 @@ const StaffForm = (props) => {
                                                             id="firstname"
                                                             type="text"
                                                             className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer le prénom"
+                                                            placeholder="Veuillez entrer le prénom"
                                                             value={data.firstname}
                                                             onChange={(e) => onChangeFirstName(e)}
                                                         />
@@ -534,7 +542,7 @@ const StaffForm = (props) => {
                                                             id="ville"
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veillez entrer votre ville"
+                                                            placeholder="Veuillez entrer votre ville"
                                                             value={data.ville ? data.ville : ""}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
@@ -561,7 +569,7 @@ const StaffForm = (props) => {
                                                         <Select
                                                             isClearable
                                                             value={position}
-                                                            placeholder={"Veillez selectionner le poste"}
+                                                            placeholder={"Veuillez selectionner le poste"}
                                                             onChange={onChangePosition}
                                                             options={formatSelectOption(positions, "name", "fr")}
                                                         />
@@ -583,7 +591,7 @@ const StaffForm = (props) => {
                                                                 <Select
                                                                     isClearable
                                                                     value={institution}
-                                                                    placeholder={"Veillez selectionner l'institution"}
+                                                                    placeholder={"Veuillez selectionner l'institution"}
                                                                     onChange={onChangeInstitution}
                                                                     options={formatSelectOption(formatInstitutions(institutions), "name", false)}
                                                                 />
@@ -607,7 +615,7 @@ const StaffForm = (props) => {
                                                         <Select
                                                             isClearable
                                                             value={unit}
-                                                            placeholder={"Veillez selectionner l'unité"}
+                                                            placeholder={"Veuillez selectionner l'unité"}
                                                             onChange={onChangeUnit}
                                                             options={formatUnitSelectOption(units, "name", "fr")}
                                                         />

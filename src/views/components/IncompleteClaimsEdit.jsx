@@ -8,7 +8,6 @@ import {
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import {
     debug,
     filterChannel,
@@ -480,10 +479,10 @@ const IncompleteClaimsEdit = props => {
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
 
-        debug(endPoint.update(`${id}`), "endpoint");
+/*        debug(endPoint.update(`${id}`), "endpoint");
         for (var value of formatFormData(newData).values()) {
             debug(value, "value");
-        }
+        }*/
         if (verifyTokenExpire()) {
             axios.post(endPoint.update(`${id}`), formatFormData(newData))
                 .then((response) => {
@@ -894,7 +893,7 @@ const IncompleteClaimsEdit = props => {
                                                     <div className="form-group row">
                                                         <div className={"col"}>
                                                             <label
-                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}</label>
+                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}<InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
@@ -908,8 +907,7 @@ const IncompleteClaimsEdit = props => {
                                                         <div
                                                             className={error.claim_object_id.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}
-                                                                <InputRequire/></label>
+                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}<InputRequire/></label>
                                                             <Select
                                                                 classNamePrefix="select"
                                                                 className="basic-single"
@@ -940,7 +938,7 @@ const IncompleteClaimsEdit = props => {
                                                                 className={error.lieu.length ? "form-control is-invalid" : "form-control"}
                                                                 placeholder={componentData ? componentData.params.fr.lieu_placeholder.value : ""}
                                                                 value={data.lieu}
-                                                                onChange={(e) => onChangeLieu(e)}
+                                                                onChange={e=>onChangeLieu(e)}
                                                             />
                                                             {
                                                                 error.lieu.length ? (
