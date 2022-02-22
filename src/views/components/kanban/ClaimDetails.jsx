@@ -2,8 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import {formatDateToTimeStampte, loadCss, loadScript} from "../../../helpers/function";
 import appConfig from "../../../config/appConfig";
 import Loader from "../Loader";
-import HtmlDescriptionModal from "../DescriptionDetail/HtmlDescriptionModal";
-import HtmlDescription from "../DescriptionDetail/HtmlDescription";
 import {useTranslation} from "react-i18next";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
