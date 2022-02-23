@@ -211,8 +211,11 @@ const EmailConfig = (props) => {
                     setData(sendData);
                     if (error.response.data.code === 400)
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                    setError({...defaultErrorEmail, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    else {
+                        setError({...defaultErrorEmail, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }
+
                 })
                 ;
         }
@@ -240,8 +243,10 @@ const EmailConfig = (props) => {
                     setLoadingEmail(false);
                     if (error.response.data.code === 400)
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
-                    setError({...defaultErrorEmail, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    else {
+                        setError({...defaultErrorEmail, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    }
                 })
             ;
         }
