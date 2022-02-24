@@ -11,7 +11,7 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import Select from "react-select";
 
@@ -206,11 +206,15 @@ const EmailConfig = (props) => {
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     setReload(!reload);
                 })
-                    .catch(errorRequest => {
+                    .catch(error => {
                     setLoadingEmail(false);
                     setData(sendData);
-                    setError({...defaultErrorEmail, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    if (error.response.data.code === 400)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    else {
+                        setError({...defaultErrorEmail, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }
                 })
                 ;
         }
@@ -234,10 +238,14 @@ const EmailConfig = (props) => {
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig);
                     setReload(!reload);
                 })
-                .catch(errorRequest => {
+                .catch(error => {
                     setLoadingEmail(false);
-                    setError({...defaultErrorEmail, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    if (error.response.data.code === 400)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    else {
+                        setError({...defaultErrorEmail, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    }
                 })
             ;
         }
