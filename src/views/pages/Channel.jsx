@@ -9,12 +9,12 @@ import Pagination from "../components/Pagination";
 import appConfig from "../../config/appConfig";
 import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmDeleteConfig} from "../../config/confirmConfig";
+import {confirmActivationChannel, confirmDeleteConfig} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastDeleteErrorMessageConfig,
     toastDeleteSuccessMessageConfig,
-    toastErrorMessageWithParameterConfig
+    toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
@@ -35,20 +35,20 @@ const Channel = (props) => {
     const [showList, setShowList] = useState([]);
 
     useEffect(() => {
-        async function fetchData () {
+        async function fetchData() {
             axios.get(`${appConfig.apiDomaine}/channels`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
+                    setNumberPage(forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setChannels(response.data);
                     setLoad(false);
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
                 })
             ;
         }
+
         if (verifyTokenExpire())
             fetchData();
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
@@ -66,10 +66,10 @@ const Channel = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(channels.length/NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(channels.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(channels.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(0);
         }
@@ -79,13 +79,13 @@ const Channel = (props) => {
         setActiveNumberPage(0);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(channels.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(channels.length/parseInt(e.target.value)));
+        setNumberPage(forceRound(channels.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i<position; i++) {
-            end = end+numberPerPage;
+        for (let i = 0; i < position; i++) {
+            end = end + numberPerPage;
         }
         return end;
     };
@@ -121,6 +121,48 @@ const Channel = (props) => {
                 )
             );
         }
+    };
+
+    const activeAccount = (e, channel, index) => {
+        e.preventDefault();
+        DeleteConfirmation.fire(confirmActivationChannel(channel.is_response))
+            .then(async (result) => {
+                if (result.value) {
+                    document.getElementById(`channel-spinner-${channel.id}`).style.display = "block";
+                    document.getElementById(`channel-${channel.id}`).style.display = "none";
+                    // document.getElementById(`channel-edit-${channel.id}`).style.display = "none";
+
+                    let endpoint = "";
+                    if (props.plan === "MACRO") {
+                        if (verifyPermission(props.userPermissions, "list-user-any-institution"))
+                            endpoint = `${appConfig.apiDomaine}/any/users/${channel.id}/enabled-desabled`;
+                        if (verifyPermission(props.userPermissions, "list-user-my-institution"))
+                            endpoint = `${appConfig.apiDomaine}/my/users/${channel.id}/enabled-desabled`;
+                    } else if (props.plan === "HUB")
+                        endpoint = `${appConfig.apiDomaine}/any/users/${channel.id}/enabled-desabled`;
+                    else if (props.plan === "PRO")
+                        endpoint = `${appConfig.apiDomaine}/channels/${channel.id}/toggle-is-response`;
+
+                    if (verifyTokenExpire()) {
+                        await axios.put(`${appConfig.apiDomaine}/channels/${channel.id}/toggle-is-response`)
+                            .then(response => {
+                                const newChannels = [...channels];
+                                newChannels[index].can_be_response = newChannels[index].can_be_response === null ? true : null;
+                                document.getElementById(`channel-spinner-${channel.id}`).style.display = "none";
+                                document.getElementById(`channel-${channel.id}`).style.display = "block";
+                                // document.getElementById(`channel-edit-${channel.id}`).style.display = "block";
+                                setChannels(newChannels);
+                                window.location.reload();
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succes de l'opération"));
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'opération"));
+                            })
+                        ;
+                    }
+                }
+            })
+        ;
     };
 
     const deleteChannel = (channelId, index) => {
@@ -178,26 +220,45 @@ const Channel = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{channel.name["fr"]}</td>
                 <td>{channel.is_response ? "Oui" : "Non"}</td>
-                <td>
+                <td className={"d-flex justify-content-between align-items-center"}>
+                    <div id={`channel-spinner-${channel.id}`}
+                         className="kt-spinner kt-spinner--lg kt-spinner--dark mt-2 mx-3" style={{display: "none"}}/>
                     {
-                        verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable ? (
-                            <Link to={`/settings/channels/${channel.id}/edit`}
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
-                                <i className="la la-edit"/>
-                            </Link>
+                        channel.can_be_response ? (
+                            <a
+                                className="mt-2"
+                                id={`channel-${channel.id}`}
+                                href={channel.is_response ? `desactive/${channel.id}` : `active/${channel.id}`}
+                                onClick={(e) => activeAccount(e, channel, index, channel.can_be_response ? "désactiver" : "Activer")}
+                                title={channel.is_response ? "Désactiver" : "Activer"}>
+                                {channel.is_response ? "Désactiver" : "Activer"}
+                            </a>
                         ) : null
+
                     }
-                    {
-                        verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable ? (
-                            <button
-                                onClick={(e) => deleteChannel(channel.id, index)}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
-                                <i className="la la-trash"/>
-                            </button>
-                        ) : null
-                    }
+
+                    <div>
+                        {
+                            verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable ? (
+                                <Link to={`/settings/channels/${channel.id}/edit`}
+                                      id={`channel-edit-${channel.id}`}
+                                      className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                      title="Modifier">
+                                    <i className="la la-edit"/>
+                                </Link>
+                            ) : null
+                        }
+                        {
+                            verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable ? (
+                                <button
+                                    onClick={(e) => deleteChannel(channel.id, index)}
+                                    className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                    title="Supprimer">
+                                    <i className="la la-trash"/>
+                                </button>
+                            ) : null
+                        }
+                    </div>
                 </td>
             </tr>
         );
@@ -214,9 +275,11 @@ const Channel = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     Canal
                                 </a>
                             </div>
@@ -260,18 +323,23 @@ const Channel = (props) => {
                                                 <table
                                                     className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                     id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
+                                                    style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">Nom
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Canale de reponse
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">Canale
+                                                            de reponse
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
+                                                            aria-label="Type: activate to sort column ascending">
                                                             Action
                                                         </th>
                                                     </tr>
@@ -304,7 +372,8 @@ const Channel = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {channels.length} données
+                                                     aria-live="polite">Affichage de 1
+                                                    à {numberPerPage} sur {channels.length} données
                                                 </div>
                                             </div>
                                             {

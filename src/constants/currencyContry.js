@@ -219,6 +219,11 @@ const currencies =  [
         label: "dollar du Zimbabwe",
         iso_code: "ZWL"
     },
+    {
+        value: 45,
+        label: "Franc CFA (CEMAC)",
+        iso_code: "XAF"
+    },
 ];
 
 export default currencies;

@@ -32,6 +32,18 @@ export const confirmActivation =  (label) => {
         cancelButtonText: "Quitter"
     };
 };
+export const confirmActivationChannel =  ( is_response) => {
+    return {
+        title: 'Êtes-vous sûre?',
+        text: is_response?(`Le canal ne sera plus un canal de réponse `):(`Le canal sera de nouveau un canal de réponse `),
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: is_response?(`Oui, désactiver!`):(`Oui, activer!`),
+        cancelButtonText: "Quitter"
+    };
+};
 
 export const confirmLeadConfig = (lead) =>  {
     return {
