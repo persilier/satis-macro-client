@@ -17,7 +17,6 @@ import HeaderTablePage from "../components/HeaderTablePage";
 import InfirmationTable from "../components/InfirmationTable";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
@@ -103,9 +102,10 @@ const   Staff = (props) => {
         value = getLowerCaseString(value);
         let newStaffs = [...staffs];
         newStaffs = newStaffs.filter(el => (
-            getLowerCaseString(`${el.is_lead ? 'L' : ''} ${(el.identite && el.identite.lastname) ? el.identite.lastname : ''} ${(el.identite && el.identite.firstname) ? el.identite.firstname : ''}`).indexOf(value) >= 0 ||
-            getLowerCaseString(separateStringByComa(el.identite.telephone)).indexOf(value) >= 0 ||
-            getLowerCaseString(separateStringByComa(el.identite.email)).indexOf(value) >= 0 ||
+
+            getLowerCaseString(`${el.is_lead ? 'L' : ''} ${el.identite ? el.identite.lastname : ''} ${el.identite ? el.identite.firstname : ''}`).indexOf(value) >= 0 ||
+            getLowerCaseString(separateStringByComa(el.identite ? el.identite.telephone : '')).indexOf(value) >= 0 ||
+            getLowerCaseString(separateStringByComa( el.identite ? el.identite.email : '')).indexOf(value) >= 0 ||
             getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? el.unit ? el.unit.name["fr"] : '' : el.unit.name["fr"]).indexOf(value) >= 0 ||
             getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ?  el.institution.name["fr"] : '').indexOf(value) >= 0 ||
             getLowerCaseString(el.position.name["fr"]).indexOf(value) >= 0
@@ -223,28 +223,22 @@ const   Staff = (props) => {
     const printBodyTable = (staff, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>
-                    {
-                        staff.is_lead ?
-                            (<span className="kt-badge kt-badge--success kt-badge--inline">L</span>) : null} {`${(staff.identite && staff.identite.lastname) ? staff.identite.lastname : ''} ${(staff.identite && staff.identite.firstname) ? staff.identite.firstname : ''}`}
-                </td>
-                <td>
-                    {
-                        (staff.identite && staff.identite.telephone !== null) ? (
-                            staff.identite.telephone.map((tel, index) => (
-                                index === staff.identite.telephone.length - 1 ? tel : tel+", "
-                            ))
-                        ) : null
-                    }
 
+                <td>{staff.is_lead ? (<span className="kt-badge kt-badge--success kt-badge--inline">L</span>) : null}{staff.identite ? staff.identite.lastname : ''}&ensp;{staff.identite ? staff.identite.firstname : ""}</td>
+                <td>
+                    { staff.identite ?
+                        staff.identite.telephone.map((tel, index) => (
+                            index === staff.identite.telephone.length - 1 ? tel : tel+", "
+                        ))
+                        : ''
+                    }
                 </td>
                 <td>
-                    {
-                        (staff.identite && staff.identite.email !== null) ? (
-                            staff.identite.email.map((mail, index) => (
-                                index === staff.identite.email.length - 1 ? mail : mail+", "
-                            ))
-                        ) : null
+                    { staff.identite ?
+                        staff.identite.email.map((mail, index) => (
+                            index === staff.identite.email.length - 1 ? mail : mail+", "
+                        ))
+                        : ''
                     }
                 </td>
                 {

@@ -135,20 +135,21 @@ const ProfilePage = ({user}) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="kt-widget__body">
-                                            <div className="kt-widget__content">
-                                                <div className="kt-widget__info">
-                                                    <span className="kt-widget__label">Username:</span>
-                                                    <a href="#" className="kt-widget__data">{username}</a>
-                                                </div>
-                                                <div className="kt-widget__info">
-                                                    <span className="kt-widget__label">{t("Téléphone")}:</span>
-                                                    <a href="#" className="kt-widget__data">{data.telephone.join("/")}</a>
-                                                </div>
-                                                <div className="kt-widget__info">
-                                                    <span className="kt-widget__label">{t("Rôles")}:</span>
-                                                    <span className="kt-widget__data">{role}</span>
-                                                </div>
+
+                                    </div>
+                                    <div className="kt-widget__body">
+                                        <div className="kt-widget__content">
+                                            <div className="kt-widget__info">
+                                                <span className="kt-widget__label">Username :</span>
+                                                <a href="#" className="kt-widget__data">{username}</a>
+                                            </div>
+                                            <div className="kt-widget__info">
+                                                <span className="kt-widget__label">Téléphone :</span>
+                                                <a href="#" className="kt-widget__data">{data.telephone.join("/")}</a>
+                                            </div>
+                                            <div className="kt-widget__info">
+                                                <span className="kt-widget__label">Roles :</span>
+                                                <span className="kt-widget__data">{role}</span>
                                             </div>
                                             <div className="kt-widget__items">
                                                 <NavLink to="/settings/account/personal-information" className="kt-widget__item" activeClassName="kt-widget__item--active">

@@ -179,7 +179,7 @@ const UnitTypeForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.can_be_target.length || error.can_treat.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Unité")} <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Type d'unité")}<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <div className="kt-checkbox-inline">
                                                         <label className="kt-checkbox">
@@ -213,7 +213,7 @@ const UnitTypeForm = (props) => {
                                             </div>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Unité")} <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Type d'unité")}<InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"

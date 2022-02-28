@@ -8,7 +8,6 @@ import {
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../config/appConfig";
-import {AUTH_TOKEN} from "../../constants/token";
 import {
     debug,
     filterChannel,
@@ -32,7 +31,6 @@ import Loader from "./Loader";
 import HtmlDescriptionModal from "./DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "./DescriptionDetail/HtmlDescription";
 import {useTranslation} from "react-i18next";
-
 
 
 const endPointConfig = {
@@ -324,7 +322,7 @@ const IncompleteClaimsEdit = props => {
     };
     const onChangeLieu = (e) => {
         const newData = {...data};
-        newData.Lieu = e.target.value;
+        newData.lieu = e.target.value;
         setData(newData);
     };
 
@@ -479,6 +477,7 @@ const IncompleteClaimsEdit = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+
         if (!newData.amount_disputed)
             delete newData.amount_disputed;
         if (!newData.amount_currency_slug)
@@ -486,10 +485,10 @@ const IncompleteClaimsEdit = props => {
         if (!verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
             delete newData.relationship_id;
 
-        debug(endPoint.update(`${id}`), "endpoint");
-        for (var value of formatFormData(newData).values()) {
-            debug(value, "value");
-        }
+        /*        debug(endPoint.update(`${id}`), "endpoint");
+                for (var value of formatFormData(newData).values()) {
+                    debug(value, "value");
+                }*/
         if (verifyTokenExpire()) {
             axios.post(endPoint.update(`${id}`), formatFormData(newData))
                 .then((response) => {
@@ -530,7 +529,8 @@ const IncompleteClaimsEdit = props => {
                 (verifyPermission(props.userPermissions, 'update-claim-incomplete-against-any-institution')
                     || verifyPermission(props.userPermissions, "update-claim-incomplete-against-my-institution") ||
                     verifyPermission(props.userPermissions, "update-claim-incomplete-without-client")) && isRequire ? (
-                    <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
+                         id="kt_content">
                         <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                             <div className="kt-container  kt-container--fluid ">
                                 <div className="kt-subheader__main">
@@ -598,7 +598,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.institution_targeted_id.length ? (
                                                                         error.institution_targeted_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -780,8 +781,26 @@ const IncompleteClaimsEdit = props => {
                                                                     </div>
 
                                                                 </div>
+
+                                                                <div className="form-group row">
+                                                                    <div className={"col"}>
+                                                                        <label
+                                                                            htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}<InputRequire/></label>
+                                                                        <Select
+                                                                            classNamePrefix="select"
+                                                                            className="basic-single"
+                                                                            placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}
+                                                                            value={claimCategory}
+                                                                            onChange={onChangeClaimCategory}
+                                                                            options={claimCategories}
+                                                                        />
+                                                                        >>>>>>> master_test
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
+
+
                                                     ) : null
                                                 }
 
@@ -820,21 +839,20 @@ const IncompleteClaimsEdit = props => {
                                                                             }
                                                                         </div>
                                                                         <div
-                                                                            className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                            className={error.claim_object_id.length ? "col validated" : "col"}>
                                                                             <label
-                                                                                htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""} {isRequire.account_targeted_id ?
-                                                                                <InputRequire/> : ""}</label>
+                                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}<InputRequire/></label>
                                                                             <Select
                                                                                 classNamePrefix="select"
                                                                                 className="basic-single"
-                                                                                placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
-                                                                                value={account}
-                                                                                onChange={onChangeAccount}
-                                                                                options={accounts}
+                                                                                placeholder={componentData ? componentData.params.fr.object_placeholder.value : ""}
+                                                                                value={claimObject}
+                                                                                onChange={onChangeClaimObject}
+                                                                                options={claimObjects}
                                                                             />
                                                                             {
-                                                                                error.account_targeted_id.length ? (
-                                                                                    error.account_targeted_id.map((error, index) => (
+                                                                                error.claim_object_id.length ? (
+                                                                                    error.claim_object_id.map((error, index) => (
                                                                                         <div key={index}
                                                                                              className="invalid-feedback">
                                                                                             {error}
@@ -842,6 +860,55 @@ const IncompleteClaimsEdit = props => {
                                                                                     ))
                                                                                 ) : null
                                                                             }
+                                                                        </div>
+
+                                                                        <div
+                                                                            className={error.lieu.length ? "col validated" : "col"}>
+                                                                            <label
+                                                                                htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""} </label>
+                                                                            <input
+                                                                                // disabled={!disabledInput}
+                                                                                id="lieu"
+                                                                                type="text"
+                                                                                className={error.lieu.length ? "form-control is-invalid" : "form-control"}
+                                                                                placeholder={componentData ? componentData.params.fr.lieu_placeholder.value : ""}
+                                                                                value={data.lieu}
+                                                                                onChange={e => onChangeLieu(e)}
+                                                                            />
+                                                                            {
+                                                                                error.lieu.length ? (
+                                                                                    error.lieu.map((error, index) => (
+                                                                                        <div key={index}
+                                                                                             className="invalid-feedback">
+                                                                                            {error}
+                                                                                        </div>
+                                                                                    ))
+                                                                                ) : null
+                                                                            }
+                                                                            <div
+                                                                                className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                                <label
+                                                                                    htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""} {isRequire.account_targeted_id ?
+                                                                                    <InputRequire/> : ""}</label>
+                                                                                <Select
+                                                                                    classNamePrefix="select"
+                                                                                    className="basic-single"
+                                                                                    placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
+                                                                                    value={account}
+                                                                                    onChange={onChangeAccount}
+                                                                                    options={accounts}
+                                                                                />
+                                                                                {
+                                                                                    error.account_targeted_id.length ? (
+                                                                                        error.account_targeted_id.map((error, index) => (
+                                                                                            <div key={index}
+                                                                                                 className="invalid-feedback">
+                                                                                                {error}
+                                                                                            </div>
+                                                                                        ))
+                                                                                    ) : null
+                                                                                }
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 )
@@ -865,7 +932,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.request_channel_slug.length ? (
                                                                         error.request_channel_slug.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -889,7 +957,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.response_channel_slug.length ? (
                                                                         error.response_channel_slug.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -928,7 +997,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.claim_object_id.length ? (
                                                                         error.claim_object_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -981,7 +1051,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.amount_disputed.length ? (
                                                                         error.amount_disputed.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1007,7 +1078,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.amount_currency_slug.length ? (
                                                                         error.amount_currency_slug.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1035,7 +1107,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.event_occured_at.length ? (
                                                                         error.event_occured_at.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1085,7 +1158,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.file.length ? (
                                                                         error.file.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1104,14 +1178,14 @@ const IncompleteClaimsEdit = props => {
                                                                         <InputRequire/> : ""}</label>
 
                                                                 {
-                                                                    data.request_channel_slug ==="email"?(
+                                                                    data.request_channel_slug === "email" ? (
                                                                             <div>
                                                                                 <HtmlDescription onClick={e => {
                                                                                     e.preventDefault()
                                                                                     showModal(data.description ? data.description : '-')
                                                                                 }}/>
                                                                             </div>
-                                                                        ):
+                                                                        ) :
                                                                         (
                                                                             <textarea
                                                                                 rows="7"
@@ -1127,7 +1201,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.description.length ? (
                                                                         error.description.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1151,7 +1226,8 @@ const IncompleteClaimsEdit = props => {
                                                                 {
                                                                     error.claimer_expectation.length ? (
                                                                         error.claimer_expectation.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -1159,8 +1235,11 @@ const IncompleteClaimsEdit = props => {
                                                                 }
                                                             </div>
                                                         </div>
-                                                        <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                        <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
+                                                        <button id="button_modal" type="button"
+                                                                className="btn btn-secondary btn-icon-sm d-none"
+                                                                data-toggle="modal" data-target="#message_email"/>
+                                                        <HtmlDescriptionModal title={t("Description")}
+                                                                              message={currentMessage}/>
                                                     </div>
                                                 </div>
 

@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import {AUTH_TOKEN} from "../../constants/token";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
@@ -12,7 +11,7 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import Select from "react-select";
 import {useTranslation} from "react-i18next";
@@ -212,11 +211,16 @@ const EmailConfig = (props) => {
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     setReload(!reload);
                 })
-                    .catch(errorRequest => {
+                    .catch(error => {
                     setLoadingEmail(false);
                     setData(sendData);
-                    setError({...defaultErrorEmail, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                    if (error.response.data.code === 400)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    else {
+                        setError({...defaultErrorEmail, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }
+
                 })
                 ;
         }
@@ -240,10 +244,14 @@ const EmailConfig = (props) => {
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     setReload(!reload);
                 })
-                .catch(errorRequest => {
+                .catch(error => {
                     setLoadingEmail(false);
-                    setError({...defaultErrorEmail, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
+                    if (error.response.data.code === 400)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                    else {
+                        setError({...defaultErrorEmail, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    }
                 })
             ;
         }

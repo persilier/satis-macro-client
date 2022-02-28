@@ -16,7 +16,7 @@ import EmptyTable from "../components/EmptyTable";
 import HeaderTablePage from "../components/HeaderTablePage";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
-import {AUTH_TOKEN} from "../../constants/token";
+
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
@@ -24,12 +24,12 @@ import {toastDeleteSuccessMessageConfig, toastSuccessMessageWithParameterConfig}
 import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
-axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
 const   ProofReceipt = (props) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
+
 
     if (!(verifyPermission(props.userPermissions, 'list-notification-proof') || verifyPermission(props.userPermissions, 'list-any-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-notification-proof') || verifyPermission(props.userPermissions, 'pilot-list-any-notification-proof')))
         window.location.href = ERROR_401;
@@ -374,7 +374,6 @@ const   ProofReceipt = (props) => {
                                                         ))
                                                     )}
                                                 </div>
-
                                                 <div className="form-group col-6">
                                                     <label htmlFor="end_date">{t("Date de fin")}</label>
                                                     <input

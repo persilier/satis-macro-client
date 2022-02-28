@@ -14,7 +14,6 @@ import {
     getLowerCaseString,
     loadCss, removeNullValueInObject,
 } from "../../helpers/function";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
@@ -42,6 +41,7 @@ const ClaimReportingUemoaThree = (props) => {
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
     const defaultError = {
         date_start: [],
         date_end: [],
@@ -452,7 +452,7 @@ const ClaimReportingUemoaThree = (props) => {
     };
 
     const downloadReportingPdf = async () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -498,7 +498,7 @@ const ClaimReportingUemoaThree = (props) => {
                 .then(async ({data}) => {
                     setError(defaultError);
                     FileSaver.saveAs(data, `reporting_etat_hors_delai_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -507,7 +507,7 @@ const ClaimReportingUemoaThree = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -638,7 +638,7 @@ const ClaimReportingUemoaThree = (props) => {
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Retard de")} +30
+                                        {t("Etat hors délai")}
                                     </a>
                                 </div>
                             </div>
@@ -654,7 +654,7 @@ const ClaimReportingUemoaThree = (props) => {
 
                         <div className="kt-portlet">
                             <HeaderTablePage
-                                title={t("Rapport") + t("Retard de") + "30" + t("jours")}
+                                title={t("Rapport Etat hors délai")}
                             />
 
                             <div className="kt-portlet__body">
@@ -915,34 +915,34 @@ const ClaimReportingUemoaThree = (props) => {
                                             }
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div className="col-md-12">
-                                        <div className="form-group d-flex justify-content-end">
-                                            <a className="d-none" href="#" id="downloadButton" download={true}>downloadButton</a>
-                                            {loadFilter ? (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    {t("Chargement")}...
-                                                </button>
-                                            ) : (
-                                                <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>{t("Filtrer le rapport")}</button>
-                                            )}
+                                <div className="col-md-12">
+                                    <div className="form-group d-flex justify-content-end">
+                                        <a className="d-none" href="#" id="downloadButton" download={true}>downloadButton</a>
+                                        {loadFilter ? (
+                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                {t("Chargement")}...
+                                            </button>
+                                        ) : (
+                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>{t("Filtrer le rapport")}</button>
+                                        )}
 
-                                            {loadDownload ? (
-                                                <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                    {t("Chargement")}...
-                                                </button>
-                                            ) : (
-                                                <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
-                                            )}
+                                        {loadDownload ? (
+                                            <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
+                                                {t("Chargement")}...
+                                            </button>
+                                        ) : (
+                                            <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
+                                        )}
 
-                                            {loadDownload ? (
-                                                <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                    {t("Chargement")}...
-                                                </button>
-                                            ) : (
-                                                <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
-                                            )}
-                                        </div>
+                                        {loadDownloadPdf ? (
+                                            <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
+                                                {t("Chargement")}...
+                                            </button>
+                                        ) : (
+                                            <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownload)}>PDF</button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

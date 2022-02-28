@@ -68,9 +68,12 @@ const TreatmentForm = (props) => {
         props.addTreatment(newData)
     };
     const onClick = (e) => {
+        const newData = {...data};
         e.preventDefault();
         setStartRequest(true);
-        axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, data)
+        if (!newData.amount_returned)
+            delete  newData.amount_returned;
+        axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/treatment`, newData)
             .then(response => {
                 setStartRequest(false);
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig());
@@ -86,35 +89,35 @@ const TreatmentForm = (props) => {
     console.log("props:", props);
     return (
         ready ? (
-            <div>
-                {
-                    props.amount_disputed >= 0 ?
-                        <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
-                            <label className="col-xl-3 col-lg-3 col-form-label"
-                                   htmlFor="name">{t("Montant retourné en")} <strong>{props.currency}</strong>
-                            </label>
-                            <div className="col-lg-9 col-xl-6">
-                                <input
-                                    id="amount"
-                                    type="number"
-                                    min={0}
-                                    className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
-                                    placeholder={t("Veuillez entrer le montant à retourner")}
-                                    value={data.amount_returned}
-                                    onChange={(e) => onChangeAmount(e)}
-                                />
-                                {
-                                    error.amount_returned.length ? (
-                                        error.amount_returned.map((error, index) => (
-                                            <div key={index}
-                                                 className="invalid-feedback">
-                                                {error}
-                                            </div>
-                                        ))
-                                    ) : ""
-                                }
-                            </div>
+        <div>
+            {
+                props.amount_disputed >= 0 ?
+                    <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
+                        <label className="col-xl-3 col-lg-3 col-form-label"
+                               htmlFor="name"> {props.currency? ("Montant retourné en " + props.currency):"Montant retourné"}
+                        </label>
+                        <div className="col-lg-9 col-xl-6">
+                            <input
+                                id="amount"
+                                type="number"
+                                min={0}
+                                className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
+                                placeholder="Veillez entrer le montant à retourner"
+                                value={data.amount_returned}
+                                onChange={(e) => onChangeAmount(e)}
+                            />
+                            {
+                                error.amount_returned.length ? (
+                                    error.amount_returned.map((error, index) => (
+                                        <div key={index}
+                                             className="invalid-feedback">
+                                            {error}
+                                        </div>
+                                    ))
+                                ) : ""
+                            }
                         </div>
+                    </div>
                         : null
                 }
                 <div
@@ -146,7 +149,9 @@ const TreatmentForm = (props) => {
 
                 <div
                     className={error.preventive_measures.length ? "form-group row validated" : "form-group row"}>
-                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">{t("Mesures préventives")} <InputRequire/></label>
+                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="description">{t("Mesures préventives")}
+                    {/*<InputRequire/>*/}
+                    </label>
                     <div className="col-lg-9 col-xl-6">
                     <textarea
                         id="measures"

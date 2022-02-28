@@ -14,6 +14,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import InputRequire from "./InputRequire";
 
 
 const TypeCompteForm = (props) => {
@@ -192,6 +193,7 @@ const TypeCompteForm = (props) => {
                                             id="description"
                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
                                             placeholder={t("Veuillez entrer la description")}
+
                                             cols="30"
                                             rows="5"
                                             value={data.description}

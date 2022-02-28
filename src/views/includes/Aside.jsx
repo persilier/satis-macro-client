@@ -267,7 +267,7 @@ const Aside = (props) => {
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-two" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">{t("Etat Retard de +30")}</span>
+                                                                    <span className="kt-menu__link-text">{t("Etat Retard de +30 jrs")}</span>
                                                                 </li>
                                                             </NavLink>
                                                         ) : null

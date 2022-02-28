@@ -5,7 +5,6 @@ import FormInformation from "../../components/FormInformation";
 import TagsInput from "react-tagsinput";
 import Select from "react-select";
 import appConfig from "../../../config/appConfig";
-import {AUTH_TOKEN} from "../../../constants/token";
 import {formatSelectOption, formatToTimeStamp} from "../../../helpers/function";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
@@ -164,8 +163,7 @@ const ConfirmClaimAddModal = props => {
                     ;
                 }
             }
-        }
-        else {
+        } else {
             setUnits([]);
             setUnit(null);
             setInstitution(null);
@@ -329,16 +327,13 @@ const ConfirmClaimAddModal = props => {
             if (key === "file") {
                 for (let i = 0; i < (newData.file).length; i++)
                     formData.append("file[]", (newData[key])[i], ((newData[key])[i]).name);
-            }
-            else if (key === "telephone") {
+            } else if (key === "telephone") {
                 for (let i = 0; i < (newData.telephone).length; i++)
                     formData.append("telephone[]", (newData[key])[i]);
-            }
-            else if (key === "email") {
+            } else if (key === "email") {
                 for (let i = 0; i < (newData.email).length; i++)
                     formData.append("email[]", (newData[key])[i]);
-            }
-            else
+            } else
                 formData.set(key, newData[key]);
         }
         return formData;
@@ -352,6 +347,10 @@ const ConfirmClaimAddModal = props => {
 
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!newData.amount_disputed)
+            delete newData.amount_disputed;
+        if (!newData.amount_currency_slug)
+            delete newData.amount_currency_slug;
         if (!verifyPermission(props.userPermissions, "store-claim-without-client"))
             delete newData.relationship_id;
         if (verifyTokenExpire()) {
@@ -395,13 +394,15 @@ const ConfirmClaimAddModal = props => {
 
     return (
         ready ? (
-            <div className="modal fade" id="kt_modal_4_2" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{display: "none"}}>
+            <div className="modal fade" id="kt_modal_4_2" data-backdrop="static" tabIndex="-1" role="dialog"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true" style={{display: "none"}}>
                 <div className="modal-dialog modal-xl" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel">{t("Enregistrement réclamation")}</h5>
                             <button onClick={(e) => onClickClose(e)} type="button" className="close"/>
-                            <button id="closeButton" style={{display: "none"}} type="button" className="close" data-dismiss="modal" aria-label="Close"/>
+                            <button id="closeButton" style={{display: "none"}} type="button" className="close"
+                                    data-dismiss="modal" aria-label="Close"/>
                         </div>
                         <div className="modal-body">
                             <form>
@@ -414,8 +415,11 @@ const ConfirmClaimAddModal = props => {
                                         <div className="kt-section__body">
                                             {
                                                 verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
-                                                    <div className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">{componentData ? componentData.params.fr.institution.value : ""} <InputRequire/></label>
+                                                    <div
+                                                        className={error.institution_targeted_id.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label"
+                                                               htmlFor="institution">{componentData ? componentData.params.fr.institution.value : ""}
+                                                            <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             <Select
                                                                 isClearable
@@ -448,7 +452,7 @@ const ConfirmClaimAddModal = props => {
                                                             <div className="form-group row">
                                                                 <div className={"col d-flex align-items-center mt-4"}>
                                                                     <label className="kt-checkbox">
-                                                                        <input disabled={true} type="checkbox" />
+                                                                        <input disabled={true} type="checkbox"/>
                                                                         {t("Le client est-il déjà enregistré ?")}<span/>
                                                                     </label>
                                                                 </div>
@@ -457,7 +461,11 @@ const ConfirmClaimAddModal = props => {
                                                                     <div className="row">
                                                                         <div className="col d-flex">
                                                                             <input
-                                                                                style={{marginTop: "2rem", borderBottomRightRadius: "0px", borderTopRightRadius: "0px"}}
+                                                                                style={{
+                                                                                    marginTop: "2rem",
+                                                                                    borderBottomRightRadius: "0px",
+                                                                                    borderTopRightRadius: "0px"
+                                                                                }}
                                                                                 type="text"
                                                                                 placeholder={t("Rechercher un client...")}
                                                                                 className="form-control"
@@ -465,7 +473,11 @@ const ConfirmClaimAddModal = props => {
                                                                             />
 
                                                                             <button
-                                                                                style={{marginTop: "2rem", borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px"}}
+                                                                                style={{
+                                                                                    marginTop: "2rem",
+                                                                                    borderTopLeftRadius: "0px",
+                                                                                    borderBottomLeftRadius: "0px"
+                                                                                }}
                                                                                 type="button"
                                                                                 className="btn btn-primary btn-icon"
                                                                                 disabled={true}
@@ -480,8 +492,11 @@ const ConfirmClaimAddModal = props => {
                                                     }
 
                                                     <div className="form-group row">
-                                                        <div className={error.lastname.length ? "col validated" : "col"}>
-                                                            <label htmlFor="lastname">{componentData ? componentData.params.fr.nom.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.lastname.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="lastname">{componentData ? componentData.params.fr.nom.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 disabled={true}
                                                                 id="lastname"
@@ -502,8 +517,11 @@ const ConfirmClaimAddModal = props => {
                                                             }
                                                         </div>
 
-                                                        <div className={error.firstname.length ? "col validated" : "col"}>
-                                                            <label htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.firstname.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="firstname">{componentData ? componentData.params.fr.prenoms.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 disabled={true}
                                                                 id="firstname"
@@ -526,8 +544,11 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={error.sexe.length ? "form-group col validated" : "form-group col"}>
-                                                            <label htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.sexe.length ? "form-group col validated" : "form-group col"}>
+                                                            <label
+                                                                htmlFor="sexe">{componentData ? componentData.params.fr.sexe.value : ""}
+                                                                <InputRequire/></label>
                                                             <select
                                                                 disabled={true}
                                                                 id="sexe"
@@ -535,7 +556,8 @@ const ConfirmClaimAddModal = props => {
                                                                 value={data.sexe}
                                                                 onChange={(e) => onChangeSexe(e)}
                                                             >
-                                                                <option value="" disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
+                                                                <option value=""
+                                                                        disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
                                                                 <option value="F">{t("Féminin")}</option>
                                                                 <option value="M">{t("Masculin")}</option>
                                                                 <option value="A">{t("Autres")}</option>
@@ -552,7 +574,8 @@ const ConfirmClaimAddModal = props => {
                                                         </div>
 
                                                         <div className={error.ville.length ? "col validated" : "col"}>
-                                                            <label htmlFor="ville">{componentData ? componentData.params.fr.ville.value : ""}</label>
+                                                            <label
+                                                                htmlFor="ville">{componentData ? componentData.params.fr.ville.value : ""}</label>
                                                             <input
                                                                 disabled={true}
                                                                 id="ville"
@@ -575,8 +598,11 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={error.telephone.length ? "col validated" : "col"}>
-                                                            <label htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/> <InputRequire/></label>
+                                                        <div
+                                                            className={error.telephone.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
+                                                                <InputRequire/></label>
                                                             <TagsInput
                                                                 disabled={true}
                                                                 value={data.telephone}
@@ -598,7 +624,9 @@ const ConfirmClaimAddModal = props => {
                                                         </div>
 
                                                         <div className={error.email.length ? "col validated" : "col"}>
-                                                            <label htmlFor="email">{componentData ? componentData.params.fr.email.value : ""} <InputRequire/></label>
+                                                            <label
+                                                                htmlFor="email">{componentData ? componentData.params.fr.email.value : ""}
+                                                                <InputRequire/></label>
                                                             <TagsInput
                                                                 disabled={true}
                                                                 value={data.email}
@@ -622,7 +650,8 @@ const ConfirmClaimAddModal = props => {
                                                 </div>
                                             </div>
 
-                                            <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                            <div
+                                                className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
                                             <div className="kt-section">
                                                 <div className="kt-section__body">
@@ -631,8 +660,10 @@ const ConfirmClaimAddModal = props => {
                                                     {
                                                         !verifyPermission(props.userPermissions, 'store-claim-without-client') ? (
                                                             <div className="form-group row">
-                                                                <div className={error.unit_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="unit">{componentData ? componentData.params.fr.unite.value : ""}</label>
+                                                                <div
+                                                                    className={error.unit_targeted_id.length ? "col validated" : "col"}>
+                                                                    <label
+                                                                        htmlFor="unit">{componentData ? componentData.params.fr.unite.value : ""}</label>
                                                                     <Select
                                                                         isClearable
                                                                         placeholder={componentData ? componentData.params.fr.unite_placeholder.value : ""}
@@ -643,7 +674,8 @@ const ConfirmClaimAddModal = props => {
                                                                     {
                                                                         error.unit_targeted_id.length ? (
                                                                             error.unit_targeted_id.map((error, index) => (
-                                                                                <div key={index} className="invalid-feedback">
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
                                                                                     {error}
                                                                                 </div>
                                                                             ))
@@ -651,8 +683,10 @@ const ConfirmClaimAddModal = props => {
                                                                     }
                                                                 </div>
 
-                                                                <div className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
+                                                                <div
+                                                                    className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                    <label
+                                                                        htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
                                                                     <Select
                                                                         isClearable
                                                                         placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
@@ -663,7 +697,8 @@ const ConfirmClaimAddModal = props => {
                                                                     {
                                                                         error.account_targeted_id.length ? (
                                                                             error.account_targeted_id.map((error, index) => (
-                                                                                <div key={index} className="invalid-feedback">
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
                                                                                     {error}
                                                                                 </div>
                                                                             ))
@@ -675,8 +710,11 @@ const ConfirmClaimAddModal = props => {
                                                     }
 
                                                     <div className="form-group row">
-                                                        <div className={error.request_channel_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.request_channel_slug.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="receptionChannel">{componentData ? componentData.params.fr.canal_reception.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.canal_reception_placeholder.value : ""}
@@ -695,8 +733,11 @@ const ConfirmClaimAddModal = props => {
                                                             }
                                                         </div>
 
-                                                        <div className={error.response_channel_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.response_channel_slug.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="responseChannel">{componentData ? componentData.params.fr.canal_reponse.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.canal_reponse_placeholder.value : ""}
@@ -715,10 +756,11 @@ const ConfirmClaimAddModal = props => {
                                                             }
                                                         </div>
                                                     </div>
-
                                                     <div className="form-group row">
                                                         <div className={"col"}>
-                                                            <label htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""} </label>
+                                                            <label
+                                                                htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}
@@ -728,8 +770,11 @@ const ConfirmClaimAddModal = props => {
                                                             />
                                                         </div>
 
-                                                        <div className={error.claim_object_id.length ? "col validated" : "col"}>
-                                                            <label htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.claim_object_id.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}
+                                                                <InputRequire/></label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.object_placeholder.value : ""}
@@ -750,7 +795,8 @@ const ConfirmClaimAddModal = props => {
 
                                                         <div
                                                             className={error.lieu.length ? "col validated" : "col"}>
-                                                            <label htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""}</label>
+                                                            <label
+                                                                htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""}</label>
                                                             <input
                                                                 type={"text"}
                                                                 id="lieu"
@@ -772,8 +818,12 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={error.amount_disputed.length ? "col validated" : "col"}>
-                                                            <label htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong className="text-danger">Laisser vide si pas de montant</strong>)</label>
+                                                        <div
+                                                            className={error.amount_disputed.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="amount_claim">{componentData ? componentData.params.fr.montant.value : ""} (<strong
+                                                                className="text-danger">Laisser vide si pas de
+                                                                montant</strong>)</label>
                                                             <input
                                                                 type={"number"}
                                                                 id="amount_claim"
@@ -793,8 +843,10 @@ const ConfirmClaimAddModal = props => {
                                                             }
                                                         </div>
 
-                                                        <div className={error.amount_currency_slug.length ? "col validated" : "col"}>
-                                                            <label htmlFor="currency">{componentData ? componentData.params.fr.devise.value : ""}</label>
+                                                        <div
+                                                            className={error.amount_currency_slug.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="currency">{componentData ? componentData.params.fr.devise.value : ""}</label>
                                                             <Select
                                                                 isClearable
                                                                 placeholder={componentData ? componentData.params.fr.devise_placeholder.value : ""}
@@ -815,8 +867,11 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={error.event_occured_at.length ? "col validated" : "col"}>
-                                                            <label htmlFor="date">{componentData ? componentData.params.fr.date.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.event_occured_at.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="date">{componentData ? componentData.params.fr.date.value : ""}
+                                                                <InputRequire/></label>
                                                             <input
                                                                 type={"datetime-local"}
                                                                 id="date"
@@ -837,7 +892,8 @@ const ConfirmClaimAddModal = props => {
                                                         </div>
 
                                                         <div className="col">
-                                                            <label htmlFor="file">{componentData ? componentData.params.fr.piece.value : ""}</label>
+                                                            <label
+                                                                htmlFor="file">{componentData ? componentData.params.fr.piece.value : ""}</label>
                                                             <input
                                                                 onChange={onChangeFile}
                                                                 type="file"
@@ -858,8 +914,11 @@ const ConfirmClaimAddModal = props => {
 
                                                         {
                                                             verifyPermission(props.userPermissions, "store-claim-without-client") ? (
-                                                                <div className={error.relationship_id.length ? "col validated" : "col"}>
-                                                                    <label htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} avec l'institution <InputRequire/></label>
+                                                                <div
+                                                                    className={error.relationship_id.length ? "col validated" : "col"}>
+                                                                    <label
+                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} avec
+                                                                        l'institution <InputRequire/></label>
                                                                     <Select
                                                                         isClearable
                                                                         placeholder={componentData ? componentData.params.fr.relation_placeholder.value : ""}
@@ -870,7 +929,8 @@ const ConfirmClaimAddModal = props => {
                                                                     {
                                                                         error.relationship_id.length ? (
                                                                             error.relationship_id.map((error, index) => (
-                                                                                <div key={index} className="invalid-feedback">
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
                                                                                     {error}
                                                                                 </div>
                                                                             ))
@@ -884,8 +944,11 @@ const ConfirmClaimAddModal = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={error.description.length ? "col validated" : "col"}>
-                                                            <label htmlFor="description">{componentData ? componentData.params.fr.description.value : ""} <InputRequire/></label>
+                                                        <div
+                                                            className={error.description.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="description">{componentData ? componentData.params.fr.description.value : ""}
+                                                                <InputRequire/></label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="description"
@@ -905,8 +968,10 @@ const ConfirmClaimAddModal = props => {
                                                             }
                                                         </div>
 
-                                                        <div className={error.claimer_expectation.length ? "col validated" : "col"}>
-                                                            <label htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value : ""}</label>
+                                                        <div
+                                                            className={error.claimer_expectation.length ? "col validated" : "col"}>
+                                                            <label
+                                                                htmlFor="claimer_expectation">{componentData ? componentData.params.fr.attente.value : ""}</label>
                                                             <textarea
                                                                 rows="7"
                                                                 id="claimer_expectation"
@@ -929,21 +994,28 @@ const ConfirmClaimAddModal = props => {
                                                 </div>
                                             </div>
 
-                                            <div className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
+                                            <div
+                                                className="kt-separator kt-separator--border-dashed kt-separator--space-lg"/>
 
                                             <div className="kt-section">
                                                 <div className="kt-section__body">
-                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""} <InputRequire/></h3>
+                                                    <h3 className="kt-section__title kt-section__title-lg">{componentData ? componentData.params.fr.last_titre.value : ""}
+                                                        <InputRequire/></h3>
 
                                                     <div className="form-group row">
-                                                        <label className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
+                                                        <label
+                                                            className="col-3 col-form-label">{componentData ? componentData.params.fr.question.value : ""}</label>
                                                         <div className="col-9">
                                                             <div className="kt-radio-inline">
                                                                 <label className="kt-radio">
-                                                                    <input type="radio" value={option1} onChange={handleOptionChange} checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                    <input type="radio" value={option1}
+                                                                           onChange={handleOptionChange}
+                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
-                                                                    <input type="radio" value={option2} onChange={handleOptionChange} checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                    <input type="radio" value={option2}
+                                                                           onChange={handleOptionChange}
+                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -958,14 +1030,19 @@ const ConfirmClaimAddModal = props => {
                         <div className="modal-footer">
                             {
                                 !startRequest ? (
-                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Valider")}</button>
+                                    <button type="submit" onClick={(e) => onSubmit(e)}
+                                            className="btn btn-primary">{t("Valider")}</button>
                                 ) : (
-                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                    <button
+                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                        type="button" disabled>
                                         {t("Chargement")}...
                                     </button>
                                 )
                             }
-                            <button id="closeConfirmSaveForm" style={{display: "none"}} type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button id="closeConfirmSaveForm" style={{display: "none"}} type="button"
+                                    className="btn btn-secondary" data-dismiss="modal">Close
+                            </button>
                         </div>
                     </div>
                 </div>

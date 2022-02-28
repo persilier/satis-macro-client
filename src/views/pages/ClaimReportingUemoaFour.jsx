@@ -14,7 +14,6 @@ import {
     getLowerCaseString,
     loadCss,
 } from "../../helpers/function";
-import {AUTH_TOKEN} from "../../constants/token";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
@@ -49,6 +48,7 @@ const ClaimReportingUemoaThree = (props) => {
     });
     const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
+    const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
 
@@ -62,16 +62,19 @@ const ClaimReportingUemoaThree = (props) => {
                 endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
             else
                 endpoint = `${appConfig.apiDomaine}/without/uemoa/state-analytique`;
-            sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
-        }
-        else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+            sendData = {
+                date_start: dateStart,
+                date_end: dateEnd,
+                institution_id: institution ? institution.value : null
+            };
+        } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/state-analytique`;
             sendData = {date_start: dateStart, date_end: dateEnd};
         }
         await axios.get(endpoint, {params: sendData})
             .then(response => {
                 if (click)
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès"): ""));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
                 setNumberPage(forceRound(response.data.length / numberPerPage));
                 setShowList(response.data.slice(0, numberPerPage));
                 setClaims(response.data);
@@ -134,17 +137,17 @@ const ClaimReportingUemoaThree = (props) => {
                 getLowerCaseString(el.filiale ? el.filiale : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimCategorie ? el.claimCategorie : '-').indexOf(value) >= 0 ||
                 getLowerCaseString(el.claimObject ? el.claimObject : '-').indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayMediumQualification+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayMediumTreatmentWithWeekend+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayMediumTreatmentWithoutWeekend+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.delayPlanned+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.percentageNoTreated+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.percentageTreatedInDelay+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.percentageTreatedOutDelay+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.totalClaim+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.totalNoValidated+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.totalTreated+"").indexOf(value) >= 0 ||
-                getLowerCaseString(el.totalUnfounded+"").indexOf(value) >= 0
+                getLowerCaseString(el.delayMediumQualification + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayMediumTreatmentWithWeekend + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayMediumTreatmentWithoutWeekend + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.delayPlanned + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.percentageNoTreated + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.percentageTreatedInDelay + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.percentageTreatedOutDelay + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.totalClaim + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.totalNoValidated + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.totalTreated + "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.totalUnfounded + "").indexOf(value) >= 0
             )
         });
 
@@ -246,7 +249,11 @@ const ClaimReportingUemoaThree = (props) => {
                 endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
             else
                 endpoint = `${appConfig.apiDomaine}/without/uemoa/state-analytique`;
-            sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
+            sendData = {
+                date_start: dateStart,
+                date_end: dateEnd,
+                institution_id: institution ? institution.value : null
+            };
         } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/state-analytique`;
             sendData = {date_start: dateStart, date_end: dateEnd};
@@ -269,7 +276,7 @@ const ClaimReportingUemoaThree = (props) => {
                         institution_id: []
                     });
                     const downloadButton = document.getElementById("downloadButton");
-                    downloadButton.href =`${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
+                    downloadButton.href = `${appConfig.apiDomaine}/download-uemoa-reports/${data.file}`;
                     downloadButton.click();
                     setLoadDownload(false);
                     setLoadDownload(false);
@@ -290,7 +297,7 @@ const ClaimReportingUemoaThree = (props) => {
     };
 
     const downloadReportingPdf = () => {
-        setLoadDownload(true);
+        setLoadDownloadPdf(true);
         let endpoint = "";
         let sendData = {};
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
@@ -298,7 +305,11 @@ const ClaimReportingUemoaThree = (props) => {
                 endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique-pdf`;
             else
                 endpoint = `${appConfig.apiDomaine}/without/uemoa/state-analytique-pdf`;
-            sendData = {date_start: dateStart, date_end: dateEnd, institution_id: institution ? institution.value : null};
+            sendData = {
+                date_start: dateStart,
+                date_end: dateEnd,
+                institution_id: institution ? institution.value : null
+            };
         } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/state-analytique-pdf`;
             sendData = {date_start: dateStart, date_end: dateEnd};
@@ -321,8 +332,8 @@ const ClaimReportingUemoaThree = (props) => {
                         institution_id: []
                     });
                     FileSaver.saveAs(data, `reporting_etat_analytique_${new Date().getFullYear()}.pdf`);
-                    setLoadDownload(false);
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
+                    // setLoadDownload(false);
                     // ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Téléchargement éffectuer avec succès'));
                 })
                 .catch(error => {
@@ -333,7 +344,7 @@ const ClaimReportingUemoaThree = (props) => {
                         ...error.response.data.error
                     });
                     console.log("Something is wrong");
-                    setLoadDownload(false);
+                    setLoadDownloadPdf(false);
                 })
             ;
         }
@@ -345,10 +356,11 @@ const ClaimReportingUemoaThree = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>
-                    <button className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split" title={t("Détails")} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button className="btn btn-sm btn-clean btn-icon btn-icon-md dropdown-toggle dropdown-toggle-split"
+                            title={t("Détails")} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {/*<i className="flaticon2-down"/>*/}
                     </button>
-                    <div className="dropdown-menu px-5" style={{ width: "550px" }}>
+                    <div className="dropdown-menu px-5" style={{width: "550px"}}>
                         <div className="d-flex justify-content-between">
                             <strong>{t("Délai moyen de qualification")} (J) {t("avec weekend")}</strong>
                             <p className="ml-5">{claim.delayMediumQualification}</p>
@@ -371,25 +383,25 @@ const ClaimReportingUemoaThree = (props) => {
 
                         <div className="d-flex justify-content-between">
                             <strong>{t("Pourcentage de réclamations traités dans le délai")}</strong>
-                            <p className="ml-5">{claim.percentageTreatedInDelay+"%"}</p>
+                            <p className="ml-5">{claim.percentageTreatedInDelay + "%"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
                             <strong>{t("Pourcentage de réclamations traités hors délai")}</strong>
-                            <p className="ml-5">{claim.percentageTreatedOutDelay+"%"}</p>
+                            <p className="ml-5">{claim.percentageTreatedOutDelay + "%"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
                             <strong>{t("Pourcentage de réclamations en cours de traitement")}</strong>
-                            <p className="ml-5">{claim.percentageNoTreated+"%"}</p>
+                            <p className="ml-5">{claim.percentageNoTreated + "%"}</p>
                         </div>
                     </div>
                 </td>
                 {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                     <td>{claim.filiale ? claim.filiale : '-'}</td>
                 ) : null}
-                <td>{claim.claimCategorie  ? claim.claimCategorie  : "-"}</td>
-                <td>{claim.claimObject  ? claim.claimObject  : "-"}</td>
+                <td>{claim.claimCategorie ? claim.claimCategorie : "-"}</td>
+                <td>{claim.claimObject ? claim.claimObject : "-"}</td>
                 <td>{claim.totalClaim ? claim.totalClaim : "-"}</td>
                 <td>{claim.totalTreated ? claim.totalTreated : "-"}</td>
                 <td>{claim.totalUnfounded}</td>
@@ -410,9 +422,11 @@ const ClaimReportingUemoaThree = (props) => {
                                 </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                         {t("État retard de")} +30
                                     </a>
                                 </div>
@@ -436,7 +450,8 @@ const ClaimReportingUemoaThree = (props) => {
                                 <div className="row">
                                     {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                                         <div className="col">
-                                            <div className={error.institution_id.length ? "form-group validated" : "form-group"}>
+                                            <div
+                                                className={error.institution_id.length ? "form-group validated" : "form-group"}>
                                                 <label htmlFor="">{t("Institution")}</label>
                                                 <Select
                                                     isClearable
@@ -462,7 +477,9 @@ const ClaimReportingUemoaThree = (props) => {
                                     <div className="col">
                                         <div className="form-group">
                                             <label htmlFor="">{t("Date de début")}</label>
-                                            <input type="date" onChange={handleDateStartChange} className={error.date_start.length ? "form-control is-invalid" : "form-control"} value={dateStart}/>
+                                            <input type="date" onChange={handleDateStartChange}
+                                                   className={error.date_start.length ? "form-control is-invalid" : "form-control"}
+                                                   value={dateStart}/>
 
                                             {
                                                 error.date_start.length ? (
@@ -479,7 +496,9 @@ const ClaimReportingUemoaThree = (props) => {
                                     <div className="col">
                                         <div className="form-group">
                                             <label htmlFor="">{t("Date de fin")}</label>
-                                            <input type="date" onChange={handleDateEndChange} className={error.date_end.length ? "form-control is-invalid" : "form-control"} value={dateEnd}/>
+                                            <input type="date" onChange={handleDateEndChange}
+                                                   className={error.date_end.length ? "form-control is-invalid" : "form-control"}
+                                                   value={dateEnd}/>
 
                                             {
                                                 error.date_end.length ? (
@@ -495,29 +514,40 @@ const ClaimReportingUemoaThree = (props) => {
 
                                     <div className="col-md-12">
                                         <div className="form-group d-flex justify-content-end">
-                                            <a className="d-none" href="#" id="downloadButton" download={true}>downloadButton</a>
+                                            <a className="d-none" href="#" id="downloadButton"
+                                               download={true}>downloadButton</a>
                                             {loadFilter ? (
-                                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                    {t("Chargement")}...
+                                                <button
+                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                    type="button" disabled>
+                                                    {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button onClick={filterReporting} className="btn btn-primary" disabled={loadDownload ? true : false}>{t("Filtrer le rapport")}</button>
+                                                <button onClick={filterReporting} className="btn btn-primary"
+                                                        disabled={(loadDownload || loadDownloadPdf)}>{t("Filtrer le rapport")}</button>
                                             )}
 
                                             {loadDownload ? (
-                                                <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                    {t("Chargement")}...
+                                                <button
+                                                    className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
+                                                    type="button" disabled>
+                                                    {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>EXCEL</button>
+                                                <button onClick={downloadReporting} className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
                                             )}
 
-                                            {loadDownload ? (
-                                                <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                    {t("Chargement")}...
+                                            {loadDownloadPdf ? (
+                                                <button
+                                                    className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
+                                                    type="button" disabled>
+                                                    {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={loadFilter ? true : false}>PDF</button>
+                                                <button onClick={downloadReportingPdf}
+                                                        className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter || loadDownload)}>PDF</button>
                                             )}
                                         </div>
                                     </div>
@@ -535,41 +565,71 @@ const ClaimReportingUemoaThree = (props) => {
                                                     <div id="kt_table_1_filter" className="dataTables_filter">
                                                         <label>
                                                             {t("Rechercher")}:
-                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                            <input id="myInput" type="text"
+                                                                   onKeyUp={(e) => searchElement(e)}
+                                                                   className="form-control form-control-sm"
+                                                                   placeholder="" aria-controls="kt_table_1"/>
                                                         </label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col-sm-12">
-                                                    <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{width: "952px"}}>
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{width: "952px"}}>
                                                         <thead>
                                                         <tr role="row">
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Détails")}
                                                             </th>
                                                             {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                    style={{width: "70.25px"}}
+                                                                    aria-label="Country: activate to sort column ascending">
                                                                     {t("Filiale")}
                                                                 </th>
                                                             ) : null}
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Catégorie de réclamation")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Objet de réclamation")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Nombre de réclamations")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Nombre de réclamations traitées")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Nombre de réclamations non fondé")}
                                                             </th>
 
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1" rowSpan="1" colSpan="1"
+                                                                style={{width: "70.25px"}}
+                                                                aria-label="Country: activate to sort column ascending">
                                                                 {t("Nombre de réclamations en cours")}
                                                             </th>
                                                         </tr>
@@ -597,12 +657,17 @@ const ClaimReportingUemoaThree = (props) => {
                                                             {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
                                                                 <th rowSpan="1" colSpan="1">{t("Filiale")}</th>
                                                             ) : null}
-                                                            <th rowSpan="1" colSpan="1">{t("Catégorie de réclamation")}</th>
+                                                            <th rowSpan="1"
+                                                                colSpan="1">{t("Catégorie de réclamation")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Nombre de réclamations")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Nombre de réclamations traitées")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Nombre de réclamations non fondé")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Nombre de réclamations en cours")}</th>
+                                                            <th rowSpan="1"
+                                                                colSpan="1">{t("Nombre de réclamations")}</th>
+                                                            <th rowSpan="1"
+                                                                colSpan="1">{t("Nombre de réclamations traitées")}</th>
+                                                            <th rowSpan="1"
+                                                                colSpan="1">{t("Nombre de réclamations non fondé")}</th>
+                                                            <th rowSpan="1"
+                                                                colSpan="1">{t("Nombre de réclamations en cours")}</th>
                                                         </tr>
                                                         </tfoot>
                                                     </table>
