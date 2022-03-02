@@ -41,10 +41,9 @@ export default function setupAxios(axios, store) {
                                 ;
                             })
                             .catch(console.log);
-                        return Promise.reject(error);
-                    }
 
-                    return response;
+                        return response;
+                    }
                 }
             }
             return response;
