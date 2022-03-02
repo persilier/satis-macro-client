@@ -30,16 +30,19 @@ export default function setupAxios(axios, store) {
             if (window.location.href !== "/login") {
                 if (localStorage.getItem('userData') !== null) {
                     if (isTimeOut()) {
-                        ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
-                            .then(res => {
-                                if(res.value){
-                                    logout();
-                                }
+                        logoutUser()
+                            .then(({ data }) => {
+                                ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
+                                    .then(res => {
+                                        if (res.value) {
+                                            logout();
+                                        }
+                                    })
+                                ;
                             })
-                        ;
+                            .catch(console.log);
+                        return response;
                     }
-
-                    return response;
                 }
             }
             return response;
