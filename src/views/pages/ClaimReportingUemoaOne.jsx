@@ -45,7 +45,7 @@ const ClaimReportingUemoaOne = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [dateStart, setDateStart] = useState('2020-01-01');
-    const [dateEnd, setDateEnd] = useState("2021-02-01");
+    const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
     const defaultError = {
         date_start: [],
         date_end: [],

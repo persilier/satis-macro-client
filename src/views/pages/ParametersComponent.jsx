@@ -60,7 +60,7 @@ const ParametersComponent = (props) => {
         value = getLowerCaseString(value);
         let newComponent = [...component];
         newComponent = newComponent.filter(el => (
-            getLowerCaseString(el.params["fr"].title ? el.params["fr"].title.value : "").indexOf(value) >= 0
+            getLowerCaseString(el.name ? el.name : "").indexOf(value) >= 0
         ));
 
         return newComponent;
