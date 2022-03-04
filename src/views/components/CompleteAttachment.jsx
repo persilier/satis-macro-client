@@ -26,7 +26,7 @@ const CompleteAttachments = ({claimId}) => {
         setLoad(true);
         const files = inputRef.current.files;
         const formData = new FormData();
-        for(let i = 0; i < files.length; i++)
+        for (let i = 0; i < files.length; i++)
             formData.append("file[]", files[i], files[i].name);
 
         // seeFormData(formData);
@@ -41,14 +41,10 @@ const CompleteAttachments = ({claimId}) => {
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Pièce(s)  jointe(s)  ajouter avec succès')));
                     window.location.reload();
                 })
-                .catch(({response}) => {
-                    console.log("error:", response.status);
-                    console.log("response:", response);
+                .catch((errorRequest) => {
+                    // console.log("response:", errorRequest);
                     setLoad(false);
-                    if (response.status === 422)
-                        setError(Object.values(response.data.error).map(el => el[0]));
-                    if (response.status === 404)
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data));
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Fichier non attaché"));
                 })
             ;
         }
@@ -82,9 +78,12 @@ const CompleteAttachments = ({claimId}) => {
                         <div className="text-right">
                             {
                                 !load ? (
-                                    <button type="submit" onClick={handleClick} className="btn btn-primary">{t("Completer")}</button>
+                                    <button type="submit" onClick={handleClick}
+                                            className="btn btn-primary">{t("Completer")}</button>
                                 ) : (
-                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                    <button
+                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                        type="button" disabled>
                                         {t("Chargement")}...
                                     </button>
                                 )
