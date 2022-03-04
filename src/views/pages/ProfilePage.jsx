@@ -168,7 +168,7 @@ const ProfilePage = ({user}) => {
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fillRule="evenodd"><path d="M0 0h24v24H0z"/><path d="M4 4l7.631-1.43a2 2 0 01.738 0L20 4v9.283a8.51 8.51 0 01-4 7.217l-3.47 2.169a1 1 0 01-1.06 0L8 20.5a8.51 8.51 0 01-4-7.217V4z" fill="#000" opacity=".3"/><path d="M12 11a2 2 0 110-4 2 2 0 010 4zM7 16.5c.216-2.983 2.368-4.5 4.99-4.5 2.66 0 4.846 1.433 5.009 4.5.006.122 0 .5-.418.5H7.404c-.14 0-.415-.338-.404-.5z" fill="#000" opacity=".3"/></g></svg>
                                                     </span>
                                                     <span className="kt-widget__desc">
-                                                        Changer le mot de passe
+                                                        {t("Changer le mot de passe")}
                                                     </span>
                                                 </span>
                                                 </NavLink>
@@ -179,7 +179,7 @@ const ProfilePage = ({user}) => {
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="kt-svg-icon"><g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd"><rect x="0" y="0" width="24" height="24"/><rect fill="#000000" x="4" y="5" width="16" height="3" rx="1.5"></rect><path d="M5.5,15 L18.5,15 C19.3284271,15 20,15.6715729 20,16.5 C20,17.3284271 19.3284271,18 18.5,18 L5.5,18 C4.67157288,18 4,17.3284271 4,16.5 C4,15.6715729 4.67157288,15 5.5,15 Z M5.5,10 L12.5,10 C13.3284271,10 14,10.6715729 14,11.5 C14,12.3284271 13.3284271,13 12.5,13 L5.5,13 C4.67157288,13 4,12.3284271 4,11.5 C4,10.6715729 4.67157288,10 5.5,10 Z" fill="#000000" opacity="0.3"/></g></svg>
                                                     </span>
                                                     <span className="kt-widget__desc">
-                                                        Canaux de réponse
+                                                        {t("Canaux de réponse")}
                                                     </span>
                                                 </span>
                                                 </NavLink>
