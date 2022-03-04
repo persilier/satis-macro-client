@@ -60,7 +60,7 @@ const ImportFileForm = (props) => {
                         setData(defaultData);
                         ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("succès de l'importation")));
                     } else {
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Importation effectuée avec enregistrement de toutes les donnés")));
                     }
                 })
                 .catch(({response}) => {

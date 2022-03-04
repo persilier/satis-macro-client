@@ -794,7 +794,6 @@ const IncompleteClaimsEdit = props => {
                                                                             onChange={onChangeClaimCategory}
                                                                             options={claimCategories}
                                                                         />
-                                                                        >>>>>>> master_test
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -838,21 +837,23 @@ const IncompleteClaimsEdit = props => {
                                                                                 ) : null
                                                                             }
                                                                         </div>
+
                                                                         <div
-                                                                            className={error.claim_object_id.length ? "col validated" : "col"}>
+                                                                            className={error.account_targeted_id.length ? "col validated" : "col"}>
                                                                             <label
-                                                                                htmlFor="claimObject">{componentData ? componentData.params.fr.object.value : ""}<InputRequire/></label>
+                                                                                htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""} {isRequire.account_targeted_id ?
+                                                                                <InputRequire/> : ""}</label>
                                                                             <Select
                                                                                 classNamePrefix="select"
                                                                                 className="basic-single"
-                                                                                placeholder={componentData ? componentData.params.fr.object_placeholder.value : ""}
-                                                                                value={claimObject}
-                                                                                onChange={onChangeClaimObject}
-                                                                                options={claimObjects}
+                                                                                placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
+                                                                                value={account}
+                                                                                onChange={onChangeAccount}
+                                                                                options={accounts}
                                                                             />
                                                                             {
-                                                                                error.claim_object_id.length ? (
-                                                                                    error.claim_object_id.map((error, index) => (
+                                                                                error.account_targeted_id.length ? (
+                                                                                    error.account_targeted_id.map((error, index) => (
                                                                                         <div key={index}
                                                                                              className="invalid-feedback">
                                                                                             {error}
@@ -862,54 +863,6 @@ const IncompleteClaimsEdit = props => {
                                                                             }
                                                                         </div>
 
-                                                                        <div
-                                                                            className={error.lieu.length ? "col validated" : "col"}>
-                                                                            <label
-                                                                                htmlFor="lieu">{componentData ? componentData.params.fr.lieu.value : ""} </label>
-                                                                            <input
-                                                                                // disabled={!disabledInput}
-                                                                                id="lieu"
-                                                                                type="text"
-                                                                                className={error.lieu.length ? "form-control is-invalid" : "form-control"}
-                                                                                placeholder={componentData ? componentData.params.fr.lieu_placeholder.value : ""}
-                                                                                value={data.lieu}
-                                                                                onChange={e => onChangeLieu(e)}
-                                                                            />
-                                                                            {
-                                                                                error.lieu.length ? (
-                                                                                    error.lieu.map((error, index) => (
-                                                                                        <div key={index}
-                                                                                             className="invalid-feedback">
-                                                                                            {error}
-                                                                                        </div>
-                                                                                    ))
-                                                                                ) : null
-                                                                            }
-                                                                            <div
-                                                                                className={error.account_targeted_id.length ? "col validated" : "col"}>
-                                                                                <label
-                                                                                    htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""} {isRequire.account_targeted_id ?
-                                                                                    <InputRequire/> : ""}</label>
-                                                                                <Select
-                                                                                    classNamePrefix="select"
-                                                                                    className="basic-single"
-                                                                                    placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
-                                                                                    value={account}
-                                                                                    onChange={onChangeAccount}
-                                                                                    options={accounts}
-                                                                                />
-                                                                                {
-                                                                                    error.account_targeted_id.length ? (
-                                                                                        error.account_targeted_id.map((error, index) => (
-                                                                                            <div key={index}
-                                                                                                 className="invalid-feedback">
-                                                                                                {error}
-                                                                                            </div>
-                                                                                        ))
-                                                                                    ) : null
-                                                                                }
-                                                                            </div>
-                                                                        </div>
                                                                     </div>
                                                                 )
                                                                 : null
