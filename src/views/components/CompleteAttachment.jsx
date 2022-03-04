@@ -39,7 +39,6 @@ const CompleteAttachments = ({claimId}) => {
                     inputRef.current.files = null;
                     inputRef.current.value = null;
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Pièce(s)  jointe(s)  ajouter avec succès')));
-                    window.location.reload();
                 })
                 .catch(({response}) => {
                     console.log("error:", response.status);
