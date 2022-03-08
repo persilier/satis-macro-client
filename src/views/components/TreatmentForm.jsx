@@ -95,14 +95,15 @@ const TreatmentForm = (props) => {
                     <div className={error.amount_returned.length ? "form-group row validated" : "form-group row"}>
                         <label className="col-xl-3 col-lg-3 col-form-label"
                                htmlFor="name"> {props.currency? ("Montant retourné en " + props.currency):"Montant retourné"}
-                        </label>
+                            {" "} {props.amount_disputed ?  <InputRequire/> : null} </label>
                         <div className="col-lg-9 col-xl-6">
                             <input
                                 id="amount"
                                 type="number"
+                                required={props.amount_disputed ? true : false}
                                 min={0}
                                 className={error.amount_returned.length ? "form-control is-invalid" : "form-control"}
-                                placeholder="Veillez entrer le montant à retourner"
+                                placeholder="Veuillez entrer le montant à retourner"
                                 value={data.amount_returned}
                                 onChange={(e) => onChangeAmount(e)}
                             />

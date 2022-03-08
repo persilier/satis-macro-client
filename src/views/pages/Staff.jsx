@@ -366,7 +366,7 @@ const   Staff = (props) => {
                                                             }
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px" }}
-                                                                aria-label="Country: activate to sort column ascending">{t("Position")}
+                                                                aria-label="Country: activate to sort column ascending">{t("Fonction")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "53px" }} aria-label="Type: activate to sort column ascending">
                                                                 {t("Action")}

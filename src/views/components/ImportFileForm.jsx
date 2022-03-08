@@ -58,7 +58,7 @@ const ImportFileForm = (props) => {
                     if (response.data.status) {
                         setName("");
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("succès de l'importation")));
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     } else {
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                     }
@@ -147,7 +147,7 @@ const ImportFileForm = (props) => {
                                                         id="senderID"
                                                         type="file"
                                                         className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder={t("Veuillez choisier le fichier")}
+                                                        placeholder={t("Veuillez choisir le fichier")}
                                                         value={name}
                                                         onChange={(e) => handleChangeFile(e)}
                                                     />

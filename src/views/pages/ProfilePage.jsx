@@ -8,6 +8,7 @@ import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import PreferredChannel from "../components/profile/PreferredChannel";
 import {useTranslation} from "react-i18next";
+import '../../css/ProfilePage.css'
 
 
 const ProfilePage = ({user}) => {
@@ -152,7 +153,7 @@ const ProfilePage = ({user}) => {
                                                 <span className="kt-widget__data">{role}</span>
                                             </div>
                                             <div className="kt-widget__items">
-                                                <NavLink to="/settings/account/personal-information" className="kt-widget__item" activeClassName="kt-widget__item--active">
+                                                <NavLink to="/settings/account/personal-information" className="kt-widget__item " activeClassName="kt-widget__item--active">
                                                 <span className="kt-widget__section">
                                                     <span className="kt-widget__icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fillRule="evenodd"><path d="M0 0h24v24H0z"/><path d="M12 11a4 4 0 110-8 4 4 0 010 8z" fill="#000" fillRule="nonzero" opacity=".3"/><path d="M3 20.2c.388-4.773 4.262-7.2 8.983-7.2 4.788 0 8.722 2.293 9.015 7.2.012.195 0 .8-.751.8H3.727c-.25 0-.747-.54-.726-.8z" fill="#000" fillRule="nonzero"/></g></svg>
@@ -163,7 +164,7 @@ const ProfilePage = ({user}) => {
                                                 </span>
                                                 </NavLink>
 
-                                                <NavLink to="/settings/account/change-password" className="kt-widget__item " activeClassName="kt-widget__item--active">
+                                                <NavLink to="/settings/account/change-password" className="kt-widget__item" activeClassName="kt-widget__item--active">
                                                 <span className="kt-widget__section">
                                                     <span className="kt-widget__icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><g fill="none" fillRule="evenodd"><path d="M0 0h24v24H0z"/><path d="M4 4l7.631-1.43a2 2 0 01.738 0L20 4v9.283a8.51 8.51 0 01-4 7.217l-3.47 2.169a1 1 0 01-1.06 0L8 20.5a8.51 8.51 0 01-4-7.217V4z" fill="#000" opacity=".3"/><path d="M12 11a2 2 0 110-4 2 2 0 010 4zM7 16.5c.216-2.983 2.368-4.5 4.99-4.5 2.66 0 4.846 1.433 5.009 4.5.006.122 0 .5-.418.5H7.404c-.14 0-.415-.338-.404-.5z" fill="#000" opacity=".3"/></g></svg>
