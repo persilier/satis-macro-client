@@ -168,12 +168,12 @@ const IncompleteClaimsEdit = props => {
                     // console.log(response.data, "DATA")
                     const newIncompleteClaim = {
                         claimer_id: response.data.claim.claimer_id,
-                        firstname: response.data.claim.claimer.firstname,
-                        lastname: response.data.claim.claimer.lastname,
-                        sexe: response.data.claim.claimer.sexe !== null ? response.data.claim.claimer.sexe : "",
-                        telephone: response.data.claim.claimer.telephone !== null ? response.data.claim.claimer.telephone : [],
-                        email: response.data.claim.claimer.email === null ? [] : response.data.claim.claimer.email,
-                        ville: response.data.claim.claimer.ville === null ? "" : response.data.claim.claimer.ville,
+                        firstname: response.data.claim.claimer !== null && response.data.claim.claimer.firstname !== null ? response.data.claim.claimer.firstname : "",
+                        lastname: response.data.claim.claimer !== null && response.data.claim.claimer.lastname !== null ? response.data.claim.claimer.lastname : "" ,
+                        sexe: response.data.claim.claimer !== null && response.data.claim.claimer.sexe !== null ? response.data.claim.claimer.sexe : "",
+                        telephone: response.data.claim.claimer !== null && response.data.claim.claimer.telephone !== null ? response.data.claim.claimer.telephone : [],
+                        email: response.data.claim.claimer === null || response.data.claim.claimer.email === null ? [] : response.data.claim.claimer.email,
+                        ville: response.data.claim.claimer === null || response.data.claim.claimer.ville === null ? "" : response.data.claim.claimer.ville,
                         unit_targeted_id: response.data.claim.unit_targeted_id,
                         relationship_id: response.data.claim.relationship_id,
                         account_targeted_id: response.data.claim.account_targeted_id,
