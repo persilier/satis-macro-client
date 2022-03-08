@@ -570,11 +570,11 @@ const StaffForm = (props) => {
                                                 <h3 className="kt-section__title kt-section__title-lg">{t("Informations professionnelles")}:</h3>
                                                 <div className={error.position_id.length ? "form-group row validated" : "form-group row"}>
                                                     <div className="col">
-                                                        <label htmlFor="position">{t("Poste")} <InputRequire/></label>
+                                                        <label htmlFor="position">{t("Fonction")} <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             value={position}
-                                                            placeholder={t("Veuillez selectionner le poste")}
+                                                            placeholder={t("Veuillez sélectionner la fonction")}
                                                             onChange={onChangePosition}
                                                             options={formatSelectOption(positions, "name", "fr")}
                                                         />
@@ -596,7 +596,7 @@ const StaffForm = (props) => {
                                                                 <Select
                                                                     isClearable
                                                                     value={institution}
-                                                                    placeholder={t("Veuillez selectionner l'institution")}
+                                                                    placeholder={t("Veuillez sélectionner l'institution")}
                                                                     onChange={onChangeInstitution}
                                                                     options={formatSelectOption(formatInstitutions(institutions), "name", false)}
                                                                 />
