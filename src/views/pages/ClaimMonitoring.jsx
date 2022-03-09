@@ -359,7 +359,7 @@ const ClaimMonitoring = (props) => {
                                             </div>
 
                                             <div className={"col"}>
-                                                <label htmlFor="staff">{t("Agent traitant")}t</label>
+                                                <label htmlFor="staff">{t("Agent traitant")}</label>
                                                 <Select
                                                     isClearable
                                                     placeholder={t("Veillez sélectionner l'agent")}

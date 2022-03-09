@@ -196,7 +196,7 @@ const IncompleteClaimsEdit = props => {
                     setOldFiles(response.data.claim.files);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
-                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "number", false) : "");
+                    setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "account_number", false) : "");
 
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-against-any-institution") ||
                         verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))

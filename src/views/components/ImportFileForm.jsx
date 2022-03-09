@@ -28,6 +28,7 @@ const ImportFileForm = (props) => {
     const [name, setName] = useState('');
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
+    const [errorFile, setErrorFile] = useState([])
     const [startRequest, setStartRequest] = useState(false);
 
     const handleStateUpdateChange = (e) => {
@@ -60,7 +61,9 @@ const ImportFileForm = (props) => {
                         setData(defaultData);
                         ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     } else {
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Importation effectuée avec enregistrement de toutes les donnés")));
+                        if(response.data[props.errorField])
+                            setErrorFile(response.data[props.errorField]);
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuiller verifier le fichier")));
                     }
                 })
                 .catch(({response}) => {
@@ -146,7 +149,7 @@ const ImportFileForm = (props) => {
                                                     <input
                                                         id="senderID"
                                                         type="file"
-                                                        className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                        className={(error.file.length || errorFile.length) ? "form-control is-invalid" : "form-control"}
                                                         placeholder={t("Veuillez choisir le fichier")}
                                                         value={name}
                                                         onChange={(e) => handleChangeFile(e)}
@@ -160,6 +163,21 @@ const ImportFileForm = (props) => {
                                                             ))
                                                         ) : null
                                                     }
+
+                                                    {
+                                                        errorFile.length ? (
+                                                            errorFile.map((element, index) => (
+                                                                element.error ? (
+                                                                    element.error.map((error, idx) => (
+                                                                        <div key={idx} className="invalid-feedback">
+                                                                            ligne {index + 1} {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            ))
+                                                        ) : null
+                                                    }
+
                                                 </div>
                                             </div>
                                         </div>
