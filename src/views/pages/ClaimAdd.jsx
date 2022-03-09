@@ -314,7 +314,7 @@ const ClaimAdd = props => {
         const newData = {...data};
         setAccount(null);
         newData.account_targeted_id = "";
-        setAccounts(formatSelectOption(selected.accounts, "account_number", false));
+        setAccounts(formatSelectOption(selected.accounts, "number", false));
         newData.firstname = selected.identity.firstname;
         newData.lastname = selected.identity.lastname;
         newData.sexe = selected.identity.sexe;
