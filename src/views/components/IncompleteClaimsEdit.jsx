@@ -130,24 +130,24 @@ const IncompleteClaimsEdit = props => {
     const option2 = 0;
 
     const [load, setLoad] = useState(true);
-    const [claimObject, setClaimObject] = useState({});
+    const [claimObject, setClaimObject] = useState(null);
     const [claimObjects, setClaimObjects] = useState([]);
-    const [claimCategory, setClaimCategory] = useState({});
+    const [claimCategory, setClaimCategory] = useState(null);
     const [claimCategories, setClaimCategories] = useState([]);
     const [accounts, setAccounts] = useState([]);
-    const [account, setAccount] = useState([]);
+    const [account, setAccount] = useState(null);
     const [units, setUnits] = useState([]);
-    const [unit, setUnit] = useState({});
+    const [unit, setUnit] = useState(null);
     const [responseChannels, setResponseChannels] = useState([]);
     const [channels, setChannels] = useState([]);
     const [relationships, setRelationships] = useState([]);
-    const [relationship, setRelationship] = useState({});
-    const [responseChannel, setResponseChannel] = useState({});
-    const [receptionChannel, setReceptionChannel] = useState({});
-    const [currency, setCurrency] = useState({});
+    const [relationship, setRelationship] = useState(null);
+    const [responseChannel, setResponseChannel] = useState(null);
+    const [receptionChannel, setReceptionChannel] = useState(null);
+    const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
-    const [institution, setInstitution] = useState({});
+    const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -155,6 +155,7 @@ const IncompleteClaimsEdit = props => {
     const [isRequire, setIsRequire] = useState(null);
     const [componentData, setComponentData] = useState(undefined);
     const [currentMessage, setCurrentMessage] = useState("");
+    const [oldFiles, setOldFiles] = useState([]);
 
 
     const currentDate = new Date();
@@ -188,10 +189,11 @@ const IncompleteClaimsEdit = props => {
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
                         is_revival: response.data.claim.is_revival ? response.data.claim.is_revival : 0,
-                        // file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : null
+                        //file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : []
                     };
                     setData(newIncompleteClaim);
                     setIsRequire(response.data.requirements);
+                    setOldFiles(response.data.claim.files);
                     if (verifyPermission(props.userPermissions, "update-claim-incomplete-without-client"))
                         setRelationships(formatSelectOption(response.data.relationships, "name", "fr"));
                     setAccounts(response.data.accounts ? formatSelectOption(response.data.accounts, "account_number", false) : "");
@@ -1107,6 +1109,20 @@ const IncompleteClaimsEdit = props => {
                                                                     id="customFile"
                                                                     multiple={true}
                                                                 />
+                                                                {
+                                                                    oldFiles ? (
+                                                                        oldFiles.length ? (
+                                                                            oldFiles.map((file, index) => (
+                                                                                <div className="kt-margin-t-10">
+                                                                                    <a href={`${appConfig.apiDomaine}${file.url}`}
+                                                                                       download={true} target={"_blank"}>
+                                                                                        {file.title}
+                                                                                    </a>
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    ) : null
+                                                                }
                                                                 {
                                                                     error.file.length ? (
                                                                         error.file.map((error, index) => (

@@ -39,6 +39,7 @@ const ClaimImportPage = (props) => {
                 pageTitle={t("Enregistrement réclamation")}
                 panelTitle={t("Importation de réclamation au format excel")}
                 claimImport={true}
+                errorField={"claims"}
             />
         ) : null
     );
