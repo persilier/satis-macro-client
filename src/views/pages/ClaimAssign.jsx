@@ -66,9 +66,9 @@ const ClaimAssign = (props) => {
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
                 getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
                 getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
-                getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
+                getLowerCaseString( el.claim_object ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
                 getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
-                getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : el.institution_targeted.name).indexOf(value) >= 0
+                getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : (el.institution_targeted ? el.institution_targeted.name : "")).indexOf(value) >= 0
             )
         });
 
@@ -163,7 +163,7 @@ const ClaimAssign = (props) => {
                         : <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>
                     }
                 </td>
-                <td>{claim.claim_object.name["fr"]}</td>
+                <td>{ claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                 </td>
