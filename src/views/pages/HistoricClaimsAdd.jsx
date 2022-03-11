@@ -150,8 +150,8 @@ const HistoricClaimsAdd = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} </td>
-                <td>{`${ claim.claimer ? claim.claimer.lastname : null } ${ claim.claimer ? claim.claimer.firstname : null }`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
-                <td>{claim.claim_object.name["fr"]}</td>
+                <td>{`${ claim.claimer ? claim.claimer.lastname : "-" } ${ claim.claimer ? claim.claimer.firstname : "" }`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{ claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                 </td>
@@ -323,14 +323,6 @@ const HistoricClaimsAdd = (props) => {
                                                         data-toggle="modal" data-target="#message_email"/>
                                                 <HtmlDescriptionModal title={t("Description")}
                                                                       message={currentMessage}/>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {claimsAdd.length} données
-                                                </div>
                                             </div>
                                         </div>
                                         <div className="row">

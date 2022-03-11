@@ -215,6 +215,8 @@ const Unit = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{unit.name["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.unit_type.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}> { unit.state && unit.state.country ? unit.state.country.name : "-"} </td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}> { unit.state ? unit.state.name : "-"} </td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>
                     {
                         unit.lead ?
@@ -323,6 +325,14 @@ const Unit = (props) => {
                                                                 aria-label="Country: activate to sort column ascending">{t("Type Unité")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "0px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Pays")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "0px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Zones")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70px" }}
                                                                 aria-label="Country: activate to sort column ascending">{t("Responsable")}
                                                             </th>
@@ -358,6 +368,8 @@ const Unit = (props) => {
                                                         <tr>
                                                             <th rowSpan="1" colSpan="1">{t("Nom Unité")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Type Unité")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Pays")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Zones")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Responsable")}</th>
                                                             {
                                                                 verifyPermission(props.userPermissions, 'list-any-unit') ? (

@@ -337,7 +337,7 @@ const ClaimMonitoring = (props) => {
                                                     <div className={"col"}>
                                                         <label htmlFor="institution">{t("Institution concernée")}</label>
                                                         <Select
-                                                            placeholder={t("Veillez sélectionner l'institution")}
+                                                            placeholder={t("Veuillez sélectionner l'institution")}
                                                             isClearable
                                                             value={institution}
                                                             onChange={onChangeInstitution}
@@ -351,7 +351,7 @@ const ClaimMonitoring = (props) => {
                                                 <label htmlFor="unite">{t("Unité en charge du traitement")}</label>
                                                 <Select
                                                     isClearable
-                                                    placeholder={t("Veillez sélectionner l'unité")}
+                                                    placeholder={t("Veuillez sélectionner l'unité")}
                                                     value={unit}
                                                     onChange={onChangeUnit}
                                                     options={filterUnits}
@@ -362,7 +362,7 @@ const ClaimMonitoring = (props) => {
                                                 <label htmlFor="staff">{t("Agent traitant")}</label>
                                                 <Select
                                                     isClearable
-                                                    placeholder={t("Veillez sélectionner l'agent")}
+                                                    placeholder={t("Veuillez sélectionner l'agent")}
                                                     value={staff}
                                                     onChange={onChangeStaff}
                                                     options={filterStaffs}
@@ -375,7 +375,7 @@ const ClaimMonitoring = (props) => {
                                                 <label htmlFor="category">{t("Catégorie de la réclamation traitée")}</label>
                                                 <Select
                                                     value={category}
-                                                    placeholder={t("Veillez sélectionner la catégorie")}
+                                                    placeholder={t("Veuillez sélectionner la catégorie")}
                                                     isClearable
                                                     onChange={onChangeCategory}
                                                     options={categories}
@@ -387,7 +387,7 @@ const ClaimMonitoring = (props) => {
                                                 <Select
                                                     isClearable
                                                     value={object}
-                                                    placeholder={t("Veillez sélectionner l'objet")}
+                                                    placeholder={t("Veuillez sélectionner l'objet")}
                                                     onChange={onChangeObject}
                                                     options={filterObjects}
                                                 />

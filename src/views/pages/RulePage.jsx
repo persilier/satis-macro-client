@@ -9,7 +9,7 @@ import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
     toastDeleteErrorMessageConfig,
-    toastDeleteSuccessMessageConfig
+    toastDeleteSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
@@ -170,7 +170,12 @@ const RulePage = (props) => {
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
+                                console.log("erreur:", error.response.data)
+                                if (error.response.status === 404 ) {
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                                } else {
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
+                                }
                             })
                         ;
                     }
