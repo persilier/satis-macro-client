@@ -61,7 +61,7 @@ const ClaimsArchived = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
@@ -101,12 +101,12 @@ const ClaimsArchived = (props) => {
         } else {
             setNumberPage(forceRound(claimsArchived.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claimsArchived.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(claimsArchived.length / parseInt(e.target.value)));

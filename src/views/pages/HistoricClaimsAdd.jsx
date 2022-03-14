@@ -29,7 +29,7 @@ const HistoricClaimsAdd = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
@@ -70,12 +70,12 @@ const HistoricClaimsAdd = (props) => {
         } else {
             setNumberPage(forceRound(claimsAdd.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claimsAdd.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claimsAdd.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(claimsAdd.length / parseInt(e.target.value)));

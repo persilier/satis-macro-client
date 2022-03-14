@@ -33,7 +33,7 @@ const RulePage = (props) => {
     const [load, setLoad] = useState(true);
     const [rules, setRulePages] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -79,12 +79,12 @@ const RulePage = (props) => {
         } else {
             setNumberPage(forceRound(rules.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(rules.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(rules.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(rules.length/parseInt(e.target.value)));
@@ -92,7 +92,7 @@ const RulePage = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i<position; i++) {
+        for (let i = 1; i<position; i++) {
             end = end+numberPerPage;
         }
         return end;
