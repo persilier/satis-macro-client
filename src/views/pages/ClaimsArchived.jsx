@@ -91,7 +91,7 @@ const ClaimsArchived = (props) => {
         let newClaims = [...claimsArchived];
         newClaims = newClaims.filter(el => (
             getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}`).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.claimer ? el.claimer.lastname : "-"} ${el.claimer ? el.claimer.firstname : ""}`).indexOf(value) >= 0 ||
             getLowerCaseString(el.description).indexOf(value) >= 0 ||
             getLowerCaseString(el.active_treatment.solution === null ? "-" : el.active_treatment.solution).indexOf(value) >= 0
         ));
@@ -176,7 +176,7 @@ const ClaimsArchived = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{archived.reference === null ? "-" : archived.reference}</td>
-                <td>{`${archived.claimer.lastname} ${archived.claimer.firstname} ${archived.account_targeted !== null ? "/" + archived.account_targeted.number : ""}`}</td>
+                <td>{`${archived.claimer ? archived.claimer.lastname : "-"} ${archived.claimer ? archived.claimer.firstname : ""} ${archived.account_targeted !== null ? "/" + archived.account_targeted.number : ""}`}</td>
                 <td>
                     {
                         (props.plan === 'PRO') ?

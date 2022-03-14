@@ -296,16 +296,16 @@ const Body = () => {
                 <PerformanceIndicatorForm/>
             </Route>
 
-            <Route exact path="/settings/unit_type">
-                <UnitType/>
+            <Route exact path="/settings/unit_type/:id/edit">
+                <UnitTypeForm/>
             </Route>
 
             <Route exact path="/settings/unit_type/add">
                 <UnitTypeForm/>
             </Route>
 
-            <Route exact path="/settings/unit_type/:id/edit">
-                <UnitTypeForm/>
+            <Route exact path="/settings/unit_type">
+                <UnitType/>
             </Route>
 
             <Route exact path="/settings/unit">

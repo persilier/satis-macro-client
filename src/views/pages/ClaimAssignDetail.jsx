@@ -85,7 +85,7 @@ const ClaimAssignDetail = (props) => {
                 await axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment/${id}`)
                     .then(response => {
                         setClaim(response.data);
-                        setDataId(response.data.institution_targeted.name);
+                        setDataId(response.data.institution_targeted ? response.data.institution_targeted.name : "-");
                     })
                     .catch(error => console.log("Something is wrong"))
                 ;
@@ -285,7 +285,7 @@ const ClaimAssignDetail = (props) => {
                                                             <div className="kt-wizard-v2__review-title"><h5><span style={{color:"red"}}>{t("Unité de traitement")}</span></h5></div>
                                                             <div className="kt-wizard-v2__review-content">
                                                                 <strong>{t("Unité")}:</strong>
-                                                                <span className="mx-2">{claim.active_treatment.responsible_unit.name["fr"]}</span><br/>
+                                                                <span className="mx-2">{ claim.active_treatment.responsible_unit ? claim.active_treatment.responsible_unit.name["fr"] : "-"} </span><br/>
                                                             </div>
                                                         </div>
                                                     ) : null}

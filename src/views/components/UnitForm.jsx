@@ -124,26 +124,31 @@ const HoldingUnitForm = (props) => {
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
-                            state_id: response.data.unit.state_id,
-                            institution_id: response.data.unit.institution ? response.data.unit.institution_id ? response.data.unit.institution_id : "" : "",
+                            state_id: response.data.unit.state_id ? response.data.unit.state_id : "",
+                            institution_id: response.data.unit.institution ? response.data.unit.institution_id : "",
                         };
-                         axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
-                            .then(response => {
-                                setStates(formatSelectOption(response.data, "name"));
-                            })
-                            .catch(error => {
-                                console.log("something is wrong");
-                            })
-                        ;
+
+                        if (response.data.unit.state !== null ){
+                            axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
+                                .then(response => {
+                                    setStates(formatSelectOption(response.data, "name"));
+                                })
+                                .catch(error => {
+                                    console.log("something is wrong");
+                                })
+                            ;
+                            setCountrie(
+                                response.data.unit.state.country ? {value: response.data.unit.state.country.id, label: response.data.unit.state.country.name} : {value: "", label: ""}
+                            );
+                        }
+
                         setData(newData);
                         setState(response.data.unit.state ? {value: response.data.unit.state.id, label: response.data.unit.state.name} : {value: "", label: ""});
                         setUnitType({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
 
                         setCountries(formatSelectOption(response.data.countries, "name"));
-                        setCountrie(
-                            response.data.unit.state.country ? {value: response.data.unit.state.country.id, label: response.data.unit.state.country.name} : {value: "", label: ""}
-                        );
+
 
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
@@ -202,13 +207,14 @@ const HoldingUnitForm = (props) => {
         const newData = {...data};
         newData.countrie_id = selected ? selected.value : "";
         setCountrie(selected);
-        axios.get(`${appConfig.apiDomaine}/country/${newData.countrie_id}/states`,)
-            .then(response => {
-                setStates(formatSelectOption(response.data, "name"));
+            axios.get(`${appConfig.apiDomaine}/country/${newData.countrie_id}/states`,)
+                .then(response => {
+                    setStates(formatSelectOption(response.data, "name"));
                 })
-            .catch(error => {
-                console.log("something is wrong");
-            })
+                .catch(error => {
+                    console.log("something is wrong");
+                })
+
         ;
         // setData(newData);
     };
