@@ -38,7 +38,7 @@ const FAQs = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -77,12 +77,12 @@ const FAQs = (props) => {
         } else {
             setNumberPage(forceRound(faqs.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(faqs.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(faqs.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(faqs.length / parseInt(e.target.value)));
@@ -90,7 +90,7 @@ const FAQs = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;

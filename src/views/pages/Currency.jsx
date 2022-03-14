@@ -35,7 +35,7 @@ const Currency = (props) => {
     const [load, setLoad] = useState(true);
     const [currencies, setCurrencies] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -76,12 +76,12 @@ const Currency = (props) => {
         } else {
             setNumberPage(forceRound(currencies.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(currencies.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(currencies.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(currencies.length/parseInt(e.target.value)));
