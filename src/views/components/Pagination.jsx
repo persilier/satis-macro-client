@@ -1,7 +1,7 @@
 import {DOTS, usePagination} from "./PaginationRange";
 import React from "react";
 
-const Pagi = (props) => {
+const Pagination = (props) => {
     const {
         onClickPage,
         onClickPreviousPage,
@@ -83,4 +83,4 @@ const Pagi = (props) => {
 
 }
 
-export default Pagi;
+export default Pagination;
