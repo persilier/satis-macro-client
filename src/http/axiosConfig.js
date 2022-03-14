@@ -55,6 +55,7 @@ export default function setupAxios(axios, store) {
                     if (isTimeOut()) {
                         logoutUser()
                             .then(({ data }) => {
+                                localStorage.removeItem('userData');
                                 ExpirationConfirmation.fire(ExpireConfig(i18n.t("Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter")))
                                     .then(res => {
                                         if (res.value) {
