@@ -35,7 +35,7 @@ const ClaimList = (props) => {
     const [load, setLoad] = useState(true);
     const [claims, setClaims] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
@@ -85,12 +85,12 @@ const ClaimList = (props) => {
         } else {
             setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claims.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
@@ -98,7 +98,7 @@ const ClaimList = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
