@@ -70,7 +70,7 @@ const RemoveChats = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
