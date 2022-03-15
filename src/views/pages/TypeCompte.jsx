@@ -32,7 +32,7 @@ const TypeCompte = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
@@ -64,7 +64,7 @@ const TypeCompte = (props) => {
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(typeCompte.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(typeCompte.length / parseInt(e.target.value)));

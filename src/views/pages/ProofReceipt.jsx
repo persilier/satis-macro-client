@@ -38,7 +38,7 @@ const   ProofReceipt = (props) => {
     const [load, setLoad] = useState(true);
     const [staffs, setProofs] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const defautFilterDataError = {
@@ -122,12 +122,12 @@ const   ProofReceipt = (props) => {
         } else {
             setNumberPage(forceRound(staffs.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(staffs.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(staffs.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(staffs.length/parseInt(e.target.value)));
@@ -135,7 +135,7 @@ const   ProofReceipt = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i<position; i++) {
+        for (let i = 1; i<position; i++) {
             end = end+numberPerPage;
         }
         return end;

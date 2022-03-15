@@ -36,7 +36,7 @@ const ConfigRequirements = () => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [data, setData] = useState(defaultData);
     const [startRequest, setStartRequest] = useState(false);
 
@@ -110,12 +110,12 @@ const ConfigRequirements = () => {
         } else {
             setNumberPage(forceRound(claimObject.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(claimObject.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claimObject.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(claimObject.length / parseInt(e.target.value)));

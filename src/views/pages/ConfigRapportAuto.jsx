@@ -59,7 +59,7 @@ const ConfigRapportAuto = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -106,12 +106,12 @@ const ConfigRapportAuto = (props) => {
         } else {
             setNumberPage(forceRound(rapportAuto.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(rapportAuto.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(rapportAuto.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(rapportAuto.length / parseInt(e.target.value)));
