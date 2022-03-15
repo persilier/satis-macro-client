@@ -35,7 +35,7 @@ const ModelNumberToClaimList = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
@@ -67,7 +67,7 @@ const ModelNumberToClaimList = (props) => {
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(satisfactionMeasure.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(satisfactionMeasure.length / parseInt(e.target.value)));
@@ -75,7 +75,7 @@ const ModelNumberToClaimList = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;

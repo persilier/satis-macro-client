@@ -33,7 +33,7 @@ const PerformanceIndicator = (props) => {
     const [load, setLoad] = useState(true);
     const [performances, setPerformances] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
 
@@ -76,12 +76,12 @@ const PerformanceIndicator = (props) => {
         } else {
             setNumberPage(forceRound(performances.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(performances.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(performances.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(performances.length/parseInt(e.target.value)));

@@ -66,7 +66,7 @@ const IncompleteClaims = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
     const [currentMessage, setCurrentMessage] = useState("");
 
@@ -124,12 +124,12 @@ const IncompleteClaims = (props) => {
         } else {
             setNumberPage(forceRound(incompleteClaims.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(incompleteClaims.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(incompleteClaims.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(incompleteClaims.length / parseInt(e.target.value)));
@@ -137,7 +137,7 @@ const IncompleteClaims = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;

@@ -66,7 +66,7 @@ const ClaimsArchived = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [currentMessage, setCurrentMessage] = useState("");
 
     useEffect(() => {
@@ -106,12 +106,12 @@ const ClaimsArchived = (props) => {
         } else {
             setNumberPage(forceRound(claimsArchived.length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(claimsArchived.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(claimsArchived.length / parseInt(e.target.value)));
@@ -119,7 +119,7 @@ const ClaimsArchived = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
@@ -184,12 +184,13 @@ const ClaimsArchived = (props) => {
                             : (archived.institution_targeted ? archived.institution_targeted.name : "")
                     }
                 </td>
-                <td>{archived.claim_object ? archived.claim_object.name["fr"] : "-"}</td>
+
+                <td>{(archived.claim_object && archived.claim_object.name["fr"]) ? archived.claim_object.name["fr"] : "-"}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(archived.description ? archived.description : '-')}/>
                 </td>
                 {/*<td>{archived.description.length > 15 ? reduceCharacter(archived.description) : archived.description}</td>*/}
-                <td style={{textAlign: 'center'}}>{archived.claim_object.time_limit}</td>
+                <td style={{textAlign: 'center'}}>{(archived.claim_object && archived.claim_object.time_limit) ? archived.claim_object.time_limit : '-'}</td>
                 <td style={{textAlign: 'center'}}>
                     {
                         archived.active_treatment.is_claimer_satisfied === 1 ?

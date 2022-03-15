@@ -55,7 +55,7 @@ function ResetPassword() {
       })
       .catch((err) => {
         setIsloading(false);
-        if(err.response.status == 422){
+        if(err.response.status === 422){
           ToastBottomEnd.fire({
             background: "#3c3e40",
             icon: "error",
