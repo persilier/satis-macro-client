@@ -181,10 +181,10 @@ const ClaimsArchived = (props) => {
                     {
                         (props.plan === 'PRO') ?
                             (archived.unit_targeted ? archived.unit_targeted.name.fr : "-")
-                            : archived.institution_targeted.name
+                            : (archived.institution_targeted ? archived.institution_targeted.name : "")
                     }
                 </td>
-                <td>{archived.claim_object.name["fr"]}</td>
+                <td>{archived.claim_object ? archived.claim_object.name["fr"] : "-"}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(archived.description ? archived.description : '-')}/>
                 </td>
