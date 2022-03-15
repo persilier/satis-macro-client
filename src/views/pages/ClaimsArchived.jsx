@@ -184,12 +184,12 @@ const ClaimsArchived = (props) => {
                             : archived.institution_targeted.name
                     }
                 </td>
-                <td>{archived.claim_object.name["fr"]}</td>
+                <td>{(archived.claim_object && archived.claim_object.name["fr"]) ? archived.claim_object.name["fr"] : "-"}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(archived.description ? archived.description : '-')}/>
                 </td>
                 {/*<td>{archived.description.length > 15 ? reduceCharacter(archived.description) : archived.description}</td>*/}
-                <td style={{textAlign: 'center'}}>{archived.claim_object.time_limit}</td>
+                <td style={{textAlign: 'center'}}>{(archived.claim_object && archived.claim_object.time_limit) ? archived.claim_object.time_limit : '-'}</td>
                 <td style={{textAlign: 'center'}}>
                     {
                         archived.active_treatment.is_claimer_satisfied === 1 ?
