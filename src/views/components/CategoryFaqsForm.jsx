@@ -15,9 +15,14 @@ import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 const CategoryFaqsForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id}=useParams();
 
     if (!id) {
@@ -69,13 +74,13 @@ const CategoryFaqsForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         window.location.href="/settings/faqs/category"
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }else{
@@ -84,12 +89,12 @@ const CategoryFaqsForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -102,7 +107,7 @@ const CategoryFaqsForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -110,12 +115,12 @@ const CategoryFaqsForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/faqs/category" className="kt-subheader__breadcrumbs-link">
-                                    Categorie FAQ
+                                    {t("Catégorie FAQ")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -132,7 +137,7 @@ const CategoryFaqsForm = (props) => {
                                         <h3 className="kt-portlet__head-title">
                                             {
                                                 id?
-                                                    "Modification des catégories de FAQ":" Ajout des catégories de FAQ"
+                                                    t("Modification des catégories de FAQ"): t("Ajout des catégories de FAQ")
                                             }
                                         </h3>
                                     </div>
@@ -142,13 +147,13 @@ const CategoryFaqsForm = (props) => {
                                     <div className="kt-portlet__body">
 
                                         <div className={error.name.length ? "form-group  validated" : "form-group"}>
-                                            <label htmlFor="name">Libellé <InputRequire/></label>
+                                            <label htmlFor="name">{t("Libellé")} <InputRequire/></label>
                                             <div className="col-md-6 mb-3">
                                                 <input
                                                     id="name"
                                                     type="text"
                                                     className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer le nom"
+                                                    placeholder={t("Veuillez entrer le nom")}
                                                     value={data.name}
                                                     onChange={(e) => onChangeName(e)}
                                                 />
@@ -169,21 +174,21 @@ const CategoryFaqsForm = (props) => {
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id?"Modifier":"Enregistrer"}</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id?t("Modifier"):t("Enregistrer")}</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                        Chargement...
+                                                        {t("Chargement")}...
                                                     </button>
                                                 )
                                             }
                                             {
                                                 !startRequest ? (
                                                     <Link to="/settings/faqs/category" className="btn btn-secondary mx-2">
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 ) : (
                                                     <Link to="/settings/faqs/category" className="btn btn-secondary mx-2" disabled>
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 )
                                             }
@@ -199,13 +204,15 @@ const CategoryFaqsForm = (props) => {
         );
     };
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-faq-category') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-faq-category') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-faq-category') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-faq-category') ? (
+                    printJsx()
+                ) : null
+        ): null
     );
 };
 

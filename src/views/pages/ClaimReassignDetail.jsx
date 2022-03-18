@@ -23,6 +23,7 @@ import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -30,7 +31,11 @@ loadScript("/assets/js/pages/custom/chat/chat.js");
 
 
 const ClaimReassignDetail = (props) => {
-    document.title = "Satis client - Détail réclamation";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Détails réclamation") : "";
     const {id} = useParams();
 
     if (!verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment"))
@@ -76,7 +81,7 @@ const ClaimReassignDetail = (props) => {
         if (verifyTokenExpire()) {
             axios.put(`${appConfig.apiDomaine}/claim-reassignment/${id}`, {staff_id: staff ? staff.value : null})
                 .then(({data}) => {
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('La réclamation à été réassigner avec succès'));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('La réclamation a été réassigner avec succès')));
                     setStartRequest(false);
                     setStaff(null);
                     setErrors([]);
@@ -91,13 +96,13 @@ const ClaimReassignDetail = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
+        ready ? ( verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Processus
+                                {t("Processus")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -106,14 +111,14 @@ const ClaimReassignDetail = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    Traitement
+                                    {t("Traitement")}
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <Link to="/process/unit-claims" className="kt-subheader__breadcrumbs-link">
-                                        Liste des réclamations
+                                        {t("Liste des réclamations")}
                                     </Link>
                                 </div>
                             </div>
@@ -126,7 +131,7 @@ const ClaimReassignDetail = (props) => {
                                 <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "text"}}
                                    className="kt-subheader__breadcrumbs-link">
                                     {
-                                        claim ? claim.reference : "Détail réclamation"
+                                        claim ? claim.reference : t("Détails réclamation")
                                     }
                                 </a>
                             </div>
@@ -157,10 +162,10 @@ const ClaimReassignDetail = (props) => {
                                                             </div>
                                                             <div className="kt-wizard-v2__nav-label">
                                                                 <div className="kt-wizard-v2__nav-label-title">
-                                                                    Réassignation de la réclamation
+                                                                    {t("Réassignation de la réclamation")}
                                                                 </div>
                                                                 <div className="kt-wizard-v2__nav-label-desc">
-                                                                    Réassigner la reclamation à un agent
+                                                                    {t("Réassigner la réclamation à un agent")}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -184,17 +189,17 @@ const ClaimReassignDetail = (props) => {
                                                 <div className="kt-wizard-v2__content"
                                                      data-ktwizard-type="step-content">
                                                     <div className="kt-heading kt-heading--md">
-                                                        Réassignation de la réclamation
+                                                        {t("Réassignation de la réclamation")}
                                                     </div>
                                                     <div className="kt-form__section kt-form__section--first">
                                                         <div className="kt-wizard-v2__review">
                                                             <div className="kt-wizard-v2__review-content">
                                                                 <div
                                                                     className={errors.length ? "form-group validated" : "form-group"}>
-                                                                    <label>Agent</label>
+                                                                    <label>{t("Agent")}</label>
                                                                     <Select
                                                                         isClearable
-                                                                        placeholder={"Veillez selectioner l'agent"}
+                                                                        placeholder={t("Veillez sélectionner l'agent")}
                                                                         value={staff}
                                                                         onChange={onChangeStaff}
                                                                         options={staffs}
@@ -212,13 +217,13 @@ const ClaimReassignDetail = (props) => {
                                                                     {
                                                                         !startRequest ? (
                                                                             <button className="btn btn-primary" onClick={assignClaim}>
-                                                                                Réassigner
+                                                                                {t("Réassigner")}
                                                                             </button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -234,13 +239,13 @@ const ClaimReassignDetail = (props) => {
                                             <button
                                                 className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                 data-ktwizard-type="action-prev">
-                                                PRÉCÉDENT
+                                                {t("PRÉCÉDENT")}
                                             </button>
 
                                             <button
                                                 className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
                                                 data-ktwizard-type="action-next">
-                                                SUIVANT
+                                                {t("SUIVANT")}
                                             </button>
                                         </div>
                                     </form>
@@ -250,7 +255,7 @@ const ClaimReassignDetail = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : null
     );
 };
 

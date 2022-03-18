@@ -11,9 +11,14 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const StaffImportPage = (props) => {
-    document.title = "Satis client - Importation objet de reclamation";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Importation objet de réclamation") : "");
     if (!(verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-my-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit')))
         window.location.href = ERROR_401;
 
@@ -85,13 +90,13 @@ const StaffImportPage = (props) => {
                         setFileName("");
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("succès de l'importation"));
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     })
                     .catch(({response}) => {
                         console.log(response.data);
                         setStartRequest(false);
                         setError({...defaultError, ...response.data.error});
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'importation"));
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                     })
                 ;
             }
@@ -101,146 +106,148 @@ const StaffImportPage = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, "store-staff-from-my-unit") || verifyPermission(props.userPermissions, "store-staff-from-maybe-no-unit") ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètre
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
-                                    Agents
-                                </Link>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Importation
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="row">
-                        <div className="col">
-                            <div className="kt-portlet">
-                                <div className="kt-portlet__head">
-                                    <div className="kt-portlet__head-label">
-                                        <h3 className="kt-portlet__head-title">
-                                            Importation d'agent au format excel
-                                        </h3>
-                                    </div>
+        ready ? (
+            verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, "store-staff-from-my-unit") || verifyPermission(props.userPermissions, "store-staff-from-maybe-no-unit") ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètre")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
+                                        {t("Agents")}
+                                    </Link>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Importation")}
+                                    </a>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <form method="POST" className="kt-form">
-                                    <div className="kt-form kt-form--label-right">
-                                        <div className="kt-portlet__body">
-                                            <div className="form-group validated row">
-                                                <label className="col-3 col-form-label">Stop identite exist <InputRequire/></label>
-                                                <div className="col-9">
-                                                    <div className="kt-radio-inline">
-                                                        <label className="kt-radio">
-                                                            <input type="radio" value={optionOne} onChange={handleOptionOneChange} checked={optionOne === data.stop_identite_exist}/> Oui<span/>
-                                                        </label>
-                                                        <label className="kt-radio">
-                                                            <input type="radio" value={optionTwo} onChange={handleOptionOneChange} checked={optionTwo === data.stop_identite_exist}/> Non<span/>
-                                                        </label>
-                                                    </div>
-                                                    {
-                                                        error.stop_identite_exist.length ? (
-                                                            error.stop_identite_exist.map((error, index) => (
-                                                                <spann key={index} className="form-text text-danger">
-                                                                    {error}
-                                                                </spann>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </div>
-
-                                            <div className="form-group row">
-                                                <label className="col-3 col-form-label">Etat update <InputRequire/></label>
-                                                <div className="col-9">
-                                                    <div className="kt-radio-inline">
-                                                        <label className="kt-radio">
-                                                            <input type="radio"  value={optionThree} onChange={handleOptionTwoChange} checked={optionThree === data.etat_update}/> Oui<span/>
-                                                        </label>
-                                                        <label className="kt-radio">
-                                                            <input type="radio"  value={optionFour} onChange={handleOptionTwoChange} checked={optionFour === data.etat_update}/> Non<span/>
-                                                        </label>
-                                                    </div>
-                                                    {
-                                                        error.etat_update.length ? (
-                                                            error.etat_update.map((error, index) => (
-                                                                <spann key={index} className="form-text text-danger">
-                                                                    {error}
-                                                                </spann>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </div>
-
-                                            <div className={error.file.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">Fichier <InputRequire/></label>
-                                                <div className="col-lg-9 col-xl-6">
-                                                    <input
-                                                        id="senderID"
-                                                        type="file"
-                                                        className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veiller choisier le fichier"
-                                                        value={fileName}
-                                                        onChange={(e) => handleFileChange(e)}
-                                                    />
-                                                    {
-                                                        error.file.length ? (
-                                                            error.file.map((error, index) => (
-                                                                <div key={index} className="invalid-feedback">
-                                                                    {error}
-                                                                </div>
-                                                            ))
-                                                        ) : null
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="kt-portlet__foot">
-                                            <div className="kt-form__actions text-right">
-                                                {
-                                                    !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
-                                                    ) : (
-                                                        <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
-                                                        </button>
-                                                    )
-                                                }
-
-                                                {
-                                                    !startRequest ? (
-                                                        <Link to="/settings/staffs" className="btn btn-secondary mx-2">
-                                                            Quitter
-                                                        </Link>
-                                                    ) : (
-                                                        <Link to="/settings/staffs" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
-                                                        </Link>
-                                                    )
-                                                }
-                                            </div>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="row">
+                            <div className="col">
+                                <div className="kt-portlet">
+                                    <div className="kt-portlet__head">
+                                        <div className="kt-portlet__head-label">
+                                            <h3 className="kt-portlet__head-title">
+                                                {t("Importation d'agent au format excel")}
+                                            </h3>
                                         </div>
                                     </div>
-                                </form>
+
+                                    <form method="POST" className="kt-form">
+                                        <div className="kt-form kt-form--label-right">
+                                            <div className="kt-portlet__body">
+                                                <div className="form-group validated row">
+                                                    <label className="col-3 col-form-label">{t("Stop identité existe")} <InputRequire/></label>
+                                                    <div className="col-9">
+                                                        <div className="kt-radio-inline">
+                                                            <label className="kt-radio">
+                                                                <input type="radio" value={optionOne} onChange={handleOptionOneChange} checked={optionOne === data.stop_identite_exist}/> {t("Oui")}<span/>
+                                                            </label>
+                                                            <label className="kt-radio">
+                                                                <input type="radio" value={optionTwo} onChange={handleOptionOneChange} checked={optionTwo === data.stop_identite_exist}/> {t("Non")}<span/>
+                                                            </label>
+                                                        </div>
+                                                        {
+                                                            error.stop_identite_exist.length ? (
+                                                                error.stop_identite_exist.map((error, index) => (
+                                                                    <spann key={index} className="form-text text-danger">
+                                                                        {error}
+                                                                    </spann>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <div className="form-group row">
+                                                    <label className="col-3 col-form-label">{t("État update")} <InputRequire/></label>
+                                                    <div className="col-9">
+                                                        <div className="kt-radio-inline">
+                                                            <label className="kt-radio">
+                                                                <input type="radio"  value={optionThree} onChange={handleOptionTwoChange} checked={optionThree === data.etat_update}/> {t("Oui")}<span/>
+                                                            </label>
+                                                            <label className="kt-radio">
+                                                                <input type="radio"  value={optionFour} onChange={handleOptionTwoChange} checked={optionFour === data.etat_update}/> {t("Non")}<span/>
+                                                            </label>
+                                                        </div>
+                                                        {
+                                                            error.etat_update.length ? (
+                                                                error.etat_update.map((error, index) => (
+                                                                    <spann key={index} className="form-text text-danger">
+                                                                        {error}
+                                                                    </spann>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <div className={error.file.length ? "form-group row validated" : "form-group row"}>
+                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="senderID">{t("Fichier")} <InputRequire/></label>
+                                                    <div className="col-lg-9 col-xl-6">
+                                                        <input
+                                                            id="senderID"
+                                                            type="file"
+                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                            placeholder={t("Veuiller choisier le fichier")}
+                                                            value={fileName}
+                                                            onChange={(e) => handleFileChange(e)}
+                                                        />
+                                                        {
+                                                            error.file.length ? (
+                                                                error.file.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="kt-portlet__foot">
+                                                <div className="kt-form__actions text-right">
+                                                    {
+                                                        !startRequest ? (
+                                                            <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Enregistrer")}</button>
+                                                        ) : (
+                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                                {t("Chargement")}...
+                                                            </button>
+                                                        )
+                                                    }
+
+                                                    {
+                                                        !startRequest ? (
+                                                            <Link to="/settings/staffs" className="btn btn-secondary mx-2">
+                                                                {t("Quitter")}
+                                                            </Link>
+                                                        ) : (
+                                                            <Link to="/settings/staffs" className="btn btn-secondary mx-2" disabled>
+                                                                {t("Quitter")}
+                                                            </Link>
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

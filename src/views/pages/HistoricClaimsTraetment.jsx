@@ -13,13 +13,18 @@ import {verifyPermission} from "../../helpers/permission";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 
 const HistoricClaimsAdd = (props) => {
-    document.title = "Satis client - Paramètre Historique";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + (ready ? t("Paramètre Historique") : "");
 
     if (!verifyPermission(props.userPermissions, "history-list-treat-claim")) {
         window.location.href = ERROR_401;
@@ -157,10 +162,10 @@ const HistoricClaimsAdd = (props) => {
                 <td style={{textAlign: "center"}}>
                     {
                         claim.status === "archived" ?
-                            <span className="kt-badge kt-badge--inline kt-badge--dark">Archivé</span>
+                            <span className="kt-badge kt-badge--inline kt-badge--dark">{t("Archivé")}</span>
                             : claim.status === "validated" ?
-                            <span className="kt-badge kt-badge--inline kt-badge--success">Traité</span>
-                            : <span className="kt-badge kt-badge--inline kt-badge--warning">En cours de traitement</span>
+                            <span className="kt-badge kt-badge--inline kt-badge--success">{t("Traité")}</span>
+                            : <span className="kt-badge kt-badge--inline kt-badge--warning">{t("En cours de traitement")}</span>
 
                     }
                 </td>
@@ -169,13 +174,13 @@ const HistoricClaimsAdd = (props) => {
     };
 
     return (
-
+        ready ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Historiques
+                                {t("Historiques")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -184,7 +189,7 @@ const HistoricClaimsAdd = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Réclamations traitées
+                                    {t("Réclamations traitées")}
                                 </a>
                             </div>
                         </div>
@@ -194,7 +199,7 @@ const HistoricClaimsAdd = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamations traitées"}
+                            title={t("Réclamations traitées")}
                         />
 
                         {
@@ -207,7 +212,7 @@ const HistoricClaimsAdd = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
@@ -230,41 +235,39 @@ const HistoricClaimsAdd = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Référence
+                                                            aria-label="Country: activate to sort column ascending">{t("Référence")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Country: activate to sort column ascending">Réclamant
+                                                            aria-label="Country: activate to sort column ascending">{t("Réclamant")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Country: activate to sort column ascending">Objets
-                                                            de réclamation
+                                                            aria-label="Country: activate to sort column ascending">{t("Objets de réclamation")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Country: activate to sort column ascending">Description
-                                                            de la Réclamation
+                                                            aria-label="Country: activate to sort column ascending">{t("Description de la réclamation")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            {(props.plan === 'PRO') ? "  Point de service visé" : "Institution ciblée"}
+                                                            {(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
 
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Statut
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Statut")}
                                                         </th>
 
                                                         {/*<th className="sorting" tabIndex="0"*/}
@@ -292,14 +295,14 @@ const HistoricClaimsAdd = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">Référence</th>
-                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">Objets de réclamations</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Objets de réclamations")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Description")}</th>
                                                         <th rowSpan="1"
-                                                            colSpan="1">{(props.plan === 'PRO') ? "Point de service visé" : "Institution ciblée"}
+                                                            colSpan="1">{(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
                                                         </th>
-                                                        <th rowSpan="1" colSpan="1">Statut</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Statut")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -310,8 +313,8 @@ const HistoricClaimsAdd = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {claimsAdd.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1
+                                                    {t("à")} {numberPerPage} {t("sur")} {claimsAdd.length} {t("données")}
                                                 </div>
                                             </div>
 
@@ -339,6 +342,7 @@ const HistoricClaimsAdd = (props) => {
                     </div>
                 </div>
             </div>
+        ) : null
 
     );
 };

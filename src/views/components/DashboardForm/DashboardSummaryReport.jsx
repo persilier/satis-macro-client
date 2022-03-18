@@ -3,8 +3,13 @@ import React, {useEffect, useState} from 'react';
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
+import {useTranslation} from "react-i18next";
 
 const DashboardSummaryReport = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const [load, setLoad] = useState(true);
     const reportColor = [
         {
@@ -60,9 +65,10 @@ const DashboardSummaryReport = (props) => {
         setLoad(false)
     }, []);
     return (
-        (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
-            verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
-            <div className="kt-portlet">
+        ready ? (
+            (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
+                verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
+                <div className="kt-portlet">
                     <div className="kt-portlet__head">
                         <div className="kt-portlet__head-label">
                             <h3 className="kt-portlet__head-title">
@@ -79,9 +85,9 @@ const DashboardSummaryReport = (props) => {
                                 <table className="table table-striped table-bordered">
                                     <thead>
                                     <tr>
-                                        <th>Rang</th>
-                                        <th>Objets de Réclamations</th>
-                                        <th>Total</th>
+                                        <th>{t("Rang")}</th>
+                                        <th>{t("Objets de Réclamations")}</th>
+                                        <th>{t("Total")}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -91,13 +97,13 @@ const DashboardSummaryReport = (props) => {
                                             reportColor.map((color, j) => (
                                                 i === j ?
                                                     report.label!==0?
-                                                    <tr key={i}>
-                                                        <td>{color.rang}</td>
+                                                        <tr key={i}>
+                                                            <td>{color.rang}</td>
 
-                                                        <td>{report.canal}</td>
+                                                            <td>{report.canal}</td>
 
-                                                        <td>{report.label}</td>
-                                                    </tr> : null
+                                                            <td>{report.label}</td>
+                                                        </tr> : null
                                                     : null
                                             ))
                                         ))
@@ -110,8 +116,9 @@ const DashboardSummaryReport = (props) => {
                             </div>
                         )
                     }
-            </div>
-            : null
+                </div>
+                : null
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

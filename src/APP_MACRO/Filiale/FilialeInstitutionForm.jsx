@@ -13,11 +13,15 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 
 
 const FilialeInstitutionForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
 
     if (!verifyPermission(props.userPermissions, 'update-my-institution'))
         window.location.href = ERROR_401;
@@ -105,13 +109,13 @@ const FilialeInstitutionForm = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(error => {
                     console.log(error.response.data.error)
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }
@@ -124,7 +128,7 @@ const FilialeInstitutionForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -132,13 +136,13 @@ const FilialeInstitutionForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/institution" className="kt-subheader__breadcrumbs-link">
-                                    Institution
+                                    {t("Institution")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     {
-                                        "Modification"
+                                        t("Modification")
                                     }
                                 </a>
                             </div>
@@ -153,7 +157,7 @@ const FilialeInstitutionForm = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Modification d'une institution
+                                            {t("Modification d'une institution")}
                                         </h3>
                                     </div>
                                 </div>
@@ -206,13 +210,13 @@ const FilialeInstitutionForm = (props) => {
                                                                 </div>
 
                                                                 <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name"> Nom <span style={{color:"red"}}>*</span></label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name"> {t("Nom")} <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le nom"
+                                                                            placeholder={t("Veuillez entrer le nom")}
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -230,12 +234,12 @@ const FilialeInstitutionForm = (props) => {
                                                                 </div>
 
                                                                 <div className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="Acronyme">Acronyme <span style={{color:"red"}}>*</span></label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="Acronyme">{t("Acronyme")} <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
                                                                             className={error.acronyme.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer l'acronyme"
+                                                                            placeholder={t("Veuillez entrer l'acronyme")}
                                                                             type="text"
                                                                             value={data.acronyme}
                                                                             onChange={(e) => onChangeAcronyme(e)}
@@ -255,13 +259,13 @@ const FilialeInstitutionForm = (props) => {
 
                                                                 <div
                                                                     className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">Code Iso <span style={{color:"red"}}>*</span></label>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">{t("Code Iso")} <span style={{color:"red"}}>*</span></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="value"
                                                                             type="text"
                                                                             className={error.iso_code.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer le code ISO"
+                                                                            placeholder={t("Veuillez entrer le code ISO")}
                                                                             value={data.iso_code}
                                                                             onChange={(e) => onChangeIsoCode(e)}
                                                                         />
@@ -284,12 +288,12 @@ const FilialeInstitutionForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Modifier</button>
+                                                                                    className="btn btn-primary">{t("Modifier")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Loading...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }

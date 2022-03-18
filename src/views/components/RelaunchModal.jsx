@@ -4,8 +4,13 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "./Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
+import {useTranslation} from "react-i18next";
 
 const RelaunchModal = ({onClose, id}) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const [description, setDescription] = useState("");
     const [error, setError] = useState([]);
     const [load, setLoad] = useState(false);
@@ -18,7 +23,7 @@ const RelaunchModal = ({onClose, id}) => {
                 .then(({data}) => {
                     setLoad(false);
                     ref.current.click();
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Relance effectuer avec succès'))
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Relance effectuer avec succès')))
                 })
                 .catch(({response}) => {
                     setLoad(false);
@@ -29,48 +34,50 @@ const RelaunchModal = ({onClose, id}) => {
     };
 
     return (
-        <div className="modal fade" id="kt_modal_4" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog modal-lg" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Relance</h5>
-                        <button ref={ref} onClick={() => onClose()} type="button" className="close" data-dismiss="modal" aria-label="Close"/>
-                    </div>
-                    <div className="modal-body">
-                        <form>
-                            <div className="form-group">
-                                <label htmlFor="message-text" className="form-control-label">Message:</label>
-                                <textarea
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className={error.length ? "form-control is-invalid" : "form-control"}
-                                    id="message-text"
-                                />
+        ready ? (
+            <div className="modal fade" id="kt_modal_4" data-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-lg" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">{t("Relance")}</h5>
+                            <button ref={ref} onClick={() => onClose()} type="button" className="close" data-dismiss="modal" aria-label="Close"/>
+                        </div>
+                        <div className="modal-body">
+                            <form>
+                                <div className="form-group">
+                                    <label htmlFor="message-text" className="form-control-label">{t("Message")}:</label>
+                                    <textarea
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className={error.length ? "form-control is-invalid" : "form-control"}
+                                        id="message-text"
+                                    />
 
-                                {
-                                    error.map((error, index) => (
-                                        <div key={index} className="invalid-feedback">
-                                            {error}
-                                        </div>
-                                    ))
-                                }
-                            </div>
-                        </form>
-                    </div>
-                    <div className="modal-footer">
-                        {
-                            !load ? (
-                                <button type="button" className="btn btn-primary" onClick={handleClick}>Envoyer</button>
-                            ) : (
-                                <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                    Chargement...
-                                </button>
-                            )
-                        }
+                                    {
+                                        error.map((error, index) => (
+                                            <div key={index} className="invalid-feedback">
+                                                {error}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                        <div className="modal-footer">
+                            {
+                                !load ? (
+                                    <button type="button" className="btn btn-primary" onClick={handleClick}>{t("Envoyer")}</button>
+                                ) : (
+                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                        {t("Chargement")}...
+                                    </button>
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        ) : null
     );
 };
 

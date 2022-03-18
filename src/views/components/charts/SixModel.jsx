@@ -1,7 +1,12 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
+import {useTranslation} from "react-i18next";
 
 const SixModel = ({data})  => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     var label = [];
     var series = [];
     const getData = () => {
@@ -34,12 +39,14 @@ const SixModel = ({data})  => {
     };
 
     return (
-        <div className="mt-4">
-            <div id="graphOne" className="d-flex justify-content-center">
-                <ReactApexChart options={options} series={series} type="pie" width={450}/>
+        ready ? (
+            <div className="mt-4">
+                <div id="graphOne" className="d-flex justify-content-center">
+                    <ReactApexChart options={options} series={series} type="pie" width={450}/>
+                </div>
+                <h5 className="text-center">{t("Pourcentage d'utilisation des canneaux")}</h5>
             </div>
-            <h5 className="text-center">Pourcentage d'utilisation des canneaux</h5>
-        </div>
+        ) : null
     );
 };
 

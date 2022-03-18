@@ -18,12 +18,17 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const TypeClient = (props) => {
-    document.title = "Satis client - Paramètre Type client";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? "Satis client - Paramètre Type client" : "");
     if (!verifyPermission(props.userPermissions, "list-type-client"))
         window.location.href = ERROR_401;
 
@@ -112,7 +117,7 @@ const TypeClient = (props) => {
     };
 
     const deleteTypeClient = (typeClientId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -137,10 +142,10 @@ const TypeClient = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -168,7 +173,7 @@ const TypeClient = (props) => {
 
                     <Link to="/settings/clients/type/detail"
                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                          title="Détail">
+                          title={t("Détails")}>
                         <i className="la la-eye"/>
                     </Link>
 
@@ -176,7 +181,7 @@ const TypeClient = (props) => {
                         verifyPermission(props.userPermissions, 'show-type-client')?
                             <Link to={`/settings/clients/type/edit/${type.id}`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                             :""
@@ -187,7 +192,7 @@ const TypeClient = (props) => {
                             <button
                                 onClick={(e) => deleteTypeClient(type.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
+                                title={t("Supprimer")}>
                                 <i className="la la-trash"/>
                             </button>
                             : null
@@ -199,153 +204,155 @@ const TypeClient = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-position") ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Client
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, "list-position") ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                         className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link">
-                                        Type Client
+                                    <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                        {t("Client")}
                                     </a>
+                                    <span className="kt-subheader__separator kt-hidden"/>
+                                    <div className="kt-subheader__breadcrumbs">
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
+                                        <span className="kt-subheader__breadcrumbs-separator"/>
+                                        <a href="#button" onClick={e => e.preventDefault()}
+                                           className="kt-subheader__breadcrumbs-link">
+                                            {t("Type Client")}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Liste des types client"}/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable
+                            information={t("Liste des types client")}/>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            addPermission={"store-type-client"}
-                            title={"Type Client"}
-                            addText={"Ajouter un Type Client"}
-                            addLink={"/settings/clients/type/add"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={"store-type-client"}
+                                title={t("Type Client")}
+                                addText={t("Ajouter un Type Client")}
+                                addLink={"/settings/clients/type/add"}
+                            />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Recherche:
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm" placeholder=""
-                                                               aria-controls="kt_table_1"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "200px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        typeClient.length ? (
-                                                            search ? (
-                                                                typeClient.map((type, index) => (
-                                                                    printBodyTable(type, index)
-                                                                ))
-                                                            ) : (
-                                                                showList.map((type, index) => (
-                                                                    printBodyTable(type, index)
-                                                                ))
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr></tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">
-                                                    {typeClient.length ?
-                                                        `Affichage de 1 à ${numberPerPage} sur ${typeClient.length} données`
-                                                        :
-                                                        "Affichage de 0 page"
-                                                    }
-
-                                                </div>
-                                            </div>
-                                            {
-                                                !search ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Recherche")}:
+                                                            <input id="myInput" type="text"
+                                                                   onKeyUp={(e) => searchElement(e)}
+                                                                   className="form-control form-control-sm" placeholder=""
+                                                                   aria-controls="kt_table_1"/>
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{width: "952px"}}>
+                                                        <thead>
+                                                        <tr role="row">
+
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "150px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Nom")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "200px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Description")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                                aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            typeClient.length ? (
+                                                                search ? (
+                                                                    typeClient.map((type, index) => (
+                                                                        printBodyTable(type, index)
+                                                                    ))
+                                                                ) : (
+                                                                    showList.map((type, index) => (
+                                                                        printBodyTable(type, index)
+                                                                    ))
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr></tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">
+                                                        {typeClient.length ?
+                                                            `${t("Affichage de")} 1 ${t("à")} ${numberPerPage} ${t("sur")} ${typeClient.length} ${t("données")}`
+                                                            :
+                                                            t("Affichage de 0 page")
+                                                        }
+
+                                                    </div>
+                                                </div>
+                                                {
+                                                    !search ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

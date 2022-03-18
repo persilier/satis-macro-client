@@ -13,10 +13,15 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 import InputRequire from "./InputRequire";
 
 
 const TypeCompteForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {edittypeid} = useParams();
     if (!edittypeid) {
         if (!verifyPermission(props.userPermissions, 'store-account-type'))
@@ -76,12 +81,12 @@ const TypeCompteForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError, ...error.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {
@@ -90,12 +95,12 @@ const TypeCompteForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError, ...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -108,7 +113,7 @@ const TypeCompteForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -116,12 +121,12 @@ const TypeCompteForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/clients/type" className="kt-subheader__breadcrumbs-link">
-                                    Type Compte
+                                    {t("Type Compte")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        edittypeid ? "Modification" : "Ajout"
+                                        edittypeid ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -138,7 +143,7 @@ const TypeCompteForm = (props) => {
                                         <h3 className="kt-portlet__head-title">
                                             {
                                                 edittypeid ?
-                                                    "Modification de Type Compte" : " Ajout de Type Compte"
+                                                    t("Modification de Type Compte") : t("Ajout de Type Compte")
                                             }
                                         </h3>
                                     </div>
@@ -156,13 +161,13 @@ const TypeCompteForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Nom <InputRequire/></label>
+                                                                           htmlFor="name">{t("Nom")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
                                                                             type="text"
                                                                             className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veuillez entrer le nom"
+                                                                            placeholder={t("Veuillez entrer le nom")}
                                                                             value={data.name}
                                                                             onChange={(e) => onChangeName(e)}
                                                                         />
@@ -182,12 +187,13 @@ const TypeCompteForm = (props) => {
                                                                 <div
                                                                     className={error.description.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="description">Description</label>
+                                                                           htmlFor="description">{t("Description")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                         <textarea
                                             id="description"
                                             className={error.description.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Veuillez entrer la description"
+                                            placeholder={t("Veuillez entrer la description")}
+
                                             cols="30"
                                             rows="5"
                                             value={data.description}
@@ -212,12 +218,12 @@ const TypeCompteForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">{edittypeid?"Modifier":"Enregistrer"}</button>
+                                                                                    className="btn btn-primary">{edittypeid?t("Modifier"):t("Enregistrer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -225,13 +231,13 @@ const TypeCompteForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/settings/accounts/type"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/settings/accounts/type"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -253,13 +259,15 @@ const TypeCompteForm = (props) => {
         );
     };
     return (
-        edittypeid ?
-            verifyPermission(props.userPermissions, 'update-account-type') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, "store-account-type") ? (
-                printJsx()
-            ) : null
+        ready ? (
+            edittypeid ?
+                verifyPermission(props.userPermissions, 'update-account-type') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, "store-account-type") ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 
 };

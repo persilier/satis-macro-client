@@ -1,9 +1,5 @@
 import React from "react";
-import {
-    Switch,
-    Route,
-    Redirect
-} from "react-router-dom";
+import {Switch, Route, Redirect} from "react-router-dom";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
 import UnitType from "../pages/UnitType";
@@ -128,7 +124,10 @@ import EmailConfig from "../pages/EmailConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
+import ConfigConnexion from "../pages/ConfigConnexion";
+import Logs from "../pages/Logs";
 import ProofReceipt from "../pages/ProofReceipt";
+import ResetPassword from '../pages/password-reset';
 
 const Body = () => {
     return (
@@ -139,6 +138,15 @@ const Body = () => {
             <Route exact path="/settings/config">
                 <ParametersComponent/>
             </Route>
+
+            <Route exact path="/settings/logs">
+                <Logs/>
+            </Route>
+
+            {/**
+             <Route exact path="/settings/reset-password">
+             <ResetPassword />
+             </Route> */}
 
             <Route exact path="/historic/claims/add">
                 <HistoricClaimsAdd/>
@@ -288,16 +296,16 @@ const Body = () => {
                 <PerformanceIndicatorForm/>
             </Route>
 
-            <Route exact path="/settings/unit_type">
-                <UnitType/>
+            <Route exact path="/settings/unit_type/:id/edit">
+                <UnitTypeForm/>
             </Route>
 
             <Route exact path="/settings/unit_type/add">
                 <UnitTypeForm/>
             </Route>
 
-            <Route exact path="/settings/unit_type/:id/edit">
-                <UnitTypeForm/>
+            <Route exact path="/settings/unit_type">
+                <UnitType/>
             </Route>
 
             <Route exact path="/settings/unit">
@@ -372,8 +380,13 @@ const Body = () => {
                 <UnitImportPage/>
             </Route>
 
+
             <Route exact path="/settings/proof-of-receipt">
                 <ProofReceipt/>
+            </Route>
+
+            <Route exact path="/settings/staffs">
+                <Staff/>
             </Route>
 
             <Route exact path="/settings/staffs">
@@ -426,6 +439,10 @@ const Body = () => {
 
             <Route exact path="/settings/channels/:id/edit">
                 <ChannelForm/>
+            </Route>
+
+            <Route exact path="/settings/connexion">
+                <ConfigConnexion/>
             </Route>
 
             <Route exact path="/process/claims/add">

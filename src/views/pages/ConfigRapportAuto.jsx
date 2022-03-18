@@ -19,6 +19,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -39,7 +40,11 @@ const endPointConfig = {
 };
 
 const ConfigRapportAuto = (props) => {
-    document.title = "Satis rapport - Paramètre Configuration Rapport Automatique";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis rapport - " + (ready ? t("Paramètre configuration rapport automatique") : "");
     if (!verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
         verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
         window.location.href = ERROR_401;
@@ -159,7 +164,7 @@ const ConfigRapportAuto = (props) => {
     };
 
     const deleteCategoryClient = (rapportAutoId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {
@@ -183,10 +188,10 @@ const ConfigRapportAuto = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -224,7 +229,7 @@ const ConfigRapportAuto = (props) => {
                             <Link
                                 to={`/settings/rapport/edit/${rapport.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Modifier">
+                                title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                             : null
@@ -234,7 +239,7 @@ const ConfigRapportAuto = (props) => {
                         <button
                             onClick={(e) => deleteCategoryClient(rapport.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Supprimer">
+                            title={t("Supprimer")}>
                             <i className="la la-trash"/>
                         </button>
                         : null
@@ -245,12 +250,13 @@ const ConfigRapportAuto = (props) => {
     };
 
     return (
+        ready ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -259,7 +265,7 @@ const ConfigRapportAuto = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Rapport automatique
+                                    {t("Rapport automatique")}
                                 </a>
                             </div>
                         </div>
@@ -268,14 +274,14 @@ const ConfigRapportAuto = (props) => {
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"Liste des rapports automatiques"}/>
+                        information={t("Liste des rapports automatiques")}/>
 
                     <div className="kt-portlet">
 
                         <HeaderTablePage
                             addPermission={"config-reporting-claim-any-institution"}
-                            title={"Rapport Automatique"}
-                            addText={"Ajouter une configuration"}
+                            title={t("Rapport Automatique")}
+                            addText={t("Ajouter une configuration")}
                             addLink={"/settings/rapport/add"}
                         />
                         {
@@ -288,7 +294,7 @@ const ConfigRapportAuto = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
@@ -311,13 +317,13 @@ const ConfigRapportAuto = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Institutions
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Institutions")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Périodes
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Périodes")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
@@ -329,7 +335,7 @@ const ConfigRapportAuto = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -350,10 +356,10 @@ const ConfigRapportAuto = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">Institutions</th>
-                                                        <th rowSpan="1" colSpan="1">Périodes</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Institutions")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Périodes")}</th>
                                                         <th rowSpan="1" colSpan="1">Emails</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -362,8 +368,7 @@ const ConfigRapportAuto = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {rapportAuto.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {rapportAuto.length} {t("données")}
                                                 </div>
                                             </div>
                                             {
@@ -390,6 +395,7 @@ const ConfigRapportAuto = (props) => {
                     </div>
                 </div>
             </div>
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

@@ -17,13 +17,14 @@ const Pagination = (props) => {
             return null;
         }*/
 
+
     let lastPage = paginationRange[paginationRange.length - 1];
 
     return (
         <div>
             <div className="dataTables_length" id="kt_table_1_length">
                 <label>
-                    Afficher
+                    {("Afficher")}
                     <select value={props.numberPerPage} onChange={(e) => props.onChangeNumberPerPage(e)} name="kt_table_1_length" aria-controls="kt_table_1" className="custom-select custom-select-sm form-control form-control-sm">
                         <option value="10">10</option>
                         <option value="20">20</option>
@@ -31,7 +32,7 @@ const Pagination = (props) => {
                         <option value="50">50</option>
                         <option value="100">100</option>
                     </select>
-                    données
+                    {("données")}
                 </label>
             </div>
 
@@ -80,7 +81,7 @@ const Pagination = (props) => {
         </div>
     )
 
-
 }
+
 
 export default Pagination;

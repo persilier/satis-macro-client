@@ -20,10 +20,15 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Channel = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!verifyPermission(props.userPermissions, "list-channel"))
         window.location.href = ERROR_401;
 
@@ -84,8 +89,9 @@ const Channel = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 1; i < position; i++) {
-            end = end + numberPerPage;
+
+        for (let i = 1; i<position; i++) {
+            end = end+numberPerPage;
         }
         return end;
     };
@@ -166,7 +172,7 @@ const Channel = (props) => {
     };
 
     const deleteChannel = (channelId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {
@@ -190,13 +196,13 @@ const Channel = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
                                 if (error.response.data.error)
                                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -224,6 +230,7 @@ const Channel = (props) => {
                     <div id={`channel-spinner-${channel.id}`}
                          className="kt-spinner kt-spinner--lg kt-spinner--dark mt-2 mx-3" style={{display: "none"}}/>
                     {
+
                         channel.can_be_response ? (
                             <a
                                 className="mt-2"
@@ -233,6 +240,7 @@ const Channel = (props) => {
                                 title={channel.is_response ? "Désactiver" : "Activer"}>
                                 {channel.is_response ? "Désactiver" : "Activer"}
                             </a>
+
                         ) : null
 
                     }
@@ -265,22 +273,22 @@ const Channel = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-channel') ? (
+        ready ? ( verifyPermission(props.userPermissions, 'list-channel') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Canal
+
+                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    {t("Canal")}
                                 </a>
                             </div>
                         </div>
@@ -291,8 +299,8 @@ const Channel = (props) => {
                     <div className="kt-portlet">
                         <HeaderTablePage
                             addPermission={"store-channel"}
-                            title={"Canal"}
-                            addText={"Ajouter"}
+                            title={t("Canal")}
+                            addText={t("Ajouter")}
                             addLink={"/settings/channels/add"}
                         />
 
@@ -306,7 +314,7 @@ const Channel = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input
                                                             id="myInput"
                                                             type="text"
@@ -326,21 +334,17 @@ const Channel = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Nom
+
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">{t("Nom")}
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">Canale
-                                                            de reponse
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                            aria-label="Country: activate to sort column ascending">{t("Canal de réponse")}
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -361,9 +365,9 @@ const Channel = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Canale de reponse</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Canal de réponse")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
@@ -372,8 +376,8 @@ const Channel = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {channels.length} données
+
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {channels.length} {t("données")}
                                                 </div>
                                             </div>
                                             {
@@ -400,7 +404,7 @@ const Channel = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : ""
     );
 };
 

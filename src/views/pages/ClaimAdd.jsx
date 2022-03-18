@@ -26,6 +26,7 @@ import InputRequire from "../components/InputRequire";
 import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const endPointConfig = {
     PRO: {
@@ -55,7 +56,11 @@ const endPointConfig = {
 };
 
 const ClaimAdd = props => {
-    document.title = "Satis client - Enrégistrement de réclamation";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Enrégistrement de réclamation") : "";
     if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
         window.location.href = ERROR_401;
 
@@ -440,7 +445,7 @@ const ClaimAdd = props => {
     const handleEventOccuredAt = e => {
         const newData = {...data};
         if (new Date(e.target.value) >= new Date()) {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Date invalide"));
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Date invalide")));
             newData.event_occured_at = "";
         } else
             newData.event_occured_at = e.target.value;
@@ -520,13 +525,15 @@ const ClaimAdd = props => {
                 if (institution) {
                     startSearchClient();
                 } else
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez selectioner une institution"))
+
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectioner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
                 startSearchClient();
             }
 
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez renseigner le champ de recherche"))
+
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez renseigner le champ de recherche")))
         }
     };
 
@@ -574,6 +581,7 @@ const ClaimAdd = props => {
             delete newData.amount_disputed;
         if (!newData.amount_currency_slug)
             delete newData.amount_currency_slug;
+
         if (!newData.claimer_id)
             delete newData.claimer_id;
         if (props.plan !== "HUB")
@@ -582,7 +590,7 @@ const ClaimAdd = props => {
             axios.post(endPoint.store, formatFormData(newData))
                 .then(async (response) => {
                     setDisabledInput(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     resetAllData();
                     document.getElementById("customFile").value = "";
                     if (response.data.errors)
@@ -609,7 +617,7 @@ const ClaimAdd = props => {
                             }
                         }
                         setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     }
                 })
             ;
@@ -617,7 +625,7 @@ const ClaimAdd = props => {
     };
 
     return (
-        load ? (
+        load && !ready ? (
             <Loader/>
         ) : (
             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
@@ -626,7 +634,7 @@ const ClaimAdd = props => {
                         <div className="kt-container  kt-container--fluid ">
                             <div className="kt-subheader__main">
                                 <h3 className="kt-subheader__title">
-                                    Processus
+                                    {t("Processus")}
                                 </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -635,7 +643,7 @@ const ClaimAdd = props => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        Collecte
+                                        {t("Collecte")}
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
@@ -644,7 +652,7 @@ const ClaimAdd = props => {
                                         <span className="kt-subheader__breadcrumbs-separator"/>
                                         <a href="#button" onClick={e => e.preventDefault()}
                                            className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                            Enrégistrement réclamation
+                                            {t("Enrégistrement de réclamation")}
                                         </a>
                                     </div>
                                 </div>
@@ -729,7 +737,7 @@ const ClaimAdd = props => {
                                                                         <input id="is_client" type="checkbox"
                                                                                value={disabledInput}
                                                                                onChange={handleDisabledInputChange}/>
-                                                                        Le client est-il déjà enregistré ?<span/>
+                                                                        {t("Le client est-il déjà enregistré")} ?<span/>
                                                                     </label>
                                                                 </div>
 
@@ -747,7 +755,7 @@ const ClaimAdd = props => {
                                                                                 type="text"
                                                                                 value={searchInputValue}
                                                                                 onChange={e => setSearchInputValue(e.target.value)}
-                                                                                placeholder={"Rechercher un client..."}
+                                                                                placeholder={t("Rechercher un client") + "..."}
                                                                                 className="form-control"
                                                                                 disabled={!disabledInput}
                                                                             />
@@ -820,7 +828,7 @@ const ClaimAdd = props => {
                                                                                                     className={"mt-3 mb-3"}><Loader/></span>
                                                                                             ) : (
                                                                                                 <span
-                                                                                                    className="d-flex justify-content-center">Pas de resultat</span>
+                                                                                                    className="d-flex justify-content-center">{t("Pas de resultat")}</span>
                                                                                             )
                                                                                         }
                                                                                     </div>
@@ -900,9 +908,10 @@ const ClaimAdd = props => {
                                                             >
                                                                 <option value=""
                                                                         disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
-                                                                <option value="F">Féminin</option>
-                                                                <option value="M">Masculin</option>
-                                                                <option value="A">Autres</option>
+
+                                                                <option value="F">{t("Féminin")}</option>
+                                                                <option value="M">{t("Masculin")}</option>
+                                                                <option value="A">{t("Autres")}</option>
                                                             </select>
                                                             {
                                                                 error.sexe.length ? (
@@ -1231,8 +1240,9 @@ const ClaimAdd = props => {
                                                                 <div
                                                                     className={error.relationship_id.length ? "col validated" : "col"}>
                                                                     <label
-                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} avec
-                                                                        l'institution <InputRequire/></label>
+
+                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} {t("avec l'institution")}
+                                                                        <InputRequire/></label>
                                                                     <Select
                                                                         isClearable
                                                                         value={relationship}
@@ -1366,15 +1376,11 @@ const ClaimAdd = props => {
                                                                     <div className="alert-icon"><i
                                                                         className="flaticon-warning"/></div>
                                                                     <div className="alert-text">
-                                                                        <p>La réclamation a été enregistrée avec succès
-                                                                            sous
-                                                                            la
-                                                                            référence <strong>{completionError.ref}</strong>
+                                                                        <p>{t("La réclamation a été enregistrée avec succès sous la référence")}
+                                                                            <strong>{completionError.ref}</strong>
                                                                         </p>
-                                                                        <p>Cependant elle est incomplète</p>
-                                                                        <p>Les informations qu'il reste à fournir sont
-                                                                            les
-                                                                            suivants :</p>
+                                                                        <p>{t("Cependant elle est incomplète")}</p>
+                                                                        <p>{t("Les informations qu'il reste à fournir sont les suivantes")} :</p>
                                                                         <ul className="ml-4">
                                                                             {completionError.list.map((el, index) => (
                                                                                 <li key={index}>- {el.description["fr"]}</li>
@@ -1401,12 +1407,12 @@ const ClaimAdd = props => {
                                                 {
                                                     !startRequest ? (
                                                         <button type="submit" onClick={(e) => onSubmit(e)}
-                                                                className="btn btn-primary">Enregistrer</button>
+                                                                className="btn btn-primary">{t("Enregistrer")}</button>
                                                     ) : (
                                                         <button
                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                             type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }

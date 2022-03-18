@@ -7,7 +7,11 @@ import {
 import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
@@ -20,6 +24,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import ExportButton from "../components/ExportButton";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -47,6 +52,10 @@ const endPointConfig = {
 };
 
 const Unit = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!(verifyPermission(props.userPermissions, 'list-any-unit') || verifyPermission(props.userPermissions, 'list-my-unit') || verifyPermission(props.userPermissions, 'list-without-link-unit')))
         window.location.href = ERROR_401;
 
@@ -72,7 +81,7 @@ const Unit = (props) => {
                 .then(response => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-                    console.log("data:", response.data);
+
                     setUnits(response.data);
                     setLoad(false);
                 })
@@ -159,7 +168,7 @@ const Unit = (props) => {
     };
 
     const deleteUnit = (unitId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {
@@ -183,10 +192,13 @@ const Unit = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error))
+                                else
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -210,6 +222,8 @@ const Unit = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{unit.name["fr"]}</td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>{unit.unit_type.name["fr"]}</td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}> { unit.state && unit.state.country ? unit.state.country.name : "-"} </td>
+                <td style={{ textOverflow: "ellipsis", width: "70px" }}> { unit.state ? unit.state.name : "-"} </td>
                 <td style={{ textOverflow: "ellipsis", width: "70px" }}>
                     {
                         unit.lead ?
@@ -227,7 +241,7 @@ const Unit = (props) => {
                         verifyPermission(props.userPermissions, 'update-any-unit') || verifyPermission(props.userPermissions, 'update-my-unit') || verifyPermission(props.userPermissions, 'update-without-link-unit') ? (
                             <Link to={`/settings/unit/${unit.id}/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                         ) : null
@@ -237,7 +251,7 @@ const Unit = (props) => {
                             <button
                                 onClick={(e) => deleteUnit(unit.id, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
+                                title={t("Supprimer")}>
                                 <i className="la la-trash"/>
                             </button>
                         ) : null
@@ -248,152 +262,164 @@ const Unit = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-any-unit') || verifyPermission(props.userPermissions, 'list-my-unit') || verifyPermission(props.userPermissions, 'list-without-link-unit') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Unité
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, 'list-any-unit') || verifyPermission(props.userPermissions, 'list-my-unit') || verifyPermission(props.userPermissions, 'list-without-link-unit') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Unité")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Liste des services, agences, etc..."}/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable information={t("Liste des services, agences, etc") + '...'}/>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            addPermission={['store-any-unit', 'store-my-unit', 'store-without-link-unit']}
-                            title={"Unité"}
-                            addText={"Ajouter"}
-                            addLink={"/settings/unit/add"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={['store-any-unit', 'store-my-unit', 'store-without-link-unit']}
+                                title={t("Unité")}
+                                addText={t("Ajouter")}
+                                addLink={"/settings/unit/add"}
+                            />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter"><label>
-                                                    Recherche:
-                                                    <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                </label>
-                                                </div>
-                                            </div>
-
-                                            <ExportButton
-                                                downloadLink={`${appConfig.apiDomaine}/download-excel/units`}
-                                                pageUrl={"/settings/unit/import"}
-                                            />
-                                        </div>
-
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom Unité
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Type Unité
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70px" }}
-                                                            aria-label="Country: activate to sort column ascending">Responsable
-                                                        </th>
-                                                        {
-                                                            verifyPermission(props.userPermissions, 'list-any-unit') ? (
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                    colSpan="1" style={{ width: "70px" }}
-                                                                    aria-label="Country: activate to sort column ascending">Institution
-                                                                </th>
-                                                            ) : <th style={{display: "none"}}/>
-                                                        }
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        units.length ? (
-                                                            showList.length ? (
-                                                                showList.map((unit, index) => (
-                                                                    printBodyTable(unit, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom Unité</th>
-                                                        <th rowSpan="1" colSpan="1">Type Unité</th>
-                                                        <th rowSpan="1" colSpan="1">Responsable</th>
-                                                        {
-                                                            verifyPermission(props.userPermissions, 'list-any-unit') ? (
-                                                                <th rowSpan="1" colSpan="1">Institution</th>
-                                                            ) : <th style={{display: "none"}}/>
-                                                        }
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {units.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                showList ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter"><label>
+                                                        {t("Recherche")}:
+                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                    </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+
+                                                <ExportButton
+                                                    downloadLink={`${appConfig.apiDomaine}/download-excel/units`}
+                                                    pageUrl={"/settings/unit/import"}
+                                                />
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{ width: "952px" }}>
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Nom Unité")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Type Unité")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "0px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Pays")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "0px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Zones")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Responsable")}
+                                                            </th>
+                                                            {
+                                                                verifyPermission(props.userPermissions, 'list-any-unit') ? (
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                        colSpan="1" style={{ width: "70px" }}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Institution")}
+                                                                    </th>
+                                                                ) : <th style={{display: "none"}}/>
+                                                            }
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            units.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((unit, index) => (
+                                                                        printBodyTable(unit, index)
+                                                                    ))
+                                                                ) : (
+                                                                    <EmptyTable search={true}/>
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">{t("Nom Unité")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Type Unité")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Pays")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Zones")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Responsable")}</th>
+                                                            {
+                                                                verifyPermission(props.userPermissions, 'list-any-unit') ? (
+                                                                    <th rowSpan="1" colSpan="1">{t("Institution")}</th>
+                                                                ) : <th style={{display: "none"}}/>
+                                                            }
+                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {units.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    showList ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

@@ -9,8 +9,12 @@ import {
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const UnfoundedModal = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
 
     const defaultData = {
         unfounded_reason: "",
@@ -54,116 +58,118 @@ const UnfoundedModal = (props) => {
                 axios.put(appConfig.apiDomaine + `/claim-awaiting-assignment/${props.getId}/unfounded`, data)
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         window.location.href="/process/claim-assign"
                     }).catch(error => {
                     setStartRequest(false);
                     setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             }else{
                 axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
                     .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                         window.location.href="/process/claim-assign/to-staff"
                     }).catch(error => {
                     setStartRequest(false);
                     setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             }
         }
     };
     return (
-        <div>
-            <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog"
-                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Réclamation non Fondée</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <div
-                                className={error.unfounded_reason.length ? "form-group validated" : "form-group"}>
-                                <label htmlFor="description">Motif <span style={{color:"red"}}>*</span></label>
-                                <textarea
-                                    id="description"
-                                    className={error.unfounded_reason.length ? "form-control is-invalid" : "form-control"}
-                                    placeholder="Veillez entrer la description du motif"
-                                    cols="62"
-                                    rows="7"
-                                    value={data.unfounded_reason}
-                                    onChange={(e) => onChangeDescription(e)}
-                                />
-                                {
-                                    error.unfounded_reason.length ? (
-                                        error.unfounded_reason.map((error, index) => (
-                                            <div key={index}
-                                                 className="invalid-feedback">
-                                                {error}
-                                            </div>
-                                        ))
-                                    ) : ""
-                                }
+        ready ? (
+            <div>
+                <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">{t("Réclamation non Fondée")}</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
-                            {
-                                verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
-                                    <div
-                                        className={error.solution_communicated.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="description">Solution <span style={{color:"red"}}>*</span></label>
-                                        <textarea
-                                            id="description"
-                                            className={error.solution_communicated.length ? "form-control is-invalid" : "form-control"}
-                                            placeholder="Message à communiquer au client"
-                                            cols="30"
-                                            rows="7"
-                                            value={data.solution_communicated}
-                                            onChange={(e) => onChangeSolution(e)}
-                                        />
-                                        {
-                                            error.solution_communicated.length ? (
-                                                error.solution_communicated.map((error, index) => (
-                                                    <div key={index}
-                                                         className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : ""
-                                        }
+                            <div className="modal-body">
+                                <div
+                                    className={error.unfounded_reason.length ? "form-group validated" : "form-group"}>
+                                    <label htmlFor="description">{t("Motif")} <span style={{color:"red"}}>*</span></label>
+                                    <textarea
+                                        id="description"
+                                        className={error.unfounded_reason.length ? "form-control is-invalid" : "form-control"}
+                                        placeholder={t("Veuillez entrer la description du motif")}
+                                        cols="62"
+                                        rows="7"
+                                        value={data.unfounded_reason}
+                                        onChange={(e) => onChangeDescription(e)}
+                                    />
+                                    {
+                                        error.unfounded_reason.length ? (
+                                            error.unfounded_reason.map((error, index) => (
+                                                <div key={index}
+                                                     className="invalid-feedback">
+                                                    {error}
+                                                </div>
+                                            ))
+                                        ) : ""
+                                    }
+                                </div>
+                                {
+                                    verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
+                                        <div
+                                            className={error.solution_communicated.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="description">{t("Solution")} <span style={{color:"red"}}>*</span></label>
+                                            <textarea
+                                                id="description"
+                                                className={error.solution_communicated.length ? "form-control is-invalid" : "form-control"}
+                                                placeholder={t("Message à communiquer au client")}
+                                                cols="30"
+                                                rows="7"
+                                                value={data.solution_communicated}
+                                                onChange={(e) => onChangeSolution(e)}
+                                            />
+                                            {
+                                                error.solution_communicated.length ? (
+                                                    error.solution_communicated.map((error, index) => (
+                                                        <div key={index}
+                                                             className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : ""
+                                            }
 
-                                    </div>
-                                ):""
-                            }
+                                        </div>
+                                    ):""
+                                }
 
-                        </div>
-                        <div className="modal-footer">
+                            </div>
+                            <div className="modal-footer">
 
-                            {
-                                !startRequest ? (
-                                    <button type="submit"
-                                            onClick={(e) => onSubmit(e)}
-                                            className="btn btn-primary">Enregistrer</button>
-                                ) : (
-                                    <button
-                                        className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                        type="button" disabled>
-                                        Chargement...
-                                    </button>
-                                )
-                            }
+                                {
+                                    !startRequest ? (
+                                        <button type="submit"
+                                                onClick={(e) => onSubmit(e)}
+                                                className="btn btn-primary">{("Enregistrer")}</button>
+                                    ) : (
+                                        <button
+                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                            type="button" disabled>
+                                            {t("Chargement")}...
+                                        </button>
+                                    )
+                                }
 
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Quitter</button>
+                                <button type="button" className="btn btn-secondary" data-dismiss="modal">{t("Quitter")}</button>
 
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        ) : null
     )
 };
 const mapStateToProps = state => {

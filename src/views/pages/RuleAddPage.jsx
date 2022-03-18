@@ -18,9 +18,14 @@ import {
     toastAddSuccessMessageConfig, toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
+import {useTranslation} from "react-i18next";
 
 
 const RuleAddPage = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     const {id} = useParams();
     if (id) {
         if (!(verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role')))
@@ -140,7 +145,7 @@ const RuleAddPage = (props) => {
             <div key={index}>
                 <h5 className="text-center">Module: {module.name["fr"]}</h5>
                 <div className={error.permissions.length ? "form-group row validated" : "form-group row"}>
-                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Permissions <InputRequire/></label>
+                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Permissions")} <InputRequire/></label>
                     <div className="col-lg-9 col-xl-6">
                         <div className="kt-checkbox-inline">
                             {
@@ -181,19 +186,19 @@ const RuleAddPage = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/rules" className="kt-subheader__breadcrumbs-link">
-                                    Roles
+                                    {t("Rôles")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -209,7 +214,7 @@ const RuleAddPage = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de role" : "Ajout de role"
+                                                id ? t("Modification de rôle") : t("Ajout de rôle")
                                             }
                                         </h3>
                                     </div>
@@ -219,13 +224,13 @@ const RuleAddPage = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Nom")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom du type d'unité"
+                                                        placeholder={t("Veuillez entrer le nom du type d'unité")}
                                                         value={data.name}
                                                         onChange={(e) => handleNameChange(e)}
                                                     />
@@ -244,7 +249,7 @@ const RuleAddPage = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-any-institution-type-role') ? (
                                                     <div className={error.institutionTypes.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Type d'institution <InputRequire/></label>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Type d'institution")} <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             <Select
                                                                 isClearable
@@ -305,23 +310,23 @@ const RuleAddPage = (props) => {
                                                     !startRequest ? (
                                                         <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">
                                                             {
-                                                                id ? "Modifier" : "Enregistrer"
+                                                                id ? t("Modifier") : t("Enregistrer")
                                                             }
                                                         </button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/rules" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/rules" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -359,12 +364,12 @@ const RuleAddPage = (props) => {
                     .then(() => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(({response}) => {
                         setError({...defaultError, ...response.data.error});
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {
@@ -383,12 +388,12 @@ const RuleAddPage = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(({response}) => {
                         setError({...defaultError, ...response.data.error});
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -396,13 +401,15 @@ const RuleAddPage = (props) => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'store-my-institution-type-role') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'store-my-institution-type-role') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

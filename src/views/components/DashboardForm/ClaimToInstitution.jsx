@@ -7,9 +7,14 @@ import {connect} from "react-redux";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 const ClaimToInstitution = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const [load, setLoad] = useState(true);
     const [institutionData, setInstitutionData] = useState("");
 
@@ -50,25 +55,27 @@ const ClaimToInstitution = (props) => {
     }, []);
 
     return (
-
-        <div>
-            <div className="kt-portlet__head">
-                <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Satisfaction des institutions qui reçoivent plus de
-                        réclamations sur les 30 derniers jours</h3>
-                </div>
-            </div>
-            {
-                load ? (
-                    <LoadingTable/>
-                ) : (
-                    <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
-                        <Chart options={institutionData.options} series={institutionData.series} type="pie"
-                               width={380}/>
-
+        ready ? (
+            <div>
+                <div className="kt-portlet__head">
+                    <div className="kt-portlet__head-label">
+                        <h3 className="kt-portlet__head-title">
+                            {t("Satisfaction des institutions qui reçoivent plus de réclamations sur les 30 derniers jours")}
+                        </h3>
                     </div>
-                )}
-        </div>
+                </div>
+                {
+                    load ? (
+                        <LoadingTable/>
+                    ) : (
+                        <div id="chart" className="d-flex justify-content-center" style={{position: "relative"}}>
+                            <Chart options={institutionData.options} series={institutionData.series} type="pie"
+                                   width={380}/>
+
+                        </div>
+                    )}
+            </div>
+        ) : null
     );
 };
 const mapStateToProps = (state) => {

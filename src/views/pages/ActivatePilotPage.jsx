@@ -13,10 +13,15 @@ import {ERROR_401} from "../../config/errorPage";
 import InputRequire from "../components/InputRequire";
 import appConfig from "../../config/appConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 const ActivatePilotPage = (props) => {
-    document.title = "Satis client - Paramètre pilote actif";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Paramètre pilote actif") : "";
 
     if (!(verifyPermission(props.userPermissions, 'update-active-pilot')))
         window.location.href = ERROR_401;
@@ -71,7 +76,7 @@ const ActivatePilotPage = (props) => {
             axios.put(`${appConfig.apiDomaine}/active-pilot/institutions/${props.activeUserInstitution}`, {staff_id: staff ? staff.value : ""})
                 .then( async () => {
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
 
                         if (props.user.staff.is_active_pilot) {
                             await axios.get(`${appConfig.apiDomaine}/login`)
@@ -87,7 +92,7 @@ const ActivatePilotPage = (props) => {
                 .catch(errorRequest => {
                     setStartRequest(false);
                     setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }
@@ -100,14 +105,14 @@ const ActivatePilotPage = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Pilote actif
+                                    {t("Pilote actif")}
                                 </a>
                             </div>
                         </div>
@@ -121,7 +126,7 @@ const ActivatePilotPage = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Pilote actif
+                                            {t("Pilote actif")}
                                         </h3>
                                     </div>
                                 </div>
@@ -130,7 +135,7 @@ const ActivatePilotPage = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.staff_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Veillez choisir le pilote actif <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Veillez choisir le pilote actif")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
@@ -155,10 +160,10 @@ const ActivatePilotPage = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{"Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
@@ -175,8 +180,10 @@ const ActivatePilotPage = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'update-active-pilot') ? (
-            printJsx()
+        ready ? (
+            verifyPermission(props.userPermissions, 'update-active-pilot') ? (
+                printJsx()
+            ) : null
         ) : null
     );
 };

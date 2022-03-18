@@ -1,7 +1,9 @@
+import React from 'react';
 import {connect} from "react-redux";
 import ModelNumberToClaimList from "../components/ModelNumberToClaimList";
 import {verifyPermission} from "../../helpers/permission"
 import appConfig from "../../config/appConfig";
+import {useTranslation} from "react-i18next";
 
 const endPointConfig = {
     PRO: {
@@ -23,7 +25,11 @@ const endPointConfig = {
 };
 
 const TotalClaimForUnit = (props) => {
-    document.title = "Satis client - Les réclamation a transféré à une unité";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Les réclamation a transféré à une unité") : "");
     let endPoint = "";
 
     if (props.plan === "MACRO") {
@@ -33,15 +39,18 @@ const TotalClaimForUnit = (props) => {
             endPoint = endPointConfig[props.plan].filial
     } else
         endPoint = endPointConfig[props.plan];
+
     return (
-        <ModelNumberToClaimList
-            navigationTitle={"Les réclamations a transféré à une unité"}
-            description={'La liste des réclamations a transféré à une unité'}
-            title={'Les reclamations a transféré à une unité'}
-            endpoint={endPoint}
-            userPermissions={props.userPermissions}
-            plan={props.plan}
-        />
+        ready ? (
+            <ModelNumberToClaimList
+                navigationTitle={t("Les réclamations a transféré à une unité")}
+                description={t('La liste des réclamations a transféré à une unité')}
+                title={t('Les réclamations a transféré à une unité')}
+                endpoint={endPoint}
+                userPermissions={props.userPermissions}
+                plan={props.plan}
+            />
+        ) : null
     );
 };
 

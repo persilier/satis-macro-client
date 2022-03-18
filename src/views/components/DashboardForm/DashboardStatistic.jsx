@@ -6,8 +6,13 @@ import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import LoadingTable from "../LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const DashboardStatistic = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const [data, setProcessData] = useState("");
     const [componentData, setComponentData] = useState("");
     const [load, setLoad] = useState(true);
@@ -18,23 +23,23 @@ const DashboardStatistic = (props) => {
 
     const defaultData = {
         series: [{
-            name: "Enregistrées",
+            name: t("Enregistrées"),
             data: data ? data.series.data1 : []
         },
             {
-                name: "Tranférées à une Unité",
+                name: t("Tranférées à une Unité"),
                 data: data ? data.series.data2 : []
             },
             {
-                name: 'Traitées',
+                name: t('Traitées'),
                 data: data ? data.series.data3 : []
             },
             {
-                name: 'Non Fondées',
+                name: t('Non Fondées'),
                 data: data ? data.series.data4 : []
             },
             {
-                name: 'Mesure Satisfaction',
+                name: t('Mesure Satisfaction'),
                 data: data ? data.series.data5 : []
             }
         ],
@@ -55,7 +60,7 @@ const DashboardStatistic = (props) => {
                 dashArray: [0, 3, 3, 0, 3]
             },
             title: {
-                text: 'Evolution des satisfactions par mois',
+                text: t('Évolution des satisfactions par mois'),
                 align: 'left'
             },
             legend: {
@@ -82,7 +87,7 @@ const DashboardStatistic = (props) => {
             xaxis: {
                 categories: data ? data.options.xaxis.categories : [],
                 title: {
-                    text: 'Mois'
+                    text: t('Mois')
                 }
             },
 
@@ -129,31 +134,33 @@ const DashboardStatistic = (props) => {
     }, []);
 
     return (
-        (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
-            verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
-            <div className="kt-portlet">
-                <div className="kt-portlet__head">
-                    <div className="kt-portlet__head-label">
-                        <h3 className="kt-portlet__head-title">
-                            {/*Evolution de la satisfaction des réclamations sur les 11 derniers mois*/}
-                            {componentData ? componentData.params.fr.title_satisfaction_of_process.value : ""}
-                        </h3>
-                    </div>
-                </div>
-
-                {
-                    load ? (
-                        <LoadingTable/>
-                    ) : (
-                    data ?
-                        <div id="chart" className="kt-portlet__body">
-                            <Chart options={data.options} series={data.series} type="area" height={350}/>
+        ready ? (
+            (verifyPermission(props.userPermissions, "show-dashboard-data-all-institution") ||
+                verifyPermission(props.userPermissions, "show-dashboard-data-my-institution")) ?
+                <div className="kt-portlet">
+                    <div className="kt-portlet__head">
+                        <div className="kt-portlet__head-label">
+                            <h3 className="kt-portlet__head-title">
+                                {/*Evolution de la satisfaction des réclamations sur les 11 derniers mois*/}
+                                {componentData ? componentData.params.fr.title_satisfaction_of_process.value : ""}
+                            </h3>
                         </div>
-                        : null
-                    )
-                }
-            </div>
-            : null
+                    </div>
+
+                    {
+                        load ? (
+                            <LoadingTable/>
+                        ) : (
+                            data ?
+                                <div id="chart" className="kt-portlet__body">
+                                    <Chart options={data.options} series={data.series} type="area" height={350}/>
+                                </div>
+                                : null
+                        )
+                    }
+                </div>
+                : null
+        ) : null
     )
 
 };
