@@ -129,7 +129,7 @@ const HoldingClientForm = (props) => {
                     }
                     if (verifyPermission(props.userPermissions, 'store-client-from-my-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution')) {
                         const clientOptions =
-                            response.data.client_institutions ? response.data.client_institutions.map((client) => ({
+                            response.data.client_institutions ? response.data.client_institutions.data.map((client) => ({
                                 value: client.client_id,
                                 label: client.client.identite.firstname + ' ' + client.client.identite.lastname
                             })) : "";

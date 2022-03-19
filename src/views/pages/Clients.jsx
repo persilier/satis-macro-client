@@ -72,10 +72,11 @@ const Clients = (props) => {
         if (verifyTokenExpire()) {
             axios.get(endPoint.list)
                 .then(response => {
+                    console.log(response.data);
                     setLoad(false);
-                    setClients(response.data);
-                    setShowList(response.data.slice(0, numberPerPage));
-                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                    setClients(response.data["data"]);
+                    setShowList(response.data.data.slice(0, numberPerPage));
+                    setNumberPage(forceRound(response.data.data.length / numberPerPage));
                 })
                 .catch(error => {
                     setLoad(false);
