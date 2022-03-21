@@ -66,3 +66,123 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+# React i18next
+Pour plus d'informations voir:
+
+https://react.i18next.com/
+
+https://www.i18next.com/
+
+## How to use
+
+Si vous voulez utiliser des textes dans vos composants vous devrez utiliser
+react-i18next.
+
+### Import
+
+Si c'est un composant react, vous devez importer `useTranslation` de `react-i18next`
+puis l'appeler dans le composant
+```jsx
+import {useTranslation} from "react-i18next";
+
+const YourComponent = props => {
+
+    //usage of useTranslation i18n here
+    const {t, ready} = useTranslation()
+
+    return (<>JSX CODE</>)  
+}
+```
+Si vous voulez juste déclarer une constante qui implique
+que vous y mettiez du texte, vous ne pouvez pas utiliser
+`useTranslation` qui ne marche que dans les composant react.
+Dans ce cas vous devrez importer le fichier `src/i18n.js`
+```js
+import i18n from "./i18n";
+
+export const yourConstant = () => {
+    return ("your constant")
+}
+```
+
+### Translate text
+Pour les composants react il suffit d'entourer le texte avec la fonction
+`t` précedemment appeler avec `const {t, ready} = useTranslation()`
+ ```jsx
+ import {useTranslation} from "react-i18next";
+ 
+ const YourComponent = props => {
+ 
+     //usage of useTranslation i18n here
+     const {t, ready} = useTranslation()
+ 
+     return (
+         <>
+            {t("Your text")}
+         </>
+     );
+ }
+ ```
+Néanmoins il existe une variable `ready` qui est égale a `false` tant que les fichiers
+de translation n'auront pas fini de chargé. Il faut l'utiliser sinon votre page
+tenterai d'afficher des translations alors qu'elles n'ont pas finis de chargé
+qui peut engendrer des problèmes.
+ ```jsx
+ import {useTranslation} from "react-i18next";
+ 
+ const YourComponent = props => {
+ 
+     //usage of useTranslation i18n here
+     const {t, ready} = useTranslation()
+ 
+     return (
+            ready === true ? (
+                    <>
+                        {t("Your text")}
+                    </>
+            ) : null
+            //null peut être remplacé par un loader ou autres  
+     );
+ }
+ ```
+Pour les constantes vu qu'on ne peut pas utiliser `useTranslation` qui ne peut être
+utilisés que dans des composants react, vous allez utiliser `i18n.t` et `i18n.isInitialized` (joue le même rôle que `ready`).
+Mais pour que la translation fonctionne correctement vous devez creé une fonction
+qui va retourner votre constante, cette fonction sera utilisée plus tard là
+ou voulez faire appel à la constante
+ ```js
+ import i18n from "./i18n";
+ 
+ export const yourConstant = () => {
+     return (
+            i18n.isInitialized === true ? (
+                i18n.t("your constant")
+            ) : null
+            //null peut être remplacé par un loader ou autres  
+     );
+ }
+ ```
+
+### Add text in translation files
+Après avoir utiliser les différentes fonction propes à `react-i18next` et `i18next`
+sur vos textes vous allez devoir ajouter les textes et leur translation dans les fichiers
+suivants:
+
+`public/locales/fr/translation.json` pour le français
+```
+    {
+      ...
+      "your text": "your translation" //vous pouvez écrire le même texte
+      ...
+    }      
+```
+
+`public/locales/en/translation.json` pour l'anglais
+```
+    {
+      ...
+      "your text": "your translation"
+      ...
+    }      
+```

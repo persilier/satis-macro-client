@@ -18,6 +18,7 @@ import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -29,13 +30,16 @@ const Participants = (props) => {
 
     let userDataJson = JSON.parse(localStorage.getItem("userData"));
 
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     const [load, setLoad] = useState(true);
     const [contributor, setContributor] = useState([]);
     const [responseData, setResponseData] = useState(null);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
 
     useEffect(() => {
@@ -68,7 +72,7 @@ const Participants = (props) => {
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(contributor.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(contributor.length / parseInt(e.target.value)));
@@ -76,7 +80,7 @@ const Participants = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
@@ -116,7 +120,7 @@ const Participants = (props) => {
     };
 
     const deleteContributor = (contributorId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -140,10 +144,10 @@ const Participants = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -195,23 +199,15 @@ const Participants = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-discussion-contributors") ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Traitement
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Tchat
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, "list-discussion-contributors") ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Traitement")}
+                                </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
@@ -219,146 +215,155 @@ const Participants = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
-                                        Liste des participants
+                                        {t("Tchat")}
                                     </a>
+                                    <span className="kt-subheader__separator kt-hidden"/>
+                                    <div className="kt-subheader__breadcrumbs">
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
+                                        <span className="kt-subheader__breadcrumbs-separator"/>
+                                        <a href="#button" onClick={e => e.preventDefault()}
+                                           className="kt-subheader__breadcrumbs-link">
+                                            {t("Liste des participants")}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Liste des Participants"}/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable
+                            information={t("Liste des participants")}/>
 
-                    <div className="kt-portlet">
+                        <div className="kt-portlet">
 
-                        <HeaderTablePage
-                            addPermission={"add-discussion-contributor"}
-                            addText={"Ajouter"}
-                            addLink={`/treatment/chat/add_user/${id}`}
-                            title={"Liste des participants"}
-                        />
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Search:
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm"
-                                                               placeholder=""
-                                                               aria-controls="kt_table_1"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Participants
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Staff
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Email
-                                                        </th>
-
-                                                        {
-                                                            responseData ?
-                                                                userDataJson.staff.id === responseData.created_by.id ?
-                                                                    <th className="sorting" tabIndex="0"
-                                                                        aria-controls="kt_table_1"
-                                                                        rowSpan="1" colSpan="1" style={{width: "50px"}}
-                                                                        aria-label="Type: activate to sort column ascending">
-                                                                        Action
-                                                                    </th>
-                                                                    : <th style={{display: "none"}}/>
-                                                                : null
-                                                        }
-
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        contributor.length ? (
-                                                            search ? (
-                                                                contributor.map((user, index) => (
-                                                                    printBodyTable(user, index)
-                                                                ))
-                                                            ) : (
-                                                                showList.map((user, index) => (
-                                                                    printBodyTable(user, index)
-                                                                ))
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {contributor.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                !search ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            <HeaderTablePage
+                                addPermission={"add-discussion-contributor"}
+                                addText={t("Ajouter")}
+                                addLink={`/treatment/chat/add_user/${id}`}
+                                title={t("Liste des participants")}
+                            />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Search")}:
+                                                            <input id="myInput" type="text"
+                                                                   onKeyUp={(e) => searchElement(e)}
+                                                                   className="form-control form-control-sm"
+                                                                   placeholder=""
+                                                                   aria-controls="kt_table_1"/>
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{width: "952px"}}>
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "150px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Participants")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "150px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Agent")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "150px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">Email
+                                                            </th>
+
+                                                            {
+                                                                responseData ?
+                                                                    userDataJson.staff.id === responseData.created_by.id ?
+                                                                        <th className="sorting" tabIndex="0"
+                                                                            aria-controls="kt_table_1"
+                                                                            rowSpan="1" colSpan="1" style={{width: "50px"}}
+                                                                            aria-label="Type: activate to sort column ascending">
+                                                                            Action
+                                                                        </th>
+                                                                        : <th style={{display: "none"}}/>
+                                                                    : null
+                                                            }
+
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            contributor.length ? (
+                                                                search ? (
+                                                                    contributor.map((user, index) => (
+                                                                        printBodyTable(user, index)
+                                                                    ))
+                                                                ) : (
+                                                                    showList.map((user, index) => (
+                                                                        printBodyTable(user, index)
+                                                                    ))
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1
+                                                        {t("à")} {numberPerPage} {t("sur")} {contributor.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    !search ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
-
     );
 };
 const mapStateToProps = (state) => {

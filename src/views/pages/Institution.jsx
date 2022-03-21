@@ -20,12 +20,17 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import InfoFormatExcel from "../../constants/InfoFormatExcel";
+import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Institution = (props) => {
-    document.title = "Satis client - Paramètre Institution";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client -" + (ready ? t("Paramètre Institution") : "");
 
     if (!verifyPermission(props.userPermissions, "list-any-institution")) {
         window.location.href = ERROR_401;
@@ -35,7 +40,7 @@ const Institution = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -74,12 +79,12 @@ const Institution = (props) => {
         } else {
             setNumberPage(forceRound(institutions.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(institutions.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(institutions.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(institutions.length / parseInt(e.target.value)));
@@ -87,7 +92,7 @@ const Institution = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
@@ -127,7 +132,7 @@ const Institution = (props) => {
     };
 
     const deleteInstitution = (institutionId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -151,10 +156,10 @@ const Institution = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -191,7 +196,7 @@ const Institution = (props) => {
                         verifyPermission(props.userPermissions, "update-institution-message-api") ? (
                             <Link to={`/settings/institutions/${institution.id}/message-apis`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Parametrer message API">
+                                  title={t("Parametrer message API")}>
                                 <i className="la flaticon-multimedia-2"/>
                             </Link>
                         ) : null
@@ -201,13 +206,13 @@ const Institution = (props) => {
                         verifyPermission(props.userPermissions, "show-any-institution") ?
                             <Link to={`/settings/institution/edit/${institution.id}`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                             : verifyPermission(props.userPermissions, "update-my-institution") ?
                             <Link to={`/settings/institution/edit`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                             : null
@@ -230,165 +235,166 @@ const Institution = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions,"list-any-institution") ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Institution
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions,"list-any-institution") ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link">
+                                        {t("Institution")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            addPermission={"store-any-institution"}
-                            title={"Institution"}
-                            addText={"Ajouter"}
-                            addLink={"/settings/institution/add"}
-                        />
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={"store-any-institution"}
+                                title={t("Institution")}
+                                addText={t("Ajouter")}
+                                addLink={"/settings/institution/add"}
+                            />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Recherche:
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm"
-                                                               placeholder=""
-                                                               aria-controls="kt_table_1"
-                                                        />
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <ExportButton pageUrl={"/settings/importInstitutions"} downloadLink={`${appConfig.apiDomaine}/download-excel/institutions`}/>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "40px"}}
-                                                            aria-label="Country: activate to sort column ascending">Logo
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Country: activate to sort column ascending">Type
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Acronyme
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">Iso_Code
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        institutions.length ? (
-                                                            showList.length ? (
-                                                                showList.map((institution, index) => (
-                                                                    printBodyTable(institution, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">Logo</th>
-                                                        <th rowSpan="1" colSpan="1">Type</th>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Acronyme</th>
-                                                        <th rowSpan="1" colSpan="1">Iso_Code</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {institutions.length} données
-                                                </div>
-                                            </div>
-
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Recherche")}:
+                                                            <input id="myInput" type="text"
+                                                                   onKeyUp={(e) => searchElement(e)}
+                                                                   className="form-control form-control-sm"
+                                                                   placeholder=""
+                                                                   aria-controls="kt_table_1"
+                                                            />
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                                <ExportButton pageUrl={"/settings/importInstitutions"} downloadLink={`${appConfig.apiDomaine}/download-excel/institutions`}/>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{width: "952px"}}>
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "40px"}}
+                                                                aria-label="Country: activate to sort column ascending">Logo
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "50px"}}
+                                                                aria-label="Country: activate to sort column ascending">{t("Type")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "100px"}}
+                                                                aria-label="Country: activate to sort column ascending">{t("Nom")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "100px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Acronyme")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "80px"}}
+                                                                aria-label="Ship Address: activate to sort column ascending">{t("Iso Code")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                                aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            institutions.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((institution, index) => (
+                                                                        printBodyTable(institution, index)
+                                                                    ))
+                                                                ) : (
+                                                                    <EmptyTable search={true}/>
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr style={{textAlign:"center"}}>
+                                                            <th rowSpan="1" colSpan="1">{t("Logo")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Type")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Acronyme")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Iso Code")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {institutions.length} {t("données")}
+                                                    </div>
+                                                </div>
+
+                                                {
+                                                    showList.length ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

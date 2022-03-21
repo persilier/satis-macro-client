@@ -21,6 +21,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import {useTranslation} from "react-i18next";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 
 
@@ -50,7 +51,11 @@ const endPointConfig = {
 };
 
 const IncompleteClaims = (props) => {
-    document.title = "Satis client - Liste plaintes incomplètes";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + (ready ? t("Liste plaintes incomplètes") : null);
     if (!(verifyPermission(props.userPermissions, "list-claim-incomplete-against-any-institution") ||
         verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ||
         verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")))
@@ -61,7 +66,7 @@ const IncompleteClaims = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
     const [currentMessage, setCurrentMessage] = useState("");
 
@@ -119,12 +124,12 @@ const IncompleteClaims = (props) => {
         } else {
             setNumberPage(forceRound(incompleteClaims.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(incompleteClaims.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(incompleteClaims.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(incompleteClaims.length / parseInt(e.target.value)));
@@ -132,7 +137,7 @@ const IncompleteClaims = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
@@ -215,7 +220,7 @@ const IncompleteClaims = (props) => {
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
                         verifyPermission(props.userPermissions, 'show-claim-incomplete-against-my-institution') ||
                         verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                            <Link to={`/process/incomplete_claims/edit/${claim.id}`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Complèter">
+                            <Link to={`/process/incomplete_claims/edit/${claim.id}`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Complèter")}>
                                 <i className="la la-edit"/>
                             </Link>
                             : null
@@ -227,203 +232,204 @@ const IncompleteClaims = (props) => {
     };
 
     return (
-        (
-            verifyPermission(props.userPermissions, "list-claim-incomplete-against-any-institution") ||
-            verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ||
-            verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")
-        ) ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader  kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Collecte
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
+        ready ? (
+            (
+                verifyPermission(props.userPermissions, "list-claim-incomplete-against-any-institution") ||
+                verifyPermission(props.userPermissions, "list-claim-incomplete-against-my-institution") ||
+                verifyPermission(props.userPermissions, "list-claim-incomplete-without-client")
+            ) ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader  kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Collecte")}
+                                </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                        className="flaticon2-shelter"/></a>
-                                    <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()}
-                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        Réclamations Incomplètes
-                                    </a>
+                                    <span className="kt-subheader__separator kt-hidden"/>
+                                    <div className="kt-subheader__breadcrumbs">
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
+                                        <span className="kt-subheader__breadcrumbs-separator"/>
+                                        <a href="#button" onClick={e => e.preventDefault()}
+                                           className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                            {t("Réclamations Incomplètes")}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable
-                        information={"Liste des réclamations incomplètes"}/>
+                    <div className="kt-container  kt-container--fluid kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable
+                            information={t("Liste des réclamations imcomplètes")}/>
 
-                    <div className="kt-portlet">
 
-                        <HeaderTablePage
-                            addPermission={""}
-                            title={"Réclamations Incomplètes"}
-                            addText={"Ajouter de réclamations"}
-                            addLink={"/settings/claims/add"}
-                        />
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="text-left col-sm-6">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Rechercher:
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control form-control-sm"
-                                                               placeholder=""
-                                                               aria-controls="kt_table_1"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "25px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Référence
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "85px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Réclamant
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">
-                                                            {
-                                                                verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
-                                                                verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
-                                                                    " Institution concernée"
-                                                                    : "Pointde service visé"
-                                                            }
-                                                        </th>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Date
-                                                            de réception
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "85px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">
-                                                            Objet de réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        incompleteClaims.length ? (
-                                                            search ? (
-                                                                incompleteClaims.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
-                                                            ) : (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Référence</th>
-                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
-                                                        <th rowSpan="1" colSpan="1">
-                                                            {
-                                                                (props.plan === 'PRO') ?
-                                                                    "Point de service visé"
-                                                                    : "Institution ciblée"
-                                                            }
-                                                        </th>
-
-                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {incompleteClaims.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                !search ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={""}
+                                title={t("Réclamations Incomplètes")}
+                                addText={t("Ajouter de réclamations")}
+                                addLink={"/settings/claims/add"}
+                            />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="text-left col-sm-6">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Rechercher")}:
+                                                            <input id="myInput" type="text"
+                                                                   onKeyUp={(e) => searchElement(e)}
+                                                                   className="form-control form-control-sm"
+                                                                   placeholder=""
+                                                                   aria-controls="kt_table_1"/>
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{width: "952px"}}>
+                                                        <thead>
+                                                        <tr role="row">
+
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "25px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Référence")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "85px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Réclamant")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "50px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">
+                                                                {
+                                                                    verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') ||
+                                                                    verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ?
+                                                                        t("Institution concernée")
+                                                                        : t("Point de service visé")
+                                                                }
+                                                            </th>
+
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "50px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">
+                                                                {t("Date de réception")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "85px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">
+                                                                {t("Objet de réclamation")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1"
+                                                                colSpan="1" style={{width: "100px"}}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Description")}
+                                                            </th>
+
+                                                            <th className="sorting" tabIndex="0"
+                                                                aria-controls="kt_table_1"
+                                                                rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                                aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            incompleteClaims.length ? (
+                                                                search ? (
+                                                                    incompleteClaims.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
+                                                                ) : (
+                                                                    showList.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
+                                                            <th rowSpan="1" colSpan="1">
+                                                                {
+                                                                    (props.plan === 'PRO') ?
+                                                                        t("Point de service visé")
+                                                                        : t("Institution ciblée")
+                                                                }
+                                                            </th>
+
+                                                            <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                    <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                    <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {incompleteClaims.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    !search ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
-
     );
 };
 const mapStateToProps = (state) => {

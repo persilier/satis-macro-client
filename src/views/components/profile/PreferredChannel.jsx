@@ -9,9 +9,14 @@ import {
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {Link} from "react-router-dom";
 import LoadingTable from "../LoadingTable";
+import {useTranslation} from "react-i18next";
 
 
 const PreferredChannel = () => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const defaultData = {
         feedback_preferred_channels: []
     };
@@ -56,41 +61,42 @@ const PreferredChannel = () => {
             axios.put(appConfig.apiDomaine + "/feedback-channels", data)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
                     console.log("something is wrong");
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }
     };
 
     return (
-        <div className="kt-portlet">
-            <div className="kt-portlet__head">
-                <div className="kt-portlet__head-label">
-                    <h3 className="kt-portlet__head-title">Canal de réponse</h3>
+        ready ? (
+            <div className="kt-portlet">
+                <div className="kt-portlet__head">
+                    <div className="kt-portlet__head-label">
+                        <h3 className="kt-portlet__head-title">{t("Canal de réponse")}</h3>
+                    </div>
                 </div>
-            </div>
-            <form className="kt-form kt-form--label-right">
-                <div className="kt-portlet__body">
-                    <div className="kt-section kt-section--first">
-                        <div className="kt-section__body">
-                            <div className="row">
-                                <label className="col-xl-3"/>
-                                <div className="col-lg-9 col-xl-6">
-                                    <h3 className="kt-section__title kt-section__title-sm">Changer le canal de réponse:</h3>
+                <form className="kt-form kt-form--label-right">
+                    <div className="kt-portlet__body">
+                        <div className="kt-section kt-section--first">
+                            <div className="kt-section__body">
+                                <div className="row">
+                                    <label className="col-xl-3"/>
+                                    <div className="col-lg-9 col-xl-6">
+                                        <h3 className="kt-section__title kt-section__title-sm">{t("Changer le canal de réponse")}:</h3>
+                                    </div>
                                 </div>
-                            </div>
-                            {
-                                !load && (
-                                    listChannels.channels ?
-                                        listChannels.channels.map((channel, index) => (
-                                            <div className="form-group row" key={index}>
-                                                <label className="col-xl-3 col-lg-3 col col-form-label ">{channel}</label>
-                                                <div className="col-lg-9 col-xl-6">
+                                {
+                                    !load && (
+                                        listChannels.channels ?
+                                            listChannels.channels.map((channel, index) => (
+                                                <div className="form-group row" key={index}>
+                                                    <label className="col-xl-3 col-lg-3 col col-form-label ">{channel}</label>
+                                                    <div className="col-lg-9 col-xl-6">
                                                     <span className="kt-switch kt-switch--sm kt-switch--outline kt-switch--icon kt-switch--success ">
                                                     <label>
                                                         {data.feedback_preferred_channels.length ?
@@ -123,39 +129,40 @@ const PreferredChannel = () => {
                                                         <span/>
                                                     </label>
                                                     </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        )) : null
-                                )
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kt-portlet__foot">
-                    <div className="kt-form__actions">
-                        <div className="row">
-                            <div className="col-lg-3 col-xl-3">
-                            </div>
-                            <div className="col-lg-9 col-xl-9">
-                                {
-                                    !startRequest ? (
-                                        <button type="submit" onClick={(e) => onSubmit(e)}
-                                                className="btn btn-primary">Enregistrer</button>
-                                    ) : (
-                                        <button
-                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                            type="button" disabled>
-                                            Chargement...
-                                        </button>
+                                            )) : null
                                     )
                                 }
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
+
+                    <div className="kt-portlet__foot">
+                        <div className="kt-form__actions">
+                            <div className="row">
+                                <div className="col-lg-3 col-xl-3">
+                                </div>
+                                <div className="col-lg-9 col-xl-9">
+                                    {
+                                        !startRequest ? (
+                                            <button type="submit" onClick={(e) => onSubmit(e)}
+                                                    className="btn btn-primary">{t("Enregistrer")}</button>
+                                        ) : (
+                                            <button
+                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                type="button" disabled>
+                                                {t("Chargement")}...
+                                            </button>
+                                        )
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        ) : null
     );
 };
 

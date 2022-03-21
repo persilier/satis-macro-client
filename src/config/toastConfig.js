@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import Swal from "sweetalert2";
 
 export const toastBottomEndConfig =  {
@@ -72,106 +73,229 @@ export const toastCenterEndConfig =  {
     }
 };
 
-export const toastAddErrorMessageConfig = {
-    background: "#3c3e40",
-    icon: 'error',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>Echec de l'enregistrement</strong>"
+export const toastAddErrorMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'error',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${i18n.t("Echec de l'enregistrement")}</strong>`
+            }
+        ) : null
+    )
+
 };
 
-export const toastAddSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succes de l'enregistrement</strong>"
+export const toastAddSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Succès de l'enregistrement")}</strong>`
+            }
+        ) : null
+    )
+
 };
-export const toastConnectSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Connexion réussie</strong>"
+export const toastConnectSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Connexion réussie")}</strong>`
+            }
+        ) : null
+    )
 };
-export const toastConnectErrorMessageConfig = {
-    background: "#3c3e40",
-    icon: 'error',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Connexion échouée</strong>"
+export const toastConnectErrorMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'error',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Connexion échouée")}</strong>`
+            }
+        ) : null
+    )
 };
 
-export const toastEditSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succes de la modification</strong>"
+export const toastEditSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Succès de la modification")}</strong>`
+            }
+        ) : null
+    )
 };
 
-export const toastEditErrorMessageConfig = {
-    background: "#3c3e40",
-    icon: 'error',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>Echec de la modification</strong>"
+export const toastEditErrorMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'error',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${i18n.t("Echec de la modification")}</strong>`
+            }
+        ) : null
+    )
+
 };
 
-export const toastDeleteSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>Succes de la suppression</strong>"
+export const toastDeleteSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${i18n.t("Succès de la suppression")}</strong>`
+            }
+        ) : null
+    )
+
 };
 
-export const toastDeleteErrorMessageConfig = {
-    background: "#3c3e40",
-    icon: 'error',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>Echec de la suppression</strong>"
+export const toastDeleteErrorMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'error',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${i18n.t("Echec de la suppression")}</strong>`
+            }
+        ) : null
+    )
+
 };
 
 export const toastErrorMessageWithParameterConfig = (message) => {
-    return {
-        background: "#3c3e40",
-        icon: 'error',
-        title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>"+message+"</strong>"
-    }
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'error',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${message}</strong>`
+            }
+        ) : null
+    )
 };
 
 export const toastSuccessMessageWithParameterConfig = (message) => {
-    return {
-        background: "#3c3e40",
-        icon: 'success',
-        title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>"+message+"</strong>"
-    }
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${message}</strong>`
+            }
+        ) : null
+    )
+
 };
 
-export const toastMergeSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Plainte fusionée avec succes</strong>"
+export const toastMergeSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Plainte fusionée avec succes")}</strong>`
+            }
+        ) : null
+    )
 };
 
-export const toastRejectClaimSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Réclamation rejetée avec succès</strong>"
+export const toastRejectClaimSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Réclamation rejetée avec succès")}</strong>`
+            }
+        ) : null
+    )
 };
 
-export const toastAssignClaimSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Réclamation affectée avec succès</strong>"
+export const toastAssignClaimSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Réclamation affectée avec succès")}</strong>`
+            }
+        ) : null
+    )
 };
 
-export const toastRejectTreatmentClaimSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Rejeter avec succès</strong>"
+export const toastRejectTreatmentClaimSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Rejeter avec succès")}</strong>`
+            }
+        ) : null
+    )
 };
 
-export const toastValidateTreatmentClaimSuccessMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Succès de la validation</strong>"
+export const toastValidateTreatmentClaimSuccessMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Succès de la validation")}</strong>`
+            }
+        ) : null
+    )
+
 };
 
-export const toastInvalidPeriodMessageConfig = {
-    background: "#3c3e40",
-    icon: 'error',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Période invalide</strong>"
+export const toastInvalidPeriodMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'error',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Période invalide")}</strong>`
+            }
+        ) : null
+    )
+
 };
 
-export const toastValidPeriodMessageConfig = {
-    background: "#3c3e40",
-    icon: 'success',
-    title: "<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>Période valide</strong>"
+export const toastValidPeriodMessageConfig = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white;' class='m-4'>${i18n.t("Période valide")}</strong>`
+            }
+        ) : null
+    )
 };

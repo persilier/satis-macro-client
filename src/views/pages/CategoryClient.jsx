@@ -6,7 +6,11 @@ import {
 import {loadCss, forceRound, getLowerCaseString} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
-import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
+import {
+    toastDeleteErrorMessageConfig,
+    toastDeleteSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmDeleteConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
@@ -19,13 +23,18 @@ import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const CategoryClient = (props) => {
-    document.title = "Satis client - Paramètre categorie client";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Paramètre categorie client") : "";
     if (!verifyPermission(props.userPermissions, "list-category-client"))
         window.location.href = ERROR_401;
 
@@ -34,7 +43,7 @@ const CategoryClient = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(5);
-    const [activeNumberPage, setActiveNumberPage] = useState(0);
+    const [activeNumberPage, setActiveNumberPage] = useState(1);
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -71,12 +80,12 @@ const CategoryClient = (props) => {
         } else {
             setNumberPage(forceRound(categoryClient.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(categoryClient.slice(0, NUMBER_ELEMENT_PER_PAGE));
-            setActiveNumberPage(0);
+            setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(0);
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
         setShowList(categoryClient.slice(0, parseInt(e.target.value)));
         setNumberPage(forceRound(categoryClient.length / parseInt(e.target.value)));
@@ -84,7 +93,7 @@ const CategoryClient = (props) => {
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
-        for (let i = 0; i < position; i++) {
+        for (let i = 1; i < position; i++) {
             end = end + numberPerPage;
         }
         return end;
@@ -124,7 +133,7 @@ const CategoryClient = (props) => {
     };
 
     const deleteCategoryClient = (categoryClientId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -148,10 +157,13 @@ const CategoryClient = (props) => {
                                         )
                                     );
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error))
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -172,8 +184,8 @@ const CategoryClient = (props) => {
     const printBodyTable = (category, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{category.name.fr===null?"":category.name.fr}</td>
-                <td>{category.description.fr===null?"":category.description.fr}</td>
+                <td>{(category && category.name && category.name.fr) ? category.name.fr : ""}</td>
+                <td>{(category && category.description && category.description.fr) ? category.description.fr : ""}</td>
                 <td style={{textAlign:'center'}}>
                     {/*<Link to="/settings/clients/category/detail"*/}
                     {/*      className="btn btn-sm btn-clean btn-icon btn-icon-md"*/}
@@ -186,7 +198,7 @@ const CategoryClient = (props) => {
                             <Link
                                 to={`/settings/clients/category/edit/${category.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Modifier">
+                                title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                             : null
@@ -197,7 +209,7 @@ const CategoryClient = (props) => {
                         <button
                             onClick={(e) => deleteCategoryClient(category.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                            title="Supprimer">
+                            title={t("Supprimer")}>
                             <i className="la la-trash"/>
                         </button>
                         : null
@@ -208,13 +220,13 @@ const CategoryClient = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "list-category-client") ? (
+        ready ? ( verifyPermission(props.userPermissions, "list-category-client") ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -223,7 +235,7 @@ const CategoryClient = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
-                                    Client
+                                    {t("Client")}
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -232,7 +244,7 @@ const CategoryClient = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
-                                        Categorie Client
+                                        {t("Catégorie client")}
                                     </a>
                                 </div>
                             </div>
@@ -242,14 +254,14 @@ const CategoryClient = (props) => {
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable
-                        information={"Liste des catégories client"}/>
+                        information={t("Liste des catégories client")}/>
 
                     <div className="kt-portlet">
 
                         <HeaderTablePage
                             addPermission={"store-category-client"}
-                            title={"Catégorie Client"}
-                            addText={"Ajouter"}
+                            title={t("Catégorie client")}
+                            addText={t("Ajouter")}
                             addLink={"/settings/clients/category/add"}
                         />
                         {
@@ -262,7 +274,7 @@ const CategoryClient = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm"
@@ -285,19 +297,19 @@ const CategoryClient = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Nom
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Nom")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Description")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -327,8 +339,7 @@ const CategoryClient = (props) => {
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {categoryClient.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {categoryClient.length} {t("données")}
                                                 </div>
                                             </div>
                                             {
@@ -355,7 +366,7 @@ const CategoryClient = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : null
 
     );
 };

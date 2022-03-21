@@ -17,11 +17,11 @@ class RouteApp extends Component {
 
         return (
             <Router>
-                {
-                    !this.props.user.token ? (
-                        <LoginPage/>
-                    ) : <App />
-                }
+                    {
+                        !this.props.user.token ? (
+                            <LoginPage/>
+                            ) : <App />
+                    }
             </Router>
         );
     }

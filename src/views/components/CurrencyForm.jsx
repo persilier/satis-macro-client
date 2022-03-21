@@ -19,8 +19,13 @@ import {verifyPermission} from "../../helpers/permission";
 import currencies from "../../constants/currencyContry";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const CurrencyForm = () => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(["update-currency"], 'update-currency'))
@@ -30,7 +35,7 @@ const CurrencyForm = () => {
             window.location.href = ERROR_401;
     }
 
-    const [listCurrency, setListCurrency] = useState(currencies);
+    const [listCurrency, setListCurrency] = useState(currencies());
     const [currency, setCurrency] = useState(null);
 
     const defaultData = {
@@ -106,12 +111,12 @@ const CurrencyForm = () => {
                         setCurrency(null);
                         setError(defaultError);
                         setListCurrency(filterCurrency([data]));
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {
@@ -122,13 +127,13 @@ const CurrencyForm = () => {
                         setData(defaultData);
                         setCurrency(null);
                         setListCurrency(filterCurrency([data]));
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         redirectError401Page(errorRequest.response.data.code);
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -142,19 +147,19 @@ const CurrencyForm = () => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/unit_type" className="kt-subheader__breadcrumbs-link">
-                                    Devise
+                                    {t("Devise")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -170,7 +175,7 @@ const CurrencyForm = () => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification de la devise" : "Ajout de la devise"
+                                                id ? t("Modification de la devise") : t("Ajout de la devise")
                                             }
                                         </h3>
                                     </div>
@@ -180,12 +185,12 @@ const CurrencyForm = () => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Devise <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Devise")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
                                                         value={currency}
-                                                        placeholder={"Veillez selectioner la devise"}
+                                                        placeholder={t("Veillez selectioner la devise")}
                                                         onChange={onChangeCurrency}
                                                         options={listCurrency}
                                                     />
@@ -193,7 +198,7 @@ const CurrencyForm = () => {
                                             </div>
 
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Nom <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Nom")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         disabled={true}
@@ -242,21 +247,21 @@ const CurrencyForm = () => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">Enregistrer</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/currencies" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/currencies" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -273,13 +278,15 @@ const CurrencyForm = () => {
     };
 
     return (
-        id ?
-            verifyPermission(["update-currency"], 'update-currency') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(["store-currency"], 'store-currency') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(["update-currency"], 'update-currency') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(["store-currency"], 'store-currency') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

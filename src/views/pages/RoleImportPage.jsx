@@ -4,9 +4,14 @@ import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import ImportFileForm from "../components/ImportFileForm";
+import {useTranslation} from "react-i18next";
 
 const RoleImportPage = (props) => {
-    document.title = "Satis client - Importation role";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Importation rôle") : "");
 
     let endpoint = "";
     if (!(verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, "store-my-institution-type-role") || verifyPermission(props.userPermissions, "store-claim-without-client")))
@@ -20,13 +25,15 @@ const RoleImportPage = (props) => {
         endpoint = `${appConfig.apiDomaine}/any/roles/add-profil/import`;
 
     return (
-        <ImportFileForm
-            submitEndpoint={endpoint}
-            pageTitleLink="/settings/rules/add"
-            pageTitle="Enregistrement role"
-            panelTitle="Importation de role au format excel"
-            claimImport={false}
-        />
+        ready ? (
+            <ImportFileForm
+                submitEndpoint={endpoint}
+                pageTitleLink="/settings/rules/add"
+                pageTitle={t("Enregistrement role")}
+                panelTitle={t("Importation de rôle au format excel")}
+                claimImport={false}
+            />
+        ) : null
     );
 };
 
