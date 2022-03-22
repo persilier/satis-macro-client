@@ -78,6 +78,7 @@ const Clients = (props) => {
 
     useEffect(() => {
         if (verifyTokenExpire()) {
+            setLoad(true);
             axios.get(endPoint.list)
                 .then(response => {
                     console.log(response.data);
@@ -123,11 +124,47 @@ const Clients = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
+/*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
+            if (verifyTokenExpire()) {
+                setLoad(true);
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
+                    .then(response => {
+                        console.log("search", response.data);
+                        setLoad(false);
+                        setClients(response.data["data"]);
+                        setShowList(response.data.data.slice(0, numberPerPage));
+                        setTotal(response.data.total);
+                        setNumberPage(forceRound(response.data.total / numberPerPage));
+                        setPrevUrl(response.data["prev_page_url"]);
+                        setNextUrl(response.data["next_page_url"]);
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                    })
+                ;
+            }
         } else {
-            setNumberPage(forceRound(total / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(clients.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            if (verifyTokenExpire()) {
+                setLoad(true);
+                axios.get(endPoint.list)
+                    .then(response => {
+                        console.log(response.data);
+                        setLoad(false);
+                        setClients(response.data["data"]);
+                        setShowList(response.data.data.slice(0, numberPerPage));
+                        setTotal(response.data.total);
+                        setNumberPage(forceRound(response.data.total / numberPerPage));
+                        setPrevUrl(response.data["prev_page_url"]);
+                        setNextUrl(response.data["next_page_url"]);
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                    })
+                ;
+            }
+/*            setNumberPage(forceRound(total / NUMBER_ELEMENT_PER_PAGE));
+            setShowList(clients.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             setActiveNumberPage(1);
         }
     };
@@ -135,6 +172,7 @@ const Clients = (props) => {
     const onChangeNumberPerPage = (e) => {
         e.persist();
         if (verifyTokenExpire()) {
+            setLoad(true);
             axios.get(endPoint.list + "?size=" + e.target.value)
                 .then(response => {
                     console.log(response.data);
@@ -426,12 +464,7 @@ const Clients = (props) => {
                                 )
                         }
 
-
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
+                        <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
                                             <div className="col-sm-6 text-left">
@@ -446,96 +479,104 @@ const Clients = (props) => {
                                             </div>
                                             <ExportButton pageUrl={"/settings/importClients"} downloadLink={`${appConfig.apiDomaine}/download-excel/clients`}/>
                                         </div>
-                                        <div className="row table-responsive">
-                                            <div className="col-sm-12 ">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline table"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "100%"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "30%"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Nom")}
-                                                        </th>
+                                        {
+                                            load ? (
+                                                <LoadingTable/>
+                                            ) : (
+                                                <>
+                                                    <div className="row table-responsive">
+                                                        <div className="col-sm-12 ">
+                                                            <table
+                                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline table"
+                                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                                style={{width: "100%"}}>
+                                                                <thead>
+                                                                <tr role="row">
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "30%"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Nom")}
+                                                                    </th>
 
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            style={{width: "15%"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">{t("Téléphone")}(s)
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            style={{width: "20%"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">Email(s)
-                                                        </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        style={{width: "15%"}}
+                                                                        aria-label="Ship Address: activate to sort column ascending">{t("Téléphone")}(s)
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        style={{width: "20%"}}
+                                                                        aria-label="Ship Address: activate to sort column ascending">Email(s)
+                                                                    </th>
 
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            style={{width: "20%"}}
-                                                            aria-label="Ship Address: activate to sort column ascending">{t("Numéro de compte")}
-                                                        </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        style={{width: "20%"}}
+                                                                        aria-label="Ship Address: activate to sort column ascending">{t("Numéro de compte")}
+                                                                    </th>
 
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            style={{width: "15%"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            {t("Action")}
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        style={{width: "15%"}}
+                                                                        aria-label="Type: activate to sort column ascending">
+                                                                        {t("Action")}
+                                                                    </th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
 
-                                                    {
-                                                        clients.length ? (
-                                                            showList.length ? (
-                                                                showList.map((client, index) => (
-                                                                    printBodyTable(client, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr style={{textAlign: "center"}}>
-                                                        <th rowSpan="1" colSpan="1">{t("Nom")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Téléphone")}(s)</th>
-                                                        <th rowSpan="1" colSpan="1">Email(s)</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Numéro de compte")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
-                                                </div>
-                                            </div>
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                                                                {
+                                                                    clients.length ? (
+                                                                        showList.length ? (
+                                                                            showList.map((client, index) => (
+                                                                                printBodyTable(client, index)
+                                                                            ))
+                                                                        ) : (
+                                                                            <EmptyTable search={true}/>
+                                                                        )
+                                                                    ) : (
+                                                                        <EmptyTable/>
+                                                                    )
+                                                                }
+                                                                </tbody>
+                                                                <tfoot>
+                                                                <tr style={{textAlign: "center"}}>
+                                                                    <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Téléphone")}(s)</th>
+                                                                    <th rowSpan="1" colSpan="1">Email(s)</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Numéro de compte")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                                </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
                                                     </div>
-                                                ) : null
-                                            }
-                                        </div>
+                                                    <div className="row">
+                                                        <div className="col-sm-12 col-md-5">
+                                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                                 aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
+                                                            </div>
+                                                        </div>
+                                                        {
+                                                            showList.length ? (
+                                                                <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                                    <Pagination
+                                                                        numberPerPage={numberPerPage}
+                                                                        onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                        activeNumberPage={activeNumberPage}
+                                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                        pages={pages}
+                                                                        onClickPage={(e, number) => onClickPage(e, number)}
+                                                                        numberPage={numberPage}
+                                                                        onClickNextPage={e => onClickNextPage(e)}
+                                                                    />
+                                                                </div>
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </>
+                                            )
+
+                                        }
                                     </div>
                                 </div>
-                            )
-                        }
+
                     </div>
                 </div>
             </div>
