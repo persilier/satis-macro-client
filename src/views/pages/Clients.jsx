@@ -271,7 +271,6 @@ const Clients = (props) => {
                     setLoad(true);
                     axios.get(prevUrl)
                         .then(response => {
-                            console.log(response.data);
                             let newClients = [...clients, ...response.data["data"]];
                             let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                             setLoad(false);
@@ -279,7 +278,7 @@ const Clients = (props) => {
                             setNextUrl(response.data["next_page_url"]);
                             setClients(newData);
                             setShowList(
-                                clients.slice(
+                                newData.slice(
                                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                                     getEndByPosition(activeNumberPage - 1)
                                 )
@@ -339,7 +338,7 @@ const Clients = (props) => {
 
     const arrayNumberPage = () => {
         const pages = [];
-        for (let i = 0; i < numberPage; i++) {
+        for (let i = 1; i < numberPage; i++) {
             pages[i] = i;
         }
         return pages
