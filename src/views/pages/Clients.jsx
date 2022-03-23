@@ -67,15 +67,22 @@ const Clients = (props) => {
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [nextUrl, setNextUrl] = useState(null);
+    const [prevUrl, setPrevUrl] = useState(null);
+
 
     useEffect(() => {
         if (verifyTokenExpire()) {
             axios.get(endPoint.list)
                 .then(response => {
                     setLoad(false);
-                    setClients(response.data);
-                    setShowList(response.data.slice(0, numberPerPage));
-                    setNumberPage(forceRound(response.data.length / numberPerPage));
+                    setClients(response.data["data"]);
+                    setShowList(response.data.data.slice(0, numberPerPage));
+                    setTotal(response.data.total);
+                    setNumberPage(forceRound(response.data.total / numberPerPage));
+                    setPrevUrl(response.data["prev_page_url"]);
+                    setNextUrl(response.data["next_page_url"]);
                 })
                 .catch(error => {
                     setLoad(false);
@@ -111,21 +118,76 @@ const Clients = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
+            /*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
+                        setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
+            if (verifyTokenExpire()) {
+                setLoad(true);
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
+                    .then(response => {
+                        console.log("search", response.data);
+                        setLoad(false);
+                        setClients(response.data["data"]);
+                        setShowList(response.data.data.slice(0, numberPerPage));
+                        setTotal(response.data.total);
+                        setNumberPage(forceRound(response.data.total / numberPerPage));
+                        setPrevUrl(response.data["prev_page_url"]);
+                        setNextUrl(response.data["next_page_url"]);
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                    })
+                ;
+            }
         } else {
-            setNumberPage(forceRound(clients.length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(clients.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            if (verifyTokenExpire()) {
+                setLoad(true);
+                axios.get(endPoint.list)
+                    .then(response => {
+                        console.log(response.data);
+                        setLoad(false);
+                        setClients(response.data["data"]);
+                        setShowList(response.data.data.slice(0, numberPerPage));
+                        setTotal(response.data.total);
+                        setNumberPage(forceRound(response.data.total / numberPerPage));
+                        setPrevUrl(response.data["prev_page_url"]);
+                        setNextUrl(response.data["next_page_url"]);
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                    })
+                ;
+            }
+            /*            setNumberPage(forceRound(total / NUMBER_ELEMENT_PER_PAGE));
+                        setShowList(clients.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             setActiveNumberPage(1);
         }
     };
 
+
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(1);
+        e.persist();
+        if (verifyTokenExpire()) {
+            setLoad(true);
+            axios.get(endPoint.list + "?size=" + e.target.value)
+                .then(response => {
+                    console.log(response.data);
+                    setLoad(false);
+                    setActiveNumberPage(1);
+                    setClients(response.data["data"]);
+                    setShowList(response.data.data.slice(0, parseInt(e.target.value)));
+                    setTotal(response.data.total);
+                    setNumberPage(forceRound(total / parseInt(e.target.value)));
+                    setPrevUrl(response.data["prev_page_url"]);
+                    setNextUrl(response.data["next_page_url"]);
+                })
+                .catch(error => {
+                    setLoad(false);
+                })
+            ;
+        }
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(clients.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(clients.length / parseInt(e.target.value)));
     };
+
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
@@ -138,20 +200,61 @@ const Clients = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(clients.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+
+        if (verifyTokenExpire()) {
+            setLoad(true);
+            axios.get("/my/clients?page=" + page)
+                .then(response => {
+                    //console.log(response.data["data"]);
+                    let newClients = [...clients, ...response.data["data"]];
+                    let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
+                    setLoad(false);
+                    setPrevUrl(response.data["prev_page_url"]);
+                    setNextUrl(response.data["next_page_url"]);
+                    setClients(newData);
+                    setShowList(newData.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+
+                })
+                .catch(error => {
+                    setLoad(false);
+                })
+            ;
+            console.log(clients)
+        }
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
-            setShowList(
-                clients.slice(
-                    getEndByPosition(
-                        activeNumberPage + 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage + 1)
-                )
-            );
+            if (nextUrl !== null) {
+                if (verifyTokenExpire()) {
+                    setLoad(true);
+                    axios.get(nextUrl)
+                        .then(response => {
+                            console.log(response.data);
+                            let newClients = [...clients, ...response.data["data"]];
+                            let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
+                            setLoad(false);
+                            setPrevUrl(response.data["prev_page_url"]);
+                            setNextUrl(response.data["next_page_url"]);
+                            setClients(newData);
+                            setShowList(
+                                newData.slice(
+                                    getEndByPosition(
+                                        activeNumberPage + 1) - numberPerPage,
+                                    getEndByPosition(activeNumberPage + 1)
+                                )
+                            );
+
+                        })
+                        .catch(error => {
+                            setLoad(false);
+                        })
+                    ;
+                }
+            }
+
         }
     };
 
@@ -159,14 +262,34 @@ const Clients = (props) => {
         e.preventDefault();
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
-            setShowList(
-                clients.slice(
-                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage - 1)
-                )
-            );
+            if (prevUrl !== null) {
+                if (verifyTokenExpire()) {
+                    setLoad(true);
+                    axios.get(prevUrl)
+                        .then(response => {
+                            let newClients = [...clients, ...response.data["data"]];
+                            let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
+                            setLoad(false);
+                            setPrevUrl(response.data["prev_page_url"]);
+                            setNextUrl(response.data["next_page_url"]);
+                            setClients(newData);
+                            setShowList(
+                                newData.slice(
+                                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                                    getEndByPosition(activeNumberPage - 1)
+                                )
+                            );
+
+                        })
+                        .catch(error => {
+                            setLoad(false);
+                        })
+                    ;
+                }
+            }
         }
     };
+
 
     const deleteClient = (accountId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig)
@@ -423,7 +546,7 @@ const Clients = (props) => {
                                         <div className="col-sm-12 col-md-5">
                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
                                                  aria-live="polite">Affichage de 1
-                                                à {numberPerPage} sur {clients.length} données
+                                                à {numberPerPage} sur {total} données
                                             </div>
                                         </div>
                                         {
