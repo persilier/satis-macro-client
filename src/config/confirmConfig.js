@@ -21,6 +21,7 @@ export const ExpireConfig = (message)=>  {
                 title: i18n.t('Information!'),
                 text: message,
                 icon: 'warring',
+                allowOutsideClick: false,
             }
         ) : null
     )

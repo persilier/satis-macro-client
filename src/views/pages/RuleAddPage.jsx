@@ -140,7 +140,7 @@ const RuleAddPage = (props) => {
         setPermissions(newPermission);
     };
 
-    const printModule = (module, index, allModule) => {
+/*    const printModule = (module, index, allModule) => {
         return (
             <div key={index}>
                 <h5 className="text-center">Module: {module.name["fr"]}</h5>
@@ -166,6 +166,54 @@ const RuleAddPage = (props) => {
                                     ) : null
                                 ) : null
                             }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    };*/
+
+    const printModule = (module, index, allModule) => {
+        return (
+            <div key={index} className="card">
+                <div className="card-header" id={"headingOne" + index}>
+                    <div className="card-title collapsed" data-toggle="collapse" data-target={"#collapseOne" + index} aria-expanded="false" aria-controls={"collapseOne" + index}>
+                        <i className="flaticon2-layers-1" /> Module: {module.name["fr"]}
+                    </div>
+                </div>
+                <div id={"collapseOne" + index} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div className="card-body">
+                        <label className="" htmlFor="unit_type">{t("Permissions")} <InputRequire/></label>
+                        <div className={error.permissions.length ? "form-group row validated" : "form-group row"}>
+                            <div className="col-lg-12 col-xl-6">
+                                    <div className="kt-checkbox-inline">
+                                        {
+                                            module.permissions.map((el, ind) => (
+                                                <>
+                                                    {/*<span className="btn" style={{width: "30%"}}>*/}
+                                                        <label className="kt-checkbox" key={ind} style={{width: "30%"}}>
+                                                            <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.name)}/> {el.name}<span/>
+                                                        </label>
+                                                    {/*</span>*/}
+                                                    {
+                                                        ((ind+1) % 3 === 0 && <br/>)
+                                                    }
+                                                </>
+                                            ))
+                                        }
+                                        {
+                                            error.permissions.length ? (
+                                                index === allModule.length - 1 ? (
+                                                    error.permissions.map((error, indEr) => (
+                                                        <div key={indEr} className="invalid-feedback text-center">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            ) : null
+                                        }
+                                    </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -224,7 +272,7 @@ const RuleAddPage = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Nom")} <InputRequire/></label>
+                                                <label className="col-xl-2 col-lg-2 col-form-label" htmlFor="name">{t("Nom")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -276,7 +324,7 @@ const RuleAddPage = (props) => {
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-any-institution-type-role') ? (
                                                     institutionType.length ? (
-                                                        <>
+                                                        <div className="accordion  accordion-toggle-arrow" id="accordionExample4">
                                                             {
                                                                 data.institution_type.length ? (
                                                                     data.institution_type.length === 2 ? (
@@ -290,15 +338,20 @@ const RuleAddPage = (props) => {
                                                                     )
                                                                 ) : null
                                                             }
-                                                        </>
+                                                        </div>
                                                     ) : null
                                                 ) : (
                                                     verifyPermission(props.userPermissions, 'store-my-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
-                                                        proModule ? (
-                                                            proModule.map((el, index) => (
-                                                                printModule(el, index, proModule)
-                                                            ))
-                                                        ) : null
+                                                        <div className="accordion  accordion-toggle-arrow" id="accordionExample">
+                                                            {
+                                                                proModule ? (
+                                                                    proModule.map((el, index) => (
+                                                                        printModule(el, index, proModule)
+                                                                    ))
+                                                                ) : null
+                                                            }
+                                                        </div>
+
                                                     ) : null
                                                 )
                                             }
