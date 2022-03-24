@@ -1,29 +1,49 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 
 const InfoFormatExcel = () => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation()
+    const [show, setShow] = useState("show");
+
+    useEffect( ()=>{
+        setTimeout(() => {
+            setShow("");
+        }, 5000);
+    }, [])
+
+    /*setTimeout(() => {
+       setShow("");
+    }, 5000);*/
+
+    const showDropdown = () =>{
+        if (show === ""){
+            setShow("show")
+        } else {
+            setShow("");
+        }
+    }
+
 
     return (
         ready ? (
-            <div className="dropdown dropdown-inline show">
+            <div className={"dropdown dropdown-inline dropup " + show}>
                 <button type="button"
-                        className="btn btn-clean btn-sm btn-icon btn-icon-md"
-                        data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="true"><i className="fa fa-info-circle"/>
+                        onClick={showDropdown}
+                        className="btn btn-clean btn-sm btn-icon btn-icon-md"><i className="fa fa-info-circle"/>
                 </button>
                 <div
-                    className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md show"
-                    x-placement="bottom-end"
+                    className={"dropdown-menu " + show}
                     style={{
-                        position: "absolute",
-                        transform: "translate3d(-200px, 33px, 0px)",
-                        top: "0px",
-                        left: '0px',
-                        willChange: 'transform'
-                    }}>
+                        fontSize: '11px',
+                        lineHeight: '20px',
+                        width: "300px",
+                        left: "-165px",
+                        padding: "0",
+                        zIndex: "1"
+                    }}
+                >
                     <p className="mt-2 ml-3">
                     <span
                         className="kt-nav__link-text">1- {t("Cliquer d'abord sur")} <strong>{t("Télécharger Format")}</strong> {t("pour récupérer le format du fichier excel")}</span>
