@@ -222,6 +222,7 @@ const Logs = (props) => {
                                                         <input
                                                             ref={startDate}
                                                             type="date"
+                                                            value={new Date().getFullYear().toString()+"-01-01"}
                                                             className={`form-control ${error.date_start.length ? 'is-invalid' : ''}`}
                                                         />
                                                         {error.date_start.length !== 0 && (

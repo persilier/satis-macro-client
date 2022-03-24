@@ -56,7 +56,7 @@ const   ProofReceipt = (props) => {
     const [filterData, setFilterData] = useState({
         sender: '',
         chanel: '',
-        start_date: '',
+        start_date: new Date().getFullYear().toString()+"-01-01",
         end_date: ''
     });
     const [startFilter, setStartFilter] = useState(false);
