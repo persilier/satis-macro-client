@@ -249,7 +249,16 @@ const ConfigProcessingCircuit = (props) => {
 
     const onChangeProcessing = (e, object_id) => {
         let newData = {...data};
-        newData[object_id] = e?e.map(sel => ({value: sel.value, label: sel.label})):"";
+        let all = false;
+        let newUnits = e ? e.map(sel => {
+            if (sel.value !== "all")
+                return ({value: sel.value, label: sel.label})
+            else if (sel.value === "all")
+                all = true;
+        }): "";
+        newData[object_id] = all && newUnits ? formatSelectOption(units, 'name', "fr") : newUnits
+
+        console.log(e);
         setData(newData);
     };
     const onSubmit = (e) => {
@@ -327,7 +336,7 @@ const ConfigProcessingCircuit = (props) => {
                                 <Select
                                     value={data[object.id]}
                                     onChange={(e) => onChangeProcessing(e, object.id)}
-                                    options={formatSelectOption(units, 'name', "fr")}
+                                    options={[{value: "all", label: <strong><em>Tout sélectionner</em></strong>}, ...formatSelectOption(units, 'name', "fr")]}
                                     isMulti
                                     placeholder={t("Veillez sélectionnez le circuit")}
                                     key={object.id}
