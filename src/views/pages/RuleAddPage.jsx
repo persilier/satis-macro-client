@@ -96,6 +96,7 @@ const RuleAddPage = (props) => {
                     endpoint = `${appConfig.apiDomaine}/my/roles/create`;
                 await axios.get(endpoint)
                     .then(response => {
+                        console.log(response.data);
                         if (verifyPermission(props.userPermissions, 'store-any-institution-type-role')) {
                             setInstitutionTypes(formatSelectOption(response.data.institutionTypes, 'name'));
                             setModulesPermissions(response.data.modulesPermissions);
@@ -189,16 +190,16 @@ const RuleAddPage = (props) => {
                                     <div className="kt-checkbox-inline">
                                         {
                                             module.permissions.map((el, ind) => (
-                                                <>
+                                                <React.Fragment key={ind}>
                                                     {/*<span className="btn" style={{width: "30%"}}>*/}
-                                                        <label className="kt-checkbox" key={ind} style={{width: "30%"}}>
-                                                            <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.name)}/> {el.name}<span/>
+                                                        <label className="kt-checkbox"  style={{width: "30%"}}>
+                                                            <input className={"checkInput"} type="checkbox" name={el.description} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.description)}/> {el.description}<span/>
                                                         </label>
                                                     {/*</span>*/}
                                                     {
                                                         ((ind+1) % 3 === 0 && <br/>)
                                                     }
-                                                </>
+                                                </React.Fragment>
                                             ))
                                         }
                                         {
