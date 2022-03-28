@@ -124,7 +124,6 @@ const Clients = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
                     .then(response => {
-                        console.log("search", response.data);
                         setLoad(false);
                         setClients(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -143,7 +142,6 @@ const Clients = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list)
                     .then(response => {
-                        console.log(response.data);
                         setLoad(false);
                         setClients(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -170,7 +168,6 @@ const Clients = (props) => {
             setLoad(true);
             axios.get(endPoint.list + "?size=" + e.target.value)
                 .then(response => {
-                    console.log(response.data);
                     setLoad(false);
                     setActiveNumberPage(1);
                     setClients(response.data["data"]);
@@ -205,7 +202,6 @@ const Clients = (props) => {
             setLoad(true);
             axios.get("/my/clients?page=" + page)
                 .then(response => {
-                    //console.log(response.data["data"]);
                     let newClients = [...clients, ...response.data["data"]];
                     let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                     setLoad(false);
@@ -219,7 +215,6 @@ const Clients = (props) => {
                     setLoad(false);
                 })
             ;
-            console.log(clients)
         }
     };
 
@@ -232,7 +227,6 @@ const Clients = (props) => {
                     setLoad(true);
                     axios.get(nextUrl)
                         .then(response => {
-                            console.log(response.data);
                             let newClients = [...clients, ...response.data["data"]];
                             let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                             setLoad(false);
@@ -460,10 +454,7 @@ const Clients = (props) => {
                     }
 
 
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
+
                             <div className="kt-portlet__body">
                                 <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                     <div className="row">
@@ -479,97 +470,103 @@ const Clients = (props) => {
                                         </div>
                                         <ExportButton pageUrl={"/settings/importClients"} downloadLink={`${appConfig.apiDomaine}/download-excel/clients`}/>
                                     </div>
-                                    <div className="row table-responsive">
-                                        <div className="col-sm-12 ">
-                                            <table
-                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline table"
-                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                style={{width: "100%"}}>
-                                                <thead>
-                                                <tr role="row">
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "30%"}}
-                                                        aria-label="Country: activate to sort column ascending">Nom
-                                                    </th>
+                                    {
+                                        load ? (
+                                            <LoadingTable/>
+                                        ) : (
+                                            <>
+                                                <div className="row table-responsive">
+                                                    <div className="col-sm-12 ">
+                                                        <table
+                                                            className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline table"
+                                                            id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                            style={{width: "100%"}}>
+                                                            <thead>
+                                                            <tr role="row">
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{width: "30%"}}
+                                                                    aria-label="Country: activate to sort column ascending">Nom
+                                                                </th>
 
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "15%"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Téléphone(s)
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "20%"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Email(s)
-                                                    </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    style={{width: "15%"}}
+                                                                    aria-label="Ship Address: activate to sort column ascending">Téléphone(s)
+                                                                </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    style={{width: "20%"}}
+                                                                    aria-label="Ship Address: activate to sort column ascending">Email(s)
+                                                                </th>
 
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "20%"}}
-                                                        aria-label="Ship Address: activate to sort column ascending">Numero de compte
-                                                    </th>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    style={{width: "20%"}}
+                                                                    aria-label="Ship Address: activate to sort column ascending">Numero de compte
+                                                                </th>
 
-                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                        style={{width: "15%"}}
-                                                        aria-label="Type: activate to sort column ascending">
-                                                        Action
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                    style={{width: "15%"}}
+                                                                    aria-label="Type: activate to sort column ascending">
+                                                                    Action
+                                                                </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
 
-                                                {
-                                                    clients.length ? (
-                                                        showList.length ? (
-                                                            showList.map((client, index) => (
-                                                                printBodyTable(client, index)
-                                                            ))
-                                                        ) : (
-                                                            <EmptyTable search={true}/>
-                                                        )
-                                                    ) : (
-                                                        <EmptyTable/>
-                                                    )
-                                                }
-                                                </tbody>
-                                                <tfoot>
-                                                <tr style={{textAlign: "center"}}>
-                                                    <th rowSpan="1" colSpan="1">Nom</th>
-                                                    <th rowSpan="1" colSpan="1">Téléphone(s)</th>
-                                                    <th rowSpan="1" colSpan="1">Email(s)</th>
-                                                    <th rowSpan="1" colSpan="1">Numero de Compte</th>
-                                                    <th rowSpan="1" colSpan="1">Action</th>
-                                                </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12 col-md-5">
-                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1
-                                                à {numberPerPage} sur {total} données
-                                            </div>
-                                        </div>
-                                        {
-                                            showList.length ? (
-                                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                    <Pagination
-                                                        numberPerPage={numberPerPage}
-                                                        onChangeNumberPerPage={onChangeNumberPerPage}
-                                                        activeNumberPage={activeNumberPage}
-                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                        pages={pages}
-                                                        onClickPage={(e, number) => onClickPage(e, number)}
-                                                        numberPage={numberPage}
-                                                        onClickNextPage={e => onClickNextPage(e)}
-                                                    />
+                                                            {
+                                                                clients.length ? (
+                                                                    showList.length ? (
+                                                                        showList.map((client, index) => (
+                                                                            printBodyTable(client, index)
+                                                                        ))
+                                                                    ) : (
+                                                                        <EmptyTable search={true}/>
+                                                                    )
+                                                                ) : (
+                                                                    <EmptyTable/>
+                                                                )
+                                                            }
+                                                            </tbody>
+                                                            <tfoot>
+                                                            <tr style={{textAlign: "center"}}>
+                                                                <th rowSpan="1" colSpan="1">Nom</th>
+                                                                <th rowSpan="1" colSpan="1">Téléphone(s)</th>
+                                                                <th rowSpan="1" colSpan="1">Email(s)</th>
+                                                                <th rowSpan="1" colSpan="1">Numero de Compte</th>
+                                                                <th rowSpan="1" colSpan="1">Action</th>
+                                                            </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            ) : null
-                                        }
-                                    </div>
+                                                <div className="row">
+                                                    <div className="col-sm-12 col-md-5">
+                                                        <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                             aria-live="polite">Affichage de 1
+                                                            à {numberPerPage} sur {total} données
+                                                        </div>
+                                                    </div>
+                                                    {
+                                                        showList.length ? (
+                                                            <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                                <Pagination
+                                                                    numberPerPage={numberPerPage}
+                                                                    onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                    activeNumberPage={activeNumberPage}
+                                                                    onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                    pages={pages}
+                                                                    onClickPage={(e, number) => onClickPage(e, number)}
+                                                                    numberPage={numberPage}
+                                                                    onClickNextPage={e => onClickNextPage(e)}
+                                                                />
+                                                            </div>
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </>
+                                        )
+                                    }
                                 </div>
                             </div>
-                        )
-                    }
                 </div>
             </div>
         </div>
