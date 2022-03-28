@@ -8,6 +8,7 @@ const appConfig = {
     apiDomaine: `http://url`,
     host: `host`,
     port: 8000,
+    language: "fr",
     listConnectData: {
         PRO: {
             grant_type: "grant_type",

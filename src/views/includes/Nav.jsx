@@ -435,10 +435,10 @@ const Nav = (props) => {
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                         <span className="kt-header__topbar-icon text-white">
-                            {props.language.languageSelected.toUpperCase()}
+                            {i18n.isInitialized && i18n.language.toUpperCase()}
                         </span>
                         </div>
-                        <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
+                        {/*<div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                             <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
                                 <li className={`kt-nav__item ${props.language.languageSelected === "en" && "kt-nav__item--active"}`}>
                                     <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
@@ -458,7 +458,7 @@ const Nav = (props) => {
                                     </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div>*/}
                     </div>
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">

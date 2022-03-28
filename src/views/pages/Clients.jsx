@@ -81,7 +81,6 @@ const Clients = (props) => {
             setLoad(true);
             axios.get(endPoint.list)
                 .then(response => {
-                    console.log(response.data);
                     setLoad(false);
                     setClients(response.data["data"]);
                     setShowList(response.data.data.slice(0, numberPerPage));
@@ -130,7 +129,6 @@ const Clients = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
                     .then(response => {
-                        console.log("search", response.data);
                         setLoad(false);
                         setClients(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -149,7 +147,6 @@ const Clients = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list)
                     .then(response => {
-                        console.log(response.data);
                         setLoad(false);
                         setClients(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -175,7 +172,6 @@ const Clients = (props) => {
             setLoad(true);
             axios.get(endPoint.list + "?size=" + e.target.value)
                 .then(response => {
-                    console.log(response.data);
                     setLoad(false);
                     setActiveNumberPage(1);
                     setClients(response.data["data"]);
@@ -209,7 +205,6 @@ const Clients = (props) => {
             setLoad(true);
             axios.get("/my/clients?page=" + page)
                 .then(response => {
-                    //console.log(response.data["data"]);
                     let newClients = [...clients, ...response.data["data"]];
                     let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                     setLoad(false);
@@ -223,7 +218,6 @@ const Clients = (props) => {
                     setLoad(false);
                 })
             ;
-            console.log(clients)
         }
     };
 
@@ -236,7 +230,6 @@ const Clients = (props) => {
                     setLoad(true);
                     axios.get(nextUrl)
                         .then(response => {
-                            console.log(response.data);
                             let newClients = [...clients, ...response.data["data"]];
                             let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                             setLoad(false);
