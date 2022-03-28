@@ -347,14 +347,14 @@ const Clients = (props) => {
 
                         {
                             i === 0 ?
-                                <td rowSpan={client.accounts.length}>{client.client.identite.lastname} &ensp; {client.client.identite.firstname}</td> : null
+                                <td rowSpan={client.accounts.length}>{client.client?.identite?.lastname ? client.client.identite.lastname : ""} &ensp; {client.client?.identite?.firstname ? client.client.identite.firstname : ""}</td> : null
                         }
 
                         {
                             i === 0 ?
                                 <td rowSpan={client.accounts.length}>
                                     {
-                                        client.client.identite.telephone.length ?
+                                        client.client?.identite?.telephone?.length ?
                                             client.client.identite.telephone.map((tel, index) => (
                                                 index === client.client.identite.telephone.length - 1 ? tel : tel + " " + "/ " + " "
                                             )) : null
@@ -365,7 +365,7 @@ const Clients = (props) => {
                          {
                             i === 0 ?
                                 <td rowSpan={client.accounts.length}>
-                                    {client.client.identite.email ?
+                                    {client.client?.identite?.email ?
                                         client.client.identite.email.map((mail, index) => (
                                             index === client.client.identite.email.length - 1 ? mail : mail + " " + "/ " + " "
                                         )) : null

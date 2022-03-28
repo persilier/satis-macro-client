@@ -130,7 +130,7 @@ const Channel = (props) => {
     };
 
     const activeAccount = (e, channel, index) => {
-        e.preventDefault();
+     /*   e.preventDefault();*/
         DeleteConfirmation.fire(confirmActivationChannel(channel.is_response))
             .then(async (result) => {
                 if (result.value) {
@@ -232,15 +232,16 @@ const Channel = (props) => {
                     {
 
                         channel.can_be_response ? (
-                            <a
-                                className="mt-2"
-                                id={`channel-${channel.id}`}
-                                href={channel.is_response ? `desactive/${channel.id}` : `active/${channel.id}`}
-                                onClick={(e) => activeAccount(e, channel, index, channel.can_be_response ? "désactiver" : "Activer")}
-                                title={channel.is_response ? "Désactiver" : "Activer"}>
-                                {channel.is_response ? "Désactiver" : "Activer"}
-                            </a>
 
+                            <span className="kt-switch kt-switch--icon"  id={`channel-${channel.id}`}>
+                                <label>
+                                    <input type="checkbox"
+                                           checked={channel.is_response ? "checked" : ""}
+                                           onChange={(e) => activeAccount(e, channel, index, channel.can_be_response ? "désactiver" : "Activer")}
+                                           name=""/>
+                                    <span></span>
+                                </label>
+                            </span>
                         ) : null
 
                     }
