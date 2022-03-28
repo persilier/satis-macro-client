@@ -79,7 +79,6 @@ const   Staff = (props) => {
         async function fetchData() {
             await axios.get(endPoint.list)
                 .then(response => {
-                    console.log(response.data);
                     setNumberPage(forceRound(response.data.total/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setStaffs(response.data["data"]);
@@ -129,7 +128,6 @@ const   Staff = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
                     .then(response => {
-                        console.log("search", response.data);
                         setLoad(false);
                         setStaffs(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -148,7 +146,6 @@ const   Staff = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list)
                     .then(response => {
-                        console.log(response.data);
                         setLoad(false);
                         setStaffs(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -208,7 +205,6 @@ const   Staff = (props) => {
             setLoad(true);
             axios.get(endPoint.list + "?page=" + page)
                 .then(response => {
-                    //console.log(response.data["data"]);
                     let newStaffs = [...staffs, ...response.data["data"]];
                     let newData = [...new Map(newStaffs.map(item => [item.id, item])).values()]
                     setLoad(false);
@@ -270,7 +266,6 @@ const   Staff = (props) => {
                     setLoad(true);
                     axios.get(prevUrl)
                         .then(response => {
-                            console.log(response.data);
                             let newStaffs = [...staffs, ...response.data["data"]];
                             let newData = [...new Map(newStaffs.map(item => [item.id, item])).values()]
                             setLoad(false);
@@ -436,10 +431,7 @@ const   Staff = (props) => {
                                 addLink={"/settings/staffs/add"}
                             />
 
-                            {
-                                load ? (
-                                    <LoadingTable/>
-                                ) : (
+
                                     <div className="kt-portlet__body">
                                         <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                             <div className="row">
@@ -454,90 +446,95 @@ const   Staff = (props) => {
 
                                                 <ExportButton downloadLink={`${appConfig.apiDomaine}/download-excel/staffs`} pageUrl={"/settings/staffs/import"}/>
                                             </div>
-                                            <div className="row">
-                                                <div className="col-sm-12">
-                                                    <table
-                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                        style={{ width: "952px" }}>
-                                                        <thead>
-                                                        <tr role="row">
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                colSpan="1" style={{ width: "70.25px" }}
-                                                                aria-label="Country: activate to sort column ascending">{t("Nom")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                colSpan="1" style={{ width: "50px" }}
-                                                                aria-label="Country: activate to sort column ascending">{t("Téléphone")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                colSpan="1" style={{ width: "50px" }}
-                                                                aria-label="Country: activate to sort column ascending">Email
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                colSpan="1" style={{ width: "70.25px" }}
-                                                                aria-label="Country: activate to sort column ascending">{t("Unité")}
-                                                            </th>
+                                            {
+                                                load ? (
+                                                    <LoadingTable/>
+                                                ) : (
+                                                    <>
+                                                        <div className="row">
+                                                            <div className="col-sm-12">
+                                                                <table
+                                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                                    style={{ width: "952px" }}>
+                                                                    <thead>
+                                                                    <tr role="row">
+                                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                                            aria-label="Country: activate to sort column ascending">{t("Nom")}
+                                                                        </th>
+                                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                            colSpan="1" style={{ width: "50px" }}
+                                                                            aria-label="Country: activate to sort column ascending">{t("Téléphone")}
+                                                                        </th>
+                                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                            colSpan="1" style={{ width: "50px" }}
+                                                                            aria-label="Country: activate to sort column ascending">Email
+                                                                        </th>
+                                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                                            aria-label="Country: activate to sort column ascending">{t("Unité")}
+                                                                        </th>
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
+                                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                                    colSpan="1" style={{ width: "70.25px" }}
+                                                                                    aria-label="Country: activate to sort column ascending">{t("Institution")}
+                                                                                </th>
+                                                                            ) : <th style={{display: "none"}}/>
+                                                                        }
+                                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                            colSpan="1" style={{ width: "70.25px" }}
+                                                                            aria-label="Country: activate to sort column ascending">{t("Fonction")}
+                                                                        </th>
+                                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "53px" }} aria-label="Type: activate to sort column ascending">
+                                                                            {t("Action")}
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {
+                                                                        staffs.length ? (
+                                                                            showList ? (
+                                                                                showList.map((staff, index) => (
+                                                                                    printBodyTable(staff, index)
+                                                                                ))
+                                                                            ) : (
+                                                                                <EmptyTable search={true}/>
+                                                                            )
+                                                                        ) : (
+                                                                            <EmptyTable/>
+                                                                        )
+                                                                    }
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                    <tr>
+                                                                        <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                                        <th rowSpan="1" colSpan="1">{t("Téléphone")}</th>
+                                                                        <th rowSpan="1" colSpan="1">{t("Email")}</th>
+                                                                        <th rowSpan="1" colSpan="1">{t("Unité")}</th>
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
+                                                                                <th rowSpan="1" colSpan="1">{t("Institution")}</th>
+                                                                            ) : <th style={{display: "none"}}/>
+                                                                        }
+                                                                        <th rowSpan="1" colSpan="1">{t("Position")}</th>
+                                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                                    </tr>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div className="row">
+                                                            <div className="col-sm-12 col-md-5">
+                                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {staffs.length} {t("données")}
+                                                                </div>
+                                                            </div>
                                                             {
-                                                                verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
-                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                        colSpan="1" style={{ width: "70.25px" }}
-                                                                        aria-label="Country: activate to sort column ascending">{t("Institution")}
-                                                                    </th>
-                                                                ) : <th style={{display: "none"}}/>
-                                                            }
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                                colSpan="1" style={{ width: "70.25px" }}
-                                                                aria-label="Country: activate to sort column ascending">{t("Fonction")}
-                                                            </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "53px" }} aria-label="Type: activate to sort column ascending">
-                                                                {t("Action")}
-                                                            </th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {
-                                                            staffs.length ? (
-                                                                showList ? (
-                                                                    showList.map((staff, index) => (
-                                                                        printBodyTable(staff, index)
-                                                                    ))
-                                                                ) : (
-                                                                    <EmptyTable search={true}/>
-                                                                )
-                                                            ) : (
-                                                                <EmptyTable/>
-                                                            )
-                                                        }
-                                                        </tbody>
-                                                        <tfoot>
-                                                        <tr>
-                                                            <th rowSpan="1" colSpan="1">{t("Nom")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Téléphone")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Email")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Unité")}</th>
-                                                            {
-                                                                verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ? (
-                                                                    <th rowSpan="1" colSpan="1">{t("Institution")}</th>
-                                                                ) : <th style={{display: "none"}}/>
-                                                            }
-                                                            <th rowSpan="1" colSpan="1">{t("Position")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
-                                                        </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-sm-12 col-md-5">
-                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {staffs.length} {t("données")}
-                                                    </div>
-                                                </div>
-                                                {
-                                                    showList.length ? (
-                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
-{/*                                                            <Pagination
+                                                                showList.length ? (
+                                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                                        {/*                                                            <Pagination
                                                                 numberPerPage={numberPerPage}
                                                                 onChangeNumberPerPage={onChangeNumberPerPage}
                                                                 activeNumberPage={activeNumberPage}
@@ -547,23 +544,24 @@ const   Staff = (props) => {
                                                                 numberPage={numberPage}
                                                                 onClickNextPage={e => onClickNextPage(e)}
                                                             />*/}
-                                                            <Pagination
-                                                                numberPerPage={numberPerPage}
-                                                                onChangeNumberPerPage={onChangeNumberPerPage}
-                                                                activeNumberPage={activeNumberPage}
-                                                                onClickPage={(e, number) => onClickPage(e, number)}
-                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                                onClickNextPage={e => onClickNextPage(e)}
-                                                                numberPage={numberPage}
-                                                            />
+                                                                        <Pagination
+                                                                            numberPerPage={numberPerPage}
+                                                                            onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                            activeNumberPage={activeNumberPage}
+                                                                            onClickPage={(e, number) => onClickPage(e, number)}
+                                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                            onClickNextPage={e => onClickNextPage(e)}
+                                                                            numberPage={numberPage}
+                                                                        />
+                                                                    </div>
+                                                                ) : null
+                                                            }
                                                         </div>
-                                                    ) : null
-                                                }
-                                            </div>
+                                                    </>
+                                                )
+                                            }
                                         </div>
                                     </div>
-                                )
-                            }
                         </div>
                     </div>
                 </div>

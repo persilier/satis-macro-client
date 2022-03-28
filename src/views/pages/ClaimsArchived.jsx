@@ -76,7 +76,6 @@ const ClaimsArchived = (props) => {
         if (verifyTokenExpire()) {
             axios.get(endPoint.list)
                 .then(response => {
-                    console.log(response.data);
                     setLoad(false);
                     setNumberPage(forceRound(response.data.total/numberPerPage));
                     setShowList(response.data.data.slice(0, numberPerPage));
@@ -114,7 +113,6 @@ const ClaimsArchived = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
                     .then(response => {
-                        console.log("search", response.data);
                         setLoad(false);
                         setClaimsArchived(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -135,7 +133,6 @@ const ClaimsArchived = (props) => {
                 setLoad(true);
                 axios.get(endPoint.list)
                     .then(response => {
-                        console.log(response.data);
                         setLoad(false);
                         setClaimsArchived(response.data["data"]);
                         setShowList(response.data.data.slice(0, numberPerPage));
@@ -192,7 +189,6 @@ const ClaimsArchived = (props) => {
             setLoad(true);
             axios.get(endPoint.list + "?page=" + page)
                 .then(response => {
-                    //console.log(response.data["data"]);
                     let newClaimsArchived = [...claimsArchived, ...response.data["data"]];
                     let newData = [...new Map(newClaimsArchived.map(item => [item.id, item])).values()]
                     setLoad(false);
@@ -254,7 +250,6 @@ const ClaimsArchived = (props) => {
                     setLoad(true);
                     axios.get(prevUrl)
                         .then(response => {
-                            console.log(response.data);
                             let newClaimsArchived = [...claimsArchived, ...response.data["data"]];
                             let newData = [...new Map(newClaimsArchived.map(item => [item.id, item])).values()]
                             setLoad(false);
@@ -382,11 +377,7 @@ const ClaimsArchived = (props) => {
                         <HeaderTablePage
                             title={t("Réclamations archivées")}
                         />
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
+                        <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
                                             <div className="col-sm-6 text-left">
@@ -403,119 +394,125 @@ const ClaimsArchived = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Référence")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Réclamant")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">
-                                                            {(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
+                                        {
+                                            load ? (
+                                                <LoadingTable/>
+                                            ) : (
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col-sm-12">
+                                                            <table
+                                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                                style={{width: "952px"}}>
+                                                                <thead>
+                                                                <tr role="row">
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Référence")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Réclamant")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
 
-                                                        </th>
+                                                                    </th>
 
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">
-                                                            {t("Objet de réclamation")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Description")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "25px"}}
-                                                            aria-label="Country: activate to sort column ascending">
-                                                            {t("Durée du traitement")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "25px"}}
-                                                            aria-label="Country: activate to sort column ascending">
-                                                            {t("Satisfaction du client")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            {t("Action")}
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        claimsArchived.length ? (
-                                                            showList.length ? (
-                                                                showList.map((archived, index) => (
-                                                                    printBodyTable(archived, index)
-                                                                ))
-                                                            ) : <EmptyTable search={true}/>
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">{t("Référence")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
-                                                        <th rowSpan="1"
-                                                            colSpan="1">{(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
-                                                        </th>
-                                                        <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Description")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Durée du traitement")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Satisfaction du client")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status" aria-live="polite">
-                                                    {t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
-                                                </div>
-                                            </div>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {t("Objet de réclamation")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Description")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {t("Durée du traitement")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {t("Satisfaction du client")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1" colSpan="1" style={{width: "40.25px"}}
+                                                                        aria-label="Type: activate to sort column ascending">
+                                                                        {t("Action")}
+                                                                    </th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {
+                                                                    claimsArchived.length ? (
+                                                                        showList.length ? (
+                                                                            showList.map((archived, index) => (
+                                                                                printBodyTable(archived, index)
+                                                                            ))
+                                                                        ) : <EmptyTable search={true}/>
+                                                                    ) : (
+                                                                        <EmptyTable/>
+                                                                    )
+                                                                }
+                                                                </tbody>
+                                                                <tfoot>
+                                                                <tr>
+                                                                    <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
+                                                                    <th rowSpan="1"
+                                                                        colSpan="1">{(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
+                                                                    </th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Durée du traitement")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Satisfaction du client")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                                </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                            <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                            <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="col-sm-12 col-md-5">
+                                                            <div className="dataTables_info" id="kt_table_1_info" role="status" aria-live="polite">
+                                                                {t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
+                                                            </div>
+                                                        </div>
 
-                                            <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                <Pagination
-                                                    numberPerPage={numberPerPage}
-                                                    onChangeNumberPerPage={onChangeNumberPerPage}
-                                                    activeNumberPage={activeNumberPage}
-                                                    onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                    pages={pages}
-                                                    onClickPage={(e, number) => onClickPage(e, number)}
-                                                    numberPage={numberPage}
-                                                    onClickNextPage={e => onClickNextPage(e)}
-                                                />
-                                            </div>
-                                        </div>
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
                                     </div>
                                 </div>
-                            )
-                        }
                     </div>
                 </div>
             </div>
