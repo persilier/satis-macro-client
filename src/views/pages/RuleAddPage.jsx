@@ -192,7 +192,7 @@ const RuleAddPage = (props) => {
                                                 <>
                                                     {/*<span className="btn" style={{width: "30%"}}>*/}
                                                         <label className="kt-checkbox" key={ind} style={{width: "30%"}}>
-                                                            <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.name)}/> {el.name}<span/>
+                                                            <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.name)}/> {el.description ? el.description : el.name}<span/>
                                                         </label>
                                                     {/*</span>*/}
                                                     {

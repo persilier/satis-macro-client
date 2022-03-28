@@ -198,6 +198,7 @@ const RulePage = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{rule.name ? rule.name : "-"}</td>
+                <td>{rule.description ? rule.description : "-"}</td>
                 <td>
                     {
                         rule.is_editable === 1 ? (
@@ -298,6 +299,10 @@ const RulePage = (props) => {
                                                                 colSpan="1" style={{ width: "70.25px" }}
                                                                 aria-label="Country: activate to sort column ascending">{t("Nom")}
                                                             </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Description")}
+                                                            </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                                 {t("Action")}
                                                             </th>
@@ -321,6 +326,7 @@ const RulePage = (props) => {
                                                         <tfoot>
                                                         <tr>
                                                             <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Description")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                         </tr>
                                                         </tfoot>
