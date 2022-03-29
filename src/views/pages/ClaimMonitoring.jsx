@@ -87,8 +87,10 @@ const ClaimMonitoring = (props) => {
                 endpoint = `${appConfig.apiDomaine}/any/monitoring-claim`;
             else if(props.plan === "PRO")
                 endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
+            console.log("recuperation de plainte")
             await axios.get(endpoint)
                 .then(response => {
+                    console.log("plainte recupérée", response.data)
                     setClaimsToComplete(response.data.incompletes);
                     setClaimsToAssignUnit(response.data.toAssignementToUnit);
                     setClaimsToAssignStaff(response.data.toAssignementToStaff);
@@ -108,6 +110,7 @@ const ClaimMonitoring = (props) => {
                     setUnits(response.data.units);
                     setStaffs(response.data.staffs);
                     setObjects(response.data.claimObjects);
+                    console.log("recuperation terminée")
                 })
                 .catch(error => {
                     console.log("Something is wrong");

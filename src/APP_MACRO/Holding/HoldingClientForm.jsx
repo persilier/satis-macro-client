@@ -133,7 +133,7 @@ const HoldingClientForm = (props) => {
                     }
                     if (verifyPermission(props.userPermissions, 'store-client-from-my-institution') || verifyPermission(props.userPermissions, 'update-client-from-my-institution')) {
                         const clientOptions =
-                            response.data.client_institutions ? response.data.client_institutions.data.map((client) => ({
+                            response.data.client_institutions?.data ? response.data.client_institutions.data.map((client) => ({
                                 value: client.client_id,
                                 label: client.client.identite.firstname + ' ' + client.client.identite.lastname
                             })) : "";
@@ -685,7 +685,7 @@ const HoldingClientForm = (props) => {
                                             <div className="form-group row">
                                                 <div className={error.account_type_id.length ? "col validated" : "col"}>
                                                     <label htmlFor="exampleSelect1">Type de
-                                                        {t("Compte")} <InputRequire/></label>
+                                                        {t(" Compte")} <InputRequire/></label>
                                                     {accountType ? (
                                                         <Select
                                                             placeholder={t("Veuillez selectionner le type de compte")}
