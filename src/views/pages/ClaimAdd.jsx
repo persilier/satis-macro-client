@@ -157,6 +157,8 @@ const ClaimAdd = props => {
     const [componentData, setComponentData] = useState(undefined);
     const [load, setLoad] = useState(true);
 
+    const [tag, setTag] = useState({name: "", label: "", className: "", show: false});
+
     const [completionError, setCompletionError] = useState({ref: "", list: []});
 
     const currentDate = new Date();
@@ -166,6 +168,7 @@ const ClaimAdd = props => {
 
     useEffect(() => {
         async function fetchData() {
+            setLoad(true);
             await axios.get(endPoint.create)
                 .then(response => {
                     if (verifyPermission(props.userPermissions, "store-claim-without-client"))
@@ -501,23 +504,85 @@ const ClaimAdd = props => {
             setStartSearch(false);
             setSearchList(clientCash.clients);
         } else {
-            if (verifyTokenExpire()) {
-                await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?r=${searchInputValue}`)
-                    .then(({data}) => {
-                        setStartSearch(false);
-                        setShowSearchResult(true);
-                        if (data.length)
-                            setClientCash({"searchInputValue": searchInputValue, "clients": data});
-                        setSearchList(data);
-                    })
-                    .catch(({response}) => {
-                        setStartSearch(false);
-                        console.log("Something is wrong");
-                    })
-                ;
+            if (tag.name.length && tag.show) {
+                if (tag.name === "full_name" || tag.name === "telephone") {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                                console.log(data);
+                                console.log(searchInputValue);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else if (tag.name === "account_number") {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=account_number&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                                console.log(data);
+                                console.log(searchInputValue);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+            }
+            else {
+                if (verifyTokenExpire()) {
+                    await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                        .then(({data}) => {
+                            setStartSearch(false);
+                            setShowSearchResult(true);
+                            if (data.length)
+                                setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                            setSearchList(data);
+                            console.log(data);
+                            console.log(searchInputValue);
+                        })
+                        .catch(({response}) => {
+                            setStartSearch(false);
+                            console.log("Something is wrong");
+                        })
+                    ;
+                }
             }
         }
     };
+
+    const onClickTag = (name, label, className) => {
+        const newTag = {...tag};
+        newTag.name = name;
+        newTag.label = label;
+        newTag.className = className;
+        newTag.show = true;
+        setTag(newTag);
+    }
+
+    const onCloseTag = () => {
+        const newTag = {...tag};
+        newTag.name = "";
+        newTag.label = "";
+        newTag.className = "";
+        newTag.show = false;
+        setTag(newTag)
+    }
 
     const searchClient = () => {
         if (searchInputValue.length) {
@@ -625,7 +690,7 @@ const ClaimAdd = props => {
     };
 
     return (
-        load && !ready ? (
+        load || !ready ? (
             <Loader/>
         ) : (
             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
@@ -742,10 +807,39 @@ const ClaimAdd = props => {
                                                                 </div>
 
                                                                 <div className={"col"}>
+
                                                                     <div className="row"
                                                                          onFocus={e => setShowSearchResult(true)}
                                                                          onBlur={e => blur()}>
                                                                         <div className="col d-flex">
+
+                                                                            {
+                                                                                tag.show && tag.name.length ? (
+                                                                                    <span className={"btn btn-label-" + tag.className}
+                                                                                          style={{
+
+                                                                                              marginTop: "2rem",
+                                                                                              borderBottomRightRadius: "0px",
+                                                                                              borderTopRightRadius: "0px",
+                                                                                              whiteSpace: "nowrap",
+                                                                                          }}>
+                                                                                        <div>
+                                                                                    {tag.label}
+                                                                                    <button type="button" onClick={e => onCloseTag()} className="btn btn-icon" style={{
+                                                                                        height: "50%",
+                                                                                        width: "20%",
+                                                                                    }}>
+                                                                                        <i className="flaticon2-cross" style={{
+                                                                                            fontSize: "0.8em",
+                                                                                        }}/>
+                                                                                    </button>
+
+                                                                                </div>
+                                                                                    </span>
+                                                                                ) : null
+                                                                            }
+
+
                                                                             <input
                                                                                 style={{
                                                                                     marginTop: "2rem",
@@ -793,6 +887,13 @@ const ClaimAdd = props => {
                                                                                             transform: "translate3d(0px, 38px, 0px)",
                                                                                             zIndex: "1"
                                                                                         }}>
+                                                                                        <span className="d-flex justify-content-center"><em>--- Type de recherche ---</em></span>
+                                                                                        <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("full_name", "Nom/Prénom", "dark")}>Nom/Prénom</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("telephone", "Numéro de téléphone", "dark")}>Numéro de téléphone</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("account_number", "Numéro de compte", "dark")}>Numéro de compte</button>
+                                                                                        </div>
+                                                                                        <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
                                                                                         {
                                                                                             searchList.map((el, index) => (
                                                                                                 <span
@@ -822,15 +923,27 @@ const ClaimAdd = props => {
                                                                                             transform: "translate3d(0px, 38px, 0px)",
                                                                                             zIndex: "1"
                                                                                         }}>
+
                                                                                         {
                                                                                             startSearch ? (
                                                                                                 <span
-                                                                                                    className={"mt-3 mb-3"}><Loader/></span>
+                                                                                                    className={"mt-5 mb-5"}><Loader/></span>
                                                                                             ) : (
-                                                                                                <span
-                                                                                                    className="d-flex justify-content-center">{t("Pas de resultat")}</span>
+                                                                                                <>
+                                                                                                    <span className="d-flex justify-content-center"><em>--- Type de recherche ---</em></span>
+                                                                                                    <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("full_name", "Nom/Prénom", "primary")}>Nom/Prénom</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("telephone", "Numéro de téléphone", "primary")}>Numéro de téléphone</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("account_number", "Numéro de compte", "primary")}>Numéro de compte</button>
+                                                                                                    </div>
+                                                                                                    <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
+                                                                                                    <span
+                                                                                                        className="d-flex justify-content-center">{t("Pas de resultat")}</span>
+
+                                                                                                </>
                                                                                             )
                                                                                         }
+
                                                                                     </div>
                                                                                 </div>
                                                                             )
