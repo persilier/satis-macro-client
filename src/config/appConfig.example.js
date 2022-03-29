@@ -9,6 +9,7 @@ const appConfig = {
     host: `host`,
     port: 8000,
     language: "fr",
+    useManyLanguage: "false",
     listConnectData: {
         PRO: {
             grant_type: "grant_type",
