@@ -505,7 +505,24 @@ const ClaimAdd = props => {
             setSearchList(clientCash.clients);
         } else {
             if (tag.name.length && tag.show) {
-                if (tag.name === "full_name" || tag.name === "telephone") {
+                if (tag.name === "full_name" && isNaN(searchInputValue)) {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else if (tag.name === "telephone" && !isNaN(searchInputValue)) {
                     if (verifyTokenExpire()) {
                         await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
                             .then(({data}) => {
@@ -542,6 +559,10 @@ const ClaimAdd = props => {
                             })
                         ;
                     }
+                }
+                else {
+                    setStartSearch(false);
+                    setSearchList([]);
                 }
             }
             else {
@@ -902,7 +923,7 @@ const ClaimAdd = props => {
                                                                                                     className="dropdown-item"
                                                                                                     style={{cursor: "pointer"}}
                                                                                                 >
-                                                                                                {el.fullName}
+                                                                                                    <strong>{el.fullName}</strong>
                                                                                             </span>
                                                                                             ))
                                                                                         }
@@ -938,7 +959,7 @@ const ClaimAdd = props => {
                                                                                                     </div>
                                                                                                     <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
                                                                                                     <span
-                                                                                                        className="d-flex justify-content-center">{t("Pas de resultat")}</span>
+                                                                                                        className="d-flex justify-content-center"><strong>{t("Pas de resultat")}</strong></span>
 
                                                                                                 </>
                                                                                             )
