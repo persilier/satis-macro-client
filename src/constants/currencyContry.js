@@ -225,6 +225,11 @@ const currencies =  () => {
                     label: i18n.t("dollar du Zimbabwe"),
                     iso_code: "ZWL"
                 },
+                {
+                    value: 45,
+                    label: i18n.t("dollar américain"),
+                    iso_code: "USD"
+                },
             ]
         ) : null
     )

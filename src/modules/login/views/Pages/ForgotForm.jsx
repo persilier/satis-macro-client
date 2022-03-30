@@ -2,7 +2,11 @@ import React, {useState} from 'react';
 import axios from "axios";
 import appConfig from "../../../../config/appConfig";
 import {ToastBottomEnd} from "../../../../views/components/Toast";
-import {toastAddErrorMessageConfig, toastSuccessMessageWithParameterConfig} from "../../../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastErrorMessageWithParameterConfig,
+    toastSuccessMessageWithParameterConfig
+} from "../../../../config/toastConfig";
 import {Link} from "react-router-dom";
 
 import {useTranslation} from "react-i18next";
@@ -26,7 +30,14 @@ const ForgotForm = () => {
             })
             .catch(error => {
                 setStartRequestForgot(false);
-                ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                if( error.response.data.error){
+                    ToastBottomEnd.fire(
+                        toastErrorMessageWithParameterConfig(error.response.data.error)
+                    );
+                } else {
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                }
+
             })
         ;
     };

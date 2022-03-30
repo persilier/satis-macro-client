@@ -96,10 +96,16 @@ const UnitTypeForm = (props) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        let defaultDataPost = {
+            name: data.name,
+            can_be_target: data.can_be_target ? 1 : 0,
+            can_treat: data.can_treat ? 1 : 0,
+            description: data.description,
+        };
         setStartRequest(true);
         if (verifyTokenExpire()) {
             if (id) {
-                axios.put(`${appConfig.apiDomaine}/unit-types/${id}`, data)
+                axios.put(`${appConfig.apiDomaine}/unit-types/${id}`, defaultDataPost)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
@@ -116,7 +122,13 @@ const UnitTypeForm = (props) => {
                     })
                 ;
             } else {
-                axios.post(`${appConfig.apiDomaine}/unit-types`, data)
+                let defaultDataPost = {
+                    name: data.name,
+                    can_be_target: data.can_be_target ? 1 : 0,
+                    can_treat: data.can_treat ? 1 : 0,
+                    description: data.description,
+                };
+                axios.post(`${appConfig.apiDomaine}/unit-types`, defaultDataPost)
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
@@ -198,12 +210,13 @@ const UnitTypeForm = (props) => {
                                                         <label className="kt-checkbox">
                                                             <input type="checkbox" checked={data.can_treat} onChange={handleCanTreatChange}/> {t("Peut résoudre une réclamation ?")}
                                                             <span/>
+
                                                             {
                                                                 error.can_treat.length ? (
                                                                     error.can_treat.map((error, index) => (
-                                                                        <div key={index} className="invalid-feedback">
+                                                                            <div key={index} className="invalid-feedback">
                                                                             {error}
-                                                                        </div>
+                                                                            </div>
                                                                     ))
                                                                 ) : null
                                                             }
