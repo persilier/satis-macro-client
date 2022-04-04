@@ -105,10 +105,10 @@ const ClaimsArchived = (props) => {
     const searchElement = async (e) => {
         if (e.target.value) {
             /*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
-                        setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/;
+                        setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
                     .then(response => {
                         setLoad(false);
                         setClaimsArchived(response.data["data"]);
@@ -128,7 +128,7 @@ const ClaimsArchived = (props) => {
                         setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list)
+                axios.get(endPoint.list + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
                     .then(response => {
                         setLoad(false);
                         setClaimsArchived(response.data["data"]);
@@ -186,7 +186,7 @@ const ClaimsArchived = (props) => {
         setActiveNumberPage(page);
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list + "?page=" + page)
+            axios.get(endPoint.list + "?page=" + page + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
                 .then(response => {
                     let newClaimsArchived = [...claimsArchived, ...response.data["data"]];
                     let newData = [...new Map(newClaimsArchived.map(item => [item.id, item])).values()]
