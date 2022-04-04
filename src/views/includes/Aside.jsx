@@ -294,6 +294,17 @@ const Aside = (props) => {
                                                             </NavLink>
                                                         ) : null
                                                     }
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                            <NavLink exact to="/monitoring/claims/uemoa/reporting-five" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Etat réglementaire")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
                                                 </ul>
                                             </div>
                                         </li>
@@ -597,7 +608,7 @@ const Aside = (props) => {
                                                                                          activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link ">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                                        <span className="kt-menu__link-text">{t("Clients")}</span>
+                                                                                        <span className="kt-menu__link-text">{t("Client")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null

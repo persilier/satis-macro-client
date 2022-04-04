@@ -103,6 +103,7 @@ import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
 import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
 import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
+import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -535,6 +536,10 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/uemoa/reporting-four">
                 <ClaimReportingUemoaFour/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-five">
+                <ClaimReportingUemoaFive/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">
