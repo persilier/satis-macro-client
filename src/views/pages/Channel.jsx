@@ -225,19 +225,18 @@ const Channel = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{channel.name["fr"]}</td>
-                <td>{channel.is_response === '1' ? "Oui" : "Non"}</td>
+                <td>{channel.is_response ? "Oui" : "Non"}</td>
                 <td className={"d-flex justify-content-between align-items-center"}>
                     <div id={`channel-spinner-${channel.id}`}
                          className="kt-spinner kt-spinner--lg kt-spinner--dark mt-2 mx-3" style={{display: "none"}}/>
                     {
-
-                        channel.can_be_response === "1"  ? (
+                        channel.can_be_response   ? (
 
                             <span className="kt-switch kt-switch--icon"  id={`channel-${channel.id}`}>
                                 <label>
                                     <input type="checkbox"
-                                           checked={channel.is_response === '1' ? "checked" : ""}
-                                           onChange={(e) => activeAccount(e, channel, index, channel.can_be_response === '1' ? "désactiver" : "Activer")}
+                                           checked={channel.is_response  ? "checked" : ""}
+                                           onChange={(e) => activeAccount(e, channel, index, channel.can_be_response  ? "désactiver" : "Activer")}
                                            name=""/>
                                     <span></span>
                                 </label>
@@ -245,10 +244,12 @@ const Channel = (props) => {
                         ) : null
 
                     }
+                </td>
 
+                <td>
                     <div>
                         {
-                            verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable === "1"  ? (
+                            verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable   ? (
                                 <Link to={`/settings/channels/${channel.id}/edit`}
                                       id={`channel-edit-${channel.id}`}
                                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -258,7 +259,7 @@ const Channel = (props) => {
                             ) : null
                         }
                         {
-                            verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable === "1"  ? (
+                            verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable  ? (
                                 <button
                                     onClick={(e) => deleteChannel(channel.id, index)}
                                     className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -345,6 +346,9 @@ const Channel = (props) => {
                                                             aria-label="Country: activate to sort column ascending">{t("Canal de réponse")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                            {t("Statut")}
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                             {t("Action")}
                                                         </th>
                                                     </tr>
@@ -368,6 +372,7 @@ const Channel = (props) => {
                                                     <tr>
                                                         <th rowSpan="1" colSpan="1">{t("Nom")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Canal de réponse")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Statut")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
