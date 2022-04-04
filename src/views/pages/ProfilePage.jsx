@@ -36,6 +36,9 @@ const ProfilePage = ({user}) => {
 
     const role = formatRole(user?.data?.roles);
 
+    const unity = user?.data?.identite?.staff?.unit?.name?.fr ?? "";
+
+   console.log(user.data)
     useEffect(() => {
         async function fetchData() {
             await axios.get(`${appConfig.apiDomaine}/edit-profil`)
@@ -149,6 +152,10 @@ const ProfilePage = ({user}) => {
                                                 <div className="kt-widget__info">
                                                     <span className="kt-widget__label">Roles :</span>
                                                     <span className="kt-widget__data">{role}</span>
+                                                </div>
+                                                <div className="kt-widget__info">
+                                                    <span className="kt-widget__label">Unité :</span>
+                                                    <span className="kt-widget__data">{unity}</span>
                                                 </div>
                                             </div>
                                             <div className="kt-widget__items">

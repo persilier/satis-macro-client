@@ -75,8 +75,11 @@ const ClaimMonitoring = (props) => {
 
     const [relaunchId, setRelaunchId] = useState('');
 
+    const [isLoad, setIsLoad] = useState(true)
+
     useEffect(() => {
         async function fetchData () {
+            setIsLoad(true);
             let endpoint = "";
             if (props.plan === "MACRO") {
                 if (verifyPermission(props.userPermissions, "list-monitoring-claim-any-institution"))
@@ -89,6 +92,7 @@ const ClaimMonitoring = (props) => {
                 endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
             await axios.get(endpoint)
                 .then(response => {
+                    console.log("plainte recupérée", response.data)
                     setClaimsToComplete(response.data.incompletes);
                     setClaimsToAssignUnit(response.data.toAssignementToUnit);
                     setClaimsToAssignStaff(response.data.toAssignementToStaff);
@@ -108,9 +112,11 @@ const ClaimMonitoring = (props) => {
                     setUnits(response.data.units);
                     setStaffs(response.data.staffs);
                     setObjects(response.data.claimObjects);
+                    setIsLoad(false)
                 })
                 .catch(error => {
                     console.log("Something is wrong");
+                    setIsLoad(false)
                 })
             ;
         }
@@ -354,6 +360,7 @@ const ClaimMonitoring = (props) => {
                                                     placeholder={t("Veuillez sélectionner l'unité")}
                                                     value={unit}
                                                     onChange={onChangeUnit}
+                                                    isLoading={isLoad}
                                                     options={filterUnits}
                                                 />
                                             </div>
@@ -365,6 +372,7 @@ const ClaimMonitoring = (props) => {
                                                     placeholder={t("Veuillez sélectionner l'agent")}
                                                     value={staff}
                                                     onChange={onChangeStaff}
+                                                    isLoading={isLoad}
                                                     options={filterStaffs}
                                                 />
                                             </div>
@@ -378,6 +386,7 @@ const ClaimMonitoring = (props) => {
                                                     placeholder={t("Veuillez sélectionner la catégorie")}
                                                     isClearable
                                                     onChange={onChangeCategory}
+                                                    isLoading={isLoad}
                                                     options={categories}
                                                 />
                                             </div>
@@ -389,6 +398,7 @@ const ClaimMonitoring = (props) => {
                                                     value={object}
                                                     placeholder={t("Veuillez sélectionner l'objet")}
                                                     onChange={onChangeObject}
+                                                    isLoading={isLoad}
                                                     options={filterObjects}
                                                 />
                                             </div>
