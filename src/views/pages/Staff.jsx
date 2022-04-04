@@ -126,7 +126,7 @@ const   Staff = (props) => {
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value))
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
                     .then(response => {
                         setLoad(false);
                         setStaffs(response.data["data"]);
@@ -144,7 +144,7 @@ const   Staff = (props) => {
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list)
+                axios.get(endPoint.list + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? "&size=" + numberPerPage : ""))
                     .then(response => {
                         setLoad(false);
                         setStaffs(response.data["data"]);
@@ -203,7 +203,7 @@ const   Staff = (props) => {
 
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list + "?page=" + page)
+            axios.get(endPoint.list + "?page=" + page + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? "&size=" + numberPerPage : ""))
                 .then(response => {
                     let newStaffs = [...staffs, ...response.data["data"]];
                     let newData = [...new Map(newStaffs.map(item => [item.id, item])).values()]
