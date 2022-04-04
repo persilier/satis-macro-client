@@ -225,19 +225,19 @@ const Channel = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{channel.name["fr"]}</td>
-                <td>{channel.is_response ? "Oui" : "Non"}</td>
+                <td>{channel.is_response === '1' ? "Oui" : "Non"}</td>
                 <td className={"d-flex justify-content-between align-items-center"}>
                     <div id={`channel-spinner-${channel.id}`}
                          className="kt-spinner kt-spinner--lg kt-spinner--dark mt-2 mx-3" style={{display: "none"}}/>
                     {
 
-                        channel.can_be_response ? (
+                        channel.can_be_response === "1"  ? (
 
                             <span className="kt-switch kt-switch--icon"  id={`channel-${channel.id}`}>
                                 <label>
                                     <input type="checkbox"
-                                           checked={channel.is_response ? "checked" : ""}
-                                           onChange={(e) => activeAccount(e, channel, index, channel.can_be_response ? "désactiver" : "Activer")}
+                                           checked={channel.is_response === '1' ? "checked" : ""}
+                                           onChange={(e) => activeAccount(e, channel, index, channel.can_be_response === '1' ? "désactiver" : "Activer")}
                                            name=""/>
                                     <span></span>
                                 </label>
@@ -248,7 +248,7 @@ const Channel = (props) => {
 
                     <div>
                         {
-                            verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable ? (
+                            verifyPermission(props.userPermissions, 'update-channel') && channel.is_editable === "1"  ? (
                                 <Link to={`/settings/channels/${channel.id}/edit`}
                                       id={`channel-edit-${channel.id}`}
                                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -258,7 +258,7 @@ const Channel = (props) => {
                             ) : null
                         }
                         {
-                            verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable ? (
+                            verifyPermission(props.userPermissions, 'destroy-channel') && channel.is_editable === "1"  ? (
                                 <button
                                     onClick={(e) => deleteChannel(channel.id, index)}
                                     className="btn btn-sm btn-clean btn-icon btn-icon-md"
