@@ -9,11 +9,19 @@ import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import React, {useState} from "react";
 import moment from "moment"
+import pdfMake from "pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import htmlToPdfmake from "html-to-pdfmake";
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import {ERROR_401} from "../../config/errorPage";
 
 const ClaimSystemUsageReport = (props) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
+
+    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))
+        window.location.href = ERROR_401;
 
     const defaultError = {
         date_start: [],
@@ -41,7 +49,16 @@ const ClaimSystemUsageReport = (props) => {
     };
 
     const downloadReportingPdf = () => {
-        console.log("pdf");
+        setLoadDownload(true);
+        pdfMake.vfs = pdfFonts.pdfMake.vfs;
+        let systemUsageTable = document.getElementById("system-usage-div");
+        let htmlTable = htmlToPdfmake(systemUsageTable.innerHTML);
+        let docDefinition = {
+          content: htmlTable
+        };
+        pdfMake.createPdf(docDefinition).download("SystemUsageReport.pdf", function () {
+            setLoadDownload(false);
+        });
     }
 
     return (
@@ -82,33 +99,38 @@ const ClaimSystemUsageReport = (props) => {
 
                             <div className="kt-portlet__body">
 
-{/*                                {props.plan !== "HUB" ? (
-                                    <div className="row">
-                                        <div className="col">
-                                            <div
-                                                className={error.account_type_id.length ? "form-group validated" : "form-group"}>
-                                                <label htmlFor="">{t("Type de compte")}</label>
-                                                <Select
-                                                    isClearable
-                                                    value={clientType}
-                                                    placeholder={t("Veuillez sélectionner le type de compte")}
-                                                    onChange={onChangeClientType}
-                                                    options={clientTypes}
-                                                />
+                                {
+                                    props.plan !== "PRO" ? (
+                                        <div className="row">
+                                            {verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                                <div className="col-md-12">
+                                                    <div
+                                                        className={error.date_start.length ? "form-group validated" : "form-group"}>
+                                                        <label htmlFor="">Institution</label>
+                                                        <Select
+                                                            isClearable
+                                                            value={institution}
+                                                            placeholder={t("Veuillez sélectionner l'institution")}
+                                                            /*onChange={}*/
+                                                            options={institutions}
+                                                        />
 
-                                                {
-                                                    error.account_type_id.length ? (
-                                                        error.account_type_id.map((error, index) => (
-                                                            <div key={index} className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : null
-                                                }
-                                            </div>
+                                                        {
+                                                            error.date_end.length ? (
+                                                                error.date_end.map((error, index) => (
+                                                                    <div key={index} className="invalid-feedback">
+                                                                        {error}
+                                                                    </div>
+                                                                ))
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </div>
+                                            ) : null}
                                         </div>
-                                    </div>
-                                ) : null}*/}
+                                    ) : null
+                                }
+
 
                                 <div className="row">
                                     <div className="col">
@@ -171,8 +193,17 @@ const ClaimSystemUsageReport = (props) => {
                                                     {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button /*onClick={}*/ className="btn btn-secondary ml-3"
-                                                        disabled={(loadFilter)}>EXCEL</button>
+                                                /*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter)}>EXCEL</button>*/
+                                                <ReactHTMLTableToExcel
+                                                    id="test-table-xls-button"
+                                                    className="btn btn-secondary ml-3"
+                                                    table="system-usage-table"
+                                                    filename="SystemUsageReport"
+                                                    sheet="system-usage-report"
+                                                    buttonText="EXCEL"
+                                                />
+
                                             )}
 
                                             {loadDownload ? (
@@ -184,7 +215,7 @@ const ClaimSystemUsageReport = (props) => {
                                             ) : (
                                                 <button onClick={downloadReportingPdf}
                                                         className="btn btn-secondary ml-3"
-                                                        disabled={(loadFilter || loadDownload)}>PDF</button>
+                                                        disabled={(loadDownload)}>PDF</button>
                                             )}
                                         </div>
                                     </div>
@@ -198,8 +229,8 @@ const ClaimSystemUsageReport = (props) => {
                                     <div className="kt-portlet__body">
                                         <div>
                                             <div className="row">
-                                                <div className="col-sm-12">
-                                                    <table className="table table-bordered">
+                                                <div className="col-sm-12" id="system-usage-div">
+                                                    <table  id="system-usage-table" className="table table-bordered">
                                                         <thead>
                                                             <tr>
                                                                 <th rowSpan={2}>Titre</th>
