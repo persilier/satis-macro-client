@@ -29,6 +29,7 @@ const ConfirmClaimAddModal = props => {
         unit_targeted_id: props.unit_targeted_id,
         institution_targeted_id: props.institution_targeted_id,
         account_targeted_id: props.account_targeted_id,
+        account_number: props.account_targeted_id,
         claim_object_id: props.claim_object_id,
         request_channel_slug: props.request_channel_slug,
         response_channel_slug: props.response_channel_slug,
@@ -53,6 +54,7 @@ const ConfirmClaimAddModal = props => {
         unit_targeted_id: [],
         institution_targeted_id: [],
         account_targeted_id: [],
+        account_number: [],
         claim_object_id: [],
         request_channel_slug: [],
         response_channel_slug: [],
@@ -174,6 +176,7 @@ const ConfirmClaimAddModal = props => {
             newData.unit_targeted_id = "";
             newData.claimer_id = "";
             newData.account_targeted_id = "";
+            newData.account_number = "";
             newData.institution_targeted_id = "";
         }
         setData(newData);
@@ -202,6 +205,12 @@ const ConfirmClaimAddModal = props => {
         }
         setData(newData);
     };
+
+    const onChangeAccountNumber = (e) => {
+        const newData = {...data};
+        newData.account_number = e.target.value;
+        setData(newData);
+    }
 
     const onChangeClaimObject = selected => {
         const newData = {...data};
@@ -346,6 +355,8 @@ const ConfirmClaimAddModal = props => {
 
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!newData.account_number)
+            delete newData.account_number;
         if (!newData.amount_disputed)
             delete  newData.amount_disputed;
         if (!newData.amount_currency_slug)
@@ -648,19 +659,42 @@ const ConfirmClaimAddModal = props => {
                                                                 }
                                                             </div>
 
-                                                            <div className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                            <div className={error.account_targeted_id.length || error.account_number.length ? "col validated" : "col"}>
                                                                 <label htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
-                                                                <Select
-                                                                    isClearable
-                                                                    placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
-                                                                    value={account}
-                                                                    onChange={onChangeAccount}
-                                                                    options={accounts}
-                                                                />
+                                                                {
+                                                                    accounts.length ? (
+                                                                        <Select
+                                                                            isClearable
+                                                                            placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
+                                                                            value={account}
+                                                                            onChange={onChangeAccount}
+                                                                            options={accounts}
+                                                                        />
+                                                                    ) : (
+                                                                        <input
+                                                                            id="account-incomplete"
+                                                                            type="text"
+                                                                            className={error.account_number.length ? "form-control is-invalid" : "form-control"}
+                                                                            placeholder={"Veuillez entrer le numéro de compte"}
+                                                                            value={data.account_number ? data.account_number : ""}
+                                                                            onChange={(e) => onChangeAccountNumber(e)}
+                                                                        />
+                                                                    )
+                                                                }
                                                                 {
                                                                     error.account_targeted_id.length ? (
                                                                         error.account_targeted_id.map((error, index) => (
                                                                             <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                                {
+                                                                    error.account_number.length ? (
+                                                                        error.account_number.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
