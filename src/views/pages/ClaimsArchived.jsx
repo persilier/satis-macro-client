@@ -65,7 +65,7 @@ const ClaimsArchived = (props) => {
     const [claimsArchived, setClaimsArchived] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [currentMessage, setCurrentMessage] = useState("");
     const [total, setTotal] = useState(0);
@@ -74,7 +74,7 @@ const ClaimsArchived = (props) => {
 
     useEffect(() => {
         if (verifyTokenExpire()) {
-            axios.get(endPoint.list)
+            axios.get(endPoint.list + "?size=" + numberPerPage)
                 .then(response => {
                     setLoad(false);
                     setNumberPage(forceRound(response.data.total/numberPerPage));
@@ -111,7 +111,7 @@ const ClaimsArchived = (props) => {
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/;
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + "&size=" + numberPerPage)
                     .then(response => {
                         setLoad(false);
                         setClaimsArchived(response.data["data"]);
@@ -131,7 +131,7 @@ const ClaimsArchived = (props) => {
             setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+                axios.get(endPoint.list + "?size=" + numberPerPage)
                     .then(response => {
                         setLoad(false);
                         setClaimsArchived(response.data["data"]);
@@ -160,9 +160,9 @@ const ClaimsArchived = (props) => {
                     setLoad(false);
                     setActiveNumberPage(1);
                     setClaimsArchived(response.data["data"]);
-                    setShowList(response.data.data.slice(0, parseInt(e.target.value)));
+                    setShowList(response.data.data.slice(0, response.data.per_page));
                     setTotal(response.data.total);
-                    setNumberPage(forceRound(total / parseInt(e.target.value)));
+                    setNumberPage(forceRound(response.data.total / response.data.per_page));
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
                 })
@@ -187,15 +187,13 @@ const ClaimsArchived = (props) => {
         setActiveNumberPage(page);
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list + "?page=" + page + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+            axios.get(endPoint.list + "?page=" + page + "&size=" + numberPerPage)
                 .then(response => {
-                    let newClaimsArchived = [...claimsArchived, ...response.data["data"]];
-                    let newData = [...new Map(newClaimsArchived.map(item => [item.id, item])).values()]
                     setLoad(false);
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
-                    setClaimsArchived(newData);
-                    setShowList(newData.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+                    setClaimsArchived(response.data["data"]);
+                    setShowList(response.data["data"].slice(0, numberPerPage));
 
                 })
                 .catch(error => {
@@ -213,20 +211,14 @@ const ClaimsArchived = (props) => {
             if (nextUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(nextUrl)
+                    axios.get(nextUrl + "?size=" + numberPerPage)
                         .then(response => {
-                            let newClaimsArchived = [...claimsArchived, ...response.data["data"]];
-                            let newData = [...new Map(newClaimsArchived.map(item => [item.id, item])).values()]
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
                             setNextUrl(response.data["next_page_url"]);
-                            setClaimsArchived(newData);
+                            setClaimsArchived(response.data["data"]);
                             setShowList(
-                                newData.slice(
-                                    getEndByPosition(
-                                        activeNumberPage + 1) - numberPerPage,
-                                    getEndByPosition(activeNumberPage + 1)
-                                )
+                                response.data["data"].slice(0, numberPerPage)
                             );
 
                         })
@@ -248,19 +240,14 @@ const ClaimsArchived = (props) => {
             if (prevUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(prevUrl)
+                    axios.get(prevUrl + "?size=" + numberPerPage)
                         .then(response => {
-                            let newClaimsArchived = [...claimsArchived, ...response.data["data"]];
-                            let newData = [...new Map(newClaimsArchived.map(item => [item.id, item])).values()]
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
                             setNextUrl(response.data["next_page_url"]);
-                            setClaimsArchived(newData);
+                            setClaimsArchived(response.data["data"]);
                             setShowList(
-                                newData.slice(
-                                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                    getEndByPosition(activeNumberPage - 1)
-                                )
+                                response.data["data"].slice(0, numberPerPage)
                             );
 
                         })
