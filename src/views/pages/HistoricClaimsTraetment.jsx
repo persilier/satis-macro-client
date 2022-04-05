@@ -56,7 +56,7 @@ const HistoricClaimsAdd = (props) => {
             getLowerCaseString(el.reference).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object ? el.claim_object.name.fr : "").indexOf(value) >= 0 ||
             getLowerCaseString(el.description).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / "+el.account_number : "")}`).indexOf(value) >= 0
     ));
 
         return newClaimsAdd;
@@ -141,7 +141,7 @@ const HistoricClaimsAdd = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} </td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}</td>
                 <td>{claim.claim_object.name["fr"]}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>

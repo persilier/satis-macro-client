@@ -75,7 +75,7 @@ const ClientButtonDetail = ({claim}) => {
                                             <div className="kt-widget__info">
                                                 <span>Numero de compte:</span>
                                                 <span className="kt-widget__data">
-                                                    {claim ? (claim.account_targeted ? claim.account_targeted.number : '-') : '-'}
+                                                    {claim ? (claim.account_targeted ? claim.account_targeted.number : (claim.account_number ? claim.account_number : "-")) : '-'}
                                                 </span>
                                             </div>
 

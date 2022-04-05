@@ -59,7 +59,7 @@ const ClaimReassign = (props) => {
         newClaims = newClaims.filter(el => {
             return (
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-                getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+                getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname}  ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / "+el.account_number : "")}`).indexOf(value) >= 0 ||
                 getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
                 getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
                 getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
@@ -148,7 +148,7 @@ const ClaimReassign = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference}</td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}  ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted.name}</td>
                 <td>
                     {formatDateToTime(claim.created_at)} <br/>
