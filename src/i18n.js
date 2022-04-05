@@ -10,7 +10,7 @@ i18n
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         debug: true,
-        lng: localStorage.getItem('i18nextLng') || appConfig.language,
+        lng: localStorage.getItem('i18nextLng') !== null ? localStorage.getItem('i18nextLng') : appConfig.language,
         fallbackLng: "fr",
         interpolation: {
             escapeValue: false // react already safes from xss

@@ -188,7 +188,7 @@ const IncompleteClaimsEdit = props => {
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
-                        is_revival: response.data.claim.is_revival ? response.data.claim.is_revival : 0,
+                        is_revival: response.data.claim.is_revival ? 1 : 0,
                         //file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : []
                     };
                     setData(newIncompleteClaim);
@@ -784,20 +784,6 @@ const IncompleteClaimsEdit = props => {
 
                                                                 </div>
 
-                                                                <div className="form-group row">
-                                                                    <div className={"col"}>
-                                                                        <label
-                                                                            htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}<InputRequire/></label>
-                                                                        <Select
-                                                                            classNamePrefix="select"
-                                                                            className="basic-single"
-                                                                            placeholder={componentData ? componentData.params.fr.categorie_placeholder.value : ""}
-                                                                            value={claimCategory}
-                                                                            onChange={onChangeClaimCategory}
-                                                                            options={claimCategories}
-                                                                        />
-                                                                    </div>
-                                                                </div>
                                                             </div>
                                                         </div>
 

@@ -403,7 +403,7 @@ export const logout = () => {
     const lng = localStorage.getItem('i18nextLng');
     localStorage.clear();
     localStorage.setItem('plan', plan);
-    localStorage.setItem('i18nextLng', lng);
+    lng !== null && localStorage.setItem('i18nextLng', lng);
     localStorage.removeItem("DTimeout");
     window.location.href = "/login";
 };
