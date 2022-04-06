@@ -178,7 +178,7 @@ const UserAdd = (props) => {
 
     const onViewPasswordConfirm = (e) => {
         let input = document.getElementById("password_confirmation");
-        let icon = document.getElementById("icon");
+        let icon = document.getElementById("icon-conf");
         if (input.type === "password") {
             input.type = "text";
             icon.className = "fa fa-eye"
@@ -448,7 +448,7 @@ const UserAdd = (props) => {
                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="password_confirmation">{t("Confirmation")} <InputRequire/></label>
                                                     <div className="col-lg-9 col-xl-6 kt-input-icon kt-input-icon--right">
                                                         <span className="kt-input-icon__icon kt-input-icon__icon--right mt-3">
-                                                            <i id="icon" className="fa fa-eye-slash" aria-hidden="true" onClick={(e) => onViewPasswordConfirm(e)}/>
+                                                            <i id="icon-conf" className="fa fa-eye-slash" aria-hidden="true" onClick={(e) => onViewPasswordConfirm(e)}/>
                                                         </span>
                                                         <input
                                                             id="password_confirmation"
