@@ -128,6 +128,7 @@ import ConfigConnexion from "../pages/ConfigConnexion";
 import Logs from "../pages/Logs";
 import ProofReceipt from "../pages/ProofReceipt";
 import ResetPassword from '../pages/password-reset';
+import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 
 const Body = () => {
     return (
@@ -535,6 +536,10 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/uemoa/reporting-four">
                 <ClaimReportingUemoaFour/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/reporting-benchmarking">
+                <ClaimReportingBenchmarking/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">

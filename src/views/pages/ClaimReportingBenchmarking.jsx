@@ -1,4 +1,6 @@
-const ClaimBenchmarkingReport = (props) => {
+import {connect} from "react-redux";
+
+const ClaimReportingBenchmarking = (props) => {
 
 }
 
@@ -10,4 +12,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(ClaimBenchmarkingReport);
+export default connect(mapStateToProps)(ClaimReportingBenchmarking);
