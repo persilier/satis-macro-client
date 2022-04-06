@@ -53,9 +53,9 @@ const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) =>
             <div className="kt-portlet" style={{cursor: "pointer"}} onClick={() => onShowDetail(claim)}>
                 <div className="kt-portlet__head kt-portlet__head--right kt-portlet__head--noborder  kt-ribbon kt-ribbon--clip kt-ribbon--left kt-ribbon--info">
                     <div className="kt-ribbon__target" style={{ top: "12px", zIndex: 0 }}>
-                        <span className="kt-ribbon__inner" style={{backgroundColor: claim.time_expire > 0 ? "#C6F6D5" : "#FED7D7"}}/>
-                        <strong style={{color: claim.time_expire > 0 ? "#2F855A" : "#C53030"}}>
-                            {timeExpire}
+                        <span className="kt-ribbon__inner" style={{backgroundColor: claim.time_expire !== null ? (claim.time_expire > 0 ? "#FED7D7" : "#C6F6D5") : "#e6e6e6"}}/>
+                        <strong style={{color: claim.time_expire !== null ? (claim.time_expire > 0 ?  "#C53030" : "#2F855A") : "#000000"}}>
+                            {claim.time_expire !== null ? timeExpire : "-"}
                         </strong>
                     </div>
 

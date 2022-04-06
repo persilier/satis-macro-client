@@ -4,7 +4,7 @@ import appConfig from "../../../config/appConfig";
 import {ToastBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {Link} from "react-router-dom";
@@ -21,9 +21,15 @@ const PreferredChannel = () => {
         feedback_preferred_channels: []
     };
 
+    const defaultError = {
+        feedback_preferred_channels: []
+    };
+
+
     const [data, setData] = useState(defaultData);
     const [listChannels, setListChannels] = useState("");
     const [startRequest, setStartRequest] = useState(false);
+    const [error, setError] = useState(defaultError);
     const [load, setLoad] = useState(true);
 
     useEffect(() => {
@@ -61,12 +67,17 @@ const PreferredChannel = () => {
             axios.put(appConfig.apiDomaine + "/feedback-channels", data)
                 .then(response => {
                     setStartRequest(false);
+                    setError(defaultError);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
-                .catch(error => {
+                .catch(err => {
                     setStartRequest(false);
                     console.log("something is wrong");
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                    setError({...defaultError, ...err.response.data.error});
+                    if (err.response.data.error && err.response.data.error.feedback_preferred_channels.length)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(err.response.data.error.feedback_preferred_channels[0]));
+                    else
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }
