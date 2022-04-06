@@ -1024,5 +1024,10 @@
     "Le canal ne sera plus un canal de réponse": "The channel will no longer be a response channel",
     "Le canal sera de nouveau un canal de réponse": "The channel will again be a response channel",
     "Oui, désactiver!": "Yes, deactivate!",
-    "Oui, activer!": "Yes, activate!"
+    "Oui, activer!": "Yes, activate!",
+    "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter": "You have been logged out of your account for inactivity, please log back in",
+    "Nom/Prénom": "Last Name/First Name",
+    "Numéro de téléphone": "Phone number",
+    "Type de recherche": "Search type",
+    "Fin": "End"
 }

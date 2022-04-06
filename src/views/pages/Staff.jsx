@@ -86,6 +86,7 @@ const   Staff = (props) => {
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
                     setLoad(false);
+
                 })
                 .catch(error => {
                     setLoad(false);
@@ -189,6 +190,7 @@ const   Staff = (props) => {
         setNumberPerPage(parseInt(e.target.value));
     };
 
+
     const getEndByPosition = (position) => {
         let end = numberPerPage;
         for (let i = 1; i<position; i++) {
@@ -276,6 +278,7 @@ const   Staff = (props) => {
 
         }
     };
+
 
     const deleteStaff = (staffId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig())

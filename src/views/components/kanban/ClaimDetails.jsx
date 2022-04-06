@@ -282,7 +282,7 @@ const ClaimDetails = (props) => {
                                                         className="mx-2">{claim.claim_object.name["fr"]}</span><br/>
                                                         <br/>
                                                         <strong>{t("Numéro de compte")} </strong>: <span
-                                                        className="mx-2">{claim.account_targeted ? claim.account_targeted.number : "-"}</span><br/>
+                                                        className="mx-2">{claim.account_targeted ? claim.account_targeted.number : ( claim.account_number ? " / "+claim.account_number : "-")}</span><br/>
                                                         <br/>
                                                         <strong>{t("Montant réclamé")}</strong>: <span
                                                         className="mx-2">{claim.amount_disputed ? `${claim.amount_disputed} ${claim.amount_currency.name["fr"]}` : "-"}</span><br/>

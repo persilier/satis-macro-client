@@ -166,6 +166,7 @@ const Clients = (props) => {
         }
     };
 
+
     const onChangeNumberPerPage = (e) => {
         e.persist();
         if (verifyTokenExpire()) {
@@ -188,6 +189,7 @@ const Clients = (props) => {
         }
         setNumberPerPage(parseInt(e.target.value));
     };
+
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
@@ -274,6 +276,7 @@ const Clients = (props) => {
             }
         }
     };
+
 
     const deleteClient = (accountId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig())
