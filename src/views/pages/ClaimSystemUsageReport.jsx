@@ -233,7 +233,7 @@ const ClaimSystemUsageReport = (props) => {
                                                     <table  id="system-usage-table" className="table table-bordered">
                                                         <thead>
                                                             <tr>
-                                                                <th rowSpan={2}>Titre</th>
+                                                                <th className="text-center" rowSpan={2}>Titre</th>
                                                                 <th className="text-center" colSpan={2}>Valeur</th>
                                                             </tr>
                                                             <tr>
