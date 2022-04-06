@@ -1013,5 +1013,13 @@
   "Satis client - Paramètre Envoie de mail": "Satis client - Paramètre Envoie de mail",
   "Utilisateur enregistré et désigné comme pilote": "Utilisateur enregistré et désigné comme pilote",
   "Utilisateur enregistré mais non défini comme pilote actif": "Utilisateur enregistré mais non défini comme pilote actif",
-  "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter": "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter"
+  "Vous avez été déconnecter pour durer d'inactivité de votre compte, veuillez vous reconnecter": "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter",
+  "Compte Utilisateur": "Compte Utilisateur",
+  "Compte Client": "Compte Client",
+  "Clients": "Clients",
+  "Enregistrement de réclamation": "Enregistrement de réclamation",
+  "Le canal ne sera plus un canal de réponse": "Le canal ne sera plus un canal de réponse",
+  "Le canal sera de nouveau un canal de réponse": "Le canal sera de nouveau un canal de réponse",
+  "Oui, désactiver!": "Oui, désactiver!",
+  "Oui, activer!": "Oui, activer!"
 }

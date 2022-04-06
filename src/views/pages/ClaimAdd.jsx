@@ -738,7 +738,7 @@ const ClaimAdd = props => {
                                         <span className="kt-subheader__breadcrumbs-separator"/>
                                         <a href="#button" onClick={e => e.preventDefault()}
                                            className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                            {t("Enrégistrement de réclamation")}
+                                            {t("Enregistrement de réclamation")}
                                         </a>
                                     </div>
                                 </div>

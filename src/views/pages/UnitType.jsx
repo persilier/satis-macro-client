@@ -192,7 +192,7 @@ const UnitType = (props) => {
                 <td>{unitType.can_treat ? t("Oui") : t("Non")}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : "-"}</td>
                 <td>
-                    {unitType.is_editable === 1 ? (
+                    {unitType.is_editable == 1 ? (
                         <>
                             {
                                 verifyPermission(props.userPermissions, 'update-unit-type') ? (
