@@ -921,13 +921,13 @@ const ClaimAdd = props => {
                                                                                             transform: "translate3d(0px, 38px, 0px)",
                                                                                             zIndex: "1"
                                                                                         }}>
-                                                                                        <span className="d-flex justify-content-center"><em>--- Type de recherche ---</em></span>
+                                                                                        <span className="d-flex justify-content-center"><em>{("---" + t("Type de recherche") + "---")}</em></span>
                                                                                         <div className="d-flex justify-content-center mt-1 mb-1">
-                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("full_name", "Nom/Prénom", "dark")}>Nom/Prénom</button>&nbsp;
-                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("telephone", "Numéro de téléphone", "dark")}>Numéro de téléphone</button>&nbsp;
-                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("account_number", "Numéro de compte", "dark")}>Numéro de compte</button>
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("full_name", t("Nom/Prénom"), "dark")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("telephone", t("Numéro de téléphone"), "dark")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("account_number", t("Numéro de compte"), "dark")}>{t("Numéro de compte")}</button>
                                                                                         </div>
-                                                                                        <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
+                                                                                        <span className="d-flex justify-content-center mb-2"><em>{"---"+t("Fin")+"---"}</em></span>
                                                                                         {
                                                                                             searchList.map((el, index) => (
                                                                                                 <span
@@ -964,13 +964,13 @@ const ClaimAdd = props => {
                                                                                                     className={"mt-5 mb-5"}><Loader/></span>
                                                                                             ) : (
                                                                                                 <>
-                                                                                                    <span className="d-flex justify-content-center"><em>--- Type de recherche ---</em></span>
+                                                                                                    <span className="d-flex justify-content-center"><em>{"--- "+ t("Type de recherche") +" ---"}</em></span>
                                                                                                     <div className="d-flex justify-content-center mt-1 mb-1">
-                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("full_name", "Nom/Prénom", "primary")}>Nom/Prénom</button>&nbsp;
-                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("telephone", "Numéro de téléphone", "primary")}>Numéro de téléphone</button>&nbsp;
-                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("account_number", "Numéro de compte", "primary")}>Numéro de compte</button>
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("full_name", t("Nom/Prénom"), "primary")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("telephone", t("Numéro de téléphone"), "primary")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("account_number", t("Numéro de compte"), "primary")}>{t("Numéro de compte")}</button>
                                                                                                     </div>
-                                                                                                    <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
+                                                                                                    <span className="d-flex justify-content-center mb-2"><em>{"--- "+t("Fin")+" ---"}</em></span>
                                                                                                     <span
                                                                                                         className="d-flex justify-content-center"><strong>{t("Pas de resultat")}</strong></span>
 
