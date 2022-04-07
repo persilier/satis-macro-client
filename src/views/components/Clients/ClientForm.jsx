@@ -272,7 +272,7 @@ const EditClients = (props) => {
 
                                                 <div className="form-group row">
                                                     <div className={error.account_type_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="exampleSelect1">{t("Type de Compte")}</label>
+                                                        <label htmlFor="exampleSelect1">{t("Type de compte")}</label>
                                                         {accountType ? (
                                                             <Select
                                                                 value={type}

@@ -159,10 +159,10 @@ const Channel = (props) => {
                                 // document.getElementById(`channel-edit-${channel.id}`).style.display = "block";
                                 setChannels(newChannels);
                                 window.location.reload();
-                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succes de l'opération"));
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'opération")));
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'opération"));
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'opération")));
                             })
                         ;
                     }
@@ -225,7 +225,7 @@ const Channel = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{channel.name["fr"]}</td>
-                <td>{channel.is_response ? "Oui" : "Non"}</td>
+                <td>{channel.is_response ? t("Oui") : t("Non")}</td>
                 <td className={"d-flex justify-content-between align-items-center"}>
                     <div id={`channel-spinner-${channel.id}`}
                          className="kt-spinner kt-spinner--lg kt-spinner--dark mt-2 mx-3" style={{display: "none"}}/>

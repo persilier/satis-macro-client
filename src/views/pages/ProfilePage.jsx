@@ -154,7 +154,7 @@ const ProfilePage = ({user}) => {
                                                     <span className="kt-widget__data">{role}</span>
                                                 </div>
                                                 <div className="kt-widget__info">
-                                                    <span className="kt-widget__label">Unité :</span>
+                                                    <span className="kt-widget__label">{t("Unité")} :</span>
                                                     <span className="kt-widget__data">{unity}</span>
                                                 </div>
                                             </div>

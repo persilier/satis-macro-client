@@ -442,7 +442,7 @@ const Nav = (props) => {
                             appConfig.useManyLanguage ? (
                                 <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
                                     <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                        <li className={`kt-nav__item ${props.language.languageSelected === "en" && "kt-nav__item--active"}`}>
+                                        <li className={`kt-nav__item ${i18n.language === "en" && "kt-nav__item--active"}`}>
                                             <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             EN
@@ -451,12 +451,12 @@ const Nav = (props) => {
                                             </a>
                                         </li>
 
-                                        <li className={`kt-nav__item ${props.language.languageSelected === "fr" && "kt-nav__item--active"}`}>
+                                        <li className={`kt-nav__item ${i18n.language === "fr" && "kt-nav__item--active"}`}>
                                             <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             FR
                                         </span>
-                                                <span className="kt-nav__link-text">Francais</span>
+                                                <span className="kt-nav__link-text">Français</span>
                                             </a>
                                         </li>
                                     </ul>
