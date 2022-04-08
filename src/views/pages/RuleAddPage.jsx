@@ -96,6 +96,7 @@ const RuleAddPage = (props) => {
                     endpoint = `${appConfig.apiDomaine}/my/roles/create`;
                 await axios.get(endpoint)
                     .then(response => {
+                        console.log(response.data);
                         if (verifyPermission(props.userPermissions, 'store-any-institution-type-role')) {
                             setInstitutionTypes(formatSelectOption(response.data.institutionTypes, 'name'));
                             setModulesPermissions(response.data.modulesPermissions);
@@ -173,27 +174,40 @@ const RuleAddPage = (props) => {
         )
     };*/
 
+
     const printModule = (module, index, allModule) => {
         return (
-            <div key={index} className="card">
-                <div className="card-header" id={"headingOne" + index}>
-                    <div className="card-title collapsed" data-toggle="collapse" data-target={"#collapseOne" + index} aria-expanded="false" aria-controls={"collapseOne" + index}>
-                        <i className="flaticon2-layers-1" /> Module: {module.name["fr"]}
+            <div key={index} className={error.permissions.length ? "validated" : ""}>
+                {
+                    error.permissions.length ? (
+                        index === allModule.length - 1 ? (
+                            error.permissions.map((error, indEr) => (
+                                <div key={indEr} className="invalid-feedback text-center mt-3 mb-3">
+                                    {error}
+                                </div>
+                            ))
+                        ) : null
+                    ) : null
+                }
+                <div key={index} className="card mb-3">
+                    <div className="card-header" id={"headingOne" + index}>
+                        <div className="card-title collapsed" data-toggle="collapse" data-target={"#collapseOne" + index} aria-expanded="false" aria-controls={"collapseOne" + index}>
+                            <i className="flaticon2-layers-1" /> Module: {module.name["fr"]}
+                        </div>
                     </div>
-                </div>
-                <div id={"collapseOne" + index} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div className="card-body">
-                        <label className="" htmlFor="unit_type">{t("Permissions")} <InputRequire/></label>
-                        <div className={error.permissions.length ? "form-group row validated" : "form-group row"}>
-                            <div className="col-lg-12 col-xl-6">
+                    <div id={"collapseOne" + index} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div className="card-body">
+                            <label className="" htmlFor="unit_type">{t("Permissions")} <InputRequire/></label>
+                            <div className={error.permissions.length ? "form-group row validated" : "form-group row"}>
+                                <div className="col-lg-12 col-xl-6">
                                     <div className="kt-checkbox-inline">
                                         {
                                             module.permissions.map((el, ind) => (
                                                 <React.Fragment key={ind}>
                                                     {/*<span className="btn" style={{width: "30%"}}>*/}
-                                                        <label className="kt-checkbox"  style={{width: "30%"}}>
-                                                            <input className={"checkInput"} type="checkbox" name={el.description} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.description)}/> {el.description}<span/>
-                                                        </label>
+                                                    <label className="kt-checkbox"  style={{width: "30%"}}>
+                                                        <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.description)}/> {el.description}<span/>
+                                                    </label>
                                                     {/*</span>*/}
                                                     {
                                                         ((ind+1) % 3 === 0 && <br/>)
@@ -201,7 +215,7 @@ const RuleAddPage = (props) => {
                                                 </React.Fragment>
                                             ))
                                         }
-                                        {
+{/*                                        {
                                             error.permissions.length ? (
                                                 index === allModule.length - 1 ? (
                                                     error.permissions.map((error, indEr) => (
@@ -211,8 +225,9 @@ const RuleAddPage = (props) => {
                                                     ))
                                                 ) : null
                                             ) : null
-                                        }
+                                        }*/}
                                     </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -342,7 +357,7 @@ const RuleAddPage = (props) => {
                                                     ) : null
                                                 ) : (
                                                     verifyPermission(props.userPermissions, 'store-my-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
-                                                        <div className="accordion  accordion-toggle-arrow" id="accordionExample">
+                                                        <div className={error.permissions.length ? "accordion  accordion-toggle-arrow validated" : "accordion  accordion-toggle-arrow"} id="accordionExample">
                                                             {
                                                                 proModule ? (
                                                                     proModule.map((el, index) => (
