@@ -16,6 +16,16 @@ const FusionClaim = props => {
         duplicate: false
     });
 
+    const changeKeepClaim = () => {
+        if (!choice.original && !choice.duplicate)
+            return null;
+        if (choice.original && !choice.duplicate)
+            return 1;
+        if (!choice.original && choice.duplicate)
+            return 0;
+    }
+
+
     const onClickFusion = () => {
         if (choice.original || choice.duplicate) {
             setStartRequest(true);
@@ -24,7 +34,7 @@ const FusionClaim = props => {
             else {
                 setStartRequest(true);
                 if (verifyTokenExpire()) {
-                    axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {keep_claim: !choice.original && !choice.duplicate ? null : choice.original})
+                    axios.put(`${appConfig.apiDomaine}/claim-awaiting-assignment/${props.claim.id}/merge/${props.copyClaim.id}`, {keep_claim: changeKeepClaim()})
                         .then(response => {
                             ToastBottomEnd.fire(toastMergeSuccessMessageConfig);
                             setStartRequest(false);
