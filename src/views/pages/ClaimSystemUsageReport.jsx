@@ -18,6 +18,8 @@ import {loadCss, removeNullValueInObject} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import appConfig from "../../config/appConfig";
 import axios from "axios";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -59,13 +61,13 @@ const ClaimSystemUsageReport = (props) => {
             endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
 
         if (verifyTokenExpire()) {
-            if (click)
-                setLoadFilter(true);
             axios.post(endpoint, removeNullValueInObject(sendData))
                 .then(response => {
                     setLoad(false);
                     setLoadFilter(false);
                     setData(response.data);
+                    if (click)
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
                 })
                 .catch(error => {
                     setLoad(false);
@@ -93,8 +95,9 @@ const ClaimSystemUsageReport = (props) => {
     const downloadReportingPdf = () => {
         setLoadDownload(true);
         pdfMake.vfs = pdfFonts.pdfMake.vfs;
+        let systemUsageHeader = document.getElementById("system-usage-header")
         let systemUsageTable = document.getElementById("system-usage-div");
-        let htmlTable = htmlToPdfmake(systemUsageTable.innerHTML);
+        let htmlTable = htmlToPdfmake(systemUsageHeader.innerHTML + systemUsageTable.innerHTML);
         let docDefinition = {
           content: htmlTable
         };
@@ -143,6 +146,7 @@ const ClaimSystemUsageReport = (props) => {
 
                         <div className="kt-portlet">
                             <HeaderTablePage
+                                id="system-usage-header"
                                 title={t("Rapport utilisation système")}
                             />
 
@@ -278,7 +282,7 @@ const ClaimSystemUsageReport = (props) => {
                                     <div className="kt-portlet__body">
                                         <div>
                                             <div className="row">
-                                                <div className="col-sm-12" id="system-usage-div">
+                                                <div className="table-responsive col-sm-12" id="system-usage-div">
                                                     <table  id="system-usage-table" className="table table-bordered">
                                                         <thead>
                                                             <tr>
