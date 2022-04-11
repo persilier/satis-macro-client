@@ -67,7 +67,7 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-brand">
-									{data.totalRegistered ? data.totalRegistered.myUnit : ""}
+									{(data.totalRegistered && data.totalRegistered.myUnit) ? data.totalRegistered.myUnit : ""}
 								</span>
                                             </div>
                                         </div>
@@ -84,12 +84,12 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-danger">
-									{data.totalIncomplete ? data.totalIncomplete.myUnit : ""}
+									{(data.totalIncomplete && data.totalIncomplete.myUnit) ? data.totalIncomplete.myUnit : ""}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
-                                                    data.totalIncomplete ?
+                                                    (data.totalIncomplete && data.totalIncomplete.myUnit) ?
                                                         <div className="progress-bar kt-bg-danger" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalIncomplete.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -105,7 +105,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
 
                                                 {
-                                                    data.totalIncomplete ?
+                                                    (data.totalIncomplete && data.totalIncomplete.myUnit) ?
                                                         <span className="kt-widget24__number">
                                                 {percentageData((data.totalIncomplete.myUnit), totalData)}
                                            </span>
@@ -127,12 +127,12 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-success">
-									{data.totalComplete ? data.totalComplete.myUnit : ""}
+									{(data.totalComplete && data.totalComplete.myUnit) ? data.totalComplete.myUnit : ""}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
-                                                    data.totalComplete ?
+                                                    (data.totalComplete && data.totalComplete.myUnit) ?
                                                         <div className="progress-bar kt-bg-success" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalComplete.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -149,7 +149,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
                                                 <span className="kt-widget24__number">
 									{
-                                        data.totalComplete ?
+                                        (data.totalComplete && data.totalComplete.myUnit) ?
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalComplete.myUnit), totalData)}
                                            </span>
@@ -172,13 +172,13 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-brand">
-                                        {data.totalTransferredToUnit ? data.totalTransferredToUnit.myUnit : ""}
+                                        {(data.totalTransferredToUnit && data.totalTransferredToUnit.myUnit) ? data.totalTransferredToUnit.myUnit : ""}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
 
                                                 {
-                                                    data.totalTransferredToUnit ?
+                                                    (data.totalTransferredToUnit && data.totalTransferredToUnit.myUnit) ?
                                                         <div className="progress-bar kt-bg-brand" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalTransferredToUnit.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -195,7 +195,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
                                                 <span className="kt-widget24__number">
 									{
-                                        data.totalTransferredToUnit ?
+                                        (data.totalTransferredToUnit && data.totalTransferredToUnit.myUnit) ?
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalTransferredToUnit.myUnit), totalData)}
                                            </span>
@@ -218,13 +218,13 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-warning">
-									   {data.totalBeingProcess ? data.totalBeingProcess.myUnit : ""}
+									   {(data.totalBeingProcess && data.totalBeingProcess.myUnit) ? data.totalBeingProcess.myUnit : ""}
 
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
-                                                    data.totalBeingProcess ?
+                                                    (data.totalBeingProcess && data.totalBeingProcess.myUnit) ?
                                                         <div className="progress-bar kt-bg-warning" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalBeingProcess.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -241,7 +241,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
                                                 <span className="kt-widget24__number">
 									{
-                                        data.totalBeingProcess ?
+                                        (data.totalBeingProcess && data.totalBeingProcess.myUnit) ?
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalBeingProcess.myUnit), totalData)}
                                            </span>
@@ -264,12 +264,12 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-success">
-                                        {data.totalTreated ? data.totalTreated.myUnit : ""}
+                                        {(data.totalTreated && data.totalTreated.myUnit) ? data.totalTreated.myUnit : ""}
                                     </span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
-                                                    data.totalTreated ?
+                                                    (data.totalTreated && data.totalTreated.myUnit) ?
                                                         <div className="progress-bar kt-bg-success" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalTreated.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -287,7 +287,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
                                                 <span className="kt-widget24__number">
 									{
-                                        data.totalTreated ?
+                                        (data.totalTreated && data.totalTreated.myUnit) ?
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalTreated.myUnit), totalData)}
                                            </span>
@@ -310,12 +310,12 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-success">
-                                        {data.totalUnfounded ? data.totalUnfounded.myUnit : ""}
+                                        {(data.totalUnfounded && data.totalUnfounded.myUnit) ? data.totalUnfounded.myUnit : ""}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
-                                                    data.totalUnfounded ?
+                                                    (data.totalUnfounded && data.totalUnfounded.myUnit) ?
                                                         <div className="progress-bar kt-bg-success" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalUnfounded.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -331,7 +331,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
                                                 <span className="kt-widget24__number">
 									{
-                                        data.totalUnfounded ?
+                                        (data.totalUnfounded && data.totalUnfounded.myUnit) ?
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalUnfounded.myUnit), totalData)}
                                            </span>
@@ -354,13 +354,13 @@ const DashboardClaimsUnit = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-danger">
-                                        {data.totalMeasuredSatisfaction ? data.totalMeasuredSatisfaction.myUnit : ""}
+                                        {(data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.myUnit) ? data.totalMeasuredSatisfaction.myUnit : ""}
 
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
                                                 {
-                                                    data.totalMeasuredSatisfaction ?
+                                                    (data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.myUnit) ?
                                                         <div className="progress-bar kt-bg-danger" role="progressbar"
                                                              aria-valuenow={percentageData((data.totalMeasuredSatisfaction.myUnit), totalData)}
                                                              aria-valuemin="0" aria-valuemax="100"
@@ -376,7 +376,7 @@ const DashboardClaimsUnit = (props) => {
 								</span>
                                                 <span className="kt-widget24__number">
 									{
-                                        data.totalMeasuredSatisfaction ?
+                                        (data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.myUnit) ?
                                             <span className="kt-widget24__number">
                                                 {percentageData((data.totalMeasuredSatisfaction.myUnit), totalData)}
                                            </span>

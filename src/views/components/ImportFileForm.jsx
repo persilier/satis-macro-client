@@ -59,10 +59,14 @@ const ImportFileForm = (props) => {
                     if (response.data.status) {
                         setName("");
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
+                        if(response.data["errors"]) {
+                            setErrorFile(response.data["errors"]);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuiller verifier le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     } else {
-                        if(response.data[props.errorField])
-                            setErrorFile(response.data[props.errorField]);
+                        if(response.data["errors"])
+                            setErrorFile(response.data["errors"]);
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuiller verifier le fichier")));
                     }
                 })
@@ -165,14 +169,26 @@ const ImportFileForm = (props) => {
                                                     }
 
                                                     {
+                                                        /*{index + 1}-  {error}*/
                                                         errorFile.length ? (
                                                             errorFile.map((element, index) => (
-                                                                element.error ? (
-                                                                    element.error.map((error, idx) => (
-                                                                        <div key={idx} className="invalid-feedback">
-                                                                            ligne {index + 1} {error}
+                                                                element.messages ? (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {
+                                                                                Object.keys(element.messages).map((message, idx) => (
+                                                                                    message.length ? (
+                                                                                        element.messages[message].map((error, id) => {
+                                                                                            return (
+                                                                                                <>
+                                                                                                    {(" " + (idx === 0 ? "ligne " + (index + 1) + " - " : "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0") + error)}
+                                                                                                    <br/>
+                                                                                                </>
+                                                                                            )
+                                                                                        })
+                                                                                    ) :null
+                                                                                ))
+                                                                            }
                                                                         </div>
-                                                                    ))
                                                                 ) : null
                                                             ))
                                                         ) : null
