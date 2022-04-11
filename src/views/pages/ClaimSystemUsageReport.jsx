@@ -7,13 +7,18 @@ import Select from "react-select";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import moment from "moment"
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {ERROR_401} from "../../config/errorPage";
+import {loadCss} from "../../helpers/function";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
+import appConfig from "../../config/appConfig";
+
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimSystemUsageReport = (props) => {
 
@@ -26,6 +31,7 @@ const ClaimSystemUsageReport = (props) => {
     const defaultError = {
         date_start: [],
         date_end: [],
+        institution_targeted_id: [],
     };
 
     const [load, setLoad] = useState(false);
@@ -38,6 +44,14 @@ const ClaimSystemUsageReport = (props) => {
     const [institutions, setInstitutions] = useState([]);
     const [dateStart, setDateStart] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+
+    useEffect(() => {
+        let endpoint = "";
+
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+            endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
+
+    }, []);
 
 
     const handleDateStartChange = e => {
