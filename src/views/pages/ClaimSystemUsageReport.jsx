@@ -17,6 +17,7 @@ import {ERROR_401} from "../../config/errorPage";
 import {loadCss} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import appConfig from "../../config/appConfig";
+import axios from "axios";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -50,6 +51,16 @@ const ClaimSystemUsageReport = (props) => {
 
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
             endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
+
+        if (verifyTokenExpire()) {
+            axios.post(endpoint)
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(error => {
+
+                })
+        }
 
     }, []);
 
