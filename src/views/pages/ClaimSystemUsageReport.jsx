@@ -14,7 +14,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {ERROR_401} from "../../config/errorPage";
-import {loadCss} from "../../helpers/function";
+import {loadCss, removeNullValueInObject} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import appConfig from "../../config/appConfig";
 import axios from "axios";
@@ -46,22 +46,39 @@ const ClaimSystemUsageReport = (props) => {
     const [dateStart, setDateStart] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
 
-    useEffect(() => {
+    const fetchData = async (click = false) => {
         let endpoint = "";
+        let sendData = {};
+
+        sendData = {
+            date_start: dateStart ? dateStart : null,
+            date_end: dateEnd ? dateEnd : null,
+        }
 
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
             endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
 
         if (verifyTokenExpire()) {
-            axios.post(endpoint)
+            if (click)
+                setLoadFilter(true);
+            axios.post(endpoint, removeNullValueInObject(sendData))
                 .then(response => {
-                    console.log(response.data);
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setData(response.data);
                 })
                 .catch(error => {
-
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    console.log("Something is wrong");
                 })
         }
+    }
 
+    useEffect(() => {
+        setLoad(true);
+        fetchData();
     }, []);
 
 
@@ -85,6 +102,13 @@ const ClaimSystemUsageReport = (props) => {
             setLoadDownload(false);
         });
     }
+
+    const filterReporting = () => {
+        setLoadFilter(true);
+        setLoad(true);
+        if (verifyTokenExpire())
+            fetchData(true);
+    };
 
     return (
         ready ? (
@@ -207,8 +231,8 @@ const ClaimSystemUsageReport = (props) => {
                                                     {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button /*onClick={}*/ className="btn btn-primary"
-                                                        disabled={(loadDownload)}>{t("Filtrer le rapport")}</button>
+                                                <button onClick={filterReporting} className="btn btn-primary"
+                                                        disabled={(loadFilter)}>{t("Filtrer le rapport")}</button>
                                             )}
 
                                             {loadDownload ? (
@@ -258,41 +282,49 @@ const ClaimSystemUsageReport = (props) => {
                                                     <table  id="system-usage-table" className="table table-bordered">
                                                         <thead>
                                                             <tr>
-                                                                <th className="text-center" rowSpan={2}>Titre</th>
-                                                                <th className="text-center" colSpan={2}>Valeur</th>
+                                                                <th className="text-center" rowSpan={1}>Titre</th>
+                                                                <th className="text-center" colSpan={1}>Valeur</th>
                                                             </tr>
-                                                            <tr>
+{/*                                                            <tr>
                                                                 <th>Satis</th>
                                                                 <th>Dmd</th>
-                                                            </tr>
+                                                            </tr>*/}
                                                         </thead>
                                                         <tbody>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes reçues sur la période
-                                                            </th>
-                                                            <td>Jhon</td>
-                                                            <td>Jhon</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes traitées sur la période
-                                                            </th>
-                                                            <td>Lisa</td>
-                                                            <td>Lisa</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes évaluées dans la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
+                                                        {
+                                                            data.totalReceivedClaims !== null ? (
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        Nombre de plaintes reçues sur la période
+                                                                    </th>
+                                                                    <td>{data.totalReceivedClaims}</td>
+                                                                </tr>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            data.totalTreatedClaims !== null ? (
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        Nombre de plaintes traitées sur la période
+                                                                    </th>
+                                                                    <td>{data.totalTreatedClaims}</td>
+                                                                </tr>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            data.totalSatisfactionMeasured !== null ? (
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        Nombre de plaintes évaluées dans la période
+                                                                    </th>
+                                                                    <td>{data.totalSatisfactionMeasured}</td>
+                                                                </tr>
+                                                            ) : null
+                                                        }
+{/*                                                        <tr>
                                                             <th scope="row">
                                                                 Nombre de plaintes reçues sur la période par une institution
                                                             </th>
-                                                            <td>Larry</td>
                                                             <td>Larry</td>
                                                         </tr>
                                                         <tr>
@@ -308,7 +340,7 @@ const ClaimSystemUsageReport = (props) => {
                                                             </th>
                                                             <td>Larry</td>
                                                             <td>Larry</td>
-                                                        </tr>
+                                                        </tr>*/}
                                                         </tbody>
                                                     </table>
                                                 </div>
