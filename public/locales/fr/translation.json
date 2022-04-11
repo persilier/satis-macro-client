@@ -1026,5 +1026,9 @@
   "Nom/Prénom": "Nom/Prénom",
   "Numéro de téléphone": "Numéro de téléphone",
   "Type de recherche": "Type de recherche",
-  "Fin": "Fin"
+  "Fin": "Fin",
+  "Le fichier contient": "Le fichier contient",
+  "erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur": "erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur",
+  "Veuillez verifier le fichier": "Veuillez verifier le fichier",
+  "ligne ": "ligne "
 }

@@ -1523,12 +1523,12 @@ const ClaimAdd = props => {
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option1}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                           checked={option1 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option2}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                           checked={option2 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>
