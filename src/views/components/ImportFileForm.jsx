@@ -180,7 +180,7 @@ const ImportFileForm = (props) => {
                                                                                         element.messages[message].map((error, id) => {
                                                                                             return (
                                                                                                 <>
-                                                                                                    {(" " + (idx === 0 ? (index + 1) + "- " : "\xa0\xa0\xa0\xa0\xa0") + error)}
+                                                                                                    {(" " + (idx === 0 ? "ligne " + (index + 1) + " - " : "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0") + error)}
                                                                                                     <br/>
                                                                                                 </>
                                                                                             )
