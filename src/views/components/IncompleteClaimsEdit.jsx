@@ -191,7 +191,7 @@ const IncompleteClaimsEdit = props => {
                         amount_currency_slug: response.data.claim.amount_currency_slug ? response.data.claim.amount_currency_slug : "",
                         amount_disputed: response.data.claim.amount_disputed ? response.data.claim.amount_disputed : "",
                         event_occured_at: formatToTime(response.data.claim.event_occured_at),
-                        is_revival: response.data.claim.is_revival ? 1 : 0,
+                        is_revival: response.data.claim.is_revival == 1 ? 1 : 0,
                         //file: response.data.claim.files ? response.data.claim.files.map(file => file.title) : []
                     };
                     setData(newIncompleteClaim);
@@ -1246,12 +1246,12 @@ const IncompleteClaimsEdit = props => {
                                                                     <label className="kt-radio">
                                                                         <input type="radio" value={option1}
                                                                                onChange={handleOptionChange}
-                                                                               checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                               checked={option1 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                     </label>
                                                                     <label className="kt-radio">
                                                                         <input type="radio" value={option2}
                                                                                onChange={handleOptionChange}
-                                                                               checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                               checked={option2 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                     </label>
                                                                 </div>
                                                             </div>

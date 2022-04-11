@@ -1029,5 +1029,9 @@
     "Nom/Prénom": "Last Name/First Name",
     "Numéro de téléphone": "Phone number",
     "Type de recherche": "Search type",
-    "Fin": "End"
+    "Fin": "End",
+    "Le fichier contient": "The file contains",
+    "erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur": "errors. Before correcting the errors, please delete the lines without any errors",
+    "Veuillez verifier le fichier": "Please check the file",
+    "ligne ": "line "
 }
