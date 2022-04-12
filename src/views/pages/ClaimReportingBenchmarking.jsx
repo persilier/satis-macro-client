@@ -230,152 +230,169 @@ const ClaimReportingBenchmarking = (props) => {
                                         <div>
                                             <div className="row">
                                                 <div className="col-sm-12" id="system-usage-div">
-                                                    <table  id="system-usage-table" className="table table-bordered">
+                                                    <table className="table table-bordered">
                                                         <thead>
-                                                        <tr>
-                                                            <th className="text-center" colSpan={2} rowSpan={2}>Titre</th>
-                                                            <th className="text-center" colSpan={2}>Valeur</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Satis</th>
-                                                            <th>Dmd</th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th scope="col" colSpan={2} rowSpan={2}>Titre</th>
+                                                                <th scope="col" colSpan={2}>Valeur</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Satis</th>
+                                                                <th>Dmd</th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <tr>
-                                                            <th scope="row" rowSpan={3}>
-                                                                Taux de plaintes reçues par niveau de gravité sur la période
-                                                            </th>
-                                                            <td>Faible</td>
-                                                            <td>Jhon</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Normale</td>
-                                                            <td>Jhon</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Grave</td>
-                                                            <td>Jhon</td>
-                                                        </tr>
+                                                            <tr>
+                                                                <th rowSpan={3} scope="rowGroup">
+                                                                    Taux de plaintes reçues par niveau de gravité sur la période
+                                                                </th>
+                                                                <th>Faible</th>
+                                                                <td/>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Normal</th>
+                                                                <td/>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Grave</th>
+                                                                <td/>
+                                                                <td/>
+                                                            </tr>
 
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Taux de traitement des plaintes par niveau de gravité sur la période
-                                                            </th>
-                                                            <td>Lisa</td>
-                                                            <td>Lisa</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nature de plaintes réccurentes et rang sur la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes reçues par
-                                                                catégorie client VIP ou Non VIP)
-                                                                sur la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Points de service les plus
-                                                                concernés
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Unité de traitement les plus solicité
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Taux de plaintes reçues par une institution par niveau
-                                                                de gravité sur la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Taux de traitement des plaintes par une institution  par
-                                                                niveau de gravité sur la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nature de plaintes réccurentes
-                                                                et rang sur la période pour une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes reçues par
-                                                                catégorie client (VIP ou Non VIP)
-                                                                sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes évaluées sur la période par une institution
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Nombre de plaintes traitées par une institution relatives
-                                                                aux catégories d'agent
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Point de service d'une institution les plus
-                                                                indexé dans les plaintes
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Services d'une institution les plus solicité dans
-                                                                le traitement des plaintes
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Canaux les plus sollicités pour la réception des plaintes sur la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">
-                                                                Canaux les plus sollicités au sein d'une institution pour la réception des plaintes sur la période
-                                                            </th>
-                                                            <td>Larry</td>
-                                                            <td>Larry</td>
-                                                        </tr>
+                                                            <tr>
+                                                                <th rowSpan={3} scope="row">
+                                                                    Taux de traitement des plaintes par niveau de gravité sur la période
+                                                                </th>
+                                                                <th>Faible</th>
+                                                                <td/>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Normal</th>
+                                                                <td/>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Grave</th>
+                                                                <td/>
+                                                                <td/>
+                                                            </tr>
+
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Nature de plaintes réccurentes et rang sur la période
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Nombre de plaintes reçues par
+                                                                    catégorie client VIP ou Non VIP)
+                                                                    sur la période
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Points de service les plus concernés
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Unité de traitement les plus solicité
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Taux de plaintes reçues par une institution par niveau
+                                                                    de gravité sur la période
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Taux de traitement des plaintes par une institution par
+                                                                    niveau de gravité sur la période
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Nature de plaintes réccurentes
+                                                                    et rang sur la période pour une institution
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Nombre de plaintes reçues par
+                                                                    catégorie client (VIP ou Non VIP)
+                                                                    sur la période par une institution
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Nombre de plaintes évaluées sur la période par une institution
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Nombre de plaintes traitées par une institution relatives
+                                                                    aux catégories d'agent
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Point de service d'une institution les plus
+                                                                    indexé dans les plaintes
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Services d'une institution les plus solicité dans
+                                                                    le traitement des plaintes
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Canaux les plus sollicités pour la réception
+                                                                    des plaintes sur la période
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colSpan={2} scope="row">
+                                                                    Canaux les plus sollicités au sein d'une institution
+                                                                    pour la réception des plaintes sur la période
+                                                                </th>
+                                                                <td>Lisa</td>
+                                                                <td/>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
+
                                                 </div>
                                             </div>
                                         </div>
