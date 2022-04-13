@@ -36,10 +36,12 @@ const RuleAddPage = (props) => {
     }
     const defaultData = {
         name: "",
+        description: "",
         institution_type: [],
     };
     const defaultError = {
         name: [],
+        description: [],
         institutionTypes: [],
         permissions: []
     };
@@ -71,6 +73,7 @@ const RuleAddPage = (props) => {
 
                             const newData = {...data};
                             newData.name = response.data.role.name;
+                            newData.description = response.data.role.description;
                             newData.institution_type = response.data.role.institution_types;
                             setPermissions(formatPermissions(response.data.role.permissions));
                             setData(newData);
@@ -79,6 +82,7 @@ const RuleAddPage = (props) => {
                             setPermissions(formatPermissions(response.data.role.permissions));
                             const newData = {...data};
                             newData.name = response.data.role.name;
+                            newData.description = response.data.role.description;
                             setData(newData);
                             setProModule(response.data.modulesPermissions.independant);
                         }
@@ -116,6 +120,12 @@ const RuleAddPage = (props) => {
     const handleNameChange = (e) => {
         const newData = {...data};
         newData.name = e.target.value;
+        setData(newData);
+    };
+
+    const handleDescriptionChange = (e) => {
+        const newData = {...data};
+        newData.description = e.target.value;
         setData(newData);
     };
 
@@ -309,6 +319,29 @@ const RuleAddPage = (props) => {
                                                 </div>
                                             </div>
 
+                                            <div className={error.description.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-2 col-lg-2 col-form-label" htmlFor="name">{t("Description")} <InputRequire/></label>
+                                                <div className="col-lg-9 col-xl-6">
+                                                    <input
+                                                        id="description"
+                                                        type="text"
+                                                        className={error.description.length ? "form-control is-invalid" : "form-control"}
+                                                        placeholder={t("Veuillez entrer la description du type d'unité")}
+                                                        value={data.description}
+                                                        onChange={(e) => handleDescriptionChange(e)}
+                                                    />
+                                                    {
+                                                        error.description.length ? (
+                                                            error.description.map((error, index) => (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {error}
+                                                                </div>
+                                                            ))
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </div>
+
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-any-institution-type-role') ? (
                                                     <div className={error.institutionTypes.length ? "form-group row validated" : "form-group row"}>
@@ -415,6 +448,7 @@ const RuleAddPage = (props) => {
         setStartRequest(true);
         const sendData = {
             name: data.name,
+            description: data.description,
             permissions: permissions,
             institutionTypes: data.institution_type
         };
