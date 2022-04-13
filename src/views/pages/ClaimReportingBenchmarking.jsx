@@ -7,13 +7,22 @@ import Select from "react-select";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import moment from "moment"
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {ERROR_401} from "../../config/errorPage";
+import {loadCss, removeNullValueInObject} from "../../helpers/function";
+import {verifyTokenExpire} from "../../middleware/verifyToken";
+import appConfig from "../../config/appConfig";
+import axios from "axios";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+
+loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+
 
 
 const ClaimReportingBenchmarking = (props) => {
@@ -32,12 +41,50 @@ const ClaimReportingBenchmarking = (props) => {
     const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({});
     const [error, setError] = useState(defaultError);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [dateStart, setDateStart] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+
+    const fetchData = async (click = false) => {
+        let endpoint = "";
+        let sendData = {};
+
+        sendData = {
+            date_start: dateStart ? dateStart : null,
+            date_end: dateEnd ? dateEnd : null,
+        }
+
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+            endpoint = `${appConfig.apiDomaine}/my/benchmarking-rapport`;
+
+        if (verifyTokenExpire()) {
+            await axios.post(endpoint, removeNullValueInObject(sendData))
+                .then(response => {
+                    console.log(response.data);
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setData(response.data);
+                    if (click)
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
+                })
+                .catch(error => {
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    console.log("Something is wrong");
+                })
+        }
+
+    }
+
+    useEffect(() => {
+        setLoad(true);
+        fetchData().then(r => console.log("report loaded"));
+    }, []);
+
 
 
     const handleDateStartChange = e => {
@@ -60,6 +107,13 @@ const ClaimReportingBenchmarking = (props) => {
             setLoadDownload(false);
         });
     }
+
+    const filterReporting = async () => {
+        setLoadFilter(true);
+        setLoad(true);
+        fetchData(true).then(r => console.log("filter works"));
+    };
+
 
     return (
         ready ? (
@@ -234,89 +288,115 @@ const ClaimReportingBenchmarking = (props) => {
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col" colSpan={2} rowSpan={2}>Titre</th>
-                                                                <th scope="col" colSpan={2}>Valeur</th>
+                                                                <th scope="col" >Valeur</th>
                                                             </tr>
-                                                            <tr>
+{/*                                                            <tr>
                                                                 <th>Satis</th>
                                                                 <th>Dmd</th>
-                                                            </tr>
+                                                            </tr>*/}
                                                         </thead>
                                                         <tbody>
-                                                            <tr>
-                                                                <th rowSpan={3} scope="rowGroup">
-                                                                    Taux de plaintes reçues par niveau de gravité sur la période
-                                                                </th>
-                                                                <th>Faible</th>
-                                                                <td/>
-                                                                <td/>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Normal</th>
-                                                                <td/>
-                                                                <td/>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Grave</th>
-                                                                <td/>
-                                                                <td/>
-                                                            </tr>
 
-                                                            <tr>
-                                                                <th rowSpan={3} scope="row">
-                                                                    Taux de traitement des plaintes par niveau de gravité sur la période
-                                                                </th>
-                                                                <th>Faible</th>
-                                                                <td/>
-                                                                <td/>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Normal</th>
-                                                                <td/>
-                                                                <td/>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Grave</th>
-                                                                <td/>
-                                                                <td/>
-                                                            </tr>
+                                                        {
+                                                            data.RateOfReceivedClaimsBySeverityLevel && data.RateOfReceivedClaimsBySeverityLevel.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.RateOfReceivedClaimsBySeverityLevel.length} scope="rowGroup">
+                                                                            Taux de plaintes reçues par niveau de gravité sur la période
+                                                                        </th>
+                                                                        {
+                                                                            data.RateOfReceivedClaimsBySeverityLevel[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel ? data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel : '-'}</th>
+                                                                                        <td>{data.RateOfReceivedClaimsBySeverityLevel[0].rate ? data.RateOfReceivedClaimsBySeverityLevel[0].rate : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.RateOfReceivedClaimsBySeverityLevel.length > 1 ? (
+                                                                            data.RateOfReceivedClaimsBySeverityLevel.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.severityLevel ? value.severityLevel :"-"}</th>
+                                                                                            <td>{value.rate ? value.rate :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : null
+                                                        }
+
+                                                        {
+                                                            data.RateOfTreatedClaimsBySeverityLevel && data.RateOfTreatedClaimsBySeverityLevel.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.RateOfTreatedClaimsBySeverityLevel.length} scope="rowGroup">
+                                                                            Taux de traitement des plaintes par niveau de gravité sur la période
+                                                                        </th>
+                                                                        {
+                                                                            data.RateOfTreatedClaimsBySeverityLevel[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.RateOfTreatedClaimsBySeverityLevel[0].severityLevel ? data.RateOfTreatedClaimsBySeverityLevel[0].severityLevel : '-'}</th>
+                                                                                        <td>{data.RateOfTreatedClaimsBySeverityLevel[0].rate ? data.RateOfTreatedClaimsBySeverityLevel[0].rate : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.RateOfTreatedClaimsBySeverityLevel.length > 1 ? (
+                                                                            data.RateOfTreatedClaimsBySeverityLevel.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.severityLevel ? value.severityLevel :"-"}</th>
+                                                                                            <td>{value.rate ? value.rate :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : null
+                                                        }
 
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Nature de plaintes réccurentes et rang sur la période
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Nombre de plaintes reçues par
-                                                                    catégorie client VIP ou Non VIP)
+                                                                    catégorie client (VIP ou Non VIP)
                                                                     sur la période
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Points de service les plus concernés
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Unité de traitement les plus solicité
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
-                                                            <tr>
+{/*                                                            <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Taux de plaintes reçues par une institution par niveau
                                                                     de gravité sur la période
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -324,7 +404,6 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     niveau de gravité sur la période
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -332,7 +411,6 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     et rang sur la période pour une institution
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -341,14 +419,12 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     sur la période par une institution
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Nombre de plaintes évaluées sur la période par une institution
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -356,7 +432,6 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     aux catégories d'agent
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -364,7 +439,6 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     indexé dans les plaintes
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -372,7 +446,6 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     le traitement des plaintes
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -380,7 +453,6 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     des plaintes sur la période
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
                                                             </tr>
                                                             <tr>
                                                                 <th colSpan={2} scope="row">
@@ -388,8 +460,8 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     pour la réception des plaintes sur la période
                                                                 </th>
                                                                 <td>Lisa</td>
-                                                                <td/>
-                                                            </tr>
+
+                                                            </tr>*/}
                                                         </tbody>
                                                     </table>
 
