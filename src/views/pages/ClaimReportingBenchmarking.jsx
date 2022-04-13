@@ -236,7 +236,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                     {t("Chargement...")}
                                                 </button>
                                             ) : (
-                                                <button /*onClick={}*/ className="btn btn-primary"
+                                                <button onClick={filterReporting} className="btn btn-primary"
                                                                        disabled={(loadDownload)}>{t("Filtrer le rapport")}</button>
                                             )}
 
@@ -288,7 +288,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col" colSpan={2} rowSpan={2}>Titre</th>
-                                                                <th scope="col" >Valeur</th>
+                                                                <th scope="col">Valeur</th>
                                                             </tr>
 {/*                                                            <tr>
                                                                 <th>Satis</th>
@@ -524,8 +524,8 @@ const ClaimReportingBenchmarking = (props) => {
                                                                         }
                                                                     </tr>
                                                                     {
-                                                                        data.TreatmentUnit.length > 1 ? (
-                                                                            data.TreatmentUnit.map((value, index) => {
+                                                                        data.ClaimsTreatedByUnit.length > 1 ? (
+                                                                            data.ClaimsTreatedByUnit.map((value, index) => {
                                                                                 if (index !== 0)
                                                                                     return (
                                                                                         <tr key={index}>
