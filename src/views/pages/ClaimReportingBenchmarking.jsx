@@ -309,7 +309,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                                                 (
                                                                                     <>
                                                                                         <th>{data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel ? data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel : '-'}</th>
-                                                                                        <td>{data.RateOfReceivedClaimsBySeverityLevel[0].rate ? data.RateOfReceivedClaimsBySeverityLevel[0].rate : 0}</td>
+                                                                                        <td>{data.RateOfReceivedClaimsBySeverityLevel[0].rate ? data.RateOfReceivedClaimsBySeverityLevel[0].rate + " %" : 0}</td>
                                                                                     </>
                                                                                 ) : null
                                                                         }
@@ -321,14 +321,21 @@ const ClaimReportingBenchmarking = (props) => {
                                                                                     return (
                                                                                         <tr key={index}>
                                                                                             <th>{value.severityLevel ? value.severityLevel :"-"}</th>
-                                                                                            <td>{value.rate ? value.rate :0}</td>
+                                                                                            <td>{value.rate ? value.rate + " %" :0}</td>
                                                                                         </tr>
                                                                                     )
                                                                             })
                                                                         ) : null
                                                                     }
                                                                 </>
-                                                            ) : null
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Taux de plaintes reçues par niveau de gravité sur la période
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
                                                         }
 
                                                         {
@@ -343,7 +350,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                                                 (
                                                                                     <>
                                                                                         <th>{data.RateOfTreatedClaimsBySeverityLevel[0].severityLevel ? data.RateOfTreatedClaimsBySeverityLevel[0].severityLevel : '-'}</th>
-                                                                                        <td>{data.RateOfTreatedClaimsBySeverityLevel[0].rate ? data.RateOfTreatedClaimsBySeverityLevel[0].rate : 0}</td>
+                                                                                        <td>{data.RateOfTreatedClaimsBySeverityLevel[0].rate ? data.RateOfTreatedClaimsBySeverityLevel[0].rate + " %": 0}</td>
                                                                                     </>
                                                                                 ) : null
                                                                         }
@@ -355,42 +362,232 @@ const ClaimReportingBenchmarking = (props) => {
                                                                                     return (
                                                                                         <tr key={index}>
                                                                                             <th>{value.severityLevel ? value.severityLevel :"-"}</th>
-                                                                                            <td>{value.rate ? value.rate :0}</td>
+                                                                                            <td>{value.rate ? value.rate + " %" :0}</td>
                                                                                         </tr>
                                                                                     )
                                                                             })
                                                                         ) : null
                                                                     }
                                                                 </>
-                                                            ) : null
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Taux de traitement des plaintes par niveau de gravité sur la période
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
                                                         }
 
-                                                            <tr>
-                                                                <th colSpan={2} scope="row">
-                                                                    Nature de plaintes réccurentes et rang sur la période
-                                                                </th>
-                                                                <td>Lisa</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th colSpan={2} scope="row">
-                                                                    Nombre de plaintes reçues par
-                                                                    catégorie client (VIP ou Non VIP)
-                                                                    sur la période
-                                                                </th>
-                                                                <td>Lisa</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th colSpan={2} scope="row">
-                                                                    Points de service les plus concernés
-                                                                </th>
-                                                                <td>Lisa</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th colSpan={2} scope="row">
-                                                                    Unité de traitement les plus solicité
-                                                                </th>
-                                                                <td>Lisa</td>
-                                                            </tr>
+                                                        {
+                                                            data.recurringClaimObject && data.recurringClaimObject.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.recurringClaimObject.length} scope="rowGroup">
+                                                                            Nature de plaintes réccurentes et rang sur la période
+                                                                        </th>
+                                                                        {
+                                                                            data.recurringClaimObject[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.recurringClaimObject[0].ClaimsObject ? data.recurringClaimObject[0].ClaimsObject  : '-'}</th>
+                                                                                        <td>{data.recurringClaimObject[0].total ? data.recurringClaimObject[0].total : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.recurringClaimObject.length > 1 ? (
+                                                                            data.recurringClaimObject.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.ClaimsObject ? value.ClaimsObject :"-"}</th>
+                                                                                            <td>{value.total ? value.total :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Nature de plaintes réccurentes et rang sur la période
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                        {
+                                                            data.ClaimsByCategoryClient && data.ClaimsByCategoryClient.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.ClaimsByCategoryClient.length} scope="rowGroup">
+                                                                            Nombre de plaintes reçues par
+                                                                            catégorie client (VIP ou Non VIP)
+                                                                            sur la période
+                                                                        </th>
+                                                                        {
+                                                                            data.ClaimsByCategoryClient[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.ClaimsByCategoryClient[0].CategoryClient ? data.ClaimsByCategoryClient[0].CategoryClient  : '-'}</th>
+                                                                                        <td>{data.ClaimsByCategoryClient[0].total ? data.ClaimsByCategoryClient[0].total : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.ClaimsByCategoryClient.length > 1 ? (
+                                                                            data.ClaimsByCategoryClient.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.CategoryClient ? value.CategoryClient :"-"}</th>
+                                                                                            <td>{value.total ? value.total :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Nombre de plaintes reçues par
+                                                                        catégorie client (VIP ou Non VIP)
+                                                                        sur la période
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                        {
+                                                            data.ClaimsByUnit && data.ClaimsByUnit.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.ClaimsByUnit.length} scope="rowGroup">
+                                                                            Points de service les plus concernés
+                                                                        </th>
+                                                                        {
+                                                                            data.ClaimsByUnit[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.ClaimsByUnit[0].Unit ? data.ClaimsByUnit[0].Unit  : '-'}</th>
+                                                                                        <td>{data.ClaimsByUnit[0].total ? data.ClaimsByUnit[0].total : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.ClaimsByUnit.length > 1 ? (
+                                                                            data.ClaimsByUnit.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.Unit ? value.Unit :"-"}</th>
+                                                                                            <td>{value.total ? value.total :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Points de service les plus concernés
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                        {
+                                                            data.ClaimsTreatedByUnit && data.ClaimsTreatedByUnit.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.ClaimsTreatedByUnit.length} scope="rowGroup">
+                                                                            Unité de traitement les plus solicité
+                                                                        </th>
+                                                                        {
+                                                                            data.ClaimsTreatedByUnit[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.ClaimsTreatedByUnit[0].TreatmentUnit ? data.ClaimsTreatedByUnit[0].TreatmentUnit  : '-'}</th>
+                                                                                        <td>{data.ClaimsTreatedByUnit[0].total ? data.ClaimsTreatedByUnit[0].total : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.TreatmentUnit.length > 1 ? (
+                                                                            data.TreatmentUnit.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.TreatmentUnit ? value.TreatmentUnit :"-"}</th>
+                                                                                            <td>{value.total ? value.total :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Unité de traitement les plus solicité
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                        {
+                                                            data.ClaimsByRequestChanel && data.ClaimsByRequestChanel.length ? (
+                                                                <>
+                                                                    <tr>
+                                                                        <th rowSpan={data.ClaimsByRequestChanel.length} scope="rowGroup">
+                                                                            Canaux les plus sollicités pour la réception des plaintes sur la période
+                                                                        </th>
+                                                                        {
+                                                                            data.ClaimsByRequestChanel[0] ?
+                                                                                (
+                                                                                    <>
+                                                                                        <th>{data.ClaimsByRequestChanel[0].RequestChanel ? data.ClaimsByRequestChanel[0].RequestChanel  : '-'}</th>
+                                                                                        <td>{data.ClaimsByRequestChanel[0].total ? data.ClaimsByRequestChanel[0].total : 0}</td>
+                                                                                    </>
+                                                                                ) : null
+                                                                        }
+                                                                    </tr>
+                                                                    {
+                                                                        data.ClaimsByRequestChanel.length > 1 ? (
+                                                                            data.ClaimsByRequestChanel.map((value, index) => {
+                                                                                if (index !== 0)
+                                                                                    return (
+                                                                                        <tr key={index}>
+                                                                                            <th>{value.RequestChanel ? value.RequestChanel :"-"}</th>
+                                                                                            <td>{value.total ? value.total :0}</td>
+                                                                                        </tr>
+                                                                                    )
+                                                                            })
+                                                                        ) : null
+                                                                    }
+                                                                </>
+                                                            ) : (
+                                                                <tr>
+                                                                    <th colSpan={2} scope="row">
+                                                                        Canaux les plus sollicités pour la réception des plaintes sur la période
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
+                                                        }
+
 {/*                                                            <tr>
                                                                 <th colSpan={2} scope="row">
                                                                     Taux de plaintes reçues par une institution par niveau
