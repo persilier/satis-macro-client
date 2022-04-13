@@ -155,8 +155,7 @@ const HoldingClientForm = (props) => {
                             email: response.data.client_institution.client.identite.email,
                             institution_id: response.data.client_institution.institution_id,
                             ville: response.data.client_institution.client.identite.ville === null ? "" : response.data.client_institution.client.identite.ville,
-
-                            number: response.data.number,
+                            number: response.data.account_number,
                             account_type_id: response.data.account_type_id,
                             category_client_id: response.data.client_institution.category_client_id,
                         };
@@ -684,8 +683,7 @@ const HoldingClientForm = (props) => {
                                             </h5>
                                             <div className="form-group row">
                                                 <div className={error.account_type_id.length ? "col validated" : "col"}>
-                                                    <label htmlFor="exampleSelect1">Type de
-                                                        {t(" Compte")} <InputRequire/></label>
+                                                    <label htmlFor="exampleSelect1">{t("Type de compte")}<InputRequire/></label>
                                                     {accountType ? (
                                                         <Select
                                                             placeholder={t("Veuillez selectionner le type de compte")}

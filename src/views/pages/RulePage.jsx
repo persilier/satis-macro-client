@@ -201,7 +201,7 @@ const RulePage = (props) => {
                 <td>{rule.description ? rule.description : "-"}</td>
                 <td>
                     {
-                        rule.is_editable === 1 ? (
+                        rule.is_editable == 1 ? (
                             verifyPermission(props.userPermissions, 'update-any-institution-type-role') || verifyPermission(props.userPermissions, 'update-my-institution-type-role') ? (
                                 <Link to={`/settings/rules/${rule.name}/edit`}
                                       className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -212,13 +212,15 @@ const RulePage = (props) => {
                         ) : null
                     }
                     {
-                        verifyPermission(props.userPermissions, 'destroy-any-institution-type-role') || verifyPermission(props.userPermissions, 'destroy-my-institution-type-role') ? (
-                            <button
-                                onClick={(e) => deleteRulePage(rule.name, index)}
-                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title={t("Supprimer")}>
-                                <i className="la la-trash"/>
-                            </button>
+                        rule.is_editable == 1 ? (
+                            verifyPermission(props.userPermissions, 'destroy-any-institution-type-role') || verifyPermission(props.userPermissions, 'destroy-my-institution-type-role') ? (
+                                <button
+                                    onClick={(e) => deleteRulePage(rule.name, index)}
+                                    className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                    title={t("Supprimer")}>
+                                    <i className="la la-trash"/>
+                                </button>
+                            ) : null
                         ) : null
                     }
                 </td>
