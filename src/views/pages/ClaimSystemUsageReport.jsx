@@ -286,11 +286,11 @@ const ClaimSystemUsageReport = (props) => {
                                         <div>
                                             <div className="row">
                                                 <div className="table-responsive col-sm-12" id="system-usage-div">
-                                                    <table  id="system-usage-table" className="table table-bordered">
+                                                    <table  id="system-usage-table" className="table table-striped table-bordered table-hover table-checkable dtr-inline">
                                                         <thead>
                                                             <tr>
-                                                                <th className="text-center" rowSpan={1}>{t("Titre")}</th>
-                                                                <th className="text-center" colSpan={1}>{t("Valeur")}</th>
+                                                                <th rowSpan={1}>{t("Titre")}</th>
+                                                                <th colSpan={1}>{t("Valeur")}</th>
                                                             </tr>
 {/*                                                            <tr>
                                                                 <th>Satis</th>
