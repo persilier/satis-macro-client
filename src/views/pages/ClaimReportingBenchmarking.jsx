@@ -9,9 +9,6 @@ import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import React, {useEffect, useState} from "react";
 import moment from "moment"
-import pdfMake from "pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-import htmlToPdfmake from "html-to-pdfmake";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {ERROR_401} from "../../config/errorPage";
 import {loadCss, removeNullValueInObject} from "../../helpers/function";
@@ -21,6 +18,12 @@ import axios from "axios";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
+import htmlToPdfmake from "html-to-pdfmake";
+import pdfMake from "pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 
@@ -29,7 +32,7 @@ const ClaimReportingBenchmarking = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))
+    if (!verifyPermission(props.userPermissions, 'list-benchmarking-reporting'))
         window.location.href = ERROR_401;
 
     const defaultError = {
@@ -57,7 +60,7 @@ const ClaimReportingBenchmarking = (props) => {
             date_end: dateEnd ? dateEnd : null,
         }
 
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+        if (verifyPermission(props.userPermissions, 'list-benchmarking-reporting'))
             endpoint = `${appConfig.apiDomaine}/my/benchmarking-rapport`;
 
         if (verifyTokenExpire()) {
@@ -97,15 +100,19 @@ const ClaimReportingBenchmarking = (props) => {
 
     const downloadReportingPdf = () => {
         setLoadDownload(true);
-        pdfMake.vfs = pdfFonts.pdfMake.vfs;
-        let systemUsageTable = document.getElementById("system-usage-div");
-        let htmlTable = htmlToPdfmake(systemUsageTable.innerHTML);
-        let docDefinition = {
+        let doc = document.cloneNode(true);
+        let benchmarkingHeader = doc.getElementById("benchmarking-header").outerHTML
+        let benchmarkingTable = doc.getElementById("benchmarking-div").outerHTML;
+        let htmlTable = htmlToPdfmake(benchmarkingHeader + benchmarkingTable,  {
+            tableAutoSize: true
+        });
+        console.log(htmlTable);
+/*        let docDefinition = {
             content: htmlTable
         };
-        pdfMake.createPdf(docDefinition).download("SystemUsageReport.pdf", function () {
+        pdfMake.createPdf(docDefinition).download("BenchmarkingReport.pdf", function () {
             setLoadDownload(false);
-        });
+        });*/
     }
 
     const filterReporting = async () => {
@@ -117,7 +124,7 @@ const ClaimReportingBenchmarking = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+            verifyPermission(props.userPermissions, 'list-benchmarking-reporting') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -148,6 +155,7 @@ const ClaimReportingBenchmarking = (props) => {
 
                         <div className="kt-portlet">
                             <HeaderTablePage
+                                id={"benchmarking-header"}
                                 title={t("Rapport benchmarking")}
                             />
 
@@ -156,7 +164,7 @@ const ClaimReportingBenchmarking = (props) => {
                                 {
                                     props.plan !== "PRO" ? (
                                         <div className="row">
-                                            {verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                                            {verifyPermission(props.userPermissions, 'list-benchmarking-reporting') ? (
                                                 <div className="col-md-12">
                                                     <div
                                                         className={error.date_start.length ? "form-group validated" : "form-group"}>
@@ -252,9 +260,9 @@ const ClaimReportingBenchmarking = (props) => {
                                                 <ReactHTMLTableToExcel
                                                     id="test-table-xls-button"
                                                     className="btn btn-secondary ml-3"
-                                                    table="system-usage-table"
-                                                    filename="SystemUsageReport"
-                                                    sheet="system-usage-report"
+                                                    table="benchmarking-table"
+                                                    filename="BenchmarkingReport"
+                                                    sheet="benchmarking-report"
                                                     buttonText="EXCEL"
                                                 />
 
@@ -283,11 +291,11 @@ const ClaimReportingBenchmarking = (props) => {
                                     <div className="kt-portlet__body">
                                         <div>
                                             <div className="row">
-                                                <div className="col-sm-12" id="system-usage-div">
-                                                    <table className="table table-bordered">
+                                                <div className="table-responsive col-sm-12" id="benchmarking-div">
+                                                    <table className="table table-bordered" id="benchmarking-table">
                                                         <thead>
                                                             <tr>
-                                                                <th scope="col" colSpan={2} rowSpan={2}>Titre</th>
+                                                                <th scope="col" colSpan="2">Titre</th>
                                                                 <th scope="col">Valeur</th>
                                                             </tr>
 {/*                                                            <tr>
@@ -298,7 +306,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                         <tbody>
 
                                                         {
-                                                            data.RateOfReceivedClaimsBySeverityLevel && data.RateOfReceivedClaimsBySeverityLevel.length ? (
+                                                            (data.RateOfReceivedClaimsBySeverityLevel && data.RateOfReceivedClaimsBySeverityLevel.length) ? (
                                                                 <>
                                                                     <tr>
                                                                         <th rowSpan={data.RateOfReceivedClaimsBySeverityLevel.length} scope="rowGroup">
@@ -308,7 +316,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                                             data.RateOfReceivedClaimsBySeverityLevel[0] ?
                                                                                 (
                                                                                     <>
-                                                                                        <th>{data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel ? data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel : '-'}</th>
+                                                                                        <th>{data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel.fr ? data.RateOfReceivedClaimsBySeverityLevel[0].severityLevel.fr : '-'}</th>
                                                                                         <td>{data.RateOfReceivedClaimsBySeverityLevel[0].rate ? data.RateOfReceivedClaimsBySeverityLevel[0].rate + " %" : 0}</td>
                                                                                     </>
                                                                                 ) : null
@@ -338,8 +346,8 @@ const ClaimReportingBenchmarking = (props) => {
                                                             )
                                                         }
 
-                                                        {
-                                                            data.RateOfTreatedClaimsBySeverityLevel && data.RateOfTreatedClaimsBySeverityLevel.length ? (
+{/*                                                        {
+                                                            (data.RateOfTreatedClaimsBySeverityLevel && data.RateOfTreatedClaimsBySeverityLevel.length) ? (
                                                                 <>
                                                                     <tr>
                                                                         <th rowSpan={data.RateOfTreatedClaimsBySeverityLevel.length} scope="rowGroup">
@@ -377,10 +385,10 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     <td>0</td>
                                                                 </tr>
                                                             )
-                                                        }
+                                                        }*/}
 
-                                                        {
-                                                            data.recurringClaimObject && data.recurringClaimObject.length ? (
+{/*                                                        {
+                                                            (data.recurringClaimObject && data.recurringClaimObject.length) ? (
                                                                 <>
                                                                     <tr>
                                                                         <th rowSpan={data.recurringClaimObject.length} scope="rowGroup">
@@ -418,10 +426,10 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     <td>0</td>
                                                                 </tr>
                                                             )
-                                                        }
+                                                        }*/}
 
-                                                        {
-                                                            data.ClaimsByCategoryClient && data.ClaimsByCategoryClient.length ? (
+{/*                                                        {
+                                                            (data.ClaimsByCategoryClient && data.ClaimsByCategoryClient.length) ? (
                                                                 <>
                                                                     <tr>
                                                                         <th rowSpan={data.ClaimsByCategoryClient.length} scope="rowGroup">
@@ -463,10 +471,10 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     <td>0</td>
                                                                 </tr>
                                                             )
-                                                        }
+                                                        }*/}
 
-                                                        {
-                                                            data.ClaimsByUnit && data.ClaimsByUnit.length ? (
+{/*                                                        {
+                                                            (data.ClaimsByUnit && data.ClaimsByUnit.length) ? (
                                                                 <>
                                                                     <tr>
                                                                         <th rowSpan={data.ClaimsByUnit.length} scope="rowGroup">
@@ -504,9 +512,9 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     <td>0</td>
                                                                 </tr>
                                                             )
-                                                        }
+                                                        }*/}
 
-                                                        {
+{/*                                                        {
                                                             data.ClaimsTreatedByUnit && data.ClaimsTreatedByUnit.length ? (
                                                                 <>
                                                                     <tr>
@@ -545,10 +553,10 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     <td>0</td>
                                                                 </tr>
                                                             )
-                                                        }
+                                                        }*/}
 
-                                                        {
-                                                            data.ClaimsByRequestChanel && data.ClaimsByRequestChanel.length ? (
+{/*                                                        {
+                                                            (data.ClaimsByRequestChanel && data.ClaimsByRequestChanel.length) ? (
                                                                 <>
                                                                     <tr>
                                                                         <th rowSpan={data.ClaimsByRequestChanel.length} scope="rowGroup">
@@ -586,7 +594,7 @@ const ClaimReportingBenchmarking = (props) => {
                                                                     <td>0</td>
                                                                 </tr>
                                                             )
-                                                        }
+                                                        }*/}
 
 {/*                                                            <tr>
                                                                 <th colSpan={2} scope="row">

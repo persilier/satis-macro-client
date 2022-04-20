@@ -61,7 +61,7 @@ const ClaimSystemUsageReport = (props) => {
             endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
 
         if (verifyTokenExpire()) {
-            axios.post(endpoint, removeNullValueInObject(sendData))
+            await axios.post(endpoint, removeNullValueInObject(sendData))
                 .then(response => {
                     setLoad(false);
                     setLoadFilter(false);
@@ -78,9 +78,33 @@ const ClaimSystemUsageReport = (props) => {
         }
     }
 
-    useEffect(() => {
-        setLoad(true);
-        fetchData();
+    useEffect(async () => {
+        let endpoint = "";
+        let sendData = {};
+
+        sendData = {
+            date_start: dateStart ? dateStart : null,
+            date_end: dateEnd ? dateEnd : null,
+        }
+
+        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+            endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
+
+        if (verifyTokenExpire()) {
+            setLoad(true);
+            await axios.post(endpoint, removeNullValueInObject(sendData))
+                .then(response => {
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setData(response.data);
+                })
+                .catch(error => {
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    console.log("Something is wrong");
+                })
+        }
     }, []);
 
 
@@ -110,7 +134,7 @@ const ClaimSystemUsageReport = (props) => {
         setLoadFilter(true);
         setLoad(true);
         if (verifyTokenExpire())
-            fetchData(true);
+            fetchData(true).then(r => console.log("filter works"));
     };
 
     return (
