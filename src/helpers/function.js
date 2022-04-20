@@ -356,6 +356,7 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
         || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+        || verifyPermission(userPermissions, 'list-system-usage-reporting')
     );
 };
 

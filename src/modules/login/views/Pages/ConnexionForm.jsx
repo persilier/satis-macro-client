@@ -11,10 +11,10 @@ const ConnexionForm = ({componentData, data, error, startRequest, onChangeUserNa
     const {t, ready} = useTranslation();
 
     return (
-        ready ? (<div className="kt-login__form" style={{paddingTop: '15px'}}>
+        ready ? (<div className="kt-login__form" style={{paddingTop: '8.5%'}}>
             <div className="kt-login__title">
                 <div className="form-group row"
-                     style={{marginTop: '50px'}}>
+                     style={{marginTop: '11%'}}>
 
                     <div className="col-lg-12 col-xl-6">
                         <img

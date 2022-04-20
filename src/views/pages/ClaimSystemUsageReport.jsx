@@ -7,11 +7,8 @@ import Select from "react-select";
 import LoadingTable from "../components/LoadingTable";
 import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import moment from "moment"
-import pdfMake from "pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-import htmlToPdfmake from "html-to-pdfmake";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {ERROR_401} from "../../config/errorPage";
 import {loadCss, removeNullValueInObject} from "../../helpers/function";
@@ -21,6 +18,11 @@ import axios from "axios";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
+import pdfMake from "pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import htmlToPdfmake from "html-to-pdfmake";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimSystemUsageReport = (props) => {
@@ -28,7 +30,7 @@ const ClaimSystemUsageReport = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))
+    if (!(verifyPermission(props.userPermissions, 'list-system-usage-reporting')))
         window.location.href = ERROR_401;
 
     const defaultError = {
@@ -48,63 +50,41 @@ const ClaimSystemUsageReport = (props) => {
     const [dateStart, setDateStart] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
 
-    const fetchData = async (click = false) => {
-        let endpoint = "";
-        let sendData = {};
+    const fetchData = useCallback(
+        async (click = false) => {
+            let endpoint = "";
+            let sendData = {};
 
-        sendData = {
-            date_start: dateStart ? dateStart : null,
-            date_end: dateEnd ? dateEnd : null,
+            sendData = {
+                date_start: dateStart ? dateStart : null,
+                date_end: dateEnd ? dateEnd : null,
+            }
+
+            if (verifyPermission(props.userPermissions, 'list-system-usage-reporting'))
+                endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
+
+            if (verifyTokenExpire()) {
+                await axios.post(endpoint, removeNullValueInObject(sendData))
+                    .then(response => {
+                        setLoad(false);
+                        setLoadFilter(false);
+                        setData(response.data);
+                        if (click)
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
+                    })
+                    .catch(error => {
+                        setLoad(false);
+                        setLoadFilter(false);
+                        setError({...defaultError, ...error.response.data.error});
+                        console.log("Something is wrong");
+                    })
+            }
         }
+    , [dateStart, dateEnd])
 
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
-            endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
-
-        if (verifyTokenExpire()) {
-            await axios.post(endpoint, removeNullValueInObject(sendData))
-                .then(response => {
-                    setLoad(false);
-                    setLoadFilter(false);
-                    setData(response.data);
-                    if (click)
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
-                })
-                .catch(error => {
-                    setLoad(false);
-                    setLoadFilter(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    console.log("Something is wrong");
-                })
-        }
-    }
-
-    useEffect(async () => {
-        let endpoint = "";
-        let sendData = {};
-
-        sendData = {
-            date_start: dateStart ? dateStart : null,
-            date_end: dateEnd ? dateEnd : null,
-        }
-
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
-            endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
-
-        if (verifyTokenExpire()) {
-            setLoad(true);
-            await axios.post(endpoint, removeNullValueInObject(sendData))
-                .then(response => {
-                    setLoad(false);
-                    setLoadFilter(false);
-                    setData(response.data);
-                })
-                .catch(error => {
-                    setLoad(false);
-                    setLoadFilter(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    console.log("Something is wrong");
-                })
-        }
+    useEffect(() => {
+        setLoad(true);
+        fetchData().catch(error => console.log("Something is wrong"))
     }, []);
 
 
@@ -118,9 +98,9 @@ const ClaimSystemUsageReport = (props) => {
 
     const downloadReportingPdf = () => {
         setLoadDownload(true);
-        pdfMake.vfs = pdfFonts.pdfMake.vfs;
-        let systemUsageHeader = document.getElementById("system-usage-header")
-        let systemUsageTable = document.getElementById("system-usage-div");
+        let doc = document.cloneNode(true);
+        let systemUsageHeader = doc.getElementById("system-usage-header").outerHTML
+        let systemUsageTable = doc.getElementById("system-usage-div").outerHTML;
         let htmlTable = htmlToPdfmake(systemUsageHeader.innerHTML + systemUsageTable.innerHTML);
         let docDefinition = {
           content: htmlTable
@@ -130,16 +110,15 @@ const ClaimSystemUsageReport = (props) => {
         });
     }
 
-    const filterReporting = () => {
+    const filterReporting = async () => {
         setLoadFilter(true);
         setLoad(true);
-        if (verifyTokenExpire())
-            fetchData(true).then(r => console.log("filter works"));
+        fetchData(true).catch(error => console.log("Something is wrong"));
     };
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+            verifyPermission(props.userPermissions, 'list-system-usage-reporting')  ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -164,7 +143,7 @@ const ClaimSystemUsageReport = (props) => {
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                         <InfirmationTable information={(
                             <div>
-                                {t("Utilisation du sytème sur une période donnée")}
+                                {t("Utilisation du système sur une période donnée")}
                             </div>
                         )}/>
 
@@ -183,7 +162,7 @@ const ClaimSystemUsageReport = (props) => {
                                                 <div className="col-md-12">
                                                     <div
                                                         className={error.date_start.length ? "form-group validated" : "form-group"}>
-                                                        <label htmlFor="">Institution</label>
+                                                        <label htmlFor="">{t("Institution")}</label>
                                                         <Select
                                                             isClearable
                                                             value={institution}
@@ -256,7 +235,7 @@ const ClaimSystemUsageReport = (props) => {
                                                 <button
                                                     className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                     type="button" disabled>
-                                                    {t("Chargement...")}
+                                                    {t("Chargement") + "..."}
                                                 </button>
                                             ) : (
                                                 <button onClick={filterReporting} className="btn btn-primary"
@@ -267,7 +246,7 @@ const ClaimSystemUsageReport = (props) => {
                                                 <button
                                                     className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
                                                     type="button" disabled>
-                                                    {t("Chargement...")}
+                                                    {t("Chargement") + "..."}
                                                 </button>
                                             ) : (
                                                 /*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
@@ -287,7 +266,7 @@ const ClaimSystemUsageReport = (props) => {
                                                 <button
                                                     className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3"
                                                     type="button" disabled>
-                                                    {t("Chargement...")}
+                                                    {t("Chargement") + "..."}
                                                 </button>
                                             ) : (
                                                 <button onClick={downloadReportingPdf}
@@ -310,8 +289,8 @@ const ClaimSystemUsageReport = (props) => {
                                                     <table  id="system-usage-table" className="table table-bordered">
                                                         <thead>
                                                             <tr>
-                                                                <th className="text-center" rowSpan={1}>Titre</th>
-                                                                <th className="text-center" colSpan={1}>Valeur</th>
+                                                                <th className="text-center" rowSpan={1}>{t("Titre")}</th>
+                                                                <th className="text-center" colSpan={1}>{t("Valeur")}</th>
                                                             </tr>
 {/*                                                            <tr>
                                                                 <th>Satis</th>
@@ -323,31 +302,52 @@ const ClaimSystemUsageReport = (props) => {
                                                             data.totalReceivedClaims !== null ? (
                                                                 <tr>
                                                                     <th scope="row">
-                                                                        Nombre de plaintes reçues sur la période
+                                                                        {t("Nombre de plaintes reçues sur la période")}
                                                                     </th>
                                                                     <td>{data.totalReceivedClaims}</td>
                                                                 </tr>
-                                                            ) : null
+                                                            ) : (
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        {t("Nombre de plaintes reçues sur la période")}
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
                                                         }
                                                         {
                                                             data.totalTreatedClaims !== null ? (
                                                                 <tr>
                                                                     <th scope="row">
-                                                                        Nombre de plaintes traitées sur la période
+                                                                        {t("Nombre de plaintes traitées sur la période")}
                                                                     </th>
                                                                     <td>{data.totalTreatedClaims}</td>
                                                                 </tr>
-                                                            ) : null
+                                                            ) : (
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        {t("Nombre de plaintes traitées sur la période")}
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
                                                         }
                                                         {
                                                             data.totalSatisfactionMeasured !== null ? (
                                                                 <tr>
                                                                     <th scope="row">
-                                                                        Nombre de plaintes évaluées dans la période
+                                                                        {t("Nombre de plaintes évaluées dans la période")}
                                                                     </th>
                                                                     <td>{data.totalSatisfactionMeasured}</td>
                                                                 </tr>
-                                                            ) : null
+                                                            ) : (
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        {t("Nombre de plaintes évaluées dans la période")}
+                                                                    </th>
+                                                                    <td>0</td>
+                                                                </tr>
+                                                            )
                                                         }
 {/*                                                        <tr>
                                                             <th scope="row">
