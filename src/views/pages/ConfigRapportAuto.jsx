@@ -45,8 +45,9 @@ const ConfigRapportAuto = (props) => {
     const {t, ready} = useTranslation();
 
     document.title = "Satis rapport - " + (ready ? t("Paramètre configuration rapport automatique") : "");
-    if (!verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
-        verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
+    if (
+        !verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") &&
+        !verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -54,7 +55,7 @@ const ConfigRapportAuto = (props) => {
         if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
         else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
-            endPoint = endPointConfig[props.plan].filial
+            endPoint = endPointConfig[props.plan]
     } else {
         endPoint = endPointConfig[props.plan]
     }
@@ -225,7 +226,7 @@ const ConfigRapportAuto = (props) => {
                 <td style={{textAlign:'center'}}>
 
                     {
-                        verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ?
+                        verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ?
                             <Link
                                 to={`/settings/rapport/edit/${rapport.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -235,7 +236,7 @@ const ConfigRapportAuto = (props) => {
                             : null
                     }
 
-                    {verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ?
+                    {verifyPermission(props.userPermissions, "config-reporting-claim-my-institution") ?
                         <button
                             onClick={(e) => deleteCategoryClient(rapport.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -279,7 +280,7 @@ const ConfigRapportAuto = (props) => {
                     <div className="kt-portlet">
 
                         <HeaderTablePage
-                            addPermission={"config-reporting-claim-any-institution"}
+                            addPermission={"config-reporting-claim-my-institution"}
                             title={t("Rapport Automatique")}
                             addText={t("Ajouter une configuration")}
                             addLink={"/settings/rapport/add"}
@@ -358,7 +359,7 @@ const ConfigRapportAuto = (props) => {
                                                     <tr style={{textAlign:"center"}}>
                                                         <th rowSpan="1" colSpan="1">{t("Institutions")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Périodes")}</th>
-                                                        <th rowSpan="1" colSpan="1">Emails</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Emails")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>

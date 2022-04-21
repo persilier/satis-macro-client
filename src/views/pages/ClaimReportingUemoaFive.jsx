@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import FileSaver from "file-saver";
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
@@ -27,7 +27,6 @@ import moment from "moment";
 import pdfMake from 'pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import htmlToPdfmake from 'html-to-pdfmake';
-import InputRequire from "../components/InputRequire";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -37,7 +36,7 @@ const ClaimReportingUemoaFive = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))
+    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(false);
@@ -50,6 +49,9 @@ const ClaimReportingUemoaFive = (props) => {
     const [treatedClaims, setTreatedClaims] = useState([]);
     const [unresolvedClaims, setUnresolvedClaims] = useState([]);
     const [currentInstitution, setCurrentInstitution] = useState({});
+    const [country, setCountry] = useState("");
+    const [report_title, setReport_title] = useState("");
+    const [libellePeriode, setLibellePeriode] = useState("");
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -70,14 +72,12 @@ const ClaimReportingUemoaFive = (props) => {
         relationShip: [],
         number_of_claims_litigated_in_court: [],
         total_amount_of_claims_litigated_in_court: [],
-        title_rapport: [],
 
     };
 
     const defaultData = {
         number_of_claims_litigated_in_court: null,
         total_amount_of_claims_litigated_in_court: null,
-        title_rapport: "",
     };
 
 
@@ -129,30 +129,28 @@ const ClaimReportingUemoaFive = (props) => {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
                 institution_id: institution ? institution.value : null,
-                number_claim_object: null,
-                number_claim_object_total: null,
-                title_rapport: null,
+                number_of_claims_litigated_in_court: null,
+                total_amount_of_claims_litigated_in_court: null,
             };
             if (props.plan === "HUB") {
                 delete sendData.unit_targeted_id;
                 delete sendData.account_type_id;
             } else
                 delete sendData.relationShip
-        } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+        } else if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/reporting-claim/regulatory-state`;
             sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
                 institution_id: institution ? institution.value : null,
-                number_claim_object: null,
-                number_claim_object_total: null,
-                title_rapport: null,
+                number_of_claims_litigated_in_court: data.number_of_claims_litigated_in_court != null ? data.number_of_claims_litigated_in_court : null,
+                total_amount_of_claims_litigated_in_court: data.total_amount_of_claims_litigated_in_court != null ? data.total_amount_of_claims_litigated_in_court : null,
             };
         }
         await axios.post(endpoint, sendData)
             .then(response => {
                 if (click)
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
                 console.log(response.data)
                 /*setNumberPage(forceRound(response.data.length / numberPerPage));
                 setShowList(response.data.slice(0, numberPerPage));*/
@@ -160,6 +158,9 @@ const ClaimReportingUemoaFive = (props) => {
                 setTreatedClaims(response.data.treatedClaims)
                 setUnresolvedClaims(response.data.unresolvedClaims)
                 setCurrentInstitution(response.data.institution)
+                setLibellePeriode(response.data.libellePeriode)
+                setCountry(response.data.country)
+                setReport_title(response.data.report_title)
                 setClaims(response.data);
                 setError(defaultError);
                 setLoadFilter(false);
@@ -191,7 +192,7 @@ const ClaimReportingUemoaFive = (props) => {
                 endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
         }
 
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution'))
+        if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution'))
             endpoint = `${appConfig.apiDomaine}/my/uemoa/data-filter`;
 
         if (verifyTokenExpire()) {
@@ -208,7 +209,7 @@ const ClaimReportingUemoaFive = (props) => {
                             setRelations(formatSelectOption(response.data.relationShip, 'name', 'fr'));
                         }
                     }
-                    if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+                    if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')) {
                         setUnits(formatSelectOption(response.data.agences, "name", "fr"));
                         setResponsibles(formatSelectOption(response.data.functionTreating, "name", "fr"));
                     }
@@ -356,13 +357,13 @@ const ClaimReportingUemoaFive = (props) => {
 
     const handleRecurencePeriod = (e) => {
         const newData = {...data};
-        newData.number_claim_object = parseInt(e.target.value);
+        newData.number_of_claims_litigated_in_court = parseInt(e.target.value);
         setData(newData);
     };
 
     const handleMountTotal= (e) => {
         const newData = {...data};
-        newData.number_claim_object_total = parseInt(e.target.value);
+        newData.total_amount_of_claims_litigated_in_court = parseInt(e.target.value);
         setData(newData);
     };
 
@@ -381,11 +382,6 @@ const ClaimReportingUemoaFive = (props) => {
             fetchData(true);
     };
 
-    const onChangeTitleRapport = (e) => {
-        const newData = {...data};
-        newData.title_rapport = e.target.value;
-        setData(newData);
-    };
 
     const downloadReporting = async () => {
         setLoadDownload(true);
@@ -409,7 +405,7 @@ const ClaimReportingUemoaFive = (props) => {
                 status: status ? status.value : null,
                 relationship_id: relation ? relation.value : null,
             };
-        } else if (verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')) {
+        } else if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')) {
             endpoint = `${appConfig.apiDomaine}/my/uemoa/global-state-report`;
             sendData = {
                 date_start: dateStart ? dateStart : null,
@@ -479,7 +475,7 @@ const ClaimReportingUemoaFive = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -544,34 +540,6 @@ const ClaimReportingUemoaFive = (props) => {
                                         ) : null}
                                     </div>
                                 </div>
-
-                                <div className="row">
-                                        { verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-                                            <div className="col">
-                                                <div
-                                                    className={error.title_rapport.length ? "form-group validated" : "form-group"}>
-                                                    <label htmlFor="">{t("Titre du Rapport")} <InputRequire/></label>
-                                                        <input
-                                                            id="title_rapport"
-                                                            type="text"
-                                                            className={error.title_rapport.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder={t("Veuillez ajouter un titre au rapport")}
-                                                            value={data.title_rapport}
-                                                            onChange={(e) => onChangeTitleRapport(e)}
-                                                        />
-                                                        {
-                                                            error.title_rapport.length ? (
-                                                                error.title_rapport.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                </div>
-                                            </div>
-                                        ) : null}
-                                    </div>
 
 
                                 {props.plan !== "HUB" ? (
@@ -699,8 +667,15 @@ const ClaimReportingUemoaFive = (props) => {
                                                         {t("Chargement...")}
                                                     </button>
                                                 ) : (
-                                                    <button onClick={downloadReporting} className="btn btn-secondary ml-3"
-                                                            disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
+                                                    <ReactHTMLTableToExcel
+                                                        id="test-table-xls-button"
+                                                        className="btn btn-secondary ml-3"
+                                                        table="myExcel"
+                                                        filename="rapport_etat_reglementaire"
+                                                        sheet="etat_reglementaire"
+                                                        buttonText="EXCEL"/>
+                                                    /*<button onClick={downloadReporting} className="btn btn-secondary ml-3"
+                                                            disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>*/
                                                 )}
 
                                                 {loadDownloadPdf ? (
@@ -726,8 +701,8 @@ const ClaimReportingUemoaFive = (props) => {
                                     <LoadingTable/>
                                 ) : (
                                     <div className="kt-portlet__body">
-                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                            <div className="row">
+                         -               <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                      {/*      <div className="row">
                                                 <div className="col-sm-6 text-left">
                                                     <div id="kt_table_1_filter" className="dataTables_filter">
                                                         <label>
@@ -739,29 +714,29 @@ const ClaimReportingUemoaFive = (props) => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>*/}
                                             <div className="row">
 
                                                 <div style={{display:"none"}} id={"headRapport"} className="headRapport mt-5">
-                                                    <div className="mb-2" style={{textAlign:"justify"}}>
-                                                        <h4 style={{textAlign:"center"}}>{data.title_rapport.toUpperCase()}</h4>
+                                                    <div className="mb-5" style={{textAlign:"justify"}}>
+                                                        <h6 style={{textAlign:"center"}}> { report_title ? report_title : "-"}</h6>
                                                     </div>
                                                     <p>
-                                                        <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} > {t("Pays")}:</span>
-                                                        <span> Canada </span>
+                                                        <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} >{t("Pays")}:</span>
+                                                        <span> { country ? country : "-"} </span>
                                                     </p>
                                                     <p>
-                                                        <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} > {t("Etablissement Déclarant ")}:</span>
-                                                        <span> { currentInstitution.name ? currentInstitution.name : ""} </span>
+                                                        <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} >{t("Etablissement Déclarant")}:</span>
+                                                        <span> { currentInstitution.name ? currentInstitution.name : "-"} </span>
                                                     </p>
                                                     <p>
                                                         <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} >{t("Période")}:</span>
-                                                        <span> {moment(dateStart).format('DD/MM/YYYY')} - {moment(dateEnd).format('DD/MM/YYYY')} </span>
+                                                        <span> { libellePeriode ? libellePeriode : "-"}</span>
                                                     </p>
                                                 </div>
 
                                                 <div id="myTable"  className="col-sm-12">
-                                                    <table
+                                                    <table id="myExcel"
                                                         className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                        role="grid" aria-describedby="kt_table_1_info"
                                                         style={{width: "952px"}}>
@@ -790,7 +765,7 @@ const ClaimReportingUemoaFive = (props) => {
                                                         </thead>
                                                         <tbody>
                                                         <tr>
-                                                            <td  style={{ textAlign:"center", background:"#d5d8db" ,fontWeight:"bold", minWidth:"100%", minHeight:"100%"}} colSpan="3"> {t("RÉCLAMATIONS RECUES AU COURS DU ")} {moment(dateStart).format('DD/MM/YYYY')} - {moment(dateEnd).format('DD/MM/YYYY')} </td>
+                                                            <td  style={{ textAlign:"center",fontWeight:"bold", color:"lavenderblush", background:"lightslategray"}} colSpan="3"> {t("RÉCLAMATIONS RECUES AU COURS DU ")}  { libellePeriode ? libellePeriode : "-"} </td>
                                                         </tr>
                                                         {
                                                            receivedClaims.length ? (
@@ -804,13 +779,13 @@ const ClaimReportingUemoaFive = (props) => {
                                                                     ))
                                                                 )
                                                             ) : (
-                                                                <EmptyTable/>
+                                                                <EmptyTable colSpan={3}/>
                                                             )
                                                         }
 
 
                                                         <tr>
-                                                            <td  style={{textAlign:"center", background:"#d5d8db", fontWeight:"bold"}} colSpan="3"> {t("RÉCLAMATIONS TRAITÉES AU COURS DU ")} {moment(dateStart).format('DD/MM/YYYY')} - {moment(dateEnd).format('DD/MM/YYYY')} </td>
+                                                            <td  style={{textAlign:"center",color:"lavenderblush", background:"lightslategray", fontWeight:"bold"}} colSpan="3"> {t("RÉCLAMATIONS TRAITÉES AU COURS DU ")} { libellePeriode ? libellePeriode : "-"} </td>
                                                         </tr>
                                                         {
                                                             treatedClaims.length ? (
@@ -824,12 +799,12 @@ const ClaimReportingUemoaFive = (props) => {
                                                                     ))
                                                                 )
                                                             ) : (
-                                                                <EmptyTable/>
+                                                                <EmptyTable colSpan={3}/>
                                                             )
                                                         }
 
                                                         <tr>
-                                                            <td  style={{textAlign:"center", background:"#d5d8db", fontWeight:"bold"}} colSpan="3"> {t("RÉCLAMATIONS NON RÉSOLUES OU EN SUSPENS DU")} {moment(dateStart).format('DD/MM/YYYY')} - {moment(dateEnd).format('DD/MM/YYYY')} </td>
+                                                            <td  style={{textAlign:"center",color:"lavenderblush", background:"lightslategray", fontWeight:"bold"}} colSpan="3"> {t("RÉCLAMATIONS NON RÉSOLUES OU EN SUSPENS DU")} { libellePeriode ? libellePeriode : "-"} </td>
                                                         </tr>
                                                         {
                                                             unresolvedClaims.length ? (
@@ -843,7 +818,7 @@ const ClaimReportingUemoaFive = (props) => {
                                                                     ))
                                                                 )
                                                             ) : (
-                                                                <EmptyTable/>
+                                                                <EmptyTable colSpan={3}/>
                                                             )
                                                         }
                                                         </tbody>
@@ -862,11 +837,11 @@ const ClaimReportingUemoaFive = (props) => {
                                                 <div style={{display:"none"}} id={"footRapport"} className="footRapport mt-5">
                                                     <p>
                                                         <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} >{t("Nombre de réclamations faisant l'objet de contentieux pendants devant les tribunaux :")}</span>
-                                                        <span> {data.number_claim_object} </span>
+                                                        <span> {data.number_of_claims_litigated_in_court} </span>
                                                     </p>
                                                     <p>
                                                         <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} >{t("Montant Total des réclamations faisant l'objet de contentieux pendants devant les tribunaux :")}</span>
-                                                        <span> {data.number_claim_object_total}</span>
+                                                        <span> {data.total_amount_of_claims_litigated_in_court}</span>
                                                     </p>
                                                 </div>
 

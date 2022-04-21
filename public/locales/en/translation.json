@@ -1015,5 +1015,41 @@
     "Contenu/message": "Content/message",
     "Date": "Date",
     "Liste des services, agences, etc": "List of services, agencies, etc",
-    "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter": "You have been logged out of your account for inactivity, please log back in"
+    "Vous avez été déconnecter  pour durer d'inactivité de votre compte, veuillez vous reconnecter": "You have been logged out of your account for inactivity, please log back in",
+    "Pays": "Country",
+    "Etablissement Déclarant ": "Declaring institution",
+    "Période": "Period",
+    "Produits ou services concernés": "Products or services concerned",
+    "Résumé synthétique de la réclamation": "Synthetic summary of the complaint",
+    "RÉCLAMATIONS RECUES AU COURS DU ": "COMPLAINTS RECEIVED DURING THE",
+    "RÉCLAMATIONS TRAITÉES AU COURS DU ": "COMPLAINTS PROCESSED DURING THE",
+    "RÉCLAMATIONS NON RÉSOLUES OU EN SUSPENS DU": "UNRESOLVED OR PENDING CLAIMS FROM",
+    "Nombre de réclamations faisant l'objet de contentieux pendants devant les tribunaux:": "Number of claims subject to litigation pending before the courts:",
+    "Montant Total des réclamations faisant l'objet de contentieux pendants devant les tribunaux :": "Total amount of claims subject to litigation pending before the courts:",
+    "Libellés": "Label",
+    "Institutions": "Institutions",
+    "Valeurs": "Values",
+    "Nombre de plaintes reçues et non traitées sur la période": "Number of complaints received and not processed over the period",
+    "Nombre de plaintes traitées sur la période et dans le délai": "Number of complaints handled over the period and within the deadline",
+    "Nombre de plaintes traitées sur la période et hors délai": "Number of complaints processed during the period and after the deadline",
+    "Nombre de relance de la part des clients": "Number of reminders from customers",
+    "Taux de satisfaction sur la période":"Satisfaction rate over the period",
+    "Nombre de jour moyen de traitement d'une plainte": "Average number of days for processing a complaint",
+    "Nombre de plaintes reçues par une institution sur la période et non traitées": "Number of complaints received by an institution over the period and not dealt with",
+    "Nombre de plaintes traitées par une institution sur la période et dans le délai": "Number of complaints handled by an institution over the period and within the deadline",
+    "Nombre de plaintes traitées par une institution sur la période et hors délai": "Number of complaints handled by an institution over the period and after the deadline",
+    "Taux de relance de la part des clients d'une institution": "Reminder rate from an institution's clients",
+    "Taux de satisfaction des réclamations visant une institution sur la période": "Rate of satisfaction of complaints against an institution over the period",
+    "Nombre de jour moyen de traitement d'une plainte par une institution":"Average number of days for processing a complaint by an institution"
+
+
+
+
+
+
+
+
+
+
+
 }

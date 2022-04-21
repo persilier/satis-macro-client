@@ -104,6 +104,8 @@ import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
 import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
 import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
+import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
+import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -540,6 +542,14 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/uemoa/reporting-five">
                 <ClaimReportingUemoaFive/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-six">
+                <ClaimReportingUemoaSix/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-height">
+                <ClaimReportingUemoaHeight/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">

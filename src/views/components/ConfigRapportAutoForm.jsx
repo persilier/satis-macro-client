@@ -17,6 +17,8 @@ import Select from "react-select";
 import TagsInput from "react-tagsinput";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import InputRequire from "./InputRequire";
+import {formatSelectOption} from "../../helpers/function";
 
 const endPointConfig = {
     PRO: {
@@ -54,24 +56,34 @@ const ConfigRapportAutoForm = (props) => {
     const defaultData = {
         institution_id: "",
         period: "",
-        email: [],
+        staffs: [],
+        type: ""
     };
     const defaultError = {
         institution_id: "",
         period: [],
-        email: [],
+        staffs: [],
+        type: [],
     };
+    const [load, setLoad] = useState(false);
+    const [isLoad, setIsLoad] = useState(true)
     const [data, setData] = useState(defaultData);
-    const [periodData, setPeriodData] = useState(null);
+    const [periodData, setPeriodData] = useState([]);
     const [period, setPeriod] = useState(null);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [disabledInput, setDisabledInput] = useState(false);
     const [institution, setInstitution] = useState(null);
+    const [type, setType] = useState(null);
+    const [types, setTypes] = useState([]);
+    const [staff, setStaff] = useState([]);
+    const [staffs, setStaffs] = useState([]);
     const [institutions, setInstitutions] = useState(null);
 
     useEffect(() => {
         if (verifyTokenExpire()) {
+            setLoad(true);
+            setIsLoad(true);
             if (id) {
                 axios.get(endPoint.list + `/${id}/edit`)
                     .then(response => {
@@ -90,20 +102,33 @@ const ConfigRapportAutoForm = (props) => {
                         }
                         if (response.data.reportingTask.institution_targeted_id !== null) {
                             setInstitutions(response.data.institutions);
+                            setTypes(response.data.types);
                             setInstitution({value: response.data.reportingTask.institution_targeted.id, label: response.data.reportingTask.institution_targeted.name});
 
                         }
+                        setLoad(false);
+                        setIsLoad(false)
+
                     })
             }
             axios.get(endPoint.list + `/create`)
                 .then(response => {
                     let options =
-                        response.data.institutions.length ? response.data.institutions.map(institution => ({
+                        response.data.institutions && response.data.institutions.length ? response.data.institutions.map(institution => ({
                             value: institution.id, label: institution.name
                         })) : ""
                     ;
                     setInstitutions(options);
-                    setPeriodData(response.data.period)
+                    for (var i = 0; i < response.data.staffs.length ; i ++) {
+                        response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
+                        response.data.staffs[i].value= response.data.staffs[i].id;
+                    }
+                    setStaffs(response.data.staffs);
+                    setTypes(response.data.types);
+                    setPeriodData(response.data.period);
+                    setLoad(false);
+                    setIsLoad(false)
+
                 })
             ;
         }
@@ -116,9 +141,12 @@ const ConfigRapportAutoForm = (props) => {
         setData(newData);
     };
 
-    const onChangeEmail = (mail) => {
+    const onChangeStaff = (selected) => {
+        console.log(selected)
+        var staffToSend = selected.map( item => item.value)
         const newData = {...data};
-        newData.email = mail;
+        newData.staffs = staffToSend;
+        setStaff(selected);
         setData(newData);
     };
 
@@ -131,6 +159,15 @@ const ConfigRapportAutoForm = (props) => {
             newData.institution_id = selected.value;
             setInstitution(selected);
         } else setInstitution(null);
+        setData(newData);
+    };
+
+    const onChangeType = (selected) => {
+        const newData = {...data};
+        if (selected) {
+            newData.type = selected.value;
+            setType(selected);
+        } else setType(null);
         setData(newData);
     };
 
@@ -154,6 +191,7 @@ const ConfigRapportAutoForm = (props) => {
                     })
                 ;
             } else {
+                delete data.institution_id;
                 axios.post(endPoint.list, data)
                     .then(response => {
                         setStartRequest(false);
@@ -222,35 +260,41 @@ const ConfigRapportAutoForm = (props) => {
                                                         <div className="kt-section kt-section--first">
                                                             <div className="kt-section__body">
 
-                                                                <div className="form-group row">
-                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="institution">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            value={disabledInput}
-                                                                            onChange={handleDisabledInputChange}/>
-                                                                        <span/> {t("Toutes les institutions")}<span/></label>
-                                                                    <div className="col-lg-9 col-xl-6">
-                                                                        <Select
-                                                                            isClearable
-                                                                            isDisabled={disabledInput}
-                                                                            placeholder={t("Veuillez sélectionner une institution")}
-                                                                            value={institution}
-                                                                            onChange={onChangeInstitution}
-                                                                            options={institutions?institutions.map(institution=>institution):""}
-                                                                        />
-                                                                    </div>
+                                                                {
+                                                                    props.plan !== "PRO" ? (
+                                                                        <div className="form-group row">
+                                                                            <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                                   htmlFor="institution">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    value={disabledInput}
+                                                                                    onChange={handleDisabledInputChange}/>
+                                                                                <span/> {t("Toutes les institutions")}<span/></label>
+                                                                            <div className="col-lg-9 col-xl-6">
+                                                                                <Select
+                                                                                    isClearable
+                                                                                    isDisabled={disabledInput}
+                                                                                    placeholder={t("Veuillez sélectionner une institution")}
+                                                                                    value={institution}
+                                                                                    onChange={onChangeInstitution}
+                                                                                    options={institutions?institutions.map(institution=>institution):""}
+                                                                                />
+                                                                            </div>
 
-                                                                </div>
+                                                                        </div>
+                                                                    ) : null
+                                                                }
+
                                                                 <div
                                                                     className={error.period.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">{t("Période(s)")}</label>
+                                                                           htmlFor="exampleSelect1">{t("Période(s)")} <InputRequire /></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                             <Select
                                                                                 value={period}
                                                                                 onChange={onChangePeriod}
                                                                                 options={periodData }
+                                                                                isLoading={isLoad}
                                                                             />
                                                                         {
                                                                             error.period.length ? (
@@ -266,21 +310,30 @@ const ConfigRapportAutoForm = (props) => {
                                                                 </div>
 
                                                                 <div
-                                                                    className={error.email.length ? "form-group row validated" : "form-group row"}>
+                                                                    className={error.staffs.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="email">{t("Votre Email(s)")}</label>
+                                                                           htmlFor="staff">{t("Agent(s)")} <InputRequire /> </label>
                                                                     <div className=" col-lg-9 col-xl-6">
-                                                                        <TagsInput
-                                                                            value={data.email}
-                                                                            onChange={onChangeEmail}
+                                                                     {/*   <TagsInput
+                                                                            value={data.staffs}
+                                                                            onChange={onChangeStaffs}
                                                                             inputProps={{
                                                                                 className: "react-tagsinput-input",
-                                                                                placeholder: "Email(s)"
+                                                                                placeholder: "Agent(s)"
                                                                             }}
+                                                                        />*/}
+                                                                        <Select
+                                                                            isClearable
+                                                                            isMulti
+                                                                            placeholder={t("Veuillez sélectionner les agents")}
+                                                                            value={staff}
+                                                                            isLoading={isLoad}
+                                                                            onChange={onChangeStaff}
+                                                                            options={staffs}
                                                                         />
                                                                         {
-                                                                            error.email.length ? (
-                                                                                error.email.map((error, index) => (
+                                                                            error.staffs.length ? (
+                                                                                error.staffs.map((error, index) => (
                                                                                     <div key={index}
                                                                                          className="invalid-feedback">
                                                                                         {error}
@@ -291,7 +344,41 @@ const ConfigRapportAutoForm = (props) => {
                                                                     </div>
 
                                                                 </div>
+
+
+                                                                <div
+                                                                    className={error.type.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                           htmlFor="rapport">
+                                                                        {t("Rapport")} <InputRequire />
+                                                                    </label>
+                                                                    <div className="col-lg-9 col-xl-6">
+                                                                        <Select
+                                                                            isClearable
+                                                                            placeholder={t("Veuillez sélectionner le rapport")}
+                                                                            value={type}
+                                                                            isLoading={isLoad}
+                                                                            onChange={onChangeType}
+                                                                            options={types}
+                                                                        />
+                                                                        {
+                                                                            error.type.length ? (
+                                                                                error.type.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
+                                                                    </div>
+
+                                                                </div>
+
                                                             </div>
+
+
+
                                                             <div className="kt-portlet__foot">
                                                                 <div className="kt-form__actions text-right">
                                                                     {
@@ -341,7 +428,7 @@ const ConfigRapportAutoForm = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ? (
+            verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ? (
                 printJsx()
             ) : null
         ) : null
