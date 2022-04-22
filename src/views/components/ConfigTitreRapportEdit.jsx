@@ -10,6 +10,7 @@ import {
 import {Link, useParams} from "react-router-dom";
 import InputRequire from "../components/InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import Select from 'react-select'
 
 axios.defaults.headers.common['Content-Type'] = "multipart/form-data";
 
@@ -19,7 +20,13 @@ const ConfigTitreRapportEdit = (props) => {
     const [logo, setDataLogo] = useState({});
     const [data, setData] = useState({});
     const [error, setError] = useState({});
+    /*const [load, setLoad] = useState(false);
+    const [isLoad, setIsLoad] = useState(true)*/
+   /* const [data, setData] = useState(defaultData);*/
+    const [period, setPeriod] = useState(null);
+    const [periodData, setPeriodData] = useState([]);
     const [startRequest, setStartRequest] = useState(false);
+
 
     const formatState = (params, paramData = null) => {
         const newState = {};
@@ -48,6 +55,8 @@ const ConfigTitreRapportEdit = (props) => {
         formatState(componentParams, stateData);
 
     };
+
+
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -262,7 +271,6 @@ const ConfigTitreRapportEdit = (props) => {
                                             }
 
 */}
-
 
 
                                         </div>
