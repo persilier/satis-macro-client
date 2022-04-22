@@ -140,7 +140,7 @@ const ConfigTitreRapport = (props) => {
                 <td>{component.description===null?"":component.description}</td>
                 <td style={{textAlign:'center'}}>
                     <Link
-                        to={`/settings/config-rapport/edit/${component.id}`}
+                        to={`/settings/config-rapport/edit/${component.name}`}
                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
                         title="Modifier">
                         <i className="la la-edit"/>

@@ -158,7 +158,7 @@ const Body = () => {
                 <ParametersComponentEdit/>
             </Route>
 
-            <Route exact path="/settings/config-rapport/edit/:id">
+            <Route exact path="/settings/config-rapport/edit/:name">
                 <ConfigTitreRapportEdit/>
             </Route>
 
