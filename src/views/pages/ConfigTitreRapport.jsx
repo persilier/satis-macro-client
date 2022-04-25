@@ -22,14 +22,14 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const ConfigTitreRapport = (props) => {
     document.title = "Satis Paramètre Titre Rapport - Configuration formulaire";
 
-    if (!verifyPermission(props.userPermissions, "update-components-parameters"))
+    if (!verifyPermission(props.userPermissions, "update-reporting-titles-configs"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
     const [component, setComponent] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(5);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
 
     useEffect(() => {
@@ -136,7 +136,7 @@ const ConfigTitreRapport = (props) => {
             <tr key={index} role="row" className="odd">
                 <td>{component.name === null ? "" : component.name}</td>
                 <td>{component.title === null ? "" : component.title}</td>
-                <td>{component.description===null?"":component.description}</td>
+                <td>{component.description === null ? "" : component.description}</td>
                 <td style={{textAlign:'center'}}>
                     <Link
                         to={`/settings/config-rapport/edit/${component.name}`}

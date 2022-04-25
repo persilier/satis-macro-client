@@ -502,7 +502,7 @@ const ClaimReportingUemoaOne = (props) => {
                 .catch(error => {
                     setError({
                         ...defaultError,
-                        ...error.response.data.error
+                        ...error.response && error.response.data ?  error.response.data.error : ""
                     });
                     console.log("Something is wrong");
                     setLoadDownloadPdf(false);

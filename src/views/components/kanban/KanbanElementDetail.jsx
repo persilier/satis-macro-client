@@ -55,7 +55,7 @@ const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) =>
 
                 <div className="kt-portlet__head-label">
                     <h3 className="kt-portlet__head-title">
-                        {claim.claimer.lastname+" "+claim.claimer.firstname}
+                        {claim.claimer ? claim.claimer.lastname : ""}  { claim.claimer ? claim.claimer.firstname : "-"}
                     </h3>
                 </div>
             </div>
