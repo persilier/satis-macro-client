@@ -134,7 +134,6 @@ const ConfigTitreRapport = (props) => {
     const printBodyTable = (component, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                {/*<td>{component.params.fr.title===null?"":component.params.fr.title.value}</td>*/}
                 <td>{component.name === null ? "" : component.name}</td>
                 <td>{component.title === null ? "" : component.title}</td>
                 <td>{component.description===null?"":component.description}</td>
@@ -227,18 +226,6 @@ const ConfigTitreRapport = (props) => {
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {/*<tr>
-                                                            <td>7</td>
-                                                            <td>7</td>
-                                                            <td>7</td>
-                                                            <td>7</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>8</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>9</td>
-                                                        </tr> */}
                                                         {
                                                             component.length ? (
                                                                 showList ? (

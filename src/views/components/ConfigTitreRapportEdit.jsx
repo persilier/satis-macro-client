@@ -7,7 +7,7 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig,toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
@@ -16,12 +16,19 @@ import {connect} from "react-redux";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
-
 const ConfigTitreRapportEdit = (props) => {
     const {name}=useParams();
-/*
-    if ( !verifyPermission(props.userPermissions, 'edit-reporting-titles-configs'))
-            window.location.href = ERROR_401;*/
+
+    if (!name) {
+      if  ( !verifyPermission(props.userPermissions, 'edit-reporting-titles-configs'))
+        window.location.href = ERROR_401;
+    } else {
+       if ( !verifyPermission(props.userPermissions, 'edit-reporting-titles-configs'))
+        window.location.href = ERROR_401;
+    }
+
+
+
 console.log(props.userPermissions)
     const defaultData = {
         name: "",
@@ -50,13 +57,13 @@ console.log(props.userPermissions)
                         };
                         setData(newTitle)
                     })
-                    /*.catch(error => {
-                        setError({...defaultError, ...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
-                    })*/
-                ;
-
-
+                    .catch(error => {
+                        console.log(error.response)
+                        if (error.response.status === 404) {
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Vous ne pouvez pas effectuer cette opération.'))
+                            window.location.href="/settings/config-rapport"
+                        }
+                    })
                 ;
             }
         }
@@ -90,20 +97,6 @@ console.log(props.userPermissions)
                         setError(defaultError);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                         window.location.href="/settings/config-rapport"
-                    })
-                    .catch(error => {
-                        setStartRequest(false);
-                        setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
-                    })
-                ;
-            }else{
-                axios.post(appConfig.apiDomaine+`/faq-categories`, data)
-                    .then(response => {
-                        setStartRequest(false);
-                        setError(defaultError);
-                        setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
                     })
                     .catch(error => {
                         setStartRequest(false);
@@ -266,10 +259,10 @@ console.log(props.userPermissions)
     };
     return (
         name ?
-            verifyPermission(props.userPermissions, 'update-faq-category') ? (
+            verifyPermission(props.userPermissions, 'edit-reporting-titles-configs') ? (
                 printJsx()
             ) : null
-            : verifyPermission(props.userPermissions, 'store-faq-category') ? (
+            : verifyPermission(props.userPermissions, 'edit-reporting-titles-configs') ? (
                 printJsx()
             ) : null
     );
