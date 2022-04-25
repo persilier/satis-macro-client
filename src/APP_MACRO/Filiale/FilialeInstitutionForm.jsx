@@ -48,10 +48,10 @@ const FilialeInstitutionForm = (props) => {
             axios.get(appConfig.apiDomaine + `/my/institutions`)
                 .then(response => {
                     const newInstitution = {
-                        name: response.data.name,
-                        acronyme: response.data.acronyme,
-                        iso_code: response.data.iso_code,
-                        logo: response.data.logo
+                        name: response.data.institution && response.data.institution.name  ? response.data.institution.name : "",
+                        acronyme: response.data.institution && response.data.institution.acronyme ? response.data.institution.acronyme : "",
+                        iso_code: response.data.institution && response.data.institution.iso_code ? response.data.institution.iso_code : "",
+                        logo: response.data.institution && response.data.institution.logo ? response.data.institution.logo : ""
                     };
                     setData(newInstitution);
                 })
