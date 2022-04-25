@@ -45,7 +45,7 @@ const ForgotForm = () => {
     return (
 
         <div>
-            {ready ? (<div className="kt-login__form " style={{paddingTop: "100px"}}>
+            {ready ? (<div className="kt-login__form " style={{paddingTop: "43%"}}>
                 <div className="kt-login__head" style={{marginTop: '70px'}}>
                     <h3 className="kt-login__title">{t("Mot de Passe oublié")}?</h3>
                     <div className="kt-login__desc text-center">

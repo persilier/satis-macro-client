@@ -298,9 +298,8 @@ const LoginPage = (props) => {
                                                         <ForgotForm/>
                                                     </Route>
 
-                                                    <Route exact path={`/reset-password`}>
-                                                        <ReinitialisationForm
-                                                        />
+                                                    <Route exact path={`/forgot-password`}>
+                                                        <ReinitialisationForm/>
                                                     </Route>
 
                                                     <Route exact path={`/forgot-password/${tokenData}`}>
