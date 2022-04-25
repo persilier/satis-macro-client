@@ -52,7 +52,7 @@ const CategoryFAQs = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wronge");
+                    console.log("Something is wrong");
                 })
             ;
         }
