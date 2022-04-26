@@ -21,6 +21,7 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import htmlToPdfmake from "html-to-pdfmake";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import {benchmarkingReport} from "../../http/crud";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -53,34 +54,25 @@ const ClaimReportingBenchmarking = (props) => {
 
     const fetchData = useCallback(
         async (click = false) => {
-            let endpoint = "";
-            let sendData = {};
-
-            sendData = {
+            let sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
-            }
+            };
 
-            if (verifyPermission(props.userPermissions, 'list-benchmarking-reporting'))
-                endpoint = `${appConfig.apiDomaine}/my/benchmarking-rapport`;
-
-            if (verifyTokenExpire()) {
-                await axios.post(endpoint, removeNullValueInObject(sendData))
-                    .then(response => {
-                        console.log(response.data);
-                        setLoad(false);
+            await benchmarkingReport(props.userPermissions, removeNullValueInObject(sendData))
+                .then(response => {
+                    setLoad(false);
                         setLoadFilter(false);
                         setData(response.data);
                         if (click)
                             ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
-                    })
-                    .catch(error => {
-                        setLoad(false);
-                        setLoadFilter(false);
-                        setError({...defaultError, ...error.response.data.error});
-                        console.log("Something is wrong");
-                    })
-            }
+                })
+                .catch(error => {
+                    setLoad(false);
+                    setLoadFilter(false);
+                    setError({...defaultError, ...error.response.data.error});
+                    console.log("Something is wrong");
+                })
 
         }
     , [dateStart, dateEnd])

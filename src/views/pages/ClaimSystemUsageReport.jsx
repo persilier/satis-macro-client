@@ -21,6 +21,7 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
+import {systemUsageReport} from "../../http/crud";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -52,19 +53,13 @@ const ClaimSystemUsageReport = (props) => {
 
     const fetchData = useCallback(
         async (click = false) => {
-            let endpoint = "";
-            let sendData = {};
 
-            sendData = {
+            let sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
             }
 
-            if (verifyPermission(props.userPermissions, 'list-system-usage-reporting'))
-                endpoint = `${appConfig.apiDomaine}/my/system-usage-rapport`;
-
-            if (verifyTokenExpire()) {
-                await axios.post(endpoint, removeNullValueInObject(sendData))
+            await systemUsageReport(props.userPermissions, sendData)
                     .then(response => {
                         setLoad(false);
                         setLoadFilter(false);
@@ -78,7 +73,6 @@ const ClaimSystemUsageReport = (props) => {
                         setError({...defaultError, ...error.response.data.error});
                         console.log("Something is wrong");
                     })
-            }
         }
     , [dateStart, dateEnd])
 
