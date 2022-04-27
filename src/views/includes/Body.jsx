@@ -129,6 +129,8 @@ import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
 import ProofReceipt from "../pages/ProofReceipt";
+import ConfigTitreRapport from "../pages/ConfigTitreRapport";
+import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 
 const Body = () => {
     return (
@@ -138,6 +140,10 @@ const Body = () => {
             </Route>*/}
             <Route exact path="/settings/config">
                 <ParametersComponent/>
+            </Route>
+
+            <Route exact path="/settings/config-rapport">
+                <ConfigTitreRapport/>
             </Route>
 
             <Route exact path="/historic/claims/add">
@@ -150,6 +156,10 @@ const Body = () => {
 
             <Route exact path="/settings/config/edit/:id">
                 <ParametersComponentEdit/>
+            </Route>
+
+            <Route exact path="/settings/config-rapport/edit/:name">
+                <ConfigTitreRapportEdit/>
             </Route>
 
             <Route exact path="/settings/clients/category">

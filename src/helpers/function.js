@@ -182,10 +182,10 @@ export const filterChannel = (channels, typeFilter) => {
     const newChannels = [];
     for (let i = 0; i < channels.length; i++) {
         if (typeFilter === RESPONSE_CHANNEL) {
-            if (channels[i].is_response === 1)
+            if (channels[i].is_response === true)
                 newChannels.push(channels[i]);
         } else if (typeFilter === RECEPTION_CHANNEL) {
-            if (channels[i].is_response === 0)
+            if (channels[i].is_response === false)
                 newChannels.push(channels[i]);
         } else
             return channels
