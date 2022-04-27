@@ -56,11 +56,14 @@ const ClaimReportingUemoaHeight = (props) => {
         date_end: [],
         institution_targeted_id: [],
         unit_targeted_id: [],
-
-
+    };
+    const defaultData = {
+        unit_targeted_id: [],
     };
     const [units, setUnits] = useState([]);
     const [unit, setUnit] = useState([]);
+    const [isLoad, setIsLoad] = useState(true)
+    const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [loadDownload, setLoadDownload] = useState(false);
     const [institution, setInstitution] = useState(null);
@@ -91,7 +94,7 @@ const ClaimReportingUemoaHeight = (props) => {
             } else
                 console.log("hub")
         } else if (verifyPermission(props.userPermissions, 'list-global-reporting')) {
-            var unitToSend = units.map( item => item.value)
+            var unitToSend = unit.map( item => item.value)
             endpoint = `${appConfig.apiDomaine}/my/global-rapport`;
 
             sendData = {
@@ -127,6 +130,7 @@ const ClaimReportingUemoaHeight = (props) => {
 
 
     useEffect(() => {
+        setIsLoad(true);
         var endpoint = "";
         if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
             if (props.plan === "MACRO")
@@ -143,6 +147,7 @@ const ClaimReportingUemoaHeight = (props) => {
                 .then(response => {
                     console.log(response.data)
                     setUnits(formatSelectOption(response.data, "name", "fr"));
+                    setIsLoad(false);
                 })
                 .catch(error => {
                     console.log("Something is wrong")
@@ -187,7 +192,7 @@ const ClaimReportingUemoaHeight = (props) => {
             <tr>
                 <td  style={{ fontWeight:"bold"}}> {item.CategoryClaims?.fr ?? '-'} </td>
                 <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.total ?? '-'} </td>
-                <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.percentage ? item.percentage + "%" : '-'} </td>
+                <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.taux ? item.taux + "%" : '-'} </td>
             </tr>
         );
     };
@@ -197,7 +202,7 @@ const ClaimReportingUemoaHeight = (props) => {
                 <tr>
                     <td  style={{ fontWeight:"bold"}}> {item.ClaimsObject?.fr ?? '-'} </td>
                     <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.total ?? '-'} </td>
-                    <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.percentage ? item.percentage + "%" : '-'} </td>
+                    <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.taux ? item.taux + "%" : '-'} </td>
                 </tr>
             );
      };
@@ -207,7 +212,7 @@ const ClaimReportingUemoaHeight = (props) => {
             <tr>
                 <td  style={{ fontWeight:"bold"}}> {item.ClientGender ? item.ClientGender : '-'} </td>
                 <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.total ?? '-'} </td>
-                <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.percentage ? item.percentage + "%" : '-'} </td>
+                <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.taux ? item.taux + "%" : '-'} </td>
             </tr>
         );
     };
@@ -355,11 +360,18 @@ const ClaimReportingUemoaHeight = (props) => {
                                                             <Select
                                                                 isClearable
                                                                 isMulti
+                                                                clearValue
                                                                 value={unit}
+                                                                isLoading={isLoad}
                                                                 placeholder={t("Veuillez sélectionner l'agence")}
                                                                 onChange={onChangeUnit}
-                                                                options={units}
+                                                                options={ unit.length < 4 ? units : [] }
                                                             />
+                                                            {
+                                                                 unit.length > 3 ? (
+                                                                         <p className={"mt-1"} style={{ color:"red", fontSize:"10px", textAlign:"end"}}>Vous avez atteint le nombre maximal d'agences à sélectionner</p>
+                                                                ) : null
+                                                            }
 
                                                             {
                                                                 error.unit_targeted_id.length ? (
@@ -795,12 +807,12 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                         <tr>
                                                                             <td  style={{ fontWeight:"bold"}}> {t("Nombre de clients satisfaits")} </td>
                                                                             <td  style={{textAlign:"center", fontWeight:"bold"}} > { statistics.NumberOfClientSatisfied?.total !== undefined && statistics.NumberOfClientSatisfied?.total !== null ? statistics.NumberOfClientSatisfied.total : "-"} </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}} > { statistics.PercentageOfClientSatisfied?.percentageOfClientSatisfied !== undefined && statistics.PercentageOfClientSatisfied?.percentageOfClientSatisfied !== null ? statistics.PercentageOfClientSatisfied.percentageOfClientSatisfied + "%" : "-"} </td>
+                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}} > { statistics.PercentageOfClientSatisfied?.taux !== undefined && statistics.PercentageOfClientSatisfied?.taux !== null ? statistics.PercentageOfClientSatisfied.taux + "%" : "-"} </td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td  style={{ fontWeight:"bold"}}> {t("Nombre de clients non-satisfaits")}</td>
                                                                             <td  style={{textAlign:"center", fontWeight:"bold"}} > { statistics.NumberOfClientDissatisfied !== undefined && statistics.NumberOfClientDissatisfied !== null ? statistics.NumberOfClientDissatisfied : "-"} </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}} > { statistics.PercentageOfClientDissatisfied?.percentageOfClientDissatisfied !== undefined && statistics.PercentageOfClientDissatisfied?.percentageOfClientDissatisfied !== null ? statistics.PercentageOfClientDissatisfied.percentageOfClientDissatisfied + "%" : "-"} </td>
+                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}} > { statistics.PercentageOfClientDissatisfied?.taux     !== undefined && statistics.PercentageOfClientDissatisfied?.taux !== null ? statistics.PercentageOfClientDissatisfied.taux + "%" : "-"} </td>
                                                                         </tr>
                                                                         </tbody>
                                                                         <tfoot>
@@ -852,7 +864,8 @@ const ClaimReportingUemoaHeight = (props) => {
 
                                                             { typeRapport === "SPECIFIC" ? (
                                                                  <div className={"SPECIFIC"}>
-                                                                <div style={{width:"100%"}} >
+
+                                                              {/*  <div style={{width:"100%"}} >
                                                                     <h4> 1. {t("Rappels")}  </h4>
 
                                                                     <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
@@ -907,9 +920,11 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                     </table>
 
                                                                 </div>
-                                                                <br/>
+                                                                <br/>*/}
+
+
                                                                 <div style={{width:"100%"}}>
-                                                                    <h4> 2. {t("Données relatives aux institutions")}  </h4>
+                                                                    <h4> {t("Données relatives aux institutions")}  </h4>
 
                                                                     <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                                            role="grid" aria-describedby="kt_table_1_info"

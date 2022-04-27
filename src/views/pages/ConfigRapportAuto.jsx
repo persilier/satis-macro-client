@@ -213,16 +213,35 @@ const ConfigRapportAuto = (props) => {
     const printBodyTable = (rapport, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{rapport.institution_targeted?rapport.institution_targeted.name:""}</td>
-                <td>{rapport.period===null?"":rapport.period_tag.label}</td>
+
+                {
+                    props.plan === "MACRO" ? (
+                        <td>{rapport.institution_targeted ? rapport.institution_targeted.name:""}</td>
+                    ) : null
+                }
+                {
+                    props.plan === "PRO" ? (
+                        <td>
+                            {rapport.staffs ?
+                                rapport.staffs.map((staff, index) => (
+                                    staff.identite.firstname + " "  + staff.identite.lastname + " ,"
+                                )) : null
+                            }
+                        </td>
+                    ) : null
+                }
+
+                <td>{rapport.period === null ? "" : rapport.period_tag.label}</td>
+                <td>{rapport.reporting_type === null ? "-" : rapport.reporting_type}</td>
                 <td>
-                    {rapport.email ?
-                        rapport.email.map((mail, index) => (
-                            index === rapport.email.length - 1 ? mail : mail  +"/ "
+                    {rapport.staffs ?
+                        rapport.staffs.map((staff, index) => (
+                           staff.identite.email ? staff.identite.email.map((email, index) => (
+                                email +" "
+                            )) : null
                         )) : null
                     }
                 </td>
-                {/*<td>{rapport.email===null?"":rapport.email}</td>*/}
                 <td style={{textAlign:'center'}}>
 
                     {
@@ -293,7 +312,7 @@ const ConfigRapportAuto = (props) => {
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
                                             <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                              {/*  <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         {t("Recherche")}:
                                                         <input id="myInput" type="text"
@@ -302,7 +321,7 @@ const ConfigRapportAuto = (props) => {
                                                                placeholder=""
                                                                aria-controls="kt_table_1"/>
                                                     </label>
-                                                </div>
+                                                </div>*/}
                                             </div>
                                         </div>
                                         <div className="row">
@@ -313,18 +332,37 @@ const ConfigRapportAuto = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row" style={{textAlign:"center"}}>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">{t("Institutions")}
-                                                        </th>
+                                                        {
+                                                            props.plan === "MACRO" ? (
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{width: "100px"}}
+                                                                    aria-label="Ship City: activate to sort column ascending">{t("Institutions")}
+                                                                </th>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            props.plan === "PRO" ? (
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{width: "100px"}}
+                                                                    aria-label="Ship City: activate to sort column ascending">{t("Agents")}
+                                                                </th>
+                                                            ) : null
+                                                        }
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "100px"}}
                                                             aria-label="Ship City: activate to sort column ascending">{t("Périodes")}
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "100px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Rapports")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
@@ -357,8 +395,18 @@ const ConfigRapportAuto = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">{t("Institutions")}</th>
+                                                        {
+                                                            props.plan === "MACRO" ? (
+                                                                <th rowSpan="1" colSpan="1">{t("Institutions")}</th>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            props.plan === "PRO" ? (
+                                                                <th rowSpan="1" colSpan="1">{t("Agents")}</th>
+                                                            ) : null
+                                                        }
                                                         <th rowSpan="1" colSpan="1">{t("Périodes")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Rapports")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Emails")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>

@@ -36,7 +36,7 @@ const ClaimReportingUemoaFive = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')))
+    if (!(verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(false);
@@ -120,11 +120,11 @@ const ClaimReportingUemoaFive = (props) => {
         setLoad(true);
         let endpoint = "";
         let sendData = {};
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+        if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution')) {
             if (props.plan === "MACRO")
                 endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
             else
-                endpoint = `${appConfig.apiDomaine}list-reporting-claim-my-institution`;
+                endpoint = `${appConfig.apiDomaine}list-regulatory-reporting-claim-my-institution`;
             sendData = {
                 date_start: dateStart ? dateStart : null,
                 date_end: dateEnd ? dateEnd : null,
@@ -185,7 +185,7 @@ const ClaimReportingUemoaFive = (props) => {
 
     useEffect(() => {
         var endpoint = "";
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+        if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution')) {
             if (props.plan === "MACRO")
                 endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
             else
@@ -199,7 +199,7 @@ const ClaimReportingUemoaFive = (props) => {
             axios.get(endpoint)
                 .then(response => {
                     setFilterObjectData(response.data.categories);
-                    if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+                    if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution')) {
                         setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                         if (props.plan === "MACRO") {
                             setFilterUnitsData(response.data.agences);
@@ -387,7 +387,7 @@ const ClaimReportingUemoaFive = (props) => {
         setLoadDownload(true);
         let endpoint = "";
         let sendData = {};
-        if (verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution')) {
+        if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution')) {
             if (props.plan === "MACRO")
                 endpoint = `${appConfig.apiDomaine}/any/uemoa/global-state-report`;
             else
@@ -475,7 +475,7 @@ const ClaimReportingUemoaFive = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
+            verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">

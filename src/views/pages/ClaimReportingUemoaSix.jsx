@@ -164,7 +164,7 @@ const ClaimReportingUemoaSix = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
+            verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -195,7 +195,7 @@ const ClaimReportingUemoaSix = (props) => {
 
                         <div className="kt-portlet">
                             <HeaderTablePage
-                                title={t("Rapport efficacité traitement")}
+                                title={t("Rapport Efficacité traitement")}
                             />
 
                             <div className="kt-portlet__body">

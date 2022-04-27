@@ -296,7 +296,8 @@ const Aside = (props) => {
                                                     }
 
                                                     {
-                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
+                                                        verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-five" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
@@ -320,7 +321,8 @@ const Aside = (props) => {
                                                     }
 
                                                     {
-                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'system-my-efficiency-report') ? (
+                                                        verifyPermission(props.userPermissions, 'system-any-efficiency-report') ||
+                                                        verifyPermission(props.userPermissions, 'system-my-efficiency-report') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-six" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
@@ -331,7 +333,8 @@ const Aside = (props) => {
                                                     }
 
                                                     {
-                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-global-reporting') ? (
+                                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-global-reporting') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-height" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>

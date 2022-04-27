@@ -14,7 +14,7 @@
     "devextreme": "^20.2.6",
     "file-saver": "^2.0.2",
     "fusioncharts": "^3.16.0",
-    "html-to-pdfmake": "^2.3.10",
+    "html-to-pdfmake": "^2.3.11",
     "html2canvas": "^1.4.1",
     "i18next": "^21.6.5",
     "i18next-browser-languagedetector": "^6.1.2",

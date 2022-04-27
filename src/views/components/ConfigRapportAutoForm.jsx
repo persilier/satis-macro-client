@@ -8,7 +8,7 @@ import {
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig, toastEditSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
@@ -188,6 +188,7 @@ const ConfigRapportAutoForm = (props) => {
                         setStartRequest(false);
                         setError({...defaultError, ...error.response.data.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
+
                     })
                 ;
             } else {
@@ -202,7 +203,11 @@ const ConfigRapportAutoForm = (props) => {
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError, ...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                         if (error.response.status === 404 ){
+                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
+                          } else {
+                             ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                         }
                     })
                 ;
             }
@@ -314,14 +319,6 @@ const ConfigRapportAutoForm = (props) => {
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
                                                                            htmlFor="staff">{t("Agent(s)")} <InputRequire /> </label>
                                                                     <div className=" col-lg-9 col-xl-6">
-                                                                     {/*   <TagsInput
-                                                                            value={data.staffs}
-                                                                            onChange={onChangeStaffs}
-                                                                            inputProps={{
-                                                                                className: "react-tagsinput-input",
-                                                                                placeholder: "Agent(s)"
-                                                                            }}
-                                                                        />*/}
                                                                         <Select
                                                                             isClearable
                                                                             isMulti
