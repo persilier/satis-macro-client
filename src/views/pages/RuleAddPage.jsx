@@ -216,7 +216,7 @@ const RuleAddPage = (props) => {
                                                 <React.Fragment key={ind}>
                                                     {/*<span className="btn" style={{width: "30%"}}>*/}
                                                     <label className="kt-checkbox"  style={{width: "30%"}}>
-                                                        <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.description)}/> {el.description}<span/>
+                                                        <input className={"checkInput"} type="checkbox" name={el.name} onClick={handlePermissionChange} defaultChecked={permissions.includes(el.name)}/> {el.description}<span/>
                                                     </label>
                                                     {/*</span>*/}
                                                     {
