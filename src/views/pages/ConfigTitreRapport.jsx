@@ -15,6 +15,10 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {DeleteConfirmation} from "../components/ConfirmationAlert";
+import {confirmDeleteConfig} from "../../config/confirmConfig";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastDeleteErrorMessageConfig, toastDeleteSuccessMessageConfig} from "../../config/toastConfig";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -129,6 +133,29 @@ const ConfigTitreRapport = (props) => {
         return pages
     };
 
+    const deleteComponent = (id, index) => {
+        DeleteConfirmation.fire(confirmDeleteConfig)
+            .then((result) => {
+                if (result.value) {
+                    if (verifyTokenExpire()) {
+                        axios.delete(appConfig.apiDomaine + `/my/reporting-claim/config/${id}`)
+                            .then(response => {
+                                console.log(response, "OK");
+                                const newComponent = [...component];
+                                newComponent.splice(index, 1);
+                                setComponent(newComponent);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                            })
+                            .catch(error => {
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                            })
+                        ;
+                    }
+                }
+            })
+        ;
+    };
+
     const pages = arrayNumberPage();
 
     const printBodyTable = (component, index) => {
@@ -144,6 +171,12 @@ const ConfigTitreRapport = (props) => {
                         title="Modifier">
                         <i className="la la-edit"/>
                     </Link>
+                   {/* <button
+                        onClick={(e) => deleteComponent(component.id, index)}
+                        className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                        title="Supprimer">
+                        <i className="la la-trash"/>
+                    </button>*/}
                 </td>
             </tr>
         )

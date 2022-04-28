@@ -449,7 +449,7 @@ const Aside = (props) => {
                                                     ):null
                                                 }
                                                 {
-                                                    verifyPermission(props.userPermissions, "update-recurrence-alert-settings") ? (
+                                                    verifyPermission(props.userPermissions, "update-reporting-titles-configs") ? (
                                                         <NavLink exact to="/settings/config-rapport" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
