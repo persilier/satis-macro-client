@@ -300,6 +300,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "list-notification-proof")
         || verifyPermission(userPermissions, "pilot-list-notification-proof")
         || verifyPermission(userPermissions, "list-any-notification-proof")
+        || verifyPermission(userPermissions, "update-reporting-titles-configs")
         || verifyPermission(userPermissions, "pilot-list-any-notification-proof")
         || true
     );
