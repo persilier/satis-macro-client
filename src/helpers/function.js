@@ -136,19 +136,23 @@ export const formatPermissions = (permissions) => {
 
 export const filterDataTableBySearchValue = () => {
     function myFunction() {
-        var input, filter, table, tr, td, i, txtValue;
+        var input, filter, table, tr, td, i, j, txtValue;
         input = document.getElementById("myInput");
         filter = input.value.toUpperCase();
         table = document.getElementById("myTable");
         tr = table.getElementsByTagName("tr");
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1)
-                    tr[i].style.display = "";
-                else
-                    tr[i].style.display = "none";
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                    }
+                    else
+                        tr[i].style.display = "none";
+                }
             }
         }
     }
@@ -297,11 +301,15 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "update-components-parameters")
         || verifyPermission(userPermissions, "update-relance-parameters")
         || verifyPermission(userPermissions, "list-account-type")
+        || verifyPermission(userPermissions, "list-auth-config")
+        || verifyPermission(userPermissions, "update-auth-config")
+        || verifyPermission(userPermissions, "activity-log")
         || verifyPermission(userPermissions, "list-notification-proof")
         || verifyPermission(userPermissions, "pilot-list-notification-proof")
         || verifyPermission(userPermissions, "list-any-notification-proof")
         || verifyPermission(userPermissions, "update-reporting-titles-configs")
         || verifyPermission(userPermissions, "pilot-list-any-notification-proof")
+        || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
         || true
     );
 };
@@ -349,6 +357,8 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
+        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+        || verifyPermission(userPermissions, 'list-system-usage-reporting')
     );
 };
 
@@ -394,8 +404,11 @@ export const getLowerCaseString = (value) => {
 
 export const logout = () => {
     const plan = localStorage.getItem('plan');
+    const lng = localStorage.getItem('i18nextLng');
     localStorage.clear();
     localStorage.setItem('plan', plan);
+    lng !== null && localStorage.setItem('i18nextLng', lng);
+    localStorage.removeItem("DTimeout");
     window.location.href = "/login";
 };
 

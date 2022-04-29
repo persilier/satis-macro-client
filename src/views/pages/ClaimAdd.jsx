@@ -1467,6 +1467,7 @@ const ClaimAdd = props => {
                                                 telephone={foundData.entity.telephone}
                                                 email={foundData.entity.email}
                                                 ville={foundData.entity.ville ? foundData.entity.ville : null}
+                                                lieu={data.lieu}
                                                 unit_targeted_id={data.unit_targeted_id}
                                                 institution_targeted_id={data.institution_targeted_id}
                                                 account_targeted_id={data.account_targeted_id}

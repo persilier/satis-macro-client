@@ -29,7 +29,7 @@ const ConfirmClaimAddModal = props => {
         unit_targeted_id: props.unit_targeted_id,
         institution_targeted_id: props.institution_targeted_id,
         account_targeted_id: props.account_targeted_id,
-        account_number: props.account_targeted_id,
+        account_number: props.account_number,
         claim_object_id: props.claim_object_id,
         request_channel_slug: props.request_channel_slug,
         response_channel_slug: props.response_channel_slug,
