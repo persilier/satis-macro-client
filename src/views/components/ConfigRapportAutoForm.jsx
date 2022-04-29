@@ -57,13 +57,13 @@ const ConfigRapportAutoForm = (props) => {
         institution_id: "",
         period: "",
         staffs: [],
-        type: ""
+        reporting_type: ""
     };
     const defaultError = {
         institution_id: "",
         period: [],
         staffs: [],
-        type: [],
+        reporting_type: [],
     };
     const [load, setLoad] = useState(false);
     const [isLoad, setIsLoad] = useState(true)
@@ -95,7 +95,7 @@ const ConfigRapportAutoForm = (props) => {
                         setType(response.data.reportingTask.reporting_type);
 
                         const newForm = {
-                            type: response.data.reportingTask.reporting_type,
+                            reporting_type: response.data.reportingTask.reporting_type,
                             staffs: selectedStaffs,
                             period: response.data.reportingTask.period
                         };
@@ -177,7 +177,7 @@ const ConfigRapportAutoForm = (props) => {
     const onChangeType = (selected) => {
         const newData = {...data};
         if (selected) {
-            newData.type = selected.value;
+            newData.reporting_type = selected.value;
             setType(selected);
         } else setType(null);
         setData(newData);
@@ -356,7 +356,7 @@ const ConfigRapportAutoForm = (props) => {
 
 
                                                                 <div
-                                                                    className={error.type.length ? "form-group row validated" : "form-group row"}>
+                                                                    className={error.reporting_type.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
                                                                            htmlFor="rapport">
                                                                         {t("Rapport")} <InputRequire />
@@ -371,8 +371,8 @@ const ConfigRapportAutoForm = (props) => {
                                                                             options={types}
                                                                         />
                                                                         {
-                                                                            error.type.length ? (
-                                                                                error.type.map((error, index) => (
+                                                                            error.reporting_type.length ? (
+                                                                                error.reporting_type.map((error, index) => (
                                                                                     <div key={index}
                                                                                          className="invalid-feedback">
                                                                                         {error}
