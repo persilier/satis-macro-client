@@ -46,8 +46,10 @@ const ClaimReportingUemoaHeight = (props) => {
     const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
 
     const [labelTable, setLabelTable] = useState([]);
+    const [objectRankOne, setObjectRankOne] = useState([]);
+    const [objectRankTwo, setObjectRankTwo] = useState([]);
+    const [objectRankThree, setObjectRankThree] = useState([]);
     const [statistics, setStatistics] = useState({});
-    const [specifics, setSpecifics] = useState({});
     const [commentOne, setCommentOne] = useState("");
     const [commentTwo, setCommentTwo] = useState("");
     const [typeRapport , setTypeRapport] = useState("GLOBAL");
@@ -63,15 +65,22 @@ const ClaimReportingUemoaHeight = (props) => {
         unit_targeted_id: [],
     };
     const [units, setUnits] = useState([]);
+    const [unitFilters, setUnitFilters] = useState([]);
     const [unit, setUnit] = useState([]);
     const [isLoad, setIsLoad] = useState(true)
-    const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [loadDownload, setLoadDownload] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
 
     const onRadioChange = e => {
+        setStatistics({});
+        setUnitFilters([]);
+        setObjectRankOne([]);
+        setObjectRankTwo([]);
+        setObjectRankThree([]);
+        setLabelTable([]);
+        setUnit([]);
         setTypeRapport(e.target.value);
     };
 
@@ -112,10 +121,15 @@ const ClaimReportingUemoaHeight = (props) => {
             .then(response => {
                 if (click)
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
-                console.log(response.data)
                 setStatistics(response.data);
-                console.log(unit);
-                parseSpecificReportUnit(response.data, "RateOfClaimsTreatedInTime", unit);
+                if (typeRapport === 'SPECIFIC'){
+                    setUnitFilters(unit);
+                    parseSpecificReportUnit(response.data, "RateOfClaimsTreatedInTime", unit);
+                    setObjectRankOne(parseObjectRank(response.data,1))
+                    setObjectRankTwo(parseObjectRank(response.data,2))
+                    setObjectRankThree(parseObjectRank(response.data,3))
+                }
+
                 setError(defaultError);
                 setLoadFilter(false);
                 setLoad(false);
@@ -177,7 +191,7 @@ const ClaimReportingUemoaHeight = (props) => {
     };
 
     const onChangeUnit = (selected) => {
-        setUnit(selected);
+        setUnit(selected ?? []);
     };
 
     const onChangeInstitution = (selected) => {
@@ -246,6 +260,36 @@ const ClaimReportingUemoaHeight = (props) => {
         return "-";
     }
 
+
+    const parseObjectRank = (object, rank) => {
+        var resultRank = [];
+        for (var i = 0 ; i < unit.length ; i ++) {
+            var checkObject = 0;
+            for ( var j = 0 ; j < object.RecurringClaimsByClaimObject.length ; j ++) {
+                if (unit[i].label === object.RecurringClaimsByClaimObject[j].unit.fr){
+                    checkObject = 1;
+                    var checkUnit = 0;
+                    for ( var k = 0 ; k < object.RecurringClaimsByClaimObject[j].allClaimObject.length ; k ++) {
+                        if (object.RecurringClaimsByClaimObject[j].allClaimObject[k].rank === rank){
+                            checkUnit= 1;
+                            resultRank.push(object.RecurringClaimsByClaimObject[j].allClaimObject[k].ClaimsObject.fr);
+                        }
+                    }
+                    if (checkUnit === 0) {
+                        resultRank.push("-")
+                    }
+                    checkUnit = 0;
+                }
+            }
+            if (checkObject === 0) {
+                resultRank.push("-")
+            }
+            checkObject = 1;
+        }
+        console.log(rank, resultRank)
+        return resultRank;
+    }
+
     const parseSpecificReportUnit = (object, typeStatistic, unitIds) =>{
 
         let stats = object[typeStatistic];
@@ -262,7 +306,6 @@ const ClaimReportingUemoaHeight = (props) => {
                 }
             }
         }
-        console.log(labelTable);
         setLabelTable(labels);
     }
 
@@ -402,7 +445,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                 isLoading={isLoad}
                                                                 placeholder={t("Veuillez sélectionner l'agence")}
                                                                 onChange={onChangeUnit}
-                                                                options={ unit.length < 4 ? units : [] }
+                                                                options={ (!unit || (unit && unit.length < 4))  ? units : [] }
                                                             />
                                                             {
                                                                  unit.length > 3 ? (
@@ -507,7 +550,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                     <div style={{display: "none"}} id="headReport"
                                                          className="headRapport ml-5 mt-5">
                                                         <div className="mb-5" style={{textAlign: "justify"}}>
-                                                            <h6 style={{textAlign: "center"}}> RAPPORT {typeRapport==="GLOBAL" || typeRapport==="SPECIFIC"} DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
+                                                            <h6 style={{textAlign: "center"}}> RAPPORT {typeRapport==="GLOBAL" ? "GLOBAL" : "SPECIFIQUE"} DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -975,7 +1018,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                                 aria-label="Country: activate to sort column ascending" >
                                                                                 {t("Libellés")}
                                                                             </th>
-                                                                            <th colSpan={"3"} className="sorting" tabIndex="0"
+                                                                            <th colSpan={labelTable.length} className="sorting" tabIndex="0"
                                                                                 aria-controls="kt_table_1"
                                                                                 style={{textAlign: "center"}}
                                                                                 aria-label="Country: activate to sort column ascending">
@@ -1008,7 +1051,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{ fontWeight:"bold"}} colSpan={2}> {t("Nombre de plaintes reçues")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "TotalClaimsReceived", item.value)}
                                                                                         </td>
@@ -1023,7 +1066,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{fontWeight:"bold"}} colSpan={2}> {t("Nombre de plaintes traitées")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "TotalClaimsResolved", item.value)}
                                                                                         </td>
@@ -1038,7 +1081,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{fontWeight:"bold"}} colSpan={2}> {t("Nombre de plaintes non traitées")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "TotalClaimsUnresolved", item.value)}
                                                                                         </td>
@@ -1053,7 +1096,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{fontWeight:"bold"}} colSpan={2}> {t("Nombre de plaintes traitées dans les délais")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "TotalClaimResolvedOnTime", item.value)}
                                                                                         </td>
@@ -1068,7 +1111,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{fontWeight:"bold"}} colSpan={2}> {t("Nombre de plaintes traitées en retard")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "TotalClaimResolvedLate", item.value)}
                                                                                         </td>
@@ -1083,7 +1126,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{fontWeight:"bold"}} colSpan={2}> {t("Nombre de clients notifiés après traitement")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "ClientContactedAfterTreatment", item.value)}
                                                                                         </td>
@@ -1098,7 +1141,7 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                             <td  style={{fontWeight:"bold"}} colSpan={2}> {t("Taux de satisfaction")}  </td>
                                                                             {
                                                                                 labelTable.length ? (
-                                                                                    unit.map((item, index) => (
+                                                                                    unitFilters.map((item, index) => (
                                                                                         <td  style={{textAlign:"center", fontWeight:"bold"}} >
                                                                                             {parseSpecificReportTable(statistics, "RateOfClaimsSatisfaction", item.value, "taux") + " % "}
                                                                                         </td>
@@ -1112,28 +1155,49 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                        <tr>
                                                                             <td  style={{fontWeight:"bold"}} rowSpan={3}> {t("Objets de plaintes les plus récurrents")} </td>
                                                                             <td  style={{fontWeight:"bold"}} > {t("1er")}  </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
+                                                                           {
+                                                                               labelTable.length ? (
+                                                                                   objectRankOne.map((item, index) => (
+                                                                                       <td  style={{textAlign:"center", fontWeight:"bold"}}> {item} </td>
+                                                                                   ))
+
+                                                                               ) : (
+                                                                                   <td colSpan={labelTable.length} style={{textAlign:"center", fontWeight:"bold"}} > - </td>
+                                                                               )
+                                                                           }
                                                                         </tr>
                                                                         <tr>
                                                                             <td  style={{fontWeight:"bold"}} > {t("2eme")}  </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
+                                                                            {
+                                                                                labelTable.length ? (
+                                                                                    objectRankTwo.map((item, index) => (
+                                                                                        <td  style={{textAlign:"center", fontWeight:"bold"}}> {item} </td>
+                                                                                    ))
+
+                                                                                ) : (
+                                                                                    <td colSpan={labelTable.length} style={{textAlign:"center", fontWeight:"bold"}} > - </td>
+                                                                                )
+                                                                            }
                                                                         </tr>
                                                                         <tr>
                                                                             <td  style={{fontWeight:"bold"}} > {t("3eme")}  </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
-                                                                            <td  style={{textAlign:"center", fontWeight:"bold"}}> 45896 </td>
+                                                                            {
+                                                                                labelTable.length ? (
+                                                                                    objectRankThree.map((item, index) => (
+                                                                                        <td  style={{textAlign:"center", fontWeight:"bold"}}> {item} </td>
+                                                                                    ))
+
+                                                                                ) : (
+                                                                                    <td colSpan={labelTable.length} style={{textAlign:"center", fontWeight:"bold"}} > - </td>
+                                                                                )
+                                                                            }
                                                                         </tr>
 
                                                                         </tbody>
                                                                         <tfoot>
                                                                         <tr>
                                                                             <th colSpan={2}>{t("Libellés")}</th>
-                                                                            <th colSpan={"3"} style={{textAlign: "center"}}>{t("Institutions")}</th>
+                                                                            <th colSpan={labelTable.length} style={{textAlign: "center"}}>{t("Institutions")}</th>
                                                                         </tr>
                                                                         </tfoot>
                                                                     </table>

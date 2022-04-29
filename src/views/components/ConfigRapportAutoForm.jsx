@@ -87,16 +87,28 @@ const ConfigRapportAutoForm = (props) => {
             if (id) {
                 axios.get(endPoint.list + `/${id}/edit`)
                     .then(response => {
-                        console.log(response.data);
+                        let selectedStaffs = [];
+                        for (let i = 0; i < response.data.reportingTask.staffs.length; i ++) {
+                            selectedStaffs.push(response.data.reportingTask.staffs[i]);
+                        }
+                        setStaff(selectedStaffs);
+                        setType(response.data.reportingTask.reporting_type);
+
+                        const newForm = {
+                            type: response.data.reportingTask.reporting_type,
+                            staffs: selectedStaffs,
+                            period: response.data.reportingTask.period
+                        };
+
                         const newRapport = {
                             period: (response.data.reportingTask.period !== null) ? (response.data.reportingTask.period) : '',
                             email: response.data.reportingTask.email,
                             institution_id:response.data.reportingTask.institution_targeted_id!==null?response.data.reportingTask.institution_targeted_id:""
                         };
 
-                        setData(newRapport);
+                        setData(newForm);
 
-                        if (response.data.reportingTask.period !== null) {
+                       /* if (response.data.reportingTask.period !== null) {
                             setPeriodData(response.data.period);
                             setPeriod(response.data.reportingTask.period_tag);
                         }
@@ -105,7 +117,7 @@ const ConfigRapportAutoForm = (props) => {
                             setTypes(response.data.types);
                             setInstitution({value: response.data.reportingTask.institution_targeted.id, label: response.data.reportingTask.institution_targeted.name});
 
-                        }
+                        }*/
                         setLoad(false);
                         setIsLoad(false)
 
