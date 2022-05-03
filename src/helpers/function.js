@@ -186,10 +186,10 @@ export const filterChannel = (channels, typeFilter) => {
     const newChannels = [];
     for (let i = 0; i < channels.length; i++) {
         if (typeFilter === RESPONSE_CHANNEL) {
-            if (channels[i].is_response === 1)
+            if (channels[i].is_response === true)
                 newChannels.push(channels[i]);
         } else if (typeFilter === RECEPTION_CHANNEL) {
-            if (channels[i].is_response === 0)
+            if (channels[i].is_response === false)
                 newChannels.push(channels[i]);
         } else
             return channels
@@ -359,6 +359,8 @@ export const seeMonitoring = (userPermissions) => {
         //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
         // || verifyPermission(userPermissions, 'list-global-reporting')
         //|| verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
+/*        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+        || verifyPermission(userPermissions, 'list-system-usage-reporting')*/
     );
 };
 
@@ -407,8 +409,8 @@ export const logout = () => {
     const lng = localStorage.getItem('i18nextLng');
     localStorage.clear();
     localStorage.setItem('plan', plan);
+    lng !== null && localStorage.setItem('i18nextLng', lng);
     localStorage.removeItem("DTimeout");
-    localStorage.setItem('i18nextLng', lng);
     window.location.href = "/login";
 };
 

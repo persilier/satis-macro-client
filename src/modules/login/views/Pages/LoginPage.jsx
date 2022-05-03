@@ -19,6 +19,7 @@ import ConnexionForm from "./ConnexionForm";
 import {PasswordConfirmation} from "../../../../views/components/ConfirmationAlert";
 import {passwordExpireConfig} from "../../../../config/confirmConfig";
 import {useTranslation} from "react-i18next";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 loadCss("/assets/css/pages/login/login-1.css");
 loadScript("/assets/js/pages/custom/login/login-1.js");
@@ -297,10 +298,17 @@ const LoginPage = (props) => {
                                                         <ForgotForm/>
                                                     </Route>
 
-                                                    <Route exact path={`/reset-password`}>
-                                                        <ReinitialisationForm
+                                                    <Route exact path={`/forgot-password`}>
+                                                        <ReinitialisationForm/>
+                                                    </Route>
+
+                                                    <Route exact path={`/forgot-password/${tokenData}`}>
+                                                        <ForgotPasswordForm
+                                                            token={tokenData}
                                                         />
                                                     </Route>
+
+
                                                 </Switch>
 
                                             </div>

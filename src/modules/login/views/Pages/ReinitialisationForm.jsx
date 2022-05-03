@@ -88,13 +88,13 @@ const ReinitialisationForm = (props) => {
     };
     return (
         <div>
-            {ready ? (<div className="kt-login__form " style={{paddingTop: "30px"}}>
+            {ready ? (<div className="kt-login__form " style={{paddingTop: "15.5%"}}>
                 <div className="kt-login__head">
                     <h3 className="kt-login__title">{t("Réinitialisation du Mot de Passe")} </h3>
                     <div className="kt-login__desc text-center">{t("Entrer votre nouveau mot de passe")}:
                     </div>
                 </div>
-                <form className="kt-form" id="kt_login__form" style={{marginBottom: '90px'}}>
+                <form className="kt-form" id="kt_login__form" style={{marginBottom: '5%'}}>
 
                     <div className="form-group row input_container">
                         <input

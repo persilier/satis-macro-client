@@ -221,7 +221,7 @@ const CategoryClientForm = (props) => {
                                                                     !startRequest ? (
                                                                         <button type="submit"
                                                                                 onClick={(e) => onSubmit(e)}
-                                                                                className="btn btn-primary">{t("Enregistrer")}</button>
+                                                                                className="btn btn-primary">{editcategoryid ? t("Modifier") : t("Enregistrer")}</button>
                                                                     ) : (
                                                                         <button
                                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"

@@ -85,11 +85,11 @@ const ClaimButtonDetail = ({claim, plan}) => {
                                             <strong>{t("Point de service")}</strong>:
                                             <span
                                                 className="mx-2">{claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-"}</span><br/>
-                                            {claim.account_targeted ? (
+                                            {claim.account_targeted || claim.account_number ? (
                                                 <>
-                                                    <strong>{t("Compte concerné")}:</strong>
+                                                    <strong>Compte concerné:</strong>
                                                     <span
-                                                        className="mx-2">{claim.account_targeted ? claim.account_targeted.number : "-"}</span><br/>
+                                                        className="mx-2">{claim.account_targeted ? claim.account_targeted.number : (claim.account_number ? claim.account_number : "-")}</span><br/>
                                                 </>
                                             ) : null}
                                         </div>

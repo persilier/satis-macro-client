@@ -56,6 +56,7 @@ const User = (props) => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setUsers(response.data);
+                    console.log(response.data)
                     setLoad(false);
                 })
                 .catch(error => {
@@ -181,7 +182,8 @@ const User = (props) => {
                         await axios.put(endpoint)
                             .then(response => {
                                 const newUsers = [...users];
-                                newUsers[index].disabled_at = newUsers[index].disabled_at === null ? true : null;
+                                const idx = activeNumberPage > 1 ? ((activeNumberPage - 1) * numberPerPage) + index : index
+                                newUsers[idx].disabled_at = newUsers[idx].disabled_at === null ? true : null;
                                 document.getElementById(`user-spinner-${user.id}`).style.display = "none";
                                 document.getElementById(`user-${user.id}`).style.display = "block";
                                 document.getElementById(`user-edit-${user.id}`).style.display = "block";
@@ -210,7 +212,6 @@ const User = (props) => {
     const printBodyTable = (user, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                {console.log('user:', user)}
                 <td>
                     {`${user.identite.lastname} ${user.identite.firstname} `}
                     {

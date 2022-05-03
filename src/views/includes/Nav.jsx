@@ -435,30 +435,34 @@ const Nav = (props) => {
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                         <span className="kt-header__topbar-icon text-white">
-                            {props.language.languageSelected.toUpperCase()}
+                            {i18n.isInitialized && i18n.language.toUpperCase()}
                         </span>
                         </div>
-                        <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
-                            <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                <li className={`kt-nav__item ${props.language.languageSelected === "en" && "kt-nav__item--active"}`}>
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
+                        {
+                            appConfig.useManyLanguage ? (
+                                <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
+                                    <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
+                                        <li className={`kt-nav__item ${i18n.language === "en" && "kt-nav__item--active"}`}>
+                                            <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             EN
                                         </span>
-                                        <span className="kt-nav__link-text">English</span>
-                                    </a>
-                                </li>
+                                                <span className="kt-nav__link-text">English</span>
+                                            </a>
+                                        </li>
 
-                                <li className="kt-nav__item">
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
+                                        <li className={`kt-nav__item ${i18n.language === "fr" && "kt-nav__item--active"}`}>
+                                            <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             FR
                                         </span>
-                                        <span className="kt-nav__link-text">Francais</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                                                <span className="kt-nav__link-text">Français</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            ) : null
+                        }
                     </div>
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">
