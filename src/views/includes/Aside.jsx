@@ -295,7 +295,7 @@ const Aside = (props) => {
                                                         ) : null
                                                     }
 
-                                                    {
+{/*                                                    {
                                                         verifyPermission(props.userPermissions, 'list-benchmarking-reporting')  ? (
                                                             <NavLink exact to="/monitoring/claims/reporting-benchmarking" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
@@ -316,7 +316,7 @@ const Aside = (props) => {
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
-                                                    }
+                                                    }*/}
 
                                                 </ul>
                                             </div>
