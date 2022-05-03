@@ -48,6 +48,8 @@ const ClaimReportingUemoaSix = (props) => {
     const [treatmentefficacity, setTreatmentefficacity] = useState([]);
     const [dateStart, setDateStart] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const defaultError = {
         date_start: [],
         date_end: [],
@@ -97,6 +99,8 @@ const ClaimReportingUemoaSix = (props) => {
                 setError(defaultError);
                 setLoadFilter(false);
                 setLoad(false);
+                setTitle(response.data.title)
+                setDescription(response.data.description)
             })
             .catch(error => {
                 setError({
@@ -404,14 +408,13 @@ const ClaimReportingUemoaSix = (props) => {
 
                                             <div className="row">
 
-
                                                 <div className="row">
                                                     <div style={{display: "none"}} id="headReport"
                                                          className="headRapport ml-5 mt-5">
-                                                        <div className="mb-5" style={{textAlign: "justify"}}>
-                                                            <h6 style={{textAlign: "center"}}> RAPPORT ÉFFICACITÉ
-                                                                TRAITEMENT SUR LA PÉRIODE DE {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')}
-                                                            </h6>
+
+                                                        <div className="mb-5" style={{textAlign:"justify"}}>
+                                                            <h6 style={{textAlign:"center"}}> { title.toUpperCase() ? title.toUpperCase() : "-"}  DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
+                                                            <p style={{textAlign:"left"}}> { description ? description : "-"} </p>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -355,10 +355,10 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
-        || verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
-        || verifyPermission(userPermissions, 'system-my-efficiency-report')
-       /* || verifyPermission(userPermissions, 'list-global-report')*/
-        || verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
+        //|| verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
+        //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
+        // || verifyPermission(userPermissions, 'list-global-reporting')
+        //|| verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
     );
 };
 

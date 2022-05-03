@@ -50,7 +50,8 @@ const ClaimReportingUemoaFive = (props) => {
     const [unresolvedClaims, setUnresolvedClaims] = useState([]);
     const [currentInstitution, setCurrentInstitution] = useState({});
     const [country, setCountry] = useState("");
-    const [report_title, setReport_title] = useState("");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [libellePeriode, setLibellePeriode] = useState("");
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
@@ -160,7 +161,8 @@ const ClaimReportingUemoaFive = (props) => {
                 setCurrentInstitution(response.data.institution)
                 setLibellePeriode(response.data.libellePeriode)
                 setCountry(response.data.country)
-                setReport_title(response.data.report_title)
+                setTitle(response.data.title)
+                setDescription(response.data.description)
                 setClaims(response.data);
                 setError(defaultError);
                 setLoadFilter(false);
@@ -403,6 +405,8 @@ const ClaimReportingUemoaFive = (props) => {
                 responsible_unit_id: responsible ? responsible.value : null,
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
+                title: title ? title.value : null,
+                description: description ? description.value : null,
                 relationship_id: relation ? relation.value : null,
             };
         } else if (verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')) {
@@ -417,6 +421,8 @@ const ClaimReportingUemoaFive = (props) => {
                 responsible_unit_id: responsible ? responsible.value : null,
                 account_type_id: clientType ? clientType.value : null,
                 status: status ? status.value : null,
+                title: title ? title.value : null,
+                description: description ? description.value : null,
             };
         }
 
@@ -701,7 +707,7 @@ const ClaimReportingUemoaFive = (props) => {
                                     <LoadingTable/>
                                 ) : (
                                     <div className="kt-portlet__body">
-                         -               <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                      <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                       {/*      <div className="row">
                                                 <div className="col-sm-6 text-left">
                                                     <div id="kt_table_1_filter" className="dataTables_filter">
@@ -719,7 +725,8 @@ const ClaimReportingUemoaFive = (props) => {
 
                                                 <div style={{display:"none"}} id={"headRapport"} className="headRapport mt-5">
                                                     <div className="mb-5" style={{textAlign:"justify"}}>
-                                                        <h6 style={{textAlign:"center"}}> { report_title ? report_title : "-"}</h6>
+                                                        <h6 style={{textAlign:"center"}}> { title.toUpperCase() ? title.toUpperCase() : "-"}  DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
+                                                        <p style={{textAlign:"left"}}> { description ? description : "-"} </p>
                                                     </div>
                                                     <p>
                                                         <span style={{fontWeight:"bold", fontSize:"13px", textDecoration:"underline"}} className={"mr-2"} >{t("Pays")}:</span>

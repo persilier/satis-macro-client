@@ -549,9 +549,21 @@ const ClaimReportingUemoaHeight = (props) => {
                                                 <div className="mb-5 row">
                                                     <div style={{display: "none"}} id="headReport"
                                                          className="headRapport ml-5 mt-5">
-                                                        <div className="mb-5" style={{textAlign: "justify"}}>
-                                                            <h6 style={{textAlign: "center"}}> RAPPORT {typeRapport==="GLOBAL" ? "GLOBAL" : "SPECIFIQUE"} DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
-                                                        </div>
+                                                        { typeRapport === "GLOBAL" ? (
+                                                                <div className="mb-5" style={{textAlign: "justify"}}>
+                                                                    <h6 style={{textAlign: "center"}}> {statistics.title ? statistics.title : "" } DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
+                                                                    <p style={{textAlign: "center"}}> {statistics.description ? statistics.description : "" } </p>
+                                                                </div>
+                                                            ) : null
+                                                        }
+                                                        { typeRapport === "SPECIFIC" ? (
+                                                            <div className="mb-5" style={{textAlign: "justify"}}>
+                                                                <h6 style={{textAlign: "center"}}> {statistics.title ? statistics.title : "" } DU {moment(dateStart).format('DD/MM/YYYY') + " À " +  moment(dateEnd).format('DD/MM/YYYY')} </h6>
+                                                                <p style={{textAlign: "center"}}> {statistics.description ? statistics.description : "" } </p>
+                                                            </div>
+                                                        ) : null
+                                                        }
+
                                                     </div>
                                                 </div>
 
