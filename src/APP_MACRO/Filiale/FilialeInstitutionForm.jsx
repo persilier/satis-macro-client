@@ -14,6 +14,8 @@ import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import Select from "react-select";
+import {formatSelectOption} from "../../helpers/function";
 
 
 
@@ -30,15 +32,19 @@ const FilialeInstitutionForm = (props) => {
         name: "",
         acronyme: "",
         iso_code: "",
+        country_id: "",
         logo: ""
     };
     const defaultError = {
         name: [],
         acronyme: [],
         iso_code: [],
+        country_id: [],
         logo: [],
     };
     const [data, setData] = useState(defaultData);
+    const [country, setCountry] = useState(null);
+    const [countries, setCountries] = useState([]);
     const [logo, setLogo] = useState(undefined);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
@@ -48,11 +54,14 @@ const FilialeInstitutionForm = (props) => {
             axios.get(appConfig.apiDomaine + `/my/institutions`)
                 .then(response => {
                     const newInstitution = {
-                        name: response.data.institution && response.data.institution.name  ? response.data.institution.name : "",
-                        acronyme: response.data.institution && response.data.institution.acronyme ? response.data.institution.acronyme : "",
-                        iso_code: response.data.institution && response.data.institution.iso_code ? response.data.institution.iso_code : "",
-                        logo: response.data.institution && response.data.institution.logo ? response.data.institution.logo : ""
+                        name: response.data && response.data.institution ? response.data.institution.name : "",
+                        acronyme: response.data && response.data.institution ? response.data.institution.acronyme : "",
+                        iso_code: response.data && response.data.institution ? response.data.institution.iso_code : "",
+                        country_id: response.data && response.data.institution ? response.data.institution.country_id : "",
+                        logo: response.data && response.data.institution ? response.data.institution.logo : ""
                     };
+                    setCountry({label: response.data && response.data.institution ? response.data.institution.country.name :"", value: response.data && response.data.institution ? response.data.institution.country.id : "" });
+                    setCountries(formatSelectOption(response.data ? response.data.countries : [], 'name', null, 'id'));
                     setData(newInstitution);
                 })
             ;
@@ -74,6 +83,13 @@ const FilialeInstitutionForm = (props) => {
     const onChangeIsoCode = (e) => {
         const newData = {...data};
         newData.iso_code = e.target.value;
+        setData(newData);
+    };
+
+    const onChangeCountry = (e) => {
+        const newData = {...data};
+        setCountry({label: e.label, value: e.value})
+        newData.country_id = e.value;
         setData(newData);
     };
 
@@ -101,6 +117,7 @@ const FilialeInstitutionForm = (props) => {
         formData.set('name', data.name);
         formData.set('acronyme', data.acronyme);
         formData.set('iso_code', data.iso_code);
+        formData.set('country_id', data.country_id);
         setStartRequest(true);
 
         formData.append("_method", "put");
@@ -281,6 +298,33 @@ const FilialeInstitutionForm = (props) => {
                                                                         }
                                                                     </div>
                                                                 </div>
+
+                                                                <div
+                                                                    className={error.country_id.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="value">{t("Pays")} <span style={{color:"red"}}>*</span></label>
+                                                                    <div className="col-lg-9 col-xl-6">
+                                                                        <Select
+                                                                            id="value"
+                                                                            placeholder={t("Veuillez entrer le pays")}
+                                                                            value={country}
+                                                                            isClearable={true}
+                                                                            onChange={e => onChangeCountry(e)}
+                                                                            options={countries}
+                                                                        />
+                                                                        {
+                                                                            error.country_id.length ? (
+                                                                                error.country_id.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
+                                                                    </div>
+                                                                </div>
+
+
                                                             </div>
                                                             <div className="kt-portlet__foot">
                                                                 <div className="kt-form__actions text-right">
