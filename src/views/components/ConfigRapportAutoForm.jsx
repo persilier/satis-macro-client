@@ -80,6 +80,15 @@ const ConfigRapportAutoForm = (props) => {
     const [staffs, setStaffs] = useState([]);
     const [institutions, setInstitutions] = useState(null);
 
+    const getReportingType = (data, key) =>{
+        for ( let i = 0; i < data.length; i ++){
+            if (data[i].value === key) {
+                console.log(data[i])
+                return data[i];
+            }
+        }
+    }
+
     useEffect(() => {
         if (verifyTokenExpire()) {
             setLoad(true);
@@ -87,37 +96,47 @@ const ConfigRapportAutoForm = (props) => {
             if (id) {
                 axios.get(endPoint.list + `/${id}/edit`)
                     .then(response => {
+                        console.log("réponse obtenue", response.data)
                         let selectedStaffs = [];
-                        for (let i = 0; i < response.data.reportingTask.staffs.length; i ++) {
+                        for (let i = 0; i < response.data.staffs.length ; i ++) {
+                            response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
+                            response.data.staffs[i].value= response.data.staffs[i].id;
+                        }
+                        for (let i = 0; i < response.data.reportingTask.staffs.length ; i ++) {
+                            response.data.reportingTask.staffs[i].label= response.data.reportingTask.staffs[i].identite.firstname + " " + response.data.reportingTask.staffs[i].identite.lastname;
+                            response.data.reportingTask.staffs[i].value= response.data.reportingTask.staffs[i].id;
                             selectedStaffs.push(response.data.reportingTask.staffs[i]);
                         }
+
+                        setStaffs(response.data.staffs);
                         setStaff(selectedStaffs);
-                        setType(response.data.reportingTask.reporting_type);
 
-                        const newForm = {
-                            reporting_type: response.data.reportingTask.reporting_type,
-                            staffs: selectedStaffs,
-                            period: response.data.reportingTask.period
-                        };
+                        setPeriodData(response.data.period);
+                        setPeriod(response.data.reportingTask.period_tag);
 
-                        const newRapport = {
-                            period: (response.data.reportingTask.period !== null) ? (response.data.reportingTask.period) : '',
-                            email: response.data.reportingTask.email,
-                            institution_id:response.data.reportingTask.institution_targeted_id!==null?response.data.reportingTask.institution_targeted_id:""
-                        };
+                        setType(getReportingType(response.data.types, response.data.reportingTask.reporting_type));
+                        setTypes(response.data.reportingTask.types);
 
-                        setData(newForm);
-
-                       /* if (response.data.reportingTask.period !== null) {
-                            setPeriodData(response.data.period);
-                            setPeriod(response.data.reportingTask.period_tag);
-                        }
-                        if (response.data.reportingTask.institution_targeted_id !== null) {
+                       if (response.data.reportingTask.institution_targeted_id !== null) {
                             setInstitutions(response.data.institutions);
                             setTypes(response.data.types);
                             setInstitution({value: response.data.reportingTask.institution_targeted.id, label: response.data.reportingTask.institution_targeted.name});
 
-                        }*/
+                        }
+                        let selectedStaffIds = [];
+                       for ( let i = 0; i < selectedStaffs.length; i ++){
+                           selectedStaffIds.push(selectedStaffs[i].id);
+                       }
+                        const newForm = {
+                            reporting_type: response.data.reportingTask.reporting_type,
+                            staffs: selectedStaffIds,
+                            period: response.data.reportingTask.period,
+/*
+                            institution_id:response.data.reportingTask.institution_targeted_id!==null?response.data.reportingTask.institution_targeted_id:""
+*/
+                        };
+
+                        setData(newForm);
                         setLoad(false);
                         setIsLoad(false)
 

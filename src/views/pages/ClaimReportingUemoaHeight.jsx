@@ -235,10 +235,10 @@ const ClaimReportingUemoaHeight = (props) => {
         );
     };
 
-    const printBodyTableGravity= (item, index) => {
+    const printBodyTableGravity= (item, index, tableSize) => {
         return (
             <tr>
-                {  index === 0 ? (<td  style={{fontWeight:"bold"}} rowSpan={3}>  {t("Objets de plaintes les plus récurrents")}  </td> ) : null}
+                {  index === 0 ? (<td  style={{fontWeight:"bold"}} rowSpan={tableSize}>  {t("Objets de plaintes les plus récurrents")}  </td> ) : null}
                 <td  style={{textAlign:"center", fontWeight:"bold"}} > {item.rank ?? '-'} </td>
                 <td  style={{ fontWeight:"bold"}}> {item.ClaimsObject?.fr ?? '-'} </td>
             </tr>
@@ -657,11 +657,11 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                                 statistics.RecurringClaimsByClaimObject?.length ? (
                                                                                     statistics.RecurringClaimsByClaimObject?.length ? (
                                                                                         statistics.RecurringClaimsByClaimObject.map((item, index) => (
-                                                                                            printBodyTableGravity(item, index)
+                                                                                            printBodyTableGravity(item, index,  statistics.RecurringClaimsByClaimObject?.length)
                                                                                         ))
                                                                                     ) : (
                                                                                         statistics.RecurringClaimsByClaimObject.map((item, index) => (
-                                                                                            printBodyTableGravity(item, index)
+                                                                                            printBodyTableGravity(item, index,  statistics.RecurringClaimsByClaimObject?.length)
                                                                                         ))
                                                                                     )
                                                                                 ) : (
@@ -1018,12 +1018,27 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                                 aria-label="Country: activate to sort column ascending" >
                                                                                 {t("Libellés")}
                                                                             </th>
-                                                                            <th colSpan={labelTable.length} className="sorting" tabIndex="0"
-                                                                                aria-controls="kt_table_1"
-                                                                                style={{textAlign: "center"}}
-                                                                                aria-label="Country: activate to sort column ascending">
-                                                                                {t("Institutions")}
-                                                                            </th>
+                                                                            {
+                                                                                props.plan === "MACRO" ? (
+                                                                                    <th colSpan={labelTable.length} className="sorting" tabIndex="0"
+                                                                                        aria-controls="kt_table_1"
+                                                                                        style={{textAlign: "center"}}
+                                                                                        aria-label="Country: activate to sort column ascending">
+                                                                                        {t("Institutions")}
+                                                                                    </th>
+                                                                                ) : null
+                                                                            }
+                                                                            {
+                                                                                props.plan === "PRO" ? (
+                                                                                    <th colSpan={labelTable.length} className="sorting" tabIndex="0"
+                                                                                        aria-controls="kt_table_1"
+                                                                                        style={{textAlign: "center"}}
+                                                                                        aria-label="Country: activate to sort column ascending">
+                                                                                        {t("Agences")}
+                                                                                    </th>
+                                                                                ) : null
+                                                                            }
+
                                                                         </tr>
                                                                         <tr role="row">
 
@@ -1197,7 +1212,16 @@ const ClaimReportingUemoaHeight = (props) => {
                                                                         <tfoot>
                                                                         <tr>
                                                                             <th colSpan={2}>{t("Libellés")}</th>
-                                                                            <th colSpan={labelTable.length} style={{textAlign: "center"}}>{t("Institutions")}</th>
+                                                                            {
+                                                                                props.plan === "MACRO" ? (
+                                                                                    <th colSpan={labelTable.length} style={{textAlign: "center"}}>{t("Institutions")}</th>
+                                                                                ) : null
+                                                                            }
+                                                                            {
+                                                                                props.plan === "PRO" ? (
+                                                                                    <th colSpan={labelTable.length} style={{textAlign: "center"}}>{t("Agences")}</th>
+                                                                                ) : null
+                                                                            }
                                                                         </tr>
                                                                         </tfoot>
                                                                     </table>
