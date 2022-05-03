@@ -567,7 +567,7 @@ const ConfirmClaimAddModal = props => {
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder={componentData ? componentData.params.fr.ville_placeholder.value : ""}
-                                                            value={data.ville === null ? "" : data.ville}
+                                                            value={data.ville}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
                                                         {
