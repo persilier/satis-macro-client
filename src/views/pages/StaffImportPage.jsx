@@ -38,6 +38,7 @@ const StaffImportPage = (props) => {
     const optionFour = 0;
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
+    const [errorFile, setErrorFile] = useState([])
     const [startRequest, setStartRequest] = useState(false);
     const [fileName, setFileName] = useState("");
 
@@ -85,18 +86,41 @@ const StaffImportPage = (props) => {
             setStartRequest(true);
             if (verifyTokenExpire()) {
                 await axios.post(endpoint, formatFormData(data))
-                    .then(() => {
+                    .then((response) => {
                         setStartRequest(false);
-                        setFileName("");
                         setError(defaultError);
-                        setData(defaultData);
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
+                        if (response.data.status) {
+                            setFileName("");
+                            setData(defaultData);
+                            if(response.data["errors"] && response.data["errors"].length) {
+                                setErrorFile(response.data["errors"]);
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
+                            } else
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
+                        } else {
+                            if(response.data["errors"] && response.data["errors"].length) {
+                                setErrorFile(response.data["errors"]);
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
+                            } else
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
+                        }
+/*                        setData(defaultData);
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));*/
                     })
                     .catch(({response}) => {
                         console.log(response.data);
                         setStartRequest(false);
-                        setError({...defaultError, ...response.data.error});
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setFileName("");
+                            setErrorFile(response.data["errors"]);
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
+                        }
+                        else if (response.data.code === 422) {
+                            setError({...defaultError, ...response.data.error});
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                        }
+                        else
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                     })
                 ;
             }
@@ -198,7 +222,7 @@ const StaffImportPage = (props) => {
                                                         <input
                                                             id="senderID"
                                                             type="file"
-                                                            className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                            className={error.file.length || errorFile.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder={t("Veuiller choisier le fichier")}
                                                             value={fileName}
                                                             onChange={(e) => handleFileChange(e)}
@@ -212,6 +236,32 @@ const StaffImportPage = (props) => {
                                                                 ))
                                                             ) : null
                                                         }
+
+                                                        {
+                                                            errorFile.length ? (
+                                                                errorFile.map((element, index) => (
+                                                                    element.messages ? (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {
+                                                                                Object.keys(element.messages).map((message, idx) => (
+                                                                                    message.length ? (
+                                                                                        element.messages[message].map((error, id) => {
+                                                                                            return (
+                                                                                                <>
+                                                                                                    {(" " + (idx === 0 ? t("ligne ") + element.line + " - " : "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0") + error)}
+                                                                                                    <br/>
+                                                                                                </>
+                                                                                            )
+                                                                                        })
+                                                                                    ) :null
+                                                                                ))
+                                                                            }
+                                                                        </div>
+                                                                    ) : null
+                                                                ))
+                                                            ) : null
+                                                        }
+
                                                     </div>
                                                 </div>
                                             </div>

@@ -157,7 +157,9 @@ const UnitType = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newUnitTypes.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
@@ -188,8 +190,8 @@ const UnitType = (props) => {
             <tr key={index} role="row" className="odd">
                 {console.log("unitType:", unitType)}
                 <td>{unitType.name ? unitType.name["fr"] : "-"}</td>
-                <td>{unitType.can_be_target ? t("Oui") : t("Non")}</td>
-                <td>{unitType.can_treat ? t("Oui") : t("Non")}</td>
+                <td>{unitType.can_be_target == 1 ? t("Oui") : t("Non")}</td>
+                <td>{unitType.can_treat == 1 ? t("Oui") : t("Non")}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : "-"}</td>
                 <td>
                     {unitType.is_editable == 1 ? (

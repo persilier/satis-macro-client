@@ -59,13 +59,13 @@ const ImportFileForm = (props) => {
                     if (response.data.status) {
                         setName("");
                         setData(defaultData);
-                        if(response.data["errors"].length) {
+                        if(response.data["errors"] && response.data["errors"].length) {
                             setErrorFile(response.data["errors"]);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
                         } else
                             ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     } else {
-                        if(response.data["errors"].length) {
+                        if(response.data["errors"] && response.data["errors"].length) {
                             setErrorFile(response.data["errors"]);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
                         } else
@@ -74,7 +74,7 @@ const ImportFileForm = (props) => {
                 })
                 .catch(({response}) => {
                     setStartRequest(false);
-                    if(response.data["errors"].length) {
+                    if(response.data["errors"] && response.data["errors"].length) {
                         setErrorFile(response.data["errors"]);
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
                     }
