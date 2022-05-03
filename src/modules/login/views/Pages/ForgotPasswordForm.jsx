@@ -91,13 +91,13 @@ const ForgotPasswordForm = (props) => {
                 setStartRequestForgot(false);
                 setError(defaultError);
                 setGetTokenData(defaultData);
-                ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                ToastBottomEnd.fire(toastEditSuccessMessageConfig());
             })
             .catch(error => {
                 console.log(error.response.data.error, "error");
                 setStartRequestForgot(false);
                 setError({...defaultError,...error.response.data.error});
-                ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                ToastBottomEnd.fire(toastEditErrorMessageConfig());
             })
         ;
     };
@@ -137,6 +137,7 @@ const ForgotPasswordForm = (props) => {
                                  <i id="icon" className="fa fa-eye-slash" aria-hidden="true"
                                     onClick={(e) => onViewPassword(e)}></i>
                              </span>
+
                             <input
                                 id="password"
                                 className="form-control"
