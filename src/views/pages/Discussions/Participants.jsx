@@ -136,6 +136,7 @@ const Participants = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newContributor.slice(
@@ -143,7 +144,9 @@ const Participants = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newContributor.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

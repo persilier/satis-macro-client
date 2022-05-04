@@ -148,6 +148,7 @@ const Institution = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newInstitution.slice(
@@ -155,7 +156,9 @@ const Institution = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newInstitution.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

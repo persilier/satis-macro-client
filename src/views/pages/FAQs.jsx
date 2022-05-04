@@ -147,6 +147,7 @@ const FAQs = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newFaq.slice(
@@ -154,7 +155,9 @@ const FAQs = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newFaq.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

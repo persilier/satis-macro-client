@@ -144,6 +144,7 @@ const TreatmentPeriod = props => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newUnitTypes.slice(
@@ -151,7 +152,9 @@ const TreatmentPeriod = props => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newUnitTypes.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

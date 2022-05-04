@@ -181,6 +181,7 @@ const ConfigRapportAuto = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newRapport.slice(
@@ -188,7 +189,9 @@ const ConfigRapportAuto = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newRapport.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

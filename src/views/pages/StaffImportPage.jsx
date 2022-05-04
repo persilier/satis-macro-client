@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import axios from "axios";
-import {ToastBottomEnd} from "../components/Toast";
+import {ToastBottomEnd, ToastLongBottomEnd} from "../components/Toast";
 import {
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
@@ -94,13 +94,14 @@ const StaffImportPage = (props) => {
                             setData(defaultData);
                             if(response.data["errors"] && response.data["errors"].length) {
                                 setErrorFile(response.data["errors"]);
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
+                                ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
                             } else
                                 ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                         } else {
                             if(response.data["errors"] && response.data["errors"].length) {
                                 setErrorFile(response.data["errors"]);
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
+                                ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+
                             } else
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
                         }
@@ -113,7 +114,7 @@ const StaffImportPage = (props) => {
                         if(response.data["errors"] && response.data["errors"].length) {
                             setFileName("");
                             setErrorFile(response.data["errors"]);
-                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Le fichier contient") + " " + response.data["errors"].length + " " + t("erreurs. Veuillez avant de corriger les erreurs supprimer les lignes sans aucune erreur")));
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
                         }
                         else if (response.data.code === 422) {
                             setError({...defaultError, ...response.data.error});
