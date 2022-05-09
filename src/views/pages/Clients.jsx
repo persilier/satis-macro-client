@@ -286,26 +286,53 @@ const Clients = (props) => {
                         axios.delete(endPoint.destroy(accountId))
                             .then(response => {
                                 const newClient = [...clients];
-                                // newClient.splice(index, 1);
-                                // setClients(newClient);
+                                newClient.splice(index, 1);
+                                setClients(newClient);
 
                                 if (showList.length > 1) {
-                                    setShowList(
-                                        newClient.slice(
-                                            getEndByPosition(activeNumberPage) - numberPerPage,
-                                            getEndByPosition(activeNumberPage)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage);
+
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get("/my/clients?page=" + (activeNumberPage) + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setClients(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            });
+
+                                    }
+
                                 } else {
-                                    setShowList(
-                                        newClient.slice(
-                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                            getEndByPosition(activeNumberPage - 1)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage - 1);
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get("/my/clients?page=" + (activeNumberPage - 1) + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setClients(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setActiveNumberPage(activeNumberPage - 1);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            });
+
+                                    }
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
-                                window.location.reload()
+                                //window.location.reload()
                             })
                             .catch(error => {
                                 if (error.response.data.error)

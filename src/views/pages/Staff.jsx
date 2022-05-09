@@ -291,19 +291,47 @@ const   Staff = (props) => {
                                 newStaffs.splice(index, 1);
                                 setStaffs(newStaffs);
                                 if (showList.length > 1) {
-                                    setShowList(
-                                        newStaffs.slice(
-                                            getEndByPosition(activeNumberPage) - numberPerPage,
-                                            getEndByPosition(activeNumberPage)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage);
+
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get(endPoint.list + "?page=" + activeNumberPage + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setStaffs(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            })
+                                        ;
+                                    }
                                 } else {
-                                    setShowList(
-                                        newStaffs.slice(
-                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                            getEndByPosition(activeNumberPage - 1)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage - 1);
+
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get(endPoint.list + "?page=" + activeNumberPage - 1 + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setStaffs(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            })
+                                        ;
+                                    }
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })

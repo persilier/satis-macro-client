@@ -54,15 +54,18 @@ const FilialeInstitutionForm = (props) => {
             axios.get(appConfig.apiDomaine + `/my/institutions`)
                 .then(response => {
                     const newInstitution = {
-                        name: response.data && response.data.institution ? response.data.institution.name : "",
-                        acronyme: response.data && response.data.institution ? response.data.institution.acronyme : "",
-                        iso_code: response.data && response.data.institution ? response.data.institution.iso_code : "",
-                        country_id: response.data && response.data.institution ? response.data.institution.country_id : "",
-                        logo: response.data && response.data.institution ? response.data.institution.logo : ""
+                        name: response.data.institution?.name ?? "",
+                        acronyme: response.data.institution?.acronyme ?? "",
+                        iso_code: response.data.institution?.iso_code ?? "",
+                        country_id: response.data.institution?.country_id ?? "",
+                        logo: response.data.institution?.logo ?? ""
                     };
-                    setCountry({label: response.data && response.data.institution ? response.data.institution.country.name :"", value: response.data && response.data.institution ? response.data.institution.country.id : "" });
-                    setCountries(formatSelectOption(response.data ? response.data.countries : [], 'name', null, 'id'));
+                    setCountry(response.data.institution?.country ? {label: response.data.institution.country?.name  ?? "", value: response.data.institution.country?.id ?? "" } : null);
+                    setCountries(formatSelectOption(response.data?.countries ?? [], 'name', null, 'id'));
                     setData(newInstitution);
+                })
+                .catch(error => {
+                    console.log("Something Wrong");
                 })
             ;
         }

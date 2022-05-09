@@ -3,10 +3,10 @@ import axios from "axios";
 import {
     Link,
 } from "react-router-dom";
-import {ToastBottomEnd} from "../Toast";
+import {ToastBottomEnd, ToastLongBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import InputRequire from "../InputRequire";
@@ -71,6 +71,7 @@ const ImportClientForm = (props) => {
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
+    const [errorFile, setErrorFile] = useState([])
     const [startRequest, setStartRequest] = useState(false);
 
     const onChangeFile = (e) => {
@@ -114,13 +115,33 @@ const ImportClientForm = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+                    if (response.data.status) {
+                        setData(defaultData);
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setErrorFile(response.data["errors"]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
+                    } else {
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setErrorFile(response.data["errors"]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
+                    }
                 })
-                .catch(error => {
+                .catch(response => {
                     setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                    if(response.data["errors"] && response.data["errors"].length) {
+                        setErrorFile(response.data["errors"]);
+                        ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                    }
+                    else if (response.data.code === 422) {
+                        setError({...defaultError, ...response.data.error});
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                    }
+                    else
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                 })
             ;
         }
@@ -248,7 +269,7 @@ const ImportClientForm = (props) => {
                                                 <input
                                                     id="file"
                                                     type="file"
-                                                    className={error.file.length ? "form-control is-invalid" : "form-control"}
+                                                    className={error.file.length || errorFile.length ? "form-control is-invalid" : "form-control"}
                                                     placeholder={t("Veuillez télécharger le fichier excel")}
                                                     onChange={(e) => onChangeFile(e)}
                                                 />
@@ -261,6 +282,33 @@ const ImportClientForm = (props) => {
                                                         ))
                                                     ) : null
                                                 }
+
+                                                {
+                                                    /*{index + 1}-  {error}*/
+                                                    errorFile.length ? (
+                                                        errorFile.map((element, index) => (
+                                                            element.messages ? (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {
+                                                                        Object.keys(element.messages).map((message, idx) => (
+                                                                            message.length ? (
+                                                                                element.messages[message].map((error, id) => {
+                                                                                    return (
+                                                                                        <>
+                                                                                            {(" " + (idx === 0 ? t("ligne ") + element.line + " - " : "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0") + error)}
+                                                                                            <br/>
+                                                                                        </>
+                                                                                    )
+                                                                                })
+                                                                            ) :null
+                                                                        ))
+                                                                    }
+                                                                </div>
+                                                            ) : null
+                                                        ))
+                                                    ) : null
+                                                }
+
                                             </div>
                                         </div>
 

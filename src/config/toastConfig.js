@@ -13,6 +13,18 @@ export const toastBottomEndConfig =  {
     }
 };
 
+export const toastLongBottomEndConfig =  {
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 9000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+};
+
 export const toastTopEndConfig =  {
     toast: true,
     position: 'top-end',

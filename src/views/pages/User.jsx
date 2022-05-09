@@ -32,6 +32,7 @@ const User = (props) => {
 
     const [load, setLoad] = useState(true);
     const [users, setUsers] = useState([]);
+    const [usersFilter, setUsersFilter] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -56,6 +57,7 @@ const User = (props) => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setUsers(response.data);
+                    setUsersFilter([]);
                     console.log(response.data)
                     setLoad(false);
                 })
@@ -84,20 +86,28 @@ const User = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
-        } else {
-            setNumberPage(forceRound(users.length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(users.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/numberPerPage));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, numberPerPage));
             setActiveNumberPage(1);
+            setUsersFilter(filterShowListBySearchValue(e.target.value.toLowerCase()));
+        } else {
+            setNumberPage(forceRound(users.length/numberPerPage));
+            setShowList(users.slice(0, numberPerPage));
+            setActiveNumberPage(1);
+            setUsersFilter([]);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(users.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(users.length/parseInt(e.target.value)));
+        if (usersFilter.length > 0) {
+            setShowList(usersFilter.slice(0, parseInt(e.target.value)));
+            setNumberPage(forceRound(usersFilter.length/parseInt(e.target.value)));
+        } else {
+            setShowList(users.slice(0, parseInt(e.target.value)));
+            setNumberPage(forceRound(users.length/parseInt(e.target.value)));
+        }
     };
 
     const getEndByPosition = (position) => {
@@ -111,20 +121,34 @@ const User = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(users.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        if (usersFilter.length > 0) {
+            setShowList(usersFilter.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        } else {
+            setShowList(users.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        }
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
-            setShowList(
-                users.slice(
-                    getEndByPosition(
-                        activeNumberPage + 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage + 1)
-                )
-            );
+            if (usersFilter.length > 0) {
+                setShowList(
+                    usersFilter.slice(
+                        getEndByPosition(
+                            activeNumberPage + 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage + 1)
+                    )
+                );
+            } else {
+                setShowList(
+                    users.slice(
+                        getEndByPosition(
+                            activeNumberPage + 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage + 1)
+                    )
+                );
+            }
         }
     };
 
@@ -132,12 +156,21 @@ const User = (props) => {
         e.preventDefault();
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
-            setShowList(
-                users.slice(
-                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage - 1)
-                )
-            );
+            if (usersFilter.length > 0) {
+                setShowList(
+                    usersFilter.slice(
+                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage - 1)
+                    )
+                );
+            } else {
+                setShowList(
+                    users.slice(
+                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage - 1)
+                    )
+                );
+            }
         }
     };
 
@@ -178,23 +211,34 @@ const User = (props) => {
                     else if(props.plan === "PRO")
                         endpoint = `${appConfig.apiDomaine}/my/users/${user.id}/enabled-desabled`;
 
-                    if (verifyTokenExpire()) {
+/*                    if (verifyTokenExpire()) {
                         await axios.put(endpoint)
-                            .then(response => {
+                            .then(response => {*/
+
                                 const newUsers = [...users];
-                                const idx = activeNumberPage > 1 ? ((activeNumberPage - 1) * numberPerPage) + index : index
-                                newUsers[idx].disabled_at = newUsers[idx].disabled_at === null ? true : null;
+                                const newUsersFilter = [...usersFilter];
+                                const idx = activeNumberPage > 1 ? ((activeNumberPage - 1) * numberPerPage) + index : index;
+                                if (usersFilter.length > 0) {
+                                    newUsersFilter[idx].disabled_at = newUsersFilter[idx].disabled_at === null ? true : null;
+                                }
+                                else
+                                    newUsers[idx].disabled_at = newUsers[idx].disabled_at === null ? true : null;
                                 document.getElementById(`user-spinner-${user.id}`).style.display = "none";
                                 document.getElementById(`user-${user.id}`).style.display = "block";
                                 document.getElementById(`user-edit-${user.id}`).style.display = "block";
-                                setUsers(newUsers);
+                                if (usersFilter.length > 0)
+                                    setUsersFilter(newUsersFilter);
+                                else {
+                                    setUsers(newUsers);
+                                    setUsersFilter([]);
+                                }
                                 ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'opération")));
-                            })
+/*                            })
                             .catch(error => {
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'opération")));
                             })
                         ;
-                    }
+                    }*/
                 }
             })
         ;
