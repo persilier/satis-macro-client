@@ -25,6 +25,7 @@ import WithoutCode from "../../views/components/WithoutCode";
 import ConfirmClientSaveForm from "../../views/components/Clients/ConfirmClientSaveForm";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import Loader from "../../views/components/Loader";
 
 const endPointConfig = {
     PRO: {
@@ -107,6 +108,12 @@ const HoldingClientForm = (props) => {
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
     const [accountType, setAccountTypes] = useState(undefined);
+    const [accounts, setAccounts] = useState([]);
+    const [account, setAccount] = useState(null);
+    const [disabledInputTel, setDisabledInputTel] = useState(false);
+    const [disabledInputEmail, setDisabledInputEmail] = useState(false);
+    const [clientCash, setClientCash] = useState({searchInputValue: "", clients: []});
+    const [tag, setTag] = useState({name: "", label: "", className: "", show: false});
     const [categoryClient, setCategoryClient] = useState(undefined);
     const [type, setType] = useState([]);
     const [category, setCategory] = useState([]);
@@ -116,6 +123,11 @@ const HoldingClientForm = (props) => {
     const [institution, setInstitution] = useState([]);
     const [disableInput, setDisableInput] = useState(false);
     const [foundIdentity, setFoundIdentity] = useState(undefined);
+    const [searchList, setSearchList] = useState([]);
+    const [showSearchResult, setShowSearchResult] = useState(false);
+    const [searchInputValue, setSearchInputValue] = useState("");
+    const [startSearch, setStartSearch] = useState(false);
+    const [disabledInput, setDisabledInput] = useState(false);
 
 
     useEffect(() => {
@@ -174,6 +186,187 @@ const HoldingClientForm = (props) => {
             }
         }
     }, []);
+
+        const handleCustomerChange = (e, selected) => {
+        const newData = {...data};
+        setAccount(null);
+        newData.account_targeted_id = "";
+        newData.account_number = "";
+        setAccounts(formatSelectOption(selected.accounts, "number", false));
+        newData.firstname = selected.identity.firstname;
+        newData.lastname = selected.identity.lastname;
+        newData.sexe = selected.identity.sexe;
+        newData.telephone = selected.identity.telephone?selected.identity.telephone:[];
+        newData.email = selected.identity.email ? selected.identity.email : [];
+        newData.ville = selected.identity.ville;
+        newData.claimer_id = selected.identity.id;
+        setShowSearchResult(false);
+        setSearchList([]);
+        setData(newData);
+
+        if (selected.identity?.telephone && Array.isArray(selected.identity.telephone) && selected.identity.telephone.length > 0 ){
+            setDisabledInputTel(true)
+        }
+
+        if (selected.identity?.email && Array.isArray(selected.identity.email) && selected.identity.email.length > 0 ){
+            setDisabledInputEmail(true)
+        }
+    };
+
+
+    const blur = () => {
+        setTimeout(function () {
+            setShowSearchResult(false);
+        }, 500);
+    };
+
+    const startSearchClient = async () => {
+        setStartSearch(true);
+        const value = props.plan === "PRO" ? (props.currentUserInstitution) : (verifyPermission(props.userPermissions, 'store-claim-against-my-institution') ? props.currentUserInstitution : institution.value);
+        if (searchInputValue === clientCash.searchInputValue) {
+            setStartSearch(false);
+            setSearchList(clientCash.clients);
+        } else {
+            if (tag.name.length && tag.show) {
+                if (tag.name === "full_name" && isNaN(searchInputValue)) {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                console.log(data)
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else if (tag.name === "telephone" && !isNaN(searchInputValue)) {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                                console.log(data);
+                                console.log(searchInputValue);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else if (tag.name === "account_number") {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=account_number&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                                console.log(data);
+                                console.log(searchInputValue);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else {
+                    setStartSearch(false);
+                    setSearchList([]);
+                }
+            }
+            else {
+                if (verifyTokenExpire()) {
+                    await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                        .then(({data}) => {
+                            setStartSearch(false);
+                            setShowSearchResult(true);
+                            if (data.length)
+                                setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                            setSearchList(data);
+                            console.log(data);
+                            console.log(searchInputValue);
+                        })
+                        .catch(({response}) => {
+                            setStartSearch(false);
+                            console.log("Something is wrong");
+                        })
+                    ;
+                }
+            }
+        }
+    };
+
+    const onClickTag = (e, name, label, className) => {
+        e.preventDefault();
+        const newTag = {...tag};
+        newTag.name = name;
+        newTag.label = label;
+        newTag.className = className;
+        newTag.show = true;
+        setTag(newTag);
+    }
+
+    const onCloseTag = () => {
+        const newTag = {...tag};
+        newTag.name = "";
+        newTag.label = "";
+        newTag.className = "";
+        newTag.show = false;
+        setTag(newTag)
+    }
+
+    const searchClient = () => {
+        console.log(searchInputValue)
+        if (searchInputValue.length) {
+            if (verifyPermission(props.userPermissions, "store-claim-against-any-institution")) {
+                if (institution) {
+                    startSearchClient();
+                } else
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectionner une institution")))
+            } else if (verifyPermission(props.userPermissions, "store-client-from-my-institution")) {
+                console.log("je suis rentré")
+                startSearchClient();
+            }
+
+        } else {
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez renseigner le champ de recherche")))
+        }
+    };
+
+    const handleDisabledInputChange = (e) => {
+        setSearchList([]);
+        setShowSearchResult(false);
+        setSearchInputValue("");
+        const newData = {...data};
+        setAccount(null);
+        setAccounts([]);
+        newData.firstname = "";
+        newData.lastname = "";
+        newData.sexe = "";
+        newData.telephone = [];
+        newData.email = [];
+        newData.ville = "";
+        newData.claimer_id = "";
+        newData.account_targeted_id = "";
+        newData.account_number = "";
+        setData(newData);
+        setDisabledInput(e.target.checked);
+    };
 
     const onChangeAccountType = (selected) => {
         const newData = {...data};
@@ -299,7 +492,7 @@ const HoldingClientForm = (props) => {
         let newData = {...data};
         if (verifyTokenExpire()) {
             if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') || verifyPermission(props.userPermissions, 'update-client-from-any-institution')))
-                delete newData.institution_id;
+                delete newData.institution_id ;
 
             if (id) {
                 axios.put(endPoint.update(`${id}`), newData)
@@ -424,6 +617,7 @@ const HoldingClientForm = (props) => {
                                             <h5 className="kt-section__title kt-section__title-lg">{t("Identité")}:</h5>
                                             {
                                                 !id ?
+                                                    <>
                                                     <div className="form-group row">
                                                         {
                                                             verifyPermission(props.userPermissions, "store-client-from-any-institution") ?
@@ -460,10 +654,10 @@ const HoldingClientForm = (props) => {
                                                                 </div>
                                                                 : null
                                                         }
-                                                        <div
+                                                       {/* <div
                                                             className={error.client_id.length ? "col validated" : "col"}>
                                                             <label htmlFor="exampleSelect1"> {t("Client")}</label>
-                                                            {/*{console.log(nameClient,"NAME")}*/}
+                                                            {console.log(nameClient,"NAME")}
                                                             {nameClient ? (
                                                                 <Select
 
@@ -488,9 +682,165 @@ const HoldingClientForm = (props) => {
                                                                     ))
                                                                 ) : null
                                                             }
+                                                        </div>*/}
+
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <div className={"col d-flex align-items-center mt-4"}>
+                                                            <label className="kt-checkbox">
+
+                                                                <input id="is_client" type="checkbox"
+                                                                       value={disabledInput}
+                                                                       onChange={handleDisabledInputChange}/>
+                                                                {t("Le client est-il déjà enregistré")} ?<span/>
+                                                            </label>
+                                                        </div>
+
+                                                        <div className={"col"}>
+
+                                                            <div className="row"
+                                                                 onFocus={e => setShowSearchResult(true)}
+                                                                 onBlur={e => blur()}>
+                                                                <div className="col d-flex">
+
+                                                                    {
+                                                                        tag.show && tag.name.length ? (
+                                                                            <span className={"btn btn-label-" + tag.className}
+                                                                                  style={{
+
+                                                                                      marginTop: "2rem",
+                                                                                      borderBottomRightRadius: "0px",
+                                                                                      borderTopRightRadius: "0px",
+                                                                                      whiteSpace: "nowrap",
+                                                                                  }}>
+                                                                                        <div>
+                                                                                    {tag.label}
+                                                                                            <button type="button" onClick={e => onCloseTag()} className="btn btn-icon" style={{
+                                                                                                height: "50%",
+                                                                                                width: "20%",
+                                                                                            }}>
+                                                                                        <i className="flaticon2-cross" style={{
+                                                                                            fontSize: "0.8em",
+                                                                                        }}/>
+                                                                                    </button>
+
+                                                                                </div>
+                                                                                    </span>
+                                                                        ) : null
+                                                                    }
+
+
+                                                                    <input
+                                                                        style={{
+                                                                            marginTop: "2rem",
+                                                                            borderBottomRightRadius: "0px",
+                                                                            borderTopRightRadius: "0px"
+                                                                        }}
+                                                                        type="text"
+                                                                        value={searchInputValue}
+                                                                        onChange={e => setSearchInputValue(e.target.value)}
+                                                                        placeholder={t("Rechercher un client") + "..."}
+                                                                        className="form-control"
+                                                                        disabled={!disabledInput}
+                                                                    />
+
+                                                                    <button
+                                                                        style={{
+                                                                            marginTop: "2rem",
+                                                                            borderTopLeftRadius: "0px",
+                                                                            borderBottomLeftRadius: "0px"
+                                                                        }}
+                                                                        type="button"
+                                                                        className="btn btn-primary btn-icon"
+                                                                        disabled={!disabledInput || startSearch}
+                                                                        onClick={(e) => searchClient()}
+                                                                    >
+                                                                        <i className="fa fa-search"/>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            {
+                                                                disabledInput ? (
+                                                                    searchList.length ? (
+                                                                        <div className="row">
+                                                                            <div
+                                                                                className={showSearchResult ? `dropdown-menu show` : `dropdown-menu`}
+                                                                                aria-labelledby="dropdownMenuButton"
+                                                                                x-placement="bottom-start"
+                                                                                style={{
+                                                                                    width: "100%",
+                                                                                    position: "absolute",
+                                                                                    willChange: "transform",
+                                                                                    top: "33px",
+                                                                                    left: "0px",
+                                                                                    transform: "translate3d(0px, 38px, 0px)",
+                                                                                    zIndex: "1"
+                                                                                }}>
+                                                                                <span className="d-flex justify-content-center"><em>{("---" + t("Type de recherche") + "---")}</em></span>
+                                                                                <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                                    <button className="btn btn-outline-primary" onClick={(e) => onClickTag(e,"full_name", t("Nom/Prénom"), "primary")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                    <button className="btn btn-outline-primary" onClick={(e) => onClickTag(e,"telephone", t("Numéro de téléphone"), "primary")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                </div>
+                                                                                <span className="d-flex justify-content-center mb-2"><em>{"---"+t("Fin")+"---"}</em></span>
+                                                                                {
+                                                                                    searchList.map((el, index) => (
+                                                                                        <span
+                                                                                            onClick={(e) => handleCustomerChange(e, el)}
+                                                                                            key={index}
+                                                                                            className="dropdown-item"
+                                                                                            style={{cursor: "pointer"}}
+                                                                                        >
+                                                                                                    <strong>{el.fullName}</strong>
+                                                                                            </span>
+                                                                                    ))
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="row">
+                                                                            <div
+                                                                                className={showSearchResult ? `dropdown-menu show` : `dropdown-menu`}
+                                                                                aria-labelledby="dropdownMenuButton"
+                                                                                x-placement="bottom-start"
+                                                                                style={{
+                                                                                    width: "100%",
+                                                                                    position: "absolute",
+                                                                                    willChange: "transform",
+                                                                                    top: "33px",
+                                                                                    left: "0px",
+                                                                                    transform: "translate3d(0px, 38px, 0px)",
+                                                                                    zIndex: "1"
+                                                                                }}>
+
+                                                                                {
+                                                                                    startSearch ? (
+                                                                                        <span
+                                                                                            className={"mt-5 mb-5"}><Loader/></span>
+                                                                                    ) : (
+                                                                                        <>
+                                                                                            <span className="d-flex justify-content-center"><em>{"--- "+ t("Type de recherche") +" ---"}</em></span>
+                                                                                            <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                                                <button className="btn btn-outline-primary" onClick={(e) => onClickTag(e,"full_name", t("Nom/Prénom"), "primary")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                                <button className="btn btn-outline-primary" onClick={(e) => onClickTag(e,"telephone", t("Numéro de téléphone"), "primary")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                            </div>
+                                                                                            <span className="d-flex justify-content-center mb-2"><em>{"--- "+t("Fin")+" ---"}</em></span>
+                                                                                            <span
+                                                                                                className="d-flex justify-content-center"><strong>{t("Pas de resultat")}</strong></span>
+
+                                                                                        </>
+                                                                                    )
+                                                                                }
+
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                ) : null
+                                                            }
                                                         </div>
                                                     </div>
-                                                    : null
+                                                    </>
+                                                : null
                                             }
 
                                             <div className="form-group row">

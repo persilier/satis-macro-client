@@ -62,6 +62,7 @@ const FilialeInstitutionForm = (props) => {
                     };
                     setCountry({label: response.data && response.data.institution ? response.data.institution.country.name :"", value: response.data && response.data.institution ? response.data.institution.country.id : "" });
                     setCountries(formatSelectOption(response.data ? response.data.countries : [], 'name', null, 'id'));
+                   console.log("institutions", newInstitution)
                     setData(newInstitution);
                 })
             ;

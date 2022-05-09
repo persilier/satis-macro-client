@@ -144,6 +144,8 @@ const ClaimAdd = props => {
     const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
+    const [disabledInputTel, setDisabledInputTel] = useState(false);
+    const [disabledInputEmail, setDisabledInputEmail] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
@@ -333,6 +335,14 @@ const ClaimAdd = props => {
         setShowSearchResult(false);
         setSearchList([]);
         setData(newData);
+
+        if (selected.identity?.telephone && Array.isArray(selected.identity.telephone) && selected.identity.telephone.length > 0 ){
+            setDisabledInputTel(true)
+        }
+
+        if (selected.identity?.email && Array.isArray(selected.identity.email) && selected.identity.email.length > 0 ){
+            setDisabledInputEmail(true)
+        }
     };
 
     const onChangeAccount = selected => {
@@ -623,7 +633,7 @@ const ClaimAdd = props => {
                     startSearchClient();
                 } else
 
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectioner une institution")))
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectionner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
                 startSearchClient();
             }
@@ -1100,7 +1110,7 @@ const ClaimAdd = props => {
                                                             <label
                                                                 htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
                                                                 <InputRequire/></label>
-                                                            <TagsInput disabled={disabledInput} value={data.telephone}
+                                                            <TagsInput disabled={disabledInputTel } value={data.telephone}
                                                                        onChange={onChangeTelephone} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.telephone_placeholder.value : ""
@@ -1118,9 +1128,9 @@ const ClaimAdd = props => {
 
                                                         <div className={error.email.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel ?
+                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel && responseChannel.value === "email" ?
                                                                 <InputRequire/> : null}</label>
-                                                            <TagsInput disabled={disabledInput} value={data.email}
+                                                            <TagsInput disabled={disabledInputEmail} value={data.email}
                                                                        onChange={onChangeEmail} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.email_placeholder.value : ""
