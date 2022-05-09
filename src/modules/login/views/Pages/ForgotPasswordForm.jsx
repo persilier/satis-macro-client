@@ -70,14 +70,23 @@ const ForgotPasswordForm = (props) => {
     };
     const onViewPassword = (e) => {
         let input = document.getElementById("password");
-        let inputConfirm = document.getElementById("password_confirm");
-        let icon = document.getElementById("icon");
-        if (input.type === "password"||inputConfirm.type === "password") {
+        let icon = document.getElementById("icon_password");
+        if (input.type === "password") {
             input.type = "text";
-            inputConfirm.type = "text";
             icon.className = "fa fa-eye"
         } else {
             input.type = "password";
+            icon.className = "fa fa-eye-slash"
+        }
+    };
+
+    const onViewPasswordConfirm = (e) => {
+        let inputConfirm = document.getElementById("password_confirm");
+        let icon = document.getElementById("icon_confirm");
+        if (inputConfirm.type === "password") {
+            inputConfirm.type = "text";
+            icon.className = "fa fa-eye"
+        } else {
             inputConfirm.type = "password";
             icon.className = "fa fa-eye-slash"
         }
@@ -105,15 +114,15 @@ const ForgotPasswordForm = (props) => {
     return (
         getTokenData.token === props.token ?
             <div>
-                <div className="kt-login__form "
-                     style={{paddingTop: "100px"}}>
+                <div className="kt-login__form"
+                     style={{paddingTop: "19vh", width: "40vw"}}>
                     <div className="kt-login__head">
                         <h3 className="kt-login__title">{t("Réinitialisation du Mot de Passe")} </h3>
                         <div className="kt-login__desc text-center">{t("Entrer votre nouveau mot de passe")}:
                         </div>
                     </div>
                     <form className="kt-form" id="kt_login__form" style={{marginBottom: '90px'}}>
-                        <div className="form-group row input_container">
+                        <div className="form-group row">
                             <input
                                 className="form-control"
                                 type="text"
@@ -122,7 +131,8 @@ const ForgotPasswordForm = (props) => {
                                 style={{display: 'none'}}
                             />
                         </div>
-                        <div className="form-group row input_container">
+
+                        <div className="form-group row">
                             <input
                                 className="form-control"
                                 type="text"
@@ -131,21 +141,21 @@ const ForgotPasswordForm = (props) => {
                                 style={{display: 'none'}}
                             />
                         </div>
-                        <div
-                            className={error.password.length ? "form-group row input_container validated" : "form-group row input_container"}>
-                             <span className="input_icon">
-                                 <i id="icon" className="fa fa-eye-slash" aria-hidden="true"
-                                    onClick={(e) => onViewPassword(e)}></i>
-                             </span>
 
+                        <div className={error.password.length ? "form-group row input_container validated" : "form-group row input_container"}>
+                            <span className="input_icon">
+                                <i id="icon_password" className="fa fa-eye-slash" aria-hidden="true" onClick={(e) => onViewPassword(e)}/>
+                            </span>
                             <input
                                 id="password"
-                                className="form-control"
+                                className={"form-control"}
                                 type="password"
                                 placeholder={t("Nouveau mot de passe")}
+                                name="password"
                                 value={getTokenData.password}
                                 onChange={e => onChangePassword(e)}
                             />
+
                             {
                                 error.password.length ? (
                                     <div className="invalid-feedback">
@@ -153,9 +163,13 @@ const ForgotPasswordForm = (props) => {
                                     </div>
                                 ) : null
                             }
-                        </div>
-                        <div className="form-group row input_container">
 
+                        </div>
+
+                        <div className={error.password.length ? "form-group row input_container validated" : "form-group row input_container"}>
+                            <span className="input_icon">
+                                <i id="icon_confirm" className="fa fa-eye-slash" aria-hidden="true" onClick={(e) => onViewPasswordConfirm(e)}/>
+                            </span>
                             <input
                                 id="password_confirm"
                                 className="form-control"
@@ -164,7 +178,17 @@ const ForgotPasswordForm = (props) => {
                                 value={getTokenData.password_confirmation}
                                 onChange={e => onChangePasswordConfirm(e)}
                             />
+
+                            {
+                                error.password.length ? (
+                                    <div className="invalid-feedback">
+                                        {error.password}
+                                    </div>
+                                ) : null
+                            }
+
                         </div>
+
                         <div className="kt-login__actions">
 
                             {
