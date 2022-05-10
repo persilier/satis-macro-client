@@ -27,6 +27,7 @@ import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import ClaimCategory from "./ClaimCategory";
 
 const endPointConfig = {
     PRO: {
@@ -112,6 +113,7 @@ const ClaimAdd = props => {
         account_targeted_id: [],
         account_number: [],
         claim_object_id: [],
+        claim_category : [],
         request_channel_slug: [],
         response_channel_slug: [],
         claimer_expectation: [],
@@ -144,6 +146,8 @@ const ClaimAdd = props => {
     const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
+    const [disabledInputTel, setDisabledInputTel] = useState(false);
+    const [disabledInputEmail, setDisabledInputEmail] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
@@ -333,6 +337,14 @@ const ClaimAdd = props => {
         setShowSearchResult(false);
         setSearchList([]);
         setData(newData);
+
+        if (selected.identity?.telephone && Array.isArray(selected.identity.telephone) && selected.identity.telephone.length > 0 ){
+            setDisabledInputTel(true)
+        }
+
+        if (selected.identity?.email && Array.isArray(selected.identity.email) && selected.identity.email.length > 0 ){
+            setDisabledInputEmail(true)
+        }
     };
 
     const onChangeAccount = selected => {
@@ -623,7 +635,7 @@ const ClaimAdd = props => {
                     startSearchClient();
                 } else
 
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectioner une institution")))
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectionner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
                 startSearchClient();
             }
@@ -715,7 +727,7 @@ const ClaimAdd = props => {
                                 i++;
                             }
                         }
-                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors, claim_category: claimCategory === null ? ["Le champ claim_category est obligatoire."] : []});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     }
                 })
@@ -1100,7 +1112,7 @@ const ClaimAdd = props => {
                                                             <label
                                                                 htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
                                                                 <InputRequire/></label>
-                                                            <TagsInput disabled={disabledInput} value={data.telephone}
+                                                            <TagsInput disabled={disabledInputTel } value={data.telephone}
                                                                        onChange={onChangeTelephone} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.telephone_placeholder.value : ""
@@ -1118,9 +1130,9 @@ const ClaimAdd = props => {
 
                                                         <div className={error.email.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel ?
+                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel && responseChannel.value === "email" ?
                                                                 <InputRequire/> : null}</label>
-                                                            <TagsInput disabled={disabledInput} value={data.email}
+                                                            <TagsInput disabled={disabledInputEmail} value={data.email}
                                                                        onChange={onChangeEmail} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.email_placeholder.value : ""
@@ -1269,7 +1281,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={"col"}>
+                                                        <div className={error.claim_category.length ? "col validated" : "col"}>
                                                             <label
                                                                 htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
                                                                 <InputRequire/></label>
@@ -1280,6 +1292,15 @@ const ClaimAdd = props => {
                                                                 onChange={onChangeClaimCategory}
                                                                 options={claimCategories}
                                                             />
+                                                            {
+                                                                error.claim_category.length ? (
+                                                                    error.claim_category.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
                                                         </div>
 
                                                         <div

@@ -364,7 +364,7 @@
     "Votre ville": "Your city",
     "Position": "Position",
     "Agent": "Staff",
-    "Modification d'un agent": "Modidication of a staff",
+    "Modification d'un agent": "Editing an staff",
     "Ajout d'un agent": "Add a staff",
     "Poste": "Position",
     "Veuillez selectionner le poste": "Please select the position",
@@ -412,7 +412,7 @@
     "Motif du rejet": "Reason for rejection",
     "Date de validation du traitement": "Treatment validation date",
     "Type Client": "Client Type",
-    "Modification de Type Client": "Modification of Customer Type",
+    "Modification de Type Client": "Changing Customer Type",
     "Ajout de Type Client": "Add Customer Type",
     "Le Nom": "The Name",
     "La Description": "The Description",
@@ -425,7 +425,7 @@
     "Message à communiquer au client": "Message to be communicated to the customer",
     "Responsable": "Manager",
     "Guichet": "Teller",
-    "Modification de type d'unité": "Modification of unit type",
+    "Modification de type d'unité": "Editing a unit type",
     "Ajout d'un type d'unité": "Add a unit type",
     "Peut - être visé par une réclamation ?": "Can be targeted by a claim?",
     "Peut résoudre une réclamation ?": "Can resolve a claim?",
@@ -1074,6 +1074,6 @@
     "Nombre de plaintes reçues par catégorie client (VIP ou Non VIP) sur la période": "Number of complaints received by customer category (VIP or Non VIP) over the period",
     "Points de service les plus concernés": "Most affected points of service",
     "Unité de traitement les plus solicité": "Most solicited treatment unit",
-    "Canaux les plus sollicités pour la réception des plaintes sur la période": "Most requested channels for receiving complaints during the period"
+    "Canaux les plus sollicités pour la réception des plaintes sur la période": "Most requested channels for receiving complaints during the period",
 
 }

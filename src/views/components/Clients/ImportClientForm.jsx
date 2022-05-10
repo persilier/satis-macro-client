@@ -60,9 +60,9 @@ const ImportClientForm = (props) => {
     const option2 = 0;
 
     const defaultData = {
-        file: "",
-        etat_update: "",
-        stop_identite_exist: "",
+        file: null,
+        etat_update: null,
+        stop_identite_exist: null,
     };
     const defaultError = {
         file: [],
@@ -129,6 +129,12 @@ const ImportClientForm = (props) => {
                         } else
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
                     }
+                    setData(defaultData);
+                    document.getElementById("etatupdatetrue").checked=0
+                    document.getElementById("etatupdatefalse").checked=0
+                    document.getElementById("stopidentitetrue").checked=0
+                    document.getElementById("stopidentitefalse").checked=0
+                    document.getElementById("file").value = null
                 })
                 .catch(response => {
                     setStartRequest(false);
@@ -195,6 +201,7 @@ const ImportClientForm = (props) => {
                                                         className={error.stop_identite_exist.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio3"
+                                                        id="stopidentitetrue"
                                                         value={option1}
                                                         onChange={(e) => onChangeOption(e)}
                                                     /> Oui
@@ -205,6 +212,7 @@ const ImportClientForm = (props) => {
                                                         className={error.stop_identite_exist.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio3"
+                                                        id="stopidentitefalse"
                                                         value={option2}
                                                         onChange={(e) => onChangeOption(e)}
                                                     /> Non
@@ -233,6 +241,7 @@ const ImportClientForm = (props) => {
                                                         className={error.etat_update.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio4"
+                                                        id="etatupdatetrue"
                                                         value={option1}
                                                         onChange={(e) => onChangeEtatOption(e)}
                                                     /> Oui
@@ -243,6 +252,7 @@ const ImportClientForm = (props) => {
                                                         className={error.etat_update.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio4"
+                                                        id="etatupdatefalse"
                                                         value={option2}
                                                         onChange={(e) => onChangeEtatOption(e)}
                                                     /> Non
@@ -269,7 +279,7 @@ const ImportClientForm = (props) => {
                                                 <input
                                                     id="file"
                                                     type="file"
-                                                    className={error.file.length || errorFile.length ? "form-control is-invalid" : "form-control"}
+                                                    className={error.file.length ? "form-control is-invalid" : "form-control"}
                                                     placeholder={t("Veuillez télécharger le fichier excel")}
                                                     onChange={(e) => onChangeFile(e)}
                                                 />

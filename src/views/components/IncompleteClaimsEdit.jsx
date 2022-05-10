@@ -114,6 +114,7 @@ const IncompleteClaimsEdit = props => {
         account_targeted_id: [],
         account_number: [],
         claim_object_id: [],
+        claim_category : [],
         request_channel_slug: [],
         response_channel_slug: [],
         claimer_expectation: [],
@@ -521,7 +522,7 @@ const IncompleteClaimsEdit = props => {
                                 i++;
                             }
                         }
-                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors,  claim_category: claimCategory === null ? ["Le champ claim_category est obligatoire."] : []});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     } else {
                         setStartRequest(false);
@@ -941,9 +942,9 @@ const IncompleteClaimsEdit = props => {
                                                         </div>
 
                                                         <div className="form-group row">
-                                                            <div className={"col"}>
+                                                            <div className={error.claim_category.length ? "col validated" : "col"}>
                                                                 <label
-                                                                    htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}</label>
+                                                                    htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}<InputRequire/> </label>
                                                                 <Select
                                                                     classNamePrefix="select"
                                                                     className="basic-single"
@@ -952,6 +953,15 @@ const IncompleteClaimsEdit = props => {
                                                                     onChange={onChangeClaimCategory}
                                                                     options={claimCategories}
                                                                 />
+                                                                {
+                                                                    error.claim_category.length ? (
+                                                                        error.claim_category.map((error, index) => (
+                                                                            <div key={index} className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
                                                             </div>
 
                                                             <div
