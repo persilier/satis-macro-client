@@ -211,9 +211,9 @@ const User = (props) => {
                     else if(props.plan === "PRO")
                         endpoint = `${appConfig.apiDomaine}/my/users/${user.id}/enabled-desabled`;
 
-/*                    if (verifyTokenExpire()) {
+                    if (verifyTokenExpire()) {
                         await axios.put(endpoint)
-                            .then(response => {*/
+                            .then(response => {
 
                                 const newUsers = [...users];
                                 const newUsersFilter = [...usersFilter];
@@ -233,12 +233,12 @@ const User = (props) => {
                                     setUsersFilter([]);
                                 }
                                 ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'opération")));
-/*                            })
+                            })
                             .catch(error => {
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'opération")));
                             })
                         ;
-                    }*/
+                    }
                 }
             })
         ;
