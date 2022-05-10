@@ -121,7 +121,6 @@ const HoldingClientForm = (props) => {
     const [client, setClient] = useState([]);
     const [institutionData, setInstitutionData] = useState(undefined);
     const [institution, setInstitution] = useState([]);
-    const [disableInput, setDisableInput] = useState(false);
     const [foundIdentity, setFoundIdentity] = useState(undefined);
     const [searchList, setSearchList] = useState([]);
     const [showSearchResult, setShowSearchResult] = useState(false);
@@ -190,8 +189,8 @@ const HoldingClientForm = (props) => {
         const handleCustomerChange = (e, selected) => {
         const newData = {...data};
         setAccount(null);
-        newData.account_targeted_id = "";
-        newData.account_number = "";
+        newData.account_type_id = "";
+        newData.number = [];
         setAccounts(formatSelectOption(selected.accounts, "number", false));
         newData.firstname = selected.identity.firstname;
         newData.lastname = selected.identity.lastname;
@@ -199,10 +198,16 @@ const HoldingClientForm = (props) => {
         newData.telephone = selected.identity.telephone?selected.identity.telephone:[];
         newData.email = selected.identity.email ? selected.identity.email : [];
         newData.ville = selected.identity.ville;
-        newData.claimer_id = selected.identity.id;
+        newData.client_id = selected.client_id;
+        newData.category_client_id = selected.category_client_id;
         setShowSearchResult(false);
         setSearchList([]);
         setData(newData);
+
+        setCategory({
+            value: selected.category_client_id ? selected.category_client_id : "",
+            label: selected.category_name ? JSON.parse(selected.category_name).fr : ""
+        });
 
         if (selected.identity?.telephone && Array.isArray(selected.identity.telephone) && selected.identity.telephone.length > 0 ){
             setDisabledInputTel(true)
@@ -360,10 +365,9 @@ const HoldingClientForm = (props) => {
         newData.sexe = "";
         newData.telephone = [];
         newData.email = [];
+        newData.client_id = "";
         newData.ville = "";
-        newData.claimer_id = "";
-        newData.account_targeted_id = "";
-        newData.account_number = "";
+        newData.category_client_id = "";
         setData(newData);
         setDisabledInput(e.target.checked);
     };
@@ -448,7 +452,7 @@ const HoldingClientForm = (props) => {
             newData.category_client_id = "";
         }
         setData(newData);
-        setDisableInput(false)
+        setDisabledInput(false)
     };
 
     const onChangeClient = (selected) => {
@@ -482,7 +486,7 @@ const HoldingClientForm = (props) => {
                 ;
             }
         }
-        setDisableInput(true)
+        setDisabledInput(true)
 
     };
 
@@ -854,7 +858,7 @@ const HoldingClientForm = (props) => {
                                                             value={category}
                                                             onChange={onChangeCategoryClient}
                                                             options={formatSelectOption(categoryClient, 'name', 'fr')}
-                                                            isDisabled={props.getDisable ? props.getDisable : disableInput}
+                                                            isDisabled={props.getDisable ? props.getDisable : disabledInput}
                                                         />
                                                     ) : (
                                                         <select name="category"
@@ -889,7 +893,7 @@ const HoldingClientForm = (props) => {
                                                         placeholder={t("Veuillez entrer le nom de famille")}
                                                         value={data.lastname}
                                                         onChange={(e) => onChangeLastName(e)}
-                                                        disabled={props.getDisable ? props.getDisable : disableInput}
+                                                        disabled={props.getDisable ? props.getDisable : disabledInput}
                                                     />
                                                     {
                                                         error.lastname.length ? (
@@ -912,7 +916,7 @@ const HoldingClientForm = (props) => {
                                                         placeholder={t("Veuillez entrer le prénom")}
                                                         value={data.firstname}
                                                         onChange={(e) => onChangeFirstName(e)}
-                                                        disabled={props.getDisable ? props.getDisable : disableInput}
+                                                        disabled={props.getDisable ? props.getDisable : disabledInput}
                                                     />
                                                     {
                                                         error.firstname.length ? (
@@ -935,7 +939,7 @@ const HoldingClientForm = (props) => {
                                                         className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                         value={data.sexe}
                                                         onChange={(e) => onChangeSexe(e)}
-                                                        disabled={props.getDisable ? props.getDisable : disableInput}
+                                                        disabled={props.getDisable ? props.getDisable : disabledInput}
                                                     >
                                                         <option value="" disabled={true}>{t("Veuillez choisir le Sexe")}
                                                         </option>
@@ -983,7 +987,7 @@ const HoldingClientForm = (props) => {
                                                     <TagsInput
                                                         value={data.telephone}
                                                         onChange={onChangeTelephone}
-                                                        disabled={props.getDisable ? props.getDisable : disableInput}
+                                                        disabled={props.getDisable ? props.getDisable : disabledInputTel}
                                                         inputProps={{
                                                             className: "react-tagsinput-input",
                                                             placeholder: "Numéro(s)"
@@ -1005,7 +1009,7 @@ const HoldingClientForm = (props) => {
                                                     <TagsInput
                                                         value={data.email}
                                                         onChange={onChangeEmail}
-                                                        disabled={props.getDisable ? props.getDisable : disableInput}
+                                                        disabled={props.getDisable ? props.getDisable : disabledInputEmail}
                                                         inputProps={{
                                                             className: "react-tagsinput-input",
                                                             placeholder: "Email(s)"

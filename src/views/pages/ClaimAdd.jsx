@@ -27,6 +27,7 @@ import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import ClaimCategory from "./ClaimCategory";
 
 const endPointConfig = {
     PRO: {
@@ -112,6 +113,7 @@ const ClaimAdd = props => {
         account_targeted_id: [],
         account_number: [],
         claim_object_id: [],
+        claim_category : [],
         request_channel_slug: [],
         response_channel_slug: [],
         claimer_expectation: [],
@@ -725,7 +727,7 @@ const ClaimAdd = props => {
                                 i++;
                             }
                         }
-                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors, claim_category: claimCategory === null ? ["Le champ claim_category est obligatoire."] : []});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     }
                 })
@@ -1279,7 +1281,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={"col"}>
+                                                        <div className={error.claim_category.length ? "col validated" : "col"}>
                                                             <label
                                                                 htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
                                                                 <InputRequire/></label>
@@ -1290,6 +1292,15 @@ const ClaimAdd = props => {
                                                                 onChange={onChangeClaimCategory}
                                                                 options={claimCategories}
                                                             />
+                                                            {
+                                                                error.claim_category.length ? (
+                                                                    error.claim_category.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
                                                         </div>
 
                                                         <div
