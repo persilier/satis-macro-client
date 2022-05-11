@@ -40,8 +40,8 @@ const endPointConfig = {
 
 const ConfigRapportAuto = (props) => {
     document.title = "Satis rapport - Paramètre Configuration Rapport Automatique";
-    if (!verifyPermission(props.userPermissions, "list-config-reporting-claim-any-institution")||
-        !verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution"))
+    if (!verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
+        !verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -220,7 +220,7 @@ const ConfigRapportAuto = (props) => {
                 <td style={{textAlign:'center'}}>
 
                     {
-                        verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ?
+                        verifyPermission(props.userPermissions, 'update-config-reporting-claim-my-institution') ?
                             <Link
                                 to={`/settings/rapport/edit/${rapport.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -230,7 +230,7 @@ const ConfigRapportAuto = (props) => {
                             : null
                     }
 
-                    {verifyPermission(props.userPermissions, "config-reporting-claim-my-institution") ?
+                    {verifyPermission(props.userPermissions, "delete-config-reporting-claim-my-institution") ?
                         <button
                             onClick={(e) => deleteCategoryClient(rapport.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"

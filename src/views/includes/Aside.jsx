@@ -739,7 +739,7 @@ const Aside = (props) => {
                                                     ) : null
                                                 }
 
-                                               {/* {
+                                                {
                                                     verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
                                                     verifyPermission(props.userPermissions, "config-reporting-claim-my-institution")?
                                                         <NavLink to="/settings/rapport-auto" className="kt-menu__item "
@@ -749,7 +749,7 @@ const Aside = (props) => {
                                                                 <span className="kt-menu__link-text"> Rapport Automatique</span>
                                                             </li>
                                                         </NavLink>:null
-                                                }*/}
+                                                }
 
                                                 {
                                                     verifyPermission(props.userPermissions, 'list-any-institution-type-role') || verifyPermission(props.userPermissions, 'list-my-institution-type-role') ? (
