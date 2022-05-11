@@ -224,7 +224,7 @@ console.log(props.userPermissions)
                                         </div>
 
                                     </div>
-                                    <div className="kt-portlet__foot">
+                                    <div className="kt-portlet__foot" style={{float:"right", borderTop:"1px solid transparent"}}>
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
