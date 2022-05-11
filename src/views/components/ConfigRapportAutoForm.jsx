@@ -40,7 +40,7 @@ const ConfigRapportAutoForm = (props) => {
     if (props.plan === "MACRO") {
         if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
+        else if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].filial
     } else {
         endPoint = endPointConfig[props.plan]
@@ -335,7 +335,7 @@ const ConfigRapportAutoForm = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ? (
+        verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ? (
             printJsx()
         ) : null
     );
