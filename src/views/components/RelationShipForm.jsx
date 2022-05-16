@@ -48,7 +48,7 @@ const RelationShipForm = (props) => {
             if (id) {
                 axios.get(appConfig.apiDomaine + `/relationships/${id}`)
                     .then(response => {
-                        console.log(response.data, 'DATA');
+                        //console.log(response.data, 'DATA');
                         const newType = {
                             name: response.data.name.fr,
                             description: response.data.description?response.data.description.fr:null

@@ -87,7 +87,7 @@ const SeverityLevelForm = (props) => {
                         setData(newData);
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             }
@@ -140,7 +140,7 @@ const SeverityLevelForm = (props) => {
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
-                        console.log(errorRequest.response.data);
+                        //console.log(errorRequest.response.data);
                         setStartRequest(false);
                         if (errorRequest.response.data.code === 422) {
                             setError({...defaultError, ...errorRequest.response.data.error});

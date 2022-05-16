@@ -41,7 +41,7 @@ const RejectLimitPage = (props) => {
                     });
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

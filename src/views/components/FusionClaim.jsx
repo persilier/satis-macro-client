@@ -49,7 +49,7 @@ const FusionClaim = props => {
                             if (response.data.error.keep_claim)
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.keep_claim[0]));
                             setStartRequest(false);
-                            console.log("Something is wrong")
+                            //console.log("Something is wrong")
                         })
                     ;
                 }

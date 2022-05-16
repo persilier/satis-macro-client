@@ -15,7 +15,7 @@ function ResetPassword() {
     setErrors({});
     setIsloading(true);
     const _err = {};
-    console.log("state", state);
+    ////console.log("state", state);
     if (!state.current_password) {
       _err.current_password = "Champs réquis !";
     }
@@ -64,7 +64,7 @@ function ResetPassword() {
           });
         }
       
-        console.log("err", err);
+        //console.log("err", err);
       });
   };
 

@@ -20,6 +20,7 @@ import DetailModal from "../components/kanban/DetailModal";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import RelaunchModal from "../components/RelaunchModal";
 import {useTranslation} from "react-i18next";
+import moment from "moment";
 
 loadCss("/assets/plugins/custom/kanban/kanban.bundle.css");
 
@@ -68,8 +69,8 @@ const ClaimMonitoring = (props) => {
     const [filterObjects, setFilterObjects] = useState([]);
     const [filterTimeLimit, setFilterTimeLimit] = useState("all");
 
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState(moment().startOf('month').format('YYYY-MM-DD'));
+    const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD'));
 
     const [claimSelected, setClaimSelected] = useState(null);
 
@@ -92,7 +93,7 @@ const ClaimMonitoring = (props) => {
                 endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
             await axios.get(endpoint)
                 .then(response => {
-                    console.log("plainte recupérée", response.data)
+                    //console.log("plainte recupérée", response.data)
                     setClaimsToComplete(response.data.incompletes);
                     setClaimsToAssignUnit(response.data.toAssignementToUnit);
                     setClaimsToAssignStaff(response.data.toAssignementToStaff);
@@ -115,7 +116,7 @@ const ClaimMonitoring = (props) => {
                     setIsLoad(false)
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                     setIsLoad(false)
                 })
             ;

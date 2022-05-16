@@ -61,7 +61,7 @@ const Logs = (props) => {
                     }));
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -97,7 +97,7 @@ const Logs = (props) => {
                             setEndIndex(i => i+onePageNumber);
                         })
                         .catch(error => {
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }
@@ -137,7 +137,7 @@ const Logs = (props) => {
                 .catch(error => {
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t('Echec du filtrage')))
                     setError({...defaultErrors, ...error.response.data.error});
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
                 .finally(() => {setLoadFilter(false);})
             ;

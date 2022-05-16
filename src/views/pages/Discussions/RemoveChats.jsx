@@ -40,7 +40,7 @@ const RemoveChats = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + `/discussions`)
                 .then(response => {
-                    console.log(response.data, 'REMOVE');
+                    //console.log(response.data, 'REMOVE');
                     setShowList(response.data.slice(0, numberPerPage));
                     setNumberPage(forceRound(response.data.length / numberPerPage));
                     setChats(response.data);
@@ -48,7 +48,7 @@ const RemoveChats = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -130,6 +130,7 @@ const RemoveChats = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newChats.slice(
@@ -137,7 +138,9 @@ const RemoveChats = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newChats.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

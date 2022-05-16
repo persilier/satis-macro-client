@@ -45,8 +45,9 @@ const ConfigRapportAuto = (props) => {
     const {t, ready} = useTranslation();
 
     document.title = "Satis rapport - " + (ready ? t("Paramètre configuration rapport automatique") : "");
-    if (!verifyPermission(props.userPermissions, "config-reporting-claim-any-institution")||
-        verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
+    if (
+        !verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") &&
+        !verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -54,7 +55,7 @@ const ConfigRapportAuto = (props) => {
         if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
         else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
-            endPoint = endPointConfig[props.plan].filial
+            endPoint = endPointConfig[props.plan]
     } else {
         endPoint = endPointConfig[props.plan]
     }
@@ -77,7 +78,7 @@ const ConfigRapportAuto = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -180,6 +181,7 @@ const ConfigRapportAuto = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newRapport.slice(
@@ -187,7 +189,9 @@ const ConfigRapportAuto = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newRapport.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
@@ -212,20 +216,39 @@ const ConfigRapportAuto = (props) => {
     const printBodyTable = (rapport, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{rapport.institution_targeted?rapport.institution_targeted.name:""}</td>
-                <td>{rapport.period===null?"":rapport.period_tag.label}</td>
+
+                {
+                    props.plan === "MACRO" ? (
+                        <td>{rapport.institution_targeted ? rapport.institution_targeted.name:""}</td>
+                    ) : null
+                }
+                {
+                    props.plan === "PRO" ? (
+                        <td>
+                            {rapport.staffs ?
+                                rapport.staffs.map((staff, index) => (
+                                    staff.identite.firstname + " "  + staff.identite.lastname + " ,"
+                                )) : null
+                            }
+                        </td>
+                    ) : null
+                }
+
+                <td>{rapport.period === null ? "" : rapport.period_tag.label}</td>
+                <td>{rapport.reporting_type === null ? "-" : rapport.reporting_type}</td>
                 <td>
-                    {rapport.email ?
-                        rapport.email.map((mail, index) => (
-                            index === rapport.email.length - 1 ? mail : mail  +"/ "
+                    {rapport.staffs ?
+                        rapport.staffs.map((staff, index) => (
+                           staff.identite.email ? staff.identite.email.map((email, index) => (
+                                email +" "
+                            )) : null
                         )) : null
                     }
                 </td>
-                {/*<td>{rapport.email===null?"":rapport.email}</td>*/}
                 <td style={{textAlign:'center'}}>
 
                     {
-                        verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution') ?
+                        verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ?
                             <Link
                                 to={`/settings/rapport/edit/${rapport.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -235,7 +258,7 @@ const ConfigRapportAuto = (props) => {
                             : null
                     }
 
-                    {verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ?
+                    {verifyPermission(props.userPermissions, "config-reporting-claim-my-institution") ?
                         <button
                             onClick={(e) => deleteCategoryClient(rapport.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -279,7 +302,7 @@ const ConfigRapportAuto = (props) => {
                     <div className="kt-portlet">
 
                         <HeaderTablePage
-                            addPermission={"config-reporting-claim-any-institution"}
+                            addPermission={"config-reporting-claim-my-institution"}
                             title={t("Rapport Automatique")}
                             addText={t("Ajouter une configuration")}
                             addLink={"/settings/rapport/add"}
@@ -292,7 +315,7 @@ const ConfigRapportAuto = (props) => {
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
                                             <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                              {/*  <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         {t("Recherche")}:
                                                         <input id="myInput" type="text"
@@ -301,7 +324,7 @@ const ConfigRapportAuto = (props) => {
                                                                placeholder=""
                                                                aria-controls="kt_table_1"/>
                                                     </label>
-                                                </div>
+                                                </div>*/}
                                             </div>
                                         </div>
                                         <div className="row">
@@ -312,18 +335,37 @@ const ConfigRapportAuto = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row" style={{textAlign:"center"}}>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">{t("Institutions")}
-                                                        </th>
+                                                        {
+                                                            props.plan === "MACRO" ? (
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{width: "100px"}}
+                                                                    aria-label="Ship City: activate to sort column ascending">{t("Institutions")}
+                                                                </th>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            props.plan === "PRO" ? (
+                                                                <th className="sorting" tabIndex="0"
+                                                                    aria-controls="kt_table_1"
+                                                                    rowSpan="1"
+                                                                    colSpan="1" style={{width: "100px"}}
+                                                                    aria-label="Ship City: activate to sort column ascending">{t("Agents")}
+                                                                </th>
+                                                            ) : null
+                                                        }
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "100px"}}
                                                             aria-label="Ship City: activate to sort column ascending">{t("Périodes")}
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "100px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Rapports")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
@@ -356,9 +398,19 @@ const ConfigRapportAuto = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">{t("Institutions")}</th>
+                                                        {
+                                                            props.plan === "MACRO" ? (
+                                                                <th rowSpan="1" colSpan="1">{t("Institutions")}</th>
+                                                            ) : null
+                                                        }
+                                                        {
+                                                            props.plan === "PRO" ? (
+                                                                <th rowSpan="1" colSpan="1">{t("Agents")}</th>
+                                                            ) : null
+                                                        }
                                                         <th rowSpan="1" colSpan="1">{t("Périodes")}</th>
-                                                        <th rowSpan="1" colSpan="1">Emails</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Rapports")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Emails")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>

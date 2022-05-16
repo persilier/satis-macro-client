@@ -16,9 +16,9 @@ const CompleteAttachments = ({claimId}) => {
     const inputRef = useRef(null);
 
     const seeFormData = (formData) => {
-        console.log("SEE_FORM_DATA");
+        //console.log("SEE_FORM_DATA");
         for (let input of formData.entries()) {
-            console.log("element:", input[1]);
+            //console.log("element:", input[1]);
         }
     };
 

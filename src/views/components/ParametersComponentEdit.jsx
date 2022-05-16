@@ -73,15 +73,15 @@ const ParametersComponentEdit = (props) => {
         const newData = {...data};
         newData[param] = Object.values(e.target.files)[0];
         setData(newData);
-        console.log(Object.values(e.target.files)[0], "NEW_DATA");
-        console.log(newData[param], 'new data param');
+        //console.log(Object.values(e.target.files)[0], "NEW_DATA");
+        //console.log(newData[param], 'new data param');
         const newLogo = {...logo};
         newLogo[param] = true;
         setDataLogo(newLogo);
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById(param);
-            console.log(image, 'image');
+            //console.log(image, 'image');
             image.src = e.target.result;
         };
         reader.readAsDataURL(newData[param]);

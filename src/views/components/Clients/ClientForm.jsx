@@ -125,10 +125,10 @@ const EditClients = (props) => {
         e.preventDefault();
         setStartRequest(true);
         {
-            console.log(...props.identite, "props")
+            //console.log(...props.identite, "props")
         }
         const formData = {...props.identite, ...data};
-        console.log(formData, "FORM_DATA");
+        //console.log(formData, "FORM_DATA");
         if (verifyTokenExpire()) {
             if (id) {
                 axios.put(appConfig.apiDomaine + `/my/clients/${id}`, formData)
@@ -146,7 +146,7 @@ const EditClients = (props) => {
                     })
                 ;
             } else {
-                console.log(props.identite.client_id, "CLIENT_ID");
+                //console.log(props.identite.client_id, "CLIENT_ID");
                 if (props.identite.client_id) {
                     axios.post(appConfig.apiDomaine + `/my/accounts/${props.identite.client_id}/clients`, formData)
                         .then(response => {
@@ -177,7 +177,7 @@ const EditClients = (props) => {
                         })
                         .catch(async (errorRequest) => {
 
-                            console.log(errorRequest.response.data.identite, 'ERROR');
+                            //console.log(errorRequest.response.data.identite, 'ERROR');
 
                             if (errorRequest.response.data.identite) {
                                 await axios.post(appConfig.apiDomaine + `/my/identites/${errorRequest.response.data.identite.id}/client`, formData)
@@ -272,7 +272,7 @@ const EditClients = (props) => {
 
                                                 <div className="form-group row">
                                                     <div className={error.account_type_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="exampleSelect1">{t("Type de Compte")}</label>
+                                                        <label htmlFor="exampleSelect1">{t("Type de compte")}</label>
                                                         {accountType ? (
                                                             <Select
                                                                 value={type}

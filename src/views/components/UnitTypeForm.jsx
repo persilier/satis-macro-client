@@ -56,14 +56,14 @@ const UnitTypeForm = (props) => {
                     .then(({data}) => {
                         const newData = {
                             name: data.unitType.name ? data.unitType.name.fr : "",
-                            can_be_target: data.unitType.can_be_target === 1,
-                            can_treat: data.unitType.can_treat === 1,
+                            can_be_target: data.unitType.can_be_target == 1,
+                            can_treat: data.unitType.can_treat == 1,
                             description: data.unitType.description ? data.unitType.description.fr : "",
                         };
                         setData(newData);
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             }

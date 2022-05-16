@@ -7,7 +7,7 @@ const ClientButtonDetail = ({claim}) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation()
 
-    console.log("claim:", claim);
+    //console.log("claim:", claim);
 
     return (
         ready ? (
@@ -75,11 +75,11 @@ const ClientButtonDetail = ({claim}) => {
                                                 </span>
                                                 </div>
 
-                                                {console.log("claimer:", claim)}
-                                                <div className="kt-widget__info">
-                                                    <span>{t("Numero de compte")}:</span>
-                                                    <span className="kt-widget__data">
-                                                    {claim ? (claim.account_targeted ? claim.account_targeted.number : '-') : '-'}
+                                            {console.log("claimer:", claim)}
+                                            <div className="kt-widget__info">
+                                                <span>{t("Numero de compte")}:</span>
+                                                <span className="kt-widget__data">
+                                                    {claim ? (claim.account_targeted ? claim.account_targeted.number : (claim.account_number ? claim.account_number : "-")) : '-'}
                                                 </span>
                                                 </div>
 

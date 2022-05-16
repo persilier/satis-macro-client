@@ -66,7 +66,7 @@ const ClaimAssignToStaff = (props) => {
         let newClaims = [...claims];
         newClaims = newClaims.filter(el => (
             getLowerCaseString(`${el.reference} ${ el.isInvalidTreatment ? "(R)" : ""}`).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname} ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname} ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / "+el.account_number : "")}`).indexOf(value) >= 0 ||
             getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
             getLowerCaseString(truncateString(el.description)).indexOf(value) >= 0 ||
@@ -157,7 +157,7 @@ const ClaimAssignToStaff = (props) => {
 
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted ? claim.institution_targeted.name : "-"}</td>
                 <td>
                     {formatDateToTime(claim.created_at)} <br/>

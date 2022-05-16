@@ -142,7 +142,7 @@ const IndentiteForm = (props) => {
         props.addIdentite(selected);
         axios.get(appConfig.apiDomaine + `/any/clients/${newData.institution_id}/institutions`)
             .then(response => {
-                console.log(response.data, "CLIENT D'UNE INSTITUTION");
+                //console.log(response.data, "CLIENT D'UNE INSTITUTION");
                 const options = [
                     response.data ? response.data.map((client) => ({
                         value: client.client_id,
@@ -165,7 +165,7 @@ const IndentiteForm = (props) => {
         props.addIdentite(selected);
         axios.get(endPoint.list + `/${newData.client_id}`)
             .then(response => {
-                console.log(response.data,"IDENTITE")
+                //console.log(response.data,"IDENTITE")
                 const newIdentity = {
                     firstname: response.data.client.identite.firstname,
                     lastname: response.data.client.identite.lastname,

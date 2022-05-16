@@ -27,6 +27,7 @@ import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import ClaimCategory from "./ClaimCategory";
 
 const endPointConfig = {
     PRO: {
@@ -84,6 +85,7 @@ const ClaimAdd = props => {
         unit_targeted_id: "",
         institution_targeted_id: "",
         account_targeted_id: "",
+        account_number: "",
         relationship_id: "",
         claim_object_id: "",
         request_channel_slug: "",
@@ -109,7 +111,9 @@ const ClaimAdd = props => {
         institution_targeted_id: [],
         relationship_id: [],
         account_targeted_id: [],
+        account_number: [],
         claim_object_id: [],
+        claim_category : [],
         request_channel_slug: [],
         response_channel_slug: [],
         claimer_expectation: [],
@@ -142,6 +146,8 @@ const ClaimAdd = props => {
     const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
+    const [disabledInputTel, setDisabledInputTel] = useState(false);
+    const [disabledInputEmail, setDisabledInputEmail] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
@@ -184,7 +190,7 @@ const ClaimAdd = props => {
                     setResponseChannels(formatSelectOption(filterChannel(response.data.channels, RESPONSE_CHANNEL), "name", "fr", "slug"))
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 });
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/register_claim")
                 .then(response => {
@@ -193,7 +199,7 @@ const ClaimAdd = props => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -257,7 +263,7 @@ const ClaimAdd = props => {
                             setUnits(formatSelectOption(response.data.units, "name", "fr"))
                         })
                         .catch(error => {
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }
@@ -277,6 +283,7 @@ const ClaimAdd = props => {
             newData.unit_targeted_id = "";
             newData.claimer_id = "";
             newData.account_targeted_id = "";
+            newData.account_number = "";
             newData.institution_targeted_id = "";
         }
         setData(newData);
@@ -297,6 +304,7 @@ const ClaimAdd = props => {
         newData.ville = "";
         newData.claimer_id = "";
         newData.account_targeted_id = "";
+        newData.account_number = "";
         setData(newData);
         setDisabledInput(e.target.checked);
     };
@@ -317,6 +325,7 @@ const ClaimAdd = props => {
         const newData = {...data};
         setAccount(null);
         newData.account_targeted_id = "";
+        newData.account_number = "";
         setAccounts(formatSelectOption(selected.accounts, "number", false));
         newData.firstname = selected.identity.firstname;
         newData.lastname = selected.identity.lastname;
@@ -328,6 +337,14 @@ const ClaimAdd = props => {
         setShowSearchResult(false);
         setSearchList([]);
         setData(newData);
+
+        if (selected.identity?.telephone && Array.isArray(selected.identity.telephone) && selected.identity.telephone.length > 0 ){
+            setDisabledInputTel(true)
+        }
+
+        if (selected.identity?.email && Array.isArray(selected.identity.email) && selected.identity.email.length > 0 ){
+            setDisabledInputEmail(true)
+        }
     };
 
     const onChangeAccount = selected => {
@@ -341,6 +358,12 @@ const ClaimAdd = props => {
         }
         setData(newData);
     };
+
+    const onChangeAccountNumber = (e) => {
+        const newData = {...data};
+        newData.account_number = e.target.value;
+        setData(newData);
+    }
 
     const onChangeClaimObject = selected => {
         const newData = {...data};
@@ -517,7 +540,7 @@ const ClaimAdd = props => {
                             })
                             .catch(({response}) => {
                                 setStartSearch(false);
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                         ;
                     }
@@ -531,12 +554,12 @@ const ClaimAdd = props => {
                                 if (data.length)
                                     setClientCash({"searchInputValue": searchInputValue, "clients": data});
                                 setSearchList(data);
-                                console.log(data);
-                                console.log(searchInputValue);
+                                //console.log(data);
+                                //console.log(searchInputValue);
                             })
                             .catch(({response}) => {
                                 setStartSearch(false);
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                         ;
                     }
@@ -550,12 +573,12 @@ const ClaimAdd = props => {
                                 if (data.length)
                                     setClientCash({"searchInputValue": searchInputValue, "clients": data});
                                 setSearchList(data);
-                                console.log(data);
-                                console.log(searchInputValue);
+                                //console.log(data);
+                                //console.log(searchInputValue);
                             })
                             .catch(({response}) => {
                                 setStartSearch(false);
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                         ;
                     }
@@ -574,12 +597,12 @@ const ClaimAdd = props => {
                             if (data.length)
                                 setClientCash({"searchInputValue": searchInputValue, "clients": data});
                             setSearchList(data);
-                            console.log(data);
-                            console.log(searchInputValue);
+                            //console.log(data);
+                            //console.log(searchInputValue);
                         })
                         .catch(({response}) => {
                             setStartSearch(false);
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }
@@ -612,7 +635,7 @@ const ClaimAdd = props => {
                     startSearchClient();
                 } else
 
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectioner une institution")))
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectionner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
                 startSearchClient();
             }
@@ -663,6 +686,8 @@ const ClaimAdd = props => {
             delete newData.unit_targeted_id;
         if (!newData.account_targeted_id)
             delete newData.account_targeted_id;
+        if (!newData.account_number)
+            delete newData.account_number;
         if (!newData.amount_disputed)
             delete newData.amount_disputed;
         if (!newData.amount_currency_slug)
@@ -702,7 +727,7 @@ const ClaimAdd = props => {
                                 i++;
                             }
                         }
-                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors, claim_category: claimCategory === null ? ["Le champ claim_category est obligatoire."] : []});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     }
                 })
@@ -738,7 +763,7 @@ const ClaimAdd = props => {
                                         <span className="kt-subheader__breadcrumbs-separator"/>
                                         <a href="#button" onClick={e => e.preventDefault()}
                                            className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                            {t("Enrégistrement de réclamation")}
+                                            {t("Enregistrement de réclamation")}
                                         </a>
                                     </div>
                                 </div>
@@ -908,13 +933,13 @@ const ClaimAdd = props => {
                                                                                             transform: "translate3d(0px, 38px, 0px)",
                                                                                             zIndex: "1"
                                                                                         }}>
-                                                                                        <span className="d-flex justify-content-center"><em>--- Type de recherche ---</em></span>
+                                                                                        <span className="d-flex justify-content-center"><em>{("---" + t("Type de recherche") + "---")}</em></span>
                                                                                         <div className="d-flex justify-content-center mt-1 mb-1">
-                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("full_name", "Nom/Prénom", "dark")}>Nom/Prénom</button>&nbsp;
-                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("telephone", "Numéro de téléphone", "dark")}>Numéro de téléphone</button>&nbsp;
-                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("account_number", "Numéro de compte", "dark")}>Numéro de compte</button>
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("full_name", t("Nom/Prénom"), "dark")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("telephone", t("Numéro de téléphone"), "dark")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("account_number", t("Numéro de compte"), "dark")}>{t("Numéro de compte")}</button>
                                                                                         </div>
-                                                                                        <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
+                                                                                        <span className="d-flex justify-content-center mb-2"><em>{"---"+t("Fin")+"---"}</em></span>
                                                                                         {
                                                                                             searchList.map((el, index) => (
                                                                                                 <span
@@ -951,13 +976,13 @@ const ClaimAdd = props => {
                                                                                                     className={"mt-5 mb-5"}><Loader/></span>
                                                                                             ) : (
                                                                                                 <>
-                                                                                                    <span className="d-flex justify-content-center"><em>--- Type de recherche ---</em></span>
+                                                                                                    <span className="d-flex justify-content-center"><em>{"--- "+ t("Type de recherche") +" ---"}</em></span>
                                                                                                     <div className="d-flex justify-content-center mt-1 mb-1">
-                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("full_name", "Nom/Prénom", "primary")}>Nom/Prénom</button>&nbsp;
-                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("telephone", "Numéro de téléphone", "primary")}>Numéro de téléphone</button>&nbsp;
-                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("account_number", "Numéro de compte", "primary")}>Numéro de compte</button>
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("full_name", t("Nom/Prénom"), "primary")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("telephone", t("Numéro de téléphone"), "primary")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("account_number", t("Numéro de compte"), "primary")}>{t("Numéro de compte")}</button>
                                                                                                     </div>
-                                                                                                    <span className="d-flex justify-content-center mb-2"><em>--- Fin ---</em></span>
+                                                                                                    <span className="d-flex justify-content-center mb-2"><em>{"--- "+t("Fin")+" ---"}</em></span>
                                                                                                     <span
                                                                                                         className="d-flex justify-content-center"><strong>{t("Pas de resultat")}</strong></span>
 
@@ -1087,7 +1112,7 @@ const ClaimAdd = props => {
                                                             <label
                                                                 htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
                                                                 <InputRequire/></label>
-                                                            <TagsInput disabled={disabledInput} value={data.telephone}
+                                                            <TagsInput disabled={disabledInputTel } value={data.telephone}
                                                                        onChange={onChangeTelephone} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.telephone_placeholder.value : ""
@@ -1105,9 +1130,9 @@ const ClaimAdd = props => {
 
                                                         <div className={error.email.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel ?
+                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel && responseChannel.value === "email" ?
                                                                 <InputRequire/> : null}</label>
-                                                            <TagsInput disabled={disabledInput} value={data.email}
+                                                            <TagsInput disabled={disabledInputEmail} value={data.email}
                                                                        onChange={onChangeEmail} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.email_placeholder.value : ""
@@ -1159,19 +1184,42 @@ const ClaimAdd = props => {
                                                                 </div>
 
                                                                 <div
-                                                                    className={error.account_targeted_id.length ? "col validated" : "col"}>
+                                                                    className={(error.account_targeted_id.length || error.account_number.length) ? "col validated" : "col"}>
                                                                     <label
                                                                         htmlFor="account">{componentData ? componentData.params.fr.compte.value : ""}</label>
-                                                                    <Select
-                                                                        isClearable
-                                                                        value={account}
-                                                                        placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
-                                                                        onChange={onChangeAccount}
-                                                                        options={accounts}
-                                                                    />
+                                                                    {
+                                                                        accounts.length ? (
+                                                                            <Select
+                                                                                isClearable
+                                                                                value={account}
+                                                                                placeholder={componentData ? componentData.params.fr.compte_placeholder.value : ""}
+                                                                                onChange={onChangeAccount}
+                                                                                options={accounts}
+                                                                            />
+                                                                            ) : (
+                                                                                <input
+                                                                                    id="account"
+                                                                                    type="text"
+                                                                                    className={error.account_number.length ? "form-control is-invalid" : "form-control"}
+                                                                                    placeholder={"Veuillez entrer le numéro de compte"}
+                                                                                    value={data.account_number ? data.account_number : ""}
+                                                                                    onChange={(e) => onChangeAccountNumber(e)}
+                                                                                />
+                                                                            )
+                                                                    }
                                                                     {
                                                                         error.account_targeted_id.length ? (
                                                                             error.account_targeted_id.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                    {
+                                                                        error.account_number.length ? (
+                                                                            error.account_number.map((error, index) => (
                                                                                 <div key={index}
                                                                                      className="invalid-feedback">
                                                                                     {error}
@@ -1233,7 +1281,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={"col"}>
+                                                        <div className={error.claim_category.length ? "col validated" : "col"}>
                                                             <label
                                                                 htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
                                                                 <InputRequire/></label>
@@ -1244,6 +1292,15 @@ const ClaimAdd = props => {
                                                                 onChange={onChangeClaimCategory}
                                                                 options={claimCategories}
                                                             />
+                                                            {
+                                                                error.claim_category.length ? (
+                                                                    error.claim_category.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
                                                         </div>
 
                                                         <div
@@ -1487,12 +1544,12 @@ const ClaimAdd = props => {
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option1}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                           checked={option1 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option2}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                           checked={option2 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -1574,6 +1631,7 @@ const ClaimAdd = props => {
                                                 unit_targeted_id={data.unit_targeted_id}
                                                 institution_targeted_id={data.institution_targeted_id}
                                                 account_targeted_id={data.account_targeted_id}
+                                                account_number={data.account_number}
                                                 claim_object_id={data.claim_object_id}
                                                 request_channel_slug={data.request_channel_slug}
                                                 response_channel_slug={data.response_channel_slug}

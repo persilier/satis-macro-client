@@ -70,7 +70,7 @@ const Clients = (props) => {
     const [clients, setClients] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [nextUrl, setNextUrl] = useState(null);
@@ -79,7 +79,7 @@ const Clients = (props) => {
     useEffect(() => {
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list)
+            axios.get(endPoint.list + "?size=" + numberPerPage)
                 .then(response => {
                     setLoad(false);
                     setClients(response.data["data"]);
@@ -127,7 +127,7 @@ const Clients = (props) => {
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + "&size=" + numberPerPage)
                     .then(response => {
                         setLoad(false);
                         setClients(response.data["data"]);
@@ -145,7 +145,7 @@ const Clients = (props) => {
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+                axios.get(endPoint.list + "?size=" + numberPerPage)
                     .then(response => {
                         setLoad(false);
                         setClients(response.data["data"]);
@@ -166,6 +166,7 @@ const Clients = (props) => {
         }
     };
 
+
     const onChangeNumberPerPage = (e) => {
         e.persist();
         if (verifyTokenExpire()) {
@@ -175,9 +176,9 @@ const Clients = (props) => {
                     setLoad(false);
                     setActiveNumberPage(1);
                     setClients(response.data["data"]);
-                    setShowList(response.data.data.slice(0, parseInt(e.target.value)));
+                    setShowList(response.data.data.slice(0, response.data.per_page));
                     setTotal(response.data.total);
-                    setNumberPage(forceRound(total / parseInt(e.target.value)));
+                    setNumberPage(forceRound(response.data.total / response.data.per_page));
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
                 })
@@ -188,6 +189,7 @@ const Clients = (props) => {
         }
         setNumberPerPage(parseInt(e.target.value));
     };
+
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
@@ -203,15 +205,13 @@ const Clients = (props) => {
 
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get("/my/clients?page=" + page + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+            axios.get("/my/clients?page=" + page + "&size=" + numberPerPage)
                 .then(response => {
-                    let newClients = [...clients, ...response.data["data"]];
-                    let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                     setLoad(false);
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
-                    setClients(newData);
-                    setShowList(newData.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+                    setClients(response.data["data"]);
+                    setShowList(response.data["data"].slice(0, numberPerPage));
 
                 })
                 .catch(error => {
@@ -228,20 +228,15 @@ const Clients = (props) => {
             if (nextUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(nextUrl)
+                    axios.get(nextUrl + "&size=" + numberPerPage)
                         .then(response => {
-                            let newClients = [...clients, ...response.data["data"]];
-                            let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                             setLoad(false);
+                            console.log(response.data);
                             setPrevUrl(response.data["prev_page_url"]);
                             setNextUrl(response.data["next_page_url"]);
-                            setClients(newData);
+                            setClients(response.data["data"]);
                             setShowList(
-                                newData.slice(
-                                    getEndByPosition(
-                                        activeNumberPage + 1) - numberPerPage,
-                                    getEndByPosition(activeNumberPage + 1)
-                                )
+                                response.data["data"].slice(0, numberPerPage)
                             );
 
                         })
@@ -262,19 +257,14 @@ const Clients = (props) => {
             if (prevUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(prevUrl)
+                    axios.get(prevUrl + "&size=" + numberPerPage)
                         .then(response => {
-                            let newClients = [...clients, ...response.data["data"]];
-                            let newData = [...new Map(newClients.map(item => [item.id, item])).values()]
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
                             setNextUrl(response.data["next_page_url"]);
-                            setClients(newData);
+                            setClients(response.data["data"]);
                             setShowList(
-                                newData.slice(
-                                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                    getEndByPosition(activeNumberPage - 1)
-                                )
+                                response.data["data"].slice(0, numberPerPage)
                             );
 
                         })
@@ -287,6 +277,7 @@ const Clients = (props) => {
         }
     };
 
+
     const deleteClient = (accountId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
@@ -295,26 +286,53 @@ const Clients = (props) => {
                         axios.delete(endPoint.destroy(accountId))
                             .then(response => {
                                 const newClient = [...clients];
-                                // newClient.splice(index, 1);
-                                // setClients(newClient);
+                                newClient.splice(index, 1);
+                                setClients(newClient);
 
                                 if (showList.length > 1) {
-                                    setShowList(
-                                        newClient.slice(
-                                            getEndByPosition(activeNumberPage) - numberPerPage,
-                                            getEndByPosition(activeNumberPage)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage);
+
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get("/my/clients?page=" + (activeNumberPage) + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setClients(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            });
+
+                                    }
+
                                 } else {
-                                    setShowList(
-                                        newClient.slice(
-                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                            getEndByPosition(activeNumberPage - 1)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage - 1);
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get("/my/clients?page=" + (activeNumberPage - 1) + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setClients(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setActiveNumberPage(activeNumberPage - 1);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            });
+
+                                    }
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
-                                window.location.reload()
+                                //window.location.reload()
                             })
                             .catch(error => {
                                 if (error.response.data.error)

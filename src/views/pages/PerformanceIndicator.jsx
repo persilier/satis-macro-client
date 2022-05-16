@@ -48,7 +48,7 @@ const PerformanceIndicator = (props) => {
                })
                .catch(error => {
                    setLoad(false);
-                   console.log("Something is wrong");
+                   //console.log("Something is wrong");
                })
            ;
        }
@@ -145,6 +145,7 @@ const PerformanceIndicator = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newPerformances.slice(
@@ -152,7 +153,9 @@ const PerformanceIndicator = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
+                                setNumberPage(forceRound(newPerformances.length/numberPerPage));
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {

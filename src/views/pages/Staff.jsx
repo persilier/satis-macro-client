@@ -77,7 +77,7 @@ const   Staff = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(endPoint.list)
+            await axios.get(endPoint.list + "?size=" + numberPerPage)
                 .then(response => {
                     setNumberPage(forceRound(response.data.total/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
@@ -86,10 +86,11 @@ const   Staff = (props) => {
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
                     setLoad(false);
+
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 });
         }
         if (verifyTokenExpire())
@@ -126,7 +127,7 @@ const   Staff = (props) => {
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? ("&size=" + numberPerPage) : ""))
+                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + "&size=" + numberPerPage)
                     .then(response => {
                         setLoad(false);
                         setStaffs(response.data["data"]);
@@ -144,7 +145,7 @@ const   Staff = (props) => {
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? "&size=" + numberPerPage : ""))
+                axios.get(endPoint.list + "?size=" + numberPerPage)
                     .then(response => {
                         setLoad(false);
                         setStaffs(response.data["data"]);
@@ -175,9 +176,9 @@ const   Staff = (props) => {
                     setLoad(false);
                     setActiveNumberPage(1);
                     setStaffs(response.data["data"]);
-                    setShowList(response.data.data.slice(0, parseInt(e.target.value)));
+                    setShowList(response.data.data.slice(0, response.data.per_page));
                     setTotal(response.data.total);
-                    setNumberPage(forceRound(total / parseInt(e.target.value)));
+                    setNumberPage(forceRound(response.data.total / response.data.per_page));
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
                 })
@@ -188,6 +189,7 @@ const   Staff = (props) => {
         }
         setNumberPerPage(parseInt(e.target.value));
     };
+
 
     const getEndByPosition = (position) => {
         let end = numberPerPage;
@@ -203,15 +205,13 @@ const   Staff = (props) => {
 
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list + "?page=" + page + (numberPerPage !== NUMBER_ELEMENT_PER_PAGE ? "&size=" + numberPerPage : ""))
+            axios.get(endPoint.list + "?page=" + page + "&size=" + numberPerPage)
                 .then(response => {
-                    let newStaffs = [...staffs, ...response.data["data"]];
-                    let newData = [...new Map(newStaffs.map(item => [item.id, item])).values()]
                     setLoad(false);
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
-                    setStaffs(newData);
-                    setShowList(newData.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+                    setStaffs(response.data["data"]);
+                    setShowList(response.data["data"].slice(0, numberPerPage));
 
                 })
                 .catch(error => {
@@ -229,20 +229,14 @@ const   Staff = (props) => {
             if (nextUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(nextUrl)
+                    axios.get(nextUrl + "?size=" + numberPerPage)
                         .then(response => {
-                            let newStaffs = [...staffs, ...response.data["data"]];
-                            let newData = [...new Map(newStaffs.map(item => [item.id, item])).values()]
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
                             setNextUrl(response.data["next_page_url"]);
-                            setStaffs(newData);
+                            setStaffs(response.data["data"]);
                             setShowList(
-                                newData.slice(
-                                    getEndByPosition(
-                                        activeNumberPage + 1) - numberPerPage,
-                                    getEndByPosition(activeNumberPage + 1)
-                                )
+                                response.data["data"].slice(0, numberPerPage)
                             );
 
                         })
@@ -264,19 +258,14 @@ const   Staff = (props) => {
             if (prevUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(prevUrl)
+                    axios.get(prevUrl + "?size=" + numberPerPage)
                         .then(response => {
-                            let newStaffs = [...staffs, ...response.data["data"]];
-                            let newData = [...new Map(newStaffs.map(item => [item.id, item])).values()]
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
                             setNextUrl(response.data["next_page_url"]);
-                            setStaffs(newData);
+                            setStaffs(response.data["data"]);
                             setShowList(
-                                newData.slice(
-                                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                    getEndByPosition(activeNumberPage - 1)
-                                )
+                                response.data["data"].slice(0, numberPerPage)
                             );
 
                         })
@@ -290,6 +279,7 @@ const   Staff = (props) => {
         }
     };
 
+
     const deleteStaff = (staffId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
@@ -301,19 +291,47 @@ const   Staff = (props) => {
                                 newStaffs.splice(index, 1);
                                 setStaffs(newStaffs);
                                 if (showList.length > 1) {
-                                    setShowList(
-                                        newStaffs.slice(
-                                            getEndByPosition(activeNumberPage) - numberPerPage,
-                                            getEndByPosition(activeNumberPage)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage);
+
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get(endPoint.list + "?page=" + activeNumberPage + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setStaffs(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            })
+                                        ;
+                                    }
                                 } else {
-                                    setShowList(
-                                        newStaffs.slice(
-                                            getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                                            getEndByPosition(activeNumberPage - 1)
-                                        )
-                                    );
+                                    setActiveNumberPage(activeNumberPage - 1);
+
+                                    if (verifyTokenExpire()) {
+                                        setLoad(true);
+                                        axios.get(endPoint.list + "?page=" + activeNumberPage - 1 + "&size=" + numberPerPage)
+                                            .then(response => {
+                                                setLoad(false);
+                                                setPrevUrl(response.data["prev_page_url"]);
+                                                setNextUrl(response.data["next_page_url"]);
+                                                setStaffs(response.data["data"]);
+                                                setShowList(response.data["data"].slice(0, numberPerPage));
+                                                setTotal(response.data.total);
+                                                setNumberPage(forceRound(response.data.total / numberPerPage));
+
+                                            })
+                                            .catch(error => {
+                                                setLoad(false);
+                                            })
+                                        ;
+                                    }
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })

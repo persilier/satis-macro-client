@@ -48,13 +48,13 @@ const ImportInstitutionForm = (props) => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
+            // //console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 formData.append("file", newData.file);
             } else
                 formData.set(key, newData[key]);
         }
-        console.log(formData.get('file'), 'FORMDATA');
+        //console.log(formData.get('file'), 'FORMDATA');
         return formData;
 
     };

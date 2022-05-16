@@ -63,7 +63,7 @@ const CurrencyForm = () => {
                         setListCurrency(filterCurrency(data.currencies));
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -72,7 +72,7 @@ const CurrencyForm = () => {
                         setListCurrency(filterCurrency(data));
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
             }
         }

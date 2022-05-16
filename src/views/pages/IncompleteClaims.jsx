@@ -92,7 +92,7 @@ const IncompleteClaims = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -106,7 +106,7 @@ const IncompleteClaims = (props) => {
         newClaims = newClaims.filter(el => {
             return (
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-                getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+                getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / "+el.account_number : "")}`).indexOf(value) >= 0 ||
                 getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
                 getLowerCaseString((el.claim_object && el.claim_object.name["fr"]) ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
                 getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
@@ -195,7 +195,7 @@ const IncompleteClaims = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference ? claim.reference : ''}</td>
-                <td>{claim.claimer ? claim.claimer.lastname : ''}&ensp;{claim.claimer ? claim.claimer.firstname : ""}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : ""}</td>
+                <td>{claim.claimer ? claim.claimer.lastname : ''}&ensp;{claim.claimer ? claim.claimer.firstname : ""}{claim.account_targeted !== null ? "/" + claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}</td>
                 <td>
                     {verifyPermission(props.userPermissions, 'show-claim-incomplete-against-any-institution') || verifyPermission(props.userPermissions, "show-claim-incomplete-without-client") ? (
                         claim.institution_targeted ? (claim.institution_targeted.name !== null ? claim.institution_targeted.name : '') : '-'

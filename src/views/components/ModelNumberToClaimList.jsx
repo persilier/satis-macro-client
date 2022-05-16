@@ -49,7 +49,7 @@ const ModelNumberToClaimList = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -128,7 +128,7 @@ const ModelNumberToClaimList = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{measure.reference === null ? "" : measure.reference}</td>
-                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${measure.account_targeted ? " / "+measure.account_targeted.number : ""}`}</td>
+                <td>{`${measure.claimer.lastname} ${measure.claimer.firstname}  ${measure.account_targeted ? " / "+measure.account_targeted.number : (measure.account_number ? " / " + measure.account_number : "")}`}</td>
                 <td>
                     {
                         (props.plan === 'PRO') ?

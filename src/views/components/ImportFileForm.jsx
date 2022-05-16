@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import axios from "axios";
-import {ToastBottomEnd} from "./Toast";
+import {ToastBottomEnd, ToastLongBottomEnd} from "./Toast";
 import {
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
@@ -59,18 +59,31 @@ const ImportFileForm = (props) => {
                     if (response.data.status) {
                         setName("");
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setErrorFile(response.data["errors"]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     } else {
-                        if(response.data[props.errorField])
-                            setErrorFile(response.data[props.errorField]);
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuiller verifier le fichier")));
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setErrorFile(response.data["errors"]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
                     }
                 })
                 .catch(({response}) => {
                     setStartRequest(false);
-                    if (response.data.code === 422)
+                    if(response.data["errors"] && response.data["errors"].length) {
+                        setErrorFile(response.data["errors"]);
+                        ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                    }
+                    else if (response.data.code === 422) {
                         setError({...defaultError, ...response.data.error});
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                    }
+                    else
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                 })
             ;
         }
@@ -165,14 +178,26 @@ const ImportFileForm = (props) => {
                                                     }
 
                                                     {
+                                                        /*{index + 1}-  {error}*/
                                                         errorFile.length ? (
                                                             errorFile.map((element, index) => (
-                                                                element.error ? (
-                                                                    element.error.map((error, idx) => (
-                                                                        <div key={idx} className="invalid-feedback">
-                                                                            ligne {index + 1} {error}
+                                                                element.messages ? (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {
+                                                                                Object.keys(element.messages).map((message, idx) => (
+                                                                                    message.length ? (
+                                                                                        element.messages[message].map((error, id) => {
+                                                                                            return (
+                                                                                                <>
+                                                                                                    {(" " + (idx === 0 ? t("ligne ") + element.line + " - " : "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0") + error)}
+                                                                                                    <br/>
+                                                                                                </>
+                                                                                            )
+                                                                                        })
+                                                                                    ) :null
+                                                                                ))
+                                                                            }
                                                                         </div>
-                                                                    ))
                                                                 ) : null
                                                             ))
                                                         ) : null

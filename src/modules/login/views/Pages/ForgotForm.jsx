@@ -30,9 +30,9 @@ const ForgotForm = () => {
             })
             .catch(error => {
                 setStartRequestForgot(false);
-                if( error.response.data.error){
+                if( error.response.data.error || error.response.data.code === 422){
                     ToastBottomEnd.fire(
-                        toastErrorMessageWithParameterConfig(error.response.data.error)
+                        toastErrorMessageWithParameterConfig(error.response.data.error.email)
                     );
                 } else {
                     ToastBottomEnd.fire(toastAddErrorMessageConfig());
@@ -45,7 +45,7 @@ const ForgotForm = () => {
     return (
 
         <div>
-            {ready ? (<div className="kt-login__form " style={{paddingTop: "100px"}}>
+            {ready ? (<div className="kt-login__form " style={{paddingTop: "43%"}}>
                 <div className="kt-login__head" style={{marginTop: '70px'}}>
                     <h3 className="kt-login__title">{t("Mot de Passe oublié")}?</h3>
                     <div className="kt-login__desc text-center">

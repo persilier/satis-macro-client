@@ -22,6 +22,7 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastDeleteSuccessMessageConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import {useTranslation} from "react-i18next";
+import moment from "moment";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -56,8 +57,8 @@ const   ProofReceipt = (props) => {
     const [filterData, setFilterData] = useState({
         sender: '',
         chanel: '',
-        start_date: '',
-        end_date: ''
+        start_date: moment().startOf('month').format('YYYY-MM-DD'),
+        end_date: moment().startOf('month').format('YYYY-MM-DD'),
     });
     const [startFilter, setStartFilter] = useState(false);
     const [expeditors, setExpeditors] = useState([]);
@@ -65,7 +66,22 @@ const   ProofReceipt = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            const sendData = null
+            const sendData = {
+                channel: filterData.chanel,
+                date_start: filterData.start_date,
+                date_end: filterData.end_date,
+                institution_id: filterData.sender ? filterData.sender.value : ''
+            };
+
+            if (!sendData.channel)
+                delete sendData.channel;
+            if (!sendData.date_start)
+                delete sendData.date_start;
+            if (!sendData.date_end)
+                delete sendData.date_end;
+            if (!sendData.institution_id)
+                delete sendData.institution_id;
+
             await axios.post(appConfig.apiDomaine+endPoint, sendData)
                 .then(response => {
                     setLoad(false);

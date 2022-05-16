@@ -103,6 +103,9 @@ import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
 import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
 import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
+import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
+import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
+import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -128,6 +131,8 @@ import ConfigConnexion from "../pages/ConfigConnexion";
 import Logs from "../pages/Logs";
 import ProofReceipt from "../pages/ProofReceipt";
 import ResetPassword from '../pages/password-reset';
+import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
+import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
 
 const Body = () => {
     return (
@@ -535,6 +540,26 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/uemoa/reporting-four">
                 <ClaimReportingUemoaFour/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-five">
+                <ClaimReportingUemoaFive/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-six">
+                <ClaimReportingUemoaSix/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-height">
+                <ClaimReportingUemoaHeight/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/reporting-benchmarking">
+                <ClaimReportingBenchmarking/>
+            </Route>
+
+            <Route exact path={"/monitoring/claims/system-usage"}>
+                <ClaimSystemUsageReport/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">

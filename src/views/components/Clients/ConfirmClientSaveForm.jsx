@@ -58,14 +58,14 @@ const ConfirmClientSaveForm = (props) => {
 
 
     const defaultData = {
-        firstname: props.identite.identite.firstname,
-        lastname: props.identite.identite.lastname,
+        firstname: props.identite && props.identite.identite ? props.identite.identite.firstname : "",
+        lastname: props.identite && props.identite.identite ? props.identite.identite.lastname : "",
         sexe: props.identite.identite.sexe,
-        telephone: JSON.parse(props.identite.identite.telephone),
-        email: JSON.parse(props.identite.identite.email),
+        telephone: props.identite && props.identite.identite && props.identite.identite.telephone ? JSON.parse( props.identite.identite.telephone): [],
+        email: props.identite && props.identite.identite && props.identite.identite.email ? JSON.parse(props.identite.identite.email) : [],
         ville: props.identite.identite.ville === null ? "" : props.identite.identite.ville,
         number:props.number,
-        account_type_id: props.account_type_id,
+        account_type_id: props.account_type_id ? props.account_type_id : "",
         client_id: props.client_id,
         institution_id: props.institution_id,
         category_client_id:props.category_id
