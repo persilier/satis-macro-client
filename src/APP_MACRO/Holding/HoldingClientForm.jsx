@@ -367,7 +367,7 @@ const HoldingClientForm = (props) => {
         newData.ville = "";
         newData.category_client_id = "";
         setData(newData);
-        setDisabledInput(!disabledInput);
+        setDisabledInput(e.target.checked);
     };
 
     const onChangeAccountType = (selected) => {
@@ -487,13 +487,6 @@ const HoldingClientForm = (props) => {
         setDisabledInput(true)
 
     };
-
-    const check = () => {
-        document.getElementById("is_client").checked = true;
-    }
-    const uncheck = () => {
-        document.getElementById("is_client").checked = false;
-    }
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -703,7 +696,7 @@ const HoldingClientForm = (props) => {
                                                             <label className="kt-checkbox">
 
                                                                 <input id="is_client" type="checkbox"
-                                                                       value={disabledInput}
+                                                                       checked={disabledInput}
                                                                        onChange={handleDisabledInputChange}/>
                                                                 {t("Le client est-il déjà enregistré")} ?<span/>
                                                             </label>
