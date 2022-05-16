@@ -51,7 +51,7 @@ const TypeCompte = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -123,7 +123,7 @@ const TypeCompte = (props) => {
                     if (verifyTokenExpire()) {
                         axios.delete(appConfig.apiDomaine + `/type-clients/${typeCompteId}`)
                             .then(response => {
-                                console.log(response, "OK");
+                                //console.log(response, "OK");
                                 const newType = [...typeCompte];
                                 newType.splice(index, 1);
                                 setTypeCompte(newType);

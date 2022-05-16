@@ -41,7 +41,7 @@ const ParametersComponent = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/components")
                 .then(response => {
-                    console.log(response.data, 'RESPONSE');
+                    //console.log(response.data, 'RESPONSE');
                     setLoad(false);
                     setComponent(response.data);
                     setShowList(response.data.slice(0, numberPerPage));
@@ -49,7 +49,7 @@ const ParametersComponent = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

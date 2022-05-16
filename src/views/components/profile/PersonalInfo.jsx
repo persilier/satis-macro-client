@@ -44,7 +44,7 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                 return false
             })
         ;
-        console.log("coucou:", coucou);
+        //console.log("coucou:", coucou);
     };
 
     return (

@@ -120,7 +120,7 @@ const HoldingUnitForm = (props) => {
             if (id) {
                 await axios.get(endPoint.edit(id))
                     .then(response => {
-                        console.log("DATA:",response.data)
+                        //console.log("DATA:",response.data)
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
@@ -134,7 +134,7 @@ const HoldingUnitForm = (props) => {
                                     setStates(formatSelectOption(response.data, "name"));
                                 })
                                 .catch(error => {
-                                    console.log("something is wrong");
+                                    //console.log("something is wrong");
                                 })
                             ;
                             setCountrie(
@@ -162,7 +162,7 @@ const HoldingUnitForm = (props) => {
 
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -174,7 +174,7 @@ const HoldingUnitForm = (props) => {
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     })
                     .catch(error => {
-                        console.log("something is wrong");
+                        //console.log("something is wrong");
                     })
                 ;
             }
@@ -212,7 +212,7 @@ const HoldingUnitForm = (props) => {
                     setStates(formatSelectOption(response.data, "name"));
                 })
                 .catch(error => {
-                    console.log("something is wrong");
+                    //console.log("something is wrong");
                 })
 
         ;

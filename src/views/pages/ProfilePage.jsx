@@ -38,7 +38,7 @@ const ProfilePage = ({user}) => {
 
     const unity = user?.data?.identite?.staff?.unit?.name?.fr ?? "";
 
-   console.log(user.data)
+   //console.log(user.data)
     useEffect(() => {
         async function fetchData() {
             await axios.get(`${appConfig.apiDomaine}/edit-profil`)
@@ -53,7 +53,7 @@ const ProfilePage = ({user}) => {
                     });
                 })
                 .catch(({response}) => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

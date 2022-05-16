@@ -7,7 +7,7 @@ const ClientButtonDetail = ({claim}) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation()
 
-    console.log("claim:", claim);
+    //console.log("claim:", claim);
 
     return (
         ready ? (

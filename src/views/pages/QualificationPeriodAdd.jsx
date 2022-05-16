@@ -128,7 +128,7 @@ const QualificationPeriodAdd = (props) => {
                             setError(defaultError);
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error));
                         }
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             }

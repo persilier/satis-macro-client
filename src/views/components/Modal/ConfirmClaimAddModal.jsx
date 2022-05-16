@@ -160,7 +160,7 @@ const ConfirmClaimAddModal = props => {
                             setUnits(formatSelectOption(response.data.units, "name", "fr"))
                         })
                         .catch(error => {
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }

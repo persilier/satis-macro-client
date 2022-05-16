@@ -47,9 +47,9 @@ const ClaimReassign = (props) => {
                     setLoad(false);
                 })
                 .catch(error => {
-                    console.log("error:", error.response);
+                    //console.log("error:", error.response);
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

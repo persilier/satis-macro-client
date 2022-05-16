@@ -31,7 +31,7 @@ const ChooseHeaderBuilder = () => {
 
 
     const addHeaderBuilder = (data) => {
-        console.log(data, "Add header builder");
+        //console.log(data, "Add header builder");
         axios({
             method: 'post',
             url: `http://127.0.0.1:8000/header`,
@@ -41,14 +41,14 @@ const ChooseHeaderBuilder = () => {
             },
         })
             .then(function (response) {
-                console.log(response, 'OK');
+                //console.log(response, 'OK');
             })
             .catch(function (response) {
-                console.log(response);
+                //console.log(response);
             });
     };
     const updateHeaderBuilder = (data) => {
-        console.log(data, "Add header builder");
+        //console.log(data, "Add header builder");
         if (getHeader !== undefined) {
             axios({
                 method: 'put',
@@ -59,10 +59,10 @@ const ChooseHeaderBuilder = () => {
                 },
             })
                 .then(function (response) {
-                    console.log(response, 'OK');
+                    //console.log(response, 'OK');
                 })
                 .catch(function (response) {
-                    console.log(response);
+                    //console.log(response);
                 });
         }
         onCloseHeader()

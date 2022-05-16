@@ -93,7 +93,7 @@ const ClaimMonitoring = (props) => {
                 endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
             await axios.get(endpoint)
                 .then(response => {
-                    console.log("plainte recupérée", response.data)
+                    //console.log("plainte recupérée", response.data)
                     setClaimsToComplete(response.data.incompletes);
                     setClaimsToAssignUnit(response.data.toAssignementToUnit);
                     setClaimsToAssignStaff(response.data.toAssignementToStaff);
@@ -116,7 +116,7 @@ const ClaimMonitoring = (props) => {
                     setIsLoad(false)
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                     setIsLoad(false)
                 })
             ;

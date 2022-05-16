@@ -57,7 +57,7 @@ const ActivatePilotPage = (props) => {
                     setStaffs(formatListStaff(data));
                 })
                 .catch(error => {
-                    console.log("something is wrong");
+                    //console.log("something is wrong");
                 })
             ;
         }

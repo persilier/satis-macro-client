@@ -47,7 +47,7 @@ const TypeCompteForm = (props) => {
             if (verifyTokenExpire()) {
                 axios.get(appConfig.apiDomaine + `/account-types/${edittypeid}`)
                     .then(response => {
-                        console.log(response.data, 'DATA');
+                        //console.log(response.data, 'DATA');
                         const newType = {
                             name: response.data.name.fr,
                             description: response.data.description.fr

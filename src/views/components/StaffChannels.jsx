@@ -37,7 +37,7 @@ const StaffChannels = () => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -45,7 +45,7 @@ const StaffChannels = () => {
 
     const onChangeOption = (e, channel) => {
         const newData = {...data};
-        console.log(e.target.checked, "OPTION");
+        //console.log(e.target.checked, "OPTION");
         if (e.target.checked === true) {
             newData.feedback_preferred_channels.push(channel)
         } else newData.feedback_preferred_channels = newData.feedback_preferred_channels.filter(item => item !== channel);
@@ -58,13 +58,13 @@ const StaffChannels = () => {
         if (verifyTokenExpire()) {
             axios.put(appConfig.apiDomaine + "/feedback-channels", data)
                 .then(response => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     setStartRequest(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    console.log("something is wrong");
+                    //console.log("something is wrong");
                     ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;

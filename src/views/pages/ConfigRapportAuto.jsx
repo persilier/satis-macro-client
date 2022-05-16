@@ -78,7 +78,7 @@ const ConfigRapportAuto = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

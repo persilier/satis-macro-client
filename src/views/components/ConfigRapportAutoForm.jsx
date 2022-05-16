@@ -83,7 +83,7 @@ const ConfigRapportAutoForm = (props) => {
     const getReportingType = (data, key) =>{
         for ( let i = 0; i < data.length; i ++){
             if (data[i].value === key) {
-                console.log(data[i])
+                //console.log(data[i])
                 return data[i];
             }
         }
@@ -96,7 +96,7 @@ const ConfigRapportAutoForm = (props) => {
             if (id) {
                 axios.get(endPoint.list + `/${id}/edit`)
                     .then(response => {
-                        console.log("réponse obtenue", response.data)
+                        //console.log("réponse obtenue", response.data)
                         let selectedStaffs = [];
                         for (let i = 0; i < response.data.staffs.length ; i ++) {
                             response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
@@ -173,7 +173,7 @@ const ConfigRapportAutoForm = (props) => {
     };
 
     const onChangeStaff = (selected) => {
-        console.log(selected)
+        //console.log(selected)
         var staffToSend = selected.map( item => item.value)
         const newData = {...data};
         newData.staffs = staffToSend;

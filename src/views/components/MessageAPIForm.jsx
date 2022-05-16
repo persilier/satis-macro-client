@@ -70,7 +70,7 @@ const MessageAPIForm = props => {
                         setMethods(formatMethodOptions(response.data));
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -79,7 +79,7 @@ const MessageAPIForm = props => {
                         setMethods(formatMethodOptions(data));
                     })
                     .catch(({response}) => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             }

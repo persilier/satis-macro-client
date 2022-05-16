@@ -124,7 +124,7 @@ const ConfigProcessingCircuit = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -258,7 +258,7 @@ const ConfigProcessingCircuit = (props) => {
         }): "";
         newData[object_id] = all && newUnits ? formatSelectOption(units, 'name', "fr") : newUnits
 
-        console.log(e);
+        //console.log(e);
         setData(newData);
     };
     const onSubmit = (e) => {

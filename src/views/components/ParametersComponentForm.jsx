@@ -77,7 +77,7 @@ const ParametersComponentForm = (props) => {
                     for (const param in componentsData) {
                         componentParams.push(param);
                     }
-                    console.log(componentParams,"COMPONENTS_DATA")
+                    //console.log(componentParams,"COMPONENTS_DATA")
 
                     const newComponent = {
                         logo: {
@@ -106,7 +106,7 @@ const ParametersComponentForm = (props) => {
                         },
                     };
                     setData(newComponent);
-                    console.log(newComponent,"newComponent")
+                    //console.log(newComponent,"newComponent")
 
                 })
         }
@@ -120,7 +120,7 @@ const ParametersComponentForm = (props) => {
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById('Image1');
-            console.log(image, 'image');
+            //console.log(image, 'image');
             image.src = e.target.result;
         };
         reader.readAsDataURL(newData.logo);
@@ -149,7 +149,7 @@ const ParametersComponentForm = (props) => {
         var reader = new FileReader();
         reader.onload = function (e) {
             var image = document.getElementById('Image2');
-            console.log(image, 'image');
+            //console.log(image, 'image');
             image.src = e.target.result;
         };
         reader.readAsDataURL(newData.background);

@@ -46,7 +46,7 @@ const PreferredChannel = () => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -72,7 +72,7 @@ const PreferredChannel = () => {
                 })
                 .catch(err => {
                     setStartRequest(false);
-                    console.log("something is wrong");
+                    //console.log("something is wrong");
                     setError({...defaultError, ...err.response.data.error});
                     if (err.response.data.error && err.response.data.error.feedback_preferred_channels.length)
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(err.response.data.error.feedback_preferred_channels[0]));
