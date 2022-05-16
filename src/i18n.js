@@ -9,7 +9,7 @@ i18n
     /*.use(LanguageDetector)*/ // for browser detection
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
-        debug: true,
+        debug: false,
         lng: localStorage.getItem('i18nextLng') !== null ? localStorage.getItem('i18nextLng') : appConfig.language,
         fallbackLng: "fr",
         interpolation: {
