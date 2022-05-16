@@ -109,7 +109,7 @@ const StaffImportPage = (props) => {
                         ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));*/
                     })
                     .catch(({response}) => {
-                        console.log(response.data);
+                        //console.log(response.data);
                         setStartRequest(false);
                         if(response.data["errors"] && response.data["errors"].length) {
                             setFileName("");

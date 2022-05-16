@@ -95,13 +95,13 @@ const ImportClientForm = (props) => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
+            // //console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 formData.append("file", newData.file);
             } else
                 formData.set(key, newData[key]);
         }
-        console.log(formData.get('file'), 'FORMDATA');
+        //console.log(formData.get('file'), 'FORMDATA');
         return formData;
 
     };
@@ -138,16 +138,22 @@ const ImportClientForm = (props) => {
                 })
                 .catch(response => {
                     setStartRequest(false);
-                    if(response.data["errors"] && response.data["errors"].length) {
-                        setErrorFile(response.data["errors"]);
-                        ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                   // if(response.data["errors"] && response.data["errors"].length) {
+                    if(response.response.data.error) {
+                       setErrorFile(response.response.data.error);
+                      // ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                       ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.response.data.error.file[1]));
                     }
                     else if (response.data.code === 422) {
+                        //console.log('luuu');
                         setError({...defaultError, ...response.data.error});
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                     }
-                    else
+                    else {
+                        //console.log('lolo')
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                    }
+
                 })
             ;
         }
@@ -186,7 +192,7 @@ const ImportClientForm = (props) => {
                                         </h3>
                                     </div>
                                 </div>
-                                {console.log(data, "DATA_OPTION")}
+
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
 

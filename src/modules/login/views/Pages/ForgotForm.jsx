@@ -30,9 +30,9 @@ const ForgotForm = () => {
             })
             .catch(error => {
                 setStartRequestForgot(false);
-                if( error.response.data.error){
+                if( error.response.data.error || error.response.data.code === 422){
                     ToastBottomEnd.fire(
-                        toastErrorMessageWithParameterConfig(error.response.data.error)
+                        toastErrorMessageWithParameterConfig(error.response.data.error.email)
                     );
                 } else {
                     ToastBottomEnd.fire(toastAddErrorMessageConfig());

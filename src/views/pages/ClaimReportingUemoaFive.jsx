@@ -152,7 +152,7 @@ const ClaimReportingUemoaFive = (props) => {
             .then(response => {
                 if (click)
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
-                console.log(response.data)
+                //console.log(response.data)
                 /*setNumberPage(forceRound(response.data.length / numberPerPage));
                 setShowList(response.data.slice(0, numberPerPage));*/
                 setReceivedClaims(response.data.receivedClaims)
@@ -175,7 +175,7 @@ const ClaimReportingUemoaFive = (props) => {
                 });
                 setLoadFilter(false);
                 setLoad(false);
-                console.log("Something is wrong");
+                //console.log("Something is wrong");
             })
         ;
     };
@@ -222,7 +222,7 @@ const ClaimReportingUemoaFive = (props) => {
                     setStatutes(formatStatus(response.data.status));
                 })
                 .catch(error => {
-                    console.log("Something is wrong")
+                    //console.log("Something is wrong")
                 })
             ;
         }

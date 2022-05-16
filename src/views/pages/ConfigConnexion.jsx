@@ -96,7 +96,7 @@ const ConfigConnexion = (props) => {
                     setLoad(false);
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                     setLoad(false);
                 })
         }

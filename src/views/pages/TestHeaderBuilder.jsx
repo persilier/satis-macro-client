@@ -12,7 +12,7 @@ const TestHeaderBuilder = () => {
     useEffect(() => {
         setHeaderForm(AppLibrariesModel.allHeader()
             .then(response => {
-                console.log('FormHeader', response);
+                //console.log('FormHeader', response);
                 setGetHeader(response.data.map(header => (header.name)))
             })
             .catch(error => console.log(error))
@@ -20,7 +20,7 @@ const TestHeaderBuilder = () => {
     }, []);
 
     const upDateHeaderBuilder = (data) => {
-        console.log(data, "Add header builder");
+        //console.log(data, "Add header builder");
         if (getHeader !== undefined) {
             axios({
                 method: 'put',
@@ -31,17 +31,17 @@ const TestHeaderBuilder = () => {
                 },
             })
                 .then(function (response) {
-                    console.log(response, 'OK');
+                    //console.log(response, 'OK');
                 })
                 .catch(function (response) {
-                    console.log(response);
+                    //console.log(response);
                 });
         }
 
     };
 
     const updateHeaderBuilder = (data) => {
-        console.log(data, "Update header builder");
+        //console.log(data, "Update header builder");
     };
     return (
         <div className="container">

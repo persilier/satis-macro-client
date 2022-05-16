@@ -160,7 +160,7 @@ const StaffForm = (props) => {
                         setData(newData);
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -173,7 +173,7 @@ const StaffForm = (props) => {
                             setUnits(formatUnits(response.data.units));
                     })
                     .catch(error => {
-                        console.log("something is wrong");
+                        //console.log("something is wrong");
                     })
                 ;
             }
@@ -340,7 +340,7 @@ const StaffForm = (props) => {
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
-                        console.log("data-56465:",errorRequest.response.data)
+                        //console.log("data-56465:",errorRequest.response.data)
 
                         if (errorRequest.response.status === 409) {
                             setStartRequest(false);

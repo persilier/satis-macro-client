@@ -79,7 +79,7 @@ const ClaimObjectForm = (props) => {
                         );
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -89,7 +89,7 @@ const ClaimObjectForm = (props) => {
                         setSeverityLevels(formatSelectOption(response.data.severityLevels, "name", "fr"));
                     })
                     .catch(error => {
-                        console.log("something is wrong");
+                        //console.log("something is wrong");
                     })
                 ;
             }

@@ -190,7 +190,7 @@ const ClaimAdd = props => {
                     setResponseChannels(formatSelectOption(filterChannel(response.data.channels, RESPONSE_CHANNEL), "name", "fr", "slug"))
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 });
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/register_claim")
                 .then(response => {
@@ -199,7 +199,7 @@ const ClaimAdd = props => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -263,7 +263,7 @@ const ClaimAdd = props => {
                             setUnits(formatSelectOption(response.data.units, "name", "fr"))
                         })
                         .catch(error => {
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }
@@ -540,7 +540,7 @@ const ClaimAdd = props => {
                             })
                             .catch(({response}) => {
                                 setStartSearch(false);
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                         ;
                     }
@@ -554,12 +554,12 @@ const ClaimAdd = props => {
                                 if (data.length)
                                     setClientCash({"searchInputValue": searchInputValue, "clients": data});
                                 setSearchList(data);
-                                console.log(data);
-                                console.log(searchInputValue);
+                                //console.log(data);
+                                //console.log(searchInputValue);
                             })
                             .catch(({response}) => {
                                 setStartSearch(false);
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                         ;
                     }
@@ -573,12 +573,12 @@ const ClaimAdd = props => {
                                 if (data.length)
                                     setClientCash({"searchInputValue": searchInputValue, "clients": data});
                                 setSearchList(data);
-                                console.log(data);
-                                console.log(searchInputValue);
+                                //console.log(data);
+                                //console.log(searchInputValue);
                             })
                             .catch(({response}) => {
                                 setStartSearch(false);
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                         ;
                     }
@@ -597,12 +597,12 @@ const ClaimAdd = props => {
                             if (data.length)
                                 setClientCash({"searchInputValue": searchInputValue, "clients": data});
                             setSearchList(data);
-                            console.log(data);
-                            console.log(searchInputValue);
+                            //console.log(data);
+                            //console.log(searchInputValue);
                         })
                         .catch(({response}) => {
                             setStartSearch(false);
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }

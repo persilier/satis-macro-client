@@ -53,7 +53,7 @@ const Nav = (props) => {
                     setRelaunchNotification(filterRelaunchNotification(response.data));
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -89,12 +89,12 @@ const Nav = (props) => {
         e.preventDefault();
         axios.get(`${appConfig.apiDomaine}/logout`)
             .then(response => {
-                console.log('response:', response.data);
+                //console.log('response:', response.data);
                 props.logoutUser();
             })
             .catch(error => {
-                console.log("")
-                console.log("Something is wrong");
+                //console.log("")
+                //console.log("Something is wrong");
             })
         ;
     }, [props.logoutUser]);
@@ -143,7 +143,7 @@ const Nav = (props) => {
                         .catch((error) => {
                             setLoader(false);
                             setSearchData([]);
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }

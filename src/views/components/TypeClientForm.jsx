@@ -46,7 +46,7 @@ const TypeClientForm = (props) => {
             if (verifyTokenExpire()) {
                 axios.get(appConfig.apiDomaine + `/type-clients/${edittypeid}`)
                     .then(response => {
-                        console.log(response.data, 'DATA');
+                        //console.log(response.data, 'DATA');
                         const newType = {
                             name: response.data.name.fr,
                             description: response.data.description.fr

@@ -37,7 +37,7 @@ const ConfigCoefficient = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + `/configurations/relance`)
                 .then(response => {
-                    console.log(response.data, "Data");
+                    //console.log(response.data, "Data");
                     const newConfig = {
                         coef: response.data.coef,
                     };

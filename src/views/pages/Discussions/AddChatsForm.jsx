@@ -47,7 +47,7 @@ const AddChatsForm = (props) => {
                     setClaimIdData(response.data);
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

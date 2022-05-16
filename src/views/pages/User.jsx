@@ -58,12 +58,12 @@ const User = (props) => {
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setUsers(response.data);
                     setUsersFilter([]);
-                    console.log(response.data)
+                    //console.log(response.data)
                     setLoad(false);
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }

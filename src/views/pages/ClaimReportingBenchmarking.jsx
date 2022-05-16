@@ -71,7 +71,7 @@ const ClaimReportingBenchmarking = (props) => {
                     setLoad(false);
                     setLoadFilter(false);
                     setError({...defaultError, ...error.response.data.error});
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
 
         }

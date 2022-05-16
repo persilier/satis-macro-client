@@ -40,7 +40,7 @@ const KanbanElementDetail = ({claim, userPermissions, onClick, onShowDetail}) =>
                             .catch(error => {
                                 setRevokeLoad(false);
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec de revocation de la réclamation'));
-                                console.log("Something is wrong");
+                                //console.log("Something is wrong");
                             })
                     }
                 }

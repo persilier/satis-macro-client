@@ -17,11 +17,11 @@ const Discussion = () => {
     useEffect(() => {
         axios.get(appConfig.apiDomaine + "/discussions")
             .then(response => {
-                console.log(response.data, 'RESPONSE');
+                //console.log(response.data, 'RESPONSE');
                 setListChat(response.data)
             })
             .catch(error => {
-                console.log("Something is wrong");
+                //console.log("Something is wrong");
             })
     }, []);
 

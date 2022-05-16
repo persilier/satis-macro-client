@@ -129,7 +129,7 @@ const HeaderBuilder = (props) => {
                                     </div>
                                   </div>
                               ): (
-                                  console.log('end')
+                                  //console.log('end')
                               )
                         }
                       </div>

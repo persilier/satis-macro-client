@@ -355,8 +355,6 @@ const HoldingClientForm = (props) => {
 
     const handleDisabledInputChange = (e) => {
         setSearchList([]);
-        setShowSearchResult(false);
-        setSearchInputValue("");
         const newData = {...data};
         setAccount(null);
         setAccounts([]);
@@ -369,7 +367,7 @@ const HoldingClientForm = (props) => {
         newData.ville = "";
         newData.category_client_id = "";
         setData(newData);
-        setDisabledInput(e.target.checked);
+        setDisabledInput(!disabledInput);
     };
 
     const onChangeAccountType = (selected) => {
@@ -490,6 +488,13 @@ const HoldingClientForm = (props) => {
 
     };
 
+    const check = () => {
+        document.getElementById("is_client").checked = true;
+    }
+    const uncheck = () => {
+        document.getElementById("is_client").checked = false;
+    }
+
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
@@ -521,6 +526,10 @@ const HoldingClientForm = (props) => {
                     axios.post(endPoint.storeAccount(`${data.client_id}`), data)
 
                         .then(response => {
+                            setShowSearchResult(false);
+                            setSearchInputValue("");
+                            setDisabledInput(false);
+                            setTag({name: "", label: "", className: "", show: false})
                             setStartRequest(false);
                             setError(defaultError);
                             setData(defaultData);
