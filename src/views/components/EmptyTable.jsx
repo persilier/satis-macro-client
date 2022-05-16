@@ -1,16 +1,23 @@
 import React from "react";
+import {useTranslation} from "react-i18next";
 
-const EmptyTable = ({search}) => {
+const EmptyTable = ({search, colSpan=100 }) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     return (
-        <tr>
-            <td colSpan={100} className="text-center">
+        ready ? (
+            <tr>
+                <td style={{textAlign:"center"}}  colSpan={colSpan} className="text-center">
                 <span className="kt-datatable--error">
                     {
-                        search ? "Pas d'élément pour cette recherche" : "Le tableau est vide"
+                        search ? t("Pas d'élément pour cette recherche" ): t("Le tableau est vide")
                     }
                 </span>
-            </td>
-        </tr>
+                </td>
+            </tr>
+        ) : null
     )
 };
 

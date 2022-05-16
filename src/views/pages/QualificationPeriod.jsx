@@ -19,9 +19,14 @@ import {
 } from "../../config/toastConfig";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const QualificationPeriod = props => {
-    document.title = "Satis client - Paramètre délai de qualification";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Paramètre délai de qualification") : "");
     if (!verifyPermission(props.userPermissions, "list-delai-qualification-parameters"))
         window.location.href = ERROR_401;
 
@@ -56,7 +61,7 @@ const QualificationPeriod = props => {
         value = getLowerCaseString(value);
         let newQualificationPeriods = [...qualificationPeriods];
         newQualificationPeriods = newQualificationPeriods.filter(el => (
-            getLowerCaseString(`${el.borne_sup === "+" ? `Plus de ${el.borne_inf}` : `${el.borne_inf}-${el.borne_sup}`} jours`).indexOf(value) >= 0
+            getLowerCaseString(`${el.borne_sup === "+" ? `${t("Plus de")} ${el.borne_inf}` : `${el.borne_inf}-${el.borne_sup}`} ${t("jours")}`).indexOf(value) >= 0
         ));
 
         return newQualificationPeriods;
@@ -121,7 +126,7 @@ const QualificationPeriod = props => {
     };
 
     const deletePeriod = (qualificationPeriodId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (verifyTokenExpire()) {
                     if (result.value) {
@@ -137,6 +142,7 @@ const QualificationPeriod = props => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newUnitTypes.slice(
@@ -144,14 +150,16 @@ const QualificationPeriod = props => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                setNumberPage(forceRound(newUnitTypes.length/numberPerPage));
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
                                 if (error.response.data.error)
                                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -176,11 +184,11 @@ const QualificationPeriod = props => {
                 <td>
                     {
                         qualificationPeriod.borne_sup === "+" ? (
-                            `Plus de ${qualificationPeriod.borne_inf}`
+                            `${t("Plus de")} ${qualificationPeriod.borne_inf}`
                         ) : (
                             `${qualificationPeriod.borne_inf}-${qualificationPeriod.borne_sup}`
                         )
-                    } Jours
+                    } {t("Jours")}
                 </td>
                 <td>
                     {
@@ -188,7 +196,7 @@ const QualificationPeriod = props => {
                             <button
                                 onClick={(e) => deletePeriod(qualificationPeriod.uuid, index)}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Supprimer">
+                                title={t("Supprimer")}>
                                 <i className="la la-trash"/>
                             </button>
                         ) : null
@@ -199,133 +207,135 @@ const QualificationPeriod = props => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-delai-qualification-parameters') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Délai qualification
-                                </a>
+
+        ready ? (
+            verifyPermission(props.userPermissions, 'list-delai-qualification-parameters') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Délai qualification")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            addPermission={
-                                !qualificationPeriods.length ? "" : qualificationPeriods[qualificationPeriods.length - 1 ].borne_sup === "+" ? "" : "store-delai-qualification-parameters"
-                            }
-                            title={"Délai qualification"}
-                            addText={"Ajouter"}
-                            addLink={"/settings/qualification-period/add"}
-                        />
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={
+                                    !qualificationPeriods.length ? "" : qualificationPeriods[qualificationPeriods.length - 1 ].borne_sup === "+" ? "" : "store-delai-qualification-parameters"
+                                }
+                                title={t("Délai qualification")}
+                                addText={t("Ajouter")}
+                                addLink={"/settings/qualification-period/add"}
+                            />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Recherche:
-                                                        <input
-                                                            id="myInput"
-                                                            type="text"
-                                                            onKeyUp={(e) => searchElement(e)}
-                                                            className="form-control form-control-sm"
-                                                            placeholder=""
-                                                            aria-controls="kt_table_1"
-                                                        />
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
-                                                    <thead>
-                                                    <tr role="row" className="text-center">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Période
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "15%" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        qualificationPeriods.length ? (
-                                                            showList.length ? (
-                                                                showList.map((qualificationPeriod, index) => (
-                                                                    printBodyTable(qualificationPeriod, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr className="text-center">
-                                                        <th rowSpan="1" colSpan="1">Période</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {qualificationPeriods.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Recherche")}:
+                                                            <input
+                                                                id="myInput"
+                                                                type="text"
+                                                                onKeyUp={(e) => searchElement(e)}
+                                                                className="form-control form-control-sm"
+                                                                placeholder=""
+                                                                aria-controls="kt_table_1"
+                                                            />
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{ width: "952px" }}>
+                                                        <thead>
+                                                        <tr role="row" className="text-center">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Période")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "15%" }} aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            qualificationPeriods.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((qualificationPeriod, index) => (
+                                                                        printBodyTable(qualificationPeriod, index)
+                                                                    ))
+                                                                ) : (
+                                                                    <EmptyTable search={true}/>
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr className="text-center">
+                                                            <th rowSpan="1" colSpan="1">{t("Période")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {qualificationPeriods.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    showList.length ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
-
     );
 };
 

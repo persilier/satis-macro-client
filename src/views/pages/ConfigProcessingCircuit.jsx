@@ -24,6 +24,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -49,7 +50,11 @@ const endPointConfig = {
 
 
 const ConfigProcessingCircuit = (props) => {
-    document.title = "Satis client - Paramètre Entités de traitement";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Paramètre entités de traitement") : "";
 
     if (!(verifyPermission(props.userPermissions, 'update-processing-circuit-my-institution') ||
         verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ||
@@ -119,7 +124,7 @@ const ConfigProcessingCircuit = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -244,7 +249,16 @@ const ConfigProcessingCircuit = (props) => {
 
     const onChangeProcessing = (e, object_id) => {
         let newData = {...data};
-        newData[object_id] = e?e.map(sel => ({value: sel.value, label: sel.label})):"";
+        let all = false;
+        let newUnits = e ? e.map(sel => {
+            if (sel.value !== "all")
+                return ({value: sel.value, label: sel.label})
+            else if (sel.value === "all")
+                all = true;
+        }): "";
+        newData[object_id] = all && newUnits ? formatSelectOption(units, 'name', "fr") : newUnits
+
+        //console.log(e);
         setData(newData);
     };
     const onSubmit = (e) => {
@@ -271,11 +285,11 @@ const ConfigProcessingCircuit = (props) => {
             axios.put(newEndPoint, values)
                 .then(response => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             ;
         }
@@ -322,9 +336,9 @@ const ConfigProcessingCircuit = (props) => {
                                 <Select
                                     value={data[object.id]}
                                     onChange={(e) => onChangeProcessing(e, object.id)}
-                                    options={formatSelectOption(units, 'name', "fr")}
+                                    options={[{value: "all", label: <strong><em>Tout sélectionner</em></strong>}, ...formatSelectOption(units, 'name', "fr")]}
                                     isMulti
-                                    placeholder={"Veillez selectionez le circuit"}
+                                    placeholder={t("Veillez sélectionnez le circuit")}
                                     key={object.id}
                                 />
                             ) : null
@@ -336,213 +350,213 @@ const ConfigProcessingCircuit = (props) => {
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                <div className="kt-container  kt-container--fluid ">
-                    <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            Paramètres
-                        </h3>
-                        <span className="kt-subheader__separator kt-hidden"/>
-                        <div className="kt-subheader__breadcrumbs">
+        ready ? (
+            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                    <div className="kt-container  kt-container--fluid ">
+                        <div className="kt-subheader__main">
+                            <h3 className="kt-subheader__title">
+                                {t("Paramètres")}
+                            </h3>
+                            <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
-                                    className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()}
-                                   className="kt-subheader__breadcrumbs-link">
-                                    Configuration Entités de traitement
-                                </a>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link">
+                                        {t("Configuration entités de traitement")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                <InfirmationTable
-                    information={"Paramètre de configuration des entités de traitement"}/>
+                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                    <InfirmationTable
+                        information={t("Paramètre de configuration des entités de traitement")}/>
+                    <div className="kt-portlet">
+                        <HeaderTablePage
+                            addPermission={""}
+                            title={t("Entités de traitement")}
+                            addText={t("Ajouter une entité de traitement")}
+                            addLink={"/settings/processing-circuit"}
+                        />
 
-                <div className="kt-portlet">
-                    <HeaderTablePage
-                        addPermission={""}
-                        title={"Entités de Traitement"}
-                        addText={"Ajouter une entité de traitement"}
-                        addLink={"/settings/processing-circuit"}
-                    />
-
-                    {
-                        load ? (
-                            <LoadingTable/>
-                        ) : (
-                            <div className="kt-portlet__body">
-                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                    <div className="row">
-                                        <div className="col-sm-6 text-left">
-                                            <div id="kt_table_1_filter" className="dataTables_filter">
-                                                <label>
-                                                    Recherche:
-                                                    <input id="myInput" type="text"
-                                                           onKeyUp={(e) => searchElement(e)}
-                                                           className="form-control form-control-sm"
-                                                           placeholder=""
-                                                           aria-controls="kt_table_1"/>
-                                                </label>
+                        {
+                            load ? (
+                                <LoadingTable/>
+                            ) : (
+                                <div className="kt-portlet__body">
+                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                        <div className="row">
+                                            <div className="col-sm-6 text-left">
+                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                                    <label>
+                                                        {t("Recherche")}:
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control form-control-sm"
+                                                               placeholder=""
+                                                               aria-controls="kt_table_1"/>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12">
-                                            <br/>
-                                            <br/>
-                                            {
-                                                verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ?
-                                                    <div
-                                                        className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="exampleSelect1">Sélectionnez une Institution</label>
-                                                        <div className="col-lg-9 col-xl-6">
-                                                            {
-                                                                institutionData ? (
-                                                                    <Select
-                                                                        placeholder={"Veillez selectionner l'institution"}
-                                                                        value={institution}
-                                                                        onChange={onChangeInstitution}
-                                                                        options={institutionData.length ? institutionData[0].map(name => name) : null}
-                                                                    />
-
-                                                                ) : (<select name="category"
-                                                                             className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
-                                                                             id="category">
-                                                                    <option value=""/>
-                                                                </select>)
-                                                            }
-                                                        </div>
-                                                        {
-                                                            error.institution_id.length ? (
-                                                                error.institution_id.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-
-                                                    </div>
-                                                    : null
-                                            }
-
-
-                                            <table
-                                                className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                style={{width: "952px"}}>
-                                                <thead>
-                                                <tr role="row">
-
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "80px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Catégorie
-                                                        de plainte
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "100px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Objets
-                                                        de plainte
-                                                    </th>
-                                                    <th className="sorting" tabIndex="0"
-                                                        aria-controls="kt_table_1"
-                                                        rowSpan="1"
-                                                        colSpan="1" style={{width: "170px"}}
-                                                        aria-label="Ship City: activate to sort column ascending">Entités
-                                                        de traitement
-                                                    </th>
-
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {/*{console.log(data,'data')}*/}
+                                        <div className="row">
+                                            <div className="col-sm-12">
+                                                <br/>
+                                                <br/>
                                                 {
-                                                    claimObject ? (
-                                                        showList.length ? (
-                                                            showList.map((category, index) => (
-                                                                printBodyTable(category, index)
-                                                            ))
-                                                        ) : (
-                                                            <EmptyTable search={true}/>
-                                                        )
-                                                    ) : (
-                                                        <EmptyTable/>
-                                                    )
-                                                }
-                                                </tbody>
+                                                    verifyPermission(props.userPermissions, "update-processing-circuit-any-institution") ?
+                                                        <div
+                                                            className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="exampleSelect1">{t("Sélectionnez une institution")}</label>
+                                                            <div className="col-lg-9 col-xl-6">
+                                                                {
+                                                                    institutionData ? (
+                                                                        <Select
+                                                                            placeholder={t("Veuillez sélectionner l'institution")}
+                                                                            value={institution}
+                                                                            onChange={onChangeInstitution}
+                                                                            options={institutionData.length ? institutionData[0].map(name => name) : null}
+                                                                        />
 
-                                            </table>
-                                            <div className="kt-portlet__foot">
-                                                <div className="kt-form__actions text-right">
+                                                                    ) : (<select name="category"
+                                                                                 className={error.institution_id.length ? "form-control is-invalid" : "form-control"}
+                                                                                 id="category">
+                                                                        <option value=""/>
+                                                                    </select>)
+                                                                }
+                                                            </div>
+                                                            {
+                                                                error.institution_id.length ? (
+                                                                    error.institution_id.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
+
+                                                        </div>
+                                                        : null
+                                                }
+
+
+                                                <table
+                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                    style={{width: "952px"}}>
+                                                    <thead>
+                                                    <tr role="row">
+
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "80px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">
+                                                            {t("Catégorie de plainte")}
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "100px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">
+                                                            {t("Objets de plainte")}
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "170px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">
+                                                            {t("Entités de traitement")}
+                                                        </th>
+
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {/*{console.log(data,'data')}*/}
                                                     {
-                                                        !startRequest ? (
-                                                            <button type="submit"
-                                                                    onClick={(e) => onSubmit(e)}
-                                                                    className="btn btn-primary">Enregistrer</button>
+                                                        claimObject ? (
+                                                            showList.length ? (
+                                                                showList.map((category, index) => (
+                                                                    printBodyTable(category, index)
+                                                                ))
+                                                            ) : (
+                                                                <EmptyTable search={true}/>
+                                                            )
                                                         ) : (
-                                                            <button
-                                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                                type="button" disabled>
-                                                                Chargement...
-                                                            </button>
+                                                            <EmptyTable/>
                                                         )
                                                     }
-                                                    {
-                                                        !startRequest ? (
-                                                            <Link to="/dashboard" className="btn btn-secondary mx-2">
-                                                                Quitter
-                                                            </Link>
-                                                        ) : (
-                                                            <Link to="/dashboard" className="btn btn-secondary mx-2"
-                                                                  disabled>
-                                                                Quitter
-                                                            </Link>
-                                                        )
-                                                    }
+                                                    </tbody>
+
+                                                </table>
+                                                <div className="kt-portlet__foot">
+                                                    <div className="kt-form__actions text-right">
+                                                        {
+                                                            !startRequest ? (
+                                                                <button type="submit"
+                                                                        onClick={(e) => onSubmit(e)}
+                                                                        className="btn btn-primary">{t("Enregistrer")}</button>
+                                                            ) : (
+                                                                <button
+                                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                    type="button" disabled>
+                                                                    {t("Chargement")}...
+                                                                </button>
+                                                            )
+                                                        }
+                                                        {
+                                                            !startRequest ? (
+                                                                <Link to="/dashboard" className="btn btn-secondary mx-2">
+                                                                    {t("Quitter")}
+                                                                </Link>
+                                                            ) : (
+                                                                <Link to="/dashboard" className="btn btn-secondary mx-2"
+                                                                      disabled>
+                                                                    {t("Quitter")}
+                                                                </Link>
+                                                            )
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-sm-12 col-md-5">
-                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                 aria-live="polite">Affichage de 1
-                                                à {numberPerPage} sur {claimObject.length} données
-                                            </div>
-                                        </div>
-                                        {
-                                            showList.length ? (
-                                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                    <Pagination
-                                                        numberPerPage={numberPerPage}
-                                                        onChangeNumberPerPage={onChangeNumberPerPage}
-                                                        activeNumberPage={activeNumberPage}
-                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                        pages={pages}
-                                                        onClickPage={(e, number) => onClickPage(e, number)}
-                                                        numberPage={numberPage}
-                                                        onClickNextPage={e => onClickNextPage(e)}
-                                                    />
+                                        <div className="row">
+                                            <div className="col-sm-12 col-md-5">
+                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                     aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {claimObject.length} {t("données")}
                                                 </div>
-                                            ) : null
-                                        }
+                                            </div>
+                                            {
+                                                showList.length ? (
+                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                        <Pagination
+                                                            numberPerPage={numberPerPage}
+                                                            onChangeNumberPerPage={onChangeNumberPerPage}
+                                                            activeNumberPage={activeNumberPage}
+                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                            pages={pages}
+                                                            onClickPage={(e, number) => onClickPage(e, number)}
+                                                            numberPage={numberPage}
+                                                            onClickNextPage={e => onClickNextPage(e)}
+                                                        />
+                                                    </div>
+                                                ) : null
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    }
+                            )
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        ) : null
     );
 };
 

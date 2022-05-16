@@ -15,8 +15,13 @@ import {
 } from "../../config/toastConfig";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const MessageAPIForm = props => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (id) {
         if (!verifyPermission(props.userPermissions, 'update-message-apis'))
@@ -65,7 +70,7 @@ const MessageAPIForm = props => {
                         setMethods(formatMethodOptions(response.data));
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -74,7 +79,7 @@ const MessageAPIForm = props => {
                         setMethods(formatMethodOptions(data));
                     })
                     .catch(({response}) => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             }
@@ -103,12 +108,12 @@ const MessageAPIForm = props => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {
@@ -122,13 +127,13 @@ const MessageAPIForm = props => {
                         setMethods(newMethods);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         redirectError401Page(errorRequest.response.data.code);
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -142,19 +147,19 @@ const MessageAPIForm = props => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/message-apis" className="kt-subheader__breadcrumbs-link">
-                                    Message API
+                                    {t("Message API")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -170,7 +175,7 @@ const MessageAPIForm = props => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification d'un méssage API" : "Ajout d'un méssage API"
+                                                id ? t("Modification d'un méssage API") : t("Ajout d'un méssage API")
                                             }
                                         </h3>
                                     </div>
@@ -180,13 +185,13 @@ const MessageAPIForm = props => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méssage API <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Message API")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Veillez entrer le nom du Méssage API"
+                                                        placeholder={t("Veuillez entrer le nom du Méssage API")}
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -203,12 +208,12 @@ const MessageAPIForm = props => {
                                             </div>
 
                                             <div className={error.method.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Méthode <InputRequire/></label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Méthode")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
                                                         value={method}
-                                                        placeholder="Veillez selectionner la méthod"
+                                                        placeholder={t("Veuillez selectionner la méthod")}
                                                         onChange={handleMethodChange}
                                                         options={methods}
                                                     />
@@ -228,21 +233,21 @@ const MessageAPIForm = props => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/message-apis" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/message-apis" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -259,13 +264,15 @@ const MessageAPIForm = props => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-message-apis') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-message-apis') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-message-apis') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-message-apis') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

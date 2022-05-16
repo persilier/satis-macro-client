@@ -1,9 +1,5 @@
 import React from "react";
-import {
-    Switch,
-    Route,
-    Redirect
-} from "react-router-dom";
+import {Switch, Route, Redirect} from "react-router-dom";
 import Mail from "../pages/Mail";
 import PerformanceIndicator from "../pages/PerformanceIndicator";
 import UnitType from "../pages/UnitType";
@@ -107,6 +103,9 @@ import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
 import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
 import ClaimReportingUemoaFour from "../pages/ClaimReportingUemoaFour";
+import ClaimReportingUemoaFive from "../pages/ClaimReportingUemoaFive";
+import ClaimReportingUemoaSix from "../pages/ClaimReportingUemoaSix";
+import ClaimReportingUemoaHeight from "../pages/ClaimReportingUemoaHeight";
 import TotalClaimRegister from "../pages/TotalClaimRegister";
 import TotalIncompleteClaim from "../pages/TotalIncompleteClaim";
 import TotalCompleteClaim from "../pages/TotalCompleteClaim";
@@ -128,9 +127,14 @@ import EmailConfig from "../pages/EmailConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
+import ConfigConnexion from "../pages/ConfigConnexion";
+import Logs from "../pages/Logs";
 import ProofReceipt from "../pages/ProofReceipt";
 import ConfigTitreRapport from "../pages/ConfigTitreRapport";
 import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
+import ResetPassword from '../pages/password-reset';
+import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
+import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
 
 const Body = () => {
     return (
@@ -145,6 +149,15 @@ const Body = () => {
             <Route exact path="/settings/config-rapport">
                 <ConfigTitreRapport/>
             </Route>
+
+            <Route exact path="/settings/logs">
+                <Logs/>
+            </Route>
+
+            {/**
+             <Route exact path="/settings/reset-password">
+             <ResetPassword />
+             </Route> */}
 
             <Route exact path="/historic/claims/add">
                 <HistoricClaimsAdd/>
@@ -298,16 +311,16 @@ const Body = () => {
                 <PerformanceIndicatorForm/>
             </Route>
 
-            <Route exact path="/settings/unit_type">
-                <UnitType/>
+            <Route exact path="/settings/unit_type/:id/edit">
+                <UnitTypeForm/>
             </Route>
 
             <Route exact path="/settings/unit_type/add">
                 <UnitTypeForm/>
             </Route>
 
-            <Route exact path="/settings/unit_type/:id/edit">
-                <UnitTypeForm/>
+            <Route exact path="/settings/unit_type">
+                <UnitType/>
             </Route>
 
             <Route exact path="/settings/unit">
@@ -382,8 +395,13 @@ const Body = () => {
                 <UnitImportPage/>
             </Route>
 
+
             <Route exact path="/settings/proof-of-receipt">
                 <ProofReceipt/>
+            </Route>
+
+            <Route exact path="/settings/staffs">
+                <Staff/>
             </Route>
 
             <Route exact path="/settings/staffs">
@@ -436,6 +454,10 @@ const Body = () => {
 
             <Route exact path="/settings/channels/:id/edit">
                 <ChannelForm/>
+            </Route>
+
+            <Route exact path="/settings/connexion">
+                <ConfigConnexion/>
             </Route>
 
             <Route exact path="/process/claims/add">
@@ -528,6 +550,26 @@ const Body = () => {
 
             <Route exact path="/monitoring/claims/uemoa/reporting-four">
                 <ClaimReportingUemoaFour/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-five">
+                <ClaimReportingUemoaFive/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-six">
+                <ClaimReportingUemoaSix/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/uemoa/reporting-height">
+                <ClaimReportingUemoaHeight/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/reporting-benchmarking">
+                <ClaimReportingBenchmarking/>
+            </Route>
+
+            <Route exact path={"/monitoring/claims/system-usage"}>
+                <ClaimSystemUsageReport/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">

@@ -15,7 +15,13 @@ import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 
+import { useTranslation } from "react-i18next";
+
+
 const Nav = (props) => {
+
+    const {t, i18n, ready} = useTranslation();
+
     const [eventNotification, setEventNotification] = useState([]);
     const [relaunchNotification, setRelaunchNotification] = useState([]);
     const [loader, setLoader] = useState(false);
@@ -47,7 +53,7 @@ const Nav = (props) => {
                     setRelaunchNotification(filterRelaunchNotification(response.data));
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -59,7 +65,7 @@ const Nav = (props) => {
 
     useEffect(() => {
         if (props.user) {
-            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props.user.identite_id}`)
+            window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${props?.user?.identite_id}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
                         if (window.location.pathname !== "chat#messageList")
@@ -70,16 +76,27 @@ const Nav = (props) => {
                 })
             ;
         }
-    }, [props.user.identite]);
+    }, [props?.user?.identite]);
 
     const onClickLanguage = useCallback((e, lang) => {
         e.preventDefault();
         props.changeLanguage(lang);
+        i18n.changeLanguage(lang);
+        localStorage.setItem('i18nextLng', lang);
     }, [props.changeLanguage]);
 
     const onClickLogoutLink = useCallback((e) => {
         e.preventDefault();
-        props.logoutUser();
+        axios.get(`${appConfig.apiDomaine}/logout`)
+            .then(response => {
+                //console.log('response:', response.data);
+                props.logoutUser();
+            })
+            .catch(error => {
+                //console.log("")
+                //console.log("Something is wrong");
+            })
+        ;
     }, [props.logoutUser]);
 
     const getNotificationLink = useCallback((type, data) => {
@@ -126,7 +143,7 @@ const Nav = (props) => {
                         .catch((error) => {
                             setLoader(false);
                             setSearchData([]);
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }
@@ -159,7 +176,8 @@ const Nav = (props) => {
     return (
         <div id="kt_header" className="kt-header kt-grid__item  kt-header--fixed " data-ktheader-minimize="on"
              style={{position: "sticky", top: 0, zIndex: 2}}>
-            <div className="kt-container  kt-container--fluid ">
+
+            {ready ? (<div className="kt-container  kt-container--fluid ">
                 <div className="kt-header__brand " id="kt_header_brand">
                     <div className="kt-header__brand-logo">
                         <a href="index.html">
@@ -193,12 +211,12 @@ const Nav = (props) => {
                                         <div className="quick-search-result">
                                             {!searchData.length ? (
                                                 <div className="font-size-sm text-primary font-weight-bolder text-uppercase mb-2">
-                                                    Aucun Enregistrement Trouvé
+                                                    {t("Aucun Enregistrement Trouvé")}
                                                 </div>
                                             ) : (
                                                 <>
                                                     <div className="font-size-sm text-primary font-weight-bolder text-uppercase mb-2">
-                                                        Enregistrement Trouvé
+                                                        {t("Enregistrement Trouvé")}
                                                     </div>
 
                                                     <div className="mb-10">
@@ -211,7 +229,7 @@ const Nav = (props) => {
                                                                     {searchData[0].reference}
                                                                 </a>
                                                                 <span className="font-size-sm font-weight-bold text-muted">
-                                                                    Reclamant: {searchData[0].claimer.lastname+" "+searchData[0].claimer.firstname}
+                                                                    {t("Reclamant") + ":" + searchData[0].claimer.lastname+" "+searchData[0].claimer.firstname}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -300,22 +318,22 @@ const Nav = (props) => {
                             <form>
                                 <div className="kt-head kt-head--skin-light kt-head--fit-x kt-head--fit-b">
                                     <h3 className="kt-head__title">
-                                        Notifications
+                                        {t("Notifications")}
                                         &nbsp;
                                         <span
-                                            className="btn btn-label-primary btn-sm btn-bold btn-font-md">{notificationCount} nouveau</span>
+                                            className="btn btn-label-primary btn-sm btn-bold btn-font-md">{notificationCount} {t("nouveau")}</span>
                                     </h3>
                                     <ul className="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand  kt-notification-item-padding-x"
                                         role="tablist">
                                         <li className="nav-item">
                                             <a className="nav-link active show" data-toggle="tab"
                                                href="#topbar_notifications_notifications" role="tab"
-                                               aria-selected="true">Alertes</a>
+                                               aria-selected="true">{t("Alertes")}</a>
                                         </li>
                                         <li className="nav-item">
                                             <a className="nav-link" data-toggle="tab"
                                                href="#topbar_notifications_events" role="tab"
-                                               aria-selected="false">Relances</a>
+                                               aria-selected="false">{t("Relances")}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -404,7 +422,7 @@ const Nav = (props) => {
                                                     }
                                                 </div>
                                             ) : (
-                                                <EmptyNotification/>
+                                                <EmptyNotification trans={t}/>
                                             )
                                         }
 
@@ -417,35 +435,39 @@ const Nav = (props) => {
                     <div className="kt-header__topbar-item kt-header__topbar-item--langs">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
                         <span className="kt-header__topbar-icon text-white">
-                            {props.language.languageSelected.toUpperCase()}
+                            {i18n.isInitialized && i18n.language.toUpperCase()}
                         </span>
                         </div>
-                        <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
-                            <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
-                                <li className="kt-nav__item kt-nav__item--active">
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
+                        {
+                            appConfig.useManyLanguage ? (
+                                <div className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim">
+                                    <ul className="kt-nav kt-margin-t-10 kt-margin-b-10">
+                                        <li className={`kt-nav__item ${i18n.language === "en" && "kt-nav__item--active"}`}>
+                                            <a href="#link" onClick={(e) => onClickLanguage(e, "en")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             EN
                                         </span>
-                                        <span className="kt-nav__link-text">English</span>
-                                    </a>
-                                </li>
+                                                <span className="kt-nav__link-text">English</span>
+                                            </a>
+                                        </li>
 
-                                <li className="kt-nav__item">
-                                    <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
+                                        <li className={`kt-nav__item ${i18n.language === "fr" && "kt-nav__item--active"}`}>
+                                            <a href="#link" onClick={(e) => onClickLanguage(e, "fr")} className="kt-nav__link">
                                         <span className="kt-nav__link-icon">
                                             FR
                                         </span>
-                                        <span className="kt-nav__link-text">Francais</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                                                <span className="kt-nav__link-text">Français</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            ) : null
+                        }
                     </div>
 
                     <div className="kt-header__topbar-item kt-header__topbar-item--user">
                         <div className="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px">
-                            <span className="kt-header__topbar-welcome kt-visible-desktop">Salut,</span>
+                            <span className="kt-header__topbar-welcome kt-visible-desktop">{t("Salut")},</span>
                             <span className="kt-header__topbar-username kt-visible-desktop">
                                 {props.user.firstName}
                             </span>
@@ -475,10 +497,10 @@ const Nav = (props) => {
                                                 </div>
                                                 <div className="kt-notification__item-details">
                                                     <div className="kt-notification__item-title kt-font-bold">
-                                                        Mes Disccussions
+                                                        {t("Mes Discussions")}
                                                     </div>
                                                     <div className="kt-notification__item-time">
-                                                        Acceder à la liste
+                                                        {t("Acceder à la liste")}
                                                     </div>
                                                 </div>
                                             </Link>
@@ -487,23 +509,23 @@ const Nav = (props) => {
                                 }
 
                                 <NavLink to={"/settings/account"}
-                                   className="kt-notification__item">
+                                         className="kt-notification__item">
                                     <div className="kt-notification__item-icon">
                                         <i className="flaticon2-calendar-3 kt-font-success"/>
                                     </div>
                                     <div className="kt-notification__item-details">
                                         <div className="kt-notification__item-title kt-font-bold">
-                                            Mon profil
+                                            {t("Mon profil")}
                                         </div>
                                         <div className="kt-notification__item-time">
-                                            Paramètres de compte et plus
+                                            {t("Paramètres de compte et plus")}
                                         </div>
                                     </div>
                                 </NavLink>
 
                                 <div className="kt-notification__custom kt-space-between">
                                     <a href="/logout" onClick={onClickLogoutLink} target="_blank"
-                                       className="btn btn-label btn-label-brand btn-sm btn-bold">Déconnexion</a>
+                                       className="btn btn-label btn-label-brand btn-sm btn-bold">{t("Déconnexion")}</a>
                                     {/*<a href="custom/user/login-v2.html" target="_blank"*/}
                                     {/*   className="btn btn-clean btn-sm btn-bold">Upgrade Plan</a>*/}
                                 </div>
@@ -511,7 +533,9 @@ const Nav = (props) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>) : null}
+
+
         </div>
     );
 };
@@ -522,9 +546,9 @@ const mapStateToProps = (state) => {
         language: state.language,
         plan: state.plan.plan,
         user: {
-            lastName: state.user.user.data.identite.lastname,
-            firstName: state.user.user.data.identite.firstname,
-            identite_id: state.user.user.data.identite.id
+            lastName: state?.user?.user?.data?.identite?.lastname,
+            firstName: state?.user?.user?.data?.identite?.firstname,
+            identite_id: state?.user?.user?.data?.identite?.id
         }
     };
 };

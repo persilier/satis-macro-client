@@ -21,13 +21,18 @@ import {DeleteConfirmation} from "../components/ConfirmationAlert";
 import {confirmRevokeConfig} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 loadScript("/assets/js/pages/custom/chat/chat.js");
 
 const ClaimDetail = (props) => {
-    document.title = "Satis client - Détail plainte";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Détails plainte") : "";
     const [revokeLoad, setRevokeLoad] = useState(false);
     const {id} = useParams();
     const ref = useRef(null);
@@ -59,7 +64,7 @@ const ClaimDetail = (props) => {
     }, []);
 
     const revoke = e => {
-        DeleteConfirmation.fire(confirmRevokeConfig)
+        DeleteConfirmation.fire(confirmRevokeConfig())
             .then(result => {
                 if (result.value) {
                     setRevokeLoad(true);
@@ -67,7 +72,7 @@ const ClaimDetail = (props) => {
                         axios.put(`${appConfig.apiDomaine}/revoke-claim/${claim.id}`)
                             .then(response => {
                                 setRevokeLoad(false);
-                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig('Réclamation revoquer avec succès'));
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Réclamation revoquer avec succès')));
                                 setTimeout(() => {
                                     if (document.referrer)
                                         window.location.href = document.referrer;
@@ -77,7 +82,7 @@ const ClaimDetail = (props) => {
                             })
                             .catch(error => {
                                 setRevokeLoad(false);
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Echec de revocation de la réclamation'));
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t('Echec de revocation de la réclamation')));
                                 console.log("Something is wrong");
                             })
                     }
@@ -87,104 +92,106 @@ const ClaimDetail = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, "search-claim-any-reference") ||
-        verifyPermission(props.userPermissions, "search-claim-my-reference") ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid "/>
-                </div>
+        ready ? (
+            verifyPermission(props.userPermissions, "search-claim-any-reference") ||
+            verifyPermission(props.userPermissions, "search-claim-my-reference") ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid "/>
+                    </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="kt-portlet">
-                        <div className="kt-portlet__body kt-portlet__body--fit">
-                            <div className="kt-grid  kt-wizard-v2 kt-wizard-v2--white" id="kt_wizard_v2"
-                                 data-ktwizard-state="step-first">
-                                <div className="kt-grid__item kt-wizard-v2__aside">
-                                    <div className="kt-wizard-v2__nav">
-                                        <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
-                                            <ClientButton/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="kt-portlet">
+                            <div className="kt-portlet__body kt-portlet__body--fit">
+                                <div className="kt-grid  kt-wizard-v2 kt-wizard-v2--white" id="kt_wizard_v2"
+                                     data-ktwizard-state="step-first">
+                                    <div className="kt-grid__item kt-wizard-v2__aside">
+                                        <div className="kt-wizard-v2__nav">
+                                            <div className="kt-wizard-v2__nav-items kt-wizard-v2__nav-items--clickable">
+                                                <ClientButton/>
 
-                                            <ClaimButton/>
+                                                <ClaimButton/>
 
-                                            <AttachmentsButton claim={claim}/>
+                                                <AttachmentsButton claim={claim}/>
 
-                                            <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
-                                                <div className="kt-wizard-v2__nav-body">
-                                                    <div className="kt-wizard-v2__nav-icon">
-                                                        <i className="flaticon-list"/>
-                                                    </div>
-                                                    <div className="kt-wizard-v2__nav-label">
-                                                        <div className="kt-wizard-v2__nav-label-title">
-                                                            Traitement Effectué
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-list"/>
                                                         </div>
-                                                        <div className="kt-wizard-v2__nav-label-desc">
-                                                            Détails du traitement effectué
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Traitement effectué")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Détails du traitement effectué")}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
-                                    <form className="kt-form" id="kt_form">
-                                        <div className="d-flex justify-content-md-end">
-                                            {(verifyPermission(props.userPermissions, 'revoke-claim') && ['incomplete', 'full'].includes(claim ? claim.status : "")) && (
-                                                <>
-                                                    {revokeLoad ? (
-                                                        <button className="btn mr-2 btn-outline-danger btn-sm kt-spinner kt-spinner--v2 kt-spinner--sm kt-spinner--primary text-uppercase" disabled={true}>Chargement</button>
-                                                    ) : (
-                                                        <button onClick={revoke} className="btn mr-2 btn-outline-danger btn-sm text-uppercase">Revoquer</button>
-                                                    )}
-                                                </>
-                                            )}
+                                    <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
+                                        <form className="kt-form" id="kt_form">
+                                            <div className="d-flex justify-content-md-end">
+                                                {(verifyPermission(props.userPermissions, 'revoke-claim') && ['incomplete', 'full'].includes(claim ? claim.status : "")) && (
+                                                    <>
+                                                        {revokeLoad ? (
+                                                            <button className="btn mr-2 btn-outline-danger btn-sm kt-spinner kt-spinner--v2 kt-spinner--sm kt-spinner--primary text-uppercase" disabled={true}>{t("Chargement")}</button>
+                                                        ) : (
+                                                            <button onClick={revoke} className="btn mr-2 btn-outline-danger btn-sm text-uppercase">{t("Revoquer")}</button>
+                                                        )}
+                                                    </>
+                                                )}
 
-                                            {console.log("claim:", claim)}
-                                            {(claim && claim.status !== "archived") ? (
-                                                <>
-                                                    {verifyPermission(props.userPermissions, 'revive-staff') && (
-                                                        <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
-                                                            Relancer
+                                                {console.log("claim:", claim)}
+                                                {(claim && claim.status !== "archived") ? (
+                                                    <>
+                                                        {verifyPermission(props.userPermissions, 'revive-staff') && (
+                                                            <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
+                                                                {t("Relancer")}
+                                                            </button>
+                                                        )}
+                                                        <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
+                                                            {t("Relancer")}
                                                         </button>
-                                                    )}
-                                                    <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
-                                                        Relancer
-                                                    </button>
 
-                                                    <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
-                                                </>
-                                            ) : null}
+                                                        <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
+                                                    </>
+                                                ) : null}
 
-                                        </div>
-                                        <ClientButtonDetail claim={claim}/>
+                                            </div>
+                                            <ClientButtonDetail claim={claim}/>
 
-                                        <ClaimButtonDetail claim={claim}/>
+                                            <ClaimButtonDetail claim={claim}/>
 
-                                        <AttachmentsButtonDetail claim={claim}/>
+                                            <AttachmentsButtonDetail claim={claim}/>
 
-                                        <TreatmentButtonDetail archive={true} claim={claim}/>
+                                            <TreatmentButtonDetail archive={true} claim={claim}/>
 
-                                        <div className="kt-form__actions">
-                                            <button
-                                                className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
-                                                data-ktwizard-type="action-prev">
-                                                PRÉCÉDENT
-                                            </button>
+                                            <div className="kt-form__actions">
+                                                <button
+                                                    className="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
+                                                    data-ktwizard-type="action-prev">
+                                                    {t("PRÉCÉDENT")}
+                                                </button>
 
-                                            <button
-                                                className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
-                                                data-ktwizard-type="action-next">
-                                                SUIVANT
-                                            </button>
-                                        </div>
-                                    </form>
+                                                <button
+                                                    className="btn btn-brand btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u"
+                                                    data-ktwizard-type="action-next">
+                                                    {t("SUIVANT")}
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

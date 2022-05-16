@@ -29,6 +29,7 @@ import {confirmLeadConfig} from "../../../config/confirmConfig";
 import {ConfirmLead} from "../ConfirmationAlert";
 import WithoutCode from "../WithoutCode";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 const endPointConfig = {
@@ -63,6 +64,10 @@ const endPointConfig = {
 };
 
 const StaffForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (id) {
         if (!(verifyPermission(props.userPermissions, "update-staff-from-any-unit") || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit')))
@@ -155,7 +160,7 @@ const StaffForm = (props) => {
                         setData(newData);
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             } else {
@@ -168,7 +173,7 @@ const StaffForm = (props) => {
                             setUnits(formatUnits(response.data.units));
                     })
                     .catch(error => {
-                        console.log("something is wrong");
+                        //console.log("something is wrong");
                     })
                 ;
             }
@@ -300,7 +305,7 @@ const StaffForm = (props) => {
                 changeOption(parseInt(e.target.value));
             }
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig('Veillez choisir une unité'))
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t('Veuillez choisir une unité')))
         }
     };
 
@@ -331,11 +336,11 @@ const StaffForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
-                        console.log("data-56465:",errorRequest.response.data)
+                        //console.log("data-56465:",errorRequest.response.data)
 
                         if (errorRequest.response.status === 409) {
                             setStartRequest(false);
@@ -351,7 +356,7 @@ const StaffForm = (props) => {
                         }
                         if(errorRequest.response.status === 422){
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                            ToastBottomEnd.fire(toastEditErrorMessageConfig());
                         }
                     })
                 ;
@@ -364,7 +369,7 @@ const StaffForm = (props) => {
                         setPosition(null);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(async (errorRequest) => {
                         if (errorRequest.response.data.error.identite)
@@ -383,7 +388,7 @@ const StaffForm = (props) => {
                             // Validation errors
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                            ToastBottomEnd.fire(toastAddErrorMessageConfig());
                         }
                     })
                 ;
@@ -398,19 +403,19 @@ const StaffForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/staffs" className="kt-subheader__breadcrumbs-link">
-                                    Agent
+                                    {t("Agent")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -426,7 +431,7 @@ const StaffForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification d'un agent" : "Ajout d'un agent"
+                                                id ? t("Modification d'un agent") : t("Ajout d'un agent")
                                             }
                                         </h3>
                                     </div>
@@ -436,15 +441,15 @@ const StaffForm = (props) => {
                                     <div className="kt-portlet__body">
                                         <div className="kt-section kt-section--first">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations personnelles:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">{t("Informations personnelles")}:</h3>
                                                 <div className="form-group row">
                                                     <div className={error.lastname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="lastname">Nom <InputRequire/></label>
+                                                        <label htmlFor="lastname">{t("Nom")} <InputRequire/></label>
                                                         <input
                                                             id="lastname"
                                                             type="text"
                                                             className={error.lastname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veuillez entrer le nom"
+                                                            placeholder={t("Veuillez entrer le nom")}
                                                             value={data.lastname}
                                                             onChange={(e) => onChangeLastName(e)}
                                                         />
@@ -460,12 +465,12 @@ const StaffForm = (props) => {
                                                     </div>
 
                                                     <div className={error.firstname.length ? "col validated" : "col"}>
-                                                        <label htmlFor="firstname">Prénom <InputRequire/></label>
+                                                        <label htmlFor="firstname">{t("Prénom")} <InputRequire/></label>
                                                         <input
                                                             id="firstname"
                                                             type="text"
                                                             className={error.firstname.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veuillez entrer le prénom"
+                                                            placeholder={t("Veuillez entrer le prénom")}
                                                             value={data.firstname}
                                                             onChange={(e) => onChangeFirstName(e)}
                                                         />
@@ -483,17 +488,17 @@ const StaffForm = (props) => {
 
                                                 <div className="row">
                                                     <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
-                                                        <label htmlFor="sexe">Sexe <InputRequire/></label>
+                                                        <label htmlFor="sexe">{t("Sexe")} <InputRequire/></label>
                                                         <select
                                                             id="sexe"
                                                             className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.sexe}
                                                             onChange={(e) => onChangeSexe(e)}
                                                         >
-                                                            <option value="" disabled={true}>Veillez choisir le Sexe</option>
-                                                            <option value="F">Féminin</option>
-                                                            <option value="M">Masculin</option>
-                                                            <option value="A">Autres</option>
+                                                            <option value="" disabled={true}>{t("Veuillez choisir le Sexe")}</option>
+                                                            <option value="F">{t("Féminin")}</option>
+                                                            <option value="M">{t("Masculin")}</option>
+                                                            <option value="A">{t("Autres")}</option>
                                                         </select>
                                                         {
                                                             error.sexe.length ? (
@@ -509,7 +514,7 @@ const StaffForm = (props) => {
 
                                                 <div className="form-group row">
                                                     <div className={error.telephone.length ? "col validated" : "col"}>
-                                                        <label htmlFor="telephone">Téléphone(s)<WithoutCode/> <InputRequire/></label>
+                                                        <label htmlFor="telephone">{t("Téléphone(s)")}<WithoutCode/> <InputRequire/></label>
                                                         <TagsInput value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
                                                             error.telephone.length ? (
@@ -537,12 +542,12 @@ const StaffForm = (props) => {
                                                     </div>
 
                                                     <div className={error.ville.length ? "col validated" : "col"}>
-                                                        <label htmlFor="ville">Ville</label>
+                                                        <label htmlFor="ville">{t("Ville")}</label>
                                                         <input
                                                             id="ville"
                                                             type="text"
                                                             className={error.ville.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="Veuillez entrer votre ville"
+                                                            placeholder={t("Veuillez entrer votre ville")}
                                                             value={data.ville ? data.ville : ""}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
@@ -562,14 +567,14 @@ const StaffForm = (props) => {
 
                                         <div className="kt-section">
                                             <div className="kt-section__body">
-                                                <h3 className="kt-section__title kt-section__title-lg">Informations professionnelles:</h3>
+                                                <h3 className="kt-section__title kt-section__title-lg">{t("Informations professionnelles")}:</h3>
                                                 <div className={error.position_id.length ? "form-group row validated" : "form-group row"}>
                                                     <div className="col">
-                                                        <label htmlFor="position">Poste <InputRequire/></label>
+                                                        <label htmlFor="position">{t("Fonction")} <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             value={position}
-                                                            placeholder={"Veuillez selectionner le poste"}
+                                                            placeholder={t("Veuillez sélectionner la fonction")}
                                                             onChange={onChangePosition}
                                                             options={formatSelectOption(positions, "name", "fr")}
                                                         />
@@ -587,11 +592,11 @@ const StaffForm = (props) => {
                                                     {
                                                         verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
                                                             <div className="col">
-                                                                <label htmlFor="institution">Institution <InputRequire/></label>
+                                                                <label htmlFor="institution">{t("Institution")} <InputRequire/></label>
                                                                 <Select
                                                                     isClearable
                                                                     value={institution}
-                                                                    placeholder={"Veuillez selectionner l'institution"}
+                                                                    placeholder={t("Veuillez sélectionner l'institution")}
                                                                     onChange={onChangeInstitution}
                                                                     options={formatSelectOption(formatInstitutions(institutions), "name", false)}
                                                                 />
@@ -611,11 +616,11 @@ const StaffForm = (props) => {
 
                                                 <div className="form-group row">
                                                     <div  className={error.unit_id.length ? "col validated" : "col"}>
-                                                        <label htmlFor="unit">Unité <InputRequire/></label>
+                                                        <label htmlFor="unit">{t("Unité")} <InputRequire/></label>
                                                         <Select
                                                             isClearable
                                                             value={unit}
-                                                            placeholder={"Veuillez selectionner l'unité"}
+                                                            placeholder={t("Veuillez selectionner l'unité")}
                                                             onChange={onChangeUnit}
                                                             options={formatUnitSelectOption(units, "name", "fr")}
                                                         />
@@ -631,13 +636,13 @@ const StaffForm = (props) => {
                                                     </div>
 
                                                     <div  className={error.unit_id.length ? "row col validated" : "row col"}>
-                                                        <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">Responsable de l'unité <InputRequire/></label>
+                                                        <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">{t("Responsable de l'unité")} <InputRequire/></label>
                                                         <div className="col-lg-6 col-xl-6 kt-radio-inline">
                                                             <label className="kt-radio mt-4">
-                                                                <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> OUI<span/>
+                                                                <input type="radio" value={optionOne} onChange={handleOptionChange} checked={optionOne === data.is_lead}/> {t("OUI")}<span/>
                                                             </label>
                                                             <label className="kt-radio">
-                                                                <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> NON<span/>
+                                                                <input type="radio" value={optionTwo} onChange={handleOptionChange} checked={optionTwo === data.is_lead}/> {t("NON")}<span/>
                                                             </label>
                                                         </div>
                                                     </div>
@@ -650,21 +655,21 @@ const StaffForm = (props) => {
                                         <div className="kt-form__actions">
                                             {
                                                 !startRequest ? (
-                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                    <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                 ) : (
                                                     <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                        Chargement...
+                                                        {t("Chargement")}...
                                                     </button>
                                                 )
                                             }
                                             {
                                                 !startRequest ? (
                                                     <Link to="/settings/staffs" className="btn btn-secondary mx-2">
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 ) : (
                                                     <Link to="/settings/staffs" className="btn btn-secondary mx-2" disabled>
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 )
                                             }
@@ -701,15 +706,17 @@ const StaffForm = (props) => {
     };
 
     return (
-        id ? (
-            verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
-                printJsx()
-            ) : null
-        ) : (
-            verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-my-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') ? (
-                printJsx()
-            ) : null
-        )
+        ready ? (
+            id ? (
+                verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-my-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
+                    printJsx()
+                ) : null
+            ) : (
+                verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-my-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') ? (
+                    printJsx()
+                ) : null
+            )
+        ) : null
     );
 };
 

@@ -21,11 +21,16 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const UnitType = (props) => {
-    document.title = "Satis client - Paramètre type d'unité";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Paramètre type d'unité") : "");
 
     if (!verifyPermission(props.userPermissions, "list-unit-type"))
         window.location.href = ERROR_401;
@@ -48,7 +53,7 @@ const UnitType = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -61,8 +66,8 @@ const UnitType = (props) => {
         let newUnitTypes = [...unitTypes];
         newUnitTypes = newUnitTypes.filter(el => (
             getLowerCaseString(el.name ? el.name["fr"] : "").indexOf(value) >= 0 ||
-            getLowerCaseString(el.can_be_target ? "Oui" : "Non").indexOf(value) >= 0 ||
-            getLowerCaseString(el.can_treat ? "Oui" : "Non").indexOf(value) >= 0 ||
+            getLowerCaseString(el.can_be_target ? t("Oui") : t("Non")).indexOf(value) >= 0 ||
+            getLowerCaseString(el.can_treat ? t("Oui") : t("Non")).indexOf(value) >= 0 ||
             getLowerCaseString(el.description ? el.description["fr"] : "").indexOf(value) >= 0
         ));
 
@@ -129,7 +134,7 @@ const UnitType = (props) => {
     };
 
     const deleteUnitType = (unitTypeId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -145,6 +150,7 @@ const UnitType = (props) => {
                                             getEndByPosition(activeNumberPage)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage);
                                 } else {
                                     setShowList(
                                         newUnitTypes.slice(
@@ -152,14 +158,16 @@ const UnitType = (props) => {
                                             getEndByPosition(activeNumberPage - 1)
                                         )
                                     );
+                                    setActiveNumberPage(activeNumberPage - 1);
                                 }
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                setNumberPage(forceRound(newUnitTypes.length/numberPerPage));
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
                                 if (error.response.data.error)
                                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error));
                                 else
-                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -183,17 +191,17 @@ const UnitType = (props) => {
             <tr key={index} role="row" className="odd">
                 {console.log("unitType:", unitType)}
                 <td>{unitType.name ? unitType.name["fr"] : "-"}</td>
-                <td>{unitType.can_be_target ? "Oui" : "Non"}</td>
-                <td>{unitType.can_treat ? "Oui" : "Non"}</td>
+                <td>{unitType.can_be_target == 1 ? t("Oui") : t("Non")}</td>
+                <td>{unitType.can_treat == 1 ? t("Oui") : t("Non")}</td>
                 <td style={{ textOverflow: "ellipsis", width: "300px" }}>{unitType.description ? unitType.description["fr"] : "-"}</td>
                 <td>
-                    {unitType.is_editable === 1 ? (
+                    {unitType.is_editable == 1 ? (
                         <>
                             {
                                 verifyPermission(props.userPermissions, 'update-unit-type') ? (
                                     <Link to={`/settings/unit_type/${unitType.id}/edit`}
                                           className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                          title="Modifier">
+                                          title={t("Modifier")}>
                                         <i className="la la-edit"/>
                                     </Link>
                                 ) : null
@@ -204,7 +212,7 @@ const UnitType = (props) => {
                                     <button
                                         onClick={(e) => deleteUnitType(unitType.id, index)}
                                         className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                        title="Supprimer">
+                                        title={t("Supprimer")}>
                                         <i className="la la-trash"/>
                                     </button>
                                 ) : null
@@ -217,139 +225,140 @@ const UnitType = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-unit-type') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Type d'unité
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, 'list-unit-type') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Type d'unité")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            addPermission={"store-unit-type"}
-                            title={"Type d'unité"}
-                            addText={"Ajouter"}
-                            addLink={"/settings/unit_type/add"}
-                        />
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={"store-unit-type"}
+                                title={t("Type d'unité")}
+                                addText={t("Ajouter")}
+                                addLink={"/settings/unit_type/add"}
+                            />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Recherche:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Peut-être visé par une réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Peut traité une réclamation
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "300px" }}
-                                                            aria-label="Ship City: activate to sort column ascending">Description
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        unitTypes.length ? (
-                                                            showList.length ? (
-                                                                showList.map((unitType, index) => (
-                                                                    printBodyTable(unitType, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Peut-être visé par une réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Peut traité une réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {unitTypes.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Recherche")}:
+                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{ width: "952px" }}>
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Nom")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Peut - être visé par une réclamation")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Peut traité une réclamation")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "300px" }}
+                                                                aria-label="Ship City: activate to sort column ascending">{t("Description")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            unitTypes.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((unitType, index) => (
+                                                                        printBodyTable(unitType, index)
+                                                                    ))
+                                                                ) : (
+                                                                    <EmptyTable search={true}/>
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Peut - être visé par une réclamation")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Peut traité une réclamation")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {unitTypes.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    showList.length ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
-
     );
 };
 

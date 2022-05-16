@@ -26,6 +26,8 @@ import InputRequire from "../components/InputRequire";
 import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
+import ClaimCategory from "./ClaimCategory";
 
 const endPointConfig = {
     PRO: {
@@ -55,7 +57,11 @@ const endPointConfig = {
 };
 
 const ClaimAdd = props => {
-    document.title = "Satis client - Enrégistrement de réclamation";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - " + ready ? t("Enrégistrement de réclamation") : "";
     if (!(verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client")))
         window.location.href = ERROR_401;
 
@@ -107,6 +113,7 @@ const ClaimAdd = props => {
         account_targeted_id: [],
         account_number: [],
         claim_object_id: [],
+        claim_category : [],
         request_channel_slug: [],
         response_channel_slug: [],
         claimer_expectation: [],
@@ -139,6 +146,8 @@ const ClaimAdd = props => {
     const [currency, setCurrency] = useState(null);
     const [currencies, setCurrencies] = useState([]);
     const [disabledInput, setDisabledInput] = useState(false);
+    const [disabledInputTel, setDisabledInputTel] = useState(false);
+    const [disabledInputEmail, setDisabledInputEmail] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
     const [data, setData] = useState(defaultData);
@@ -154,6 +163,8 @@ const ClaimAdd = props => {
     const [componentData, setComponentData] = useState(undefined);
     const [load, setLoad] = useState(true);
 
+    const [tag, setTag] = useState({name: "", label: "", className: "", show: false});
+
     const [completionError, setCompletionError] = useState({ref: "", list: []});
 
     const currentDate = new Date();
@@ -163,6 +174,7 @@ const ClaimAdd = props => {
 
     useEffect(() => {
         async function fetchData() {
+            setLoad(true);
             await axios.get(endPoint.create)
                 .then(response => {
                     if (verifyPermission(props.userPermissions, "store-claim-without-client"))
@@ -178,7 +190,7 @@ const ClaimAdd = props => {
                     setResponseChannels(formatSelectOption(filterChannel(response.data.channels, RESPONSE_CHANNEL), "name", "fr", "slug"))
                 })
                 .catch(error => {
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 });
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/register_claim")
                 .then(response => {
@@ -187,7 +199,7 @@ const ClaimAdd = props => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -251,7 +263,7 @@ const ClaimAdd = props => {
                             setUnits(formatSelectOption(response.data.units, "name", "fr"))
                         })
                         .catch(error => {
-                            console.log("Something is wrong");
+                            //console.log("Something is wrong");
                         })
                     ;
                 }
@@ -325,6 +337,14 @@ const ClaimAdd = props => {
         setShowSearchResult(false);
         setSearchList([]);
         setData(newData);
+
+        if (selected.identity?.telephone && Array.isArray(selected.identity.telephone) && selected.identity.telephone.length > 0 ){
+            setDisabledInputTel(true)
+        }
+
+        if (selected.identity?.email && Array.isArray(selected.identity.email) && selected.identity.email.length > 0 ){
+            setDisabledInputEmail(true)
+        }
     };
 
     const onChangeAccount = selected => {
@@ -451,7 +471,7 @@ const ClaimAdd = props => {
     const handleEventOccuredAt = e => {
         const newData = {...data};
         if (new Date(e.target.value) >= new Date()) {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Date invalide"));
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Date invalide")));
             newData.event_occured_at = "";
         } else
             newData.event_occured_at = e.target.value;
@@ -507,23 +527,106 @@ const ClaimAdd = props => {
             setStartSearch(false);
             setSearchList(clientCash.clients);
         } else {
-            if (verifyTokenExpire()) {
-                await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?r=${searchInputValue}`)
-                    .then(({data}) => {
-                        setStartSearch(false);
-                        setShowSearchResult(true);
-                        if (data.length)
-                            setClientCash({"searchInputValue": searchInputValue, "clients": data});
-                        setSearchList(data);
-                    })
-                    .catch(({response}) => {
-                        setStartSearch(false);
-                        console.log("Something is wrong");
-                    })
-                ;
+            if (tag.name.length && tag.show) {
+                if (tag.name === "full_name" && isNaN(searchInputValue)) {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                //console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else if (tag.name === "telephone" && !isNaN(searchInputValue)) {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                                //console.log(data);
+                                //console.log(searchInputValue);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                //console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else if (tag.name === "account_number") {
+                    if (verifyTokenExpire()) {
+                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=account_number&r=${searchInputValue}`)
+                            .then(({data}) => {
+                                setStartSearch(false);
+                                setShowSearchResult(true);
+                                if (data.length)
+                                    setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                                setSearchList(data);
+                                //console.log(data);
+                                //console.log(searchInputValue);
+                            })
+                            .catch(({response}) => {
+                                setStartSearch(false);
+                                //console.log("Something is wrong");
+                            })
+                        ;
+                    }
+                }
+                else {
+                    setStartSearch(false);
+                    setSearchList([]);
+                }
+            }
+            else {
+                if (verifyTokenExpire()) {
+                    await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                        .then(({data}) => {
+                            setStartSearch(false);
+                            setShowSearchResult(true);
+                            if (data.length)
+                                setClientCash({"searchInputValue": searchInputValue, "clients": data});
+                            setSearchList(data);
+                            //console.log(data);
+                            //console.log(searchInputValue);
+                        })
+                        .catch(({response}) => {
+                            setStartSearch(false);
+                            //console.log("Something is wrong");
+                        })
+                    ;
+                }
             }
         }
     };
+
+    const onClickTag = (name, label, className) => {
+        const newTag = {...tag};
+        newTag.name = name;
+        newTag.label = label;
+        newTag.className = className;
+        newTag.show = true;
+        setTag(newTag);
+    }
+
+    const onCloseTag = () => {
+        const newTag = {...tag};
+        newTag.name = "";
+        newTag.label = "";
+        newTag.className = "";
+        newTag.show = false;
+        setTag(newTag)
+    }
 
     const searchClient = () => {
         if (searchInputValue.length) {
@@ -531,13 +634,15 @@ const ClaimAdd = props => {
                 if (institution) {
                     startSearchClient();
                 } else
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez selectioner une institution"))
+
+                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectionner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-claim-against-my-institution")) {
                 startSearchClient();
             }
 
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veuillez renseigner le champ de recherche"))
+
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez renseigner le champ de recherche")))
         }
     };
 
@@ -587,6 +692,7 @@ const ClaimAdd = props => {
             delete newData.amount_disputed;
         if (!newData.amount_currency_slug)
             delete newData.amount_currency_slug;
+
         if (!newData.claimer_id)
             delete newData.claimer_id;
         if (props.plan !== "HUB")
@@ -595,7 +701,7 @@ const ClaimAdd = props => {
             axios.post(endPoint.store, formatFormData(newData))
                 .then(async (response) => {
                     setDisabledInput(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     resetAllData();
                     document.getElementById("customFile").value = "";
                     if (response.data.errors)
@@ -621,8 +727,8 @@ const ClaimAdd = props => {
                                 i++;
                             }
                         }
-                        setError({...defaultError, ...error.response.data.error, file: fileErrors});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        setError({...defaultError, ...error.response.data.error, file: fileErrors, claim_category: claimCategory === null ? ["Le champ claim_category est obligatoire."] : []});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     }
                 })
             ;
@@ -630,7 +736,7 @@ const ClaimAdd = props => {
     };
 
     return (
-        load ? (
+        load || !ready ? (
             <Loader/>
         ) : (
             verifyPermission(props.userPermissions, 'store-claim-against-any-institution') || verifyPermission(props.userPermissions, "store-claim-against-my-institution") || verifyPermission(props.userPermissions, "store-claim-without-client") ? (
@@ -639,7 +745,7 @@ const ClaimAdd = props => {
                         <div className="kt-container  kt-container--fluid ">
                             <div className="kt-subheader__main">
                                 <h3 className="kt-subheader__title">
-                                    Processus
+                                    {t("Processus")}
                                 </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -648,7 +754,7 @@ const ClaimAdd = props => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        Collecte
+                                        {t("Collecte")}
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
@@ -657,7 +763,7 @@ const ClaimAdd = props => {
                                         <span className="kt-subheader__breadcrumbs-separator"/>
                                         <a href="#button" onClick={e => e.preventDefault()}
                                            className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                            Enregistrement réclamation
+                                            {t("Enregistrement de réclamation")}
                                         </a>
                                     </div>
                                 </div>
@@ -742,15 +848,44 @@ const ClaimAdd = props => {
                                                                         <input id="is_client" type="checkbox"
                                                                                value={disabledInput}
                                                                                onChange={handleDisabledInputChange}/>
-                                                                        Le client est-il déjà enregistré ?<span/>
+                                                                        {t("Le client est-il déjà enregistré")} ?<span/>
                                                                     </label>
                                                                 </div>
 
                                                                 <div className={"col"}>
+
                                                                     <div className="row"
                                                                          onFocus={e => setShowSearchResult(true)}
                                                                          onBlur={e => blur()}>
                                                                         <div className="col d-flex">
+
+                                                                            {
+                                                                                tag.show && tag.name.length ? (
+                                                                                    <span className={"btn btn-label-" + tag.className}
+                                                                                          style={{
+
+                                                                                              marginTop: "2rem",
+                                                                                              borderBottomRightRadius: "0px",
+                                                                                              borderTopRightRadius: "0px",
+                                                                                              whiteSpace: "nowrap",
+                                                                                          }}>
+                                                                                        <div>
+                                                                                    {tag.label}
+                                                                                    <button type="button" onClick={e => onCloseTag()} className="btn btn-icon" style={{
+                                                                                        height: "50%",
+                                                                                        width: "20%",
+                                                                                    }}>
+                                                                                        <i className="flaticon2-cross" style={{
+                                                                                            fontSize: "0.8em",
+                                                                                        }}/>
+                                                                                    </button>
+
+                                                                                </div>
+                                                                                    </span>
+                                                                                ) : null
+                                                                            }
+
+
                                                                             <input
                                                                                 style={{
                                                                                     marginTop: "2rem",
@@ -760,7 +895,7 @@ const ClaimAdd = props => {
                                                                                 type="text"
                                                                                 value={searchInputValue}
                                                                                 onChange={e => setSearchInputValue(e.target.value)}
-                                                                                placeholder={"Rechercher un client..."}
+                                                                                placeholder={t("Rechercher un client") + "..."}
                                                                                 className="form-control"
                                                                                 disabled={!disabledInput}
                                                                             />
@@ -798,6 +933,13 @@ const ClaimAdd = props => {
                                                                                             transform: "translate3d(0px, 38px, 0px)",
                                                                                             zIndex: "1"
                                                                                         }}>
+                                                                                        <span className="d-flex justify-content-center"><em>{("---" + t("Type de recherche") + "---")}</em></span>
+                                                                                        <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("full_name", t("Nom/Prénom"), "dark")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("telephone", t("Numéro de téléphone"), "dark")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                            <button className="btn btn-outline-dark" onClick={e => onClickTag("account_number", t("Numéro de compte"), "dark")}>{t("Numéro de compte")}</button>
+                                                                                        </div>
+                                                                                        <span className="d-flex justify-content-center mb-2"><em>{"---"+t("Fin")+"---"}</em></span>
                                                                                         {
                                                                                             searchList.map((el, index) => (
                                                                                                 <span
@@ -806,7 +948,7 @@ const ClaimAdd = props => {
                                                                                                     className="dropdown-item"
                                                                                                     style={{cursor: "pointer"}}
                                                                                                 >
-                                                                                                {el.fullName}
+                                                                                                    <strong>{el.fullName}</strong>
                                                                                             </span>
                                                                                             ))
                                                                                         }
@@ -827,15 +969,27 @@ const ClaimAdd = props => {
                                                                                             transform: "translate3d(0px, 38px, 0px)",
                                                                                             zIndex: "1"
                                                                                         }}>
+
                                                                                         {
                                                                                             startSearch ? (
                                                                                                 <span
-                                                                                                    className={"mt-3 mb-3"}><Loader/></span>
+                                                                                                    className={"mt-5 mb-5"}><Loader/></span>
                                                                                             ) : (
-                                                                                                <span
-                                                                                                    className="d-flex justify-content-center">Pas de resultat</span>
+                                                                                                <>
+                                                                                                    <span className="d-flex justify-content-center"><em>{"--- "+ t("Type de recherche") +" ---"}</em></span>
+                                                                                                    <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("full_name", t("Nom/Prénom"), "primary")}>{t("Nom/Prénom")}</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("telephone", t("Numéro de téléphone"), "primary")}>{t("Numéro de téléphone")}</button>&nbsp;
+                                                                                                        <button className="btn btn-outline-primary" onClick={e => onClickTag("account_number", t("Numéro de compte"), "primary")}>{t("Numéro de compte")}</button>
+                                                                                                    </div>
+                                                                                                    <span className="d-flex justify-content-center mb-2"><em>{"--- "+t("Fin")+" ---"}</em></span>
+                                                                                                    <span
+                                                                                                        className="d-flex justify-content-center"><strong>{t("Pas de resultat")}</strong></span>
+
+                                                                                                </>
                                                                                             )
                                                                                         }
+
                                                                                     </div>
                                                                                 </div>
                                                                             )
@@ -913,9 +1067,10 @@ const ClaimAdd = props => {
                                                             >
                                                                 <option value=""
                                                                         disabled={true}>{componentData ? componentData.params.fr.sexe_placeholder.value : ""}</option>
-                                                                <option value="F">Féminin</option>
-                                                                <option value="M">Masculin</option>
-                                                                <option value="A">Autres</option>
+
+                                                                <option value="F">{t("Féminin")}</option>
+                                                                <option value="M">{t("Masculin")}</option>
+                                                                <option value="A">{t("Autres")}</option>
                                                             </select>
                                                             {
                                                                 error.sexe.length ? (
@@ -957,7 +1112,7 @@ const ClaimAdd = props => {
                                                             <label
                                                                 htmlFor="telephone">{componentData ? componentData.params.fr.telephone.value : ""}<WithoutCode/>
                                                                 <InputRequire/></label>
-                                                            <TagsInput disabled={disabledInput} value={data.telephone}
+                                                            <TagsInput disabled={disabledInputTel } value={data.telephone}
                                                                        onChange={onChangeTelephone} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.telephone_placeholder.value : ""
@@ -975,9 +1130,9 @@ const ClaimAdd = props => {
 
                                                         <div className={error.email.length ? "col validated" : "col"}>
                                                             <label
-                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel ?
+                                                                htmlFor="email"> {componentData ? componentData.params.fr.email.value : ""} {responseChannel && responseChannel.value === "email" ?
                                                                 <InputRequire/> : null}</label>
-                                                            <TagsInput disabled={disabledInput} value={data.email}
+                                                            <TagsInput disabled={disabledInputEmail} value={data.email}
                                                                        onChange={onChangeEmail} inputProps={{
                                                                 className: 'react-tagsinput-input',
                                                                 placeholder: componentData ? componentData.params.fr.email_placeholder.value : ""
@@ -1126,7 +1281,7 @@ const ClaimAdd = props => {
                                                     </div>
 
                                                     <div className="form-group row">
-                                                        <div className={"col"}>
+                                                        <div className={error.claim_category.length ? "col validated" : "col"}>
                                                             <label
                                                                 htmlFor="claimCtegory">{componentData ? componentData.params.fr.categorie.value : ""}
                                                                 <InputRequire/></label>
@@ -1137,6 +1292,15 @@ const ClaimAdd = props => {
                                                                 onChange={onChangeClaimCategory}
                                                                 options={claimCategories}
                                                             />
+                                                            {
+                                                                error.claim_category.length ? (
+                                                                    error.claim_category.map((error, index) => (
+                                                                        <div key={index} className="invalid-feedback">
+                                                                            {error}
+                                                                        </div>
+                                                                    ))
+                                                                ) : null
+                                                            }
                                                         </div>
 
                                                         <div
@@ -1267,8 +1431,9 @@ const ClaimAdd = props => {
                                                                 <div
                                                                     className={error.relationship_id.length ? "col validated" : "col"}>
                                                                     <label
-                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} avec
-                                                                        l'institution <InputRequire/></label>
+
+                                                                        htmlFor="relationship">{componentData ? componentData.params.fr.relation.value : ""} {t("avec l'institution")}
+                                                                        <InputRequire/></label>
                                                                     <Select
                                                                         isClearable
                                                                         value={relationship}
@@ -1379,12 +1544,12 @@ const ClaimAdd = props => {
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option1}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option1 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
+                                                                           checked={option1 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_oui.value : ""}<span/>
                                                                 </label>
                                                                 <label className="kt-radio">
                                                                     <input type="radio" value={option2}
                                                                            onChange={handleOptionChange}
-                                                                           checked={option2 === data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
+                                                                           checked={option2 == data.is_revival}/> {componentData ? componentData.params.fr.reponse_non.value : ""}<span/>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -1402,15 +1567,11 @@ const ClaimAdd = props => {
                                                                     <div className="alert-icon"><i
                                                                         className="flaticon-warning"/></div>
                                                                     <div className="alert-text">
-                                                                        <p>La réclamation a été enregistrée avec succès
-                                                                            sous
-                                                                            la
-                                                                            référence <strong>{completionError.ref}</strong>
+                                                                        <p>{t("La réclamation a été enregistrée avec succès sous la référence")}
+                                                                            <strong>{completionError.ref}</strong>
                                                                         </p>
-                                                                        <p>Cependant elle est incomplète</p>
-                                                                        <p>Les informations qu'il reste à fournir sont
-                                                                            les
-                                                                            suivants :</p>
+                                                                        <p>{t("Cependant elle est incomplète")}</p>
+                                                                        <p>{t("Les informations qu'il reste à fournir sont les suivantes")} :</p>
                                                                         <ul className="ml-4">
                                                                             {completionError.list.map((el, index) => (
                                                                                 <li key={index}>- {el.description["fr"]}</li>
@@ -1437,12 +1598,12 @@ const ClaimAdd = props => {
                                                 {
                                                     !startRequest ? (
                                                         <button type="submit" onClick={(e) => onSubmit(e)}
-                                                                className="btn btn-primary">Enregistrer</button>
+                                                                className="btn btn-primary">{t("Enregistrer")}</button>
                                                     ) : (
                                                         <button
                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                             type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }

@@ -18,10 +18,15 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimAssign = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot))
         window.location.href = ERROR_401;
 
@@ -61,9 +66,9 @@ const ClaimAssign = (props) => {
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
                 getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / " + el.account_number : "")}`).indexOf(value) >= 0 ||
                 getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
-                getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
+                getLowerCaseString( el.claim_object ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
                 getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
-                getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : el.institution_targeted.name).indexOf(value) >= 0
+                getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : (el.institution_targeted ? el.institution_targeted.name : "")).indexOf(value) >= 0
             )
         });
 
@@ -158,14 +163,14 @@ const ClaimAssign = (props) => {
                         : <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>
                     }
                 </td>
-                <td>{claim.claim_object.name["fr"]}</td>
+                <td>{ claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                 </td>
                 {/*<td>{truncateString(claim.description, 41)}</td>*/}
                 <td>
                     <a href={`/process/claim-assign/${claim.id}/detail`}
-                       className="btn btn-sm btn-clean btn-icon btn-icon-md" title="Détail">
+                       className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -174,13 +179,13 @@ const ClaimAssign = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') && props.activePilot ? (
+        ready ? (        verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Processus
+                                {t("Processus")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -189,7 +194,7 @@ const ClaimAssign = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Traitement
+                                    {t("Traitement")}
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -198,7 +203,7 @@ const ClaimAssign = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        Réclamations à transférer
+                                        {t("Réclamations à transférer")}
                                     </a>
                                 </div>
                             </div>
@@ -209,17 +214,16 @@ const ClaimAssign = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            Cette page présente la liste des réclamations complètes et qui sont en attente d'être
-                            transférées
+                            {t("Cette page présente la liste des réclamations complètes et qui sont en attente d'être transférées")}
                             <br/>
-                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span> représente les
-                            réclamations réjetées
+                            <span className="kt-badge kt-badge--danger kt-badge--md">R</span>
+                            {t("représente les réclamations réjetées")}
                         </div>
                     )}/>
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={"Réclamations à transférer"}
+                            title={t("Réclamations à transférer")}
                         />
 
                         {
@@ -232,7 +236,7 @@ const ClaimAssign = (props) => {
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
-                                                        Recherche:
+                                                        {t("Recherche")}:
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control form-control-sm" placeholder=""
@@ -252,37 +256,37 @@ const ClaimAssign = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            Référence
+                                                            {t("Référence")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            Réclamant
+                                                            {t("Réclamant")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            {props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}
+                                                            {props.plan === "PRO" ? t("Point de service visé") : t("Institution ciblée")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            Date de réception
+                                                            {t("Date de réception")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            Objet de réclamation
+                                                            {t("Objet de réclamation")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            Description
+                                                            {t("Description")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "40.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
-                                                            Action
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -305,26 +309,26 @@ const ClaimAssign = (props) => {
                                                     </tbody>
                                                     <tfoot>
                                                     <tr>
-                                                        <th rowSpan="1" colSpan="1">Référence</th>
-                                                        <th rowSpan="1" colSpan="1">Réclamant</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
                                                         <th rowSpan="1"
                                                             colSpan="1">{props.plan === "PRO" ? "Point de service visé" : "Institution ciblée"}</th>
-                                                        <th rowSpan="1" colSpan="1">Date de réception</th>
-                                                        <th rowSpan="1" colSpan="1">Objet de réclamation</th>
-                                                        <th rowSpan="1" colSpan="1">Description</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Date de réception")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
                                                 <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>
+                                                <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
                                             </div>
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {claims.length} données
+                                                     aria-live="polite">{t("Affichage de")} 1
+                                                    {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
                                                 </div>
                                             </div>
                                             {
@@ -351,7 +355,7 @@ const ClaimAssign = (props) => {
                     </div>
                 </div>
             </div>
-        ) : null
+        ) : null) : null
     );
 };
 

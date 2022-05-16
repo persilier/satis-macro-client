@@ -1,24 +1,32 @@
-export const notificationConfig = {
-    "acknowledgment-of-receipt": "Accusé de réception",
-    "register-a-claim": "Enregistrer une réclamation",
-    "complete-a-claim": "Completer une réclamation",
-    "transferred-to-targeted-institution": "Transféré à une institution ciblée",
-    "transferred-to-unit": "Transféré à l'unité",
-    "assigned-to-staff": "Assigné au personnel",
-    "reject-a-claim": "Rejeter une réclamation",
-    "treat-a-claim": "Traiter une réclamation",
-    "invalidate-a-treatment": "Invalider un traitement",
-    "validate-a-treatment": "Valider un traitement",
-    "communicate-the-solution": "Communiquer la solution",
-    "communicate-the-solution-unfounded": "Communiquer la solution sans fondement",
-    "add-contributor-to-discussion": "Ajouter contributeur à la discussion",
-    "post-discussion-message": "Message post discussion",
-    "reminder-before-deadline": "Relance automatique avant échéance",
-    "reminder-after-deadline": "Relance automatique après échéance",
-    "recurrence-alert": "Maximum réclamations tolérable",
-    "revoke-claim-claimer-notification": "Notifier le réclamant lorsqu'on révoque la réclamation",
-    "revoke-claim-staff-notification": "Notifier le pilote lorsqu'on révoque la réclamation",
-    "register-a-claim-high-force-fulness": "Enregistrement d'une réclamation ayant un niveau de gravité élève"
+import i18n from "../i18n";
+
+export const notificationConfig = () => {
+    return (
+        i18n.isInitialized ? (
+            {
+                "acknowledgment-of-receipt": i18n.t("Accusé de réception"),
+                "register-a-claim": i18n.t("Enregistrer une réclamation"),
+                "complete-a-claim": i18n.t("Completer une réclamation"),
+                "transferred-to-targeted-institution": i18n.t("Transféré à une institution ciblée"),
+                "transferred-to-unit": i18n.t("Transféré à l'unité"),
+                "assigned-to-staff": i18n.t("Assigné au personnel"),
+                "reject-a-claim": i18n.t("Rejeter une réclamation"),
+                "treat-a-claim": i18n.t("Traiter une réclamation"),
+                "invalidate-a-treatment": i18n.t("Invalider un traitement"),
+                "validate-a-treatment": i18n.t("Valider un traitement"),
+                "communicate-the-solution": i18n.t("Communiquer la solution"),
+                "communicate-the-solution-unfounded": i18n.t("Communiquer la solution sans fondement"),
+                "add-contributor-to-discussion": i18n.t("Ajouter contributeur à la discussion"),
+                "post-discussion-message": i18n.t("Message post discussion"),
+                "reminder-before-deadline": i18n.t("Relance automatique avant échéance"),
+                "reminder-after-deadline": i18n.t("Relance automatique après échéance"),
+                "recurrence-alert": i18n.t("Maximum réclamations tolérable"),
+                "revoke-claim-claimer-notification": i18n.t("Notifier le réclamant lorsqu'on révoque la réclamation"),
+                "revoke-claim-staff-notification": i18n.t("Notifier le pilote lorsqu'on révoque la réclamation"),
+                "register-a-claim-high-force-fulness": i18n.t("Enregistrement d'une réclamation ayant un niveau de gravité élève")
+            }
+        ) : null
+    )
 };
 
 export const EventNotification = [

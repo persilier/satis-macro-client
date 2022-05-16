@@ -18,6 +18,7 @@ import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import LoadingTable from "../../components/LoadingTable";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const Chats = (props) => {
 
@@ -34,6 +35,10 @@ const Chats = (props) => {
         files: [],
         parent_id: "",
     };
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     const [data, setData] = useState(defaultData);
     const [listChat, setListChat] = useState("");
     const [listChatUsers, setListChatUsers] = useState([]);
@@ -162,7 +167,7 @@ const Chats = (props) => {
     };
 
     const deleteContributor = (chatsId, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -171,10 +176,10 @@ const Chats = (props) => {
                                 const newChats = [...listChat];
                                 newChats.splice(index, 1);
                                 setListChat(newChats);
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -214,7 +219,7 @@ const Chats = (props) => {
     };
 
     const deletedItem = (key, index) => {
-        DeleteConfirmation.fire(confirmDeleteConfig)
+        DeleteConfirmation.fire(confirmDeleteConfig())
             .then((result) => {
                 if (result.value) {
                     if (verifyTokenExpire()) {
@@ -223,10 +228,10 @@ const Chats = (props) => {
                                 getListMessage(idChat);
                                 const filteredItems = listChatMessages.filter(item => item.key !== key);
                                 setListChatMessage(filteredItems);
-                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig);
+                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }
@@ -236,12 +241,12 @@ const Chats = (props) => {
     };
 
     return (
-        <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        ready ? (<div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         <h3 className="kt-subheader__title">
-                            Traitement
+                            {t("Traitement")}
                         </h3>
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
@@ -250,7 +255,7 @@ const Chats = (props) => {
                             <span className="kt-subheader__breadcrumbs-separator"/>
                             <a href="#button" onClick={e => e.preventDefault()}
                                className="kt-subheader__breadcrumbs-link">
-                                TChats
+                                {t("Tchats")}
                             </a>
                         </div>
                     </div>
@@ -300,7 +305,7 @@ const Chats = (props) => {
                                                         <input id="myInput" type="text"
                                                                onKeyUp={(e) => searchElement(e)}
                                                                className="form-control"
-                                                               placeholder="Search"
+                                                               placeholder={t("Search")}
                                                                aria-controls="basic-addon1"/>
                                                     </div>
                                                 </div>
@@ -341,7 +346,7 @@ const Chats = (props) => {
                                                                                 </div>
                                                                                 <div className="kt-widget__action">
                                                                         <span
-                                                                                    className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
+                                                                            className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
                                                                                     {idChat === chat.id}
                                                                                     {/*<span*/}
                                                                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
@@ -366,7 +371,7 @@ const Chats = (props) => {
                                                                                                         className="kt-nav__link">
                                                                                                         <i className="kt-nav__link-icon flaticon2-group"></i>
                                                                                                         <span
-                                                                                                            className="kt-nav__link-text">Liste des Participants</span>
+                                                                                                            className="kt-nav__link-text">{t("Liste des participants")}</span>
 
                                                                                                         <span
                                                                                                             className="kt-nav__link-badge">
@@ -405,7 +410,7 @@ const Chats = (props) => {
                                                                                                             >
                                                                                                                 <i className="kt-nav__link-icon flaticon-delete"></i>
                                                                                                                 <span
-                                                                                                                    className="kt-nav__link-text">Supprimer un Tchat</span>
+                                                                                                                    className="kt-nav__link-text">{t("Supprimer un Tchat")}</span>
                                                                                                             </a>
                                                                                                         </li>
                                                                                                         :null
@@ -441,7 +446,7 @@ const Chats = (props) => {
 
                                         <div className="kt-chat__left"><span></span></div>
                                         <div className="kt-chat__center">
-                                            <h5>Discussions</h5>
+                                            <h5>{t("Discussions")}</h5>
                                         </div>
                                         {
                                             verifyPermission(props.userPermissions, "store-discussion") ?
@@ -472,7 +477,7 @@ const Chats = (props) => {
                                                                           className="kt-nav__link">
                                                                         <i className="kt-nav__link-icon flaticon-chat-1"></i>
                                                                         <span
-                                                                            className="kt-nav__link-text">Créer un Tchat</span>
+                                                                            className="kt-nav__link-text">{t("Créer un Tchat")}</span>
                                                                     </Link>
                                                                 </li>
 
@@ -583,7 +588,7 @@ const Chats = (props) => {
                                             <textarea
                                                 id={"monChamp"}
                                                 style={{height: "35px"}}
-                                               autoFocus={true}
+                                                autoFocus={true}
                                                 placeholder="Type here..."
                                                 value={data.text}
                                                 onChange={(e) => onChangeText(e)}
@@ -593,7 +598,7 @@ const Chats = (props) => {
                                             <div className="image-upload">
                                                 <label htmlFor="file-input"
                                                        data-toggle="kt-tooltip"
-                                                       title="Ajouter un fichier">
+                                                       title={t("Ajouter un fichier")}>
                                                     <i className="fas fa-paperclip"></i>
                                                 </label>
                                                 <input id="file-input"
@@ -609,13 +614,13 @@ const Chats = (props) => {
                                                     !startRequest ? (
                                                         <button type="button"
                                                                 onClick={(e) => addItem(e)}
-                                                                className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply ">Envoyer
+                                                                className="btn btn-brand btn-md btn-upper btn-bold kt-chat__reply ">{t("Envoyer")}
                                                         </button>
                                                     ) : (
                                                         <button
                                                             className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                             type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
@@ -629,7 +634,7 @@ const Chats = (props) => {
                 </div>
             </div>
 
-        </div>
+        </div>) : null
     );
 };
 const mapStateToProps = (state) => {

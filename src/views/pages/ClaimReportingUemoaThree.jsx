@@ -10,7 +10,7 @@ import Pagination from "../components/Pagination";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {
-    forceRound, formatSelectOption, formatStatus, getCurrentDate,
+    forceRound, formatSelectOption, formatStatus,
     getLowerCaseString,
     loadCss, removeNullValueInObject,
 } from "../../helpers/function";
@@ -20,11 +20,16 @@ import {ToastBottomEnd} from "../components/Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import Select from "react-select";
 import FileSaver from "file-saver";
+import {useTranslation} from "react-i18next";
 import moment from "moment";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimReportingUemoaThree = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution')))
         window.location.href = ERROR_401;
 
@@ -34,11 +39,9 @@ const ClaimReportingUemoaThree = (props) => {
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
-    const [dateStart, setDateStart] = useState('2020-01-01');
+    const [dateStart, setDateStart] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [dateEnd, setDateEnd] = useState(moment().format('YYYY-MM-DD'));
-
     const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
-
     const defaultError = {
         date_start: [],
         date_end: [],
@@ -131,7 +134,7 @@ const ClaimReportingUemoaThree = (props) => {
         await axios.get(endpoint, {params: removeNullValueInObject(sendData)})
             .then(response => {
                 if (click)
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Filtre éffectuer avec succès"));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectuer avec succès") : ""));
                 setNumberPage(forceRound(response.data.length / numberPerPage));
                 setShowList(response.data.slice(0, numberPerPage));
                 setClaims(response.data);
@@ -521,72 +524,72 @@ const ClaimReportingUemoaThree = (props) => {
                     </button>
                     <div className="dropdown-menu px-5" style={{ width: "550px" }}>
                         <div className="d-flex justify-content-between">
-                            <strong>Objet de réclamation</strong>
+                            <strong>{t("Objet de réclamation")}</strong>
                             <p className="ml-5">{claim.claimObject ? claim.claimObject : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Canal de réception</strong>
+                            <strong>{t("Canal de réception")}</strong>
                             <p className="ml-5">{claim.requestChannel ? claim.requestChannel : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Commentaire (client)</strong>
+                            <strong>{t("Commentaire")} ({t("client")})</strong>
                             <p className="ml-5">{claim.commentClient ? claim.commentClient : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Fonction de traitement</strong>
+                            <strong>{t("Fonction de traitement")}</strong>
                             <p className="ml-5">{claim.functionTreating ? claim.functionTreating : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Staff traitant</strong>
+                            <strong>{t("Agent traitant")}</strong>
                             <p className="ml-5">{claim.staffTreating ? claim.staffTreating : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Solution apportée par le staff</strong>
+                            <strong>{t("Solution apportée par l'agent")}</strong>
                             <p className="ml-5">{claim.solution ? claim.solution : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Statut</strong>
+                            <strong>{t("Statut")}</strong>
                             <p className="ml-5">{claim.status ? claim.status : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date réclamation</strong>
+                            <strong>{t("Date de réclamation")}</strong>
                             <p className="ml-5">{claim.dateRegister ? claim.dateRegister : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date qualification</strong>
+                            <strong>{t("Date qualification")}</strong>
                             <p className="ml-5">{claim.dateQualification ? claim.dateQualification : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date de traitement</strong>
+                            <strong>{t("Date de traitement")}</strong>
                             <p className="ml-5">{claim.dateTreatment ? claim.dateTreatment : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Date clôture</strong>
+                            <strong>{t("Date de clôture")}</strong>
                             <p className="ml-5">{claim.dateClosing ? claim.dateClosing : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délai de qualification (J) avec Weekend</strong>
+                            <strong>{t("Délai de qualification")} (J) {t("avec weekend")}</strong>
                             <p className="ml-5">{claim.delayQualifWithWeekend ? claim.delayQualifWithWeekend : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délai de traitement (J) avec Weekend</strong>
+                            <strong>{("Délai de traitement")} (J) {t("avec weekend")}</strong>
                             <p className="ml-5">{claim.delayTreatWithWeekend ? claim.delayTreatWithWeekend : "-"}</p>
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Délai de traitement (J) sans Weekend</strong>
+                            <strong>{t("Délai de traitement")} (J) {t("sans Weekend")}</strong>
                             <p className="ml-5">{claim.delayTreatWithoutWeekend ? claim.delayTreatWithoutWeekend : "-"}</p>
                         </div>
 
@@ -596,7 +599,7 @@ const ClaimReportingUemoaThree = (props) => {
                         </div>
 
                         <div className="d-flex justify-content-between">
-                            <strong>Devise du montant</strong>
+                            <strong>{t("Devise du montant")}</strong>
                             <p className="ml-5">{claim.accountCurrency ? claim.accountCurrency : "-"}</p>
                         </div>
                     </div>
@@ -621,82 +624,109 @@ const ClaimReportingUemoaThree = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Processus
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Etat Hors Délais
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Processus")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Etat hors délai")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={(
-                        <div>
-                            Etat complet de toutes les réclamations dont les délais de traitement sont dépassés et qui n'ont pas encore été traitées à la date du jour.
-                        </div>
-                    )}/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable information={(
+                            <div>
+                                {t("État complet de toutes les réclamations dont les délais de traitement sont dépassés et qui n'ont pas encore été traitées à la date du jour")}.
+                            </div>
+                        )}/>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Rapport Etat Hors Délais"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                title={t("Rapport Etat hors délai")}
+                            />
 
-                        <div className="kt-portlet__body">
-                            <div className="row">
-                                {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                    <div className="col-md-12">
-                                        <div className={error.institution_targeted_id.length ? "form-group validated" : "form-group"}>
-                                            <label htmlFor="">Institution</label>
-                                            <Select
-                                                isClearable
-                                                value={institution}
-                                                placeholder={"Veuillez sélectionner l'institution"}
-                                                onChange={onChangeInstitution}
-                                                options={institutions}
-                                            />
+                            <div className="kt-portlet__body">
+                                <div className="row">
+                                    {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
+                                        <div className="col-md-12">
+                                            <div className={error.institution_targeted_id.length ? "form-group validated" : "form-group"}>
+                                                <label htmlFor="">{t("Institution")}</label>
+                                                <Select
+                                                    isClearable
+                                                    value={institution}
+                                                    placeholder={t("Veuillez sélectionner l'institution")}
+                                                    onChange={onChangeInstitution}
+                                                    options={institutions}
+                                                />
 
-                                            {
-                                                error.institution_targeted_id.length ? (
-                                                    error.institution_targeted_id.map((error, index) => (
-                                                        <div key={index} className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : null
-                                            }
+                                                {
+                                                    error.institution_targeted_id.length ? (
+                                                        error.institution_targeted_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                </div>
+
+                                {props.plan !== "HUB" ? (
+                                    <div className="row">
+                                        <div className="col">
+                                            <div className={error.account_type_id.length ? "form-group validated" : "form-group"}>
+                                                <label htmlFor="">{t("Type de compte")}</label>
+                                                <Select
+                                                    isClearable
+                                                    value={clientType}
+                                                    placeholder={t("Veuillez sélectionner le type de compte")}
+                                                    onChange={onChangeClientType}
+                                                    options={clientTypes}
+                                                />
+
+                                                {
+                                                    error.account_type_id.length ? (
+                                                        error.account_type_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 ) : null}
-                            </div>
 
-                            {props.plan !== "HUB" ? (
                                 <div className="row">
                                     <div className="col">
-                                        <div className={error.account_type_id.length ? "form-group validated" : "form-group"}>
-                                            <label htmlFor="">Type de compte</label>
+                                        <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">{t("Catégorie de réclamation")}</label>
                                             <Select
                                                 isClearable
-                                                value={clientType}
-                                                placeholder={"Veuillez sélectionner le type de compte"}
-                                                onChange={onChangeClientType}
-                                                options={clientTypes}
+                                                value={category}
+                                                placeholder={t("Veuillez sélectionner la catégorie")}
+                                                onChange={onChangeCategory}
+                                                options={categories}
                                             />
 
                                             {
-                                                error.account_type_id.length ? (
-                                                    error.account_type_id.map((error, index) => (
+                                                error.claim_category_id.length ? (
+                                                    error.claim_category_id.map((error, index) => (
                                                         <div key={index} className="invalid-feedback">
                                                             {error}
                                                         </div>
@@ -705,73 +735,21 @@ const ClaimReportingUemoaThree = (props) => {
                                             }
                                         </div>
                                     </div>
-                                </div>
-                            ) : null}
 
-                            <div className="row">
-                                <div className="col">
-                                    <div className={error.claim_category_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="">Catégorie de réclamation</label>
-                                        <Select
-                                            isClearable
-                                            value={category}
-                                            placeholder={"Veuillez sélectionner la catégorie"}
-                                            onChange={onChangeCategory}
-                                            options={categories}
-                                        />
-
-                                        {
-                                            error.claim_category_id.length ? (
-                                                error.claim_category_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
-                                    </div>
-                                </div>
-
-                                <div className="col">
-                                    <div className={error.claim_object_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="">Objet de réclamation</label>
-                                        <Select
-                                            isClearable
-                                            value={object}
-                                            placeholder={"Veuillez sélectionner l'objet"}
-                                            onChange={onChangeObject}
-                                            options={objects}
-                                        />
-
-                                        {
-                                            error.claim_object_id.length ? (
-                                                error.claim_object_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                {props.plan === "HUB" ? (
                                     <div className="col">
-                                        <div className={error.relationShip.length ? "form-group validated" : "form-group"}>
-                                            <label htmlFor="">Relation</label>
+                                        <div className={error.claim_object_id.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">{t("Objet de réclamation")}</label>
                                             <Select
                                                 isClearable
-                                                value={relation}
-                                                placeholder={"Veuillez sélectionner la relation"}
-                                                onChange={onChangeRelation}
-                                                options={relations}
+                                                value={object}
+                                                placeholder={t("Veuillez sélectionner l'objet")}
+                                                onChange={onChangeObject}
+                                                options={objects}
                                             />
 
                                             {
-                                                error.relationShip.length ? (
-                                                    error.relationShip.map((error, index) => (
+                                                error.claim_object_id.length ? (
+                                                    error.claim_object_id.map((error, index) => (
                                                         <div key={index} className="invalid-feedback">
                                                             {error}
                                                         </div>
@@ -780,21 +758,71 @@ const ClaimReportingUemoaThree = (props) => {
                                             }
                                         </div>
                                     </div>
-                                ) : (
+                                </div>
+
+                                <div className="row">
+                                    {props.plan === "HUB" ? (
+                                        <div className="col">
+                                            <div className={error.relationShip.length ? "form-group validated" : "form-group"}>
+                                                <label htmlFor="">{t("Relation")}</label>
+                                                <Select
+                                                    isClearable
+                                                    value={relation}
+                                                    placeholder={t("Veuillez sélectionner la relation")}
+                                                    onChange={onChangeRelation}
+                                                    options={relations}
+                                                />
+
+                                                {
+                                                    error.relationShip.length ? (
+                                                        error.relationShip.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="col">
+                                            <div className={error.unit_targeted_id.length ? "form-group validated" : "form-group"}>
+                                                <label htmlFor="">{t("Agences concernée")}</label>
+                                                <Select
+                                                    isClearable
+                                                    value={unit}
+                                                    placeholder={t("Veuillez sélectionner l'agence")}
+                                                    onChange={onChangeUnit}
+                                                    options={units}
+                                                />
+
+                                                {
+                                                    error.unit_targeted_id.length ? (
+                                                        error.unit_targeted_id.map((error, index) => (
+                                                            <div key={index} className="invalid-feedback">
+                                                                {error}
+                                                            </div>
+                                                        ))
+                                                    ) : null
+                                                }
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className="col">
-                                        <div className={error.unit_targeted_id.length ? "form-group validated" : "form-group"}>
-                                            <label htmlFor="">Agences concernée</label>
+                                        <div className={error.responsible_unit_id.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">{t("Fonction traitant")}</label>
                                             <Select
                                                 isClearable
-                                                value={unit}
-                                                placeholder={"Veuillez sélectionner l'agence"}
-                                                onChange={onChangeUnit}
-                                                options={units}
+                                                value={responsible}
+                                                placeholder={t("Veuillez sélectionner la fonction traitant")}
+                                                onChange={onChangeResponsible}
+                                                options={responsibles}
                                             />
 
                                             {
-                                                error.unit_targeted_id.length ? (
-                                                    error.unit_targeted_id.map((error, index) => (
+                                                error.responsible_unit_id.length ? (
+                                                    error.responsible_unit_id.map((error, index) => (
                                                         <div key={index} className="invalid-feedback">
                                                             {error}
                                                         </div>
@@ -803,112 +831,89 @@ const ClaimReportingUemoaThree = (props) => {
                                             }
                                         </div>
                                     </div>
-                                )}
-
-                                <div className="col">
-                                    <div className={error.responsible_unit_id.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="">Fonction traitant</label>
-                                        <Select
-                                            isClearable
-                                            value={responsible}
-                                            placeholder={"Veuillez sélectionner la fonction traitant"}
-                                            onChange={onChangeResponsible}
-                                            options={responsibles}
-                                        />
-
-                                        {
-                                            error.responsible_unit_id.length ? (
-                                                error.responsible_unit_id.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col">
-                                    <div className={error.request_channel_slug.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="">Canal de réception</label>
-                                        <Select
-                                            isClearable
-                                            value={canal}
-                                            placeholder={"Veuillez sélectionner le canal de réception"}
-                                            onChange={onChangeCanal}
-                                            options={canals}
-                                        />
-
-                                        {
-                                            error.request_channel_slug.length ? (
-                                                error.request_channel_slug.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
-                                    </div>
                                 </div>
 
-                                <div className="col">
-                                    <div className={error.status.length ? "form-group validated" : "form-group"}>
-                                        <label htmlFor="">Status</label>
-                                        <Select
-                                            isClearable
-                                            value={status}
-                                            placeholder={"Veuillez sélectionner le status"}
-                                            onChange={onChangeStatus}
-                                            options={statutes}
-                                        />
+                                <div className="row">
+                                    <div className="col">
+                                        <div className={error.request_channel_slug.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">{t("Canal de réception")}</label>
+                                            <Select
+                                                isClearable
+                                                value={canal}
+                                                placeholder={t("Veuillez sélectionner le canal de réception")}
+                                                onChange={onChangeCanal}
+                                                options={canals}
+                                            />
 
-                                        {
-                                            error.status.length ? (
-                                                error.status.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
+                                            {
+                                                error.request_channel_slug.length ? (
+                                                    error.request_channel_slug.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div className="row">
-                                <div className="col">
-                                    <div className="form-group">
-                                        <label htmlFor="">Date début</label>
-                                        <input type="date" onChange={handleDateStartChange} className={error.date_start.length ? "form-control is-invalid" : "form-control"} value={dateStart}/>
+                                    <div className="col">
+                                        <div className={error.status.length ? "form-group validated" : "form-group"}>
+                                            <label htmlFor="">{t("Statut")}</label>
+                                            <Select
+                                                isClearable
+                                                value={status}
+                                                placeholder={t("Veuillez sélectionner le statut")}
+                                                onChange={onChangeStatus}
+                                                options={statutes}
+                                            />
 
-                                        {
-                                            error.date_start.length ? (
-                                                error.date_start.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
+                                            {
+                                                error.status.length ? (
+                                                    error.status.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="col">
-                                    <div className="form-group">
-                                        <label htmlFor="">Date fin</label>
-                                        <input type="date" onChange={handleDateEndChange} className={error.date_end.length ? "form-control is-invalid" : "form-control"} value={dateEnd}/>
+                                <div className="row">
+                                    <div className="col">
+                                        <div className="form-group">
+                                            <label htmlFor="">{t("Date de début")}</label>
+                                            <input type="date" onChange={handleDateStartChange} className={error.date_start.length ? "form-control is-invalid" : "form-control"} value={dateStart}/>
 
-                                        {
-                                            error.date_end.length ? (
-                                                error.date_end.map((error, index) => (
-                                                    <div key={index} className="invalid-feedback">
-                                                        {error}
-                                                    </div>
-                                                ))
-                                            ) : null
-                                        }
+                                            {
+                                                error.date_start.length ? (
+                                                    error.date_start.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div className="col">
+                                        <div className="form-group">
+                                            <label htmlFor="">{t("Date de fin")}</label>
+                                            <input type="date" onChange={handleDateEndChange} className={error.date_end.length ? "form-control is-invalid" : "form-control"} value={dateEnd}/>
+
+                                            {
+                                                error.date_end.length ? (
+                                                    error.date_end.map((error, index) => (
+                                                        <div key={index} className="invalid-feedback">
+                                                            {error}
+                                                        </div>
+                                                    ))
+                                                ) : null
+                                            }
+                                        </div>
                                     </div>
                                 </div>
 
@@ -917,15 +922,15 @@ const ClaimReportingUemoaThree = (props) => {
                                         <a className="d-none" href="#" id="downloadButton" download={true}>downloadButton</a>
                                         {loadFilter ? (
                                             <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                Chargement...
+                                                {t("Chargement")}...
                                             </button>
                                         ) : (
-                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>Filtrer le rapport</button>
+                                            <button onClick={filterReporting} className="btn btn-primary" disabled={(loadDownload || loadDownloadPdf)}>{t("Filtrer le rapport")}</button>
                                         )}
 
                                         {loadDownload ? (
                                             <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                Chargement...
+                                                {t("Chargement")}...
                                             </button>
                                         ) : (
                                             <button onClick={downloadReporting} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>
@@ -933,7 +938,7 @@ const ClaimReportingUemoaThree = (props) => {
 
                                         {loadDownloadPdf ? (
                                             <button className="btn btn-secondary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                Chargement...
+                                                {t("Chargement")}...
                                             </button>
                                         ) : (
                                             <button onClick={downloadReportingPdf} className="btn btn-secondary ml-3" disabled={(loadFilter || loadDownload)}>PDF</button>
@@ -941,136 +946,135 @@ const ClaimReportingUemoaThree = (props) => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Rechercher:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Détail
-                                                        </th>
-                                                        {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                                Filiale
-                                                            </th>
-                                                        ) : null}
-                                                        {props.plan !== "HUB" ? (
-                                                            <>
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                                    Type Client
-                                                                </th>
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                                    Client
-                                                                </th>
-                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                                    N° Compte
-                                                                </th>
-                                                            </>
-                                                        ) : (
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                                Relation
-                                                            </th>
-                                                        )}
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            N téléphone
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Agence
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
-                                                            Catégorie réclamation
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        claims.length ? (
-                                                            showList.length ? (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
-                                                            ) : (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Détail</th>
-                                                        {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                                            <th rowSpan="1" colSpan="1">Filiale</th>
-                                                        ) : null}
-                                                        {props.plan !== "HUB" ? (
-                                                            <>
-                                                                <th rowSpan="1" colSpan="1">Type Client</th>
-                                                                <th rowSpan="1" colSpan="1">Client</th>
-                                                                <th rowSpan="1" colSpan="1">N° Compte</th>
-                                                            </>
-                                                        ) : (
-                                                            <th rowSpan="1" colSpan="1">Relation</th>
-                                                        )}
-                                                        <th rowSpan="1" colSpan="1">N Téléphone</th>
-                                                        <th rowSpan="1" colSpan="1">Agence</th>
-                                                        <th rowSpan="1" colSpan="1">Catégorie réclamation</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1
-                                                    à {numberPerPage} sur {claims.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Rechercher")}:
+                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{width: "952px"}}>
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                {t("Détails")}
+                                                            </th>
+                                                            {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    {t("Filiale")}
+                                                                </th>
+                                                            ) : null}
+                                                            {props.plan !== "HUB" ? (
+                                                                <>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                        {t("Type de client")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                        {t("Client")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                        N° {t("Compte")}
+                                                                    </th>
+                                                                </>
+                                                            ) : (
+                                                                <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                    {t("Relation")}
+                                                                </th>
+                                                            )}
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                {t("Téléphone")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                {t("Agence")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                                {t("Catégorie de réclamation")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            claims.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
+                                                                ) : (
+                                                                    showList.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">{t("Détails")}</th>
+                                                            {verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
+                                                                <th rowSpan="1" colSpan="1">{t("Filiale")}</th>
+                                                            ) : null}
+                                                            {props.plan !== "HUB" ? (
+                                                                <>
+                                                                    <th rowSpan="1" colSpan="1">{t("Type de client")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Client")}</th>
+                                                                    <th rowSpan="1" colSpan="1">N° {t("Compte")}</th>
+                                                                </>
+                                                            ) : (
+                                                                <th rowSpan="1" colSpan="1">{t("Relation")}</th>
+                                                            )}
+                                                            <th rowSpan="1" colSpan="1">{t("Téléphone")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Agence")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Catégorie de réclamation")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    showList.length ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

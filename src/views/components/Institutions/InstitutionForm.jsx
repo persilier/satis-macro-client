@@ -16,9 +16,14 @@ import {verifyPermission} from "../../../helpers/permission";
 import {connect} from "react-redux";
 import InputRequire from "../InputRequire";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 const InstitutionForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (!id) {
         if (!verifyPermission(props.userPermissions, 'store-any-institution'))
@@ -144,12 +149,12 @@ const InstitutionForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             } else {
@@ -158,12 +163,12 @@ const InstitutionForm = (props) => {
                         setError(defaultError);
                         setStartRequest(false);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(error => {
                         setError({...defaultError, ...error.response.data.error});
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -176,7 +181,7 @@ const InstitutionForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -184,13 +189,13 @@ const InstitutionForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/institution" className="kt-subheader__breadcrumbs-link">
-                                    Institution
+                                    {t("Institution")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link">
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -207,7 +212,7 @@ const InstitutionForm = (props) => {
                                         <h3 className="kt-portlet__head-title">
                                             {
                                                 id ?
-                                                    "Modification d'une institution" : "Ajout d'une institution"
+                                                    t("Modification d'une institution") : t("Ajout d'une institution")
                                             }
                                         </h3>
                                     </div>
@@ -281,7 +286,7 @@ const InstitutionForm = (props) => {
                                                                         className={error.default_currency_slug.length ? "form-group row validated" : "form-group row"}>
                                                                         <label
                                                                             className="col-xl-3 col-lg-3 col-form-label"
-                                                                            htmlFor="exampleSelect1">Devise</label>
+                                                                            htmlFor="exampleSelect1">{t("Devise")}</label>
                                                                         <div className="col-lg-9 col-xl-6">
 
                                                                             <Select
@@ -306,7 +311,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">Nom <InputRequire/></label>
+                                                                           htmlFor="name">{t("Nom")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
@@ -332,7 +337,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.acronyme.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="Acronyme">Acronyme <InputRequire/></label>
+                                                                           htmlFor="Acronyme">{t("Acronyme")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="Acronyme"
@@ -358,7 +363,7 @@ const InstitutionForm = (props) => {
                                                                 <div
                                                                     className={error.iso_code.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="value">Code Iso <InputRequire/></label>
+                                                                           htmlFor="value">{t("Code Iso")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="value"
@@ -388,12 +393,12 @@ const InstitutionForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">Enregistrer</button>
+                                                                                    className="btn btn-primary">{t("Enregistrer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -401,13 +406,13 @@ const InstitutionForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/settings/institution"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/settings/institution"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -430,13 +435,15 @@ const InstitutionForm = (props) => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-any-institution') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-any-institution') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-any-institution') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-any-institution') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 
 };

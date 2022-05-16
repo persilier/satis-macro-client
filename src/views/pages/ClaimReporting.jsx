@@ -19,10 +19,15 @@ import {ERROR_401} from "../../config/errorPage";
 import {debug, formatSelectOption} from "../../helpers/function";
 import {month} from "../../constants/date";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 const ClaimReporting = props => {
-    document.title = "Satis client - Reporting";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = "Satis client - "+ ready ? t("Reporting") : "";
     if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, "list-reporting-claim-my-institution")))
         window.location.href = ERROR_401;
 
@@ -145,12 +150,12 @@ const ClaimReporting = props => {
 
         const formatCategoriesMouths = () => {
             for (var i = 0; i < categories.length; i++)
-                categories[i] = `${ month[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
+                categories[i] = `${ month()[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
         };
 
         const formatCategoriesDays = () => {
             for (var i = 0; i < categories.length; i++) {
-                categories[i] = `${ categories[i].split("-")[2] } ${ month[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
+                categories[i] = `${ categories[i].split("-")[2] } ${ month()[categories[i].split("-")[1]] } ${ categories[i].split("-")[0][2] }${ categories[i].split("-")[0][3] }`;
             }
         };
 
@@ -158,8 +163,8 @@ const ClaimReporting = props => {
             var start = "";
             var end = "";
             for (var i = 0; i < categories.length; i++) {
-                start = `${categories[i].replace(/\s/g, '').split("-")[2]} ${month[categories[i].replace(/\s/g, '').split("-")[1]]} ${categories[i].replace(/\s/g, '').split("-")[0][2]}${categories[i].replace(/\s/g, '').split("-")[0][3]}`;
-                end = `${categories[i].replace(/\s/g, '').split("-")[5]} ${month[categories[i].replace(/\s/g, '').split("-")[4]]} ${categories[i].replace(/\s/g, '').split("-")[3][2]}${categories[i].replace(/\s/g, '').split("-")[3][3]}`;
+                start = `${categories[i].replace(/\s/g, '').split("-")[2]} ${month()[categories[i].replace(/\s/g, '').split("-")[1]]} ${categories[i].replace(/\s/g, '').split("-")[0][2]}${categories[i].replace(/\s/g, '').split("-")[0][3]}`;
+                end = `${categories[i].replace(/\s/g, '').split("-")[5]} ${month()[categories[i].replace(/\s/g, '').split("-")[4]]} ${categories[i].replace(/\s/g, '').split("-")[3][2]}${categories[i].replace(/\s/g, '').split("-")[3][3]}`;
                 categories[i] = `${start} - ${end}`;
             }
         };
@@ -184,11 +189,11 @@ const ClaimReporting = props => {
 
         const series = [
             {
-                name: 'Réclamtions réçues',
+                name: t('Réclamations reçues'),
                 data: newSeries.claims_received
             },
             {
-                name: 'Réclamations résolues',
+                name: t('Réclamations résolues'),
                 data: newSeries.claims_resolved
             }
         ];
@@ -265,9 +270,9 @@ const ClaimReporting = props => {
     const handleStartDateChange = e => {
         if (endDate && e.target.value) {
             if (!(new Date(endDate) > new Date(e.target.value)))
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             else
-                ToastBottomEnd.fire(toastValidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastValidPeriodMessageConfig());
         }
         setStartDate(e.target.value);
     };
@@ -275,9 +280,9 @@ const ClaimReporting = props => {
     const handleEndDateChange = e => {
         if (startDate && e.target.value) {
             if (!(new Date(startDate) < new Date(e.target.value)))
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             else
-                ToastBottomEnd.fire(toastValidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastValidPeriodMessageConfig());
         }
         setEndDate(e.target.value);
     };
@@ -328,27 +333,27 @@ const ClaimReporting = props => {
         if (institution && startDate && endDate) {
             if (startDate && endDate) {
                 if (!(new Date(startDate) <= new Date(endDate)))
-                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
                 else {
                     filterRequest()
                 }
             } else {
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             }
         } else if (institution && !startDate && !endDate) {
             filterRequest();
         } else if (!institution && startDate && endDate) {
             if (startDate && endDate) {
                 if (!(new Date(startDate) <= new Date(endDate)))
-                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                    ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
                 else {
                     filterRequest()
                 }
             } else {
-                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig);
+                ToastBottomEnd.fire(toastInvalidPeriodMessageConfig());
             }
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Veillez renseigner les parametres correctement"))
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veillez renseigner les paramètres correctement")))
         }
     };
 
@@ -431,134 +436,135 @@ const ClaimReporting = props => {
                 ;
             }
         } else {
-            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Donné indisponible pour l'exportation"));
+            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Donnée indisponible pour l'exportation")));
         }
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Monitoring
-                            </h3>
+        ready ? (
+            verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Suivi")}
+                                </h3>
 
-                            <span className="kt-subheader__separator kt-hidden"/>
+                                <span className="kt-subheader__separator kt-hidden"/>
 
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    Reporting
-                                </a>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
+                                        {t("Reporting")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={"Page de reporting"}/>
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <InfirmationTable information={t("Page de reporting")}/>
 
-                    <div className="alert alert-light alert-elevate" role="alert">
-                        <div className="alert-icon">
-                            {
-                                startExportation ? (
-                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light">
-                                        Chargement...
-                                    </button>
-                                ) : (
-                                    <button className="btn btn-info btn-circle" onClick={exportToPdf}>
-                                        <i className="fa fa-file-export" style={{color: "white"}}/> Exportez
-                                    </button>
-                                )
-                            }
-                        </div>
-
-                        <div className="alert-text align-items-center">
-
-                            <div className="row col-12 d-flex justify-content-center align-items-center">
+                        <div className="alert alert-light alert-elevate" role="alert">
+                            <div className="alert-icon">
                                 {
-                                    verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
-                                        <div className="form-group col-3">
-                                            <label htmlFor="institution">Institutions</label>
-                                            <Select
-                                                isClearable
-                                                value={institution}
-                                                placeholder={"Choix institution"}
-                                                onChange={handleInstitutionChange}
-                                                options={formatSelectOption(fetchData ? fetchData.institutions : [], 'name', false)}
-                                            />
-                                        </div>
-                                    ) : null
+                                    startExportation ? (
+                                        <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light">
+                                            {t("Chargement")}...
+                                        </button>
+                                    ) : (
+                                        <button className="btn btn-info btn-circle" onClick={exportToPdf}>
+                                            <i className="fa fa-file-export" style={{color: "white"}}/> {t("Exportez")}
+                                        </button>
+                                    )
                                 }
+                            </div>
 
-                                <div className="form-group col-3">
-                                    <label htmlFor="start">Date de début</label>
-                                    <input
-                                        id="start"
-                                        type="date"
-                                        className="form-control"
-                                        value={startDate}
-                                        onChange={handleStartDateChange}
-                                    />
-                                </div>
+                            <div className="alert-text align-items-center">
 
-                                <div className="form-group col-3">
-                                    <label htmlFor="end">Date de début</label>
-                                    <input
-                                        id="end"
-                                        type="date"
-                                        className="form-control"
-                                        value={endDate}
-                                        onChange={handleEndDateChange}
-                                    />
-                                </div>
-
-                                <div className="form-group col-3">
+                                <div className="row col-12 d-flex justify-content-center align-items-center">
                                     {
-                                        !startFilter ? (
-                                            <button
-                                                className="btn btn-primary"
-                                                style={{marginTop: "25px"}}
-                                                onClick={() => filterData()}
-                                            >
-                                                <i className="fa fa-filter"/> Filtrer
-                                            </button>
-                                        ) : (
-                                            <button
-                                                className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                type="button" disabled
-                                                style={{marginTop: "25px"}}
-                                            >
-                                                Chargement...
-                                            </button>
-                                        )
+                                        verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ? (
+                                            <div className="form-group col-3">
+                                                <label htmlFor="institution">Institutions</label>
+                                                <Select
+                                                    isClearable
+                                                    value={institution}
+                                                    placeholder={t("Veillez sélectionner l'institution")}
+                                                    onChange={handleInstitutionChange}
+                                                    options={formatSelectOption(fetchData ? fetchData.institutions : [], 'name', false)}
+                                                />
+                                            </div>
+                                        ) : null
                                     }
+
+                                    <div className="form-group col-3">
+                                        <label htmlFor="start">{t("Date de début")}</label>
+                                        <input
+                                            id="start"
+                                            type="date"
+                                            className="form-control"
+                                            value={startDate}
+                                            onChange={handleStartDateChange}
+                                        />
+                                    </div>
+
+                                    <div className="form-group col-3">
+                                        <label htmlFor="end">{t("Date de fin")}</label>
+                                        <input
+                                            id="end"
+                                            type="date"
+                                            className="form-control"
+                                            value={endDate}
+                                            onChange={handleEndDateChange}
+                                        />
+                                    </div>
+
+                                    <div className="form-group col-3">
+                                        {
+                                            !startFilter ? (
+                                                <button
+                                                    className="btn btn-primary"
+                                                    style={{marginTop: "25px"}}
+                                                    onClick={() => filterData()}
+                                                >
+                                                    <i className="fa fa-filter"/> {t("Filtrer")}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                    type="button" disabled
+                                                    style={{marginTop: "25px"}}
+                                                >
+                                                    {t("Chargement")}...
+                                                </button>
+                                            )
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Reporting Reclamation"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                title={"Reporting Reclamation"}
+                            />
 
-                        <div className="kt-portlet__body">
-                            <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                <div className="row">
-                                    {
-                                        fetchData ? (
-                                            <div className="col-sm-12">
-                                                <strong>Légende: <br/>R </strong>{"<===>"} Réclamtions
-                                                <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
-                                                    <thead style={{backgroundColor: "#7F9CF5"}}>
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row">
+                                        {
+                                            fetchData ? (
+                                                <div className="col-sm-12">
+                                                    <strong>Légende: <br/>R </strong>{"<===>"} {t("Réclamations")}
+                                                    <table className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
+                                                        <thead style={{backgroundColor: "#7F9CF5"}}>
                                                         <tr role="row">
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending">Catégorie de <strong>R</strong>
+                                                                aria-label="Country: activate to sort column ascending">{t("Catégorie de")} <strong>R</strong>
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
@@ -566,39 +572,39 @@ const ClaimReporting = props => {
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> collectées
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("collectées")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> incomplète
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("incomplètes")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à une unité
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("à assigner à une unité")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à assigner à un agent
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("à assigner à un agent")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à traiter
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("à traiter")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à valider
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("à valider")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> à mesurer satisfaction
+                                                                aria-label="Country: activate to sort column ascending"><strong>R</strong> {t("à mesurer la satisfaction")}
                                                             </th>
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white" }}
-                                                                aria-label="Country: activate to sort column ascending">Pourcentage de Résolues
+                                                                aria-label="Country: activate to sort column ascending">{t("Pourcentage de résolues")}
                                                             </th>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                        </thead>
+                                                        <tbody>
                                                         {
                                                             fetchData.statistiqueObject.map((row, index) => (
                                                                 row.claim_objects.map((elRow, indexEleRow) => (
@@ -637,46 +643,46 @@ const ClaimReporting = props => {
                                                                 ))
                                                             ))
                                                         }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th colSpan="2" className="text-center">Total</th>
-                                                        <th>{totalCollect}</th>
-                                                        <th>{totalIncomplete}</th>
-                                                        <th>{totalToAssignUnit}</th>
-                                                        <th>{totalToAssignStaff}</th>
-                                                        <th>{totalAwaitingTreatment}</th>
-                                                        <th>{totalToValidate}</th>
-                                                        <th>{totalToMeasureSatisfaction}</th>
-                                                        <th>{totalPercentage} %</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        ) : <LoadingTable/>
-                                    }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th colSpan="2" className="text-center">{t("Total")}</th>
+                                                            <th>{totalCollect}</th>
+                                                            <th>{totalIncomplete}</th>
+                                                            <th>{totalToAssignUnit}</th>
+                                                            <th>{totalToAssignStaff}</th>
+                                                            <th>{totalAwaitingTreatment}</th>
+                                                            <th>{totalToValidate}</th>
+                                                            <th>{totalToMeasureSatisfaction}</th>
+                                                            <th>{totalPercentage} %</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            ) : <LoadingTable/>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Délai de qualification des réclamations"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                title={t("Délai de qualification des réclamations")}
+                            />
 
-                        <div className="kt-portlet__body">
-                            <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                <div className="row">
-                                    {
-                                        fetchData ? (
-                                            <div className="col-sm-12">
-                                                <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
-                                                    <thead style={{backgroundColor: "#7F9CF5", borderLeft: "none", borderRight: "none"}}>
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row">
+                                        {
+                                            fetchData ? (
+                                                <div className="col-sm-12">
+                                                    <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
+                                                        <thead style={{backgroundColor: "#7F9CF5", borderLeft: "none", borderRight: "none"}}>
                                                         <tr role="row">
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                                aria-label="Country: activate to sort column ascending">Délai de qualification (en jour)
+                                                                aria-label="Country: activate to sort column ascending">{t("Délai de qualification")} ({t("en jours")})
                                                             </th>
                                                             {
                                                                 fetchData.statistiqueQualificationPeriod.map((el, index) => (
@@ -687,18 +693,18 @@ const ClaimReporting = props => {
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
-                                                            <td style={{borderRight: "none", borderLeft: "none"}}>Nombre</td>
+                                                            <td style={{borderRight: "none", borderLeft: "none"}}>{t("Nombre")}</td>
                                                             {
                                                                 fetchData.statistiqueQualificationPeriod.map((el, index) => (
                                                                     <td key={index} style={{borderRight: "none", borderLeft: "none"}}>{el.total}</td>
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </tbody>
-                                                    <tfoot>
+                                                        </tbody>
+                                                        <tfoot>
                                                         <tr>
                                                             <th rowSpan="1" colSpan="1" style={{borderRight: "none", borderLeft: "none"}}>Taux (%)</th>
                                                             {
@@ -707,36 +713,36 @@ const ClaimReporting = props => {
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        ) : <LoadingTable/>
-                                    }
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            ) : <LoadingTable/>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Délai de traitement des réclamations"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                title={t("Délai de traitement des réclamations")}
+                            />
 
-                        <div className="kt-portlet__body">
-                            <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                <div className="row">
-                                    {
-                                        fetchData ? (
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
-                                                    <thead style={{backgroundColor: "#7F9CF5"}}>
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row">
+                                        {
+                                            fetchData ? (
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{ width: "952px" }}>
+                                                        <thead style={{backgroundColor: "#7F9CF5"}}>
                                                         <tr role="row">
                                                             <th tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70.25px", color: "white", borderLeft: "none", borderRight: "none" }}
-                                                                aria-label="Country: activate to sort column ascending">Délai de Traitement (en jour)
+                                                                aria-label="Country: activate to sort column ascending">{t("Délai de traitement")} ({t("en jours")})
                                                             </th>
                                                             {
                                                                 fetchData.statistiqueTreatmentPeriod.map((el, index) => (
@@ -747,49 +753,49 @@ const ClaimReporting = props => {
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
-                                                            <td style={{ borderLeft: "none", borderRight: "none" }}>Nombre</td>
+                                                            <td style={{ borderLeft: "none", borderRight: "none" }}>{t("Nombre")}</td>
                                                             {
                                                                 fetchData.statistiqueTreatmentPeriod.map((el, index) => (
                                                                     <td key={index} style={{ borderLeft: "none", borderRight: "none" }}>{el.total}</td>
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </tbody>
-                                                    <tfoot>
+                                                        </tbody>
+                                                        <tfoot>
                                                         <tr>
-                                                            <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>Taux</th>
+                                                            <th rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{t("Taux")}</th>
                                                             {
                                                                 fetchData.statistiqueTreatmentPeriod.map((el, index) => (
                                                                     <th key={index} rowSpan="1" colSpan="1" style={{ borderLeft: "none", borderRight: "none" }}>{el.pourcentage}</th>
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        ) : <LoadingTable/>
-                                    }
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            ) : <LoadingTable/>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Utilisation de canaux"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                title={t("Utilisation de canaux")}
+                            />
 
-                        <div className="kt-portlet__body">
-                            <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                <div className="row">
-                                    {
-                                        fetchData ? (
-                                            <div className="col-sm-12">
-                                                <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
-                                                    <thead style={{ backgroundColor: "#7F9CF5" }}>
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row">
+                                        {
+                                            fetchData ? (
+                                                <div className="col-sm-12">
+                                                    <table className="table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline" id="myTable" role="grid" aria-describedby="kt_table_1_info" style={{ width: "952px" }}>
+                                                        <thead style={{ backgroundColor: "#7F9CF5" }}>
                                                         <tr role="row">
                                                             {
                                                                 fetchData.statistiqueChannel.map((channel, index) => (
@@ -805,9 +811,9 @@ const ClaimReporting = props => {
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </thead>
-                                                    <tbody/>
-                                                    <tfoot>
+                                                        </thead>
+                                                        <tbody/>
+                                                        <tfoot>
                                                         <tr>
                                                             {
                                                                 fetchData.statistiqueChannel.map((channel, index) => (
@@ -815,73 +821,74 @@ const ClaimReporting = props => {
                                                                 ))
                                                             }
                                                         </tr>
-                                                    </tfoot>
-                                                </table>
+                                                        </tfoot>
+                                                    </table>
 
-                                                {
-                                                    fetchData ? (
-                                                        <div className="col-12 d-flex justify-content-center">
-                                                            <div id="graphOne" style={{position: "relative", zIndex: "1"}}/>
-                                                        </div>
-                                                    ) : null
-                                                }
-                                            </div>
-                                        ) : <LoadingTable/>
-                                    }
+                                                    {
+                                                        fetchData ? (
+                                                            <div className="col-12 d-flex justify-content-center">
+                                                                <div id="graphOne" style={{position: "relative", zIndex: "1"}}/>
+                                                            </div>
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            ) : <LoadingTable/>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            title={"Evolution des réclamations"}
-                        />
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                title={t("Évolution des réclamations")}
+                            />
 
-                        <div className="kt-portlet__body">
-                            <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                <div className="row d-flex justify-content-center">
-                                    <div className="form-group col-6">
-                                        <label htmlFor="filter">filtre</label>
-                                        <select
-                                            id="filter"
-                                            className="form-control"
-                                            value={typeFilter}
-                                            onChange={(e) => handleTypeFilterChange(e)}
-                                        >
-                                            <option value="" disabled={true}>Veillez choisir le filtre</option>
-                                            {
-                                                possibleFilter.months ? (
-                                                    <option value="months">Mois</option>
-                                                ) : null
-                                            }
-                                            {
-                                                possibleFilter.weeks ? (
-                                                    <option value="weeks">Semaine</option>
-                                                ) : null
-                                            }
-                                            {
-                                                possibleFilter.days ? (
-                                                    <option value="days">Jour</option>
-                                                ) : null
-                                            }
-                                        </select>
+                            <div className="kt-portlet__body">
+                                <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                    <div className="row d-flex justify-content-center">
+                                        <div className="form-group col-6">
+                                            <label htmlFor="filter">{t("Filtre")}</label>
+                                            <select
+                                                id="filter"
+                                                className="form-control"
+                                                value={typeFilter}
+                                                onChange={(e) => handleTypeFilterChange(e)}
+                                            >
+                                                <option value="" disabled={true}>{t("Veillez sélectionner le filtre")}</option>
+                                                {
+                                                    possibleFilter.months ? (
+                                                        <option value="months">{t("Mois")}</option>
+                                                    ) : null
+                                                }
+                                                {
+                                                    possibleFilter.weeks ? (
+                                                        <option value="weeks">{t("Semaine")}</option>
+                                                    ) : null
+                                                }
+                                                {
+                                                    possibleFilter.days ? (
+                                                        <option value="days">{t("Jour")}</option>
+                                                    ) : null
+                                                }
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="row">
-                                    {
-                                        fetchData ? (
-                                            <div id="parentGraphTwo" className="col-sm-12">
-                                                <div id="graphTwo" style={{position: "relative", zIndex: 1}}/>
-                                            </div>
-                                        ) : <LoadingTable/>
-                                    }
+                                    <div className="row">
+                                        {
+                                            fetchData ? (
+                                                <div id="parentGraphTwo" className="col-sm-12">
+                                                    <div id="graphTwo" style={{position: "relative", zIndex: 1}}/>
+                                                </div>
+                                            ) : <LoadingTable/>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
     );
 };

@@ -16,8 +16,12 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {connect} from "react-redux";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const FaqsForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
 
     const defaultData = {
         faq_category_id: "",
@@ -93,12 +97,12 @@ const FaqsForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             }else {
@@ -107,12 +111,12 @@ const FaqsForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(error => {
                         setStartRequest(false);
                         setError({...defaultError,...error.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -125,7 +129,7 @@ const FaqsForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -133,12 +137,12 @@ const FaqsForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/faqs/faq" className="kt-subheader__breadcrumbs-link">
-                                    FAQs
+                                    {t("FAQs")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
                                     {
-                                        editfaqid ? "Modification" : "Ajout"
+                                        editfaqid ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -154,7 +158,7 @@ const FaqsForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                editfaqid?" Modifier une FAQ" :"Ajout de FAQs"
+                                                editfaqid? t("Modifier une FAQ") : t("Ajout de FAQs")
 
                                             }
                                         </h3>
@@ -172,7 +176,7 @@ const FaqsForm = (props) => {
                                                                 <div
                                                                     className={error.faq_category_id.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">Catégorie</label>
+                                                                           htmlFor="exampleSelect1">{t("Catégorie")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         {categorieData ? (
                                                                             <Select
@@ -199,13 +203,13 @@ const FaqsForm = (props) => {
                                                                 <div
                                                                     className={error.question.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="quiz">Question</label>
+                                                                           htmlFor="quiz">{t("Question")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="quiz"
                                                                             type="text"
                                                                             className={error.question.length ? "form-control is-invalid" : "form-control"}
-                                                                            placeholder="Veillez entrer la question"
+                                                                            placeholder={t("Veuillez entrer la question")}
                                                                             value={data.question}
                                                                             onChange={(e) => onChangeQuiz(e)}
                                                                         />
@@ -225,12 +229,12 @@ const FaqsForm = (props) => {
                                                                 <div
                                                                     className={error.answer.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="answer">Réponse</label>
+                                                                           htmlFor="answer">{t("Réponse")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                 <textarea
                                                                     id="answer"
                                                                     className={error.answer.length ? "form-control is-invalid" : "form-control"}
-                                                                    placeholder="Veillez entrer la réponse"
+                                                                    placeholder={t("Veuillez entrer la réponse")}
                                                                     cols="30"
                                                                     rows="5"
                                                                     value={data.answer}
@@ -255,12 +259,12 @@ const FaqsForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">{editfaqid?"Modifier":"Enregistrer"}</button>
+                                                                                    className="btn btn-primary">{editfaqid?t("Modifier"):t("Enregistrer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                                                 type="button" disabled>
-                                                                                Chargement...
+                                                                                {t("Chargement")}...
                                                                             </button>
                                                                         )
                                                                     }
@@ -268,13 +272,13 @@ const FaqsForm = (props) => {
                                                                         !startRequest ? (
                                                                             <Link to="/settings/faqs/add"
                                                                                   className="btn btn-secondary mx-2">
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
                                                                             <Link to="/settings/faqs/add"
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
-                                                                                Quitter
+                                                                                {t("Quitter")}
                                                                             </Link>
                                                                         )
                                                                     }
@@ -295,13 +299,15 @@ const FaqsForm = (props) => {
         );
     }
     return (
-        editfaqid ?
-            verifyPermission(props.userPermissions, 'update-faq') ? (
-                printJsx()
-            ) : null
-            : verifyPermission(props.userPermissions, 'store-faq') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            editfaqid ?
+                verifyPermission(props.userPermissions, 'update-faq') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-faq') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

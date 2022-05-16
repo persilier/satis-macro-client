@@ -13,8 +13,12 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {connect} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 const ConfigCoefficient = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
 
     if (!verifyPermission(props.userPermissions, "update-relance-parameters"))
         window.location.href = ERROR_401;
@@ -33,7 +37,7 @@ const ConfigCoefficient = (props) => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + `/configurations/relance`)
                 .then(response => {
-                    console.log(response.data, "Data");
+                    //console.log(response.data, "Data");
                     const newConfig = {
                         coef: response.data.coef,
                     };
@@ -57,12 +61,12 @@ const ConfigCoefficient = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
-                    ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                    ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(error => {
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
                 })
             ;
         }
@@ -74,7 +78,7 @@ const ConfigCoefficient = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -82,7 +86,7 @@ const ConfigCoefficient = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Coefficient
+                                    {t("Coefficient")}
                                 </a>
                             </div>
                         </div>
@@ -96,7 +100,7 @@ const ConfigCoefficient = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Coefficient
+                                            {t("Coefficient")}
                                         </h3>
                                     </div>
                                 </div>
@@ -106,17 +110,17 @@ const ConfigCoefficient = (props) => {
 
                                         <div className={error.coef.length ? "form-group  validated" : "form-group"}>
                                             <label htmlFor="coef"
-                                                   title="Coefficient de la relance"
+                                                   title={t("Coefficient de la relance")}
                                                    data-toggle="tooltip"
                                                    data-placement="bottom">
-                                                Coefficient <InputRequire/><i className="fa fa-info-circle"/>
+                                                {t("Coefficient")} <InputRequire/><i className="fa fa-info-circle"/>
                                             </label>
                                             <div className="col-md-6 mb-3">
                                                 <input
                                                     id="coef"
                                                     type="text"
                                                     className={error.coef.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez entrer le Coefficient"
+                                                    placeholder={t("Veillez entrer le Coefficient")}
                                                     value={data.coef}
                                                     onChange={(e) => onChangeCoef(e)}
                                                 />
@@ -138,12 +142,12 @@ const ConfigCoefficient = (props) => {
                                             {
                                                 !startRequest ? (
                                                     <button type="submit" onClick={(e) => onSubmit(e)}
-                                                            className="btn btn-primary">Modifier</button>
+                                                            className="btn btn-primary">{t("Modifie")}r</button>
                                                 ) : (
                                                     <button
                                                         className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                         type="button" disabled>
-                                                        Chargement...
+                                                        {t("Chargement")}...
                                                     </button>
                                                 )
                                             }
@@ -151,12 +155,12 @@ const ConfigCoefficient = (props) => {
                                                 !startRequest ? (
                                                     <Link to="/dashbord"
                                                           className="btn btn-secondary mx-2">
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 ) : (
                                                     <Link to="/dashbord"
                                                           className="btn btn-secondary mx-2" disabled>
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 )
                                             }
@@ -172,9 +176,11 @@ const ConfigCoefficient = (props) => {
         );
     };
     return (
-        verifyPermission(props.userPermissions, "update-relance-parameters") ?
-            printJsx()
-            : null
+        ready ? (
+            verifyPermission(props.userPermissions, "update-relance-parameters") ?
+                printJsx()
+                : null
+        ) : null
     );
 };
 

@@ -3,10 +3,10 @@ import axios from "axios";
 import {
     Link,
 } from "react-router-dom";
-import {ToastBottomEnd} from "../Toast";
+import {ToastBottomEnd, ToastLongBottomEnd} from "../Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import InputRequire from "../InputRequire";
@@ -14,6 +14,7 @@ import {connect} from "react-redux";
 import {verifyPermission} from "../../../helpers/permission";
 import {ERROR_401} from "../../../config/errorPage";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 const endPointConfig = {
     PRO: {
@@ -35,7 +36,11 @@ const endPointConfig = {
 };
 
 const ImportClientForm = (props) => {
-    document.title = "Satis client - Importation de fichier excel";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
+    document.title = (ready ? t("Satis client - Importation de fichier excel") : null);
 
     if (!(verifyPermission(props.userPermissions, 'store-client-from-any-institution') ||
         verifyPermission(props.userPermissions, 'store-client-from-my-institution')))
@@ -55,9 +60,9 @@ const ImportClientForm = (props) => {
     const option2 = 0;
 
     const defaultData = {
-        file: "",
-        etat_update: "",
-        stop_identite_exist: "",
+        file: null,
+        etat_update: null,
+        stop_identite_exist: null,
     };
     const defaultError = {
         file: [],
@@ -66,6 +71,7 @@ const ImportClientForm = (props) => {
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
+    const [errorFile, setErrorFile] = useState([])
     const [startRequest, setStartRequest] = useState(false);
 
     const onChangeFile = (e) => {
@@ -89,13 +95,13 @@ const ImportClientForm = (props) => {
         const formData = new FormData();
         formData.append("_method", "post");
         for (const key in newData) {
-            // console.log(`${key}:`, newData[key]);
+            // //console.log(`${key}:`, newData[key]);
             if (key === "file") {
                 formData.append("file", newData.file);
             } else
                 formData.set(key, newData[key]);
         }
-        console.log(formData.get('file'), 'FORMDATA');
+        //console.log(formData.get('file'), 'FORMDATA');
         return formData;
 
     };
@@ -109,13 +115,45 @@ const ImportClientForm = (props) => {
                 .then(response => {
                     setStartRequest(false);
                     setError(defaultError);
+                    if (response.data.status) {
+                        setData(defaultData);
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setErrorFile(response.data["errors"]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
+                    } else {
+                        if(response.data["errors"] && response.data["errors"].length) {
+                            setErrorFile(response.data["errors"]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        } else
+                            ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
+                    }
                     setData(defaultData);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                    document.getElementById("etatupdatetrue").checked=0
+                    document.getElementById("etatupdatefalse").checked=0
+                    document.getElementById("stopidentitetrue").checked=0
+                    document.getElementById("stopidentitefalse").checked=0
+                    document.getElementById("file").value = null
                 })
-                .catch(error => {
+                .catch(response => {
                     setStartRequest(false);
-                    setError({...defaultError, ...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                   // if(response.data["errors"] && response.data["errors"].length) {
+                    if(response.response.data.error) {
+                       setErrorFile(response.response.data.error);
+                      // ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                       ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.response.data.error.file[1]));
+                    }
+                    else if (response.data.code === 422) {
+                        //console.log('luuu');
+                        setError({...defaultError, ...response.data.error});
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                    }
+                    else {
+                        //console.log('lolo')
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
+                    }
+
                 })
             ;
         }
@@ -128,7 +166,7 @@ const ImportClientForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
@@ -136,7 +174,7 @@ const ImportClientForm = (props) => {
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    Importation
+                                    {t("Importation")}
                                 </a>
                             </div>
                         </div>
@@ -150,17 +188,17 @@ const ImportClientForm = (props) => {
                                 <div className="kt-portlet__head">
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
-                                            Importation de clients
+                                            {t("Importation de clients")}
                                         </h3>
                                     </div>
                                 </div>
-                                {console.log(data, "DATA_OPTION")}
+
                                 <form method="POST" className="kt-form">
                                     <div className="kt-portlet__body">
 
                                         <div
                                             className={error.stop_identite_exist.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label">Identité existe déjà
+                                            <label className="col-xl-3 col-lg-3 col-form-label">{t("Identité existe déjà")}
                                                 ? <InputRequire/></label>
                                             <div className="kt-radio-inline col-lg-9 col-xl-6">
 
@@ -169,6 +207,7 @@ const ImportClientForm = (props) => {
                                                         className={error.stop_identite_exist.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio3"
+                                                        id="stopidentitetrue"
                                                         value={option1}
                                                         onChange={(e) => onChangeOption(e)}
                                                     /> Oui
@@ -179,6 +218,7 @@ const ImportClientForm = (props) => {
                                                         className={error.stop_identite_exist.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio3"
+                                                        id="stopidentitefalse"
                                                         value={option2}
                                                         onChange={(e) => onChangeOption(e)}
                                                     /> Non
@@ -199,8 +239,7 @@ const ImportClientForm = (props) => {
 
                                         <div
                                             className={error.etat_update.length ? "form-group row validated" : "form-group row"}>
-                                            <label className="col-xl-3 col-lg-3 col-form-label">Est ce une mise a
-                                                jour? <InputRequire/></label>
+                                            <label className="col-xl-3 col-lg-3 col-form-label">{t("Est ce une mise a jour?")} <InputRequire/></label>
                                             <div className="kt-radio-inline col-lg-9 col-xl-6">
 
                                                 <label className="kt-radio kt-radio--bold kt-radio--success">
@@ -208,6 +247,7 @@ const ImportClientForm = (props) => {
                                                         className={error.etat_update.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio4"
+                                                        id="etatupdatetrue"
                                                         value={option1}
                                                         onChange={(e) => onChangeEtatOption(e)}
                                                     /> Oui
@@ -218,6 +258,7 @@ const ImportClientForm = (props) => {
                                                         className={error.etat_update.length ? "form-control is-invalid" : "form-control"}
                                                         type="radio"
                                                         name="radio4"
+                                                        id="etatupdatefalse"
                                                         value={option2}
                                                         onChange={(e) => onChangeEtatOption(e)}
                                                     /> Non
@@ -239,13 +280,13 @@ const ImportClientForm = (props) => {
                                         <div
                                             className={error.file.length ? "form-group row validated" : "form-group row"}>
                                             <label className="col-xl-3 col-lg-3 col-form-label"
-                                                   htmlFor="file">Fichier <InputRequire/></label>
+                                                   htmlFor="file">{t("Fichier")} <InputRequire/></label>
                                             <div className="col-md-9 mb-3">
                                                 <input
                                                     id="file"
                                                     type="file"
                                                     className={error.file.length ? "form-control is-invalid" : "form-control"}
-                                                    placeholder="Veillez télécharger le fichier excel"
+                                                    placeholder={t("Veuillez télécharger le fichier excel")}
                                                     onChange={(e) => onChangeFile(e)}
                                                 />
                                                 {
@@ -257,6 +298,33 @@ const ImportClientForm = (props) => {
                                                         ))
                                                     ) : null
                                                 }
+
+                                                {
+                                                    /*{index + 1}-  {error}*/
+                                                    errorFile.length ? (
+                                                        errorFile.map((element, index) => (
+                                                            element.messages ? (
+                                                                <div key={index} className="invalid-feedback">
+                                                                    {
+                                                                        Object.keys(element.messages).map((message, idx) => (
+                                                                            message.length ? (
+                                                                                element.messages[message].map((error, id) => {
+                                                                                    return (
+                                                                                        <>
+                                                                                            {(" " + (idx === 0 ? t("ligne ") + element.line + " - " : "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0") + error)}
+                                                                                            <br/>
+                                                                                        </>
+                                                                                    )
+                                                                                })
+                                                                            ) :null
+                                                                        ))
+                                                                    }
+                                                                </div>
+                                                            ) : null
+                                                        ))
+                                                    ) : null
+                                                }
+
                                             </div>
                                         </div>
 
@@ -266,12 +334,12 @@ const ImportClientForm = (props) => {
                                             {
                                                 !startRequest ? (
                                                     <button type="submit" onClick={(e) => onSubmit(e)}
-                                                            className="btn btn-primary">Enregistrer</button>
+                                                            className="btn btn-primary">{t("Enregistrer")}</button>
                                                 ) : (
                                                     <button
                                                         className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
                                                         type="button" disabled>
-                                                        Chargement...
+                                                        {t("Chargement")}...
                                                     </button>
                                                 )
                                             }
@@ -279,12 +347,12 @@ const ImportClientForm = (props) => {
                                                 !startRequest ? (
                                                     <Link to="/settings/clients"
                                                           className="btn btn-secondary mx-2">
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 ) : (
                                                     <Link to="/settings/clients"
                                                           className="btn btn-secondary mx-2" disabled>
-                                                        Quitter
+                                                        {t("Quitter")}
                                                     </Link>
                                                 )
                                             }
@@ -300,10 +368,12 @@ const ImportClientForm = (props) => {
         );
     };
     return (
-        verifyPermission(props.userPermissions, 'store-client-from-any-institution') ||
-        verifyPermission(props.userPermissions, 'store-client-from-my-institution') ?
-            printJsx()
-            : null
+        ready ? (
+            verifyPermission(props.userPermissions, 'store-client-from-any-institution') ||
+            verifyPermission(props.userPermissions, 'store-client-from-my-institution') ?
+                printJsx()
+                : null
+        ) : null
     );
 };
 

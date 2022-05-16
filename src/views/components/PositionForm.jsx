@@ -16,10 +16,15 @@ import appConfig from "../../config/appConfig";
 import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 
 
 const PositionForm = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation()
+
     const {id} = useParams();
     if (!id) {
         if (!verifyPermission(props.userPermissions, 'store-position'))
@@ -50,7 +55,7 @@ const PositionForm = (props) => {
                         setData(newData);
                     })
                     .catch(error => {
-                        console.log("Something is wrong");
+                        //console.log("Something is wrong");
                     })
                 ;
             }
@@ -74,12 +79,12 @@ const PositionForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         setError(defaultError);
-                        ToastBottomEnd.fire(toastEditSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastEditErrorMessageConfig);
+                        ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
             } else {
@@ -88,12 +93,12 @@ const PositionForm = (props) => {
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig);
+                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                     })
                 ;
             }
@@ -107,19 +112,19 @@ const PositionForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             <h3 className="kt-subheader__title">
-                                Paramètres
+                                {t("Paramètres")}
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#fonctions" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/positions" className="kt-subheader__breadcrumbs-link">
-                                    Fonctions
+                                    {t("Fonctions")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#ajout" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
-                                        id ? "Modification" : "Ajout"
+                                        id ? t("Modification") : t("Ajout")
                                     }
                                 </a>
                             </div>
@@ -135,7 +140,7 @@ const PositionForm = (props) => {
                                     <div className="kt-portlet__head-label">
                                         <h3 className="kt-portlet__head-title">
                                             {
-                                                id ? "Modification d'une fonction" : "Ajout d'une fonction"
+                                                id ? t("Modification d'une fonction") : t("Ajout d'une fonction")
                                             }
                                         </h3>
                                     </div>
@@ -145,13 +150,13 @@ const PositionForm = (props) => {
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
                                             <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">Libellé(<strong className="text-danger">*</strong>)</label>
+                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Libellé")}(<strong className="text-danger">*</strong>)</label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
                                                         type="text"
                                                         className={error.name.length ? "form-control is-invalid" : "form-control"}
-                                                        placeholder="Ex:  Comptable"
+                                                        placeholder={"Ex:" + t("Comptable")}
                                                         value={data.name}
                                                         onChange={(e) => onChangeName(e)}
                                                     />
@@ -172,21 +177,21 @@ const PositionForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? "Modifier" : "Enregistrer"}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
                                                         <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                            Chargement...
+                                                            {t("Chargement")}...
                                                         </button>
                                                     )
                                                 }
                                                 {
                                                     !startRequest ? (
                                                         <Link to="/settings/positions" className="btn btn-secondary mx-2">
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     ) : (
                                                         <Link to="/settings/positions" className="btn btn-secondary mx-2" disabled>
-                                                            Quitter
+                                                            {t("Quitter")}
                                                         </Link>
                                                     )
                                                 }
@@ -203,13 +208,15 @@ const PositionForm = (props) => {
     };
 
     return (
-        id ?
-            verifyPermission(props.userPermissions, 'update-position') ? (
-                printJsx()
-            ) : null
-        : verifyPermission(props.userPermissions, 'store-position') ? (
-                printJsx()
-            ) : null
+        ready ? (
+            id ?
+                verifyPermission(props.userPermissions, 'update-position') ? (
+                    printJsx()
+                ) : null
+                : verifyPermission(props.userPermissions, 'store-position') ? (
+                    printJsx()
+                ) : null
+        ) : null
     );
 };
 

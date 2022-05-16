@@ -18,15 +18,21 @@ import {
     toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
+import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const User = (props) => {
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
     if (!(verifyPermission(props.userPermissions, "list-user-any-institution") || (verifyPermission(props.userPermissions, "list-user-my-institution"))))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
     const [users, setUsers] = useState([]);
+    const [usersFilter, setUsersFilter] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -51,11 +57,13 @@ const User = (props) => {
                     setNumberPage(forceRound(response.data.length/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
                     setUsers(response.data);
+                    setUsersFilter([]);
+                    //console.log(response.data)
                     setLoad(false);
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -70,7 +78,7 @@ const User = (props) => {
             getLowerCaseString(`${el.identite.lastname} ${el.identite.firstname}`).indexOf(value) >= 0 ||
             getLowerCaseString(el.username).indexOf(value) >= 0 ||
             getLowerCaseString(printRole(el.roles)).indexOf(value) >= 0 ||
-            getLowerCaseString(el.disabled_at === null ? "Active" : "Désactiver").indexOf(value) >= 0
+            getLowerCaseString(el.disabled_at === null ? t("Active") : t("Désactiver")).indexOf(value) >= 0
         ));
 
         return newUsers;
@@ -78,20 +86,28 @@ const User = (props) => {
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
-        } else {
-            setNumberPage(forceRound(users.length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(users.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/numberPerPage));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, numberPerPage));
             setActiveNumberPage(1);
+            setUsersFilter(filterShowListBySearchValue(e.target.value.toLowerCase()));
+        } else {
+            setNumberPage(forceRound(users.length/numberPerPage));
+            setShowList(users.slice(0, numberPerPage));
+            setActiveNumberPage(1);
+            setUsersFilter([]);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(users.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(users.length/parseInt(e.target.value)));
+        if (usersFilter.length > 0) {
+            setShowList(usersFilter.slice(0, parseInt(e.target.value)));
+            setNumberPage(forceRound(usersFilter.length/parseInt(e.target.value)));
+        } else {
+            setShowList(users.slice(0, parseInt(e.target.value)));
+            setNumberPage(forceRound(users.length/parseInt(e.target.value)));
+        }
     };
 
     const getEndByPosition = (position) => {
@@ -105,20 +121,34 @@ const User = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(users.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        if (usersFilter.length > 0) {
+            setShowList(usersFilter.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        } else {
+            setShowList(users.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        }
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
-            setShowList(
-                users.slice(
-                    getEndByPosition(
-                        activeNumberPage + 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage + 1)
-                )
-            );
+            if (usersFilter.length > 0) {
+                setShowList(
+                    usersFilter.slice(
+                        getEndByPosition(
+                            activeNumberPage + 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage + 1)
+                    )
+                );
+            } else {
+                setShowList(
+                    users.slice(
+                        getEndByPosition(
+                            activeNumberPage + 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage + 1)
+                    )
+                );
+            }
         }
     };
 
@@ -126,12 +156,21 @@ const User = (props) => {
         e.preventDefault();
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
-            setShowList(
-                users.slice(
-                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage - 1)
-                )
-            );
+            if (usersFilter.length > 0) {
+                setShowList(
+                    usersFilter.slice(
+                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage - 1)
+                    )
+                );
+            } else {
+                setShowList(
+                    users.slice(
+                        getEndByPosition(activeNumberPage - 1) - numberPerPage,
+                        getEndByPosition(activeNumberPage - 1)
+                    )
+                );
+            }
         }
     };
 
@@ -175,16 +214,28 @@ const User = (props) => {
                     if (verifyTokenExpire()) {
                         await axios.put(endpoint)
                             .then(response => {
+
                                 const newUsers = [...users];
-                                newUsers[index].disabled_at = newUsers[index].disabled_at === null ? true : null;
+                                const newUsersFilter = [...usersFilter];
+                                const idx = activeNumberPage > 1 ? ((activeNumberPage - 1) * numberPerPage) + index : index;
+                                if (usersFilter.length > 0) {
+                                    newUsersFilter[idx].disabled_at = newUsersFilter[idx].disabled_at === null ? true : null;
+                                }
+                                else
+                                    newUsers[idx].disabled_at = newUsers[idx].disabled_at === null ? true : null;
                                 document.getElementById(`user-spinner-${user.id}`).style.display = "none";
                                 document.getElementById(`user-${user.id}`).style.display = "block";
                                 document.getElementById(`user-edit-${user.id}`).style.display = "block";
-                                setUsers(newUsers);
-                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Succes de l'opération"));
+                                if (usersFilter.length > 0)
+                                    setUsersFilter(newUsersFilter);
+                                else {
+                                    setUsers(newUsers);
+                                    setUsersFilter([]);
+                                }
+                                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'opération")));
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Echec de l'opération"));
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'opération")));
                             })
                         ;
                     }
@@ -205,14 +256,13 @@ const User = (props) => {
     const printBodyTable = (user, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                {console.log('user:', user)}
                 <td>
                     {`${user.identite.lastname} ${user.identite.firstname} `}
                     {
                         rulesInclude(user.roles, "pilot-filial", "pilot-holding") ?
                             user.identite.staff ? (
                                     user.identite.staff.is_active_pilot ? (
-                                        <span className="kt-badge kt-badge--success kt-badge--inline">pilot actif</span>
+                                        <span className="kt-badge kt-badge--success kt-badge--inline">{t("pilot actif")}</span>
                                     ) : null
                             ) : null
                             : null
@@ -225,9 +275,9 @@ const User = (props) => {
                 <td>
                     {
                         user.disabled_at === null ? (
-                            <span className="kt-badge kt-badge--success kt-badge--inline">Active</span>
+                            <span className="kt-badge kt-badge--success kt-badge--inline">{t("Active")}</span>
                         ) : (
-                            <span className="kt-badge kt-badge--danger kt-badge--inline">Désactiver</span>
+                            <span className="kt-badge kt-badge--danger kt-badge--inline">{t("Désactiver")}</span>
                         )
                     }
                 </td>
@@ -237,9 +287,9 @@ const User = (props) => {
                         className="mt-2"
                         id={`user-${user.id}`}
                         href={user.disabled_at === null ? `desactive/${user.id}` : `reactive/${user.id}`}
-                        onClick={(e) => activeAccount(e, user, index, user.disabled_at === null ? "désactiver" : "réactiver")}
-                        title={user.disabled_at === null ? "Désactiver" : "Réactiver"}>
-                        {user.disabled_at === null ? "Désactiver" : "Réactiver"}
+                        onClick={(e) => activeAccount(e, user, index, user.disabled_at === null ? t("désactiver") : t("réactiver"))}
+                        title={user.disabled_at === null ? t("Désactiver") : t("Réactiver")}>
+                        {user.disabled_at === null ? t("Désactiver") : t("Réactiver")}
                     </a>
 
                     {
@@ -247,7 +297,7 @@ const User = (props) => {
                             <Link to={`/settings/users/${user.id}/edit`}
                                   id={`user-edit-${user.id}`}
                                   className="btn btn-sm btn-clean btn-icon btn-icon-md mx-3"
-                                  title="Modifier">
+                                  title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                         ) : null
@@ -258,139 +308,140 @@ const User = (props) => {
     };
 
     return (
-        verifyPermission(props.userPermissions, 'list-user-any-institution') || verifyPermission(props.userPermissions, 'list-user-my-institution') ? (
-            <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-                <div className="kt-subheader   kt-grid__item" id="kt_subheader">
-                    <div className="kt-container  kt-container--fluid ">
-                        <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                Paramètres
-                            </h3>
-                            <span className="kt-subheader__separator kt-hidden"/>
-                            <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
-                                <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                    Utilisateur
-                                </a>
+        ready ? (
+            verifyPermission(props.userPermissions, 'list-user-any-institution') || verifyPermission(props.userPermissions, 'list-user-my-institution') ? (
+                <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+                    <div className="kt-subheader   kt-grid__item" id="kt_subheader">
+                        <div className="kt-container  kt-container--fluid ">
+                            <div className="kt-subheader__main">
+                                <h3 className="kt-subheader__title">
+                                    {t("Paramètres")}
+                                </h3>
+                                <span className="kt-subheader__separator kt-hidden"/>
+                                <div className="kt-subheader__breadcrumbs">
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <span className="kt-subheader__breadcrumbs-separator"/>
+                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Utilisateur")}
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <div className="kt-portlet">
-                        <HeaderTablePage
-                            addPermission={["store-user-any-institution", "store-user-my-institution"]}
-                            title={"Utilisateur"}
-                            addText={"Ajouter"}
-                            addLink={"/settings/users/add"}
-                        />
+                    <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div className="kt-portlet">
+                            <HeaderTablePage
+                                addPermission={["store-user-any-institution", "store-user-my-institution"]}
+                                title={t("Utilisateur")}
+                                addText={t("Ajouter")}
+                                addLink={"/settings/users/add"}
+                            />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
-                                    <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        Recherche:
-                                                        <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{ width: "952px" }}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Nom
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Email
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Role
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
-                                                            colSpan="1" style={{ width: "70.25px" }}
-                                                            aria-label="Country: activate to sort column ascending">Statut
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        users.length ? (
-                                                            showList.length ? (
-                                                                showList.map((user, index) => (
-                                                                    printBodyTable(user, index)
-                                                                ))
-                                                            ) : (
-                                                                <EmptyTable search={true}/>
-                                                            )
-                                                        ) : (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr>
-                                                        <th rowSpan="1" colSpan="1">Nom</th>
-                                                        <th rowSpan="1" colSpan="1">Email</th>
-                                                        <th rowSpan="1" colSpan="1">role</th>
-                                                        <th rowSpan="1" colSpan="1">Statut</th>
-                                                        <th rowSpan="1" colSpan="1">Action</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">Affichage de 1 à {numberPerPage} sur {users.length} données
-                                                </div>
-                                            </div>
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
+                            {
+                                load ? (
+                                    <LoadingTable/>
+                                ) : (
+                                    <div className="kt-portlet__body">
+                                        <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row">
+                                                <div className="col-sm-6 text-left">
+                                                    <div id="kt_table_1_filter" className="dataTables_filter">
+                                                        <label>
+                                                            {t("Recherche")}:
+                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                        </label>
                                                     </div>
-                                                ) : null
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12">
+                                                    <table
+                                                        className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                        id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                        style={{ width: "952px" }}>
+                                                        <thead>
+                                                        <tr role="row">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Nom")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">Email
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Rôle")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
+                                                                colSpan="1" style={{ width: "70.25px" }}
+                                                                aria-label="Country: activate to sort column ascending">{t("Statut")}
+                                                            </th>
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Type: activate to sort column ascending">
+                                                                {t("Action")}
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {
+                                                            users.length ? (
+                                                                showList.length ? (
+                                                                    showList.map((user, index) => (
+                                                                        printBodyTable(user, index)
+                                                                    ))
+                                                                ) : (
+                                                                    <EmptyTable search={true}/>
+                                                                )
+                                                            ) : (
+                                                                <EmptyTable/>
+                                                            )
+                                                        }
+                                                        </tbody>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th rowSpan="1" colSpan="1">{t("Nom")}</th>
+                                                            <th rowSpan="1" colSpan="1">Email</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Rôle")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Statut")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                        </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-sm-12 col-md-5">
+                                                    <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                         aria-live="polite">{t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")} {users.length} {t("données")}
+                                                    </div>
+                                                </div>
+                                                {
+                                                    showList.length ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : null
         ) : null
-
     );
 };
 

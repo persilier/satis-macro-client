@@ -1,7 +1,9 @@
+import React from 'react';
 import {connect} from "react-redux";
 import ModelNumberToClaimList from "../components/ModelNumberToClaimList";
 import {verifyPermission} from "../../helpers/permission"
 import appConfig from "../../config/appConfig";
+import {useTranslation} from "react-i18next";
 
 const endPointConfig = {
     PRO: {
@@ -23,7 +25,11 @@ const endPointConfig = {
 };
 
 const TotalClaimToTreat = (props) => {
-    document.title = "Satis client - Les réclamations traitées";
+
+    //usage of useTranslation i18n
+    const {t, ready} = useTranslation();
+
+    document.title = (ready ? t("Satis client - Les réclamations traitées") : "");
     let endPoint = "";
 
     if (props.plan === "MACRO") {
@@ -34,14 +40,16 @@ const TotalClaimToTreat = (props) => {
     } else
         endPoint = endPointConfig[props.plan];
     return (
-        <ModelNumberToClaimList
-            navigationTitle={"Les réclamations traitées"}
-            description={'La liste des réclamations traitées'}
-            title={'Les reclamations traitées'}
-            endpoint={endPoint}
-            userPermissions={props.userPermissions}
-            plan={props.plan}
-        />
+        ready ? (
+            <ModelNumberToClaimList
+                navigationTitle={t("Les réclamations traitées")}
+                description={t('La liste des réclamations traitées')}
+                title={t('Les réclamations traitées')}
+                endpoint={endPoint}
+                userPermissions={props.userPermissions}
+                plan={props.plan}
+            />
+        ) : null
     );
 };
 
