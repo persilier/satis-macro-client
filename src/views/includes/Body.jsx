@@ -135,6 +135,7 @@ import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 import ResetPassword from '../pages/password-reset';
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
+import MonitoringDetails from "../pages/MonitoringDetails";
 
 const Body = () => {
     return (
@@ -570,6 +571,10 @@ const Body = () => {
 
             <Route exact path={"/monitoring/claims/system-usage"}>
                 <ClaimSystemUsageReport/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/staff/:id/detail">
+                <MonitoringDetails/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">
