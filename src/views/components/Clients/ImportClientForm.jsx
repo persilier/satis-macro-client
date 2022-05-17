@@ -113,9 +113,10 @@ const ImportClientForm = (props) => {
         if (verifyTokenExpire()) {
             axios.post(endPoint.store, formatFormData(data))
                 .then(response => {
+                    console.log(response)
                     setStartRequest(false);
                     setError(defaultError);
-                    if (response.data.status) {
+                 /*   if (response.data.status) {
                         setData(defaultData);
                         if(response.data["errors"] && response.data["errors"].length) {
                             setErrorFile(response.data["errors"]);
@@ -128,7 +129,11 @@ const ImportClientForm = (props) => {
                             ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
                         } else
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
+                    }*/
+                    if (response.status === 201) {
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Veuillez patienter le processus d'importation est en cours")));
                     }
+
                     setData(defaultData);
                     document.getElementById("etatupdatetrue").checked=0
                     document.getElementById("etatupdatefalse").checked=0
@@ -137,20 +142,19 @@ const ImportClientForm = (props) => {
                     document.getElementById("file").value = null
                 })
                 .catch(response => {
+                    console.log(response)
                     setStartRequest(false);
                    // if(response.data["errors"] && response.data["errors"].length) {
                     if(response.response.data.error) {
                        setErrorFile(response.response.data.error);
                       // ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error.length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
-                       ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.response.data.error.file[1]));
+                       ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.response.data.error.file[0]));
                     }
                     else if (response.data.code === 422) {
-                        //console.log('luuu');
                         setError({...defaultError, ...response.data.error});
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                     }
                     else {
-                        //console.log('lolo')
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Echec de l'importation")));
                     }
 
