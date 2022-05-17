@@ -222,6 +222,16 @@ const Aside = (props) => {
                                                 </NavLink>
                                             ) : null
                                         }
+                                        {
+                                            !verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || !verifyPermission(props.userPermissions, 'list-monitoring-claim-my-institution') ? (
+                                                <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                        <span className="kt-menu__link-text">{t("Suivi des relances")}</span>
+                                                    </li>
+                                                </NavLink>
+                                            ) : null
+                                        }
 
                                         {/*{
                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
