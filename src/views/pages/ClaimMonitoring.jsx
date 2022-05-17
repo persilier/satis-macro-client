@@ -253,7 +253,7 @@ const ClaimMonitoring = (props) => {
     };
 
     const showClaimDetail = async (claim, status) => {
-        claim.myStatus = status;
+        claim.myStatus = status ? status : "" ;
         await setClaimSelected(claim);
         document.getElementById("detailClaimButton").click();
     };
