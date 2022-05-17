@@ -52,7 +52,7 @@ const ConfigRapportAuto = (props) => {
 
     let endPoint = "";
     if (props.plan === "MACRO") {
-        if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
+        if (verifyPermission(props.userPermissions, 'list-config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
         else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
             endPoint = endPointConfig[props.plan]

@@ -130,6 +130,8 @@ import TypeCompteForm from "../components/TypeCompteForm";
 import ConfigConnexion from "../pages/ConfigConnexion";
 import Logs from "../pages/Logs";
 import ProofReceipt from "../pages/ProofReceipt";
+import ConfigTitreRapport from "../pages/ConfigTitreRapport";
+import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 import ResetPassword from '../pages/password-reset';
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
@@ -142,6 +144,10 @@ const Body = () => {
             </Route>*/}
             <Route exact path="/settings/config">
                 <ParametersComponent/>
+            </Route>
+
+            <Route exact path="/settings/config-rapport">
+                <ConfigTitreRapport/>
             </Route>
 
             <Route exact path="/settings/logs">
@@ -163,6 +169,10 @@ const Body = () => {
 
             <Route exact path="/settings/config/edit/:id">
                 <ParametersComponentEdit/>
+            </Route>
+
+            <Route exact path="/settings/config-rapport/edit/:name">
+                <ConfigTitreRapportEdit/>
             </Route>
 
             <Route exact path="/settings/clients/category">
