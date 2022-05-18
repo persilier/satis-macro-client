@@ -118,17 +118,22 @@ const MonitoringDetails = (props) => {
                                 </div>
 
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
+                                    
+                                    {
+                                        (claim && claim.status !== "archived") ? (
+                                            <>
+                                                <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
+                                                    {t("Relancer")}
+                                                </button>
+
+                                                <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
+                                            </>
+                                        ) : null
+                                    }
+
+
                                     <form className="kt-form" id="kt_form">
                                         <div className="d-flex justify-content-md-end">
-                                            {(verifyPermission(props.userPermissions, 'revoke-claim') && ['incomplete', 'full'].includes(claim ? claim.status : "")) && (
-                                                <>
-                                                    {revokeLoad ? (
-                                                        <button className="btn mr-2 btn-outline-danger btn-sm kt-spinner kt-spinner--v2 kt-spinner--sm kt-spinner--primary text-uppercase" disabled={true}>{t("Chargement")}</button>
-                                                    ) : (
-                                                        <button onClick={revoke} className="btn mr-2 btn-outline-danger btn-sm text-uppercase">{t("Revoquer")}</button>
-                                                    )}
-                                                </>
-                                            )}
 
                                             {console.log("claim:", claim)}
                                             {(claim && claim.status !== "archived") ? (
@@ -138,11 +143,6 @@ const MonitoringDetails = (props) => {
                                                             {t("Relancer")}
                                                         </button>
                                                     )}
-                                                    <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
-                                                        {t("Relancer")}
-                                                    </button>
-
-                                                    <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
                                                 </>
                                             ) : null}
 
