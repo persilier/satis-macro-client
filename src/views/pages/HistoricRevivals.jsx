@@ -26,6 +26,8 @@ const HistoricRevivals = (props) => {
 
     const [load, setLoad] = useState(false);
     const [revivals, setRevivals] = useState([]);
+    const [staff, setStaff] = useState(null);
+    const [staffs, setStaffs] = useState([]);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
@@ -133,13 +135,13 @@ const HistoricRevivals = (props) => {
                                                     <div className="kt-widget6">
                                                         <div className="kt-widget6__body">
                                                             <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
-                                                                <div className="col-lg-1">Label</div>
+                                                                <div className="col-lg-1">Agent</div>
                                                                 <div className={"col-lg-9"}>
                                                                     <Select
-                                                                        value={null}
+                                                                        value={staff}
                                                                         isClearable
-                                                                        placeholder={"Veuillez"}
-                                                                        options={[]}
+                                                                        placeholder={"Veuillez sélectionner un agent"}
+                                                                        options={staffs}
                                                                     />
                                                                                                                     {
            /*                                         error.unit_targeted_id.length ? (
@@ -197,49 +199,43 @@ const HistoricRevivals = (props) => {
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Date")}
+                                                            aria-label="Country: activate to sort column ascending">{t("Expéditeur")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "100px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Agent")}
+                                                            colSpan="1" style={{width: "120px"}}
+                                                            aria-label="Country: activate to sort column ascending">{t("Date de relance")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Message")}
+                                                            aria-label="Country: activate to sort column ascending">{t("Statut avant relance")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            {t("Expéditeur")}
+                                                            {t("Staff relancé")}
 
                                                         </th>
 
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">{t("Statut")}
-                                                        </th>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">{t("Statut de la plainte")}
-                                                        </th>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
+                                                            colSpan="1" style={{width: "150px"}}
                                                             aria-label="Ship City: activate to sort column ascending">{t("Statut de la relance")}
                                                         </th>
+
+                                                        <th className="sorting" tabIndex="0"
+                                                            aria-controls="kt_table_1"
+                                                            rowSpan="1"
+                                                            colSpan="1" style={{width: "50px"}}
+                                                            aria-label="Ship City: activate to sort column ascending">{t("Statut actuel")}
+                                                        </th>
+
 
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
@@ -259,13 +255,12 @@ const HistoricRevivals = (props) => {
                                                     <tfoot>
                                                     <tr style={{textAlign:"center"}}>
                                                         <th rowSpan="1" colSpan="1">{t("Référence")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Date")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Agent")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Message")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Expéditeur")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Statut")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Statut de la plainte")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Date de relance")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Statut avant relance")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Staff relancé")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Statut de la relance")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Statut actuel")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>

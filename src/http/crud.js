@@ -35,3 +35,8 @@ export function systemUsageReport(userPermissions, sendData) {
         return axios.post(endpoint, sendData)
     }
 }
+
+// HistoricRevivals
+export function historicRevivals(userPermissions, sendData) {
+
+}
