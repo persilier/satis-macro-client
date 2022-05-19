@@ -4,7 +4,8 @@ import {ERROR_401} from "../../config/errorPage";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {forceRound, formatDateToTime, getLowerCaseString, truncateString} from "../../helpers/function";
+import Select from "react-select";
+import {forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -22,22 +23,39 @@ const RevivalMonitoring = (props) => {
     const {t, ready} = useTranslation();
 
 
+    const defaultData = {
+        institution_id: "",
+        period: "",
+        staffs: [],
+        reporting_type: ""
+    };
+
+
     const [load, setLoad] = useState(false);
     const [claims, setClaims] = useState([]);
+    const [isLoad, setIsLoad] = useState(true);
+    const [data, setData] = useState(defaultData);
+    const [revivals, setRevivals] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [currentMessage, setCurrentMessage] = useState("");
+    const [staff, setStaff] = useState(null);
+    const [staffs, setStaffs] = useState([]);
 
-    /*useEffect(() => {
+    useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
+            axios.get(`${appConfig.apiDomaine}/my/staff`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.length / numberPerPage));
-                    setShowList(response.data.slice(0, numberPerPage));
-                    setClaims(response.data);
+                   /* setNumberPage(forceRound(response.data.length / numberPerPage));
+                    setShowList(response.data.slice(0, numberPerPage));*/
+                    setStaffs(response.data);
                     setLoad(false);
+                    for (let i = 0; i < response.data.staffs.length ; i ++) {
+                        response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
+                        response.data.staffs[i].value= response.data.staffs[i].id;
+                    }
                 })
                 .catch(error => {
                     setLoad(false);
@@ -48,7 +66,8 @@ const RevivalMonitoring = (props) => {
 
         if (verifyTokenExpire())
             fetchData();
-    }, [numberPerPage])*/;
+    }, [numberPerPage])
+    ;
 
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
@@ -136,6 +155,16 @@ const RevivalMonitoring = (props) => {
 
     const pages = arrayNumberPage();
 
+    const onChangeStaff = (selected) => {
+        //console.log(selected)
+        var staffToSend = selected.value
+        const newData = {...data};
+        newData.staff = staffToSend;
+        setStaff(selected);
+        setData(newData);
+    };
+
+
     const showModal = (message) => {
         setCurrentMessage(message);
         document.getElementById("button_modal").click();
@@ -221,6 +250,73 @@ const RevivalMonitoring = (props) => {
                             ) : (
                                 <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+
+                                        <div className="text-center m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
+                                            <div className="" style={{marginBottom: "30px"}}>
+                                                <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
+                                                    <div className="kt-widget6">
+                                                        <div className="kt-widget6__body">
+                                                            <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
+                                                                <div className="col-lg-1" style={{fontWeight: "500"}}>Agent</div>
+                                                                <div className={"col-lg-9"}>
+                                                                    <Select
+                                                                        isClearable
+                                                                        placeholder={t("Veuillez sélectionner les agents")}
+                                                                        value={staff}
+                                                                        isLoading={isLoad}
+                                                                        onChange={onChangeStaff}
+                                                                        options={staffs}
+                                                                    />
+                                                                    {
+                                                                    /* error.unit_targeted_id.length ? (
+                                                                         error.unit_targeted_id.map((error, index) => (
+                                                                             <div key={index}
+                                                                                  className="invalid-feedback">
+                                                                                 {error}
+                                                                             </div>
+                                                                         ))
+                                                                     ) : null*/
+                        }
+                                                                </div>
+                                                                <div className="col-lg-2">
+                                                                    <button type="submit" onClick={(e) => console.log(e)} className="btn btn-primary">{t("Filtrer")}</button>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div className="text-center m-auto col-xl-4 col-lg-7 order-lg-3 order-xl-1">
+                                            <div className="kt-portlet kt-portlet--height-fluid" style={{marginBottom: "30px"}}>
+                                                <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
+                                                    <div className="kt-widget6">
+                                                        <div className="kt-widget6__body">
+                                                            <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
+                                                                <span className="col-lg-10"  style={{fontWeight: "500"}}>Nombre de plaintes affectées à ce jour</span>
+                                                                <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>$11,002</span>
+                                                            </div>
+                                                            <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
+                                                                <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes déjà traitées à ce jour</span>
+                                                                <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>$11,002</span>
+                                                            </div>
+                                                            <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
+                                                                <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes restantes à traiter à ce jour</span>
+                                                                <span className="col-lg-2 kt-font-brand kt-font-bold"
+                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>$11,002</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div className="row">
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
@@ -234,6 +330,7 @@ const RevivalMonitoring = (props) => {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table

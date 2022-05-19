@@ -818,6 +818,16 @@ const Aside = (props) => {
                                                                         }
                                                                         {
                                                                             (verifyPermission(props.userPermissions, "my-email-claim-configuration") || verifyPermission(props.userPermissions, "any-email-claim-configuration")) ? (
+                                                                                <NavLink exact to="/settings/config-proxy" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Proxy Configuration")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            (verifyPermission(props.userPermissions, "my-email-claim-configuration") || verifyPermission(props.userPermissions, "any-email-claim-configuration")) ? (
                                                                                 <NavLink exact to="/settings/config-mail" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link ">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>

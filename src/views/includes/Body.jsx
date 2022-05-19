@@ -124,6 +124,7 @@ import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 import UnitImportPage from "../pages/UnitImportPage";
 import EmailConfig from "../pages/EmailConfig";
+import ProxyConfig from "../pages/ProxyConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
@@ -735,6 +736,10 @@ const Body = () => {
 
             <Route exact path="/settings/config-mail">
                 <EmailConfig/>
+            </Route>
+
+            <Route exact path="/settings/config-proxy">
+                <ProxyConfig/>
             </Route>
 
             <Route exact path="/process/total-claim-register">
