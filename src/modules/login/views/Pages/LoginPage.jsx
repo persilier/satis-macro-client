@@ -223,7 +223,7 @@ const LoginPage = (props) => {
                                 <div className="kt-grid kt-grid--hor kt-grid--root  kt-login kt-login--v1"
                                      id="kt_login">
                                     {
-                                        console.log("LOG", localStorage.getItem("userData"))
+                                        console.log("Something is wrong")
                                     }
                                     <div
                                         className="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--desktop kt-grid--ver-desktop kt-grid--hor-tablet-and-mobile">

@@ -14,7 +14,7 @@ class RouteApp extends Component {
     }
 
     render() {
-console.log("testLog---",localStorage.getItem('token'))
+            console.log("Something is wrong")
         return (
             <Router>
                     {

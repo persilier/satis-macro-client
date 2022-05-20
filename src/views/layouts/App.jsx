@@ -14,7 +14,7 @@ import Error401 from "../pages/Error401";
 
 function App() {
     {
-        console.log("LOG", localStorage.getItem("userData"))
+        console.log("Something is wrong")
     }
     return (
         <Switch>
