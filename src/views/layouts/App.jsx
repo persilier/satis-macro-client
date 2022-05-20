@@ -13,7 +13,9 @@ import Error401 from "../pages/Error401";
 
 
 function App() {
-
+    {
+        console.log("LOG", localStorage.getItem("userData"))
+    }
     return (
         <Switch>
             <Route exact path="/error401">
