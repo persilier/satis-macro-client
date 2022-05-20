@@ -46,7 +46,7 @@ const RevivalMonitoring = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/my/staff`)
+            axios.get(`${appConfig.apiDomaine}/my/unit-staff`)
                 .then(response => {
                    /* setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));*/
