@@ -295,7 +295,7 @@ const Aside = (props) => {
                                                         ) : null
                                                     }
 
-                                 {/*                   {
+                                                    {
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-five" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
@@ -330,9 +330,9 @@ const Aside = (props) => {
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
-                                                    }*/}
+                                                    }
 
-{/*                                                    {
+                                                    {
                                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') ||
                                                         verifyPermission(props.userPermissions, 'list-global-reporting') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-height" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
@@ -342,7 +342,7 @@ const Aside = (props) => {
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
-                                                    }*/}
+                                                    }
 
                                                 </ul>
                                             </div>
