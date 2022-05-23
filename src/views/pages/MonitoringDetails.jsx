@@ -19,6 +19,7 @@ import {confirmRevokeConfig} from "../../config/confirmConfig";
 import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+import {getClaimDetails} from "../../http/crud";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -47,6 +48,11 @@ const MonitoringDetails = (props) => {
 
         if (verifyTokenExpire())
             fetchData();
+
+/*        getClaimDetails(props.userPermissions, id)
+            .then()
+            .catch()
+            .finally()*/
     }, []);
 
     const revoke = e => {

@@ -60,5 +60,21 @@ export function getHistoricRevivals(userPermissions, numberPerPage, page = null,
 }
 
 export function getStaffs(userPermissions) {
-    return axios.get(`/my/unit-staff`);
+    let endpoint = "";
+
+    if (verifyPermission(userPermissions, 'show-my-staff-monitoring'))
+        endpoint = `/my/unit-staff`;
+
+    if (verifyTokenExpire())
+        return axios.get(endpoint);
+}
+
+//MonitoringDetails
+export function getClaimDetails(userPermissions, claimId) {
+    let endpoint = "";
+
+    endpoint = `claims/${claimId}`;
+    
+    if (verifyTokenExpire())
+        return axios.get(endpoint);
 }

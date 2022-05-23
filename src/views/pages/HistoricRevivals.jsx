@@ -13,6 +13,7 @@ import Pagination from "../components/Pagination";
 import Select from "react-select";
 import {getHistoricRevivals, getStaffs} from "../../http/crud";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import RelaunchModal from "../components/RelaunchModal";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -22,7 +23,7 @@ const HistoricRevivals = (props) => {
 
     document.title = "Satis client - " + (ready ? t("Paramètre Historique") : "");
 
-    if (!verifyPermission(props.userPermissions, "history-list-treat-claim")) {
+    if (!verifyPermission(props.userPermissions, "list-unit-revivals") || !verifyPermission(props.userPermissions, "list-staff-revivals")) {
         window.location.href = ERROR_401;
     }
 
@@ -50,7 +51,7 @@ const HistoricRevivals = (props) => {
             .catch(error => {
                 console.error(error.message);
             })
-        getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage)
+        getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, props.user.staff.is_lead === true ? null : props.user.staff.id)
             .then(response => {
                console.log(response.data.data);
                 setNumberPage(forceRound(response.data.total/numberPerPage));
@@ -64,6 +65,7 @@ const HistoricRevivals = (props) => {
                 console.error(error.message);
             })
             .finally(() => setLoad(false));
+
     }, [numberPerPage, activeNumberPage]);
 
     const onChangeNumberPerPage = (e) => {
@@ -141,17 +143,23 @@ const HistoricRevivals = (props) => {
                 </td>
                 <td>
                     {
-                        /*verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (*/
-                            <a href={{/*`/process/claim-list-detail/${claim.id}/detail`*/}}
-                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
-                               title={t("Détails")}>
+                        verifyPermission(props.userPermissions, "revive-staff") ? (
+                        <>
+                            <a type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4"
+                               className={`btn btn-sm btn-clean btn-icon btn-icon-md ${revival?.status === "considered" && "disabled"}`}
+
+                               title={t("Relancer")}
+                            >
                                 <i className="la la-bullhorn"/>
                             </a>
-                        /*) : null*/
+                            <RelaunchModal id={revival?.claim?.id ? revival.claim.id : ''} onClose={() => {}}/>
+                        </>
+
+                        ) : null
                     }
                     {
                         /*verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (*/
-                            <a href={{/*`/process/claim-list-detail/${claim.id}/detail`*/}}
+                            <a href={`/monitoring/claims/staff/${revival?.claim?.id}/detail`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                title={t("Détails")}>
                                 <i className="la la-eye"/>
@@ -353,6 +361,7 @@ const HistoricRevivals = (props) => {
                                                             </table>
                                                             <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
                                                             <HtmlDescriptionModal title={"Message"} message={currentMessage}/>
+
                                                         </div>
                                                     </div>
 
@@ -360,7 +369,7 @@ const HistoricRevivals = (props) => {
                                                         <div className="col-sm-12 col-md-5">
                                                             <div className="dataTables_info" id="kt_table_1_info" role="status"
                                                                  aria-live="polite">{t("Affichage de")} 1
-                                                                {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
+                                                                {t("à")} {showList.length} {t("sur")} {total} {t("données")}
                                                             </div>
                                                         </div>
 
@@ -398,7 +407,8 @@ const HistoricRevivals = (props) => {
 const mapStateToProps = (state) => {
     return {
         plan: state.plan.plan,
-        userPermissions: state.user.user.permissions
+        userPermissions: state.user.user.permissions,
+        user: state.user.user
     };
 };
 
