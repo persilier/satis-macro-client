@@ -164,7 +164,9 @@ const LoginPage = (props) => {
                     date.setSeconds(date.getSeconds() + expire_in - 180);
                     localStorage.setItem('date_expire', date);
                     localStorage.setItem('refresh_token', refresh_token);
-                    window.location.href = "/dashboard";
+                    setTimeout(()=>{
+                        window.location.href = "/dashboard";
+                    },500)
                 });
             })
             .catch(error => {
