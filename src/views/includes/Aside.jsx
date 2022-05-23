@@ -344,6 +344,28 @@ const Aside = (props) => {
                                                         ) : null
                                                     }
 
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'list-benchmarking-reporting') ? (
+                                                            <NavLink exact to="/monitoring/claims/reporting-benchmarking" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Benchmarking")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
+                                                    {
+                                                        verifyPermission(props.userPermissions, 'list-system-usage-reporting') ? (
+                                                            <NavLink exact to="/monitoring/claims/system-usage" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                <li className="kt-menu__link ">
+                                                                    <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                    <span className="kt-menu__link-text">{t("Utilisation Système")}</span>
+                                                                </li>
+                                                            </NavLink>
+                                                        ) : null
+                                                    }
+
                                                 </ul>
                                             </div>
                                         </li>
