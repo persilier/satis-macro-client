@@ -37,6 +37,28 @@ export function systemUsageReport(userPermissions, sendData) {
 }
 
 // HistoricRevivals
-export function historicRevivals(userPermissions, sendData) {
+export function getHistoricRevivals(userPermissions, numberPerPage, page = null, id = null) {
+    let endpoint = "";
 
+    if (verifyPermission(userPermissions, 'list-unit-revivals')) {
+        if (page)
+            endpoint = `/revivals?size=${numberPerPage}&page=${page}`;
+        else
+            endpoint = `/revivals?size=${numberPerPage}`;
+    }
+    if (verifyPermission(userPermissions, 'list-staff-revivals') && id) {
+        if (page)
+            endpoint = `/revivals/staff/${id}?size=${numberPerPage}&page=${page}`;
+        else
+            endpoint = `/revivals/staff/${id}?size=${numberPerPage}`;
+    }
+
+    if (verifyTokenExpire()) {
+        return axios.get(endpoint);
+    }
+
+}
+
+export function getStaffs(userPermissions) {
+    return axios.get(`/my/unit-staff`);
 }

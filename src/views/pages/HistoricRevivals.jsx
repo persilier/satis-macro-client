@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {forceRound, loadCss} from "../../helpers/function";
+import {forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
 import {connect} from "react-redux";
 import {useTranslation} from "react-i18next";
 import {verifyPermission} from "../../helpers/permission";
@@ -11,6 +11,8 @@ import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptio
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import Pagination from "../components/Pagination";
 import Select from "react-select";
+import {getHistoricRevivals, getStaffs} from "../../http/crud";
+import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -25,71 +27,142 @@ const HistoricRevivals = (props) => {
     }
 
     const [load, setLoad] = useState(false);
+    const [loadSelect, setLoadSelect] = useState(false);
+    const [loadButton, setLoadButton] = useState(false);
     const [revivals, setRevivals] = useState([]);
     const [staff, setStaff] = useState(null);
     const [staffs, setStaffs] = useState([]);
-    const [numberPage, setNumberPage] = useState(0);
-    const [showList, setShowList] = useState([]);
+    const [currentMessage, setCurrentMessage] = useState("");
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
+    const [numberPage, setNumberPage] = useState(0);
+    const [showList, setShowList] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [nextUrl, setNextUrl] = useState(null);
+    const [prevUrl, setPrevUrl] = useState(null);
+
+    useEffect(() => {
+        setLoad(true);
+        getStaffs(props.userPermissions)
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error(error.message);
+            })
+        getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage)
+            .then(response => {
+               console.log(response.data.data);
+                setNumberPage(forceRound(response.data.total/numberPerPage));
+                setShowList(response.data.data.slice(0, numberPerPage));
+                setRevivals(response.data["data"]);
+                setTotal(response.data.total);
+                setPrevUrl(response.data["prev_page_url"]);
+                setNextUrl(response.data["next_page_url"]);
+            })
+            .catch(error => {
+                console.error(error.message);
+            })
+            .finally(() => setLoad(false));
+    }, [numberPerPage, activeNumberPage]);
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(1);
+        e.persist();
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(revivals.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(revivals.length / parseInt(e.target.value)));
     };
 
-    const getEndByPosition = (position) => {
-        let end = numberPerPage;
-        for (let i = 1; i < position; i++) {
-            end = end + numberPerPage;
-        }
-        return end;
-    };
 
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(revivals.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setLoad(true);
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage <= numberPage) {
+        if (activeNumberPage <= numberPage && nextUrl !== null) {
             setActiveNumberPage(activeNumberPage + 1);
-            setShowList(
-                revivals.slice(
-                    getEndByPosition(
-                        activeNumberPage + 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage + 1)
-                )
-            );
         }
     };
 
     const onClickPreviousPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage >= 1) {
+        if (activeNumberPage >= 1 && prevUrl !== null) {
             setActiveNumberPage(activeNumberPage - 1);
-            setShowList(
-                revivals.slice(
-                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage - 1)
-                )
-            );
         }
-    };
-    
-    const arrayNumberPage = () => {
-        const pages = [];
-        for (let i = 0; i < numberPage; i++) {
-            pages[i] = i;
-        }
-        return pages
     };
 
-    const pages = arrayNumberPage();
+    const showModal = (message) => {
+        setCurrentMessage(message);
+        document.getElementById("button_modal").click();
+    };
+
+    const printBodyTable = (revival, index) => {
+        return (
+            <tr key={index} role="row" className="odd">
+                <td>
+                    {
+                        revival?.claim?.reference ? revival.claim.reference : ""
+                    }
+                </td>
+                <td>
+                    {
+                        `${revival?.created_by?.identite?.firstname ? revival.created_by.identite.firstname : ""} ${revival?.created_by?.identite?.lastname ? revival.created_by.identite.lastname : ""}`
+                    }
+                </td>
+                <td>
+                    {
+                        formatDateToTimeStampte(revival.created_at)
+                    }
+                </td>
+                <td>
+                    {
+                        revival?.claim_status ? revival.claim_status : ""
+                    }
+                </td>
+                <td>
+                    {
+                        `${revival?.staff?.identite?.firstname ? revival.staff.identite.firstname : ""} ${revival?.staff?.identite?.lastname ? revival.staff.identite.lastname : ""}`
+
+                    }
+                </td>
+                <td>
+                    {
+                        revival?.status ? revival.status : ""
+                    }
+                </td>
+                <td>
+                    {
+                        revival?.claim?.status ? revival.claim.status : ""
+                    }
+                </td>
+                <td style={{textAlign: 'center'}}>
+                    <HtmlDescription onClick={() => showModal(revival?.message ? revival.message : "-")}/>
+                </td>
+                <td>
+                    {
+                        /*verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (*/
+                            <a href={{/*`/process/claim-list-detail/${claim.id}/detail`*/}}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title={t("Détails")}>
+                                <i className="la la-bullhorn"/>
+                            </a>
+                        /*) : null*/
+                    }
+                    {
+                        /*verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (*/
+                            <a href={{/*`/process/claim-list-detail/${claim.id}/detail`*/}}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title={t("Détails")}>
+                                <i className="la la-eye"/>
+                            </a>
+                        /*) : null*/
+                    }
+                </td>
+
+            </tr>
+        )
+    }
 
     return (
         ready ? (
@@ -121,11 +194,7 @@ const HistoricRevivals = (props) => {
                             title={t("Relances")}
                         />
 
-                        {
-                            load ? (
-                                <LoadingTable/>
-                            ) : (
-                                <div className="kt-portlet__body">
+                        <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
 
@@ -165,140 +234,157 @@ const HistoricRevivals = (props) => {
                                             </div>
                                         </div>
 
-                                        <div className="row">
-                                            <div className="col-sm-6 text-left">
-                                                <div id="kt_table_1_filter" className="dataTables_filter">
-                                                    <label>
-                                                        {t("Recherche")}:
-                                                        <input id="myInput" type="text"
-                                                              /* onKeyUp={(e) => searchElement(e)}*/
-                                                               className="form-control form-control-sm"
-                                                               placeholder=""
-                                                               aria-controls="kt_table_1"
-                                                        />
-                                                    </label>
-                                                </div>
-                                            </div>
+                                        {
+                                            load ? <LoadingTable/> : (
+                                                <>
+                                                    <div className="row">
+                                                        <div className="col-sm-6 text-left">
+                                                            <div id="kt_table_1_filter" className="dataTables_filter">
+                                                                <label>
+                                                                    {t("Recherche")}:
+                                                                    <input id="myInput" type="text"
+                                                                        /* onKeyUp={(e) => searchElement(e)}*/
+                                                                           className="form-control form-control-sm"
+                                                                           placeholder=""
+                                                                           aria-controls="kt_table_1"
+                                                                    />
+                                                                </label>
+                                                            </div>
+                                                        </div>
 
-                                        </div>
-
-                                        <div className="row">
-                                            <div className="col-sm-12">
-                                                <table
-                                                    className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
-                                                    id="myTable" role="grid" aria-describedby="kt_table_1_info"
-                                                    style={{width: "952px"}}>
-                                                    <thead>
-                                                    <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Référence")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "80px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Expéditeur")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "120px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Date de relance")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Country: activate to sort column ascending">{t("Statut avant relance")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">
-                                                            {t("Staff relancé")}
-
-                                                        </th>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "150px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">{t("Statut de la relance")}
-                                                        </th>
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
-                                                            aria-label="Ship City: activate to sort column ascending">{t("Statut actuel")}
-                                                        </th>
-
-
-                                                        <th className="sorting" tabIndex="0"
-                                                            aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Type: activate to sort column ascending">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        (
-                                                            <EmptyTable/>
-                                                        )
-                                                    }
-                                                    </tbody>
-                                                    <tfoot>
-                                                    <tr style={{textAlign:"center"}}>
-                                                        <th rowSpan="1" colSpan="1">{t("Référence")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Expéditeur")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Date de relance")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Statut avant relance")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Staff relancé")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Statut de la relance")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Statut actuel")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
-                                                    </tr>
-                                                    </tfoot>
-                                                </table>
-{/*                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={"Description"} message={currentMessage}/>*/}
-                                            </div>
-                                        </div>
-
-                                        <div className="row">
-                                            <div className="col-sm-12 col-md-5">
-                                                <div className="dataTables_info" id="kt_table_1_info" role="status"
-                                                     aria-live="polite">{t("Affichage de")} 1
-                                                    {t("à")} {numberPerPage} {t("sur")} {revivals.length} {t("données")}
-                                                </div>
-                                            </div>
-
-                                            {
-                                                showList.length ? (
-                                                    <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                        <Pagination
-                                                            numberPerPage={numberPerPage}
-                                                            onChangeNumberPerPage={onChangeNumberPerPage}
-                                                            activeNumberPage={activeNumberPage}
-                                                            onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
-                                                            onClickPage={(e, number) => onClickPage(e, number)}
-                                                            numberPage={numberPage}
-                                                            onClickNextPage={e => onClickNextPage(e)}
-                                                        />
                                                     </div>
-                                                ) : null
-                                            }
-                                        </div>
+
+                                                    <div className="row">
+                                                        <div className="col-sm-12">
+                                                            <table
+                                                                className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
+                                                                id="myTable" role="grid" aria-describedby="kt_table_1_info"
+                                                                style={{width: "952px"}}>
+                                                                <thead>
+                                                                <tr role="row">
+                                                                    <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "70.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Référence")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "80px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Expéditeur")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "120px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Date de relance")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "150px"}}
+                                                                        aria-label="Country: activate to sort column ascending">{t("Statut avant relance")}
+                                                                    </th>
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "70.25px"}}
+                                                                        aria-label="Country: activate to sort column ascending">
+                                                                        {t("Staff relancé")}
+
+                                                                    </th>
+
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "150px"}}
+                                                                        aria-label="Ship City: activate to sort column ascending">{t("Statut de la relance")}
+                                                                    </th>
+
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50px"}}
+                                                                        aria-label="Ship City: activate to sort column ascending">{t("Statut actuel")}
+                                                                    </th>
+
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1"
+                                                                        colSpan="1" style={{width: "50px"}}
+                                                                        aria-label="Ship City: activate to sort column ascending">{t("Message")}
+                                                                    </th>
+
+
+                                                                    <th className="sorting" tabIndex="0"
+                                                                        aria-controls="kt_table_1"
+                                                                        rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                                        aria-label="Type: activate to sort column ascending">
+                                                                        {t("Action")}
+                                                                    </th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {
+                                                                    revivals.length ? (
+                                                                        showList ? (
+                                                                            showList.map((revival, index) => (
+                                                                                printBodyTable(revival, index)
+                                                                            ))
+                                                                        ) : (
+                                                                            <EmptyTable search={true}/>
+                                                                        )
+                                                                    ) : (<EmptyTable/>)
+                                                                }
+                                                                </tbody>
+                                                                <tfoot>
+                                                                <tr style={{textAlign:"center"}}>
+                                                                    <th rowSpan="1" colSpan="1">{t("Référence")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Expéditeur")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Date de relance")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Statut avant relance")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Staff relancé")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Statut de la relance")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Statut actuel")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Message")}</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Action")}</th>
+                                                                </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                            <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
+                                                            <HtmlDescriptionModal title={"Message"} message={currentMessage}/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="row">
+                                                        <div className="col-sm-12 col-md-5">
+                                                            <div className="dataTables_info" id="kt_table_1_info" role="status"
+                                                                 aria-live="polite">{t("Affichage de")} 1
+                                                                {t("à")} {numberPerPage} {t("sur")} {total} {t("données")}
+                                                            </div>
+                                                        </div>
+
+                                                        {
+                                                            showList.length ? (
+                                                                <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                                    <Pagination
+                                                                        numberPerPage={numberPerPage}
+                                                                        onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                        activeNumberPage={activeNumberPage}
+                                                                        onClickPage={(e, number) => onClickPage(e, number)}
+                                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                        onClickNextPage={e => onClickNextPage(e)}
+                                                                        numberPage={numberPage}
+                                                                    />
+                                                                </div>
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                </>
+                                            )
+                                        }
                                     </div>
                                 </div>
-                            )
-                        }
 
                     </div>
                 </div>
