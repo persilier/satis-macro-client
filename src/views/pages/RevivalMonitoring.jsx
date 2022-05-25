@@ -16,6 +16,8 @@ import EmptyTable from "../components/EmptyTable";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import Pagination from "../components/Pagination";
 import {connect} from "react-redux";
+import {ToastBottomEnd} from "../components/Toast";
+import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 
 const RevivalMonitoring = (props) => {
 
@@ -25,9 +27,11 @@ const RevivalMonitoring = (props) => {
 
     const defaultData = {
         institution_id: "",
-        period: "",
-        staffs: [],
-        reporting_type: ""
+        staff_id: "",
+    };
+    const defaultError = {
+        institution_targeted_id: [],
+        staff_id: [],
     };
 
 
@@ -35,14 +39,77 @@ const RevivalMonitoring = (props) => {
     const [claims, setClaims] = useState([]);
     const [isLoad, setIsLoad] = useState(true);
     const [data, setData] = useState(defaultData);
-    const [revivals, setRevivals] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(10);
+    const [revivals, setRevivals] = useState({
+        allStaffClaim: [],
+        claimAssignedToStaff: "-",
+        claimNoTreatedByStaff: "-",
+        claimTreatedByStaff: "-"
+    });
     const [activeNumberPage, setActiveNumberPage] = useState(1);
-    const [numberPage, setNumberPage] = useState(0);
+    const [numberPage, setNumberPage] = useState(5);
+    const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [showList, setShowList] = useState([]);
+    const [nextUrl, setNextUrl] = useState(null);
+    const [prevUrl, setPrevUrl] = useState(null);
     const [currentMessage, setCurrentMessage] = useState("");
     const [staff, setStaff] = useState(null);
     const [staffs, setStaffs] = useState([]);
+    const [error, setError] = useState(defaultError);
+    const [loadFilter, setLoadFilter] = useState(false);
+
+
+
+    const fetchData = async (click = false) => {
+        setLoadFilter(true);
+        setLoad(true);
+        let endpoint = "";
+        let sendData = {};
+
+        endpoint = `${appConfig.apiDomaine}/my/monitoring-by-staff?size=${numberPerPage}`;
+        sendData = {
+            staff_id: data.staff_id ? data.staff_id : ""
+        };
+
+        await axios.post(endpoint, sendData)
+            .then(response => {
+                console.log(response.data)
+                const newRevivals = {...revivals};
+                if (click)
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(ready ? t("Filtre effectué avec succès") : ""));
+                newRevivals.allStaffClaim = response.data.allStaffClaim.data ? response.data.allStaffClaim.data : [];
+                newRevivals.claimAssignedToStaff = response.data.claimAssignedToStaff;
+                newRevivals.claimNoTreatedByStaff = response.data.claimNoTreatedByStaff;
+                newRevivals.claimTreatedByStaff = response.data.claimTreatedByStaff;
+                setNumberPage(forceRound(response.data.allStaffClaim.total/numberPerPage));
+                setShowList(response.data.allStaffClaim.data.slice(0, numberPerPage));
+                setPrevUrl(response.data.allStaffClaim["prev_page_url"]);
+                setNextUrl(response.data.allStaffClaim["next_page_url"]);
+                setRevivals(newRevivals);
+                setError(defaultError);
+                setLoadFilter(false);
+                setLoad(false);
+            //    setStaff("")
+            })
+            .catch(error => {
+                setError({
+                    ...defaultError,
+                    ...error.response.data.error
+                });
+                setLoadFilter(false);
+                setLoad(false);
+                console.log("Something is wrong");
+            })
+        ;
+    };
+
+
+    const filterReporting = () => {
+        setLoadFilter(true);
+        setLoad(true);
+        if (verifyTokenExpire())
+            fetchData(true);
+    };
+
 
     useEffect(() => {
         async function fetchData() {
@@ -50,15 +117,44 @@ const RevivalMonitoring = (props) => {
                 .then(response => {
                    /* setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));*/
-                    setStaffs(response.data);
+
                     setLoad(false);
+                    setIsLoad(false);
                     for (let i = 0; i < response.data.staffs.length ; i ++) {
                         response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
                         response.data.staffs[i].value= response.data.staffs[i].id;
                     }
+
+                    setStaffs(response.data.staffs);
                 })
                 .catch(error => {
                     setLoad(false);
+                    setIsLoad(false);
+                    console.log("Something is wrong");
+                })
+            ;
+            axios.post(`${appConfig.apiDomaine}/my/monitoring-by-staff?size=${numberPerPage}`)
+                .then(response => {
+                    console.log(response.data)
+                    const newRevivals = {...revivals};
+                    newRevivals.allStaffClaim = response.data.allStaffClaim.data ? response.data.allStaffClaim.data : [];
+                    newRevivals.claimAssignedToStaff = response.data.claimAssignedToStaff;
+                    newRevivals.claimNoTreatedByStaff = response.data.claimNoTreatedByStaff;
+                    newRevivals.claimTreatedByStaff = response.data.claimTreatedByStaff;
+                    setNumberPage(forceRound(response.data.allStaffClaim.total/numberPerPage));
+                    setShowList(response.data.allStaffClaim.data.slice(0, numberPerPage));
+                    setPrevUrl(response.data.allStaffClaim["prev_page_url"]);
+                    setNextUrl(response.data.allStaffClaim["next_page_url"]);
+                    setRevivals(newRevivals);
+                    setError(defaultError);
+                    setLoadFilter(false);
+                    setLoad(false);
+                    setIsLoad(false);
+
+                })
+                .catch(error => {
+                    setLoad(false);
+                    setIsLoad(false);
                     console.log("Something is wrong");
                 })
             ;
@@ -71,8 +167,8 @@ const RevivalMonitoring = (props) => {
 
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
-        let newClaims = [...claims];
-        newClaims = newClaims.filter(el => {
+        let newRevivals = [...revivals];
+        newRevivals = newRevivals.filter(el => {
             return (
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
                 getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / " + el.account_number : "")}`).indexOf(value) >= 0 ||
@@ -83,7 +179,7 @@ const RevivalMonitoring = (props) => {
             )
         });
 
-        return newClaims;
+        return newRevivals;
     };
 
     const searchElement = async (e) => {
@@ -91,8 +187,8 @@ const RevivalMonitoring = (props) => {
             setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(revivals.length / NUMBER_ELEMENT_PER_PAGE));
+            setShowList(revivals.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(1);
         }
     };
@@ -100,8 +196,8 @@ const RevivalMonitoring = (props) => {
     const onChangeNumberPerPage = (e) => {
         setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(claims.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
+        setShowList(revivals.slice(0, parseInt(e.target.value)));
+        setNumberPage(forceRound(revivals.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -115,7 +211,7 @@ const RevivalMonitoring = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(claims.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setShowList(revivals.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
     };
 
     const onClickNextPage = (e) => {
@@ -123,7 +219,7 @@ const RevivalMonitoring = (props) => {
         if (activeNumberPage <= numberPage) {
             setActiveNumberPage(activeNumberPage + 1);
             setShowList(
-                claims.slice(
+                revivals.slice(
                     getEndByPosition(
                         activeNumberPage + 1) - numberPerPage,
                     getEndByPosition(activeNumberPage + 1)
@@ -137,7 +233,7 @@ const RevivalMonitoring = (props) => {
         if (activeNumberPage >= 1) {
             setActiveNumberPage(activeNumberPage - 1);
             setShowList(
-                claims.slice(
+                revivals.slice(
                     getEndByPosition(activeNumberPage - 1) - numberPerPage,
                     getEndByPosition(activeNumberPage - 1)
                 )
@@ -156,10 +252,9 @@ const RevivalMonitoring = (props) => {
     const pages = arrayNumberPage();
 
     const onChangeStaff = (selected) => {
-        //console.log(selected)
-        var staffToSend = selected.value
+        let staffToSend = selected?.id
         const newData = {...data};
-        newData.staff = staffToSend;
+        newData.staff_id = staffToSend;
         setStaff(selected);
         setData(newData);
     };
@@ -170,27 +265,24 @@ const RevivalMonitoring = (props) => {
         document.getElementById("button_modal").click();
     };
 
-    const printBodyTable = (claim, index) => {
+    const printBodyTable = (revival, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference} {claim.is_rejected ? (
-                    <span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
-                <td>{`${(claim.claimer && claim.claimer.lastname) ? claim.claimer.lastname : ''} ${(claim.claimer && claim.claimer.firstname) ? claim.claimer.firstname : ''} ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / " + claim.account_number : "")}`}</td>
-                <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted.name}</td>
+                <td>{revival.data.reference}</td>
                 <td>
-                    {formatDateToTime(claim.created_at)} <br/>
-                    {claim.timeExpire >= 0 ?
-                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + claim.timeExpire}</span>
-                        : <span style={{color: "red", fontWeight: "bold"}}>{"J" + claim.timeExpire}</span>
-                    }
+                    {formatDateToTime(revival.data.created_at)}
                 </td>
-                <td>{ claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
+                <td>{`${(revival.data.claimer && revival.data.claimer.lastname) ? revival.data.claimer.lastname : ''} ${(revival.data.claimer && revival.data.claimer.firstname) ? revival.data.claimer.firstname : ''} `}</td>
+                <td>{`${(revival.data.responsible_staff && revival.data.responsible_staff.lastname) ? revival.data.responsible_staff.lastname : ''} ${(revival.data.responsible_staff && revival.data.responsible_staff.firstname) ? revival.data.responsible_staff.firstname : ''} `}</td>
+                <td>{revival.data.assigned_to_staff_at}</td>
+                <td>{ revival.data.claim_object ? revival.data.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
-                    <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
+                    <HtmlDescription onClick={() => showModal(revival.data.description ? revival.data.description : '-')}/>
                 </td>
-                {/*<td>{truncateString(claim.description, 41)}</td>*/}
+                <td>{truncateString(revival.data.description, 41)}</td>
+                <td>{revival.data.status}</td>
                 <td>
-                    <a href={`/process/claim-assign/${claim.id}/detail`}
+                    <a href={`/process/claim-assign/${revival.data.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
                     </a>
@@ -200,7 +292,7 @@ const RevivalMonitoring = (props) => {
     };
 
     return (
-        ready ? ( verifyPermission(props.userPermissions, 'show-claim-awaiting-assignment') && props.activePilot ? (
+        ready ? ( verifyPermission(props.userPermissions, 'show-my-staff-monitoring') ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -224,7 +316,7 @@ const RevivalMonitoring = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Suivi des relances")}
+                                        {t("Suivi des réclammations relancées")}
                                     </a>
                                 </div>
                             </div>
@@ -256,11 +348,11 @@ const RevivalMonitoring = (props) => {
                                                 <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
                                                     <div className="kt-widget6">
                                                         <div className="kt-widget6__body">
-                                                            <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
-                                                                <div className="col-lg-1" style={{fontWeight: "500"}}>Agent</div>
+                                                            <div className={error.staff_id.length ? "form-group validated kt-widget6__item row" : "form-group kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
+                                                                <div className="col-lg-1" style={{fontWeight: "500"}}>Agents</div>
                                                                 <div className={"col-lg-9"}>
                                                                     <Select
-                                                                        isClearable
+                                                                        isClearable={true}
                                                                         placeholder={t("Veuillez sélectionner les agents")}
                                                                         value={staff}
                                                                         isLoading={isLoad}
@@ -268,18 +360,26 @@ const RevivalMonitoring = (props) => {
                                                                         options={staffs}
                                                                     />
                                                                     {
-                                                                    /* error.unit_targeted_id.length ? (
-                                                                         error.unit_targeted_id.map((error, index) => (
+                                                                     error.staff_id.length ? (
+                                                                         error.staff_id.map((error, index) => (
                                                                              <div key={index}
                                                                                   className="invalid-feedback">
                                                                                  {error}
                                                                              </div>
                                                                          ))
-                                                                     ) : null*/
+                                                                     ) : null
                         }
                                                                 </div>
                                                                 <div className="col-lg-2">
-                                                                    <button type="submit" onClick={(e) => console.log(e)} className="btn btn-primary">{t("Filtrer")}</button>
+                                                                    {loadFilter ? (
+                                                                        <button
+                                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                                            type="button" disabled>
+                                                                            {t("Chargement...")}
+                                                                        </button>
+                                                                    ) : (
+                                                                    <button type="submit" onClick={filterReporting} className="btn btn-primary" >{t("Filtrer")}</button>
+                                                                    )}
                                                                 </div>
                                                             </div>
 
@@ -299,17 +399,23 @@ const RevivalMonitoring = (props) => {
                                                             <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
                                                                 <span className="col-lg-10"  style={{fontWeight: "500"}}>Nombre de plaintes affectées à ce jour</span>
                                                                 <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>$11,002</span>
+                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
+                                                                    { revivals.claimAssignedToStaff !== undefined && revivals.claimAssignedToStaff !== null ? revivals.claimAssignedToStaff: "-"}
+                                                                </span>
                                                             </div>
                                                             <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
                                                                 <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes déjà traitées à ce jour</span>
                                                                 <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>$11,002</span>
+                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
+                                                                    { revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff: "-"}
+                                                                </span>
                                                             </div>
                                                             <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
                                                                 <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes restantes à traiter à ce jour</span>
                                                                 <span className="col-lg-2 kt-font-brand kt-font-bold"
-                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>$11,002</span>
+                                                                      style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
+                                                                     { revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff: "-"}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -317,7 +423,7 @@ const RevivalMonitoring = (props) => {
                                             </div>
                                         </div>
 
-                                        <div className="row">
+                                      {/*  <div className="row">
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
@@ -329,7 +435,7 @@ const RevivalMonitoring = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>*/}
 
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -388,15 +494,13 @@ const RevivalMonitoring = (props) => {
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        claims.length ? (
+                                                        revivals.length ? (
                                                             showList.length ? (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
+                                                                showList.map((revival, index) => (
+                                                                    printBodyTable(revival, index)
                                                                 ))
                                                             ) : (
-                                                                showList.map((claim, index) => (
-                                                                    printBodyTable(claim, index)
-                                                                ))
+                                                                <EmptyTable search={true}/>
                                                             )
                                                         ) : (
                                                             <EmptyTable/>
@@ -426,7 +530,7 @@ const RevivalMonitoring = (props) => {
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"
                                                      aria-live="polite">{t("Affichage de")} 1
-                                                    {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
+                                                    {t("à")} {numberPerPage} {t("sur")} {revivals.length} {t("données")}
                                                 </div>
                                             </div>
                                             {

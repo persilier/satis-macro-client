@@ -264,6 +264,8 @@ export const seeParameters = (userPermissions) => {
     return (
         verifyPermission(userPermissions, "update-sms-parameters")
         || verifyPermission(userPermissions, 'update-mail-parameters')
+        || verifyPermission(userPermissions, 'update-proxy-config')
+        || verifyPermission(userPermissions, 'show-proxy-config')
         || verifyPermission(userPermissions, "list-any-institution")
         || verifyPermission(userPermissions, "update-my-institution")
         || verifyPermission(userPermissions, "update-claim-object-requirement")
@@ -358,6 +360,7 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
+        || verifyPermission(userPermissions, 'show-my-staff-monitoring')
         //|| verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
         //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
         // || verifyPermission(userPermissions, 'list-global-reporting')

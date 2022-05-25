@@ -20,9 +20,8 @@ import {useTranslation} from "react-i18next";
 const endPointConfig = {
     PRO: {
         plan: "PRO",
-        create: `${appConfig.apiDomaine}/my/email-claim-configuration`,
-        store: `${appConfig.apiDomaine}/my/email-claim-configuration`,
-        storeKnowingIdentity: id => `${appConfig.apiDomaine}/my/email-claim-configuration/${id}`,
+        create: `${appConfig.apiDomaine}/proxy-metadata`,
+        store: `${appConfig.apiDomaine}/update-proxy-metadata`,
     },
     MACRO: {
         holding: {
@@ -51,8 +50,9 @@ const ProxyConfig = (props) => {
 
     document.title = "Satis client - " + (ready ? t("Proxy Configuration") : "");
 
-    if (!(verifyPermission(props.userPermissions, "my-email-claim-configuration")
-        || verifyPermission(props.userPermissions, "any-email-claim-configuration")))
+    if (
+            !((verifyPermission(props.userPermissions, "update-proxy-config") && (verifyPermission(props.userPermissions, "show-proxy-config"))))
+    )
         window.location.href = ERROR_401;
 
     let endPoint = "";
@@ -67,18 +67,20 @@ const ProxyConfig = (props) => {
         endPoint = endPointConfig[props.plan];
 
     const defaultErrorProxy = {
-        hosthttp: [],
-        hosthttps: [],
-        porthttp: [],
-        porthttps: [],
+        proxy_http_server:[],
+        proxy_https_server : [],
+        proxy_http_port : [],
+        proxy_https_port: [],
+        proxy_modules: [],
         institution_id: [],
     };
 
     const defaultDataProxy = {
-        hosthttp: "",
-        hosthttps: "",
-        porthttp: "",
-        porthttps: "",
+        proxy_http_server: [],
+        proxy_https_server : [],
+        proxy_http_port : [],
+        proxy_https_port: [],
+        proxy_modules: [],
         institution_id: "",
     }
 
@@ -89,20 +91,22 @@ const ProxyConfig = (props) => {
     const [configuration, setConfiguration] = useState("");
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([])
-    const [disabledInputEmail, setDisabledInputEmail] = useState(false);
-    const [disabledInputSms, setDisabledInputSms] = useState(false);
-    const [disabledInputIncoming, setDisabledInputIncoming] = useState(false);
+    const [InputEmail, setInputEmail] = useState(false);
+    const [InputSms, setInputSms] = useState(false);
+    const [InputIncoming, setInputIncoming] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
-            if (verifyPermission(props.userPermissions, 'my-email-claim-configuration')) {
+            if ((verifyPermission(props.userPermissions, 'show-proxy-config')) ||  (verifyPermission(props.userPermissions, 'update-proxy-config'))) {
                 await axios.get(endPoint.create)
                     .then(response => {
                         const newData = {
-                            hosthttp: response.data.hosthttp ? response.data.hosthttp : "",
-                            hosthttps: response.data.hosthttps ? response.data.hosthttps : "",
-                            porthttp: response.data.porthttp ? response.data.porthttp : "",
-                            porthttps: response.data.porthttps ? response.data.porthttps : "",
+                            proxy_http_server: response.data.proxy_http_server ? response.data.proxy_http_server : "",
+                            proxy_https_server: response.data.proxy_https_server ? response.data.proxy_https_server : "",
+                            proxy_http_port: response.data.proxy_http_port ? response.data.proxy_http_port : "",
+                            proxy_https_port: response.data.proxy_https_port ? response.data.proxy_https_port : "",
+                            proxy_modules: response.data.proxy_modules ? response.data.proxy_modules : [],
                         }
                         setConfiguration(response.data.id ? response.data.id : "")
                         setData(newData);
@@ -130,24 +134,24 @@ const ProxyConfig = (props) => {
 
     const onChangeServerHTTP = (e) => {
         const newData = {...data};
-        newData.hosthttp = e.target.value;
+        newData.proxy_http_server = e.target.value;
         setData(newData);
     };
     const onChangeServerHTTPS = (e) => {
         const newData = {...data};
-        newData.hosthttps = e.target.value;
+        newData.proxy_https_server = e.target.value;
         setData(newData);
     };
 
     const onChangePortHTTP = (e) => {
         const newData = {...data};
-        newData.porthttp = e.target.value;
+        newData.proxy_http_port = e.target.value;
         setData(newData);
     };
 
     const onChangePortHTTPS = (e) => {
         const newData = {...data};
-        newData.porthttps = e.target.value;
+        newData.proxy_https_port = e.target.value;
         setData(newData);
     };
 
@@ -190,12 +194,17 @@ const ProxyConfig = (props) => {
         if (props.plan !== "HUB")
             delete sendData.institution_id;
 
+
         setLoadingProxy(true);
         if (verifyTokenExpire()) {
-                await axios.post(endPoint.store, sendData)
+                await axios.put(endPoint.store, sendData)
                     .then(response => {
-                    setLoadingProxy(false);
-                    setError(defaultErrorProxy);
+                        console.log(response.data)
+                        setLoadingProxy(false);
+                        setInputSms(false)
+                        setInputEmail(false)
+                        setInputIncoming(false)
+                        setError(defaultErrorProxy);
                     const newData = {...data};
                     setData(newData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
@@ -216,6 +225,12 @@ const ProxyConfig = (props) => {
         }
     };
 
+    const onDisable = async (e) => {
+        e.preventDefault();
+        setDisable(!disable)
+
+    };
+
     const onUpdate = async (e) => {
         const sendData = {...data};
         e.preventDefault();
@@ -225,7 +240,7 @@ const ProxyConfig = (props) => {
 
         setLoadingProxy(true);
         if (verifyTokenExpire()) {
-            await axios.post(endPoint.storeKnowingIdentity(configuration), sendData)
+            await axios.post(endPoint.store, sendData)
                 .then(response => {
                     setLoadingProxy(false);
                     setError(defaultErrorProxy);
@@ -249,18 +264,30 @@ const ProxyConfig = (props) => {
 
     const handleDisabledInputChangeEmail = (e) => {
         const newData = {...data};
+        if (e.target.checked === true)
+            newData.proxy_modules[0].data.fr.push("mail");
+        else
+            newData.proxy_modules[0].data.fr.splice(newData.proxy_modules.indexOf("mail"), 1);
         setData(newData);
-        setDisabledInputEmail(e.target.checked);
+        setInputEmail(e.target.checked);
     };
     const handleDisabledInputChangeSms = (e) => {
-        const newData = {...data};
+        let newData = {...data};
+        if (e.target.checked === true)
+            newData.proxy_modules[0].data.fr.push("sms");
+        else
+            newData.proxy_modules[0].data.fr.splice(newData.proxy_modules.indexOf("sms"), 1);
         setData(newData);
-        setDisabledInputSms(e.target.checked);
+        setInputSms(e.target.checked);
     };
     const handleDisabledInputChangeIncoming = (e) => {
         const newData = {...data};
+        if (e.target.checked === true)
+            newData.proxy_modules[0].data.fr.push("incoming_mail_service");
+        else
+            newData.proxy_modules[0].data.fr.splice(newData.proxy_modules.indexOf("incoming_mail_service"), 1);
         setData(newData);
-        setDisabledInputIncoming(e.target.checked);
+        setInputIncoming(e.target.checked);
     };
 
 
@@ -277,7 +304,7 @@ const ProxyConfig = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, "update-mail-parameters") ? (
+            verifyPermission(props.userPermissions, "update-proxy-config") ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -330,19 +357,23 @@ const ProxyConfig = (props) => {
 
                                                                 <div className="kt-widget24__action" style={{display:"block"}}>
 
-															   <div className={error.hosthttp.length ? "form-group row validated" : "form-group row"}>
+															   <div className={error.proxy_http_server.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="host">{t("Serveur")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
+                                                                        {
+                                                                            console.log(data.proxy_http_server)
+                                                                        }
                                                                         <input
                                                                             id="senderID"
                                                                             type="text"
-                                                                            className={error.hosthttp.length ? "form-control is-invalid" : "form-control"}
-                                                                            value={data.hosthttp}
+                                                                            disabled={disable}
+                                                                            className={error.proxy_http_server.length ? "form-control is-invalid" : "form-control"}
+                                                                            value={data.proxy_http_server[0].data.fr}
                                                                             onChange={(e) => onChangeServerHTTP(e)}
                                                                         />
                                                                         {
-                                                                            error.hosthttp.length ? (
-                                                                                error.hosthttp.map((error, index) => (
+                                                                            error.proxy_http_server.length ? (
+                                                                                error.proxy_http_server.map((error, index) => (
                                                                                     <div key={index} className="invalid-feedback">
                                                                                         {error}
                                                                                     </div>
@@ -352,19 +383,20 @@ const ProxyConfig = (props) => {
                                                                       </div>
 															   </div>
 
-                                                               <div className={error.porthttp.length ? "form-group row validated" : "form-group row"}>
+                                                               <div className={error.proxy_http_port.length ? "form-group row validated" : "form-group row"}>
                                                                         <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port <InputRequire/></label>
                                                                         <div className="col-lg-9 col-xl-6">
                                                                             <input
                                                                                 id="port"
                                                                                 type="number"
-                                                                                className={error.porthttp.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={data.porthttp}
+                                                                                disabled={disable}
+                                                                                className={error.proxy_http_port.length ? "form-control is-invalid" : "form-control"}
+                                                                                value={data.proxy_http_port[0].data.fr}
                                                                                 onChange={(e) => onChangePortHTTP(e)}
                                                                             />
                                                                             {
-                                                                                error.porthttp.length ? (
-                                                                                    error.porthttp.map((error, index) => (
+                                                                                error.proxy_http_port.length ? (
+                                                                                    error.proxy_http_port.map((error, index) => (
                                                                                         <div key={index} className="invalid-feedback">
                                                                                             {error}
                                                                                         </div>
@@ -392,19 +424,20 @@ const ProxyConfig = (props) => {
                                                                 </div>
                                                                 <div className="kt-widget24__action" style={{display:"block"}}>
 
-                                                                    <div className={error.hosthttps.length ? "form-group row validated" : "form-group row"}>
+                                                                    <div className={error.proxy_https_server.length ? "form-group row validated" : "form-group row"}>
                                                                         <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="hosthttps">{t("Serveur")} <InputRequire/></label>
                                                                         <div className="col-lg-9 col-xl-6">
                                                                             <input
                                                                                 id="senderID"
                                                                                 type="text"
-                                                                                className={error.hosthttps.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={data.hosthttps}
+                                                                                disabled={disable}
+                                                                                className={error.proxy_https_server.length ? "form-control is-invalid" : "form-control"}
+                                                                                value={data.proxy_https_server[0].data.fr}
                                                                                 onChange={(e) => onChangeServerHTTPS(e)}
                                                                             />
                                                                             {
-                                                                                error.hosthttps.length ? (
-                                                                                    error.hosthttps.map((error, index) => (
+                                                                                error.proxy_https_server.length ? (
+                                                                                    error.proxy_https_server.map((error, index) => (
                                                                                         <div key={index} className="invalid-feedback">
                                                                                             {error}
                                                                                         </div>
@@ -414,19 +447,20 @@ const ProxyConfig = (props) => {
                                                                         </div>
                                                                     </div>
 
-                                                                    <div className={error.porthttps.length ? "form-group row validated" : "form-group row"}>
+                                                                    <div className={error.proxy_https_port.length ? "form-group row validated" : "form-group row"}>
                                                                         <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port <InputRequire/></label>
                                                                         <div className="col-lg-9 col-xl-6">
                                                                             <input
                                                                                 id="port"
                                                                                 type="number"
-                                                                                className={error.porthttps.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={data.port}
+                                                                                disabled={disable}
+                                                                                className={error.proxy_https_port.length ? "form-control is-invalid" : "form-control"}
+                                                                                value={data.proxy_https_port[0].data.fr}
                                                                                 onChange={(e) => onChangePortHTTPS(e)}
                                                                             />
                                                                             {
-                                                                                error.porthttps.length ? (
-                                                                                    error.porthttps.map((error, index) => (
+                                                                                error.proxy_https_port.length ? (
+                                                                                    error.proxy_https_port.map((error, index) => (
                                                                                         <div key={index} className="invalid-feedback">
                                                                                             {error}
                                                                                         </div>
@@ -453,21 +487,24 @@ const ProxyConfig = (props) => {
                                                     <div className="kt-checkbox-list" style={{display: "flex"}}>
                                                         <label className="kt-checkbox" style={{marginRight: "20px"}}>
                                                             <input id="is_client" type="checkbox"
-                                                                   checked={disabledInputEmail}
+                                                                   checked={InputEmail}
+                                                                   disabled={disable}
                                                                    onChange={handleDisabledInputChangeEmail}/>
                                                             {t("Mail")} <span/>
 
                                                         </label>
                                                         <label className="kt-checkbox" style={{marginRight: "20px"}}>
                                                             <input id="is_client" type="checkbox"
-                                                                   checked={disabledInputSms}
+                                                                   checked={InputSms}
+                                                                   disabled={disable}
                                                                    onChange={handleDisabledInputChangeSms}/>
                                                             {t("SMS")} <span/>
 
                                                         </label>
                                                         <label className="kt-checkbox" style={{marginRight: "20px"}}>
                                                             <input id="is_client" type="checkbox"
-                                                                   checked={disabledInputIncoming}
+                                                                   checked={InputIncoming}
+                                                                   disabled={disable}
                                                                    onChange={handleDisabledInputChangeIncoming}/>
                                                             {t(" Incoming mail service")} <span/>
 
@@ -635,6 +672,16 @@ const ProxyConfig = (props) => {
                                                                 {t("Chargement")}...
                                                             </button>
                                                         )
+                                                    } {""}
+                                                    {
+                                                        !loadingProxy ? (
+                                                                <button type="submit" onClick={(e) => onDisable(e)} className="btn btn-danger" style={{marginLeft:"10px"}}>{t("Désactiver")}</button>
+                                                        ) : (
+                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                                {t("Chargement")}...
+                                                            </button>
+                                                        )
+
                                                     }
                                                 </div>
                                             </div>

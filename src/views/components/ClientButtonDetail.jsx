@@ -62,9 +62,9 @@ const ClientButtonDetail = ({claim}) => {
                                                     <span className="fa fa-phone-alt" style={{fontSize: "1.5rem"}}/>
                                                     <span className="kt-widget__data">
                                                     {
-                                                        claim.claimer.telephone.map((telephone, index) => (
+                                                        (claim.claimer && claim.claimer.telephone) ? claim.claimer.telephone.map((telephone, index) => (
                                                             index === claim.claimer.telephone.length - 1 ? telephone : telephone + "/ "
-                                                        ))
+                                                        )): null
                                                     }
                                                 </span>
                                                 </div>
