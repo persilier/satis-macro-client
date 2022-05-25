@@ -38,21 +38,25 @@ const MonitoringDetails = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`/my/search-claim/${id}`)
+            await getClaimDetails(props.userPermissions, id)
+                .then(response => {
+                    setClaim(response.data);
+                    //console.log(response.data);
+                    })
+                .catch(error => {
+                    console.log(error.message);
+                    })
+/*            await axios.get(`/my/search-claim/${id}`)
                 .then(response => {
                     setClaim(response.data[0]);
                 })
                 .catch(error => console.log("Something is wrong"))
-            ;
+            ;*/
         }
 
         if (verifyTokenExpire())
             fetchData();
 
-/*        getClaimDetails(props.userPermissions, id)
-            .then()
-            .catch()
-            .finally()*/
     }, []);
 
     const revoke = e => {
@@ -124,16 +128,18 @@ const MonitoringDetails = (props) => {
                                 </div>
 
                                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
-                                    
-                                    {
-                                        (claim && claim.status !== "archived") ? (
-                                            <>
-                                                <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
-                                                    {t("Relancer")}
-                                                </button>
 
-                                                <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
-                                            </>
+                                    {
+                                        ((claim && claim.status !== "archived")) ? (
+                                            (verifyPermission(props.userPermissions, 'revive-staff') && ( props.activePilot === true)) && (
+                                                <>
+                                                    <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
+                                                        {t("Relancer")}
+                                                    </button>
+
+                                                    <RelaunchModal id={claim ? claim.id : ''} onClose={() => {}}/>
+                                                </>
+                                            )
                                         ) : null
                                     }
 
@@ -144,7 +150,7 @@ const MonitoringDetails = (props) => {
                                             {console.log("claim:", claim)}
                                             {(claim && claim.status !== "archived") ? (
                                                 <>
-                                                    {verifyPermission(props.userPermissions, 'revive-staff') && (
+                                                    {(verifyPermission(props.userPermissions, 'revive-staff') && ( props.activePilot === true)) && (
                                                         <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
                                                             {t("Relancer")}
                                                         </button>
@@ -190,6 +196,7 @@ const MonitoringDetails = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
+        activePilot: state.user.user.staff.is_active_pilot,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
     };

@@ -1,5 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {forceRound, formatDateToTimeStampte, loadCss} from "../../helpers/function";
+import React, {useCallback, useEffect, useState} from "react";
+import {
+    forceRound,
+    formatDateToTimeStampte,
+    formatSelectOption,
+    getLowerCaseString,
+    loadCss
+} from "../../helpers/function";
 import {connect} from "react-redux";
 import {useTranslation} from "react-i18next";
 import {verifyPermission} from "../../helpers/permission";
@@ -27,9 +33,13 @@ const HistoricRevivals = (props) => {
         window.location.href = ERROR_401;
     }
 
+    const defaultError = {
+        staff: []
+    };
+
     const [load, setLoad] = useState(false);
     const [loadSelect, setLoadSelect] = useState(false);
-    const [loadButton, setLoadButton] = useState(false);
+    const [error, setError] = useState(defaultError);
     const [revivals, setRevivals] = useState([]);
     const [staff, setStaff] = useState(null);
     const [staffs, setStaffs] = useState([]);
@@ -42,37 +52,74 @@ const HistoricRevivals = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
 
-    useEffect(() => {
-        setLoad(true);
+
+    const fetchData = useCallback(
+        (staffId) => {
+            setLoad(true);
+            getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, staffId)
+                .then(response => {
+                    console.log(response.data.data);
+                    setNumberPage(forceRound(response.data.total/numberPerPage));
+                    setShowList(response.data.data.slice(0, numberPerPage));
+                    setRevivals(response.data["data"]);
+                    setTotal(response.data.total);
+                    setPrevUrl(response.data["prev_page_url"]);
+                    setNextUrl(response.data["next_page_url"]);
+                })
+                .catch(error => {
+                    console.error(error.message);
+                })
+                .finally(() => setLoad(false));
+        }, [numberPerPage, activeNumberPage]
+    )
+
+    useEffect(() => {
+        setLoadSelect(true);
         getStaffs(props.userPermissions)
             .then(response => {
                 console.log(response.data);
+                setStaffs(formatStaffsOption(response.data.staffs))
             })
             .catch(error => {
                 console.error(error.message);
-            })
-        getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, props.user.staff.is_lead === true ? null : props.user.staff.id)
-            .then(response => {
-               console.log(response.data.data);
-                setNumberPage(forceRound(response.data.total/numberPerPage));
-                setShowList(response.data.data.slice(0, numberPerPage));
-                setRevivals(response.data["data"]);
-                setTotal(response.data.total);
-                setPrevUrl(response.data["prev_page_url"]);
-                setNextUrl(response.data["next_page_url"]);
-            })
-            .catch(error => {
-                console.error(error.message);
-            })
-            .finally(() => setLoad(false));
+            }).finally(() => setLoadSelect(false));
+    },  []);
 
-    }, [numberPerPage, activeNumberPage]);
+    useEffect(() => {
+        fetchData(props.userStaff.is_lead === true ? null : props.userStaff.id);
+    }, [fetchData]);
 
+    const formatStaffsOption = function (options) {
+        const newOptions = [];
+        for (let i = 0; i < options.length; i++) {
+            newOptions.push({value: (options[i])["id"], label: `${(options[i])["identite"]["firstname"]} ${(options[i])["identite"]["lastname"]}`});
+        }
+        return newOptions;
+    };
+
+    const searchElement = async (e) => {
+        if (e.target.value) {
+            setLoad(true);
+            getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, props.userStaff.is_lead === true ? null : props.userStaff.id, getLowerCaseString(e.target.value))
+                .then(response => {
+                    console.log(response.data.data);
+                    setNumberPage(forceRound(response.data.total/numberPerPage));
+                    setShowList(response.data.data.slice(0, numberPerPage));
+                    setRevivals(response.data["data"]);
+                    setTotal(response.data.total);
+                    setPrevUrl(response.data["prev_page_url"]);
+                    setNextUrl(response.data["next_page_url"]);
+                })
+                .catch(error => {
+                    console.error(error.message);
+                })
+                .finally(() => setLoad(false));
+        }
+    }
     const onChangeNumberPerPage = (e) => {
         e.persist();
         setNumberPerPage(parseInt(e.target.value));
     };
-
 
     const onClickPage = (e, page) => {
         e.preventDefault();
@@ -98,6 +145,22 @@ const HistoricRevivals = (props) => {
         setCurrentMessage(message);
         document.getElementById("button_modal").click();
     };
+
+    const onChangeStaff = (selected) => {
+        setStaff(selected);
+        console.log(selected);
+    }
+
+    const onClickFilter = async (e) => {
+        e.preventDefault();
+        console.log(staff);
+        if (staff)
+            fetchData(staff?.value);
+        else {
+            setError({...defaultError, staff: ["Veuillez choisir un staff"]});
+            console.log(error);
+        }
+    }
 
     const printBodyTable = (revival, index) => {
         return (
@@ -143,7 +206,7 @@ const HistoricRevivals = (props) => {
                 </td>
                 <td>
                     {
-                        verifyPermission(props.userPermissions, "revive-staff") ? (
+                        verifyPermission(props.userPermissions, "revive-staff") &&  ((props.userStaff.is_lead === true) || (props.userStaff.is_active_pilot === true)) ? (
                         <>
                             <a type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4"
                                className={`btn btn-sm btn-clean btn-icon btn-icon-md ${revival?.status === "considered" && "disabled"}`}
@@ -206,33 +269,44 @@ const HistoricRevivals = (props) => {
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
 
-                                        <div className="text-center m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
+                                        <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
                                             <div className="" style={{marginBottom: "30px"}}>
                                                 <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
                                                     <div className="kt-widget6">
                                                         <div className="kt-widget6__body">
-                                                            <div className="kt-widget6__item row" style={{padding: "0.5rem 0"}}>
-                                                                <div className="col-lg-1">Agent</div>
+                                                            <div className={error.staff.length ? "kt-widget6__item row validated" : "kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
+                                                                <div className="col-lg-1">{t("Agent")}</div>
                                                                 <div className={"col-lg-9"}>
                                                                     <Select
                                                                         value={staff}
                                                                         isClearable
-                                                                        placeholder={"Veuillez sélectionner un agent"}
+                                                                        isLoading={loadSelect}
+                                                                        onChange={onChangeStaff}
+                                                                        placeholder={t("Veillez sélectionner l'agent")}
                                                                         options={staffs}
                                                                     />
-                                                                                                                    {
-           /*                                         error.unit_targeted_id.length ? (
-                                                        error.unit_targeted_id.map((error, index) => (
-                                                            <div key={index}
-                                                                 className="invalid-feedback">
-                                                                {error}
-                                                            </div>
-                                                        ))
-                                                    ) : null*/
-                                                }
+                                                                    {
+                                                                        error.staff.length ? (
+                                                                            error.staff.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
                                                                 </div>
                                                                 <div className="col-lg-2">
-                                                                    <button type="submit" onClick={(e) => console.log(e)} className="btn btn-primary">{t("Filtrer")}</button>
+                                                                    {
+                                                                        load ? (
+                                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
+                                                                                {t("Chargement")}...
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button type="submit" onClick={(e) => onClickFilter(e)} className="btn btn-primary">{t("Filtrer")}</button>
+
+                                                                        )
+                                                                    }
                                                                 </div>
                                                             </div>
 
@@ -242,25 +316,26 @@ const HistoricRevivals = (props) => {
                                             </div>
                                         </div>
 
+                                        {/*<div className="row">
+                                            <div className="col-sm-6 text-left">
+                                                <div id="kt_table_1_filter" className="dataTables_filter">
+                                                    <label>
+                                                        {t("Recherche")}:
+                                                        <input id="myInput" type="text"
+                                                               onKeyUp={(e) => searchElement(e)}
+                                                               className="form-control form-control-sm"
+                                                               placeholder=""
+                                                               aria-controls="kt_table_1"
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                        </div>*/}
+
                                         {
                                             load ? <LoadingTable/> : (
                                                 <>
-                                                    <div className="row">
-                                                        <div className="col-sm-6 text-left">
-                                                            <div id="kt_table_1_filter" className="dataTables_filter">
-                                                                <label>
-                                                                    {t("Recherche")}:
-                                                                    <input id="myInput" type="text"
-                                                                        /* onKeyUp={(e) => searchElement(e)}*/
-                                                                           className="form-control form-control-sm"
-                                                                           placeholder=""
-                                                                           aria-controls="kt_table_1"
-                                                                    />
-                                                                </label>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
 
                                                     <div className="row">
                                                         <div className="col-sm-12">
@@ -340,7 +415,7 @@ const HistoricRevivals = (props) => {
                                                                                 printBodyTable(revival, index)
                                                                             ))
                                                                         ) : (
-                                                                            <EmptyTable search={true}/>
+                                                                            <EmptyTable />
                                                                         )
                                                                     ) : (<EmptyTable/>)
                                                                 }
@@ -408,7 +483,7 @@ const mapStateToProps = (state) => {
     return {
         plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
-        user: state.user.user
+        userStaff: state.user.user.staff
     };
 };
 
