@@ -38,7 +38,7 @@ const RelaunchModal = ({onClose, id}) => {
                 })
                 .catch(({response}) => {
                     setLoad(false);
-                    setError(response.data.error.text);
+                    setError(response?.data?.error?.text ? response.data.error.text : []);
                 })
             ;
         }

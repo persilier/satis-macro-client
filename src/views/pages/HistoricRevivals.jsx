@@ -148,7 +148,9 @@ const HistoricRevivals = (props) => {
 
     const onChangeStaff = (selected) => {
         setStaff(selected);
-        console.log(selected);
+        //console.log(selected);
+        if (selected === null)
+            fetchData(props.userStaff.is_lead === true ? null : props.userStaff.id);
     }
 
     const onClickFilter = async (e) => {
@@ -273,8 +275,8 @@ const HistoricRevivals = (props) => {
                                             <div className="" style={{marginBottom: "30px"}}>
                                                 <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
                                                     <div className="kt-widget6">
-                                                        <div className="kt-widget6__body">
-                                                            <div className={error.staff.length ? "kt-widget6__item row validated" : "kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
+                                                        <div className={error.staff.length ? "kt-widget6__body validated" : "kt-widget6__body"}>
+                                                            <div className={"kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
                                                                 <div className="col-lg-1">{t("Agent")}</div>
                                                                 <div className={"col-lg-9"}>
                                                                     <Select
@@ -289,7 +291,7 @@ const HistoricRevivals = (props) => {
                                                                         error.staff.length ? (
                                                                             error.staff.map((error, index) => (
                                                                                 <div key={index}
-                                                                                     className="invalid-feedback">
+                                                                                     className="invalid-feedback mb-2">
                                                                                     {error}
                                                                                 </div>
                                                                             ))
