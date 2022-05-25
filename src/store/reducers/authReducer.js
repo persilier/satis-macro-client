@@ -8,7 +8,6 @@ const initialState = {
 
 export default function (state = initialState, action) {
     let newState = {};
-    console.log("PARSE",JSON.parse(localStorage.getItem('userData')))
     switch (action.type) {
         case LOGOUT_USER:
             logout();
