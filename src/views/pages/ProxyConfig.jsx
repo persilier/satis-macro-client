@@ -101,6 +101,7 @@ const ProxyConfig = (props) => {
             if ((verifyPermission(props.userPermissions, 'show-proxy-config')) ||  (verifyPermission(props.userPermissions, 'update-proxy-config'))) {
                 await axios.get(endPoint.create)
                     .then(response => {
+                        console.log(response.data);
                         const newData = {
                             proxy_http_server: response.data.proxy_http_server ? response.data.proxy_http_server : "",
                             proxy_https_server: response.data.proxy_https_server ? response.data.proxy_https_server : "",
@@ -360,15 +361,12 @@ const ProxyConfig = (props) => {
 															   <div className={error.proxy_http_server.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="host">{t("Serveur")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
-                                                                        {
-                                                                            console.log(data.proxy_http_server)
-                                                                        }
                                                                         <input
                                                                             id="senderID"
                                                                             type="text"
                                                                             disabled={disable}
                                                                             className={error.proxy_http_server.length ? "form-control is-invalid" : "form-control"}
-                                                                            value={data.proxy_http_server[0].data.fr}
+                                                                            value={""}
                                                                             onChange={(e) => onChangeServerHTTP(e)}
                                                                         />
                                                                         {
@@ -391,7 +389,7 @@ const ProxyConfig = (props) => {
                                                                                 type="number"
                                                                                 disabled={disable}
                                                                                 className={error.proxy_http_port.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={data.proxy_http_port[0].data.fr}
+                                                                                value={""}
                                                                                 onChange={(e) => onChangePortHTTP(e)}
                                                                             />
                                                                             {
@@ -432,7 +430,7 @@ const ProxyConfig = (props) => {
                                                                                 type="text"
                                                                                 disabled={disable}
                                                                                 className={error.proxy_https_server.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={data.proxy_https_server[0].data.fr}
+                                                                                value={""}
                                                                                 onChange={(e) => onChangeServerHTTPS(e)}
                                                                             />
                                                                             {
@@ -455,7 +453,7 @@ const ProxyConfig = (props) => {
                                                                                 type="number"
                                                                                 disabled={disable}
                                                                                 className={error.proxy_https_port.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={data.proxy_https_port[0].data.fr}
+                                                                                value={""}
                                                                                 onChange={(e) => onChangePortHTTPS(e)}
                                                                             />
                                                                             {

@@ -69,6 +69,8 @@ const RevivalMonitoring = (props) => {
         sendData = {
             staff_id: data.staff_id ? data.staff_id : ""
         };
+        if (!data.staff_id)
+            delete sendData.staff_id;
 
         await axios.post(endpoint, sendData)
             .then(response => {
@@ -266,23 +268,23 @@ const RevivalMonitoring = (props) => {
     };
 
     const printBodyTable = (revival, index) => {
+        console.log(revival);
         return (
             <tr key={index} role="row" className="odd">
-                <td>{revival.data.reference}</td>
+                <td>{revival.reference}</td>
                 <td>
-                    {formatDateToTime(revival.data.created_at)}
+                    {formatDateToTime(revival.created_at)}
                 </td>
-                <td>{`${(revival.data.claimer && revival.data.claimer.lastname) ? revival.data.claimer.lastname : ''} ${(revival.data.claimer && revival.data.claimer.firstname) ? revival.data.claimer.firstname : ''} `}</td>
-                <td>{`${(revival.data.responsible_staff && revival.data.responsible_staff.lastname) ? revival.data.responsible_staff.lastname : ''} ${(revival.data.responsible_staff && revival.data.responsible_staff.firstname) ? revival.data.responsible_staff.firstname : ''} `}</td>
-                <td>{revival.data.assigned_to_staff_at}</td>
-                <td>{ revival.data.claim_object ? revival.data.claim_object.name["fr"] : ""}</td>
+                <td>{`${(revival.claimer && revival.claimer.lastname) ? revival.claimer.lastname : ''} ${(revival.claimer && revival.claimer.firstname) ? revival.claimer.firstname : ''} `}</td>
+                <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.lastname ? revival.active_treatment.responsible_staff.identite.lastname : ''} `}</td>
+                <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
+                <td>{ revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
-                    <HtmlDescription onClick={() => showModal(revival.data.description ? revival.data.description : '-')}/>
+                    <HtmlDescription onClick={() => showModal(revival.description ? revival.description : '-')}/>
                 </td>
-                <td>{truncateString(revival.data.description, 41)}</td>
-                <td>{revival.data.status}</td>
+                <td>{revival.status}</td>
                 <td>
-                    <a href={`/process/claim-assign/${revival.data.id}/detail`}
+                    <a href={`/monitoring/claims/staff/${revival?.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
                     </a>
@@ -488,13 +490,13 @@ const RevivalMonitoring = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "40.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
-                                                            {t("Détails")}
+                                                            {t("Action")}
                                                         </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     {
-                                                        revivals.length ? (
+                                                        revivals.allStaffClaim.length ? (
                                                             showList.length ? (
                                                                 showList.map((revival, index) => (
                                                                     printBodyTable(revival, index)
