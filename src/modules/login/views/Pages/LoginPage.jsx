@@ -145,17 +145,25 @@ const LoginPage = (props) => {
         };
         await axios.post(appConfig.apiDomaine + `/login`, formData)
             .then(response => {
+                console.log("debug 1");
                 const token = response.data.access_token;
+                console.log("debug 2");
                 const refresh_token = response.data.refresh_token;
+                console.log("debug 3");
                 const expire_in = response.data.expires_in;
+                console.log("debug 4");
                 axios.get(appConfig.apiDomaine + `/login`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
+                    console.log("debug 5");
                     setError(defaultError);
+                    console.log("debug 6");
                     setStartRequest(false);
+                    console.log("debug 7");
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig());
+                    console.log("debug 8");
                     const user = response.data;
                     localStorage.setItem("userData", JSON.stringify(response.data));
                     localStorage.setItem('token', token);
