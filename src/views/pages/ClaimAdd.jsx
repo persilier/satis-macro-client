@@ -700,12 +700,18 @@ const ClaimAdd = props => {
         if (verifyTokenExpire()) {
             axios.post(endPoint.store, formatFormData(newData))
                 .then(async (response) => {
+                    console.log("1");
                     setDisabledInput(false);
+                    console.log("2");
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+                    console.log("3");
                     resetAllData();
+                    console.log("4");
                     document.getElementById("customFile").value = "";
+                    console.log("5");
                     if (response.data.errors)
                         setCompletionError({ref: response.data.claim.reference, list: response.data.errors});
+                    console.log("6");
                 })
                 .catch(async (error) => {
                     if (completionError.length)
