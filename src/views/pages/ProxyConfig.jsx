@@ -11,7 +11,7 @@ import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
     toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
 } from "../../config/toastConfig";
 import Select from "react-select";
 import {useTranslation} from "react-i18next";
@@ -22,6 +22,7 @@ const endPointConfig = {
         plan: "PRO",
         create: `${appConfig.apiDomaine}/proxy-metadata`,
         store: `${appConfig.apiDomaine}/update-proxy-metadata`,
+        delete: `${appConfig.apiDomaine}/delete-proxy-metadata`,
     },
     MACRO: {
         holding: {
@@ -76,10 +77,10 @@ const ProxyConfig = (props) => {
     };
 
     const defaultDataProxy = {
-        proxy_http_server: [],
-        proxy_https_server : [],
-        proxy_http_port : [],
-        proxy_https_port: [],
+        proxy_http_server: "",
+        proxy_https_server : "",
+        proxy_http_port : "",
+        proxy_https_port: "",
         proxy_modules: [],
         institution_id: "",
     }
@@ -88,7 +89,7 @@ const ProxyConfig = (props) => {
     const [loadingProxy, setLoadingProxy] = useState(false);
     const [error, setError] = useState(defaultErrorProxy);
     const [data, setData] = useState(defaultDataProxy);
-    const [configuration, setConfiguration] = useState("");
+    const [configuration, setConfiguration] = useState({});
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([])
     const [InputEmail, setInputEmail] = useState(false);
@@ -109,7 +110,15 @@ const ProxyConfig = (props) => {
                             proxy_https_port: response.data.proxy_https_port ? response.data.proxy_https_port : "",
                             proxy_modules: response.data.proxy_modules ? response.data.proxy_modules : [],
                         }
-                        setConfiguration(response.data.id ? response.data.id : "")
+                        if (response?.data?.proxy_modules && response.data.proxy_modules.includes("sms"))
+                            setInputSms(true);
+                        if (response?.data?.proxy_modules && response.data.proxy_modules.includes("mail"))
+                            setInputEmail(true);
+                        if (response?.data?.proxy_modules && response.data.proxy_modules.includes("incoming_mail_service"))
+                            setInputIncoming(true);
+                        if (Object.keys(response.data).length === 0)
+                            setDisable(true);
+                        setConfiguration(response.data);
                         setData(newData);
                     })
                     .catch(error => {
@@ -202,9 +211,6 @@ const ProxyConfig = (props) => {
                     .then(response => {
                         console.log(response.data)
                         setLoadingProxy(false);
-                        setInputSms(false)
-                        setInputEmail(false)
-                        setInputIncoming(false)
                         setError(defaultErrorProxy);
                     const newData = {...data};
                     setData(newData);
@@ -228,7 +234,23 @@ const ProxyConfig = (props) => {
 
     const onDisable = async (e) => {
         e.preventDefault();
-        setDisable(!disable)
+        const oldDisable = disable;
+        if (oldDisable !== true) {
+            if (verifyTokenExpire()) {
+                setLoadingProxy(true);
+                await axios.delete(endPoint.delete)
+                    .then(response => {
+                        setData(defaultDataProxy);
+                        setConfiguration({});
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Configurations desactivées avec succès"));
+                    })
+                    .catch(error => {
+                        console.log(error.message);
+                        })
+                    .finally(() => setLoadingProxy(false));
+            }
+        }
+        setDisable(!oldDisable);
 
     };
 
@@ -266,27 +288,27 @@ const ProxyConfig = (props) => {
     const handleDisabledInputChangeEmail = (e) => {
         const newData = {...data};
         if (e.target.checked === true)
-            newData.proxy_modules[0].data.fr.push("mail");
+            newData.proxy_modules.push("mail");
         else
-            newData.proxy_modules[0].data.fr.splice(newData.proxy_modules.indexOf("mail"), 1);
+            newData.proxy_modules.splice(newData.proxy_modules.indexOf("mail"), 1);
         setData(newData);
         setInputEmail(e.target.checked);
     };
     const handleDisabledInputChangeSms = (e) => {
         let newData = {...data};
         if (e.target.checked === true)
-            newData.proxy_modules[0].data.fr.push("sms");
+            newData.proxy_modules.push("sms");
         else
-            newData.proxy_modules[0].data.fr.splice(newData.proxy_modules.indexOf("sms"), 1);
+            newData.proxy_modules.splice(newData.proxy_modules.indexOf("sms"), 1);
         setData(newData);
         setInputSms(e.target.checked);
     };
     const handleDisabledInputChangeIncoming = (e) => {
         const newData = {...data};
         if (e.target.checked === true)
-            newData.proxy_modules[0].data.fr.push("incoming_mail_service");
+            newData.proxy_modules.push("incoming_mail_service");
         else
-            newData.proxy_modules[0].data.fr.splice(newData.proxy_modules.indexOf("incoming_mail_service"), 1);
+            newData.proxy_modules.splice(newData.proxy_modules.indexOf("incoming_mail_service"), 1);
         setData(newData);
         setInputIncoming(e.target.checked);
     };
@@ -366,7 +388,7 @@ const ProxyConfig = (props) => {
                                                                             type="text"
                                                                             disabled={disable}
                                                                             className={error.proxy_http_server.length ? "form-control is-invalid" : "form-control"}
-                                                                            value={""}
+                                                                            value={data.proxy_http_server}
                                                                             onChange={(e) => onChangeServerHTTP(e)}
                                                                         />
                                                                         {
@@ -389,7 +411,7 @@ const ProxyConfig = (props) => {
                                                                                 type="number"
                                                                                 disabled={disable}
                                                                                 className={error.proxy_http_port.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={""}
+                                                                                value={data.proxy_http_port}
                                                                                 onChange={(e) => onChangePortHTTP(e)}
                                                                             />
                                                                             {
@@ -430,7 +452,7 @@ const ProxyConfig = (props) => {
                                                                                 type="text"
                                                                                 disabled={disable}
                                                                                 className={error.proxy_https_server.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={""}
+                                                                                value={data.proxy_https_server}
                                                                                 onChange={(e) => onChangeServerHTTPS(e)}
                                                                             />
                                                                             {
@@ -453,7 +475,7 @@ const ProxyConfig = (props) => {
                                                                                 type="number"
                                                                                 disabled={disable}
                                                                                 className={error.proxy_https_port.length ? "form-control is-invalid" : "form-control"}
-                                                                                value={""}
+                                                                                value={data.proxy_https_port}
                                                                                 onChange={(e) => onChangePortHTTPS(e)}
                                                                             />
                                                                             {
@@ -660,10 +682,10 @@ const ProxyConfig = (props) => {
                                                 <div className="kt-form__actions text-right">
                                                     {
                                                         !loadingProxy ? (
-                                                            !configuration.length ? (
+                                                            (Object.keys(configuration).length === 0) ? (
                                                                 <button type="submit" onClick={(e) => onStore(e)} className="btn btn-primary">{t("Enregistrer")}</button>
                                                             ) : (
-                                                                <button type="submit" onClick={(e) => onUpdate(e)} className="btn btn-primary">{t("Modifier")}</button>
+                                                                <button type="submit" onClick={(e) => onStore(e)} className="btn btn-primary">{t("Modifier")}</button>
                                                             )
                                                         ) : (
                                                             <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
@@ -673,7 +695,7 @@ const ProxyConfig = (props) => {
                                                     } {""}
                                                     {
                                                         !loadingProxy ? (
-                                                                <button type="submit" onClick={(e) => onDisable(e)} className="btn btn-danger" style={{marginLeft:"10px"}}>{t("Désactiver")}</button>
+                                                                <button type="submit" onClick={(e) => onDisable(e)} className="btn btn-danger" style={{marginLeft:"10px"}}>{disable ? t("Réactiver") : t("Désactiver")}</button>
                                                         ) : (
                                                             <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
                                                                 {t("Chargement")}...
