@@ -158,9 +158,9 @@ const LoginPage = (props) => {
                     }
                 }).then(response => {
                     console.log("debug 5");
-                    setError(defaultError);
+                    // setError(defaultError);
                     console.log("debug 6");
-                    setStartRequest(false);
+                    // setStartRequest(false);
                     console.log("debug 7");
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig());
                     console.log("debug 8");
