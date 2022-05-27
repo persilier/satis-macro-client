@@ -87,6 +87,7 @@ const ProxyConfig = (props) => {
 
     const [reload, setReload] = useState(false);
     const [loadingProxy, setLoadingProxy] = useState(false);
+    const [loadingProxyDisable, setLoadingProxyDisable] = useState(false);
     const [error, setError] = useState(defaultErrorProxy);
     const [data, setData] = useState(defaultDataProxy);
     const [configuration, setConfiguration] = useState({});
@@ -170,29 +171,17 @@ const ProxyConfig = (props) => {
         if (selected) {
             setInstitution(selected);
             if (selected.configuration !== null) {
-                newData.hosthttp = selected.configuration.hosthttp ? selected.configuration.hosthttp : "";
-                newData.hosthttps = selected.configuration.hosthttps ? selected.configuration.hosthttps : "";
-                newData.porthttp = selected.configuration.porthttp ? selected.configuration.porthttp : "";
-                newData.porthttps = selected.configuration.porthttps ? selected.configuration.porthttps : "";
                 newData.institution_id = selected.configuration.institution_id ? selected.configuration.institution_id : "";
                 selected.configuration.id && setConfiguration(selected.configuration.id);
             }
             else {
                 setConfiguration("");
                 newData.institution_id = selected.value;
-                newData.hosthttp = "";
-                newData.hosthttps = "";
-                newData.porthttp =  "";
-                newData.porthttps =  "";
             }
         } else {
             setInstitution(null);
             setConfiguration("");
             newData.institution_id = "";
-            newData.hosthttp = "";
-            newData.hosthttps = "";
-            newData.porthttp =  "";
-            newData.porthttps =  "";
 
         }
         setData(newData);
@@ -237,17 +226,20 @@ const ProxyConfig = (props) => {
         const oldDisable = disable;
         if (oldDisable !== true) {
             if (verifyTokenExpire()) {
-                setLoadingProxy(true);
+                setLoadingProxyDisable(true);
                 await axios.delete(endPoint.delete)
                     .then(response => {
                         setData(defaultDataProxy);
                         setConfiguration({});
+                        setInputSms(false);
+                        setInputEmail(false);
+                        setInputIncoming(false);
                         ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Configurations desactivées avec succès"));
                     })
                     .catch(error => {
                         console.log(error.message);
                         })
-                    .finally(() => setLoadingProxy(false));
+                    .finally(() => setLoadingProxyDisable(false)) ;
             }
         }
         setDisable(!oldDisable);
@@ -404,7 +396,7 @@ const ProxyConfig = (props) => {
 															   </div>
 
                                                                <div className={error.proxy_http_port.length ? "form-group row validated" : "form-group row"}>
-                                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port <InputRequire/></label>
+                                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port </label>
                                                                         <div className="col-lg-9 col-xl-6">
                                                                             <input
                                                                                 id="port"
@@ -468,7 +460,7 @@ const ProxyConfig = (props) => {
                                                                     </div>
 
                                                                     <div className={error.proxy_https_port.length ? "form-group row validated" : "form-group row"}>
-                                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port <InputRequire/></label>
+                                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port </label>
                                                                         <div className="col-lg-9 col-xl-6">
                                                                             <input
                                                                                 id="port"
@@ -534,150 +526,6 @@ const ProxyConfig = (props) => {
                                             </div>
 
 
-                                         {/*   <div className="kt-portlet__body">
-
-                                                {
-                                                    verifyPermission(props.userPermissions, 'any-email-claim-configuration') && (props.plan === "HUB") ? (
-                                                        <div
-                                                            className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
-                                                            <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                   htmlFor="institution">
-                                                                {t("Institutions")}
-                                                                <InputRequire/></label>
-                                                            <div className="col-lg-9 col-xl-6">
-                                                                <Select
-                                                                    isClearable
-                                                                    value={institution}
-                                                                    placeholder={"Selectionner une institution"}
-                                                                    onChange={onChangeInstitution}
-                                                                    options={institutions}
-                                                                />
-                                                                {
-                                                                    error.institution_id.length ? (
-                                                                        error.institution_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
-                                                                                {error}
-                                                                            </div>
-                                                                        ))
-                                                                    ) : null
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    ) : null
-                                                }
-
-                                                <div className={error.host.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="host">{t("Serveur")} <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <input
-                                                            id="senderID"
-                                                            type="text"
-                                                            className={error.host.length ? "form-control is-invalid" : "form-control"}
-                                                            value={data.host}
-                                                            onChange={(e) => onChangeServer(e)}
-                                                        />
-                                                        {
-                                                            error.host.length ? (
-                                                                error.host.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className={error.email.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor={"mail_username"}>Email <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <input
-                                                            id="mail_username"
-                                                            type="text"
-                                                            className={error.email.length ? "form-control is-invalid" : "form-control"}
-                                                            value={data.email}
-                                                            onChange={(e) => onChangeUsername(e)}
-                                                        />
-                                                        {
-                                                            error.email.length ? (
-                                                                error.email.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className={error.password.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="mail_password">{t("Mot de passe")} <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <input
-                                                            id="mail_password"
-                                                            type="password"
-                                                            className={error.password.length ? "form-control is-invalid" : "form-control"}
-                                                            value={data.password}
-                                                            onChange={(e) => onChangePassword(e)}
-                                                        />
-                                                        {
-                                                            error.password.length ? (
-                                                                error.password.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className={error.port.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="port">Port <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <input
-                                                            id="port"
-                                                            type="number"
-                                                            className={error.port.length ? "form-control is-invalid" : "form-control"}
-                                                            value={data.port}
-                                                            onChange={(e) => onChangePort(e)}
-                                                        />
-                                                        {
-                                                            error.port.length ? (
-                                                                error.port.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                                <div className={error.protocol.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="protocol">{t("Protocole")} <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <input
-                                                            id="protocol"
-                                                            type="text"
-                                                            className={error.protocol.length ? "form-control is-invalid" : "form-control"}
-                                                            value={data.protocol}
-                                                            onChange={(e) => onChangeProtocol(e)}
-                                                        />
-                                                        {
-                                                            error.protocol.length ? (
-                                                                error.protocol.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>
-
-                                            </div>*/}
-
                                             <div className="kt-portlet__foot">
                                                 <div className="kt-form__actions text-right">
                                                     {
@@ -694,7 +542,7 @@ const ProxyConfig = (props) => {
                                                         )
                                                     } {""}
                                                     {
-                                                        !loadingProxy ? (
+                                                        !loadingProxyDisable ? (
                                                                 <button type="submit" onClick={(e) => onDisable(e)} className="btn btn-danger" style={{marginLeft:"10px"}}>{disable ? t("Réactiver") : t("Désactiver")}</button>
                                                         ) : (
                                                             <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
