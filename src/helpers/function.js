@@ -186,10 +186,10 @@ export const filterChannel = (channels, typeFilter) => {
     const newChannels = [];
     for (let i = 0; i < channels.length; i++) {
         if (typeFilter === RESPONSE_CHANNEL) {
-            if (channels[i].is_response === true)
+            if (channels[i].is_response == 1)
                 newChannels.push(channels[i]);
         } else if (typeFilter === RECEPTION_CHANNEL) {
-            if (channels[i].is_response === false)
+            if (channels[i].is_response == 0)
                 newChannels.push(channels[i]);
         } else
             return channels
@@ -352,6 +352,8 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-archived')
         || verifyPermission(userPermissions, 'list-my-discussions')
         || verifyPermission(userPermissions, 'contribute-discussion')
+        || verifyPermission(userPermissions, 'list-unit-revivals')
+        || verifyPermission(userPermissions, 'list-staff-revivals')
     );
 };
 

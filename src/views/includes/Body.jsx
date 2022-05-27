@@ -136,7 +136,9 @@ import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 import ResetPassword from '../pages/password-reset';
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
-import RevivalMonitoring from "../pages/RevivalMonitoring"
+import RevivalMonitoring from "../pages/RevivalMonitoring";
+import HistoricRevivals from "../pages/HistoricRevivals";
+import MonitoringDetails from "../pages/MonitoringDetails";
 
 const Body = () => {
     return (
@@ -167,6 +169,10 @@ const Body = () => {
 
             <Route exact path="/historic/claims/treat">
                 <HistoricClaimsTraetment/>
+            </Route>
+
+            <Route exact path="/historic/revivals">
+                <HistoricRevivals/>
             </Route>
 
             <Route exact path="/settings/config/edit/:id">
@@ -576,6 +582,10 @@ const Body = () => {
 
             <Route exact path={"/monitoring/claims/system-usage"}>
                 <ClaimSystemUsageReport/>
+            </Route>
+
+            <Route exact path="/monitoring/claims/staff/:id/detail">
+                <MonitoringDetails/>
             </Route>
 
             <Route exact path="/process/claims/:id/detail">
