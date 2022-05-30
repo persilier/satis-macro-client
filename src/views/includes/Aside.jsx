@@ -223,11 +223,11 @@ const Aside = (props) => {
                                             ) : null
                                         }
                                         {
-                                            !verifyPermission(props.userPermissions, 'show-my-staff-monitoring') || !verifyPermission(props.userPermissions, 'list-monitoring-claim-my-institution') ? (
+                                            (verifyPermission(props.userPermissions, 'show-my-staff-monitoring')) && !props.activePilot ? (
                                                 <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
                                                         <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
-                                                        <span className="kt-menu__link-text">{t("Suivi des réclamations relancées")}</span>
+                                                        <span className="kt-menu__link-text">{t("Suivi des réclamations")}</span>
                                                     </li>
                                                 </NavLink>
                                             ) : null
@@ -1658,6 +1658,8 @@ const mapStateToProps = (state) => {
         activePilot: state?.user?.user?.staff?.is_active_pilot || false,
         lead: state?.user?.user?.staff?.is_lead || false,
     };
+
+
 };
 
 export default connect(mapStateToProps)(Aside);

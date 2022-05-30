@@ -27,7 +27,7 @@ const RevivalMonitoring = (props) => {
 
     const defaultData = {
         institution_id: "",
-        staff_id: "",
+        staff_id: "allStaff",
     };
     const defaultError = {
         institution_targeted_id: [],
@@ -46,13 +46,14 @@ const RevivalMonitoring = (props) => {
         claimTreatedByStaff: "-"
     });
     const [activeNumberPage, setActiveNumberPage] = useState(1);
-    const [numberPage, setNumberPage] = useState(5);
+    const [numberPage, setNumberPage] = useState(0);
+    const [total, setTotal] = useState(0);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [showList, setShowList] = useState([]);
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
     const [currentMessage, setCurrentMessage] = useState("");
-    const [staff, setStaff] = useState(null);
+    const [staff, setStaff] = useState({label: "Tous les staffs" , value : "allStaff"});
     const [staffs, setStaffs] = useState([]);
     const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
@@ -82,12 +83,16 @@ const RevivalMonitoring = (props) => {
                 newRevivals.claimAssignedToStaff = response.data.claimAssignedToStaff;
                 newRevivals.claimNoTreatedByStaff = response.data.claimNoTreatedByStaff;
                 newRevivals.claimTreatedByStaff = response.data.claimTreatedByStaff;
+
                 setNumberPage(forceRound(response.data.allStaffClaim.total/numberPerPage));
                 setShowList(response.data.allStaffClaim.data.slice(0, numberPerPage));
+                setTotal(response.data.allStaffClaim.total);
                 setPrevUrl(response.data.allStaffClaim["prev_page_url"]);
                 setNextUrl(response.data.allStaffClaim["next_page_url"]);
+
                 setRevivals(newRevivals);
                 setError(defaultError);
+
                 setLoadFilter(false);
                 setLoad(false);
             //    setStaff("")
@@ -126,8 +131,14 @@ const RevivalMonitoring = (props) => {
                         response.data.staffs[i].label= response.data.staffs[i].identite.firstname + " " + response.data.staffs[i].identite.lastname;
                         response.data.staffs[i].value= response.data.staffs[i].id;
                     }
+                    response.data.staffs.unshift(
+                        {
+                            label: "Tous les staffs" , value : "allStaff"
+                        }
+                    )
 
                     setStaffs(response.data.staffs);
+                    filterReporting();
                 })
                 .catch(error => {
                     setLoad(false);
@@ -143,10 +154,13 @@ const RevivalMonitoring = (props) => {
                     newRevivals.claimAssignedToStaff = response.data.claimAssignedToStaff;
                     newRevivals.claimNoTreatedByStaff = response.data.claimNoTreatedByStaff;
                     newRevivals.claimTreatedByStaff = response.data.claimTreatedByStaff;
+
                     setNumberPage(forceRound(response.data.allStaffClaim.total/numberPerPage));
                     setShowList(response.data.allStaffClaim.data.slice(0, numberPerPage));
+                    setTotal(response.data.allStaffClaim.total);
                     setPrevUrl(response.data.allStaffClaim["prev_page_url"]);
                     setNextUrl(response.data.allStaffClaim["next_page_url"]);
+
                     setRevivals(newRevivals);
                     setError(defaultError);
                     setLoadFilter(false);
@@ -196,10 +210,8 @@ const RevivalMonitoring = (props) => {
     };
 
     const onChangeNumberPerPage = (e) => {
-        setActiveNumberPage(1);
+        e.persist();
         setNumberPerPage(parseInt(e.target.value));
-        setShowList(revivals.slice(0, parseInt(e.target.value)));
-        setNumberPage(forceRound(revivals.length / parseInt(e.target.value)));
     };
 
     const getEndByPosition = (position) => {
@@ -213,33 +225,20 @@ const RevivalMonitoring = (props) => {
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        setShowList(revivals.slice(getEndByPosition(page) - numberPerPage, getEndByPosition(page)));
+        setLoad(true);
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage <= numberPage) {
+        if (activeNumberPage <= numberPage && nextUrl !== null) {
             setActiveNumberPage(activeNumberPage + 1);
-            setShowList(
-                revivals.slice(
-                    getEndByPosition(
-                        activeNumberPage + 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage + 1)
-                )
-            );
         }
     };
 
     const onClickPreviousPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage >= 1) {
+        if (activeNumberPage >= 1 && prevUrl !== null) {
             setActiveNumberPage(activeNumberPage - 1);
-            setShowList(
-                revivals.slice(
-                    getEndByPosition(activeNumberPage - 1) - numberPerPage,
-                    getEndByPosition(activeNumberPage - 1)
-                )
-            );
         }
     };
 
@@ -254,7 +253,7 @@ const RevivalMonitoring = (props) => {
     const pages = arrayNumberPage();
 
     const onChangeStaff = (selected) => {
-        let staffToSend = selected?.id
+        let staffToSend = selected?.id ?? selected?.value
         const newData = {...data};
         newData.staff_id = staffToSend;
         setStaff(selected);
@@ -279,9 +278,9 @@ const RevivalMonitoring = (props) => {
                 <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.lastname ? revival.active_treatment.responsible_staff.identite.lastname : ''} `}</td>
                 <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
                 <td>{ revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
-                <td style={{textAlign: 'center'}}>
+              {/*  <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(revival.description ? revival.description : '-')}/>
-                </td>
+                </td>*/}
                 <td>{revival.status}</td>
                 <td>
                     <a href={`/monitoring/claims/staff/${revival?.id}/detail`}
@@ -345,7 +344,7 @@ const RevivalMonitoring = (props) => {
                                 <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
-                                        <div className="text-center m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
+                                        <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
                                             <div className="" style={{marginBottom: "30px"}}>
                                                 <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
                                                     <div className="kt-widget6">
@@ -425,7 +424,7 @@ const RevivalMonitoring = (props) => {
                                             </div>
                                         </div>
 
-                                      {/*  <div className="row">
+                                        <div className="row">
                                             <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
@@ -437,7 +436,7 @@ const RevivalMonitoring = (props) => {
                                                     </label>
                                                 </div>
                                             </div>
-                                        </div>*/}
+                                        </div>
 
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -477,11 +476,11 @@ const RevivalMonitoring = (props) => {
                                                             aria-label="Country: activate to sort column ascending">
                                                             {t("Objet de réclamation")}
                                                         </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                     {/*   <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
                                                             {t("Description")}
-                                                        </th>
+                                                        </th>*/}
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
@@ -518,7 +517,7 @@ const RevivalMonitoring = (props) => {
                                                             colSpan="1">{props.plan === "PRO" ? "Staff" : "Institution ciblée"}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Date affectation")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                     {/*   <th rowSpan="1" colSpan="1">{t("Description")}</th>*/}
                                                         <th rowSpan="1" colSpan="1">{t("Statut")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
@@ -543,7 +542,6 @@ const RevivalMonitoring = (props) => {
                                                             onChangeNumberPerPage={onChangeNumberPerPage}
                                                             activeNumberPage={activeNumberPage}
                                                             onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                            pages={pages}
                                                             onClickPage={(e, number) => onClickPage(e, number)}
                                                             numberPage={numberPage}
                                                             onClickNextPage={e => onClickNextPage(e)}
@@ -567,7 +565,7 @@ const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot
+        activePilot: state.user.user.staff.is_active_pilot === null
     };
 };
 

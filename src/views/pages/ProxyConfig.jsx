@@ -81,7 +81,7 @@ const ProxyConfig = (props) => {
         proxy_https_server : "",
         proxy_http_port : "",
         proxy_https_port: "",
-        proxy_modules: [],
+        proxy_modules: ["sms"],
         institution_id: "",
     }
 
@@ -94,7 +94,7 @@ const ProxyConfig = (props) => {
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([])
     const [InputEmail, setInputEmail] = useState(false);
-    const [InputSms, setInputSms] = useState(false);
+    const [InputSms, setInputSms] = useState(true);
     const [InputIncoming, setInputIncoming] = useState(false);
     const [disable, setDisable] = useState(false);
 
@@ -196,6 +196,7 @@ const ProxyConfig = (props) => {
 
         setLoadingProxy(true);
         if (verifyTokenExpire()) {
+            sendData.proxy_modules = ["sms"]
                 await axios.put(endPoint.store, sendData)
                     .then(response => {
                         console.log(response.data)
@@ -351,15 +352,32 @@ const ProxyConfig = (props) => {
                                                 Proxy configuration
                                             </h3>
                                         </div>
+                                            <div style={{textAlign: "right",}}>
+                                                {
+                                                    !loadingProxyDisable ? (
+                                                        <button type="submit" onClick={(e) => onDisable(e)} style={{marginTop:"10px"}} className="btn btn-danger">{disable ? t("Réactiver") : t("Désactiver")}</button>
+                                                    ) : (
+                                                        <button className="btn btn-danger  kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"  style={{marginTop:"10px"}} type="button" disabled>
+                                                            {t("Chargement")}...
+                                                        </button>
+                                                    )
+
+                                                }
+                                            </div>
+
                                     </div>
+
+
 
                                     <form method="POST" className="kt-form">
                                         <div className="kt-form kt-form--label-right">
 
                                             <div className="kt-portlet">
                                                 <div className="kt-portlet__body  kt-portlet__body--fit">
+
                                                     <div className="row row-no-padding row-col-separator-lg">
                                                         <div className="col-md-12 col-lg-6 col-xl-3">
+
 
                                                             <div className="kt-widget24">
                                                                 <div className="kt-widget24__details">
@@ -492,7 +510,7 @@ const ProxyConfig = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className="form-group row">
+                                       {/*     <div className="form-group row" >
                                                 <label className="col-form-label col-lg-4 col-sm-12 pt-0">{t("Utiliser pour")} :
                                                      </label>
                                                 <div className="col-lg-8 col-md-8 col-sm-12" style={{verticalAlign: "middle", margin: "auto"}}>
@@ -523,7 +541,7 @@ const ProxyConfig = (props) => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div>*/}
 
 
                                             <div className="kt-portlet__foot">
@@ -540,16 +558,6 @@ const ProxyConfig = (props) => {
                                                                 {t("Chargement")}...
                                                             </button>
                                                         )
-                                                    } {""}
-                                                    {
-                                                        !loadingProxyDisable ? (
-                                                                <button type="submit" onClick={(e) => onDisable(e)} className="btn btn-danger" style={{marginLeft:"10px"}}>{disable ? t("Réactiver") : t("Désactiver")}</button>
-                                                        ) : (
-                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
-                                                                {t("Chargement")}...
-                                                            </button>
-                                                        )
-
                                                     }
                                                 </div>
                                             </div>
