@@ -350,6 +350,8 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-archived')
         || verifyPermission(userPermissions, 'list-my-discussions')
         || verifyPermission(userPermissions, 'contribute-discussion')
+        || verifyPermission(userPermissions, 'list-unit-revivals')
+        || verifyPermission(userPermissions, 'list-staff-revivals')
     );
 };
 
