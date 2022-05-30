@@ -131,7 +131,7 @@ const MonitoringDetails = (props) => {
 
                                     {
                                         ((claim && claim.status !== "archived")) ? (
-                                            (verifyPermission(props.userPermissions, 'revive-staff') && ( props.activePilot === true)) && (
+                                            (verifyPermission(props.userPermissions, 'revive-staff') && props.lead === true) && (
                                                 <>
                                                     <button ref={ref} type="button" data-keyboard="false" data-backdrop="static" data-toggle="modal" data-target="#kt_modal_4" className="d-none btn btn-outline-warning btn-sm">
                                                         {t("Relancer")}
@@ -150,7 +150,7 @@ const MonitoringDetails = (props) => {
                                             {console.log("claim:", claim)}
                                             {(claim && claim.status !== "archived") ? (
                                                 <>
-                                                    {(verifyPermission(props.userPermissions, 'revive-staff') && ( props.activePilot === true)) && (
+                                                    {(verifyPermission(props.userPermissions, 'revive-staff') && props.lead === true) && (
                                                         <button onClick={() => {ref.current.click()}} type="button" className="btn btn-outline-warning btn-sm">
                                                             {t("Relancer")}
                                                         </button>
