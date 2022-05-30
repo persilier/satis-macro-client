@@ -100,7 +100,7 @@ const HistoricRevivals = (props) => {
     const searchElement = async (e) => {
         if (e.target.value) {
             setLoad(true);
-            getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, props.userStaff.is_lead === true ? null : props.userStaff.id, getLowerCaseString(e.target.value))
+/*            getHistoricRevivals(props.userPermissions, numberPerPage, activeNumberPage, props.userStaff.is_lead === true ? null : props.userStaff.id, getLowerCaseString(e.target.value))
                 .then(response => {
                     console.log(response.data.data);
                     setNumberPage(forceRound(response.data.total/numberPerPage));
@@ -113,11 +113,12 @@ const HistoricRevivals = (props) => {
                 .catch(error => {
                     console.error(error.message);
                 })
-                .finally(() => setLoad(false));
+                .finally(() => setLoad(false));*/
         }
     }
     const onChangeNumberPerPage = (e) => {
         e.persist();
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
     };
 
