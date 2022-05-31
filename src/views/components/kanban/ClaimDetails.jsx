@@ -193,9 +193,9 @@ const ClaimDetails = (props) => {
                                                                                       style={{fontSize: "1.5rem"}}/>
                                                                     <span className="kt-widget__data">
                                                                                 {
-                                                                                    claim.claimer.email.map((mail, index) => (
+                                                                                    claim.claimer?.email ? claim.claimer.email.map((mail, index) => (
                                                                                         index === claim.claimer.email.length - 1 ? mail : mail + "/ "
-                                                                                    ))
+                                                                                    )) : ""
                                                                                 }
                                                                             </span>
                                                                 </div>
@@ -204,9 +204,9 @@ const ClaimDetails = (props) => {
                                                                                       style={{fontSize: "1.5rem"}}/>
                                                                     <span className="kt-widget__data">
                                                                                 {
-                                                                                    claim.claimer.telephone.map((telephone, index) => (
+                                                                                    claim.claimer?.telephone ? claim.claimer.telephone.map((telephone, index) => (
                                                                                         index === claim.claimer.telephone.length - 1 ? telephone : telephone + "/ "
-                                                                                    ))
+                                                                                    )) : ""
                                                                                 }
                                                                             </span>
                                                                 </div>

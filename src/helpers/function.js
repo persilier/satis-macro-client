@@ -291,7 +291,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'update-active-pilot')
         || verifyPermission(userPermissions, "list-faq")
         || verifyPermission(userPermissions, "list-faq-category")
-     //   || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
         || verifyPermission(userPermissions, "list-any-institution-type-role")
@@ -360,12 +360,12 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
-        //|| verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
-        //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
-        // || verifyPermission(userPermissions, 'list-global-reporting')
-        //|| verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
-/*        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
-        || verifyPermission(userPermissions, 'list-system-usage-reporting')*/
+        || verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
+        || verifyPermission(userPermissions, 'system-my-efficiency-report')
+        || verifyPermission(userPermissions, 'list-global-reporting')
+        || verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
+        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+        || verifyPermission(userPermissions, 'list-system-usage-reporting')
     );
 };
 
