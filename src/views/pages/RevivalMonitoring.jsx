@@ -244,7 +244,7 @@ const RevivalMonitoring = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Suivi des réclamations relancées")}
+                                        {t("Suivi des réclamations ")}
                                     </a>
                                 </div>
                             </div>
@@ -255,7 +255,7 @@ const RevivalMonitoring = (props) => {
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                     <InfirmationTable information={(
                         <div>
-                            {t("Cette page présente la liste des suivis des réclamations relancées")}
+                            {t("Cette page présente la liste des suivis des réclamations")}
                         </div>
                     )}/>
 
