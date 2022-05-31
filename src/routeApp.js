@@ -14,7 +14,6 @@ class RouteApp extends Component {
     }
 
     render() {
-            console.log("Something is wrong")
         return (
             <Router>
                     {
