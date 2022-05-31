@@ -125,14 +125,16 @@ const ClaimReportingUemoaSix = (props) => {
         }
 
         if (verifyTokenExpire()) {
+            setLoadFilter(true);
+            setLoad(true);
             axios.get(endpoint)
                 .then(response => {
                     console.log(response.data)
                 })
                 .catch(error => {
                     console.log("Something is wrong")
-                })
-            ;
+                });
+            fetchData();
         }
     }, []);
 
