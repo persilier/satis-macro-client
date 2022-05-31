@@ -16,6 +16,7 @@ import {verifyPermission} from "../../../helpers/permission";
 import {formatSelectOption} from "../../../helpers/function";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import InputRequire from "../../components/InputRequire";
 
 
 const AddChatsForm = (props) => {
@@ -144,7 +145,7 @@ const AddChatsForm = (props) => {
                                                                 <div
                                                                     className={error.claim_id.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">{t("Référence réclamation")}</label>
+                                                                           htmlFor="exampleSelect1">{t("Référence réclamation")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         {claimIdData ? (
                                                                             <Select
@@ -172,7 +173,7 @@ const AddChatsForm = (props) => {
                                                                 <div
                                                                     className={error.name.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="name">{t("Nom de Discussion")}</label>
+                                                                           htmlFor="name">{t("Nom de Discussion")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         <input
                                                                             id="name"
