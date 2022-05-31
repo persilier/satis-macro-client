@@ -146,6 +146,7 @@ const RevivalMonitoring = (props) => {
     }, [fetchData]);
 
     const searchElement = async (e) => {
+        setActiveNumberPage(1);
         if (e.target.value) {
             if (verifyTokenExpire()) {
                 setLoad(true);
@@ -260,7 +261,7 @@ const RevivalMonitoring = (props) => {
 
                     <div className="kt-portlet">
                         <HeaderTablePage
-                            title={t("Suivi des relances")}
+                            title={t("Suivi des réclamations")}
                         />
 
                         <div className="kt-portlet__body">
