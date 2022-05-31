@@ -37,20 +37,20 @@ export function systemUsageReport(userPermissions, sendData) {
 }
 
 // HistoricRevivals
-export function getHistoricRevivals(userPermissions, numberPerPage, page = null, id = null, search = null) {
+export function getHistoricRevivals(userPermissions, numberPerPage, page = null, id = null, search = {status: false, value: ""}) {
     let endpoint = "";
 
     if (verifyPermission(userPermissions, 'list-unit-revivals')) {
         if (page)
-            endpoint = `/revivals?size=${numberPerPage}&page=${page}${search ? `&key=${search}` : ""}`;
+            endpoint = `/revivals?size=${numberPerPage}&page=${page}${search.status ? `&key=${search.value}` : ""}`;
         else
-            endpoint = `/revivals?size=${numberPerPage}${search ? `&key=${search}` : ""}`;
+            endpoint = `/revivals?size=${numberPerPage}${search.status ? `&key=${search.value}` : ""}`;
     }
     if (verifyPermission(userPermissions, 'list-staff-revivals') && id) {
         if (page)
-            endpoint = `/revivals/staff/${id}?size=${numberPerPage}&page=${page}${search ? `&key=${search}` : ""}`;
+            endpoint = `/revivals/staff/${id}?size=${numberPerPage}&page=${page}${search.status ? `&key=${search.value}` : ""}`;
         else
-            endpoint = `/revivals/staff/${id}?size=${numberPerPage}${search ? `&key=${search}` : ""}`;
+            endpoint = `/revivals/staff/${id}?size=${numberPerPage}${search.status ? `&key=${search.value}` : ""}`;
     }
 
     if (verifyTokenExpire()) {
@@ -79,9 +79,9 @@ export function getClaimDetails(userPermissions, claimId) {
         return axios.get(endpoint);
 }
 
+//RelaunchModal
 export function reviveStaff(id, sendData) {
 
     if (verifyTokenExpire())
         return axios.post(`/revive-staff/${id}`, sendData);
-
 }
