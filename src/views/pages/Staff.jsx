@@ -146,10 +146,8 @@ const Staff = (props) => {
                                 setStaffs(newStaffs);
                                 if (showList.length > 1) {
                                     setActiveNumberPage(activeNumberPage);
-                                    fetchData();
                                 } else {
                                     setActiveNumberPage(activeNumberPage - 1);
-                                    fetchData();
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
