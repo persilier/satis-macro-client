@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
 import {
@@ -72,9 +72,11 @@ const ClaimsArchived = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
 
-    useEffect(() => {
+
+    const fetchData = useCallback(async (search = {status: false, value: ""}) => {
         if (verifyTokenExpire()) {
-            axios.get(endPoint.list + "?size=" + numberPerPage)
+            setLoad(true);
+            await axios.get(`${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${search.status ? `&key=${search.value}` : ""}`)
                 .then(response => {
                     setLoad(false);
                     setNumberPage(forceRound(response.data.total/numberPerPage));
@@ -90,63 +92,19 @@ const ClaimsArchived = (props) => {
                 })
             ;
         }
-    }, []);
+    }, [numberPerPage, activeNumberPage])
 
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
-    const filterShowListBySearchValue = (value) => {
-        value = getLowerCaseString(value);
-        let newClaims = [...claimsArchived];
-        newClaims = newClaims.filter(el => (
-            getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer ? el.claimer.lastname : "-"} ${el.claimer ? el.claimer.firstname : ""}`).indexOf(value) >= 0 ||
-            getLowerCaseString(el.description).indexOf(value) >= 0 ||
-            getLowerCaseString(el.active_treatment.solution === null ? "-" : el.active_treatment.solution).indexOf(value) >= 0
-        ));
-
-        return newClaims;
-    };
 
     const searchElement = async (e) => {
+        setActiveNumberPage(1);
         if (e.target.value) {
-/*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/;
-            if (verifyTokenExpire()) {
-                setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + "&size=" + numberPerPage)
-                    .then(response => {
-                        setLoad(false);
-                        setClaimsArchived(response.data["data"]);
-                        setShowList(response.data.data.slice(0, numberPerPage));
-                        setTotal(response.data.total);
-                        setNumberPage(forceRound(response.data.total / numberPerPage));
-                        setPrevUrl(response.data["prev_page_url"]);
-                        setNextUrl(response.data["next_page_url"]);
-                    })
-                    .catch(error => {
-                        setLoad(false);
-                    })
-                ;
-            }
+            fetchData({status: true, value: getLowerCaseString(e.target.value)})
         } else {
-/*            setNumberPage(forceRound(claimsArchived.length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
-            if (verifyTokenExpire()) {
-                setLoad(true);
-                axios.get(endPoint.list + "?size=" + numberPerPage)
-                    .then(response => {
-                        setLoad(false);
-                        setClaimsArchived(response.data["data"]);
-                        setShowList(response.data.data.slice(0, numberPerPage));
-                        setTotal(response.data.total);
-                        setNumberPage(forceRound(response.data.total / numberPerPage));
-                        setPrevUrl(response.data["prev_page_url"]);
-                        setNextUrl(response.data["next_page_url"]);
-                    })
-                    .catch(error => {
-                        setLoad(false);
-                    })
-                ;
-            }
+            fetchData();
             setActiveNumberPage(1);
         }
     };
@@ -155,124 +113,29 @@ const ClaimsArchived = (props) => {
     const onChangeNumberPerPage = (e) => {
 
         e.persist();
-        if (verifyTokenExpire()) {
-            setLoad(true);
-            axios.get(endPoint.list + "?size=" + e.target.value)
-                .then(response => {
-                    setLoad(false);
-                    setActiveNumberPage(1);
-                    setClaimsArchived(response.data["data"]);
-                    setShowList(response.data.data.slice(0, response.data.per_page));
-                    setTotal(response.data.total);
-                    setNumberPage(forceRound(response.data.total / response.data.per_page));
-                    setPrevUrl(response.data["prev_page_url"]);
-                    setNextUrl(response.data["next_page_url"]);
-                })
-                .catch(error => {
-                    setLoad(false);
-                })
-            ;
-        }
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
     };
 
 
-    const getEndByPosition = (position) => {
-        let end = numberPerPage;
-        for (let i = 1; i < position; i++) {
-            end = end + numberPerPage;
-        }
-        return end;
-    };
-
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-        if (verifyTokenExpire()) {
-            setLoad(true);
-            axios.get(endPoint.list + "?page=" + page + "&size=" + numberPerPage)
-                .then(response => {
-                    setLoad(false);
-                    setPrevUrl(response.data["prev_page_url"]);
-                    setNextUrl(response.data["next_page_url"]);
-                    setClaimsArchived(response.data["data"]);
-                    setShowList(response.data["data"].slice(0, numberPerPage));
-
-                })
-                .catch(error => {
-                    setLoad(false);
-                })
-            ;
-        }
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage <= numberPage) {
+        if (activeNumberPage <= numberPage && nextUrl !== null) {
             setActiveNumberPage(activeNumberPage + 1);
-
-            if (nextUrl !== null) {
-                if (verifyTokenExpire()) {
-                    setLoad(true);
-                    axios.get(nextUrl + "?size=" + numberPerPage)
-                        .then(response => {
-                            setLoad(false);
-                            setPrevUrl(response.data["prev_page_url"]);
-                            setNextUrl(response.data["next_page_url"]);
-                            setClaimsArchived(response.data["data"]);
-                            setShowList(
-                                response.data["data"].slice(0, numberPerPage)
-                            );
-
-                        })
-                        .catch(error => {
-                            setLoad(false);
-                        })
-                    ;
-                }
-            }
-
         }
     };
 
     const onClickPreviousPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage >= 1) {
+        if (activeNumberPage >= 1 && prevUrl !== null) {
             setActiveNumberPage(activeNumberPage - 1);
-
-            if (prevUrl !== null) {
-                if (verifyTokenExpire()) {
-                    setLoad(true);
-                    axios.get(prevUrl + "?size=" + numberPerPage)
-                        .then(response => {
-                            setLoad(false);
-                            setPrevUrl(response.data["prev_page_url"]);
-                            setNextUrl(response.data["next_page_url"]);
-                            setClaimsArchived(response.data["data"]);
-                            setShowList(
-                                response.data["data"].slice(0, numberPerPage)
-                            );
-
-                        })
-                        .catch(error => {
-                            setLoad(false);
-                        })
-                    ;
-                }
-            }
         }
     };
-
-
-    const arrayNumberPage = () => {
-        const pages = [];
-        for (let i = 0; i < numberPage; i++) {
-            pages[i] = i;
-        }
-        return pages
-    };
-
-    const pages = arrayNumberPage();
 
     const showModal = (message) => {
         setCurrentMessage(message);
@@ -299,9 +162,9 @@ const ClaimsArchived = (props) => {
                 <td style={{textAlign: 'center'}}>{(archived.claim_object && archived.claim_object.time_limit) ? archived.claim_object.time_limit : '-'}</td>
                 <td style={{textAlign: 'center'}}>
                     {
-                        archived.active_treatment.is_claimer_satisfied === 1 ?
+                        archived.active_treatment.is_claimer_satisfied == 1 ?
                             <span className="kt-badge kt-badge--inline kt-badge--success">{t("Oui")}</span>
-                            : archived.active_treatment.is_claimer_satisfied === 0 ?
+                            : archived.active_treatment.is_claimer_satisfied == 0 ?
                             <span className="kt-badge kt-badge--inline kt-badge--danger">{t("Non")}</span>
                             : " "
                     }
@@ -492,7 +355,6 @@ const ClaimsArchived = (props) => {
                                                                 onChangeNumberPerPage={onChangeNumberPerPage}
                                                                 activeNumberPage={activeNumberPage}
                                                                 onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                                pages={pages}
                                                                 onClickPage={(e, number) => onClickPage(e, number)}
                                                                 numberPage={numberPage}
                                                                 onClickNextPage={e => onClickNextPage(e)}
