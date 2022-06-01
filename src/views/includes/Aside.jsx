@@ -222,6 +222,16 @@ const Aside = (props) => {
                                                 </NavLink>
                                             ) : null
                                         }
+                                        {
+                                            (verifyPermission(props.userPermissions, 'show-my-staff-monitoring')) && !props.activePilot ? (
+                                                <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                    <li className="kt-menu__link ">
+                                                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                        <span className="kt-menu__link-text">{t("Suivi des réclamations")}</span>
+                                                    </li>
+                                                </NavLink>
+                                            ) : null
+                                        }
 
                                         {/*{
                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
@@ -835,6 +845,16 @@ const Aside = (props) => {
                                                                                     <li className="kt-menu__link ">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                                         <span className="kt-menu__link-text">Configuration Titre Rapport</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            (verifyPermission(props.userPermissions, "show-proxy-config") || verifyPermission(props.userPermissions, "any-email-claim-configuration")) ? (
+                                                                                <NavLink exact to="/settings/config-proxy" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Proxy Configuration")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
@@ -1660,6 +1680,8 @@ const mapStateToProps = (state) => {
         activePilot: state?.user?.user?.staff?.is_active_pilot || false,
         lead: state?.user?.user?.staff?.is_lead || false,
     };
+
+
 };
 
 export default connect(mapStateToProps)(Aside);

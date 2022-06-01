@@ -124,6 +124,7 @@ import MyTotalUnfoundedClaim from "../pages/MyTotalUnfoundedClaim";
 import MyTotalClaimMeasure from "../pages/MyTotalClaimMeasure";
 import UnitImportPage from "../pages/UnitImportPage";
 import EmailConfig from "../pages/EmailConfig";
+import ProxyConfig from "../pages/ProxyConfig";
 import RoleImportPage from "../pages/RoleImportPage";
 import TypeCompte from "../pages/TypeCompte";
 import TypeCompteForm from "../components/TypeCompteForm";
@@ -135,6 +136,7 @@ import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
 import ResetPassword from '../pages/password-reset';
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
+import RevivalMonitoring from "../pages/RevivalMonitoring";
 import HistoricRevivals from "../pages/HistoricRevivals";
 import MonitoringDetails from "../pages/MonitoringDetails";
 
@@ -498,6 +500,10 @@ const Body = () => {
                 <ClaimAssign/>
             </Route>
 
+            <Route exact path="/process/revival">
+             <RevivalMonitoring/>
+            </Route>
+
             <Route exact path="/process/claim-reassign">
                 <ClaimReassign/>
             </Route>
@@ -740,6 +746,10 @@ const Body = () => {
 
             <Route exact path="/settings/config-mail">
                 <EmailConfig/>
+            </Route>
+
+            <Route exact path="/settings/config-proxy">
+                <ProxyConfig/>
             </Route>
 
             <Route exact path="/process/total-claim-register">

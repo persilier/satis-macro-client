@@ -19,7 +19,7 @@ const RelaunchModal = ({onClose, id}) => {
 
     const handleClick = (e) => {
         setLoad(true);
-/*        reviveStaff(id, {text: description})
+        reviveStaff(id, {text: description})
             .then(({data}) => {
                 setLoad(false);
                 ref.current.click();
@@ -28,20 +28,7 @@ const RelaunchModal = ({onClose, id}) => {
             .catch(({response}) => {
                 setLoad(false);
                 setError(response.data.error.text);
-            })*/
-        if (verifyTokenExpire()) {
-            axios.post(`${appConfig.apiDomaine}/revive-staff/${id}`, {text: description})
-                .then(({data}) => {
-                    setLoad(false);
-                    ref.current.click();
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Relance effectuer avec succès')))
-                })
-                .catch(({response}) => {
-                    setLoad(false);
-                    setError(response?.data?.error?.text ? response.data.error.text : []);
-                })
-            ;
-        }
+            })
     };
 
     return (
