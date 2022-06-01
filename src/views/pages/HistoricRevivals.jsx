@@ -271,53 +271,56 @@ const HistoricRevivals = (props) => {
                         <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
 
+                                        {
+                                            props.userStaff.is_lead === true ? (
+                                                <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
+                                                    <div className="" style={{marginBottom: "30px"}}>
+                                                        <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
+                                                            <div className="kt-widget6">
+                                                                <div className={error.staff.length ? "kt-widget6__body validated" : "kt-widget6__body"}>
+                                                                    <div className={"kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
+                                                                        <div className="col-lg-1">{t("Agent")}</div>
+                                                                        <div className={"col-lg-9"}>
+                                                                            <Select
+                                                                                value={staff}
+                                                                                isClearable
+                                                                                isLoading={loadSelect}
+                                                                                onChange={onChangeStaff}
+                                                                                placeholder={t("Veuillez sélectionner l'agent")}
+                                                                                options={staffs}
+                                                                            />
+                                                                            {
+                                                                                error.staff.length ? (
+                                                                                    error.staff.map((error, index) => (
+                                                                                        <div key={index}
+                                                                                             className="invalid-feedback mb-2">
+                                                                                            {error}
+                                                                                        </div>
+                                                                                    ))
+                                                                                ) : null
+                                                                            }
+                                                                        </div>
+                                                                        <div className="col-lg-2">
+                                                                            {
+                                                                                load ? (
+                                                                                    <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
+                                                                                        {t("Chargement")}...
+                                                                                    </button>
+                                                                                ) : (
+                                                                                    <button type="submit" onClick={(e) => onClickFilter(e)} className="btn btn-primary">{t("Filtrer")}</button>
 
-                                        <div className="m-auto col-xl-4 col-lg-12 order-lg-3 order-xl-1">
-                                            <div className="" style={{marginBottom: "30px"}}>
-                                                <div className="kt-portlet__body" style={{padding: "10px 25px"}}>
-                                                    <div className="kt-widget6">
-                                                        <div className={error.staff.length ? "kt-widget6__body validated" : "kt-widget6__body"}>
-                                                            <div className={"kt-widget6__item row"} style={{padding: "0.5rem 0"}}>
-                                                                <div className="col-lg-1">{t("Agent")}</div>
-                                                                <div className={"col-lg-9"}>
-                                                                    <Select
-                                                                        value={staff}
-                                                                        isClearable
-                                                                        isLoading={loadSelect}
-                                                                        onChange={onChangeStaff}
-                                                                        placeholder={t("Veillez sélectionner l'agent")}
-                                                                        options={staffs}
-                                                                    />
-                                                                    {
-                                                                        error.staff.length ? (
-                                                                            error.staff.map((error, index) => (
-                                                                                <div key={index}
-                                                                                     className="invalid-feedback mb-2">
-                                                                                    {error}
-                                                                                </div>
-                                                                            ))
-                                                                        ) : null
-                                                                    }
-                                                                </div>
-                                                                <div className="col-lg-2">
-                                                                    {
-                                                                        load ? (
-                                                                            <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--dark ml-3" type="button" disabled>
-                                                                                {t("Chargement")}...
-                                                                            </button>
-                                                                        ) : (
-                                                                            <button type="submit" onClick={(e) => onClickFilter(e)} className="btn btn-primary">{t("Filtrer")}</button>
+                                                                                )
+                                                                            }
+                                                                        </div>
+                                                                    </div>
 
-                                                                        )
-                                                                    }
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            ) : null
+                                        }
 
                                         {/*<div className="row">
                                             <div className="col-sm-6 text-left">

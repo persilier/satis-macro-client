@@ -13,7 +13,7 @@ import appConfig from "../../config/appConfig";
 import {
     forceRound, formatSelectOption, formatStatus,
     getLowerCaseString,
-    loadCss, removeNullValueInObject,
+    loadCss, reduceCharacter, removeNullValueInObject,
 } from "../../helpers/function";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
