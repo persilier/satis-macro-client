@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {
+    displayStatus,
     forceRound,
     formatDateToTimeStampte,
     formatSelectOption,
@@ -185,7 +186,7 @@ const HistoricRevivals = (props) => {
                 </td>
                 <td>
                     {
-                        revival?.claim_status ? revival.claim_status : ""
+                        revival?.claim_status ? displayStatus(revival.claim_status) : ""
                     }
                 </td>
                 <td>
@@ -196,12 +197,12 @@ const HistoricRevivals = (props) => {
                 </td>
                 <td>
                     {
-                        revival?.status ? revival.status : ""
+                        revival?.status ? displayStatus(revival.status) : ""
                     }
                 </td>
                 <td>
                     {
-                        revival?.claim?.status ? revival.claim.status : ""
+                        revival?.claim?.status ? displayStatus(revival.claim.status) : ""
                     }
                 </td>
                 <td style={{textAlign: 'center'}}>

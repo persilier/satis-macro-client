@@ -1081,5 +1081,15 @@
     "Statut avant relance": "Status before revival",
     "Staff relancé": "Revived staff",
     "Statut de la relance": "Status of the revival",
-    "Statut actuel": "Current status"
+    "Statut actuel": "Current status",
+    "incomplète" : "incomplete",
+    "complète": "full",
+    "transférer à une unité" : "transferred to unit",
+    "transférer à une institution ciblée": "transferred to targeted institution",
+    "assigner à un staff" : "assigned to staff",
+    "traitée": "treated",
+    "validée" : "validated",
+    "archivée": "archived",
+    "en attente" : "awaiting",
+    "considérée": "considered"
 }
