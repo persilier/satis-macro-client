@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+//import ReactHTMLTableToExcel from ' react-html-table-to-excel';
 import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
