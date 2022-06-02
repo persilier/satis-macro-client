@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {connect} from "react-redux";
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+//import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {verifyPermission} from "../../helpers/permission";
 import InfirmationTable from "../components/InfirmationTable";
 import HeaderTablePage from "../components/HeaderTablePage";
@@ -672,7 +672,8 @@ const ClaimReportingUemoaFive = (props) => {
                                                         type="button" disabled>
                                                         {t("Chargement...")}
                                                     </button>
-                                                ) : (
+                                                ) : null
+                                                    /*(
                                                     <ReactHTMLTableToExcel
                                                         id="test-table-xls-button"
                                                         className="btn btn-secondary ml-3"
@@ -680,9 +681,10 @@ const ClaimReportingUemoaFive = (props) => {
                                                         filename="rapport_etat_reglementaire"
                                                         sheet="etat_reglementaire"
                                                         buttonText="EXCEL"/>
-                                                    /*<button onClick={downloadReporting} className="btn btn-secondary ml-3"
-                                                            disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>*/
-                                                )}
+                                                    /!*<button onClick={downloadReporting} className="btn btn-secondary ml-3"
+                                                            disabled={(loadFilter || loadDownloadPdf)}>EXCEL</button>*!/
+                                                )*/
+                                                }
 
                                                 {loadDownloadPdf ? (
                                                     <button

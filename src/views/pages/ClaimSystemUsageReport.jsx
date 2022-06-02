@@ -9,7 +9,7 @@ import EmptyTable from "../components/EmptyTable";
 import Pagination from "../components/Pagination";
 import React, {useCallback, useEffect, useState} from "react";
 import moment from "moment"
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+//import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import {ERROR_401} from "../../config/errorPage";
 import {loadCss, removeNullValueInObject} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
@@ -242,9 +242,10 @@ const ClaimSystemUsageReport = (props) => {
                                                     type="button" disabled>
                                                     {t("Chargement") + "..."}
                                                 </button>
-                                            ) : (
-                                                /*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
-                                                        disabled={(loadFilter)}>EXCEL</button>*/
+                                            ) : null
+                                                /* (
+                                                /!*<button /!*onClick={}*!/ className="btn btn-secondary ml-3"
+                                                        disabled={(loadFilter)}>EXCEL</button>*!/
                                                 <ReactHTMLTableToExcel
                                                     id="test-table-xls-button"
                                                     className="btn btn-secondary ml-3"
@@ -254,7 +255,8 @@ const ClaimSystemUsageReport = (props) => {
                                                     buttonText="EXCEL"
                                                 />
 
-                                            )}
+                                            )*/
+                                            }
 
                                             {loadDownload ? (
                                                 <button
