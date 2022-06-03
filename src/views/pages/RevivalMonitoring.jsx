@@ -24,6 +24,8 @@ const RevivalMonitoring = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
+    if (!(verifyPermission(props.userPermissions, 'show-my-staff-monitoring') || verifyPermission(props.userPermissions, 'show-my-staff-monitoring')))
+        window.location.href = ERROR_401;
 
     const defaultData = {
         institution_id: "",
