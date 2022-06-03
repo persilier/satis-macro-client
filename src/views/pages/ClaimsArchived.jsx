@@ -166,7 +166,7 @@ const ClaimsArchived = (props) => {
                             <span className="kt-badge kt-badge--inline kt-badge--success">{t("Oui")}</span>
                             : archived.active_treatment.is_claimer_satisfied == 0 ?
                             <span className="kt-badge kt-badge--inline kt-badge--danger">{t("Non")}</span>
-                            : " "
+                            : <span className="kt-badge kt-badge--inline kt-badge--danger">{t("Non")}</span>
                     }
                 </td>
                 {

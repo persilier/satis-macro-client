@@ -396,7 +396,10 @@ const IncompleteClaimsEdit = props => {
                     setClaimObject({});
                     setClaimObjects(formatSelectOption(response.data.claimObjects, "name", "fr"));
                 })
-                .catch(error => console.log("Something is wrong"))
+                .catch(error => {
+                    console.log("Something is wrong")
+                }
+                )
             ;
         }
     };
@@ -511,7 +514,7 @@ const IncompleteClaimsEdit = props => {
                     window.location.href = "/process/incomplete_claims"
                 })
                 .catch((error) => {
-
+                        console.log(error.response.data.error)
                     if (error.response.data.code === 422) {
                         setStartRequest(false);
                         let fileErrors = [];
@@ -523,7 +526,7 @@ const IncompleteClaimsEdit = props => {
                             }
                         }
                         setError({...defaultError, ...error.response.data.error, file: fileErrors,  claim_category: claimCategory === null ? ["Le champ claim_category est obligatoire."] : []});
-                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig(error.response.data.error));
                     } else {
                         setStartRequest(false);
                         // setError({...defaultError, ...error.response.data.error});
