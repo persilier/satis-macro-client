@@ -58,7 +58,7 @@ const   ProofReceipt = (props) => {
         sender: '',
         chanel: '',
         start_date: moment().startOf('month').format('YYYY-MM-DD'),
-        end_date: moment().startOf('month').format('YYYY-MM-DD'),
+        end_date: moment().endOf('month').format('YYYY-MM-DD'),
     });
     const [startFilter, setStartFilter] = useState(false);
     const [expeditors, setExpeditors] = useState([]);
