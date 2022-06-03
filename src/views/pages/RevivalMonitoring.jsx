@@ -5,7 +5,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import {forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString} from "../../helpers/function";
+import {displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -210,7 +210,7 @@ const RevivalMonitoring = (props) => {
               {/*  <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(revival.description ? revival.description : '-')}/>
                 </td>*/}
-                <td>{revival.status}</td>
+                <td>{revival?.status ? displayStatus(revival.status) : ""}</td>
                 <td>
                     <a href={`/monitoring/claims/staff/${revival?.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
