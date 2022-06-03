@@ -153,18 +153,22 @@ const LoginPage = (props) => {
                         'Authorization': `Bearer ${token}`,
                     }
                 }).then(response => {
-                    setError(defaultError);
-                    setStartRequest(false);
+                    // setError(defaultError);
+                    // setStartRequest(false);
                     ToastBottomEnd.fire(toastConnectSuccessMessageConfig());
                     const user = response.data;
                     localStorage.setItem("userData", JSON.stringify(response.data));
                     localStorage.setItem('token', token);
                     localStorage.setItem('expire_in', expire_in);
+                    localStorage.setItem('debug', JSON.stringify({user: 'Kilian', old: 15}));
                     var date = new Date();
                     date.setSeconds(date.getSeconds() + expire_in - 180);
                     localStorage.setItem('date_expire', date);
                     localStorage.setItem('refresh_token', refresh_token);
-                    window.location.href = "/dashboard";
+
+                    setTimeout(()=>{
+                        window.location.href = "/dashboard";
+                    },500)
                 });
             })
             .catch(error => {

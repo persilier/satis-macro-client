@@ -23,12 +23,13 @@ const ConfirmClaimAddModal = props => {
     const {t, ready} = useTranslation()
 
     const componentData = props.componentData;
+
     const defaultData = {
         firstname: props.firstname,
         lastname: props.lastname,
         sexe: props.sexe,
-        telephone: JSON.parse(props.telephone?props.telephone:[]),
-        email: JSON.parse(props.email?props.email:[]),
+        telephone: props.telephone.length?JSON.parse(props.telephone):[],
+        email: props.email.length?JSON.parse(props.email):[],
         ville: props.ville,
         lieu: props.lieu,
         unit_targeted_id: props.unit_targeted_id,

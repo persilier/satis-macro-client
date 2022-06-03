@@ -14,7 +14,6 @@ class RouteApp extends Component {
     }
 
     render() {
-
         return (
             <Router>
                     {
