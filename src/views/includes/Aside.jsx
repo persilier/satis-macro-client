@@ -222,8 +222,11 @@ const Aside = (props) => {
                                                 </NavLink>
                                             ) : null
                                         }
+
+
                                         {
-                                            (verifyPermission(props.userPermissions, 'show-my-staff-monitoring')) && !props.activePilot ? (
+                                            (verifyPermission(props.userPermissions, 'show-my-staff-monitoring')) && !props.activePilot && props.userStaff === null ? (
+                                               // console.log(!props.activePilot )
                                                 <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
                                                         <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>

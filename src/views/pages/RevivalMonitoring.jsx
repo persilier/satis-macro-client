@@ -202,7 +202,7 @@ const RevivalMonitoring = (props) => {
                     {formatDateToTime(revival.created_at)}
                 </td>
                 <td>{`${(revival.claimer && revival.claimer.lastname) ? revival.claimer.lastname : ''} ${(revival.claimer && revival.claimer.firstname) ? revival.claimer.firstname : ''} `}</td>
-                <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.lastname ? revival.active_treatment.responsible_staff.identite.lastname : ''} `}</td>
+                <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.firstname ? revival.active_treatment.responsible_staff.identite.firstname : ''} `}</td>
                 <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
                 <td>{ revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
               {/*  <td style={{textAlign: 'center'}}>
@@ -331,15 +331,15 @@ const RevivalMonitoring = (props) => {
                                                         <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes déjà traitées à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                               style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                                    { revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff: "-"}
+                                                               { revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff: "-"}
                                                                 </span>
                                                     </div>
                                                     <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
                                                         <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes restantes à traiter à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                               style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                                     { revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff: "-"}
-                                                                </span>
+                                                            { revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff: "-"}
+                                                             </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -494,8 +494,10 @@ const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot === null
+        activePilot: state.user.user.staff.is_active_pilot
     };
+
 };
+
 
 export default connect(mapStateToProps)(RevivalMonitoring);
