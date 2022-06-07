@@ -476,7 +476,7 @@ const ClaimReportingUemoaFive = (props) => {
                 <td> { claim.reference ? claim.reference : ""} </td>
                 <td> { claim.claim_object && claim.claim_object.name ?  claim.claim_object.name.fr : "-"} </td>
                 {/*<td><HtmlDescriptionDiv message={claim.description}/></td>*/}
-                <td> { claim.description ? reduceCharacter(claim.description) : ""} </td>
+                <td> { claim.plain_text_description ? claim.plain_text_description : ""} </td>
             </tr>
         );
     };
