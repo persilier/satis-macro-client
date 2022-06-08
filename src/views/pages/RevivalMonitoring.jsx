@@ -99,11 +99,11 @@ const RevivalMonitoring = (props) => {
                 .catch(error => {
                     setError({
                         ...defaultError,
-                        ...error.response.data.error
+                        ...(error.response && error.response.data ? error.response.data.error : "")
                     });
                     setLoadFilter(false);
                     setLoad(false);
-                    console.log("Something is wrong");
+                   // console.log("Something is wrong");
                 })
             ;
         }, [numberPerPage, activeNumberPage, data]
