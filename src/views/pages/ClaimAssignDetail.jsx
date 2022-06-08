@@ -132,12 +132,17 @@ const ClaimAssignDetail = (props) => {
         async function fetchData() {
             await axios.put(endPoint.update(`${id}`), data)
                 .then(response => {
+                    console.log("RESPONSE1",response)
                     setStartRequestToUnit(false);
+                    console.log("RESPONSE2",response)
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+                    console.log("RESPONSE3",response)
                     window.location.href = "/process/claim-assign";
                 })
                 .catch(error => {
+                    console.log("ERROR1",error)
                     setStartRequestToUnit(false);
+                    console.log("ERROR2",error)
                     ToastBottomEnd.fire(toastAddErrorMessageConfig())
                 })
             ;
