@@ -299,11 +299,11 @@ const ClaimsArchived = (props) => {
                 <td style={{textAlign: 'center'}}>{(archived.claim_object && archived.claim_object.time_limit) ? archived.claim_object.time_limit : '-'}</td>
                 <td style={{textAlign: 'center'}}>
                     {
-                        archived.active_treatment.is_claimer_satisfied === 1 ?
+                        archived.active_treatment.is_claimer_satisfied == 1 ?
                             <span className="kt-badge kt-badge--inline kt-badge--success">{t("Oui")}</span>
-                            : archived.active_treatment.is_claimer_satisfied === 0 ?
+                            : archived.active_treatment.is_claimer_satisfied == 0 ?
                             <span className="kt-badge kt-badge--inline kt-badge--danger">{t("Non")}</span>
-                            : " "
+                            : <span className="kt-badge kt-badge--inline kt-badge--danger">{t("Non")}</span>
                     }
                 </td>
                 {

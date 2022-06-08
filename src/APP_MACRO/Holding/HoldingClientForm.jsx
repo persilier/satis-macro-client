@@ -344,8 +344,7 @@ const HoldingClientForm = (props) => {
                 } else
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez selectionner une institution")))
             } else if (verifyPermission(props.userPermissions, "store-client-from-my-institution")) {
-                console.log("je suis rentré")
-                startSearchClient();
+                    startSearchClient();
             }
 
         } else {
@@ -451,6 +450,8 @@ const HoldingClientForm = (props) => {
         }
         setData(newData);
         setDisabledInput(false)
+        setDisabledInputTel(false);
+        setDisabledInputEmail(false);
     };
 
     const onChangeClient = (selected) => {
@@ -522,6 +523,8 @@ const HoldingClientForm = (props) => {
                             setShowSearchResult(false);
                             setSearchInputValue("");
                             setDisabledInput(false);
+                            setDisabledInputTel(false);
+                            setDisabledInputEmail(false);
                             setTag({name: "", label: "", className: "", show: false})
                             setStartRequest(false);
                             setError(defaultError);
@@ -534,7 +537,11 @@ const HoldingClientForm = (props) => {
                         .catch((errorRequest) => {
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
-                            ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                            if (errorRequest.response.data.error.code === 409){
+                                ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.message));
+                            } else {
+                                ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                            }
                         })
                     ;
                 } else {
