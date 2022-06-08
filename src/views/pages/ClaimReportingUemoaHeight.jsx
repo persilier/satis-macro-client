@@ -172,6 +172,8 @@ const ClaimReportingUemoaHeight = (props) => {
                 })
             ;
         }
+
+        fetchData();
     }, []);
 
 
