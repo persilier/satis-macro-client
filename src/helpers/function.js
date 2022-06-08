@@ -5,6 +5,7 @@ import moment from "moment";
 import axios from "axios";
 import {listConnectData} from "../constants/userClient";
 import {AUTH_TOKEN} from "../constants/token";
+import i18n from "../i18n";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -484,3 +485,49 @@ export const removeNullValueInObject = (obj) => {
     }
     return obj;
 };
+
+export const displayStatus = (status) => {
+
+    let finalStatus = "";
+
+    if (i18n.isInitialized) {
+        switch (status) {
+            case "incomplete":
+                finalStatus = i18n.t("incomplète");
+                break;
+            case "full":
+                finalStatus = i18n.t("complète");
+                break;
+            case "transferred_to_unit":
+                finalStatus = i18n.t("transférer à une unité");
+                break;
+            case "transferred_to_targeted_institution":
+                finalStatus = i18n.t("transférer à une institution ciblée");
+                break;
+            case "assigned_to_staff":
+                finalStatus = i18n.t("assigner à un staff");
+                break;
+            case "treated":
+                finalStatus = i18n.t("traitée");
+                break;
+            case "validated":
+                finalStatus = i18n.t("validée");
+                break;
+            case "archived":
+                finalStatus = i18n.t("archivée");
+                break;
+            case "awaiting":
+                finalStatus = i18n.t("en attente");
+                break;
+            case "considered":
+                finalStatus = i18n.t("considérée");
+                break;
+            default:
+                finalStatus = status;
+                break;
+        }
+    }
+
+    return finalStatus;
+};
+
