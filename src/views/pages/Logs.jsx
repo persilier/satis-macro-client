@@ -12,6 +12,8 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import {useTranslation} from "react-i18next";
+import moment from "moment";
+import LoadingTable from "../components/LoadingTable";
 
 const Logs = (props) => {
 
@@ -37,10 +39,16 @@ const Logs = (props) => {
     const [endIndex, setEndIndex] = useState(onePageNumber);
     const [loadMore, setLoadMore] = useState(false);
     const [loadFilter, setLoadFilter] = useState(false);
+    const [isLoad, setIsLoad] = useState(false);
     const [nextUrl, setNextUrl] = useState(null);
+    const [load, setLoad] = useState(false);
+
+
 
     useEffect(() => {
         async function fetchData() {
+            setIsLoad(true);
+            setLoad(true);
             axios.get(`${appConfig.apiDomaine}/activity-log/create`)
                 .then(response => {
                     const logData = response.data.logs
@@ -62,7 +70,12 @@ const Logs = (props) => {
                 })
                 .catch(error => {
                     //console.log("Something is wrong");
-                })
+                }).finally(
+                () => {
+                    setIsLoad(false);
+                    setLoad(false);
+                }
+            )
             ;
         }
 
@@ -198,6 +211,7 @@ const Logs = (props) => {
                                                         <Select
                                                             options={actors}
                                                             value={actor}
+                                                            isLoading={isLoad}
                                                             onChange={value => setActor(value)}
                                                             placeholder={t("Veuillez sélectionner l'acteur")}
                                                             isClearable
@@ -209,6 +223,7 @@ const Logs = (props) => {
                                                         <Select
                                                             options={actions}
                                                             value={action}
+                                                            isLoading={isLoad}
                                                             onChange={value => setAction(value)}
                                                             placeholder={t("Veuillez sélectionner l'action")}
                                                             isClearable
@@ -221,6 +236,7 @@ const Logs = (props) => {
                                                         <label htmlFor="actor">{t("Date de début")}</label>
                                                         <input
                                                             ref={startDate}
+                                                            defaultValue={moment().startOf('month').format('YYYY-MM-DD')}
                                                             type="date"
                                                             className={`form-control ${error.date_start.length ? 'is-invalid' : ''}`}
                                                         />
@@ -237,6 +253,7 @@ const Logs = (props) => {
                                                         <label htmlFor="actor">{t("Date de fin")}</label>
                                                         <input
                                                             ref={endDate}
+                                                            defaultValue={moment().endOf('month').format('YYYY-MM-DD')}
                                                             type="date"
                                                             className={`form-control ${error.date_end.length ? 'is-invalid' : ''}`}
                                                         />
@@ -265,49 +282,60 @@ const Logs = (props) => {
 
                                     <div className="kt-separator kt-separator--space-md"/>
 
-                                    <div className="position-relative">
-                                        {showElements.map((item, index) => (
-                                            <div key={index}>
-                                                <div className="tab-content">
-                                                    <div className="d-flex justify-content-between">
-                                                        <h5>
-                                                            {
-                                                                item.causer ? (
-                                                                    item.causer.identite ? item.causer.identite.lastname+" "+item.causer.identite.firstname : ''
-                                                                ) : ''
-                                                            }
-                                                        </h5>
-                                                        <span>{formatDateToTimeStampte(item.created_at)}</span>
+                                        {
+                                            load ? (
+                                                    <div style={{padding: 0, margin: 0}}>
+                                                        <LoadingTable/>
                                                     </div>
-                                                    <div style={{marginTop: "1%"}}>
-                                                        <strong>{t("Action")}: </strong>
-                                                        <span className="mx-2">{showAction(item.log_action)}</span>
+                                            ) : (
+                                                <>
+                                                    <div className="position-relative">
+                                                        {showElements.map((item, index) => (
+                                                            <div key={index}>
+                                                                <div className="tab-content">
+                                                                    <div className="d-flex justify-content-between">
+                                                                        <h5>
+                                                                            {
+                                                                                item.causer ? (
+                                                                                    item.causer.identite ? item.causer.identite.lastname+" "+item.causer.identite.firstname : ''
+                                                                                ) : ''
+                                                                            }
+                                                                        </h5>
+                                                                        <span>{formatDateToTimeStampte(item.created_at)}</span>
+                                                                    </div>
+                                                                    <div style={{marginTop: "1%"}}>
+                                                                        <strong>{t("Action")}: </strong>
+                                                                        <span className="mx-2">{showAction(item.log_action)}</span>
+                                                                    </div>
+
+                                                                    <div style={{marginTop: "1%"}}>
+                                                                        <strong>IP: </strong>
+                                                                        <span className="mx-2">{item.ip_address}</span>
+                                                                    </div>
+
+                                                                    <div style={{marginTop: "1%"}}>
+                                                                        <strong>{t("Description")}: </strong>
+                                                                        <span className="mx-2">{item.description}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="kt-separator kt-separator--space-md kt-separator--border-dashed"/>
+                                                            </div>
+                                                        ))}
                                                     </div>
 
-                                                    <div style={{marginTop: "1%"}}>
-                                                        <strong>IP: </strong>
-                                                        <span className="mx-2">{item.ip_address}</span>
+                                                    <div className="text-center">
+                                                        {loadMore ? (
+                                                            <button className="btn btn-primary kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light">
+                                                                {t("Voir plus")}
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={showMore} hidden={true} className="btn btn-primary">{t("Voir plus")}</button>
+                                                        )}
                                                     </div>
+                                                </>
+                                            )
+                                        }
 
-                                                    <div style={{marginTop: "1%"}}>
-                                                        <strong>{t("Description")}: </strong>
-                                                        <span className="mx-2">{item.description}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="kt-separator kt-separator--space-md kt-separator--border-dashed"/>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="text-center">
-                                        {loadMore ? (
-                                            <button className="btn btn-primary kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light">
-                                                {t("Voir plus")}
-                                            </button>
-                                        ) : (
-                                            <button onClick={showMore} className="btn btn-primary">{t("Voir plus")}</button>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
                         </div>
