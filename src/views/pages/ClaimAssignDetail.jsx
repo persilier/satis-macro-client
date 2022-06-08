@@ -110,19 +110,24 @@ const ClaimAssignDetail = (props) => {
     const onClickToTranfertInstitution = async (e) => {
         e.preventDefault();
         setStartRequest(true);
-        if (verifyTokenExpire()) {
+      /*  if (verifyTokenExpire()) {
             await axios.put(`${appConfig.apiDomaine}/transfer-claim-to-targeted-institution/${id}`)
                 .then(response => {
+                    console.log("RESPONSE1",response)
                     setStartRequest(false);
+                    console.log("RESPONSE2",response)
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                    window.location.href = "/process/claim-assign";
+                    console.log("RESPONSE3",response)
+               //     window.location.href = "/process/claim-assign";
                 })
                 .catch(error => {
+                    console.log("ERROR1",error)
                     setStartRequest(false);
+                    console.log("ERROR2",error)
                     ToastBottomEnd.fire(toastAddErrorMessageConfig())
                 })
             ;
-        }
+        }*/
     };
 
     const onClickToTranfert = (e) => {
@@ -137,7 +142,7 @@ const ClaimAssignDetail = (props) => {
                     console.log("RESPONSE2",response)
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     console.log("RESPONSE3",response)
-                    window.location.href = "/process/claim-assign";
+                   // window.location.href = "/process/claim-assign";
                 })
                 .catch(error => {
                     console.log("ERROR1",error)
