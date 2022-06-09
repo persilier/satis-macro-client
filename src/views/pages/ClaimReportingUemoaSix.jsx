@@ -37,7 +37,7 @@ const ClaimReportingUemoaSix = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution')))
+    if (!(verifyPermission(props.userPermissions, 'system-any-efficiency-report') || verifyPermission(props.userPermissions, 'system-my-efficiency-report')))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(false);

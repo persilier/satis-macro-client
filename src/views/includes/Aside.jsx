@@ -222,8 +222,11 @@ const Aside = (props) => {
                                                 </NavLink>
                                             ) : null
                                         }
+
+
                                         {
-                                            (verifyPermission(props.userPermissions, 'show-my-staff-monitoring')) && !props.activePilot ? (
+                                            (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && !props.activePilot && props.lead === true )? (
+                                               // console.log(!props.activePilot )
                                                 <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
                                                         <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
@@ -332,7 +335,7 @@ const Aside = (props) => {
 
                                                     {
                                                         verifyPermission(props.userPermissions, 'system-any-efficiency-report') ||
-                                                        verifyPermission(props.userPermissions, 'system-my-efficiency-report') ? (
+                                                       ( verifyPermission(props.userPermissions, 'system-my-efficiency-report') && props.activePilot === true) ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-six" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>

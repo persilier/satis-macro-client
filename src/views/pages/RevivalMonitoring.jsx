@@ -5,7 +5,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
-import {forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString} from "../../helpers/function";
+import {displayStatus, forceRound, formatDateToTime, getLowerCaseString, loadCss, truncateString} from "../../helpers/function";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
@@ -24,6 +24,8 @@ const RevivalMonitoring = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
+    if (!(verifyPermission(props.userPermissions, 'show-my-staff-monitoring') || verifyPermission(props.userPermissions, 'show-my-staff-monitoring')))
+        window.location.href = ERROR_401;
 
     const defaultData = {
         institution_id: "",
@@ -202,13 +204,13 @@ const RevivalMonitoring = (props) => {
                     {formatDateToTime(revival.created_at)}
                 </td>
                 <td>{`${(revival.claimer && revival.claimer.lastname) ? revival.claimer.lastname : ''} ${(revival.claimer && revival.claimer.firstname) ? revival.claimer.firstname : ''} `}</td>
-                <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.lastname ? revival.active_treatment.responsible_staff.identite.lastname : ''} `}</td>
+                <td>{`${(revival?.active_treatment?.responsible_staff?.identite?.lastname) ? revival.active_treatment.responsible_staff.identite.lastname : ''} ${revival?.active_treatment?.responsible_staff?.identite?.firstname ? revival.active_treatment.responsible_staff.identite.firstname : ''} `}</td>
                 <td>{formatDateToTime(revival.active_treatment.assigned_to_staff_at)}</td>
                 <td>{ revival.claim_object ? revival.claim_object.name["fr"] : ""}</td>
               {/*  <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(revival.description ? revival.description : '-')}/>
                 </td>*/}
-                <td>{revival.status}</td>
+                <td>{revival?.status ? displayStatus(revival.status) : ""}</td>
                 <td>
                     <a href={`/monitoring/claims/staff/${revival?.id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
@@ -331,15 +333,15 @@ const RevivalMonitoring = (props) => {
                                                         <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes déjà traitées à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                               style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                                    { revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff: "-"}
+                                                               { revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff: "-"}
                                                                 </span>
                                                     </div>
                                                     <div className="kt-widget6__item row"  style={{padding: "0.5rem 0"}}>
                                                         <span className="col-lg-10" style={{fontWeight: "500"}}>Nombre de plaintes restantes à traiter à ce jour</span>
                                                         <span className="col-lg-2 kt-font-brand kt-font-bold"
                                                               style={{backgroundColor: "rgba(93, 120, 255, 0.1)", padding: "7px", textAlign: "center", borderRadius: "3px"}}>
-                                                                     { revivals.claimTreatedByStaff !== undefined && revivals.claimTreatedByStaff !== null ? revivals.claimTreatedByStaff: "-"}
-                                                                </span>
+                                                            { revivals.claimNoTreatedByStaff !== undefined && revivals.claimNoTreatedByStaff !== null ? revivals.claimNoTreatedByStaff: "-"}
+                                                             </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -494,8 +496,10 @@ const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot === null
+        activePilot: state.user.user.staff.is_active_pilot
     };
+
 };
+
 
 export default connect(mapStateToProps)(RevivalMonitoring);
