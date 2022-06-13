@@ -296,7 +296,6 @@ const Aside = (props) => {
                                                             </NavLink>
                                                         ) : null
                                                     }
-
                                                     {
                                                         verifyPermission(props.userPermissions, 'list-reporting-claim-any-institution') || verifyPermission(props.userPermissions, 'list-reporting-claim-my-institution') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-four" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
@@ -307,8 +306,9 @@ const Aside = (props) => {
                                                             </NavLink>
                                                         ) : null
                                                     }
+                                                    {/*
+                                                        {
 
-                                                    {
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
                                                             <NavLink exact to="/monitoring/claims/uemoa/reporting-five" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
@@ -847,7 +847,7 @@ const Aside = (props) => {
                                                                                 <NavLink exact to="/settings/config-rapport" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link ">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                                        <span className="kt-menu__link-text">Configuration Titre Rapport</span>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration Titre Rapport")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
@@ -888,7 +888,7 @@ const Aside = (props) => {
                                                                                 <NavLink exact to="/settings/recurence" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link mb-3">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                                        <span className="kt-menu__link-text">{t("Configuration des alerts de recurences")}</span>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration des alertes de recurences")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
@@ -913,6 +913,7 @@ const Aside = (props) => {
                                                                                 </NavLink>
                                                                             ) : null
                                                                         }
+
                                                                         {
                                                                             verifyPermission(props.userPermissions, "list-auth-config") || verifyPermission(props.userPermissions, "update-auth-config") ? (
                                                                                 <NavLink exact to="/settings/connexion" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
