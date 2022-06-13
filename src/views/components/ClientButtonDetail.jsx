@@ -75,7 +75,6 @@ const ClientButtonDetail = ({claim}) => {
                                                 </span>
                                                 </div>
 
-                                            {console.log("claimer:", claim)}
                                             <div className="kt-widget__info">
                                                 <span>{t("Numero de compte")}:</span>
                                                 <span className="kt-widget__data">

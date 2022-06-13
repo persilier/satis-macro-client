@@ -648,6 +648,8 @@ const ClaimAdd = props => {
 
     const resetAllData = async () => {
         await setDisabledInput(false);
+        await setDisabledInputEmail(false);
+        await setDisabledInputTel(false);
         document.getElementById('is_client').click();
         await setInstitution(null);
         await setClaimCategory(null);
@@ -702,7 +704,7 @@ const ClaimAdd = props => {
                 .then(async (response) => {
                     setDisabledInput(false);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                    resetAllData();
+                    await resetAllData();
                     document.getElementById("customFile").value = "";
                     if (response.data.errors)
                         setCompletionError({ref: response.data.claim.reference, list: response.data.errors});
