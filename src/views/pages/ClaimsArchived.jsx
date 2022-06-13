@@ -158,6 +158,7 @@ const ClaimsArchived = (props) => {
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(archived.description ? archived.description : '-')}/>
                 </td>
+
                 {/*<td>{archived.description.length > 15 ? reduceCharacter(archived.description) : archived.description}</td>*/}
                 <td style={{textAlign: 'center'}}>{(archived.claim_object && archived.claim_object.time_limit) ? archived.claim_object.time_limit : '-'}</td>
                 <td style={{textAlign: 'center'}}>
@@ -169,6 +170,7 @@ const ClaimsArchived = (props) => {
                             :  <span className="kt-badge kt-badge--inline kt-badge--danger">{t("Non")}</span>
                     }
                 </td>
+
                 {
                     verifyPermission(props.userPermissions, "show-any-claim-archived") ||
                     verifyPermission(props.userPermissions, "show-my-claim-archived") ? (
