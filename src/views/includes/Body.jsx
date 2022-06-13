@@ -139,6 +139,7 @@ import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
 import RevivalMonitoring from "../pages/RevivalMonitoring";
 import HistoricRevivals from "../pages/HistoricRevivals";
 import MonitoringDetails from "../pages/MonitoringDetails";
+import CommitteeConfig from "../pages/CommitteeConfig";
 
 const Body = () => {
     return (
@@ -742,6 +743,10 @@ const Body = () => {
 
             <Route exact path="/settings/percentage-min-fusion">
                 <PercentageMinFusion/>
+            </Route>
+
+            <Route exact path="/settings/committee">
+                <CommitteeConfig/>
             </Route>
 
             <Route exact path="/settings/config-mail">

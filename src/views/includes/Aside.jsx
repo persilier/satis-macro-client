@@ -888,7 +888,7 @@ const Aside = (props) => {
                                                                                 <NavLink exact to="/settings/recurence" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link mb-3">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                                        <span className="kt-menu__link-text">{t("Configuration des alerts de recurences")}</span>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration des alertes de recurences")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
@@ -899,6 +899,16 @@ const Aside = (props) => {
                                                                                     <li className="kt-menu__link mb-3">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                                         <span className="kt-menu__link-text">{t("Configuration limitation rejet")}</span>
+                                                                                    </li>
+                                                                                </NavLink>
+                                                                            ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "update-min-fusion-percent-parameters") ? (
+                                                                                <NavLink exact to="/settings/committee" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                    <li className="kt-menu__link ">
+                                                                                        <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration des comités")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
