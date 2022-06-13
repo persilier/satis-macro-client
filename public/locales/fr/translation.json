@@ -1084,5 +1084,15 @@
   "Statut avant relance": "Statut avant relance",
   "Staff relancé": "Staff relancé",
   "Statut de la relance": "Statut de la relance",
-  "Statut actuel": "Statut actuel"
+  "Statut actuel": "Statut actuel",
+  "incomplète" : "incomplète",
+  "complète": "complète",
+  "transférer à une unité" : "transférer à une unité",
+  "transférer à une institution ciblée": "transférer à une institution ciblée",
+  "assigner à un staff" : "assigner à un staff",
+  "traitée": "traitée",
+  "validée" : "validée",
+  "archivée": "archivée",
+  "en attente" : "en attente",
+  "considérée": "considérée"
 }

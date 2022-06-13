@@ -49,8 +49,11 @@ const ImportFileForm = (props) => {
             formData.append('etat_update', stateUpdate);
         }
         e.preventDefault();
-
         setStartRequest(true);
+
+        const errorsField = props.errorsField ? props.errorsField : "errors";
+        console.log(errorsField);
+
         if (verifyTokenExpire()) {
             await axios.post(props.submitEndpoint, formData)
                 .then(response => {
@@ -59,24 +62,24 @@ const ImportFileForm = (props) => {
                     if (response.data.status) {
                         setName("");
                         setData(defaultData);
-                        if(response.data["errors"] && response.data["errors"].length) {
-                            setErrorFile(response.data["errors"]);
-                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        if(response.data[errorsField] && response.data[errorsField].length) {
+                            setErrorFile(response.data[errorsField]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data[errorsField].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
                         } else
                             ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t("Succès de l'importation")));
                     } else {
-                        if(response.data["errors"] && response.data["errors"].length) {
-                            setErrorFile(response.data["errors"]);
-                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                        if(response.data[errorsField] && response.data[errorsField].length) {
+                            setErrorFile(response.data[errorsField]);
+                            ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data[errorsField].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
                         } else
                             ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(t("Veuillez verifier le fichier")));
                     }
                 })
                 .catch(({response}) => {
                     setStartRequest(false);
-                    if(response.data["errors"] && response.data["errors"].length) {
-                        setErrorFile(response.data["errors"]);
-                        ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data["errors"].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
+                    if(response.data[errorsField] && response.data[errorsField].length) {
+                        setErrorFile(response.data[errorsField]);
+                        ToastLongBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data[errorsField].length + " " + t("erreurs identifiées. Veuillez supprimer les lignes correctes puis corriger les lignes erronées avant de renvoyer le fichier")));
                     }
                     else if (response.data.code === 422) {
                         setError({...defaultError, ...response.data.error});

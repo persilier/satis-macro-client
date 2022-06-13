@@ -1,7 +1,7 @@
 import {useTranslation} from "react-i18next";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState, useRef} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import Select from "react-select";
@@ -60,14 +60,19 @@ const RevivalMonitoring = (props) => {
     const [error, setError] = useState(defaultError);
     const [loadFilter, setLoadFilter] = useState(false);
 
+    const [searchList, setSearchList] = useState([]);
+    const [focused, setFocused] = useState(false);
+    const searchInput = useRef(null);
+    const [tag, setTag] = useState({name: "", label: "", className: "", show: false});
+
     const fetchData = useCallback(
-        async (click = false, search = {status: false, value: ""}) => {
+        async (click = false, search = {status: false, value: ""}, type = {status: false, value: ""}) => {
             setLoadFilter(true);
             setLoad(true);
             let endpoint = "";
             let sendData = {};
 
-            endpoint = `${appConfig.apiDomaine}/my/monitoring-by-staff?size=${numberPerPage}&page=${activeNumberPage}${search.status === true ? `&key=${search.value}` : ""}`;
+            endpoint = `${appConfig.apiDomaine}/my/monitoring-by-staff?size=${numberPerPage}&page=${activeNumberPage}${type.status === true ? `&type=${type.value}` : ""}${search.status === true ? `&key=${search.value}` : ""}`;
             sendData = {
                 staff_id: data.staff_id ? data.staff_id : "allStaff"
             };
@@ -117,6 +122,13 @@ const RevivalMonitoring = (props) => {
             fetchData(true);
     };
 
+    const onFocus = () => setFocused(true);
+    const onBlur = () => {
+        setTimeout(() => {
+            setFocused(false);
+        }, 250)
+    };
+
     useEffect(() => {
         if (verifyTokenExpire())
             axios.get(`${appConfig.apiDomaine}/my/unit-staff`)
@@ -152,7 +164,11 @@ const RevivalMonitoring = (props) => {
         if (e.target.value) {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                fetchData(false, {status: true, value: getLowerCaseString(e.target.value)})
+                if (tag.name !== "")
+                    fetchData(false, {status: true, value: e.target.value}, {status: true, value: tag.name});
+                else
+                    fetchData(false, {status: true, value: getLowerCaseString(e.target.value)});
+
             }
         } else {
             if (verifyTokenExpire()) {
@@ -195,6 +211,25 @@ const RevivalMonitoring = (props) => {
         setStaff(selected);
         setData(newData);
     };
+
+    const onClickTag = (name, label, className) => {
+        setFocused(true);
+        const newTag = {...tag};
+        newTag.name = name;
+        newTag.label = label;
+        newTag.className = className;
+        newTag.show = true;
+        setTag(newTag);
+    }
+
+    const onCloseTag = () => {
+        const newTag = {...tag};
+        newTag.name = "";
+        newTag.label = "";
+        newTag.className = "";
+        newTag.show = false;
+        setTag(newTag)
+    }
 
     const printBodyTable = (revival, index) => {
         return (
@@ -352,12 +387,67 @@ const RevivalMonitoring = (props) => {
                                 <div className="row">
                                     <div className="col-sm-6 text-left">
                                         <div id="kt_table_1_filter" className="dataTables_filter">
+                                            {
+                                                (
+                                                    <div className="row">
+                                                        <div
+                                                            className={`dropdown-menu ${focused ? "show" : ""}`}
+                                                            aria-labelledby="dropdownMenuButton"
+                                                            x-placement="bottom-start"
+                                                            style={{
+                                                                width: "100%",
+                                                                position: "absolute",
+                                                                willChange: "transform",
+                                                                top: "33px",
+                                                                left: "0px",
+                                                                transform: "translate3d(0px, 38px, 0px)",
+                                                                zIndex: "1"
+                                                            }}>
+                                                            <span className="d-flex justify-content-center"><em>{("---" + t("Type de recherche") + "---")}</em></span>
+                                                            <div className="d-flex justify-content-center mt-1 mb-1">
+                                                                <button className="btn btn-outline-dark" onClick={e => onClickTag("reference", t("Référence"), "dark")}>{t("Référence")}</button>&nbsp;
+                                                                <button className="btn btn-outline-dark" onClick={e => onClickTag("claimer", t("Réclamant"), "dark")}>{t("Réclamant")}</button>&nbsp;
+                                                                <button className="btn btn-outline-dark" onClick={e => onClickTag("claimObject", t("Objet de la réclamation"), "dark")}>{t("Objet de la réclamation")}</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+
                                             <label>
                                                 {t("Recherche")}:
                                                 <input id="myInput" type="text"
+                                                       ref={searchInput}
+                                                       autoComplete={"off"}
                                                        onKeyUp={(e) => searchElement(e)}
+                                                       onFocus={onFocus}
+                                                       onBlur={onBlur}
                                                        className="form-control form-control-sm" placeholder=""
                                                        aria-controls="kt_table_1"/>
+                                                {
+                                                    tag.show && tag.name.length ? (
+                                                        <span className={"btn btn-label-" + tag.className}
+                                                              style={{
+
+
+                                                                  borderBottomRightRadius: "0px",
+                                                                  borderTopRightRadius: "0px",
+                                                                  whiteSpace: "nowrap",
+                                                              }}>
+                                                        <div>
+                                                            {tag.label}
+                                                            <button type="button" onClick={e => onCloseTag()} className="btn btn-icon" style={{
+                                                                height: "50%",
+                                                                width: "20%",
+                                                            }}>
+                                                                <i className="flaticon2-cross" style={{
+                                                                    fontSize: "0.8em",
+                                                                }}/>
+                                                            </button>
+                                                        </div>
+                                                    </span>
+                                                    ) : null
+                                                }
                                             </label>
                                         </div>
                                     </div>
