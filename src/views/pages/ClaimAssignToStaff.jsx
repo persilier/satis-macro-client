@@ -65,7 +65,7 @@ const ClaimAssignToStaff = (props) => {
         value = getLowerCaseString(value);
         let newClaims = [...claims];
         newClaims = newClaims.filter(el => (
-            getLowerCaseString(`${el.reference} ${ el.isInvalidTreatment ? "(R)" : ""}`).indexOf(value) >= 0 ||
+            getLowerCaseString(`${el.reference} ${ el.isInvalidTreatment ? "(R)" : ""} ${ el.lastRevival ? "(R)" : ""}`).indexOf(value) >= 0 ||
             getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname} ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / "+el.account_number : "")}`).indexOf(value) >= 0 ||
             getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
             getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
@@ -156,7 +156,7 @@ const ClaimAssignToStaff = (props) => {
         return (
 
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
+                <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null} {claim.lastRevival ? (<span className="kt-badge kt-badge--warning kt-badge--md">R</span>) : null}</td>
                 <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted ? claim.institution_targeted.name : "-"}</td>
                 <td>
@@ -214,6 +214,9 @@ const ClaimAssignToStaff = (props) => {
                                 {t("Liste des réclamations qui vous sont assignées pour traitement")}
                                 <br/>
                                 <span className="kt-badge kt-badge--danger kt-badge--md mr-2">R</span> {t("représente les traitements réjetés")}
+                                <br/>
+                                <span className="kt-badge kt-badge--warning kt-badge--md mr-2">R</span> {t("représente les traitements ayant une relance")}
+
                             </div>
                         )}/>
 
@@ -306,7 +309,7 @@ const ClaimAssignToStaff = (props) => {
                                                 <div className="col-sm-12 col-md-5">
                                                     <div className="dataTables_info" id="kt_table_1_info" role="status"
                                                          aria-live="polite">{t("Affichage de")} 1
-                                                        {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
+                                                        {" " + t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
                                                     </div>
                                                 </div>
 

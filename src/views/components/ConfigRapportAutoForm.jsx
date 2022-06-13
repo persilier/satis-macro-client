@@ -158,7 +158,8 @@ const ConfigRapportAutoForm = (props) => {
                     setTypes(response.data.types);
                     setPeriodData(response.data.period);
                     setLoad(false);
-                    setIsLoad(false)
+                    setIsLoad(false);
+
 
                 })
             ;
@@ -226,6 +227,9 @@ const ConfigRapportAutoForm = (props) => {
                 delete data.institution_id;
                 axios.post(endPoint.list, data)
                     .then(response => {
+                        setStaff([]);
+                        setType([]);
+                        setPeriod("");
                         setStartRequest(false);
                         setError(defaultError);
                         setData(defaultData);

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import {
@@ -47,7 +47,7 @@ const endPointConfig = {
     }
 };
 
-const   Staff = (props) => {
+const Staff = (props) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
@@ -65,7 +65,7 @@ const   Staff = (props) => {
         endPoint = endPointConfig[props.plan]
     }
 
-    const [load, setLoad] = useState(true);
+    const [load, setLoad] = useState(false);
     const [staffs, setStaffs] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
@@ -75,210 +75,64 @@ const   Staff = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
 
-    useEffect(() => {
-        async function fetchData() {
-            await axios.get(endPoint.list + "?size=" + numberPerPage)
+    const fetchData = useCallback(async (search = {status: false, value: ""}) => {
+        if (verifyTokenExpire()) {
+            setLoad(true);
+            await axios.get(`${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${search.status ? `&key=${search.value}` : ""}`)
                 .then(response => {
-                    setNumberPage(forceRound(response.data.total/NUMBER_ELEMENT_PER_PAGE));
-                    setShowList(response.data.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
+                    setNumberPage(forceRound(response.data.total/numberPerPage));
+                    setShowList(response.data.data.slice(0, numberPerPage));
                     setStaffs(response.data["data"]);
                     setTotal(response.data.total);
                     setPrevUrl(response.data["prev_page_url"]);
                     setNextUrl(response.data["next_page_url"]);
                     setLoad(false);
-
                 })
                 .catch(error => {
                     setLoad(false);
                     //console.log("Something is wrong");
                 });
         }
-        if (verifyTokenExpire())
-            fetchData();
-    }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
+    }, [numberPerPage, activeNumberPage])
 
-    const separateStringByComa = (arrayString) => {
-        let generateString = "";
-        arrayString.map((t, index) => {
-            generateString = index + 1 !== arrayString.length ? generateString + t+", " : generateString + t
-        });
-        return generateString;
-    };
-
-    const filterShowListBySearchValue = (value) => {
-        value = getLowerCaseString(value);
-        let newStaffs = [...staffs];
-        newStaffs = newStaffs.filter(el => (
-
-            getLowerCaseString(`${el.is_lead ? 'L' : ''} ${el.identite ? el.identite.lastname : ''} ${el.identite ? el.identite.firstname : ''}`).indexOf(value) >= 0 ||
-            getLowerCaseString(separateStringByComa(el.identite ? el.identite.telephone : '')).indexOf(value) >= 0 ||
-            getLowerCaseString(separateStringByComa( el.identite ? el.identite.email : '')).indexOf(value) >= 0 ||
-            getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? el.unit ? el.unit.name["fr"] : '' : el.unit.name["fr"]).indexOf(value) >= 0 ||
-            getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ?  el.institution.name["fr"] : '').indexOf(value) >= 0 ||
-            getLowerCaseString(el.position.name["fr"]).indexOf(value) >= 0
-        ));
-
-        return newStaffs;
-    };
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const searchElement = async (e) => {
+        setActiveNumberPage(1);
         if (e.target.value) {
-/*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
-            if (verifyTokenExpire()) {
-                setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + "&size=" + numberPerPage)
-                    .then(response => {
-                        setLoad(false);
-                        setStaffs(response.data["data"]);
-                        setShowList(response.data.data.slice(0, numberPerPage));
-                        setTotal(response.data.total);
-                        setNumberPage(forceRound(response.data.total / numberPerPage));
-                        setPrevUrl(response.data["prev_page_url"]);
-                        setNextUrl(response.data["next_page_url"]);
-                    })
-                    .catch(error => {
-                        setLoad(false);
-                    })
-                ;
-            }
+            fetchData({status: true, value: getLowerCaseString(e.target.value)});
         } else {
-            if (verifyTokenExpire()) {
-                setLoad(true);
-                axios.get(endPoint.list + "?size=" + numberPerPage)
-                    .then(response => {
-                        setLoad(false);
-                        setStaffs(response.data["data"]);
-                        setShowList(response.data.data.slice(0, numberPerPage));
-                        setTotal(response.data.total);
-                        setNumberPage(forceRound(response.data.total / numberPerPage));
-                        setPrevUrl(response.data["prev_page_url"]);
-                        setNextUrl(response.data["next_page_url"]);
-                    })
-                    .catch(error => {
-                        setLoad(false);
-                    })
-                ;
-            }
-/*            setNumberPage(forceRound(staffs.length/NUMBER_ELEMENT_PER_PAGE));
-            setShowList(staffs.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
+            fetchData();
             setActiveNumberPage(1);
         }
     };
 
     const onChangeNumberPerPage = (e) => {
-
         e.persist();
-        if (verifyTokenExpire()) {
-            setLoad(true);
-            axios.get(endPoint.list + "?size=" + e.target.value)
-                .then(response => {
-                    setLoad(false);
-                    setActiveNumberPage(1);
-                    setStaffs(response.data["data"]);
-                    setShowList(response.data.data.slice(0, response.data.per_page));
-                    setTotal(response.data.total);
-                    setNumberPage(forceRound(response.data.total / response.data.per_page));
-                    setPrevUrl(response.data["prev_page_url"]);
-                    setNextUrl(response.data["next_page_url"]);
-                })
-                .catch(error => {
-                    setLoad(false);
-                })
-            ;
-        }
+        setActiveNumberPage(1);
         setNumberPerPage(parseInt(e.target.value));
-    };
-
-
-    const getEndByPosition = (position) => {
-        let end = numberPerPage;
-        for (let i = 1; i<position; i++) {
-            end = end+numberPerPage;
-        }
-        return end;
     };
 
     const onClickPage = (e, page) => {
         e.preventDefault();
         setActiveNumberPage(page);
-
-        if (verifyTokenExpire()) {
-            setLoad(true);
-            axios.get(endPoint.list + "?page=" + page + "&size=" + numberPerPage)
-                .then(response => {
-                    setLoad(false);
-                    setPrevUrl(response.data["prev_page_url"]);
-                    setNextUrl(response.data["next_page_url"]);
-                    setStaffs(response.data["data"]);
-                    setShowList(response.data["data"].slice(0, numberPerPage));
-
-                })
-                .catch(error => {
-                    setLoad(false);
-                })
-            ;
-        }
     };
 
     const onClickNextPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage <= numberPage) {
+        if (activeNumberPage <= numberPage && nextUrl !== null) {
             setActiveNumberPage(activeNumberPage + 1);
-
-            if (nextUrl !== null) {
-                if (verifyTokenExpire()) {
-                    setLoad(true);
-                    axios.get(nextUrl + "?size=" + numberPerPage)
-                        .then(response => {
-                            setLoad(false);
-                            setPrevUrl(response.data["prev_page_url"]);
-                            setNextUrl(response.data["next_page_url"]);
-                            setStaffs(response.data["data"]);
-                            setShowList(
-                                response.data["data"].slice(0, numberPerPage)
-                            );
-
-                        })
-                        .catch(error => {
-                            setLoad(false);
-                        })
-                    ;
-                }
-            }
-
         }
     };
 
     const onClickPreviousPage = (e) => {
         e.preventDefault();
-        if (activeNumberPage >= 1) {
+        if (activeNumberPage >= 1 && prevUrl !== null) {
             setActiveNumberPage(activeNumberPage - 1);
-
-            if (prevUrl !== null) {
-                if (verifyTokenExpire()) {
-                    setLoad(true);
-                    axios.get(prevUrl + "?size=" + numberPerPage)
-                        .then(response => {
-                            setLoad(false);
-                            setPrevUrl(response.data["prev_page_url"]);
-                            setNextUrl(response.data["next_page_url"]);
-                            setStaffs(response.data["data"]);
-                            setShowList(
-                                response.data["data"].slice(0, numberPerPage)
-                            );
-
-                        })
-                        .catch(error => {
-                            setLoad(false);
-                        })
-                    ;
-                }
-            }
-
         }
     };
-
 
     const deleteStaff = (staffId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig())
@@ -292,46 +146,8 @@ const   Staff = (props) => {
                                 setStaffs(newStaffs);
                                 if (showList.length > 1) {
                                     setActiveNumberPage(activeNumberPage);
-
-                                    if (verifyTokenExpire()) {
-                                        setLoad(true);
-                                        axios.get(endPoint.list + "?page=" + activeNumberPage + "&size=" + numberPerPage)
-                                            .then(response => {
-                                                setLoad(false);
-                                                setPrevUrl(response.data["prev_page_url"]);
-                                                setNextUrl(response.data["next_page_url"]);
-                                                setStaffs(response.data["data"]);
-                                                setShowList(response.data["data"].slice(0, numberPerPage));
-                                                setTotal(response.data.total);
-                                                setNumberPage(forceRound(response.data.total / numberPerPage));
-
-                                            })
-                                            .catch(error => {
-                                                setLoad(false);
-                                            })
-                                        ;
-                                    }
                                 } else {
                                     setActiveNumberPage(activeNumberPage - 1);
-
-                                    if (verifyTokenExpire()) {
-                                        setLoad(true);
-                                        axios.get(endPoint.list + "?page=" + activeNumberPage - 1 + "&size=" + numberPerPage)
-                                            .then(response => {
-                                                setLoad(false);
-                                                setPrevUrl(response.data["prev_page_url"]);
-                                                setNextUrl(response.data["next_page_url"]);
-                                                setStaffs(response.data["data"]);
-                                                setShowList(response.data["data"].slice(0, numberPerPage));
-                                                setTotal(response.data.total);
-                                                setNumberPage(forceRound(response.data.total / numberPerPage));
-
-                                            })
-                                            .catch(error => {
-                                                setLoad(false);
-                                            })
-                                        ;
-                                    }
                                 }
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
@@ -344,16 +160,6 @@ const   Staff = (props) => {
             })
         ;
     };
-
-    const arrayNumberPage = () => {
-        const pages = [];
-        for (let i = 0; i < numberPage; i++) {
-            pages[i] = i;
-        }
-        return pages
-    };
-
-    const pages = arrayNumberPage();
 
     const printBodyTable = (staff, index) => {
         return (

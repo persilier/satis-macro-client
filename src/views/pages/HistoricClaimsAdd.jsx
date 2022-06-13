@@ -150,7 +150,7 @@ const HistoricClaimsAdd = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} </td>
-                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}</td>
+                <td>{`${claim?.claimer?.lastname ? claim.claimer.lastname : ""} ${claim?.claimer?.firstname ? claim.claimer.firstname : ""}`} {claim.account_targeted !== null ? "/" + claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}</td>
                 <td>{claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
@@ -308,7 +308,7 @@ const HistoricClaimsAdd = (props) => {
                                                     <tr style={{textAlign: "center"}}>
                                                         <th rowSpan="1" colSpan="1">{t("Référence")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Réclamant")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Objets de réclamtions")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Objets de réclamations")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Description")}</th>
                                                         <th rowSpan="1"
                                                             colSpan="1">{(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}

@@ -3,8 +3,10 @@ import {verifyPermission} from "./permission";
 import appConfig from "../config/appConfig";
 import moment from "moment";
 import axios from "axios";
+import i18n from "../i18n";
 import {listConnectData} from "../constants/userClient";
 import {AUTH_TOKEN} from "../constants/token";
+import i18n from "../i18n";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
@@ -264,6 +266,8 @@ export const seeParameters = (userPermissions) => {
     return (
         verifyPermission(userPermissions, "update-sms-parameters")
         || verifyPermission(userPermissions, 'update-mail-parameters')
+        || verifyPermission(userPermissions, 'update-proxy-config')
+        || verifyPermission(userPermissions, 'show-proxy-config')
         || verifyPermission(userPermissions, "list-any-institution")
         || verifyPermission(userPermissions, "update-my-institution")
         || verifyPermission(userPermissions, "update-claim-object-requirement")
@@ -291,7 +295,7 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, 'update-active-pilot')
         || verifyPermission(userPermissions, "list-faq")
         || verifyPermission(userPermissions, "list-faq-category")
-     //   || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
+        || verifyPermission(userPermissions, "config-reporting-claim-any-institution")
         || verifyPermission(userPermissions, "update-recurrence-alert-settings")
         || verifyPermission(userPermissions, "update-reject-unit-transfer-parameters")
         || verifyPermission(userPermissions, "list-any-institution-type-role")
@@ -350,6 +354,8 @@ export const seeTreatment = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-archived')
         || verifyPermission(userPermissions, 'list-my-discussions')
         || verifyPermission(userPermissions, 'contribute-discussion')
+        || verifyPermission(userPermissions, 'list-unit-revivals')
+        || verifyPermission(userPermissions, 'list-staff-revivals')
     );
 };
 
@@ -358,12 +364,13 @@ export const seeMonitoring = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-any-institution')
         || verifyPermission(userPermissions, 'list-reporting-claim-my-institution')
-        //|| verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
-        //|| verifyPermission(userPermissions, 'system-my-efficiency-report')
-        // || verifyPermission(userPermissions, 'list-global-reporting')
-        //|| verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
-/*        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
-        || verifyPermission(userPermissions, 'list-system-usage-reporting')*/
+        || verifyPermission(userPermissions, 'list-regulatory-reporting-claim-my-institution')
+        || verifyPermission(userPermissions, 'system-my-efficiency-report')
+        || verifyPermission(userPermissions, 'list-global-reporting')
+        || verifyPermission(userPermissions, "config-reporting-claim-my-institution" )
+        || verifyPermission(userPermissions, 'list-benchmarking-reporting')
+        || verifyPermission(userPermissions, 'list-system-usage-reporting')
+        || verifyPermission(userPermissions, 'show-my-staff-monitoring')
     );
 };
 
@@ -478,4 +485,49 @@ export const removeNullValueInObject = (obj) => {
             delete obj[array[i][0]];
     }
     return obj;
+};
+
+export const displayStatus = (status) => {
+
+    let finalStatus = "";
+
+    if (i18n.isInitialized) {
+        switch (status) {
+            case "incomplete":
+                finalStatus = i18n.t("incomplète");
+                break;
+            case "full":
+                finalStatus = i18n.t("complète");
+                break;
+            case "transferred_to_unit":
+                finalStatus = i18n.t("transférer à une unité");
+                break;
+            case "transferred_to_targeted_institution":
+                finalStatus = i18n.t("transférer à une institution ciblée");
+                break;
+            case "assigned_to_staff":
+                finalStatus = i18n.t("assigner à un staff");
+                break;
+            case "treated":
+                finalStatus = i18n.t("traitée");
+                break;
+            case "validated":
+                finalStatus = i18n.t("validée");
+                break;
+            case "archived":
+                finalStatus = i18n.t("archivée");
+                break;
+            case "awaiting":
+                finalStatus = i18n.t("en attente");
+                break;
+            case "considered":
+                finalStatus = i18n.t("considérée");
+                break;
+            default:
+                finalStatus = status;
+                break;
+        }
+    }
+
+    return finalStatus;
 };

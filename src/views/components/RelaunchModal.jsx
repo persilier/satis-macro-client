@@ -5,6 +5,7 @@ import {ToastBottomEnd} from "./Toast";
 import {toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {useTranslation} from "react-i18next";
+import {reviveStaff} from "../../http/crud";
 
 const RelaunchModal = ({onClose, id}) => {
 
@@ -17,20 +18,17 @@ const RelaunchModal = ({onClose, id}) => {
     const ref = useRef(null);
 
     const handleClick = (e) => {
-        if (verifyTokenExpire()) {
-            setLoad(true);
-            axios.post(`${appConfig.apiDomaine}/revive-staff/${id}`, {text: description})
-                .then(({data}) => {
-                    setLoad(false);
-                    ref.current.click();
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Relance effectuer avec succès')))
-                })
-                .catch(({response}) => {
-                    setLoad(false);
-                    setError(response.data.error.text);
-                })
-            ;
-        }
+        setLoad(true);
+        reviveStaff(id, {text: description})
+            .then(({data}) => {
+                setLoad(false);
+                ref.current.click();
+                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Relance effectuer avec succès')))
+            })
+            .catch(({response}) => {
+                setLoad(false);
+                setError(response.data.error.text);
+            })
     };
 
     return (
