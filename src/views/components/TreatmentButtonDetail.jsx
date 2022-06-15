@@ -30,6 +30,17 @@ const TreatmentButtonDetail = ({claim}) => {
                             </div>
                         ) : null}
 
+                        {claim && claim.active_treatment && claim.active_treatment.transferred_to_targeted_institution_at ? (
+                            <div className="kt-wizard-v2__review-item">
+                                <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>{t("Transféré par")}</span></div>
+                                <div className="kt-wizard-v2__review-content">
+                                   ++ <strong>{t("Nom")}:</strong>
+                                   ++ <span className="mx-2">{claim.active_treatment.assigned_to_staff_by ? claim.active_treatment.assigned_to_staff_by.identite.lastname + "  " + claim.active_treatment.assigned_to_staff_by.identite.firstname : "-"}</span><br/>
+                                </div>
+                            </div>
+                        ) : null}
+
+
                         {claim && claim.active_treatment && claim.active_treatment.transferred_to_unit_at ? (
                             <div className="kt-wizard-v2__review-item">
                                 <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>{t("Unité de traitement")}</span></div>
@@ -87,6 +98,8 @@ const TreatmentButtonDetail = ({claim}) => {
                                 {
                                     !claim ? null : (
                                         <div className="kt-wizard-v2__review-content">
+                                          ++  <strong>{t("Nom")}:</strong>
+                                          ++  <span className="mx-2">{claim.active_treatment.assigned_to_staff_by ? claim.active_treatment.assigned_to_staff_by.identite.lastname + "  " + claim.active_treatment.assigned_to_staff_by.identite.firstname : "-"}</span><br/>
                                             <strong>{t("Décision")}:</strong>
                                             <span className="mx-2">{claim.active_treatment.invalidated_reason ? t("Invalide") : t("Valide")}</span><br/>
 

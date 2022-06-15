@@ -358,6 +358,11 @@ export const seeTreatment = (userPermissions) => {
     );
 };
 
+export const seeEscalade = (userPermissions) => {
+    return (verifyPermission(userPermissions, "list-my-claim-unsatisfied"))
+        || (verifyPermission(userPermissions, "close-my-claims"))
+}
+
 export const seeMonitoring = (userPermissions) => {
     return (verifyPermission(userPermissions, "list-monitoring-claim-any-institution")
         || verifyPermission(userPermissions, 'list-monitoring-claim-my-institution')

@@ -140,6 +140,9 @@ import RevivalMonitoring from "../pages/RevivalMonitoring";
 import HistoricRevivals from "../pages/HistoricRevivals";
 import MonitoringDetails from "../pages/MonitoringDetails";
 import CommitteeConfig from "../pages/CommitteeConfig";
+import CommitteeAdhoc from "../pages/CommitteeAdhoc";
+import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
+import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
 
 const Body = () => {
     return (
@@ -501,6 +504,16 @@ const Body = () => {
                 <ClaimAssign/>
             </Route>
 
+            <Route exact path="/process/claim-unsatisfied">
+                <ClaimUnsatisfied/>
+            </Route>
+
+            <Route exact path="/process/committee-adhoc">
+                <CommitteeAdhoc/>
+            </Route>
+
+
+
             <Route exact path="/process/revival">
              <RevivalMonitoring/>
             </Route>
@@ -515,6 +528,10 @@ const Body = () => {
 
             <Route exact path="/process/claim-assign/:id/detail">
                 <ClaimAssignDetail/>
+            </Route>
+
+            <Route exact path="/process/claim-unsatisfied/:id/detail">
+                <ClaimUnsatisfiedDetail/>
             </Route>
 
             <Route exact path="/process/claim-assign/to-staff">

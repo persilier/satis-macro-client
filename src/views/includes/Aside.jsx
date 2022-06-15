@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import {connect} from "react-redux";
 import {verifyPermission} from "../../helpers/permission";
-import {seeCollect, seeHistorique, seeMonitoring, seeParameters, seeTreatment} from "../../helpers/function";
+import {seeCollect, seeHistorique, seeMonitoring, seeParameters, seeTreatment, seeEscalade} from "../../helpers/function";
 
 // react-i18n
 import { useTranslation } from "react-i18next";
@@ -29,7 +29,7 @@ const Aside = (props) => {
                             </li>
 
                             {
-                                seeCollect(props.userPermissions) || seeTreatment(props.userPermissions) ? (
+                                seeCollect(props.userPermissions) || seeTreatment(props.userPermissions) || seeEscalade(props.userPermissions) ? (
                                     <li className="kt-menu__section ">
                                         <h4 className="kt-menu__section-text">{t("Processus")}</h4>
                                         <i className="kt-menu__section-icon flaticon-more-v2"/>
@@ -205,6 +205,53 @@ const Aside = (props) => {
                             }
 
                             {
+                                !seeEscalade(props.userPermissions) ? null : (
+                                    <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
+                                        <a href="#escalade" onClick={e => e.preventDefault()}
+                                           className="kt-menu__link kt-menu__toggle">
+                                            <i className="kt-menu__link-icon flaticon2-files-and-folders "/>
+                                            <span className="kt-menu__link-text">{t("Escalade")}</span>
+                                            <i className="kt-menu__ver-arrow la la-angle-right"/>
+                                        </a>
+                                        <div className="kt-menu__submenu ">
+                                            <span className="kt-menu__arrow"/>
+                                            <ul className="kt-menu__subnav">
+                                                <li className="kt-menu__item  kt-menu__item--parent" aria-haspopup="true">
+                                                <span className="kt-menu__link">
+                                                    <span className="kt-menu__link-text">{t("Escalade")}</span>
+                                                </span>
+                                                </li>
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
+                                                        <NavLink exact to="/process/claim-unsatisfied" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Réclamations insatisfaites")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
+                                                        <NavLink exact to="/process/committee-adhoc" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Liste des comités Ad'hoc")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+
+                                            </ul>
+                                        </div>
+                                    </li>
+                                )
+                            }
+
+                            {
                                 !seeMonitoring(props.userPermissions) ? null : (
                                     <>
                                         <li className="kt-menu__section ">
@@ -216,7 +263,7 @@ const Aside = (props) => {
                                             verifyPermission(props.userPermissions, 'list-monitoring-claim-any-institution') || verifyPermission(props.userPermissions, 'list-monitoring-claim-my-institution') ? (
                                                 <NavLink exact to="/monitoring/claims/monitoring" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                        <i className="kt-menu__link-icon flaticon-folder-1"/>
                                                         <span className="kt-menu__link-text">{t("Suivi des réclamations")}</span>
                                                     </li>
                                                 </NavLink>
@@ -229,7 +276,7 @@ const Aside = (props) => {
                                                // console.log(!props.activePilot )
                                                 <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
-                                                        <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                        <i className="kt-menu__link-icon flaticon-folder-1"/>
                                                         <span className="kt-menu__link-text">{t("Suivi des réclamations")}</span>
                                                     </li>
                                                 </NavLink>
@@ -251,7 +298,7 @@ const Aside = (props) => {
                                             data-ktmenu-submenu-toggle="hover">
                                             <a href="#historique" onClick={e => e.preventDefault()}
                                                className="kt-menu__link kt-menu__toggle">
-                                                <i className="kt-menu__link-icon flaticon2-heart-rate-monitor"/>
+                                                <i className="kt-menu__link-icon flaticon2-graph"/>
                                                 <span className="kt-menu__link-text">{t("Rapport")}</span>
                                                 <i className="kt-menu__ver-arrow la la-angle-right"/>
                                             </a>
@@ -397,7 +444,7 @@ const Aside = (props) => {
                                             data-ktmenu-submenu-toggle="hover">
                                             <a href="#historique" onClick={e => e.preventDefault()}
                                                className="kt-menu__link kt-menu__toggle">
-                                                <i className="kt-menu__link-icon flaticon2-telegram-logo"/>
+                                                <i className="kt-menu__link-icon flaticon2-graphic-1"/>
                                                 <span className="kt-menu__link-text">{t("Historiques")}</span>
                                                 <i className="kt-menu__ver-arrow la la-angle-right"/>
                                             </a>
