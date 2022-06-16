@@ -41,7 +41,7 @@ const CommitteeAdhoc = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/my/claim-unsatisfied`)
+            axios.get(`${appConfig.apiDomaine}/escalation-config`)
                 .then(response => {
                     console.log(response.data)
                     setNumberPage(forceRound(response.data.data.length / numberPerPage));
