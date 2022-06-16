@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -62,6 +62,15 @@ const ClaimObject = (props) => {
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
+/*
+        value = getLowerCaseString(value);
+        let newClaimObjects = [...claimObjects];
+        newClaimObjects = newClaimObjects.filter(el => (
+            getLowerCaseString(el.name["fr"]).indexOf(value) >= 0
+        ));
+
+        return newClaimObjects;*/
+
         let newClaimObjects = [...claimObjects];
         newClaimObjects = newClaimObjects.filter(el => {
             if (el.description["fr"]) {
