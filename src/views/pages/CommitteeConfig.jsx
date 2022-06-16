@@ -35,6 +35,7 @@ const CommitteeConfig = (props) => {
     const [InputStandard, setInputStandard] = useState(false);
     const [InputSpecific, setInputSpecific] = useState(false);
     const [disable, setDisable] = useState(false);
+    const [disabledInput, setDisabledInput] = useState(false);
     const [isLoad, setIsLoad] = useState(true)
 
     useEffect(() => {
@@ -60,6 +61,13 @@ const CommitteeConfig = (props) => {
         newData.min_fusion_percent = parseInt(e.target.value);
         setData(newData);
     };
+
+    const onChangeLastName = (e) => {
+        const newData = {...data};
+        newData.name = e.target.value;
+        setData(newData);
+    };
+
 
     const handleInputChangeStandard = (e) => {
         const newData = {...data};
@@ -175,10 +183,17 @@ const CommitteeConfig = (props) => {
                                                     </div>
                                                 </div>*/}
 
-                                                <div className="form-group row" >
+                                                <div className="form-group row">
 
-                                                    <div className="" style={{display: "flex",verticalAlign: "middle",margin: "auto"}}>
-                                                        <div className="kt-checkbox-list "  style={{marginRight: "20px"}}> <label htmlFor="">{t("Veuillez choisir le(s) comité(s)")}:</label></div>
+                                                    <div className="" style={{
+                                                        display: "flex",
+                                                        verticalAlign: "middle",
+                                                        margin: "auto"
+                                                    }}>
+                                                        <div className="kt-checkbox-list "
+                                                             style={{marginRight: "20px"}}><label
+                                                            htmlFor="">{t("Veuillez choisir le(s) comité(s)")}:</label>
+                                                        </div>
                                                         <div className="kt-checkbox-list " style={{display: "flex"}}>
                                                             <label className="kt-checkbox"
                                                                    style={{marginRight: "20px"}}>
@@ -207,28 +222,58 @@ const CommitteeConfig = (props) => {
 
                                                 {InputStandard === true ?
                                                     (
-                                                        <div className="form-group ">
-                                                            <div className={"col-lg-9 col-md-9 col-sm-12 m-auto"}>
-                                                                <label htmlFor="">{t("Agents concernés par le comité standard")}</label>
-                                                                <Select
-                                                                    isClearable
-                                                                    isMulti
-                                                                    clearValue
-                                                                    //value={unit}
-                                                                    //isLoading={isLoad}
-                                                                    placeholder={t("Veuillez sélectionner les agents")}
-                                                                    //onChange={onChangeUnit}
-                                                                    //options={ (!unit || (unit && unit.length < 4))  ? units : [] }
-                                                                    //options={unit}
-                                                                />
-                                                                {/*   {
+                                                        <>
+                                                            <div className="form-group">
+                                                                <div
+                                                                    className={error.name?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
+                                                                    <label
+                                                                        htmlFor="name">{t("Nom")} {""}
+                                                                        <InputRequire/> </label>
+                                                                    <input
+                                                                        disabled={disabledInput}
+                                                                        id="name"
+                                                                        type="text"
+                                                                        className={error.name?.length ? "form-control is-invalid" : "form-control"}
+                                                                        placeholder={"Veuillez entrer le nom du comité"}
+                                                                        value={data.name}
+                                                                        onChange={(e) => onChangeLastName(e)}
+                                                                    />
+                                                                    {
+                                                                        error.name?.length ? (
+                                                                            error.name.map((error, index) => (
+                                                                                <div key={index}
+                                                                                     className="invalid-feedback">
+                                                                                    {error}
+                                                                                </div>
+                                                                            ))
+                                                                        ) : null
+                                                                    }
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="form-group ">
+                                                                <div className={"col-lg-9 col-md-9 col-sm-12 m-auto"}>
+                                                                    <label
+                                                                        htmlFor="">{t("Agents concernés par le comité standard")}  <InputRequire/></label>
+                                                                    <Select
+                                                                        isClearable
+                                                                        isMulti
+                                                                        clearValue
+                                                                        //value={unit}
+                                                                        //isLoading={isLoad}
+                                                                        placeholder={t("Veuillez sélectionner les agents")}
+                                                                        //onChange={onChangeUnit}
+                                                                        //options={ (!unit || (unit && unit.length < 4))  ? units : [] }
+                                                                        //options={unit}
+                                                                    />
+                                                                    {/*   {
                                                                  unit.length > 3 ? (
                                                                      <p className={"mt-1"} style={{ color:"red", fontSize:"10px", textAlign:"end"}}>Vous avez atteint le nombre maximal d'agences à sélectionner</p>
                                                                  ) : null
                                                                }
                                                          */}
 
-                                                                {/*   {
+                                                                    {/*   {
                                                                  error.unit_targeted_id.length ? (
                                                                      error.unit_targeted_id.map((error, index) => (
                                                                          <div key={index} className="invalid-feedback">
@@ -238,21 +283,25 @@ const CommitteeConfig = (props) => {
                                                                  ) : null
                                                              }
                                                          */}
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        </>
                                                     ) : null
                                                 }
-                                                { InputSpecific === true ?
+                                                {InputSpecific === true ?
                                                     (
                                                         <div className="form-group ">
-                                                            <div className={"col-lg-9 col-md-9 col-sm-12 text-center m-auto"}>
-                                                                <div className="alert alert-outline-primary fade show" role="alert">
-                                                                    <div className="alert-icon"> <i className="flaticon-warning"></i></div>
+                                                            <div
+                                                                className={"col-lg-9 col-md-9 col-sm-12 text-center m-auto"}>
+                                                                <div className="alert alert-outline-danger fade show"
+                                                                     role="alert">
+                                                                    <div className="alert-icon"><i className="flaticon-warning"></i></div>
                                                                     <div className="alert-text">
                                                                         {t(" Veuillez configurer le comité spécifique lors du transfert de la réclamation ")}
                                                                     </div>
                                                                     <div className="alert-close">
-                                                                        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                                                                        <button type="button" className="close"
+                                                                                data-dismiss="alert" aria-label="Close">
                                                                             <span aria-hidden="true"><i className="la la-close"></i></span>
                                                                         </button>
                                                                     </div>
