@@ -57,7 +57,7 @@ const TypeCompteForm = (props) => {
                 ;
             }
         }
-    },[edittypeid, appConfig.apiDomaine]);
+    }, [edittypeid, appConfig.apiDomaine]);
 
     const onChangeName = (e) => {
         const newData = {...data};
@@ -124,7 +124,8 @@ const TypeCompteForm = (props) => {
                                     {t("Type Compte")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link">
                                     {
                                         edittypeid ? t("Modification") : t("Ajout")
                                     }
@@ -218,7 +219,7 @@ const TypeCompteForm = (props) => {
                                                                         !startRequest ? (
                                                                             <button type="submit"
                                                                                     onClick={(e) => onSubmit(e)}
-                                                                                    className="btn btn-primary">{edittypeid?t("Modifier"):t("Enregistrer")}</button>
+                                                                                    className="btn btn-primary">{edittypeid ? t("Modifier") : t("Enregistrer")}</button>
                                                                         ) : (
                                                                             <button
                                                                                 className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
