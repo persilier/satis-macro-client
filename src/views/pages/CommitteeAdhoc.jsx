@@ -18,7 +18,10 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import MemberDescriptionModal from "../components/DescriptionDetail/MemberDescriptionModal";
 import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
+import CreateCommitteeSpecific from "../components/CreateCommitteeSpecific";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -27,21 +30,22 @@ const CommitteeAdhoc = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    if (!(verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") && props.activePilot))
+    if (!(verifyPermission(props.userPermissions, "list-treatment-board") && props.activePilot))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
-  //  const [claims, setClaims] = useState([]);
+    //  const [claims, setClaims] = useState([]);
     const [committee, setCommittee] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [currentMessage, setCurrentMessage] = useState("");
+    const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/escalation-config`)
+            axios.get(`${appConfig.apiDomaine}/treatments-boards`)
                 .then(response => {
                     console.log(response.data)
                     setNumberPage(forceRound(response.data.data.length / numberPerPage));
@@ -66,9 +70,9 @@ const CommitteeAdhoc = (props) => {
         newCommittee = newCommittee.filter(el => {
             return (
                 getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-                getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / " + el.account_number : "")}`).indexOf(value) >= 0 ||
+                getLowerCaseString(`${(el.claimer && el.claimer.lastname) ? el.claimer.lastname : ''} ${(el.claimer && el.claimer.firstname) ? el.claimer.firstname : ''}  ${el.account_targeted ? " / " + el.account_targeted.number : (el.account_number ? " / " + el.account_number : "")}`).indexOf(value) >= 0 ||
                 getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
-                getLowerCaseString( el.claim_object ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
+                getLowerCaseString(el.claim_object ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
                 getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
                 getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : (el.institution_targeted ? el.institution_targeted.name : "")).indexOf(value) >= 0
             )
@@ -151,38 +155,49 @@ const CommitteeAdhoc = (props) => {
         document.getElementById("button_modal").click();
     };
 
-    const printBodyTable = (committee, index) => {
+    const showMemberModal = (mlist) => {
+        setMemberList(mlist);
+        document.getElementById("button_modal1").click();
+    };
+
+    const printBodyTable = (committee, index, id) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{committee.comity}Comité</td>
-                <td>{committee.types}Types</td>
-                <td>{committee.number_of_claims_litigated_in_court}Nombre de membres</td>
-                <td>
-                    {formatDateToTime(committee.created_at)} <br/>
-                    {committee.timeExpire >= 0 ?
-                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + committee.timeExpire}</span>
-                        : <span style={{color: "red", fontWeight: "bold"}}>{"J" + committee.timeExpire}</span>
-                    }
+                <td>{committee.name}</td>
+                <td>{committee.type}</td>
+                <td>{committee.members.length} {""}
+                    <HtmlDescription
+                        onClick={() => showMemberModal(committee.members ?
+                            committee.members : '-')}/>
+
                 </td>
-                <td>{committee.reference} {committee.is_rejected ? (
-                    <span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
-                <td>{ committee.claim_object ? committee.claim_object.name["fr"] : ""}</td>
+                <td>{formatDateToTime(committee.created_at)} <br/></td>
+                <td>{committee.claim && committee.claim.reference ? committee.claim.reference : "-"}</td>
+                <td>{committee.claim ? committee.claim.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
-                    <HtmlDescription onClick={() => showModal(committee.description ? committee.description : '-')}/>
+                    <HtmlDescription
+                        onClick={() => showModal(committee.claim && committee.claim.description ? committee.claim.description : '-')}/>
                 </td>
                 {/*<td>{truncateString(claim.description, 41)}</td>*/}
-               {/* <td>
-                    <a href={`/process/committee-adhoc/${committee.id}/detail`}
-                       className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
-                        <i className="la la-eye"/>
-                    </a>
-                </td>*/}
+                <td>
+
+                    {
+                        verifyPermission(props.userPermissions, 'update-treatment-board') ? (
+                            <Link to={`/settings/committee/${committee.id}/edit`}
+                                  id={`committee-edit-${committee.id}`}
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                  title={t("Modifier")}>
+                                <i className="la la-edit"/>
+                            </Link>
+                        ) : null
+                    }
+                </td>
             </tr>
         );
     };
 
     return (
-        ready ? ( verifyPermission(props.userPermissions, 'list-my-claim-unsatisfied') && props.activePilot ? (
+        ready ? (verifyPermission(props.userPermissions, 'list-treatment-board') && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
@@ -219,7 +234,7 @@ const CommitteeAdhoc = (props) => {
                         <div>
                             {t("Cette page présente la liste complète des comités Ad'hoc")}
                             <br/>
-                           {/* <span className="kt-badge kt-badge--danger kt-badge--md">R</span>
+                            {/* <span className="kt-badge kt-badge--danger kt-badge--md">R</span>
                             {t("représente les réclamations réjetées")}*/}
                         </div>
                     )}/>
@@ -236,7 +251,7 @@ const CommitteeAdhoc = (props) => {
                                 <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
-                                            <div className="col-sm-6 text-left">
+                                        {/*    <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         {t("Recherche")}:
@@ -246,7 +261,7 @@ const CommitteeAdhoc = (props) => {
                                                                aria-controls="kt_table_1"/>
                                                     </label>
                                                 </div>
-                                            </div>
+                                            </div>*/}
                                         </div>
                                         <div className="row">
                                             <div className="col-sm-12">
@@ -291,11 +306,11 @@ const CommitteeAdhoc = (props) => {
                                                             aria-label="Country: activate to sort column ascending">
                                                             {t("Description")}
                                                         </th>
-                                                        {/*<th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "40.25px"}}
                                                             aria-label="Type: activate to sort column ascending">
                                                             {t("Action")}
-                                                        </th>*/}
+                                                        </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -324,11 +339,20 @@ const CommitteeAdhoc = (props) => {
                                                         <th rowSpan="1" colSpan="1">{t("Référence")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
                                                 </table>
-                                                <button id="button_modal" type="button" className="btn btn-secondary btn-icon-sm d-none" data-toggle="modal" data-target="#message_email"/>
-                                                <HtmlDescriptionModal title={t("Description")} message={currentMessage}/>
+                                                <button id="button_modal" type="button"
+                                                        className="btn btn-secondary btn-icon-sm d-none"
+                                                        data-toggle="modal" data-target="#message_email"/>
+                                                <button id="button_modal1" type="button"
+                                                        className="btn btn-secondary btn-icon-sm d-none"
+                                                        data-toggle="modal" data-target="#member"/>
+                                                <HtmlDescriptionModal title={t("Description")}
+                                                                      message={currentMessage}/>
+                                                <MemberDescriptionModal title={t("Liste des membres du comité")}
+                                                                      message={memberList}/>
                                             </div>
                                         </div>
                                         <div className="row">

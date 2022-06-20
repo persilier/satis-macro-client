@@ -20,14 +20,18 @@ const CommitteeConfig = (props) => {
     const {t, ready} = useTranslation();
 
     document.title = (ready ? t("Satis client - Paramètre configuration des comités") : "");
-    if (!verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters'))
-        window.location.href = ERROR_401;
+  /*  if (!verifyPermission(props.userPermissions, 'list-treatment-board'))
+        window.location.href = ERROR_401;*/
 
     const defaultData = {
-        min_fusion_percent: 0,
+        name: "",
+        standard_bord_exists: "",
+        specific_bord_exists: ""
     };
     const defaultError = {
-        min_fusion_percent: [],
+        name: [],
+        standard_bord_exists: [],
+        specific_bord_exists: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
@@ -37,30 +41,41 @@ const CommitteeConfig = (props) => {
     const [disable, setDisable] = useState(false);
     const [disabledInput, setDisabledInput] = useState(false);
     const [isLoad, setIsLoad] = useState(true)
+    const [staff, setStaff] = useState([]);
+    const [staffs, setStaffs] = useState([]);
+    const [committee, setCommittee] = useState(null)
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/configurations/min-fusion-percent`)
-                .then(({data}) => {
-                    setData({
-                        min_fusion_percent: data,
-                    });
+            await axios.get(`${appConfig.apiDomaine}/escalation-config`)
+                .then(({response}) => {
+                    setInputStandard(response.standard_bord_exists);
+                    setInputStandard(response.specific_bord_exists);
+
+
+                    setIsLoad(false)
                 })
                 .catch(error => {
                     //console.log("Something is wrong");
                 })
+
+            await axios.get(`${appConfig.apiDomaine}/treatments-boards/create`)
+                .then(response => {
+                    for (var i = 0; i < response.data.staff.length; i++) {
+                        response.data.staff[i].label = response.data.staff[i].identite.firstname + " " + response.data.staff[i].identite.lastname;
+                        response.data.staff[i].value = response.data.staff[i].id;
+                    }
+                    setStaffs(response.data.staff);
+                    setIsLoad(false);
+                })
+                .catch(error => console.log(error))
+            ;
             ;
         }
 
         if (verifyTokenExpire())
             fetchData();
     }, []);
-
-    const handleRecurencePeriod = (e) => {
-        const newData = {...data};
-        newData.min_fusion_percent = parseInt(e.target.value);
-        setData(newData);
-    };
 
     const onChangeLastName = (e) => {
         const newData = {...data};
@@ -72,11 +87,11 @@ const CommitteeConfig = (props) => {
     const handleInputChangeStandard = (e) => {
         const newData = {...data};
         setInputStandard(e.target.checked);
-        console.log(newData.proxy_modules)
         if (e.target.checked === true)
-            newData.proxy_modules.push("Standard");
+            newData.standard_bord_exists.push(true);
         else
-            newData.proxy_modules.splice(newData.proxy_modules.indexOf("Standard"), 1);
+            //newData.proxy_modules.splice(newData.proxy_modules.indexOf("Standard"), 1);
+            newData.standard_bord_exists.push(false);
         setData(newData);
 
     };
@@ -85,29 +100,41 @@ const CommitteeConfig = (props) => {
         const newData = {...data};
         setInputSpecific(e.target.checked);
         if (e.target.checked === true)
-            newData.proxy_modules.push("Specific");
+            newData.specific_bord_exists.push(true);
         else
-            newData.proxy_modules.splice(newData.proxy_modules.indexOf("Specific"), 1);
+            newData.specific_bord_exists.push(false);
         setData(newData);
 
     };
 
 
+    const onChangeStaff = (selected) => {
+        console.log(selected)
+        if (selected && Array.isArray(selected) && selected.length > 0) {
+            var staffToSend = selected.map(item => item.value)
+            const newData = {...data};
+            newData.members = staffToSend;
+            setStaff(selected);
+            setData(newData);
+        } else {
+            setStaff([])
+        }
+    };
+
     const onSubmit = async (e) => {
         const sendData = {...data};
         e.preventDefault();
-
+        console.log(sendData)
         setStartRequest(true);
         if (verifyTokenExpire()) {
-            await axios.put(`${appConfig.apiDomaine}/configurations/min-fusion-percent`, sendData)
+            await axios.put(`${appConfig.apiDomaine}/escalation-config`, sendData)
                 .then(response => {
-                    if (response?.data?.proxy_modules && response.data.proxy_modules.includes("mail"))
+                    if (response?.data?.standard_bord_exists && response.data?.standard_bord_exists.includes("standard_bord_exists"))
                         setInputStandard(true);
-                    if (response?.data?.proxy_modules && response.data.proxy_modules.includes("incoming_mail_service"))
+                    if (response?.data?.specific_bord_exists && response.data?.specific_bord_exists.includes("specific_bord_exists"))
                         setInputSpecific(true);
                     if (Object.keys(response.data).length === 0)
                         setDisable(true);
-
                     setStartRequest(false);
                     setError(defaultError);
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig());
@@ -123,7 +150,7 @@ const CommitteeConfig = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'update-min-fusion-percent-parameters') ? (
+           ! verifyPermission(props.userPermissions, 'update-treatment-board') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -160,28 +187,6 @@ const CommitteeConfig = (props) => {
                                     <form method="POST" className="kt-form">
                                         <div className="kt-form kt-form--label-right">
                                             <div className="kt-portlet__body">
-                                                {/*   <div className={error.min_fusion_percent.length ? "form-group row validated" : "form-group row"}>
-                                                    <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="min_fusion_percent">{t("Pourcentage")} <InputRequire/></label>
-                                                    <div className="col-lg-9 col-xl-6">
-                                                        <input
-                                                            id="min_fusion_percent"
-                                                            type="number"
-                                                            className={error.min_fusion_percent.length ? "form-control is-invalid" : "form-control"}
-                                                            placeholder="0"
-                                                            value={data.min_fusion_percent}
-                                                            onChange={(e) => handleRecurencePeriod(e)}
-                                                        />
-                                                        {
-                                                            error.min_fusion_percent.length ? (
-                                                                error.min_fusion_percent.map((error, index) => (
-                                                                    <div key={index} className="invalid-feedback">
-                                                                        {error}
-                                                                    </div>
-                                                                ))
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                </div>*/}
 
                                                 <div className="form-group row">
 
@@ -225,7 +230,7 @@ const CommitteeConfig = (props) => {
                                                         <>
                                                             <div className="form-group">
                                                                 <div
-                                                                    className={error.name?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
+                                                                   className={error.name?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
                                                                     <label
                                                                         htmlFor="name">{t("Nom")} {""}
                                                                         <InputRequire/> </label>
@@ -251,40 +256,34 @@ const CommitteeConfig = (props) => {
                                                                 </div>
                                                             </div>
 
-                                                            <div className="form-group ">
-                                                                <div className={"col-lg-9 col-md-9 col-sm-12 m-auto"}>
+                                                                <div
+                                                                    className={error.members?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
                                                                     <label
-                                                                        htmlFor="">{t("Agents concernés par le comité standard")}  <InputRequire/></label>
-                                                                    <Select
-                                                                        isClearable
-                                                                        isMulti
-                                                                        clearValue
-                                                                        //value={unit}
-                                                                        //isLoading={isLoad}
-                                                                        placeholder={t("Veuillez sélectionner les agents")}
-                                                                        //onChange={onChangeUnit}
-                                                                        //options={ (!unit || (unit && unit.length < 4))  ? units : [] }
-                                                                        //options={unit}
-                                                                    />
-                                                                    {/*   {
-                                                                 unit.length > 3 ? (
-                                                                     <p className={"mt-1"} style={{ color:"red", fontSize:"10px", textAlign:"end"}}>Vous avez atteint le nombre maximal d'agences à sélectionner</p>
-                                                                 ) : null
-                                                               }
-                                                         */}
+                                                                           htmlFor="staff">{t("Agent(s)")} <InputRequire/> </label>
+                                                                    <div className={""}>
+                                                                        <Select
+                                                                            isClearable
+                                                                            isMulti
+                                                                            placeholder={t("Veuillez sélectionner les agents")}
+                                                                            value={staff}
+                                                                            isLoading={isLoad}
+                                                                            onChange={onChangeStaff}
+                                                                            options={staffs}
+                                                                        />
+                                                                        {error.members?.length ? (
+                                                                                error.members.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
+                                                                    </div>
 
-                                                                    {/*   {
-                                                                 error.unit_targeted_id.length ? (
-                                                                     error.unit_targeted_id.map((error, index) => (
-                                                                         <div key={index} className="invalid-feedback">
-                                                                             {error}
-                                                                         </div>
-                                                                     ))
-                                                                 ) : null
-                                                             }
-                                                         */}
                                                                 </div>
-                                                            </div>
+
+
                                                         </>
                                                     ) : null
                                                 }
@@ -292,7 +291,7 @@ const CommitteeConfig = (props) => {
                                                     (
                                                         <div className="form-group ">
                                                             <div
-                                                                className={"col-lg-9 col-md-9 col-sm-12 text-center m-auto"}>
+                                                                className={"col-lg-9 col-md-9 col-sm-12 text-center m-auto pt-5"}>
                                                                 <div className="alert alert-outline-danger fade show"
                                                                      role="alert">
                                                                     <div className="alert-icon"><i className="flaticon-warning"></i></div>

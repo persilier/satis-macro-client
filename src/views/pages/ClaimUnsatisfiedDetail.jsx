@@ -69,7 +69,7 @@ const ClaimUnsatisfiedDetail = (props) => {
 
     const defaultError = {
         unit_id: [],
-        parent_id: []
+        parent_id: [],
     };
     const [error, setError] = useState(defaultError);
 
@@ -81,6 +81,7 @@ const ClaimUnsatisfiedDetail = (props) => {
     const [unit, setUnit] = useState(null);
     const [startRequest, setStartRequest] = useState(false);
     const [startRequestToUnit, setStartRequestToUnit] = useState(false);
+    const [startRequestToTransfert, setStartRequestToTransfert] = useState(false);
     const [showTreatment, setShowTreatment] = useState(null)
 
     useEffect(() => {
@@ -88,7 +89,7 @@ const ClaimUnsatisfiedDetail = (props) => {
             if (verifyTokenExpire()) {
                 await axios.get(`${appConfig.apiDomaine}/claims/details/${id}`)
                     .then(response => {
-                        console.log(response.data)
+                        console.log('ee',response.data)
                         setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
                         setClaim(response.data);
                         setDataId(response.data.institution_targeted ? response.data.institution_targeted.name : "-");
@@ -133,59 +134,43 @@ const ClaimUnsatisfiedDetail = (props) => {
 
     const onClickToTranfert = (e) => {
         e.preventDefault();
-        setStartRequestToUnit(true);
-
-        async function fetchData() {
-            await axios.put(endPoint.update(`${id}`), data)
-                .then(response => {
-                    setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                    window.location.href = "/process/claim-unsatisfied";
-                })
-                .catch(error => {
-                    setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig())
-                })
-            ;
+        setStartRequestToTransfert(true)
+        const newData = {
+            type: "standard",
+            claim_id: id
         }
+        axios.post(appConfig.apiDomaine + `/treatments-boards`, newData)
+            .then(response => {
+                setStartRequestToTransfert(false)
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+                window.location.href = "/process/claim-unsatisfied"
+            }).catch(error => {
+            setStartRequestToTransfert(false)
+            ToastBottomEnd.fire(toastAddErrorMessageConfig());
+        })
 
-        if (verifyTokenExpire())
-            fetchData()
+
     };
 
-    const onClickToCreate = (e) => {
+
+
+  const onClickToTranfertStandard = (e) => {
         e.preventDefault();
-        setStartRequestToUnit(true);
-
-        async function fetchData() {
-            await axios.put(endPoint.update(`${id}`), data)
-                .then(response => {
-                    setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                    window.location.href = "/process/claim-unsatisfied";
-                })
-                .catch(error => {
-                    setStartRequestToUnit(false);
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig())
-                })
-            ;
+        setStartRequestToUnit(true)
+        const newData = {
+            type: "standard",
+            claim_id: id
         }
+        axios.post(appConfig.apiDomaine + `/treatments-boards`, newData)
+            .then(response => {
+                setStartRequestToUnit(false)
+                ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+                window.location.href = "/process/claim-unsatisfied"
+            }).catch(error => {
+            setStartRequestToUnit(false)
+            ToastBottomEnd.fire(toastAddErrorMessageConfig());
+        })
 
-        if (verifyTokenExpire())
-            fetchData()
-    };
-
-    const onChangeUnits = (selected) => {
-        const newData = {...data};
-        newData.unit_id = selected ? selected.value : null;
-        setUnit(selected);
-        setData(newData);
-        console.log(newData.unit_id, "UNIT")
-    };
-
-    const onClickFusionButton = async (newClaim) => {
-        await setCopyClaim(newClaim);
-        document.getElementById(`modal-button`).click();
     };
 
     return (
@@ -404,9 +389,9 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                    ( <div className="kt-wizard-v2__review-item">
                                                                     <div
                                                                         className="kt-wizard-v2__review-title">{t("Transférer à l'unité N+1 de l'unité")}</div>
-                                                                    <div className="modal-footer d-flex">
+                                                                    <div className=" text-center">
                                                                         {
-                                                                            !startRequestToUnit ? (
+                                                                            !startRequestToTransfert ? (
                                                                                 <button
                                                                                     className="btn btn-outline-success"
                                                                                     onClick={onClickToTranfert}>
@@ -430,12 +415,12 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                         className="kt-wizard-v2__review-title">{t("Transférer au comité Ad'hoc")}</div>
 
 
-                                                                    <div className="modal-footer d-flex">
+                                                                    <div className="modal-footer d-flex text-center">
                                                                         {
                                                                             !startRequestToUnit ? (
                                                                                 <button
                                                                                     className="btn btn-outline-success"
-                                                                                    onClick={onClickToTranfert}>
+                                                                                    onClick={onClickToTranfertStandard}>
                                                                                     {t("Transférer au comité standard")}
                                                                                 </button>
                                                                             ) : (
@@ -444,6 +429,36 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                                     type="button" disabled>
                                                                                     {t("Chargement")}...
                                                                                 </button>
+                                                                            )
+                                                                        }
+
+                                                                        {
+                                                                           (
+                                                                                <div className="d-flex justify-content-md-end">
+
+                                                                                    <button type="button" data-keyboard="false" data-backdrop="static"
+                                                                                            data-toggle="modal" data-target="#exampleModalCommittee"
+                                                                                            className="btn btn-outline-primary">
+                                                                                        {t("Transférer au comité spécifique")}
+                                                                                    </button>
+                                                                                    {
+                                                                                        claim ? (
+                                                                                            <CreateCommitteeSpecific
+                                                                                                activeTreatment={
+                                                                                                    claim.active_treatment ? (
+                                                                                                        claim.active_treatment
+                                                                                                    ) : null
+                                                                                                }
+                                                                                                getId={`${id}`}
+                                                                                            />
+                                                                                        ) : (
+                                                                                            <CreateCommitteeSpecific
+                                                                                                getId={`${id}`}
+                                                                                            />
+                                                                                        )
+                                                                                    }
+
+                                                                                </div>
                                                                             )
                                                                         }
                                                                     </div>
@@ -467,35 +482,7 @@ const ClaimUnsatisfiedDetail = (props) => {
 
                                                                     </div>*/}
 
-                                                                    {
-                                                                        verifyPermission(props.userPermissions, "close-my-claims") ? (
-                                                                            <div className="d-flex justify-content-md-end">
 
-                                                                                <button type="button" data-keyboard="false" data-backdrop="static"
-                                                                                        data-toggle="modal" data-target="#exampleModalCommittee"
-                                                                                        className="btn btn-outline-primary">
-                                                                                    {t("Transférer au comité standard")}
-                                                                                </button>
-                                                                                {
-                                                                                    claim ? (
-                                                                                        <CreateCommitteeSpecific
-                                                                                            activeTreatment={
-                                                                                                claim.active_treatment ? (
-                                                                                                    claim.active_treatment
-                                                                                                ) : null
-                                                                                            }
-                                                                                            getId={`${id}`}
-                                                                                        />
-                                                                                    ) : (
-                                                                                        <CreateCommitteeSpecific
-                                                                                            getId={`${id}`}
-                                                                                        />
-                                                                                    )
-                                                                                }
-
-                                                                            </div>
-                                                                        ) : null
-                                                                    }
 
 
                                                                 </div>

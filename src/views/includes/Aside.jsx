@@ -227,14 +227,14 @@ const Aside = (props) => {
                                                         <NavLink exact to="/process/claim-unsatisfied" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                <span className="kt-menu__link-text">{t("Réclamations insatisfaites")}</span>
+                                                                <span className="kt-menu__link-text">{t("Réclamations non satisfaites")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
                                                 }
 
                                                 {
-                                                    verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
+                                                    verifyPermission(props.userPermissions, "list-treatment-board") && props.activePilot ? (
                                                         <NavLink exact to="/process/committee-adhoc" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
@@ -894,7 +894,7 @@ const Aside = (props) => {
                                                                                 <NavLink exact to="/settings/config-rapport" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link ">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                                        <span className="kt-menu__link-text">Configuration Titre Rapport</span>
+                                                                                        <span className="kt-menu__link-text">{t("Configuration Titre Rapport")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
@@ -951,9 +951,9 @@ const Aside = (props) => {
                                                                             ) : null
                                                                         }
                                                                         {
-                                                                            verifyPermission(props.userPermissions, "update-min-fusion-percent-parameters") ? (
+                                                                            !verifyPermission(props.userPermissions, "update-treatment-board") ? (
                                                                                 <NavLink exact to="/settings/committee" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                                                    <li className="kt-menu__link ">
+                                                                                    <li className="kt-menu__link mb-3">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                                         <span className="kt-menu__link-text">{t("Configuration des comités")}</span>
                                                                                     </li>

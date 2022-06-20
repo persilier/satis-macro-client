@@ -143,6 +143,7 @@ import CommitteeConfig from "../pages/CommitteeConfig";
 import CommitteeAdhoc from "../pages/CommitteeAdhoc";
 import ClaimUnsatisfied from "../pages/ClaimUnsatisfied";
 import ClaimUnsatisfiedDetail from "../pages/ClaimUnsatisfiedDetail";
+import EditCommittee from "../components/EditCommittee";
 
 const Body = () => {
     return (
@@ -462,6 +463,10 @@ const Body = () => {
 
             <Route exact path="/settings/channels/add">
                 <ChannelForm/>
+            </Route>
+
+            <Route exact path="/settings/committee/:id/edit">
+                <EditCommittee/>
             </Route>
 
             <Route exact path="/settings/channels/:id/edit">

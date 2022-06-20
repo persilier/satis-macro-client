@@ -235,7 +235,7 @@ const ProxyConfig = (props) => {
                         setInputSms(false);
                         setInputEmail(false);
                         setInputIncoming(false);
-                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Configurations desactivées avec succès"));
+                        ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig("Configurations désactivées avec succès"));
                     })
                     .catch(error => {
                         console.log(error.message);

@@ -12,6 +12,7 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 import Select from "react-select";
 import InputRequire from "./InputRequire";
+import {ERROR_401} from "../../config/errorPage";
 
 const CreateCommitteeSpecific = (props) => {
 
@@ -19,35 +20,45 @@ const CreateCommitteeSpecific = (props) => {
     const {t, ready} = useTranslation()
 
     const defaultData = {
-        closed_reason: ""
+        name: "",
+        type: "specific",
+        members: [],
+        claim_id: props.getId
     };
     const defaultError = {
-        closed_reason: [],
+        name: [],
+        members: [],
+        claim_id: []
     };
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [disabledInput, setDisabledInput] = useState(false);
     const [startRequest, setStartRequest] = useState(false);
+    const [staff, setStaff] = useState([]);
+    const [staffs, setStaffs] = useState([]);
+    const [load, setLoad] = useState(false);
+    const [isLoad, setIsLoad] = useState(true)
+
+    if (!(verifyPermission(props.userPermissions, "store-treatment-board") && props.activePilot))
+        window.location.href = ERROR_401;
 
     useEffect(() => {
-        if (props.activeTreatment) {
-            setData({
-                closed_reason: props.activeTreatment.closed_reason ? props.activeTreatment.closed_reason : "",
-            });
+        if (verifyTokenExpire()) {
+            setIsLoad(true);
+            axios.get(`${appConfig.apiDomaine}/treatments-boards/create`)
+                .then(response => {
+                    for (var i = 0; i < response.data.staff.length; i++) {
+                        response.data.staff[i].label = response.data.staff[i].identite.firstname + " " + response.data.staff[i].identite.lastname;
+                        response.data.staff[i].value = response.data.staff[i].id;
+                    }
+                    setStaffs(response.data.staff);
+                    setIsLoad(false);
+                })
+                .catch(error => console.log(error))
+            ;
         }
-    }, [props.activeTreatment]);
+    }, [props.activeTreatment, props.getId]);
 
-    const onChangeDescription = (e) => {
-        const newData = {...data};
-        newData.closed_reason = e.target.value;
-        setData(newData);
-    };
-
-    const onChangeSolution = (e) => {
-        const newData = {...data};
-        newData.solution_communicated = e.target.value;
-        setData(newData);
-    };
 
     const onChangeLastName = (e) => {
         const newData = {...data};
@@ -55,31 +66,37 @@ const CreateCommitteeSpecific = (props) => {
         setData(newData);
     };
 
+    const onChangeStaff = (selected) => {
+        //console.log(selected)
+        // setStaff(selected ?? []);
+        console.log(selected)
+        if (selected && Array.isArray(selected) && selected.length > 0) {
+            var staffToSend = selected.map(item => item.value)
+            const newData = {...data};
+            newData.members = staffToSend;
+            setStaff(selected);
+            setData(newData);
+        } else {
+            setStaff([])
+        }
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
         if (verifyTokenExpire()) {
-            if (verifyPermission(props.userPermissions, "close-my-claims")){
-                axios.put(appConfig.apiDomaine + `/my/claim-unsatisfied/close/${props.getId}`, data)
+            if (verifyPermission(props.userPermissions, "store-treatment-board")) {
+                axios.post(appConfig.apiDomaine + `/treatments-boards`, data)
                     .then(response => {
+                        setData(defaultData);
+                        setError(defaultError)
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                        window.location.href="/process/claim-dissatisfied"
+                        window.location.href = "/process/claim-unsatisfied"
                     }).catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
-                })
-            }else{
-                axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
-                    .then(response => {
                         setStartRequest(false);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                        window.location.href="/process/claim-dissatisfied/to-staff"
-                    }).catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                        setError({...defaultError, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             }
         }
@@ -92,14 +109,15 @@ const CreateCommitteeSpecific = (props) => {
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">{t("Création du comité spécifique")}</h5>
+                                <h5 className="modal-title"
+                                    id="exampleModalLabel">{t("Création du comité spécifique")}</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div className="modal-body">
 
-                             {/*   <div className={error.closed_reason.length ? "form-group validated" : "form-group"}>
+                                {/*   <div className={error.closed_reason.length ? "form-group validated" : "form-group"}>
                                     <label htmlFor="description">{t("Motif")} <span style={{color:"red"}}>*</span></label>
                                     <textarea
                                         id="description"
@@ -122,97 +140,62 @@ const CreateCommitteeSpecific = (props) => {
                                     }
                                 </div>*/}
 
-                                <div className="form-group row">
-                                    <div className={error.name?.length ? "col validated" : "col"}>
-                                    <label
-                                        htmlFor="name">{t("Nom")}
-                                        <InputRequire/>:</label>
-                                    <input
-                                        disabled={disabledInput}
-                                        id="name"
-                                        type="text"
-                                        className={error.name?.length ? "form-control is-invalid" : "form-control"}
-                                        placeholder={"Veuillez entrer le nom du comité"}
-                                        value={data.name}
-                                        onChange={(e) => onChangeLastName(e)}
-                                    />
-                                    {
-                                        error.name?.length ? (
-                                            error.name.map((error, index) => (
-                                                <div key={index} className="invalid-feedback">
-                                                    {error}
-                                                </div>
-                                            ))
-                                        ) : null
-                                    }
-                                </div>
-                                </div>
+                               {/* <div className="form-group row">*/}
 
-                                <div className="form-group row ">
-                                    <div className={"col-lg-9 col-md-9 col-sm-12 m-auto"}>
-                                        <label htmlFor="">{t("Agents concernés")}</label>
-                                        <Select
-                                            isClearable
-                                            isMulti
-                                            clearValue
-                                            //value={unit}
-                                            //isLoading={isLoad}
-                                            placeholder={t("Veuillez sélectionner les agents")}
-                                            //onChange={onChangeUnit}
-                                            //options={ (!unit || (unit && unit.length < 4))  ? units : [] }
-                                            //options={unit}
+                                    <div className={error.name?.length ? "form-group row validated" : "form-group "}  style={{textAlign:"left"}}>
+                                        <label
+                                            htmlFor="name">{t("Nom")} {""}
+                                            <InputRequire/> </label>
+                                        <input
+                                            disabled={disabledInput}
+                                            id="name"
+                                            type="text"
+                                            className={error.name?.length ? "form-control is-invalid" : "form-control"}
+                                            placeholder={"Veuillez entrer le nom du comité"}
+                                            value={data.name}
+                                            onChange={(e) => onChangeLastName(e)}
                                         />
-                                        {/*   {
-                                                                 unit.length > 3 ? (
-                                                                     <p className={"mt-1"} style={{ color:"red", fontSize:"10px", textAlign:"end"}}>Vous avez atteint le nombre maximal d'agences à sélectionner</p>
-                                                                 ) : null
-                                                               }
-                                                         */}
-
-                                        {/*   {
-                                                                 error.unit_targeted_id.length ? (
-                                                                     error.unit_targeted_id.map((error, index) => (
-                                                                         <div key={index} className="invalid-feedback">
-                                                                             {error}
-                                                                         </div>
-                                                                     ))
-                                                                 ) : null
-                                                             }
-                                                         */}
+                                        {
+                                            error.name?.length ? (
+                                                error.name.map((error, index) => (
+                                                    <div key={index} className="invalid-feedback">
+                                                        {error}
+                                                    </div>
+                                                ))
+                                            ) : null
+                                        }
                                     </div>
-                                </div>
 
 
-
-
-                                {/*     {
-                                    verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
-                                        <div
-                                            className={error.solution_communicated.length ? "form-group validated" : "form-group"}>
-                                            <label htmlFor="description">{t("Solution")} <span style={{color:"red"}}>*</span></label>
-                                            <textarea
-                                                id="description"
-                                                className={error.solution_communicated.length ? "form-control is-invalid" : "form-control"}
-                                                placeholder={t("Message à communiquer au client")}
-                                                cols="30"
-                                                rows="7"
-                                                value={data.solution_communicated}
-                                                onChange={(e) => onChangeSolution(e)}
+                                    <div
+                                        className={error.members.length ? "form-group row validated" : "form-group "} style={{textAlign:"left"}}>
+                                        <label className="col-xl-3 col-lg-3 col-form-label pl-0"
+                                               htmlFor="staff">{t("Agent(s)")} <InputRequire/> </label>
+                                        <div className={""}>
+                                            <Select
+                                                isClearable
+                                                isMulti
+                                                placeholder={t("Veuillez sélectionner les agents")}
+                                                value={staff}
+                                                isLoading={isLoad}
+                                                onChange={onChangeStaff}
+                                                options={staffs}
                                             />
                                             {
-                                                error.solution_communicated.length ? (
-                                                    error.solution_communicated.map((error, index) => (
+                                                error.members.length ? (
+                                                    error.members.map((error, index) => (
                                                         <div key={index}
                                                              className="invalid-feedback">
                                                             {error}
                                                         </div>
                                                     ))
-                                                ) : ""
+                                                ) : null
                                             }
-
                                         </div>
-                                    ):""
-                                }*/}
+
+                                    </div>
+
+
 
                             </div>
                             <div className="modal-footer">
@@ -231,7 +214,8 @@ const CreateCommitteeSpecific = (props) => {
                                     )
                                 }
 
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">{t("Quitter")}</button>
+                                <button type="button" className="btn btn-secondary"
+                                        data-dismiss="modal">{t("Quitter")}</button>
 
                             </div>
                         </div>
@@ -244,6 +228,7 @@ const CreateCommitteeSpecific = (props) => {
 const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
+        activePilot: state.user.user.staff.is_active_pilot
 
     };
 };
