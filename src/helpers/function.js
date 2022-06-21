@@ -314,6 +314,8 @@ export const seeParameters = (userPermissions) => {
         || verifyPermission(userPermissions, "config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "update-config-reporting-claim-my-institution")
         || verifyPermission(userPermissions, "delete-config-reporting-claim-my-institution")
+        || verifyPermission(userPermissions, "list-escalation-config")
+        || verifyPermission(userPermissions, "update-escalation-config")
         || true
     );
 };
@@ -361,6 +363,8 @@ export const seeTreatment = (userPermissions) => {
 export const seeEscalade = (userPermissions) => {
     return (verifyPermission(userPermissions, "list-my-claim-unsatisfied"))
         || (verifyPermission(userPermissions, "close-my-claims"))
+        || (verifyPermission(userPermissions, "update-treatment-board"))
+        || (verifyPermission(userPermissions, "store-treatment-board"))
 }
 
 export const seeMonitoring = (userPermissions) => {

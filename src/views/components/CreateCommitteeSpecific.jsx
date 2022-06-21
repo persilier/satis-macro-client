@@ -95,7 +95,7 @@ const CreateCommitteeSpecific = (props) => {
                         window.location.href = "/process/claim-unsatisfied"
                     }).catch(error => {
                         setStartRequest(false);
-                        setError({...defaultError, ...error.response.data.error});
+                        setError({...defaultError, ...error.response?.data?.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
             }

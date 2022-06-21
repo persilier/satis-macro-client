@@ -34,8 +34,8 @@ const TreatmentButtonDetail = ({claim}) => {
                             <div className="kt-wizard-v2__review-item">
                                 <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>{t("Transféré par")}</span></div>
                                 <div className="kt-wizard-v2__review-content">
-                                   ++ <strong>{t("Nom")}:</strong>
-                                   ++ <span className="mx-2">{claim.active_treatment.transferred_to_unit_by ? claim.active_treatment.transferred_to_unit_by.identite?.lastname + "  " + claim.active_treatment.transferred_to_unit_by.identite?.firstname : "-"}</span><br/>
+                                   <strong>{t("Nom")}:</strong>
+                                   <span className="mx-2">{claim.active_treatment.transferred_to_unit_by ? claim.active_treatment.transferred_to_unit_by.identite?.lastname + "  " + claim.active_treatment.transferred_to_unit_by.identite?.firstname : "-"}</span><br/>
                                 </div>
                             </div>
                         ) : null}

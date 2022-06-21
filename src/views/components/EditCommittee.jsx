@@ -28,7 +28,7 @@ const EditCommittee = (props) => {
 
     const {id} = useParams();
     if (id) {
-        if (!verifyPermission(props.userPermissions, 'update-escalation-config'))
+        if (!verifyPermission(props.userPermissions, 'update-treatment-board'))
             window.location.href = ERROR_401;
     }
 
@@ -81,8 +81,9 @@ const EditCommittee = (props) => {
 
                         const newData = {
                             name: response.data?.treatmentBoard?.name,
-                            type : "specific",
+                            type : response.data?.treatmentBoard?.type ,
                             claim_id: response.data.treatmentBoard?.claim?.id,
+                            id: response.data.treatmentBoard?.id,
                             members: memberCommittee
                         };
                         setData(newData);
@@ -126,12 +127,19 @@ const EditCommittee = (props) => {
                 axios.put(`${appConfig.apiDomaine}/treatments-boards/${id}`, data)
                     .then(response => {
                         setStartRequest(false);
-                        setError(defaultError);
+                        setStaffs(response.data.staff);
+                        let selected = response.data.staff.filter((s)=>data.members.includes(s.id))
+                        var staffToSend = selected.map(item => item.id)
+                        let newData = {...data};
+                        newData.members = staffToSend;
+                        newData.name = data.name;
+                        setStaff(selected);
+
                         ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);
-                        setError({...defaultError, ...errorRequest.response.data.error});
+                        setError({...defaultError, ...errorRequest.response?.data?.error});
                         ToastBottomEnd.fire(toastEditErrorMessageConfig());
                     })
                 ;
@@ -188,9 +196,9 @@ const EditCommittee = (props) => {
                                             <div
                                                 className={error.name.length ? "form-group row validated" : "form-group row"}
                                             style={{textAlign: "left"}}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label "
+                                                <label className="col-xl-2 col-lg-2 col-form-label "
                                                        htmlFor="name">{t("Nom")} <InputRequire/></label>
-                                                <div className="col-lg-9 col-xl-6">
+                                                <div className="col-lg-10 col-xl-10">
                                                     <input
                                                         disabled={disabledInput}
                                                         id="name"
@@ -215,10 +223,10 @@ const EditCommittee = (props) => {
 
                                             <div
                                                 className={error.members.length ? "form-group row validated" : "form-group"}
-                                                style={{textAlign: "left !important"}}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                style={{textAlign: "left", display:"flex", }}>
+                                                <label className="col-xl-2 col-lg-2 col-form-label"
                                                        htmlFor="staff">{t("Agent(s)")} <InputRequire/> </label>
-                                                <div className={""}>
+                                                <div className={"col-lg-10 col-xl-10"}>
                                                     <Select
                                                         isClearable
                                                         isMulti

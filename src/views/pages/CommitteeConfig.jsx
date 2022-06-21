@@ -3,8 +3,9 @@ import {connect} from "react-redux";
 import axios from "axios";
 import {ToastBottomEnd} from "../components/Toast";
 import {
+    toastAddErrorMessageConfig,
     toastEditErrorMessageConfig,
-    toastEditSuccessMessageConfig
+    toastEditSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
 import appConfig from "../../config/appConfig";
 import {verifyPermission} from "../../helpers/permission";
@@ -20,8 +21,8 @@ const CommitteeConfig = (props) => {
     const {t, ready} = useTranslation();
 
     document.title = (ready ? t("Satis client - Paramètre configuration des comités") : "");
-  /*  if (!verifyPermission(props.userPermissions, 'list-treatment-board'))
-        window.location.href = ERROR_401;*/
+    /*  if (!verifyPermission(props.userPermissions, 'list-treatment-board'))
+          window.location.href = ERROR_401;*/
 
     const defaultData = {
         name: "",
@@ -36,46 +37,65 @@ const CommitteeConfig = (props) => {
     const [data, setData] = useState(defaultData);
     const [error, setError] = useState(defaultError);
     const [startRequest, setStartRequest] = useState(false);
-    const [InputStandard, setInputStandard] = useState(false);
-    const [InputSpecific, setInputSpecific] = useState(false);
+    const [InputStandard, setInputStandard] = useState("");
+    const [InputSpecific, setInputSpecific] = useState("");
+    const [configId, setConfigId] = useState("");
     const [disable, setDisable] = useState(false);
     const [disabledInput, setDisabledInput] = useState(false);
     const [isLoad, setIsLoad] = useState(true)
     const [staff, setStaff] = useState([]);
     const [staffs, setStaffs] = useState([]);
+    const [members, setMembers] = useState([]);
     const [committee, setCommittee] = useState(null)
 
     useEffect(() => {
-        async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/escalation-config`)
-                .then(({response}) => {
-                    setInputStandard(response.standard_bord_exists);
-                    setInputStandard(response.specific_bord_exists);
+        axios.get(`${appConfig.apiDomaine}/escalation-config`)
+            .then((response) => {
+                setInputStandard(response.data.standard_bord_exists);
+                setInputSpecific(response.data.specific_bord_exists);
+                setConfigId(response.data.id)
+                let newData = {...data}
+                newData.name =response.data.name
+                setData(newData)
+                setMembers(response.data.members)
+                setIsLoad(false)
 
 
-                    setIsLoad(false)
-                })
-                .catch(error => {
-                    //console.log("Something is wrong");
-                })
+                getCreateData(response.data)
+            })
+            .catch(error => {
+                //console.log("Something is wrong");
+            })
 
-            await axios.get(`${appConfig.apiDomaine}/treatments-boards/create`)
-                .then(response => {
-                    for (var i = 0; i < response.data.staff.length; i++) {
-                        response.data.staff[i].label = response.data.staff[i].identite.firstname + " " + response.data.staff[i].identite.lastname;
-                        response.data.staff[i].value = response.data.staff[i].id;
-                    }
-                    setStaffs(response.data.staff);
-                    setIsLoad(false);
-                })
-                .catch(error => console.log(error))
-            ;
-            ;
-        }
 
+
+
+/*
         if (verifyTokenExpire())
-            fetchData();
+            fetchData();*/
     }, []);
+
+    const getCreateData = (data) => {
+        axios.get(`${appConfig.apiDomaine}/treatments-boards/create`)
+            .then(response => {
+                for (var i = 0; i < response.data.staff.length; i++) {
+                    response.data.staff[i].label = response.data.staff[i].identite.firstname + " " + response.data.staff[i].identite.lastname;
+                    response.data.staff[i].value = response.data.staff[i].id;
+                }
+                setStaffs(response.data.staff);
+                let selected = response.data.staff.filter((s)=>data.members.includes(s.id))
+                var staffToSend = selected.map(item => item.id)
+                let newData = {...data};
+                newData.members = staffToSend;
+                newData.name = data.name;
+                setStaff(selected);
+                console.log(newData)
+                setData(newData);
+                setIsLoad(false);
+            })
+            .catch(error => console.log(error))
+        ;
+    }
 
     const onChangeLastName = (e) => {
         const newData = {...data};
@@ -86,63 +106,63 @@ const CommitteeConfig = (props) => {
 
     const handleInputChangeStandard = (e) => {
         const newData = {...data};
-        setInputStandard(e.target.checked);
-        if (e.target.checked === true)
-            newData.standard_bord_exists.push(true);
-        else
-            //newData.proxy_modules.splice(newData.proxy_modules.indexOf("Standard"), 1);
-            newData.standard_bord_exists.push(false);
+        let value = e.target.checked ? 1 : 0;
+        setInputStandard(value);
         setData(newData);
 
     };
 
     const handleInputChangeSpecific = (e) => {
         const newData = {...data};
-        setInputSpecific(e.target.checked);
-        if (e.target.checked === true)
-            newData.specific_bord_exists.push(true);
-        else
-            newData.specific_bord_exists.push(false);
+        let value = e.target.checked  ? 1 : 0;
+        setInputSpecific(value);
         setData(newData);
 
     };
 
 
     const onChangeStaff = (selected) => {
-        console.log(selected)
+        console.log("sel" , selected)
+        let newData = {...data};
+
         if (selected && Array.isArray(selected) && selected.length > 0) {
             var staffToSend = selected.map(item => item.value)
-            const newData = {...data};
             newData.members = staffToSend;
             setStaff(selected);
             setData(newData);
         } else {
+            newData.members = [];
             setStaff([])
+            setData(newData);
         }
     };
 
-    const onSubmit = async (e) => {
+    const onSubmit =  (e) => {
         const sendData = {...data};
+        sendData.id = configId
+        sendData.standard_bord_exists = InputStandard
+        sendData.specific_bord_exists = InputSpecific
         e.preventDefault();
         console.log(sendData)
         setStartRequest(true);
         if (verifyTokenExpire()) {
-            await axios.put(`${appConfig.apiDomaine}/escalation-config`, sendData)
+            console.log({sendData})
+             axios.put(`${appConfig.apiDomaine}/escalation-config`, sendData)
                 .then(response => {
-                    if (response?.data?.standard_bord_exists && response.data?.standard_bord_exists.includes("standard_bord_exists"))
-                        setInputStandard(true);
-                    if (response?.data?.specific_bord_exists && response.data?.specific_bord_exists.includes("specific_bord_exists"))
-                        setInputSpecific(true);
-                    if (Object.keys(response.data).length === 0)
-                        setDisable(true);
                     setStartRequest(false);
                     setError(defaultError);
                     ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                 })
                 .catch(errorRequest => {
                     setStartRequest(false);
-                    setError({...defaultError, ...errorRequest.response.data.error});
-                    ToastBottomEnd.fire(toastEditErrorMessageConfig());
+                    setError({...defaultError, ...errorRequest.response?.data?.error});
+                    console.log(errorRequest.response)
+                    if (errorRequest.response.data.code === 422) {
+                        console.log("erreur", errorRequest.response)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(("Veuillez remplir le(s) champ(s) obligatoire(s)")));
+                    } else {
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig());
+                    }
                 })
             ;
         }
@@ -150,7 +170,7 @@ const CommitteeConfig = (props) => {
 
     return (
         ready ? (
-           ! verifyPermission(props.userPermissions, 'update-treatment-board') ? (
+            !verifyPermission(props.userPermissions, 'update-treatment-board') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -203,7 +223,7 @@ const CommitteeConfig = (props) => {
                                                             <label className="kt-checkbox"
                                                                    style={{marginRight: "20px"}}>
                                                                 <input id="is_client" type="checkbox"
-                                                                       checked={InputStandard}
+                                                                       checked={InputStandard == 1}
                                                                        disabled={disable}
                                                                        onChange={handleInputChangeStandard}/>
                                                                 {t("Comité Standard")} <span
@@ -213,7 +233,7 @@ const CommitteeConfig = (props) => {
                                                             <label className="kt-checkbox"
                                                                    style={{marginRight: "20px"}}>
                                                                 <input id="is_client" type="checkbox"
-                                                                       checked={InputSpecific}
+                                                                       checked={InputSpecific == 1}
                                                                        disabled={disable}
                                                                        onChange={handleInputChangeSpecific}/>
                                                                 {t("Comité Spécifique")} <span
@@ -225,12 +245,12 @@ const CommitteeConfig = (props) => {
 
                                                 </div>
 
-                                                {InputStandard === true ?
+                                                {InputStandard == 1 ?
                                                     (
                                                         <>
                                                             <div className="form-group">
                                                                 <div
-                                                                   className={error.name?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
+                                                                    className={error.name?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
                                                                     <label
                                                                         htmlFor="name">{t("Nom")} {""}
                                                                         <InputRequire/> </label>
@@ -256,38 +276,39 @@ const CommitteeConfig = (props) => {
                                                                 </div>
                                                             </div>
 
-                                                                <div
-                                                                    className={error.members?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
-                                                                    <label
-                                                                           htmlFor="staff">{t("Agent(s)")} <InputRequire/> </label>
-                                                                    <div className={""}>
-                                                                        <Select
-                                                                            isClearable
-                                                                            isMulti
-                                                                            placeholder={t("Veuillez sélectionner les agents")}
-                                                                            value={staff}
-                                                                            isLoading={isLoad}
-                                                                            onChange={onChangeStaff}
-                                                                            options={staffs}
-                                                                        />
-                                                                        {error.members?.length ? (
-                                                                                error.members.map((error, index) => (
-                                                                                    <div key={index}
-                                                                                         className="invalid-feedback">
-                                                                                        {error}
-                                                                                    </div>
-                                                                                ))
-                                                                            ) : null
-                                                                        }
-                                                                    </div>
-
+                                                            <div
+                                                                className={error.members?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
+                                                                <label
+                                                                    htmlFor="staff">{t("Agent(s)")} <InputRequire/>
+                                                                </label>
+                                                                <div className={""}>
+                                                                    <Select
+                                                                        isClearable
+                                                                        isMulti
+                                                                        placeholder={t("Veuillez sélectionner les agents")}
+                                                                        value={staff}
+                                                                        isLoading={isLoad}
+                                                                        onChange={onChangeStaff}
+                                                                        options={staffs}
+                                                                    />
+                                                                    {error.members?.length ? (
+                                                                        error.members.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                    }
                                                                 </div>
+
+                                                            </div>
 
 
                                                         </>
                                                     ) : null
                                                 }
-                                                {InputSpecific === true ?
+                                                {InputSpecific == 1 ?
                                                     (
                                                         <div className="form-group ">
                                                             <div
@@ -301,7 +322,8 @@ const CommitteeConfig = (props) => {
                                                                     <div className="alert-close">
                                                                         <button type="button" className="close"
                                                                                 data-dismiss="alert" aria-label="Close">
-                                                                            <span aria-hidden="true"><i className="la la-close"></i></span>
+                                                                            <span aria-hidden="true"><i
+                                                                                className="la la-close"></i></span>
                                                                         </button>
                                                                     </div>
                                                                 </div>

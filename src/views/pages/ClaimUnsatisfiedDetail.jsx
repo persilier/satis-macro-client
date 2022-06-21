@@ -83,6 +83,8 @@ const ClaimUnsatisfiedDetail = (props) => {
     const [startRequestToUnit, setStartRequestToUnit] = useState(false);
     const [startRequestToTransfert, setStartRequestToTransfert] = useState(false);
     const [showTreatment, setShowTreatment] = useState(null)
+    const [showStandard, setStandard] = useState(null)
+    const [showSpecific, setSpecific] = useState(null)
 
     useEffect(() => {
         async function fetchData() {
@@ -91,6 +93,8 @@ const ClaimUnsatisfiedDetail = (props) => {
                     .then(response => {
                         console.log('ee',response.data)
                         setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
+                        setStandard(response.data?.standard_bord_exists ?? null)
+                        setSpecific(response.data?.specific_bord_exists ?? null)
                         setClaim(response.data);
                         setDataId(response.data.institution_targeted ? response.data.institution_targeted.name : "-");
                     })
@@ -410,14 +414,17 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                 </div>) : null
                                                                 }
 
-                                                                <div className="kt-wizard-v2__review-item">
+                                                                {
+                                                                   ( setStandard != null || setSpecific != null ) ? (
+                                                                    <div className="kt-wizard-v2__review-item">
+
                                                                     <div
                                                                         className="kt-wizard-v2__review-title">{t("Transférer au comité Ad'hoc")}</div>
 
 
                                                                     <div className="modal-footer d-flex text-center">
                                                                         {
-                                                                            !startRequestToUnit ? (
+                                                                            (showStandard != null) ? (
                                                                                 <button
                                                                                     className="btn btn-outline-success"
                                                                                     onClick={onClickToTranfertStandard}>
@@ -433,11 +440,15 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                         }
 
                                                                         {
-                                                                           (
-                                                                                <div className="d-flex justify-content-md-end">
+                                                                            (showSpecific != null) ? (
+                                                                                <div
+                                                                                    className="d-flex justify-content-md-end">
 
-                                                                                    <button type="button" data-keyboard="false" data-backdrop="static"
-                                                                                            data-toggle="modal" data-target="#exampleModalCommittee"
+                                                                                    <button type="button"
+                                                                                            data-keyboard="false"
+                                                                                            data-backdrop="static"
+                                                                                            data-toggle="modal"
+                                                                                            data-target="#exampleModalCommittee"
                                                                                             className="btn btn-outline-primary">
                                                                                         {t("Transférer au comité spécifique")}
                                                                                     </button>
@@ -459,33 +470,16 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                                     }
 
                                                                                 </div>
-                                                                            )
+                                                                            ) : null
                                                                         }
                                                                     </div>
 
-                                                                 {/*   <div className="modal-footer d-flex">
-                                                                        {
-                                                                            !startRequestToUnit ? (
-                                                                                <button
-                                                                                    className="btn btn-outline-primary"
-                                                                                    onClick={onClickToCreate}>
-                                                                                    {t("Créer un comité spécifique")}
-                                                                                </button>
-                                                                            ) : (
-                                                                                <button
-                                                                                    className="btn btn-success kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
-                                                                                    type="button" disabled>
-                                                                                    {t("Chargement")}...
-                                                                                </button>
-                                                                            )
-                                                                        }
-
-                                                                    </div>*/}
-
-
-
 
                                                                 </div>
+                                                                    ) : null
+                                                                }
+
+
                                                             </>
                                                         ) : null}
                                                 </div>

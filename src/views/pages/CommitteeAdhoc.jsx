@@ -173,7 +173,7 @@ const CommitteeAdhoc = (props) => {
                 </td>
                 <td>{formatDateToTime(committee.created_at)} <br/></td>
                 <td>{committee.claim && committee.claim.reference ? committee.claim.reference : "-"}</td>
-                <td>{committee.claim ? committee.claim.claim_object.name["fr"] : ""}</td>
+                <td>{committee.claim ? committee.claim.claim_object.name["fr"] : "-"}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription
                         onClick={() => showModal(committee.claim && committee.claim.description ? committee.claim.description : '-')}/>
