@@ -153,7 +153,7 @@ const ClaimUnsatisfied = (props) => {
     const printBodyTable = (claim, index) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference} {claim.is_rejected ? (
+                <td>{claim.reference ? claim.reference : ""} {claim.is_rejected ? (
                     <span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null}</td>
                 <td>{`${(claim.claimer && claim.claimer.lastname) ? claim.claimer.lastname : ''} ${(claim.claimer && claim.claimer.firstname) ? claim.claimer.firstname : ''} ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / " + claim.account_number : "")}`}</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted.name}</td>

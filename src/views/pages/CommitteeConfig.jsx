@@ -322,8 +322,7 @@ const CommitteeConfig = (props) => {
                                                                     <div className="alert-close">
                                                                         <button type="button" className="close"
                                                                                 data-dismiss="alert" aria-label="Close">
-                                                                            <span aria-hidden="true"><i
-                                                                                className="la la-close"></i></span>
+                                                                            <span aria-hidden="true"> <i className="la la-close"></i></span>
                                                                         </button>
                                                                     </div>
                                                                 </div>

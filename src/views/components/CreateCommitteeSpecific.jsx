@@ -142,7 +142,7 @@ const CreateCommitteeSpecific = (props) => {
 
                                {/* <div className="form-group row">*/}
 
-                                    <div className={error.name?.length ? "form-group row validated" : "form-group "}  style={{textAlign:"left"}}>
+                                    <div className={error.name?.length ? "form-group row validated" : "form-group "}  style={{padding: "0 9px", textAlign:"left"}}>
                                         <label
                                             htmlFor="name">{t("Nom")} {""}
                                             <InputRequire/> </label>
@@ -169,12 +169,14 @@ const CreateCommitteeSpecific = (props) => {
 
                                     <div
                                         className={error.members.length ? "form-group row validated" : "form-group "} style={{textAlign:"left"}}>
-                                        <label className="col-xl-3 col-lg-3 col-form-label pl-0"
+                                        <label
+                                            className="col-xl-3 col-lg-3 col-form-label "
                                                htmlFor="staff">{t("Agent(s)")} <InputRequire/> </label>
-                                        <div className={""}>
+                                        <div className={"col-xl-9"}>
                                             <Select
                                                 isClearable
                                                 isMulti
+                                               // className={error.members.length ? " is-invalid col-xl-3 col-lg-3 col-form-label pl-0" : ""}
                                                 placeholder={t("Veuillez sélectionner les agents")}
                                                 value={staff}
                                                 isLoading={isLoad}

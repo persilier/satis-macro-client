@@ -163,17 +163,33 @@ const CommitteeAdhoc = (props) => {
     const printBodyTable = (committee, index, id) => {
         return (
             <tr key={index} role="row" className="odd">
-                <td>{committee.name}</td>
-                <td>{committee.type}</td>
-                <td>{committee.members.length} {""}
+                <td>{committee.name ? committee.name : "-"}</td>
+                <td>
+                    {
+                        committee.type === "specific" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Spécific")}</span>
+                            : committee.type === "standard" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Standard")}</span>
+                            :  <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Standard")}</span>
+                    }
+
+
+                    {/*{committee.type ? committee.type : "-"}*/}
+                </td>
+                <td>{committee.members.length}{""} {""}
                     <HtmlDescription
                         onClick={() => showMemberModal(committee.members ?
                             committee.members : '-')}/>
 
                 </td>
                 <td>{formatDateToTime(committee.created_at)} <br/></td>
-                <td>{committee.claim && committee.claim.reference ? committee.claim.reference : "-"}</td>
-                <td>{committee.claim ? committee.claim.claim_object.name["fr"] : "-"}</td>
+                <td className={"d-contents"}
+                    style={{display: "reverts"}}>{committee.claim && committee.claim.reference ? committee.claim.reference :
+                    <td style={{color: "red", borderTop: "1px solid transparent"}}><i
+                        className="kt-menu__link-icon flaticon-questions-circular-button"/></td>}</td>
+                <td>{committee.claim ? committee.claim.claim_object.name["fr"] :
+                    <td style={{color: "red", borderTop: "1px solid transparent"}}><i
+                        className="kt-menu__link-icon flaticon-questions-circular-button"/></td>}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription
                         onClick={() => showModal(committee.claim && committee.claim.description ? committee.claim.description : '-')}/>
@@ -251,7 +267,7 @@ const CommitteeAdhoc = (props) => {
                                 <div className="kt-portlet__body">
                                     <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
                                         <div className="row">
-                                        {/*    <div className="col-sm-6 text-left">
+                                            {/*    <div className="col-sm-6 text-left">
                                                 <div id="kt_table_1_filter" className="dataTables_filter">
                                                     <label>
                                                         {t("Recherche")}:
@@ -352,7 +368,7 @@ const CommitteeAdhoc = (props) => {
                                                 <HtmlDescriptionModal title={t("Description")}
                                                                       message={currentMessage}/>
                                                 <MemberDescriptionModal title={t("Liste des membres du comité")}
-                                                                      message={memberList}/>
+                                                                        message={memberList}/>
                                             </div>
                                         </div>
                                         <div className="row">

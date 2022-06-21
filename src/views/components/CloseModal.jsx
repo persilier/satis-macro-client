@@ -4,7 +4,7 @@ import appConfig from "../../config/appConfig";
 import {ToastBottomEnd} from "./Toast";
 import {
     toastAddErrorMessageConfig,
-    toastAddSuccessMessageConfig,
+    toastAddSuccessMessageConfig, toastErrorMessageWithParameterConfig,
 } from "../../config/toastConfig";
 import {verifyPermission} from "../../helpers/permission";
 import {connect} from "react-redux";
@@ -40,38 +40,35 @@ const CloseModal = (props) => {
         setData(newData);
     };
 
-    const onChangeSolution = (e) => {
-        const newData = {...data};
-        newData.solution_communicated = e.target.value;
-        setData(newData);
-    };
-
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
         if (verifyTokenExpire()) {
-            if (verifyPermission(props.userPermissions, "close-my-claims")){
+            if (verifyPermission(props.userPermissions, "close-my-claims")) {
                 axios.put(appConfig.apiDomaine + `/my/claim-unsatisfied/close/${props.getId}`, data)
                     .then(response => {
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                        window.location.href="/process/claim-dissatisfied"
+                        window.location.href = "/process/claim-dissatisfied"
                     }).catch(error => {
                     setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
+                    setError({...defaultError, ...error.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
-            }else{
+            } else {
                 axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
                     .then(response => {
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                        window.location.href="/process/claim-dissatisfied/to-staff"
-                    }).catch(error => {
-                    setStartRequest(false);
-                    setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
-                })
+                        window.location.href = "/process/claim-dissatisfied/to-staff"
+                    })
+                    .catch(error => {
+                        setStartRequest(false);
+                        setError({...defaultError, ...error.response.data.error});
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig());
+
+
+                    })
             }
         }
     };
@@ -91,7 +88,8 @@ const CloseModal = (props) => {
                             <div className="modal-body">
                                 <div
                                     className={error.closed_reason.length ? "form-group validated" : "form-group"}>
-                                    <label htmlFor="description">{t("Motif")} <span style={{color:"red"}}>*</span></label>
+                                    <label htmlFor="description">{t("Motif")} <span
+                                        style={{color: "red"}}>*</span></label>
                                     <textarea
                                         id="description"
                                         className={error.closed_reason.length ? "form-control is-invalid" : "form-control"}
@@ -112,34 +110,6 @@ const CloseModal = (props) => {
                                         ) : ""
                                     }
                                 </div>
-                           {/*     {
-                                    verifyPermission(props.userPermissions, "unfounded-claim-awaiting-assignment")?(
-                                        <div
-                                            className={error.solution_communicated.length ? "form-group validated" : "form-group"}>
-                                            <label htmlFor="description">{t("Solution")} <span style={{color:"red"}}>*</span></label>
-                                            <textarea
-                                                id="description"
-                                                className={error.solution_communicated.length ? "form-control is-invalid" : "form-control"}
-                                                placeholder={t("Message à communiquer au client")}
-                                                cols="30"
-                                                rows="7"
-                                                value={data.solution_communicated}
-                                                onChange={(e) => onChangeSolution(e)}
-                                            />
-                                            {
-                                                error.solution_communicated.length ? (
-                                                    error.solution_communicated.map((error, index) => (
-                                                        <div key={index}
-                                                             className="invalid-feedback">
-                                                            {error}
-                                                        </div>
-                                                    ))
-                                                ) : ""
-                                            }
-
-                                        </div>
-                                    ):""
-                                }*/}
 
                             </div>
                             <div className="modal-footer">
@@ -158,7 +128,8 @@ const CloseModal = (props) => {
                                     )
                                 }
 
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">{t("Quitter")}</button>
+                                <button type="button" className="btn btn-secondary"
+                                        data-dismiss="modal">{t("Quitter")}</button>
 
                             </div>
                         </div>

@@ -62,7 +62,7 @@ const ClaimUnsatisfiedDetail = (props) => {
     document.title = "Satis client -" + ready ? t("Détails réclamation") : "";
     const {id} = useParams();
 
-    if (!(verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot))
+    if (!(verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") && props.activePilot))
         window.location.href = ERROR_401;
 
     let endPoint = endPointConfig[props.plan];
@@ -83,8 +83,8 @@ const ClaimUnsatisfiedDetail = (props) => {
     const [startRequestToUnit, setStartRequestToUnit] = useState(false);
     const [startRequestToTransfert, setStartRequestToTransfert] = useState(false);
     const [showTreatment, setShowTreatment] = useState(null)
-    const [showStandard, setStandard] = useState(null)
-    const [showSpecific, setSpecific] = useState(null)
+    const [showStandard, setStandard] = useState("")
+    const [showSpecific, setSpecific] = useState("")
 
     useEffect(() => {
         async function fetchData() {
@@ -93,11 +93,22 @@ const ClaimUnsatisfiedDetail = (props) => {
                     .then(response => {
                         console.log('ee',response.data)
                         setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
-                        setStandard(response.data?.standard_bord_exists ?? null)
-                        setSpecific(response.data?.specific_bord_exists ?? null)
+                        console.log("standard", response.data.standard_bord_exists)
                         setClaim(response.data);
                         setDataId(response.data.institution_targeted ? response.data.institution_targeted.name : "-");
                     })
+                    .catch(error => console.log(error))
+                ;
+            }
+
+            if (verifyTokenExpire()) {
+                await  axios.get(`${appConfig.apiDomaine}/escalation-config`)
+                    .then(response => {
+                        console.log("standard", response.data.standard_bord_exists)
+                        console.log("specific", response.data.specific_bord_exists)
+                        setStandard(response.data?.standard_bord_exists ?? "0")
+                        setSpecific(response.data?.specific_bord_exists ?? "0")
+                        })
                     .catch(error => console.log(error))
                 ;
             }
@@ -178,7 +189,7 @@ const ClaimUnsatisfiedDetail = (props) => {
     };
 
     return (
-        ready ? (verifyPermission(props.userPermissions, "show-claim-awaiting-assignment") && props.activePilot ? (
+        ready ? (verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") && props.activePilot ? (
             <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
                  id="kt_content">
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
@@ -318,8 +329,35 @@ const ClaimUnsatisfiedDetail = (props) => {
                                         {/*  <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>*/}
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            <div
-                                                className="kt-heading kt-heading--md">{t("Transfert de la réclamation")}</div>
+                                            {
+                                               showSpecific == "1" && showTreatment == "1" && showTreatment != null ? (
+                                                    <div
+                                                className="kt-heading kt-heading--md">{t("Transfert de la réclamation")}
+                                            </div>
+                                                ) :
+                                                   <>
+                                                     <div className="form-group ">
+                                                       <div
+                                                           className={"row text-center m-auto pt-5"}>
+                                                       <div className="alert alert-outline-danger fade show"
+                                                            role="alert">
+                                                           <div className="alert-icon"><i className="flaticon-warning"/></div>
+                                                           <div className="alert-text">
+                                                               {t(" Aucun transfert possible, veuillez configurer un comité ! ")}
+                                                           </div>
+                                                           <button type="button" className="close"
+                                                                       data-dismiss="alert" aria-label="Close">
+                                                                   <span aria-hidden="true"> <i className="la la-close"/></span>
+                                                               </button>
+                                                           </div>
+
+                                                       <span/>
+                                                   </div>
+                                               </div>
+                                                   </>
+                                            }
+
+
                                             <div className="kt-form__section kt-form__section--first">
                                                 <div className="kt-wizard-v2__review">
                                                     {claim && claim.active_treatment && claim.active_treatment.rejected_at ? (
@@ -415,7 +453,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                 }
 
                                                                 {
-                                                                   ( setStandard != null || setSpecific != null ) ? (
+                                                                   ( showStandard == "1" || showSpecific == "1" ) ? (
                                                                     <div className="kt-wizard-v2__review-item">
 
                                                                     <div
@@ -424,7 +462,7 @@ const ClaimUnsatisfiedDetail = (props) => {
 
                                                                     <div className="modal-footer d-flex text-center">
                                                                         {
-                                                                            (showStandard != null) ? (
+                                                                            showStandard == "1" ? ( !startRequestToTransfert ? (
                                                                                 <button
                                                                                     className="btn btn-outline-success"
                                                                                     onClick={onClickToTranfertStandard}>
@@ -436,13 +474,12 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                                     type="button" disabled>
                                                                                     {t("Chargement")}...
                                                                                 </button>
-                                                                            )
+                                                                            )) : null
                                                                         }
 
                                                                         {
-                                                                            (showSpecific != null) ? (
-                                                                                <div
-                                                                                    className="d-flex justify-content-md-end">
+                                                                             showSpecific == "1" ? (
+                                                                                   <div className="d-flex justify-content-md-end">
 
                                                                                     <button type="button"
                                                                                             data-keyboard="false"
@@ -470,7 +507,8 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                                     }
 
                                                                                 </div>
-                                                                            ) : null
+                                                                             ) : null
+
                                                                         }
                                                                     </div>
 

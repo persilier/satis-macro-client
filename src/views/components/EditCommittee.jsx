@@ -75,7 +75,6 @@ const EditCommittee = (props) => {
 
                         response.data?.treatmentBoard?.members.map(function(e) {memberCommittee.push(e.id)});
 
-                        console.log(memberCommittee);
                         setStaff(response.data?.treatmentBoard?.members ?? [])
                         setStaffs(response.data.staff);
 
@@ -90,6 +89,7 @@ const EditCommittee = (props) => {
                         setIsLoad(false)
                     })
                     .catch(error => {
+                        console.log("error", error)
                         //console.log("Something is wrong");
                     })
                 ;
@@ -127,13 +127,13 @@ const EditCommittee = (props) => {
                 axios.put(`${appConfig.apiDomaine}/treatments-boards/${id}`, data)
                     .then(response => {
                         setStartRequest(false);
-                        setStaffs(response.data.staff);
+                       /* setStaffs(response.data.staff);
                         let selected = response.data.staff.filter((s)=>data.members.includes(s.id))
                         var staffToSend = selected.map(item => item.id)
                         let newData = {...data};
                         newData.members = staffToSend;
                         newData.name = data.name;
-                        setStaff(selected);
+                        setStaff(selected);*/
 
                         ToastBottomEnd.fire(toastEditSuccessMessageConfig());
                     })
