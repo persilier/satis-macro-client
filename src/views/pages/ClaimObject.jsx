@@ -149,7 +149,7 @@ const ClaimObject = (props) => {
                     if (result.value) {
                         axios.delete(`${appConfig.apiDomaine}/claim-objects/${claimObjectId}`)
                             .then(response => {
-                                const newClaimObjects = [...claimObjects];
+                                const newClaimObjects = [...claimObjects].filter(e => e.id !== claimObjectId);
                                 newClaimObjects.splice(index, 1);
                                 setClaimObjects(newClaimObjects);
                                 if (showList.length > 1) {

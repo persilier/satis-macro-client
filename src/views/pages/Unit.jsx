@@ -174,7 +174,7 @@ const Unit = (props) => {
                     if (result.value) {
                         axios.delete(endPoint.destroy(unitId))
                             .then(response => {
-                                const newUnits = [...units];
+                                const newUnits = [...units].filter(e => e.id !== unitId);
                                 newUnits.splice(index, 1);
                                 setUnits(newUnits);
                                 if (showList.length > 1) {
