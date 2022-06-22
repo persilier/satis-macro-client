@@ -21,8 +21,9 @@ const CommitteeConfig = (props) => {
     const {t, ready} = useTranslation();
 
     document.title = (ready ? t("Satis client - Paramètre configuration des comités") : "");
-    /*  if (!verifyPermission(props.userPermissions, 'list-treatment-board'))
-          window.location.href = ERROR_401;*/
+
+      if (!verifyPermission(props.userPermissions, 'list-escalation-config') )
+          window.location.href = ERROR_401;
 
     const defaultData = {
         name: "",
@@ -170,7 +171,7 @@ const CommitteeConfig = (props) => {
 
     return (
         ready ? (
-            !verifyPermission(props.userPermissions, 'update-treatment-board') ? (
+            verifyPermission(props.userPermissions, 'update-escalation-config')  ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -315,14 +316,14 @@ const CommitteeConfig = (props) => {
                                                                 className={"col-lg-9 col-md-9 col-sm-12 text-center m-auto pt-5"}>
                                                                 <div className="alert alert-outline-danger fade show"
                                                                      role="alert">
-                                                                    <div className="alert-icon"><i className="flaticon-warning"></i></div>
+                                                                    <div className="alert-icon"><i className="flaticon-warning"/></div>
                                                                     <div className="alert-text">
                                                                         {t(" Veuillez configurer le comité spécifique lors du transfert de la réclamation ")}
                                                                     </div>
                                                                     <div className="alert-close">
                                                                         <button type="button" className="close"
                                                                                 data-dismiss="alert" aria-label="Close">
-                                                                            <span aria-hidden="true"> <i className="la la-close"></i></span>
+                                                                            <span aria-hidden="true"> <i className="la la-close"/></span>
                                                                         </button>
                                                                     </div>
                                                                 </div>

@@ -139,8 +139,8 @@ const CategoryClient = (props) => {
                     if (verifyTokenExpire()) {
                         axios.delete(appConfig.apiDomaine + `/category-clients/${categoryClientId}`)
                             .then(response => {
-                                const newCategory = [...categoryClient];
-                                newCategory.splice(index, 1);
+                                const newCategory = [...categoryClient].filter(e => e.id !== categoryClientId);
+                                setShowList(newCategory.slice(0, numberPerPage))
                                 setCategoryClient(newCategory);
                                 if (showList.length > 1) {
                                     setShowList(
