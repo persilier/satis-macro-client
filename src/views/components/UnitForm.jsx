@@ -77,8 +77,11 @@ const HoldingUnitForm = (props) => {
         endPoint = endPointConfig[props.plan];
 
     const [unitTypes, setUnitTypes] = useState([]);
+    const [unitTypesTemp, setUnitTypesTemp] = useState([]);
+    const [unitEscalades, setUnitEscalades] = useState([]);
     const [institutions, setInstitutions] = useState([]);
     const [unitType, setUnitType] = useState(null);
+    const [unitEscalade, setUnitEscalade] = useState(null);
     const [institution, setInstitution] = useState(null);
     const [leads, setLeads] = useState([]);
     const [lead, setLead] = useState(null);
@@ -86,10 +89,12 @@ const HoldingUnitForm = (props) => {
     const [countrie, setCountrie] = useState(null);
     const [States, setStates] = useState([]);
     const [state, setState] = useState(null);
+    const [showEscalade, setShowEscalade] = useState(null)
 
     const defaultData = {
         name: "",
         unit_type_id: unitTypes.length ? unitTypes[0].id : "",
+        unit_escalade_id: unitEscalades.length ? unitEscalades[0].id : "",
         country_id: countries.length ? countries[0].id : "",
         state_id: countries.length ? countries[0].id : "",
         lead_id: "",
@@ -100,6 +105,7 @@ const HoldingUnitForm = (props) => {
         country_id: [],
         state_id: [],
         unit_type_id: [],
+        unit_escalade_id: [],
         lead_id: [],
         institution_id: []
     };
@@ -109,8 +115,11 @@ const HoldingUnitForm = (props) => {
 
     const formatLeads = (leadsOptions) => {
         const newLeads = [];
-        for (let i=0; i<leadsOptions.length; i++) {
-            newLeads.push({value: leadsOptions[i].id, label: `${leadsOptions[i].identite.lastname} ${leadsOptions[i].identite.firstname}`})
+        for (let i = 0; i < leadsOptions.length; i++) {
+            newLeads.push({
+                value: leadsOptions[i].id,
+                label: `${leadsOptions[i].identite.lastname} ${leadsOptions[i].identite.firstname}`
+            })
         }
         return newLeads;
     };
@@ -124,11 +133,12 @@ const HoldingUnitForm = (props) => {
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
+                            unit_escalade_id: response.data.unit.unit_escalade_id,
                             state_id: response.data.unit.state_id ? response.data.unit.state_id : "",
                             institution_id: response.data.unit.institution ? response.data.unit.institution_id : "",
                         };
 
-                        if (response.data.unit.state !== null ){
+                        if (response.data.unit.state !== null) {
                             axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
                                 .then(response => {
                                     setStates(formatSelectOption(response.data, "name"));
@@ -138,26 +148,46 @@ const HoldingUnitForm = (props) => {
                                 })
                             ;
                             setCountrie(
-                                response.data.unit.state.country ? {value: response.data.unit.state.country.id, label: response.data.unit.state.country.name} : {value: "", label: ""}
+                                response.data.unit.state.country ? {
+                                    value: response.data.unit.state.country.id,
+                                    label: response.data.unit.state.country.name
+                                } : {value: "", label: ""}
                             );
                         }
 
                         setData(newData);
-                        setState(response.data.unit.state ? {value: response.data.unit.state.id, label: response.data.unit.state.name} : {value: "", label: ""});
-                        setUnitType({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
+                        setState(response.data.unit.state ? {
+                            value: response.data.unit.state.id,
+                            label: response.data.unit.state.name
+                        } : {value: "", label: ""});
+
+                        setUnitType({
+                            value: response.data.unit.unit_type_id,
+                            label: response.data.unit.unit_type.name["fr"]
+                        });
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+
+
+                        //setUnitEscalade({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
+                        //setUnitEscalades(formatSelectOption(response.data.unitTypes, "name", "fr"));
 
                         setCountries(formatSelectOption(response.data.countries, "name"));
 
 
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
-                            response.data.unit.lead ? {value: response.data.unit.lead.id, label: response.data.unit.lead.identite.lastname+" "+response.data.unit.lead.identite.lastname} : {value: "", label: ""}
+                            response.data.unit.lead ? {
+                                value: response.data.unit.lead.id,
+                                label: response.data.unit.lead.identite.lastname + " " + response.data.unit.lead.identite.lastname
+                            } : {value: "", label: ""}
                         );
 
                         if (verifyPermission(props.userPermissions, 'update-any-unit')) {
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
-                            setInstitution(response.data.unit.institution ? {value: response.data.unit.institution.id, label: response.data.unit.institution.name} : {value: "", label: ""});
+                            setInstitution(response.data.unit.institution ? {
+                                value: response.data.unit.institution.id,
+                                label: response.data.unit.institution.name
+                            } : {value: "", label: ""});
                         }
 
                     })
@@ -168,7 +198,11 @@ const HoldingUnitForm = (props) => {
             } else {
                 await axios.get(endPoint.create)
                     .then(response => {
+                        //setUnitEscalades(formatSelectOption(response.data.unitTypes, "name", "fr"));
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
+                        console.log(response.data.parents)
+                        setUnitTypesTemp(response.data.unitTypes);
+                        setUnitEscalades(formatSelectOption(response.data.parents, "name", "fr"));
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
@@ -179,6 +213,7 @@ const HoldingUnitForm = (props) => {
                 ;
             }
         }
+
         if (verifyTokenExpire())
             fetchData();
     }, [endPoint, id, props.userPermissions]);
@@ -190,13 +225,31 @@ const HoldingUnitForm = (props) => {
     };
 
     const onChangeUnitType = (selected) => {
+
         const newData = {...data};
         newData.unit_type_id = selected ? selected.value : "";
         setUnitType(selected);
         setData(newData);
+
+        console.log(unitTypesTemp)
+        let unitType = unitTypesTemp.find(e => e.id === selected.value);
+
+        console.log(unitType)
+        //endpoint get unit info
+        //newData.unit_type_id,setshowescalade(response.units.unit_type.cantreat
+        setShowEscalade(unitType.can_treat)
+    };
+
+    const onChangeUnitEscalade = (selected) => {
+        const newData = {...data};
+        newData.unit_escalade_id = selected ? selected.value : "";
+        setUnitEscalade(selected);
+        console.log('showdata', newData);
+        setData(newData);
     };
 
     const onChangeStates = (selected) => {
+        console.log(selected)
         const newData = {...data};
         newData.state_id = selected ? selected.value : "";
         setState(selected);
@@ -207,13 +260,13 @@ const HoldingUnitForm = (props) => {
         const newData = {...data};
         newData.countrie_id = selected ? selected.value : "";
         setCountrie(selected);
-            axios.get(`${appConfig.apiDomaine}/country/${newData.countrie_id}/states`,)
-                .then(response => {
-                    setStates(formatSelectOption(response.data, "name"));
-                })
-                .catch(error => {
-                    //console.log("something is wrong");
-                })
+        axios.get(`${appConfig.apiDomaine}/country/${newData.countrie_id}/states`,)
+            .then(response => {
+                setStates(formatSelectOption(response.data, "name"));
+            })
+            .catch(error => {
+                //console.log("something is wrong");
+            })
 
         ;
         // setData(newData);
@@ -247,8 +300,9 @@ const HoldingUnitForm = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
         setStartRequest(true);
+
         let newData = {...data};
-        if(!(verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit')))
+        if (!(verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit')))
             delete newData.institution_id;
         if (verifyTokenExpire()) {
             if (id) {
@@ -270,8 +324,11 @@ const HoldingUnitForm = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
-                            setInstitution({});
-                        setUnitType({});
+                            setInstitution(null);
+                        setUnitType(null);
+                        setUnitEscalade(null);
+                        setCountrie(null);
+                        setState(null)
                         setError(defaultError);
                         setData(defaultData);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
@@ -297,13 +354,15 @@ const HoldingUnitForm = (props) => {
                             </h3>
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
-                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                    className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <Link to="/settings/unit" className="kt-subheader__breadcrumbs-link">
                                     {t("Unité")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                <a href="#button" onClick={e => e.preventDefault()}
+                                   className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                     {
                                         id ? t("Modification") : t("Ajout")
                                     }
@@ -329,8 +388,11 @@ const HoldingUnitForm = (props) => {
                                 <form method="POST" className="kt-form">
                                     <div className="kt-form kt-form--label-right">
                                         <div className="kt-portlet__body">
-                                            <div className={error.name.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="name">{t("Unité")} <InputRequire/></label>
+
+                                            <div
+                                                className={error.name.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                       htmlFor="name">{t("Unité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <input
                                                         id="name"
@@ -354,8 +416,10 @@ const HoldingUnitForm = (props) => {
 
                                             {
                                                 verifyPermission(props.userPermissions, 'store-any-unit') || verifyPermission(props.userPermissions, 'update-any-unit') ? (
-                                                    <div className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
-                                                        <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">{t("Institution")} <InputRequire/></label>
+                                                    <div
+                                                        className={error.institution_id.length ? "form-group row validated" : "form-group row"}>
+                                                        <label className="col-xl-3 col-lg-3 col-form-label"
+                                                               htmlFor="institution">{t("Institution")} <InputRequire/></label>
                                                         <div className="col-lg-9 col-xl-6">
                                                             <Select
                                                                 isClearable
@@ -381,8 +445,10 @@ const HoldingUnitForm = (props) => {
                                             {
                                                 id ? (
                                                     verifyPermission(props.userPermissions, 'update-any-unit') ? (
-                                                        <div className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
-                                                            <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="institution">{t("Responsable")}</label>
+                                                        <div
+                                                            className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                   htmlFor="institution">{t("Responsable")}</label>
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <Select
                                                                     isClearable
@@ -394,7 +460,8 @@ const HoldingUnitForm = (props) => {
                                                                 {
                                                                     error.lead_id.length ? (
                                                                         error.lead_id.map((error, index) => (
-                                                                            <div key={index} className="invalid-feedback">
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
                                                                         ))
@@ -406,8 +473,10 @@ const HoldingUnitForm = (props) => {
                                                 ) : null
                                             }
 
-                                            <div className={error.unit_type_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">{t("Type d'unité")} <InputRequire/></label>
+                                            <div
+                                                className={error.unit_type_id.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                       htmlFor="unit_type">{t("Type d'unité")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
@@ -428,8 +497,41 @@ const HoldingUnitForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.country_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Pays <InputRequire/></label>
+                                            {
+                                                showEscalade != null && showEscalade == "1" ? (
+                                                    !verifyPermission(props.userPermissions, 'update-any-unit') ? (
+                                                        <div
+                                                            className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
+                                                            <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                   htmlFor="institution">{t("Unité d'escalade")}</label>
+                                                            <div className="col-lg-9 col-xl-6">
+                                                                <Select
+                                                                    isClearable
+                                                                    value={unitEscalade}
+                                                                    placeholder={t("N+1")}
+                                                                    onChange={onChangeUnitEscalade}
+                                                                    options={unitEscalades}
+                                                                />
+                                                                {
+                                                                    error.unit_escalade_id.length ? (
+                                                                        error.unit_escalade_id.map((error, index) => (
+                                                                            <div key={index}
+                                                                                 className="invalid-feedback">
+                                                                                {error}
+                                                                            </div>
+                                                                        ))
+                                                                    ) : null
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    ) : null
+                                                ) : null
+                                            }
+
+                                            <div
+                                                className={error.country_id.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                       htmlFor="unit_type">{t("Pays")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
@@ -450,8 +552,10 @@ const HoldingUnitForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            <div className={error.state_id.length ? "form-group row validated" : "form-group row"}>
-                                                <label className="col-xl-3 col-lg-3 col-form-label" htmlFor="unit_type">Zones <InputRequire/></label>
+                                            <div
+                                                className={error.state_id.length ? "form-group row validated" : "form-group row"}>
+                                                <label className="col-xl-3 col-lg-3 col-form-label"
+                                                       htmlFor="unit_type"> {t("Zones")} <InputRequire/></label>
                                                 <div className="col-lg-9 col-xl-6">
                                                     <Select
                                                         isClearable
@@ -477,9 +581,12 @@ const HoldingUnitForm = (props) => {
                                             <div className="kt-form__actions text-right">
                                                 {
                                                     !startRequest ? (
-                                                        <button type="submit" onClick={(e) => onSubmit(e)} className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
+                                                        <button type="submit" onClick={(e) => onSubmit(e)}
+                                                                className="btn btn-primary">{id ? t("Modifier") : t("Enregistrer")}</button>
                                                     ) : (
-                                                        <button className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light" type="button" disabled>
+                                                        <button
+                                                            className="btn btn-primary kt-spinner kt-spinner--left kt-spinner--md kt-spinner--light"
+                                                            type="button" disabled>
                                                             {t("Chargement")}...
                                                         </button>
                                                     )
@@ -490,7 +597,8 @@ const HoldingUnitForm = (props) => {
                                                             {t("Quitter")}
                                                         </Link>
                                                     ) : (
-                                                        <Link to="/settings/unit" className="btn btn-secondary mx-2" disabled>
+                                                        <Link to="/settings/unit" className="btn btn-secondary mx-2"
+                                                              disabled>
                                                             {t("Quitter")}
                                                         </Link>
                                                     )

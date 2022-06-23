@@ -145,8 +145,8 @@ const Clients = (props) => {
                     if (verifyTokenExpire()) {
                         axios.delete(endPoint.destroy(accountId))
                             .then(response => {
-                                const newClient = [...clients];
-                                newClient.splice(index, 1);
+                                const newClient = [...clients].filter(e => e.id !== accountId);
+                                setShowList(newClient.slice(0, numberPerPage))
                                 setClients(newClient);
 
                                 if (showList.length > 1) {

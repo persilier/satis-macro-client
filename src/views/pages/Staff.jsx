@@ -141,8 +141,8 @@ const Staff = (props) => {
                     if (result.value) {
                         axios.delete(endPoint.destroy(staffId))
                             .then(response => {
-                                const newStaffs = [...staffs];
-                                newStaffs.splice(index, 1);
+                                const newStaffs = [...staffs].filter(e => e.id !== staffId);
+                                setShowList(newStaffs.slice(0, numberPerPage))
                                 setStaffs(newStaffs);
                                 if (showList.length > 1) {
                                     setActiveNumberPage(activeNumberPage);
@@ -152,7 +152,7 @@ const Staff = (props) => {
                                 ToastBottomEnd.fire(toastDeleteSuccessMessageConfig());
                             })
                             .catch(error => {
-                                ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
                             })
                         ;
                     }

@@ -149,9 +149,14 @@ const RulePage = (props) => {
 
                         axios.delete(endpoint)
                             .then(response => {
-                                const newRulePages = [...rules];
-                                newRulePages.splice(index, 1);
+                                console.log("rule", rules)
+
+                                const newRulePages = [...rules].filter(e => e.name !== ruleId);
+
+                                console.log("newRulePages", newRulePages)
+                                setShowList(newRulePages.slice(0, numberPerPage))
                                 setRulePages(newRulePages);
+
                                 if (showList.length > 1) {
                                     setShowList(
                                         newRulePages.slice(
