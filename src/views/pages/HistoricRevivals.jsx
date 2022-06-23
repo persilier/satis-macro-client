@@ -186,8 +186,29 @@ const HistoricRevivals = (props) => {
                 </td>
                 <td>
                     {
-                        revival?.claim_status ? displayStatus(revival.claim_status) : ""
+                        (revival?.claim_status ? revival.claim_status : "") === "archived" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--dark h2">{t("Archivé")}</span>
+                            : (revival?.claim_status ? revival.claim_status : "") === "validated" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
+                            :  (revival?.claim_status ? revival.claim_status : "") === "incomplete" ?
+                                <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
+                                :  (revival?.claim_status ? revival.claim_status : "") === "full" ?
+                                    <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
+                                    :  (revival?.claim_status ? revival.claim_status : "") === "transferred_to_unit" ?
+                                        <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
+                                        :  (revival?.claim_status ? revival.claim_status : "") === "assigned_to_staff" ?
+                                            <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
+                                            :  (revival?.claim_status ? revival.claim_status : "") === "treated" ?
+                                                <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
+                                                :  (revival?.claim_status ? revival.claim_status : "") === "considered" ?
+                                                    <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
+                                                    :  (revival?.claim_status ? revival.claim_status : "") === "awaiting" ?
+                                                        <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
+                                                        :  <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
                     }
+                  {/*  {
+                        revival?.claim_status ? displayStatus(revival.claim_status) : ""
+                    }*/}
                 </td>
                 <td>
                     {
@@ -197,13 +218,55 @@ const HistoricRevivals = (props) => {
                 </td>
                 <td>
                     {
-                        revival?.status ? displayStatus(revival.status) : ""
+                        (revival?.status ? revival.status : "") === "archived" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--dark h2">{t("Archivé")}</span>
+                            : (revival?.status ? revival.status : "") === "validated" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
+                            :  (revival?.status ? revival.status : "") === "incomplete" ?
+                                <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
+                                :  (revival?.status ? revival.status : "") === "full" ?
+                                    <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
+                                    :  (revival?.status ? revival.status : "") === "transferred_to_unit" ?
+                                        <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
+                                        :  (revival?.status ? revival.status : "") === "assigned_to_staff" ?
+                                            <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
+                                            :  (revival?.status ? revival.status : "") === "treated" ?
+                                                <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
+                                                :  (revival?.status ? revival.status : "") === "considered" ?
+                                                    <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
+                                                    :  (revival?.status ? revival.status : "") === "awaiting" ?
+                                                        <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
+                                                        :  <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
                     }
+                  {/*  {
+                        revival?.status ? displayStatus(revival.status) : ""
+                    }*/}
                 </td>
                 <td>
                     {
-                        revival?.claim?.status ? displayStatus(revival.claim.status) : ""
+                        ( revival?.claim?.status ? revival.claim.status : "" ) === "archived" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--dark h2">{t("Archivé")}</span>
+                            : ( revival?.claim?.status ? revival.claim.status : "" ) === "validated" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
+                            :  ( revival?.claim?.status ? revival.claim.status : "" ) === "incomplete" ?
+                                <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
+                                :  ( revival?.claim?.status ? revival.claim.status : "" ) === "full" ?
+                                    <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
+                                    :  ( revival?.claim?.status ? revival.claim.status : "" ) === "transferred_to_unit" ?
+                                        <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
+                                        :  ( revival?.claim?.status ? revival.claim.status : "" ) === "assigned_to_staff" ?
+                                            <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
+                                            :  ( revival?.claim?.status ? revival.claim.status : "" ) === "treated" ?
+                                                <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
+                                                :  ( revival?.claim?.status ? revival.claim.status : "" ) === "considered" ?
+                                                    <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
+                                                    :  ( revival?.claim?.status ? revival.claim.status : "" ) === "awaiting" ?
+                                                        <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
+                                                        :  <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
                     }
+                   {/* {
+                        revival?.claim?.status ? displayStatus(revival.claim.status) : ""
+                    }*/}
                 </td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(revival?.message ? revival.message : "-")}/>

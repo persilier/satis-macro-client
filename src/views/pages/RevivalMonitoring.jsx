@@ -245,9 +245,33 @@ const RevivalMonitoring = (props) => {
               {/*  <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(revival.description ? revival.description : '-')}/>
                 </td>*/}
-                <td>{revival?.status ? displayStatus(revival.status) : ""}</td>
+                <td className={"text-center"}>
+                    {
+                        (revival?.status ? revival.status : "") === "archived" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--dark h2">{t("Archivé")}</span>
+                            : (revival?.status ? revival.status : "") === "validated" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Validé")}</span>
+                            :  (revival?.status ? revival.status : "") === "incomplete" ?
+                                <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Incomplète")}</span>
+                                :  (revival?.status ? revival.status : "") === "full" ?
+                                    <span className="kt-badge kt-badge--inline kt-badge--primary h2">{t("Complète")}</span>
+                                    :  (revival?.status ? revival.status : "") === "transferred_to_unit" ?
+                                        <span className="kt-badge kt-badge--inline kt-badge--unified-dark h2">{t("Transférer à une unité")}</span>
+                                        :  (revival?.status ? revival.status : "") === "assigned_to_staff" ?
+                                            <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Assigner à un staff")}</span>
+                                            :  (revival?.status ? revival.status : "") === "treated" ?
+                                                <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Traité")}</span>
+                                                :  (revival?.status ? revival.status : "") === "considered" ?
+                                                    <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Considéré")}</span>
+                                                    :  (revival?.status ? revival.status : "") === "awaiting" ?
+                                                        <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En attente")}</span>
+                                                        :  <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("En cours de traitement")}</span>
+                    }
+
+                   {/* {revival?.status ? displayStatus(revival.status) : ""}*/}
+                </td>
                 <td>
-                    <a href={`/monitoring/claims/staff/${revival?.id}/detail`}
+                    <a href={`/monitoring/claims/staff/${revival?.claim_id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
                     </a>
@@ -586,7 +610,7 @@ const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
         userPermissions: state.user.user.permissions,
-        activePilot: state.user.user.staff.is_active_pilot
+        //activePilot: state.user.user.staff.is_active_pilot
     };
 
 };
