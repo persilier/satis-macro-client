@@ -137,7 +137,7 @@ const ClaimCategory = (props) => {
                         axios.delete(`${appConfig.apiDomaine}/claim-categories/${claimCategoryId}`)
                             .then(response => {
                                 const newClaimCategories = [...claimCategories].filter(e => e.id !== claimCategoryId);
-                                newClaimCategories.splice(index, 1);
+                                setShowList(newClaimCategories.slice(0, numberPerPage))
                                 setClaimCategories(newClaimCategories);
                                 if (showList.length > 1) {
                                     setShowList(
