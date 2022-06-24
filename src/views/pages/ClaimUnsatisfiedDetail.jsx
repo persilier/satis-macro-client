@@ -331,16 +331,13 @@ const ClaimUnsatisfiedDetail = (props) => {
                                         {/*  <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>*/}
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            {
+                                          {/*  {
                                               ( showSpecific == "0" && showStandard == "0"  && showTreatment === null) ? (
-
+*/}
                                                     <div className="kt-heading kt-heading--md"> {t("Transfert de la réclamation")} </div>
 
-                                                ) :
-                                                   <>
-                                                     <div className="form-group ">
-                                                       <div
-                                                           className={"row text-center m-auto pt-5"}>
+                                            {/*  /* <div className="form-group ">
+                                                       <div className={"row text-center m-auto pt-5"}>
                                                        <div className="alert alert-outline-danger fade show"
                                                             role="alert">
                                                            <div className="alert-icon"><i className="flaticon-warning"/></div>
@@ -355,9 +352,8 @@ const ClaimUnsatisfiedDetail = (props) => {
 
                                                        <span/>
                                                    </div>
-                                               </div>
-                                                   </>
-                                            }
+                                                 </div>
+                                            */}
 
 
                                             <div className="kt-form__section kt-form__section--first">

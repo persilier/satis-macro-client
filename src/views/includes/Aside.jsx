@@ -400,9 +400,9 @@ const Aside = (props) => {
                                                         ) : null
                                                     }
 
-                                                    {
+                                                  {/*  {
                                                         verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ||
-                                                        verifyPermission(props.userPermissions, "config-reporting-claim-my-institution") ?
+                                                        verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution") ?
                                                             (<NavLink to="/settings/rapport-auto"
                                                                       className="kt-menu__item "
                                                                       activeClassName="kt-menu__item--active"
@@ -414,7 +414,7 @@ const Aside = (props) => {
                                                                     </li>
                                                                 </NavLink>
                                                             ) : null
-                                                    }
+                                                    }*/}
 
                                                     {
                                                         verifyPermission(props.userPermissions, 'system-any-efficiency-report') ||
@@ -920,7 +920,11 @@ const Aside = (props) => {
                                                             || verifyPermission(props.userPermissions, 'list-severity-level')
                                                             || verifyPermission(props.userPermissions, 'update-escalation-config')
                                                             || verifyPermission(props.userPermissions, 'list-escalation-config')
-                                                            ?
+                                                            || verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution")
+                                                            || verifyPermission(props.userPermissions, "update-config-reporting-claim-my-institution")
+                                                            || verifyPermission(props.userPermissions, "delete-config-reporting-claim-my-institution")
+                                                            || verifyPermission(props.userPermissions, "store-config-reporting-claim-my-institution")
+                                                        ?
                                                         (
                                                             <li className="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true"
                                                                 data-ktmenu-submenu-toggle="hover">
@@ -951,13 +955,28 @@ const Aside = (props) => {
                                                                         }
                                                                         {
                                                                             verifyPermission(props.userPermissions, "update-reporting-titles-configs") ? (
-                                                                                <NavLink exact to="/settings/config-rapport" className="kt-menu__item" activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                                                <NavLink exact to="/settings/config-rapport" className="kt-menu__item mb-3" activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                                     <li className="kt-menu__link ">
                                                                                         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                                         <span className="kt-menu__link-text">{t("Configuration Titre Rapport")}</span>
                                                                                     </li>
                                                                                 </NavLink>
                                                                             ) : null
+                                                                        }
+                                                                        {
+                                                                            verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ||
+                                                                            verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution") ?
+                                                                                (<NavLink to="/settings/rapport-auto"
+                                                                                          className="kt-menu__item "
+                                                                                          activeClassName="kt-menu__item--active"
+                                                                                          aria-haspopup="true">
+                                                                                        <li className="kt-menu__link ">
+                                                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                                            <span
+                                                                                                className="kt-menu__link-text"> {t("Configuration Rapport Automatique")} </span>
+                                                                                        </li>
+                                                                                    </NavLink>
+                                                                                ) : null
                                                                         }
                                                                         {
                                                                             (verifyPermission(props.userPermissions, "show-proxy-config") || verifyPermission(props.userPermissions, "any-email-claim-configuration")) ? (

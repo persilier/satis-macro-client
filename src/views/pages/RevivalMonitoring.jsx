@@ -270,7 +270,7 @@ const RevivalMonitoring = (props) => {
 
                    {/* {revival?.status ? displayStatus(revival.status) : ""}*/}
                 </td>
-                <td>
+                <td className={"text-center"}>
                     <a href={`/monitoring/claims/staff/${revival?.claim_id}/detail`}
                        className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
