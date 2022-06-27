@@ -85,15 +85,16 @@ const ClaimUnsatisfiedDetail = (props) => {
     const [showTreatment, setShowTreatment] = useState(null)
     const [showStandard, setStandard] = useState("")
     const [showSpecific, setSpecific] = useState("")
+    const [showVariable, setVariable] = useState("")
 
     useEffect(() => {
         async function fetchData() {
             if (verifyTokenExpire()) {
                 await axios.get(`${appConfig.apiDomaine}/claims/details/${id}`)
                     .then(response => {
-                        console.log('ee',response.data)
                         setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
-                        console.log("standard", response.data.standard_bord_exists)
+                        setStandard(response.data?.standard_bord_exists ?? "0")
+                        setSpecific(response.data?.specific_bord_exists ?? "0")
                         setClaim(response.data);
                         setDataId(response.data.institution_targeted ? response.data.institution_targeted.name : "-");
                     })
@@ -168,6 +169,7 @@ const ClaimUnsatisfiedDetail = (props) => {
     };
 
 
+    console.log("element" , showStandard, showSpecific, showTreatment)
 
   const onClickToTranfertStandard = (e) => {
         e.preventDefault();
@@ -329,16 +331,13 @@ const ClaimUnsatisfiedDetail = (props) => {
                                         {/*  <DoubleButtonDetail claim={claim} onClickFusionButton={onClickFusionButton} userPermissions={props.userPermissions}/>*/}
 
                                         <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                            {
-                                               showSpecific == "1" && showTreatment == "1" && showTreatment != null ? (
-                                                    <div
-                                                className="kt-heading kt-heading--md">{t("Transfert de la réclamation")}
-                                            </div>
-                                                ) :
-                                                   <>
-                                                     <div className="form-group ">
-                                                       <div
-                                                           className={"row text-center m-auto pt-5"}>
+                                          {/*  {
+                                              ( showSpecific == "0" && showStandard == "0"  && showTreatment === null) ? (
+*/}
+                                                    <div className="kt-heading kt-heading--md"> {t("Transfert de la réclamation")} </div>
+
+                                            {/*  /* <div className="form-group ">
+                                                       <div className={"row text-center m-auto pt-5"}>
                                                        <div className="alert alert-outline-danger fade show"
                                                             role="alert">
                                                            <div className="alert-icon"><i className="flaticon-warning"/></div>
@@ -353,9 +352,8 @@ const ClaimUnsatisfiedDetail = (props) => {
 
                                                        <span/>
                                                    </div>
-                                               </div>
-                                                   </>
-                                            }
+                                                 </div>
+                                            */}
 
 
                                             <div className="kt-form__section kt-form__section--first">

@@ -537,6 +537,7 @@ const HoldingClientForm = (props) => {
                         .catch((errorRequest) => {
                             setStartRequest(false);
                             setError({...defaultError, ...errorRequest.response.data.error});
+
                             if (errorRequest.response.data.error.code === 409){
                                 ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.message));
                             } else {
@@ -571,9 +572,16 @@ const HoldingClientForm = (props) => {
                                     errorRequest.response.data.client.identite.lastname + " " + errorRequest.response.data.client.identite.firstname + ": " + errorRequest.response.data.message)
                                 );
                             } else {
+                                console.log("error3", errorRequest.response.data.error)
                                 setStartRequest(false);
                                 setError({...defaultError, ...errorRequest.response.data.error});
-                                ToastBottomEnd.fire(toastAddErrorMessageConfig());
+
+                                if (errorRequest.response.data.error.status === false){
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(errorRequest.response.data.error.message));
+                                } else {
+                                    ToastBottomEnd.fire(toastAddErrorMessageConfig());
+                                }
+                               // ToastBottomEnd.fire(toastAddErrorMessageConfig());
                             }
                         });
                 }

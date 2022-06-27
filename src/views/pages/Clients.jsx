@@ -328,7 +328,7 @@ const Clients = (props) => {
                                                                     </th>
                                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                                         style={{width: "20%"}}
-                                                                        aria-label="Ship Address: activate to sort column ascending">Email(s)
+                                                                        aria-label="Ship Address: activate to sort column ascending">{t("Email")}(s)
                                                                     </th>
 
                                                                     <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
@@ -363,7 +363,7 @@ const Clients = (props) => {
                                                                 <tr style={{textAlign: "center"}}>
                                                                     <th rowSpan="1" colSpan="1">{t("Nom")}</th>
                                                                     <th rowSpan="1" colSpan="1">{t("Téléphone")}(s)</th>
-                                                                    <th rowSpan="1" colSpan="1">Email(s)</th>
+                                                                    <th rowSpan="1" colSpan="1">{t("Email")}(s)</th>
                                                                     <th rowSpan="1" colSpan="1">{t("Numéro de compte")}</th>
                                                                     <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                                 </tr>

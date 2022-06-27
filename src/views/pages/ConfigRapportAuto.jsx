@@ -46,15 +46,15 @@ const ConfigRapportAuto = (props) => {
 
     document.title = "Satis rapport - " + (ready ? t("Paramètre configuration rapport automatique") : "");
     if (
-        !verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") &&
-        !verifyPermission(props.userPermissions, "config-reporting-claim-my-institution"))
+       // !verifyPermission(props.userPermissions, "config-reporting-claim-any-institution") ||
+        !verifyPermission(props.userPermissions, "list-config-reporting-claim-my-institution"))
         window.location.href = ERROR_401;
 
     let endPoint = "";
     if (props.plan === "MACRO") {
         if (verifyPermission(props.userPermissions, 'list-config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
+        else if (verifyPermission(props.userPermissions, 'list-config-reporting-claim-my-institution'))
             endPoint = endPointConfig[props.plan]
     } else {
         endPoint = endPointConfig[props.plan]
@@ -234,7 +234,24 @@ const ConfigRapportAuto = (props) => {
                     ) : null
                 }
 
-                <td>{rapport.period === null ? "" : rapport.period_tag.label}</td>
+                <td className={"text-center"}>
+                    {
+                        (rapport?.period ? rapport.period : (rapport?.period_tag && rapport.period_tag.label ? rapport.period_tag.label : "" )) === "biannual" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--info h2">{t("Semestriel")}</span>
+                            : (rapport?.period ? rapport.period : (rapport?.period_tag && rapport.period_tag.label ? rapport.period_tag.label : "" )) === "weeks" ?
+                            <span className="kt-badge kt-badge--inline kt-badge--success h2">{t("Hebdomadaire")}</span>
+                            :  (rapport?.period ? rapport.period : (rapport?.period_tag && rapport.period_tag.label ? rapport.period_tag.label : "" )) === "quarterly" ?
+                                <span className="kt-badge kt-badge--inline kt-badge--dark h2">{t("Trimestriel")}</span>
+                                 :  (rapport?.period ? rapport.period : (rapport?.period_tag && rapport.period_tag.label ? rapport.period_tag.label : "" )) === "months" ?
+                                <span className="kt-badge kt-badge--inline kt-badge--danger h2">{t("Mensuel")}</span>
+                                   :  <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Journalier")}</span>
+                    }
+                     {/* {rapport.period === null ? "" : rapport.period_tag.label}*/}
+
+
+
+
+                </td>
                 <td>{rapport.reporting_type === null ? "-" : rapport.reporting_type}</td>
                 <td>
                     {rapport.staffs ?
@@ -248,7 +265,7 @@ const ConfigRapportAuto = (props) => {
                 <td style={{textAlign:'center'}}>
 
                     {
-                        verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ?
+                        verifyPermission(props.userPermissions, 'update-config-reporting-claim-my-institution') ?
                             <Link
                                 to={`/settings/rapport/edit/${rapport.id}`}
                                 className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -258,7 +275,7 @@ const ConfigRapportAuto = (props) => {
                             : null
                     }
 
-                    {verifyPermission(props.userPermissions, "config-reporting-claim-my-institution") ?
+                    {verifyPermission(props.userPermissions, "delete-config-reporting-claim-my-institution") ?
                         <button
                             onClick={(e) => deleteCategoryClient(rapport.id, index)}
                             className="btn btn-sm btn-clean btn-icon btn-icon-md"
@@ -302,7 +319,7 @@ const ConfigRapportAuto = (props) => {
                     <div className="kt-portlet">
 
                         <HeaderTablePage
-                            addPermission={"config-reporting-claim-my-institution"}
+                            addPermission={"store-config-reporting-claim-my-institution"}
                             title={t("Rapport Automatique")}
                             addText={t("Ajouter une configuration")}
                             addLink={"/settings/rapport/add"}

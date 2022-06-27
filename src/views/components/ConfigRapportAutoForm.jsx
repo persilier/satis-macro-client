@@ -47,7 +47,7 @@ const ConfigRapportAutoForm = (props) => {
     if (props.plan === "MACRO") {
         if (verifyPermission(props.userPermissions, 'config-reporting-claim-any-institution'))
             endPoint = endPointConfig[props.plan].holding;
-        else if (verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution'))
+        else if (verifyPermission(props.userPermissions, 'list-config-reporting-claim-my-institution'))
             endPoint = endPointConfig[props.plan].filial
     } else {
         endPoint = endPointConfig[props.plan]
@@ -81,7 +81,7 @@ const ConfigRapportAutoForm = (props) => {
     const [institutions, setInstitutions] = useState(null);
 
     const getReportingType = (data, key) =>{
-        for ( let i = 0; i < data.length; i ++){
+        for ( let i = 0; i < data?.length ? data.length : ""; i ++){
             if (data[i].value === key) {
                 //console.log(data[i])
                 return data[i];
@@ -115,7 +115,9 @@ const ConfigRapportAutoForm = (props) => {
                         setPeriod(response.data.reportingTask.period_tag);
 
                         setType(getReportingType(response.data.types, response.data.reportingTask.reporting_type));
+                        console.log("console", response.data)
                         setTypes(response.data.reportingTask.types);
+                        //setTypes(response.data.reportingTask.reporting_type);
 
                        if (response.data.reportingTask.institution_targeted_id !== null) {
                             setInstitutions(response.data.institutions);
@@ -460,7 +462,7 @@ const ConfigRapportAutoForm = (props) => {
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'config-reporting-claim-my-institution') ? (
+            verifyPermission(props.userPermissions, 'list-config-reporting-claim-my-institution') ? (
                 printJsx()
             ) : null
         ) : null

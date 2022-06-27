@@ -23,7 +23,8 @@ const RelaunchModal = ({onClose, id}) => {
             .then(({data}) => {
                 setLoad(false);
                 ref.current.click();
-                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Relance effectuer avec succès')))
+                ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Relance effectuée avec succès')))
+                window.location.href = "/historic/revivals";
             })
             .catch(({response}) => {
                 setLoad(false);
