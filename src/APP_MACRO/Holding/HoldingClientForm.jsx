@@ -253,7 +253,7 @@ const HoldingClientForm = (props) => {
                 }
                 else if (tag.name === "telephone" && !isNaN(searchInputValue)) {
                     if (verifyTokenExpire()) {
-                        await axios.get(`${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`)
+                        await axios.get(`${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`)
                             .then(({data}) => {
                                 setStartSearch(false);
                                 setShowSearchResult(true);

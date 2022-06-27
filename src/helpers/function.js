@@ -3,9 +3,9 @@ import {verifyPermission} from "./permission";
 import appConfig from "../config/appConfig";
 import moment from "moment";
 import axios from "axios";
-import i18n from "../i18n";
 import {listConnectData} from "../constants/userClient";
 import {AUTH_TOKEN} from "../constants/token";
+import i18n from "../i18n";
 
 axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 
