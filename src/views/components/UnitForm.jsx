@@ -262,12 +262,6 @@ const HoldingUnitForm = (props) => {
         const newData = {...data};
         newData.countrie_id = selected ? selected.value : "";
         setCountrie(selected)
-            .then(response => {
-                setStates(formatSelectOption(response.data, "name"));
-            })
-            .catch(error => {
-                //console.log("something is wrong");
-            })
         setState(null)
         let states = unformatedCountries.find((country)=>country.id === selected.value).states
         setStates(formatSelectOption(states,"name"));
