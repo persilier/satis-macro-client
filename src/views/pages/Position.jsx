@@ -137,8 +137,8 @@ const Position = (props) => {
                     if (result.value) {
                         axios.delete(`${appConfig.apiDomaine}/positions/${positionId}`)
                             .then(response => {
-                                const newPositions = [...positions];
-                                newPositions.splice(index, 1);
+                                const newPositions = [...positions].filter(e => e.id !== positionId);
+                                setShowList(newPositions.slice(0, numberPerPage))
                                 setPositions(newPositions);
                                 if (showList.length > 1) {
                                     setShowList(
