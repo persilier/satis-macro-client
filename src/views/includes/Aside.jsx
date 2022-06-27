@@ -538,7 +538,7 @@ const Aside = (props) => {
                                                         ) : null
                                                     }
                                                     {
-                                                        verifyPermission(props.userPermissions, 'list-unit-revivals') || verifyPermission(props.userPermissions, 'list-staff-revivals') ? (
+                                                            verifyPermission(props.userPermissions, 'list-unit-revivals') || verifyPermission(props.userPermissions, 'list-staff-revivals') ? (
                                                             <NavLink exact to="/historic/revivals" className="kt-menu__item "
                                                                      activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
