@@ -60,10 +60,18 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                         <div className="kt-section kt-section--first mb-0">
                             <div className="kt-section__body">
                                 <div className="row">
-                                    <label className="col-xl-3"/>
-                                    <div className="col-lg-9 col-xl-6">
-                                        <h3 className="kt-section__title kt-section__title-sm">{t("Information identité")}</h3>
+                                    {/* <label className="col-xl-3"/>*/}
+                                    <div className="kt-portlet kt-callout--success kt-callout--diagonal-bg">
+                                        <div className="kt-portlet__body" style={{padding: "3px 0 0"}}>
+                                                <div className="kt-callout__content">
+                                                    <h5 className="kt-callout__title text-center">{t("Information identité")}</h5>
+                                                </div>
+                                        </div>
                                     </div>
+{/*
+                                    <div className="row">
+                                        <h3 className="kt-section__title kt-section__title-sm">{t("Information identité")}</h3>
+                                    </div>*/}
                                     {/*<div className="form-group row">
                                 <label className="col-xl-3 col-lg-3 col-form-label">Avatar</label>
                                 <div className="col-lg-9 col-xl-6">
@@ -80,10 +88,11 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                                     </div>
                                 </div>
                             </div>*/}
-                                    <div
-                                        className={error.lastname.length ? "form-group row validated" : "form-group row"}>
-                                        <label className="col-xl-3 col-lg-3 col-form-label">{t("Nom")}</label>
-                                        <div className="col-lg-9 col-xl-6">
+                                    <div className={error.lastname.length ? "form-group row validated" : "form-group row"}
+                                    style={{width:"100%", marginBottom: "1rem"}}>
+                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Nom")}</label></div>
+
+                                        <div className="col-lg-9 col-xl-9">
                                             <input
                                                 className={error.lastname.length ? "form-control is-invalid" : "form-control"}
                                                 type="text" placeholder="HOUNSSOU" value={data.lastname}
@@ -99,10 +108,11 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                                             }
                                         </div>
                                     </div>
-                                    <div
-                                        className={error.firstname.length ? "form-group row validated" : "form-group row"}>
-                                        <label className="col-xl-3 col-lg-3 col-form-label">{t("Prénom")}</label>
-                                        <div className="col-lg-9 col-xl-6">
+                                    <div className={error.firstname.length ? "form-group row validated" : "form-group row"}
+                                         style={{width:"100%"}}>
+                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Prénom")}</label></div>
+
+                                        <div className="col-lg-9 col-xl-9">
                                             <input
                                                 className={error.firstname.length ? "form-control is-invalid" : "form-control"}
                                                 type="text" placeholder="Romaric" value={data.firstname}
@@ -121,14 +131,22 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
 
                                 </div>
                                 <div className="row">
-                                    <label className="col-xl-3"/>
-                                    <div className="col-lg-9 col-xl-6">
-                                        <h3 className="kt-section__title kt-section__title-sm">{t("Informations de contact")}</h3>
+                                    <div className="kt-portlet kt-callout--info kt-callout--diagonal-bg">
+                                        <div className="kt-portlet__body" style={{padding: "3px 0 0"}}>
+                                            <div className="kt-callout__content">
+                                                <h5 className="kt-callout__title text-center">{t("Information du contact")}</h5>
+                                            </div>
+                                        </div>
                                     </div>
+                                  {/*  <div className="col-lg-9 col-xl-6">
+                                        <h3 className="kt-section__title kt-section__title-sm">{t("Informations de contact")}</h3>
+                                    </div>*/}
                                     <div
-                                        className={error.telephone.length ? "form-group row validated" : "form-group row"}>
-                                        <label className="col-xl-3 col-lg-3 col-form-label">{t("Téléphone(s)")}</label>
-                                        <div className="col-lg-9 col-xl-6">
+                                        className={error.telephone.length ? "form-group row validated" : "form-group row"}
+                                        style={{width:"100%", marginBottom: "1rem"}}>
+                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Téléphone(s)")}</label></div>
+
+                                        <div className="col-lg-9 col-xl-9">
                                             <ReactTagInput
                                                 tags={data.telephone}
                                                 placeholder={t("Tapez et appuyez sur Entrée")}
@@ -146,9 +164,11 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                                         </div>
                                     </div>
 
-                                    <div className={error.email.length ? "form-group row validated" : "form-group row"}>
-                                        <label className="col-xl-3 col-lg-3 col-form-label">{t("Adresse Mail")}</label>
-                                        <div className="col-lg-9 col-xl-6">
+                                    <div className={error.email.length ? "form-group row validated" : "form-group row"}
+                                         style={{width:"100%"}}>
+                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Adresse Mail")}</label></div>
+
+                                        <div className="col-lg-9 col-xl-9">
                                             <ReactTagInput
                                                 tags={data.email}
                                                 placeholder={t("Tapez et appuyez sur Entrée")}
@@ -166,10 +186,11 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                                         </div>
                                     </div>
 
-                                    <div className={error.ville.length ? "form-group row validated" : "form-group row"}>
-                                        <label className="col-xl-3 col-lg-3 col-form-label">{t("Ville")}</label>
-                                        <div className="col-lg-9 col-xl-6">
-                                            <input
+                                    <div className={error.ville.length ? "form-group row validated" : "form-group row"}
+                                         style={{width:"100%"}}>
+                                        <div className="col-xl-3 col-lg-3 col-form-label text-right"> <label >{t("Ville")}</label></div>
+                                        <div className="col-lg-9 col-xl-9">
+                                        <input
                                                 className={error.ville.length ? "form-control is-invalid" : "form-control"}
                                                 type="text" placeholder="Cotonou" value={data.ville}
                                                 onChange={e => handleVilleChange(e.target.value)}/>
@@ -188,11 +209,9 @@ const PersonalInfo = ({data, handleLastNameChange, handleFirstNameChange, handle
                             </div>
                         </div>
                         <div className="kt-portlet__foot">
-                            <div className="kt-form__actions">
-                                <div className="row">
-                                    <div className="col-lg-3 col-xl-3">
-                                    </div>
-                                    <div className="col-lg-9 col-xl-9">
+                            <div className="kt-form__actions " >
+                                <div className="row text-center d-block">
+                                    <div className="">
                                         {
                                             !startRequest ? (
                                                 <button type="submit" onClick={(e) => updateProfile(e)}

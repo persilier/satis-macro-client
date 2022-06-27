@@ -86,6 +86,7 @@ const HoldingUnitForm = (props) => {
     const [leads, setLeads] = useState([]);
     const [lead, setLead] = useState(null);
     const [countries, setCountries] = useState([]);
+    const [unformatedCountries, setUnformatedCountries] = useState([]);
     const [countrie, setCountrie] = useState(null);
     const [States, setStates] = useState([]);
     const [state, setState] = useState(null);
@@ -172,7 +173,7 @@ const HoldingUnitForm = (props) => {
                         //setUnitEscalades(formatSelectOption(response.data.unitTypes, "name", "fr"));
 
                         setCountries(formatSelectOption(response.data.countries, "name"));
-
+                        setUnformatedCountries(response.data.countries);
 
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
@@ -204,6 +205,7 @@ const HoldingUnitForm = (props) => {
                         setUnitTypesTemp(response.data.unitTypes);
                         setUnitEscalades(formatSelectOption(response.data.parents, "name", "fr"));
                         setCountries(formatSelectOption(response.data.countries, "name"));
+                        setUnformatedCountries(response.data.countries);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitutions(formatSelectOption(response.data.institutions, "name", false));
                     })
@@ -259,17 +261,16 @@ const HoldingUnitForm = (props) => {
     const onChangeCountries = (selected) => {
         const newData = {...data};
         newData.countrie_id = selected ? selected.value : "";
-        setCountrie(selected);
-        axios.get(`${appConfig.apiDomaine}/country/${newData.countrie_id}/states`,)
+        setCountrie(selected)
             .then(response => {
                 setStates(formatSelectOption(response.data, "name"));
             })
             .catch(error => {
                 //console.log("something is wrong");
             })
-
-        ;
-        // setData(newData);
+        setState(null)
+        let states = unformatedCountries.find((country)=>country.id === selected.value).states
+        setStates(formatSelectOption(states,"name"));
     };
 
     const onChangeLead = (selected) => {
@@ -323,6 +324,8 @@ const HoldingUnitForm = (props) => {
                 axios.post(endPoint.store, newData)
                     .then(response => {
                         setStartRequest(false);
+                        setCountrie(null);
+                        setState(null);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitution(null);
                         setUnitType(null);

@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     Link
 } from "react-router-dom";
-import {forceRound, loadCss} from "../../helpers/function";
+import {forceRound, getLowerCaseString, loadCss} from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import {ToastBottomEnd} from "../components/Toast";
 import {
@@ -62,6 +62,15 @@ const ClaimObject = (props) => {
     }, [appConfig.apiDomaine, NUMBER_ELEMENT_PER_PAGE]);
 
     const filterShowListBySearchValue = (value) => {
+/*
+        value = getLowerCaseString(value);
+        let newClaimObjects = [...claimObjects];
+        newClaimObjects = newClaimObjects.filter(el => (
+            getLowerCaseString(el.name["fr"]).indexOf(value) >= 0
+        ));
+
+        return newClaimObjects;*/
+
         let newClaimObjects = [...claimObjects];
         newClaimObjects = newClaimObjects.filter(el => {
             if (el.description["fr"]) {
@@ -140,8 +149,8 @@ const ClaimObject = (props) => {
                     if (result.value) {
                         axios.delete(`${appConfig.apiDomaine}/claim-objects/${claimObjectId}`)
                             .then(response => {
-                                const newClaimObjects = [...claimObjects];
-                                newClaimObjects.splice(index, 1);
+                                const newClaimObjects = [...claimObjects].filter(e => e.id !== claimObjectId);
+                                setShowList(newClaimObjects.slice(0, numberPerPage))
                                 setClaimObjects(newClaimObjects);
                                 if (showList.length > 1) {
                                     setShowList(
