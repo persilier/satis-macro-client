@@ -46,7 +46,9 @@ import ConfigProcessingCircuit from "../pages/ConfigProcessingCircuit";
 import ClaimAssign from "../pages/ClaimAssign";
 import ClaimAssignDetail from "../pages/ClaimAssignDetail";
 import ClaimList from "../pages/ClaimList";
+import ClaimListPending from "../pages/ClaimListPending";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
+import ClaimAssignPendingToStaff from "../pages/ClaimAssignPendingToStaff";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
 import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
@@ -67,6 +69,7 @@ import InstitutionMessageApi from "../pages/InstitutionMessageApi";
 import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 import ClaimListDetail from "../pages/ClaimListDetail";
 import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
+import ClaimAssignPendingToStaffDetail from "../pages/ClaimAssignPendingToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
 import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
@@ -99,6 +102,8 @@ import PercentageMinFusion from "../pages/PercentageMinFusion";
 import ClaimDetail from "../pages/ClaimDetail";
 import ClaimReassign from "../pages/ClaimReassign";
 import ClaimReassignDetail from "../pages/ClaimReassignDetail";
+import ClaimReassignPending from "../pages/ClaimReassignPending";
+import ClaimReassignDetailPending from "../pages/ClaimReassignDetailPending";
 import ClaimReportingUemoaOne from "../pages/ClaimReportingUemoaOne";
 import ClaimReportingUemoaTwo from "../pages/ClaimReportingUemoaTwo";
 import ClaimReportingUemoaThree from "../pages/ClaimReportingUemoaThree";
@@ -513,10 +518,10 @@ const Body = () => {
                 <ClaimUnsatisfied/>
             </Route>
 
+
             <Route exact path="/process/committee-adhoc">
                 <CommitteeAdhoc/>
             </Route>
-
 
 
             <Route exact path="/process/revival">
@@ -527,8 +532,17 @@ const Body = () => {
                 <ClaimReassign/>
             </Route>
 
+            <Route exact path="/process/claim-reassign-pending">
+                <ClaimReassignPending/>
+            </Route>
+
+
             <Route exact path="/process/claim-reassign/:id">
                 <ClaimReassignDetail/>
+            </Route>
+
+            <Route exact path="/process/claim-reassign-pending/:id">
+                <ClaimReassignDetailPending/>
             </Route>
 
             <Route exact path="/process/claim-assign/:id/detail">
@@ -543,12 +557,24 @@ const Body = () => {
                 <ClaimAssignToStaff/>
             </Route>
 
+            <Route exact path="/process/claim-assign-pending/to-staff">
+                <ClaimAssignPendingToStaff/>
+            </Route>
+
             <Route exact path="/process/claim-assign/to-staff/:id/detail">
                 <ClaimAssignToStaffDetail/>
             </Route>
 
+            <Route exact path="/process/claim-assign-pending/to-staff/:id/detail">
+                <ClaimAssignPendingToStaffDetail/>
+            </Route>
+
             <Route exact path="/process/unit-claims">
                 <ClaimList/>
+            </Route>
+
+            <Route exact path="/process/unit-claims-pending">
+                <ClaimListPending/>
             </Route>
 
             <Route exact path="/process/claim-list-detail/:id/detail">

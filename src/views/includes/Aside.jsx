@@ -234,7 +234,7 @@ const Aside = (props) => {
                                                 {
                                                     verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") && props.activePilot ? (
                                                         <NavLink exact to="/process/claim-unsatisfied" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                            <li className="kt-menu__link ">
+                                                            <li className="kt-menu__link mb-3">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                 <span className="kt-menu__link-text">{t("Réclamations non satisfaites")}</span>
                                                             </li>
@@ -248,6 +248,42 @@ const Aside = (props) => {
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                 <span className="kt-menu__link-text">{t("Liste des comités Ad'hoc")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {/*LEAD et STAFF*/}
+
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
+                                                        <NavLink exact to="/process/unit-claims" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link mb-2">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Liste des réclamations non satisfaites")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+
+                                                {
+                                                    (verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') && !props.lead) && (
+                                                    <NavLink exact to="/process/claim-reassign" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        <li className="kt-menu__link mb-2">
+                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                            <span className="kt-menu__link-text">{t("Réassigner réclamation non satisfaites")}</span>
+                                                        </li>
+                                                    </NavLink>
+                                                    )
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions,"list-claim-assignment-to-staff") ? (
+                                                        <NavLink exact to="/process/claim-assign/to-staff" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Réclamations à traiter")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null
