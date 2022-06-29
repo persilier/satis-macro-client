@@ -49,18 +49,19 @@ const CloseModal = (props) => {
                     .then(response => {
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                        window.location.href = "/process/claim-dissatisfied"
+                        window.location.href = "/process/claim-unsatisfied"
                     }).catch(error => {
                     setStartRequest(false);
                     setError({...defaultError, ...error.response.data.error});
                     ToastBottomEnd.fire(toastAddErrorMessageConfig());
                 })
-            } else {
+            }
+      /*      else {
                 axios.put(appConfig.apiDomaine + `/claim-assignment-staff/${props.getId}/unfounded`, data)
                     .then(response => {
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                        window.location.href = "/process/claim-dissatisfied/to-staff"
+                        window.location.href = "/process/claim-unsatisfied/to-staff"
                     })
                     .catch(error => {
                         setStartRequest(false);
@@ -69,7 +70,7 @@ const CloseModal = (props) => {
 
 
                     })
-            }
+            }*/
         }
     };
     return (

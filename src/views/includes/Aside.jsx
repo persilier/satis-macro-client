@@ -282,7 +282,7 @@ const Aside = (props) => {
 
                                         {
                                           // (verifyPermission(props.userPermissions, 'show-my-staff-monitoring') && (!props.activePilot) && (props.userStaff?.lead === true) )
-                                          ( staff && staff.is_lead && (verifyPermission(props.userPermissions, 'show-my-staff-monitoring'))) && (
+                                            (staff.is_lead === true && (verifyPermission(props.userPermissions, 'show-my-staff-monitoring'))) && (
                                                // console.log(!props.activePilot )
                                                 <NavLink exact to="/process/revival" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                     <li className="kt-menu__link ">
