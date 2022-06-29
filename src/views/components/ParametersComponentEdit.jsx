@@ -32,8 +32,7 @@ const ParametersComponentEdit = (props) => {
         const newDatalogo = {};
         const newError = {};
         params.map(param => {
-            console.log("bug1",  paramData[param].value.url)
-            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? (paramData[param].value !== null ? paramData[param].value.url : null) : paramData[param].value : "";
+            newState[`params_${param}`] = paramData ? paramData[param].type === 'image' ? (paramData[param].value !== null ? paramData[param].value?.url : null) : paramData[param].value : "";
             newDataType[`params_${param}`] = paramData ? paramData[param].type : "";
             newError[`params_${param}`] = [];
             if (paramData) {
