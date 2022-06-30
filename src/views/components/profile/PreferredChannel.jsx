@@ -36,6 +36,7 @@ const PreferredChannel = () => {
         if (verifyTokenExpire()) {
             axios.get(appConfig.apiDomaine + "/feedback-channels")
                 .then(response => {
+                    console.log("response", response)
                     const newChannel={...data};
                     if (response.data.staff.feedback_preferred_channels!==null){
                         newChannel.feedback_preferred_channels=response.data.staff.feedback_preferred_channels;

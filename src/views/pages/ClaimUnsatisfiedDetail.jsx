@@ -148,6 +148,14 @@ const ClaimUnsatisfiedDetail = (props) => {
         }
     };
 
+    const onChangeUnits = (selected) => {
+        const newData = {...data};
+        newData.unit_id = selected ? selected.value : null;
+        setUnit(selected);
+        setData(newData);
+        console.log(newData.unit_id, "UNIT")
+    };
+
     const onClickToTranfert = (e) => {
         e.preventDefault();
         setStartRequestToTransfert(true)
@@ -158,8 +166,10 @@ const ClaimUnsatisfiedDetail = (props) => {
         axios.post(appConfig.apiDomaine + `/treatments-boards`, newData)
             .then(response => {
                 setStartRequestToTransfert(false)
+                setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 window.location.href = "/process/claim-unsatisfied"
+
             }).catch(error => {
             setStartRequestToTransfert(false)
             ToastBottomEnd.fire(toastAddErrorMessageConfig());
@@ -429,6 +439,27 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                    ( <div className="kt-wizard-v2__review-item">
                                                                     <div
                                                                         className="kt-wizard-v2__review-title">{t("Transférer à l'unité N+1 de l'unité")}</div>
+                                                                       <div
+                                                                           className={error.unit_id.length ? "form-group validated" : "form-group"}>
+                                                                           <Select
+                                                                               isClearable
+                                                                               value={unit}
+                                                                               onChange={onChangeUnits}
+                                                                               options={unitsData}
+                                                                               placeholder={t("Veuillez sélectionner l'unité N+1 de traitement")}
+                                                                           />
+                                                                           {
+                                                                               error.unit_id.length ? (
+                                                                                   error.unit_id.map((error, index) => (
+                                                                                       <div key={index}
+                                                                                            className="invalid-feedback">
+                                                                                           {error}
+                                                                                       </div>
+                                                                                   ))
+                                                                               ) : ""
+                                                                           }
+                                                                       </div>
+
                                                                     <div className=" text-center">
                                                                         {
                                                                             !startRequestToTransfert ? (

@@ -130,7 +130,7 @@ const HoldingUnitForm = (props) => {
             if (id) {
                 await axios.get(endPoint.edit(id))
                     .then(response => {
-                        //console.log("DATA:",response.data)
+                        console.log("DATA:",response.data)
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
@@ -141,12 +141,6 @@ const HoldingUnitForm = (props) => {
                         setShowEscalade(response.data.unit.unit_type.can_treat)
 
                         setunitParents(formatSelectOption(response.data.parents, "name", "fr"));
-                        setunitParent(
-                            response.data.unit.state.parent ? {
-                                value:response.data.unit.state.parent.id,
-                                label: response.data.unit.state.parent.name
-                            } : {value: "", label:""}
-                        );
 
                         if (response.data.unit.state !== null) {
                             axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
@@ -181,15 +175,11 @@ const HoldingUnitForm = (props) => {
 
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         setUnformatedCountries(response.data.countries);
-                        setCountrie(
-                            response.data.unit.state.country ? {
-                                value:response.data.unit.state.country.id,
-                                label: response.data.unit.state.country.name
-                            } : {value: "", label:""}
-                        );
+
+
                         console.log("pays", response.data.unit.state.country )
                         console.log("zones", response.data.unit.state )
-                        console.log("unite n+1", response.data?.unit?.parent_id )
+                        console.log("unite n+1", response.data?.unit?.parent?.name["fr"] )
                         console.log("type unite", response.data.unit.unit_type_id.name )
                         console.log("parents", response.data.parents)
                         console.log("parents", response.data.unit.parent_id)
