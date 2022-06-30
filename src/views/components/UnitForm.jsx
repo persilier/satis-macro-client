@@ -78,10 +78,10 @@ const HoldingUnitForm = (props) => {
 
     const [unitTypes, setUnitTypes] = useState([]);
     const [unitTypesTemp, setUnitTypesTemp] = useState([]);
-    const [unitEscalades, setUnitEscalades] = useState([]);
+    const [unitParents, setunitParents] = useState([]);
     const [institutions, setInstitutions] = useState([]);
     const [unitType, setUnitType] = useState(null);
-    const [unitEscalade, setUnitEscalade] = useState(null);
+    const [unitParent, setunitParent] = useState(null);
     const [institution, setInstitution] = useState(null);
     const [leads, setLeads] = useState([]);
     const [lead, setLead] = useState(null);
@@ -95,7 +95,7 @@ const HoldingUnitForm = (props) => {
     const defaultData = {
         name: "",
         unit_type_id: unitTypes.length ? unitTypes[0].id : "",
-        unit_escalade_id: unitEscalades.length ? unitEscalades[0].id : "",
+        parent_id: unitParents.length ? unitParents[0].id : "",
         country_id: countries.length ? countries[0].id : "",
         state_id: countries.length ? countries[0].id : "",
         lead_id: "",
@@ -106,7 +106,7 @@ const HoldingUnitForm = (props) => {
         country_id: [],
         state_id: [],
         unit_type_id: [],
-        unit_escalade_id: [],
+        parent_id: [],
         lead_id: [],
         institution_id: []
     };
@@ -134,10 +134,19 @@ const HoldingUnitForm = (props) => {
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
-                            unit_escalade_id: response.data.unit.unit_escalade_id,
+                            parent_id: response.data.unit.parent_id,
                             state_id: response.data.unit.state_id ? response.data.unit.state_id : "",
                             institution_id: response.data.unit.institution ? response.data.unit.institution_id : "",
                         };
+                        setShowEscalade(response.data.unit.unit_type.can_treat)
+
+                        setunitParents(formatSelectOption(response.data.parents, "name", "fr"));
+                        setunitParent(
+                            response.data.unit.state.parent ? {
+                                value:response.data.unit.state.parent.id,
+                                label: response.data.unit.state.parent.name
+                            } : {value: "", label:""}
+                        );
 
                         if (response.data.unit.state !== null) {
                             axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
@@ -157,6 +166,7 @@ const HoldingUnitForm = (props) => {
                         }
 
                         setData(newData);
+
                         setState(response.data.unit.state ? {
                             value: response.data.unit.state.id,
                             label: response.data.unit.state.name
@@ -169,17 +179,26 @@ const HoldingUnitForm = (props) => {
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
 
 
-                        //setUnitEscalade({value: response.data.unit.unit_type_id, label: response.data.unit.unit_type.name["fr"]});
-                        //setUnitEscalades(formatSelectOption(response.data.unitTypes, "name", "fr"));
-
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         setUnformatedCountries(response.data.countries);
+                        setCountrie(
+                            response.data.unit.state.country ? {
+                                value:response.data.unit.state.country.id,
+                                label: response.data.unit.state.country.name
+                            } : {value: "", label:""}
+                        );
+                        console.log("pays", response.data.unit.state.country )
+                        console.log("zones", response.data.unit.state )
+                        console.log("unite n+1", response.data?.unit?.parent_id )
+                        console.log("type unite", response.data.unit.unit_type_id.name )
+                        console.log("parents", response.data.parents)
+                        console.log("parents", response.data.unit.parent_id)
 
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
                             response.data.unit.lead ? {
                                 value: response.data.unit.lead.id,
-                                label: response.data.unit.lead.identite.lastname + " " + response.data.unit.lead.identite.lastname
+                                label: response.data.unit.lead.identite.lastname + " " + response.data.unit.lead.identite.firstname
                             } : {value: "", label: ""}
                         );
 
@@ -190,7 +209,6 @@ const HoldingUnitForm = (props) => {
                                 label: response.data.unit.institution.name
                             } : {value: "", label: ""});
                         }
-
                     })
                     .catch(error => {
                         //console.log("Something is wrong");
@@ -199,11 +217,10 @@ const HoldingUnitForm = (props) => {
             } else {
                 await axios.get(endPoint.create)
                     .then(response => {
-                        //setUnitEscalades(formatSelectOption(response.data.unitTypes, "name", "fr"));
+                        //setunitParents(formatSelectOption(response.data.unitTypes, "name", "fr"));
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
-                        console.log(response.data.parents)
                         setUnitTypesTemp(response.data.unitTypes);
-                        setUnitEscalades(formatSelectOption(response.data.parents, "name", "fr"));
+                        setunitParents(formatSelectOption(response.data.parents, "name", "fr"));
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         setUnformatedCountries(response.data.countries);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
@@ -232,21 +249,15 @@ const HoldingUnitForm = (props) => {
         newData.unit_type_id = selected ? selected.value : "";
         setUnitType(selected);
         setData(newData);
-
-        console.log(unitTypesTemp)
         let unitType = unitTypesTemp.find(e => e.id === selected.value);
 
-        console.log(unitType)
-        //endpoint get unit info
-        //newData.unit_type_id,setshowescalade(response.units.unit_type.cantreat
         setShowEscalade(unitType.can_treat)
     };
 
-    const onChangeUnitEscalade = (selected) => {
+    const onChangeUnitParent = (selected) => {
         const newData = {...data};
-        newData.unit_escalade_id = selected ? selected.value : "";
-        setUnitEscalade(selected);
-        console.log('showdata', newData);
+        newData.parent_id = selected ? selected.value : "";
+        setunitParent(selected);
         setData(newData);
     };
 
@@ -323,7 +334,7 @@ const HoldingUnitForm = (props) => {
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitution(null);
                         setUnitType(null);
-                        setUnitEscalade(null);
+                        setunitParent(null);
                         setCountrie(null);
                         setState(null)
                         setError(defaultError);
@@ -494,9 +505,8 @@ const HoldingUnitForm = (props) => {
                                                 </div>
                                             </div>
 
-                                            {
-                                                showEscalade != null && showEscalade == "1" ? (
-                                                    !verifyPermission(props.userPermissions, 'update-any-unit') ? (
+                                          {
+                                              showEscalade != null && showEscalade == "1" ? (
                                                         <div
                                                             className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
                                                             <label className="col-xl-3 col-lg-3 col-form-label"
@@ -504,14 +514,14 @@ const HoldingUnitForm = (props) => {
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <Select
                                                                     isClearable
-                                                                    value={unitEscalade}
+                                                                    value={unitParent}
                                                                     placeholder={t("N+1")}
-                                                                    onChange={onChangeUnitEscalade}
-                                                                    options={unitEscalades}
+                                                                    onChange={onChangeUnitParent}
+                                                                    options={unitParents}
                                                                 />
                                                                 {
-                                                                    error.unit_escalade_id.length ? (
-                                                                        error.unit_escalade_id.map((error, index) => (
+                                                                    error.parent_id.length ? (
+                                                                        error.parent_id.map((error, index) => (
                                                                             <div key={index}
                                                                                  className="invalid-feedback">
                                                                                 {error}
@@ -521,9 +531,9 @@ const HoldingUnitForm = (props) => {
                                                                 }
                                                             </div>
                                                         </div>
-                                                    ) : null
                                                 ) : null
                                             }
+
 
                                             <div
                                                 className={error.country_id.length ? "form-group row validated" : "form-group row"}>

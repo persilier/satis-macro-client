@@ -20,6 +20,7 @@ import AttachmentsButton from "../components/AttachmentsButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import TreatmentHistory from "../components/TreatmentHistory";
 import {useTranslation} from "react-i18next";
+import CloseModal from "../components/CloseModal";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -41,7 +42,7 @@ const ClaimAssignPendingToStaffDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}`)
+            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}/?type=unsatisfied`)
                 .then(response => {
                     setClaim(response.data);
                 })
@@ -131,6 +132,34 @@ const ClaimAssignPendingToStaffDetail = (props) => {
 
                                     <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                         <form className="kt-form" id="kt_form">
+                                            {
+                                                verifyPermission(props.userPermissions, "close-my-claims") ? (
+                                                    <div className="d-flex justify-content-md-end">
+                                                        <button type="button" data-keyboard="false" data-backdrop="static"
+                                                                data-toggle="modal" data-target="#exampleModal"
+                                                                className="btn btn-danger">
+                                                            {t("Clôturer").toUpperCase()}
+                                                        </button>
+                                                        {
+                                                            claim ? (
+                                                                <CloseModal
+                                                                    activeTreatment={
+                                                                        claim.active_treatment ? (
+                                                                            claim.active_treatment
+                                                                        ) : null
+                                                                    }
+                                                                    getId={`${id}`}
+                                                                />
+                                                            ) : (
+                                                                <CloseModal
+                                                                    getId={`${id}`}
+                                                                />
+                                                            )
+                                                        }
+
+                                                    </div>
+                                                ) : null
+                                            }
 
                                          {/*   <div className="d-flex justify-content-end">
                                                 <button type="button"

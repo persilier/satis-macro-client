@@ -366,6 +366,9 @@ export const seeEscalade = (userPermissions) => {
         || (verifyPermission(userPermissions, "close-my-claims"))
         || (verifyPermission(userPermissions, "update-treatment-board"))
         || (verifyPermission(userPermissions, "store-treatment-board"))
+        || verifyPermission(userPermissions, 'list-claim-awaiting-treatment')
+        || verifyPermission(userPermissions, 'assignment-claim-awaiting-treatment')
+
 }
 
 export const seeMonitoring = (userPermissions) => {

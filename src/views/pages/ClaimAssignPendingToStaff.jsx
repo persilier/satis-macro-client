@@ -42,7 +42,7 @@ const ClaimAssignPendingToStaff = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
+            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/?type=unsatisfied`)
                 .then(response => {
                     console.log(response.data, "DATA");
                     setNumberPage(forceRound(response.data.length / numberPerPage));

@@ -40,10 +40,13 @@ const ClaimListPending = (props) => {
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [currentMessage, setCurrentMessage] = useState("");
+    const [idUnit, setIdUnit] = useState(null)
+
+
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment`)
+            axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment/?type=unsatisfied`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));

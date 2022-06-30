@@ -60,7 +60,7 @@ const ClaimReassignDetailPending = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-reassignment/${id}/edit`)
+            await axios.get(`${appConfig.apiDomaine}/claim-reassignment/${id}/edit/?type=unsatisfied`)
                 .then(response => {
                     setClaim(response.data.claim);
                     setStaffs(formatStaffsOptions(response.data.staffs));
@@ -79,7 +79,7 @@ const ClaimReassignDetailPending = (props) => {
     const assignClaim = () => {
         setStartRequest(true);
         if (verifyTokenExpire()) {
-            axios.put(`${appConfig.apiDomaine}/claim-reassignment/${id}`, {staff_id: staff ? staff.value : null})
+            axios.put(`${appConfig.apiDomaine}/claim-reassignment/${id}/?type=unsatisfied`, {staff_id: staff ? staff.value : null})
                 .then(({data}) => {
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('La réclamation a été réassigner avec succès')));
                     setStartRequest(false);
