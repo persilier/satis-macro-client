@@ -76,6 +76,9 @@ const Clients = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
 
+
+
+
     const fetchData = useCallback((search = {status: false, value: ""}) => {
         if (verifyTokenExpire()) {
             setLoad(true);
@@ -145,7 +148,7 @@ const Clients = (props) => {
                     if (verifyTokenExpire()) {
                         axios.delete(endPoint.destroy(accountId))
                             .then(response => {
-                                const newClient = [...clients].filter(e => e.id !== accountId);
+                                const newClient = [...clients].filter(e => e.accounts[0].id !== accountId);
                                 setShowList(newClient.slice(0, numberPerPage))
                                 setClients(newClient);
 
@@ -167,6 +170,7 @@ const Clients = (props) => {
                         ;
                     }
                 }
+
             })
         ;
     };
