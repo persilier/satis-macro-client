@@ -9,53 +9,82 @@ import {loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import UnfoundedModal from "../components/UnfoundedModal";
-import TreatmentForm from "../components/TreatmentForm";
-import ClientButtonDetail from "../components/ClientButtonDetail";
-import ClaimButtonDetail from "../components/ClaimButtonDetail";
-import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
+import ReasonSatisfaction from "../components/ReasonSatisfaction";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
+import ClientButtonDetail from "../components/ClientButtonDetail";
+import ClaimButtonDetail from "../components/ClaimButtonDetail";
+import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
+import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
-import TreatmentHistory from "../components/TreatmentHistory";
 import {useTranslation} from "react-i18next";
-import CloseModal from "../components/CloseModal";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 loadScript("/assets/js/pages/custom/chat/chat.js");
 
+const endPointConfig = {
+    PRO: {
+        plan: "PRO",
+        edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+    },
+    MACRO: {
+        holding: {
+            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        },
+        filial: {
+            edit: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        }
+    },
+    HUB: {
+        plan: "HUB",
+        edit: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+    }
+};
 
-const ClaimAssignPendingToStaffDetail = (props) => {
+
+const SatisfactionMeasurePendingDetail = (props) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    document.title = "Satis client -" + ready ? t("Détails réclamation") : "";
+    document.title = (ready ? t("Satis client - Détails plainte") : "");
     const {id} = useParams();
 
-    if (!verifyPermission(props.userPermissions, "show-claim-assignment-to-staff"))
+    if (!(verifyPermission(props.userPermissions, 'update-satisfaction-measured-any-claim') ||
+        verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim")))
         window.location.href = ERROR_401;
+
+    let endPoint = "";
+    if (props.plan === "MACRO") {
+        if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].holding;
+        else if (verifyPermission(props.userPermissions, 'update-satisfaction-measured-my-claim'))
+            endPoint = endPointConfig[props.plan].filial
+    } else
+        endPoint = endPointConfig[props.plan];
 
     const [claim, setClaim] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}?type=unsatisfied`)
+            await axios.get(endPoint.edit + `/${id}`)
                 .then(response => {
                     setClaim(response.data);
                 })
                 .catch(error => console.log("Something is wrong"));
         }
 
-        if (verifyTokenExpire())
+        if (verifyTokenExpire()) {
             fetchData();
+        }
     }, []);
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") ? (
+            verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ||
+            verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -74,10 +103,11 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
-                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                        <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                            className="flaticon2-shelter"/></a>
                                         <span className="kt-subheader__breadcrumbs-separator"/>
-                                        <Link to="/process/claim-assign/to-staff" className="kt-subheader__breadcrumbs-link">
-                                            {t("Réclamations à traiter")}
+                                        <Link to="/process/claim_measure" className="kt-subheader__breadcrumbs-link">
+                                            {t("Mesure de Satisfaction")}
                                         </Link>
                                     </div>
                                 </div>
@@ -89,7 +119,7 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#detail" onClick={e => e.preventDefault()} style={{cursor: "default"}}
                                        className="kt-subheader__breadcrumbs-link">
-                                        {claim?claim.reference: t('Details')}
+                                        {claim ? claim.reference : 'Detail'}
                                     </a>
                                 </div>
                             </div>
@@ -113,15 +143,30 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                     <div className="kt-wizard-v2__nav-body">
                                                         <div className="kt-wizard-v2__nav-icon">
-                                                            <i className="flaticon-clipboard"/>
-
+                                                            <i className="flaticon-list"/>
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label">
                                                             <div className="kt-wizard-v2__nav-label-title">
-                                                                {t("Traitement de la réclamation")}
+                                                                {t("Traitement effectué")}
                                                             </div>
                                                             <div className="kt-wizard-v2__nav-label-desc">
-                                                                {t("Procédez au traitement de la réclamation")}
+                                                                {t("Détails du traitement effectué")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-list"/>
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Mesure de Satisfaction - réclamations non satisfaites")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Mesurer la satisfaction du client non satisfait")}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -132,96 +177,31 @@ const ClaimAssignPendingToStaffDetail = (props) => {
 
                                     <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
                                         <form className="kt-form" id="kt_form">
-                                            {
-                                                verifyPermission(props.userPermissions, "close-my-claims") ? (
-                                                    <div className="d-flex justify-content-md-end">
-                                                        <button type="button" data-keyboard="false" data-backdrop="static"
-                                                                data-toggle="modal" data-target="#exampleModal"
-                                                                className="btn btn-danger">
-                                                            {t("Clôturer").toUpperCase()}
-                                                        </button>
-                                                        {
-                                                            claim ? (
-                                                                <CloseModal
-                                                                    activeTreatment={
-                                                                        claim.active_treatment ? (
-                                                                            claim.active_treatment
-                                                                        ) : null
-                                                                    }
-                                                                    getId={`${id}`}
-                                                                />
-                                                            ) : (
-                                                                <CloseModal
-                                                                    getId={`${id}`}
-                                                                />
-                                                            )
-                                                        }
-
-                                                    </div>
-                                                ) : null
-                                            }
-
-                                         {/*   <div className="d-flex justify-content-end">
-                                                <button type="button"
-                                                        data-toggle="modal" data-target="#exampleModal"
-                                                        className="btn btn-danger">
-                                                    {t("Non fondée").toUpperCase()}
-                                                </button>
-                                                {
-                                                    claim ? (
-                                                        <UnfoundedModal
-                                                            activeTreatment={
-                                                                claim.active_treatment ? (
-                                                                    claim.active_treatment
-                                                                ) : null
-                                                            }
-                                                            getId={`${id}`}
-                                                        />
-                                                    ) : (
-                                                        <UnfoundedModal
-                                                            getId={`${id}`}
-                                                        />
-                                                    )
-                                                }
-
-                                            </div>*/}
-
                                             <ClientButtonDetail claim={claim}/>
 
                                             <ClaimButtonDetail claim={claim}/>
 
                                             <AttachmentsButtonDetail claim={claim}/>
 
-                                            <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
-                                                <TreatmentHistory claim={claim}/>
-                                                <hr/>
-                                                <div className="kt-heading kt-heading--md">{t("Traitement de la réclamation")}</div>
+                                            <TreatmentButtonDetail claim={claim}/>
+
+                                            <div className="kt-wizard-v2__content"
+                                                 data-ktwizard-type="step-content">
+                                                <div className="kt-heading kt-heading--md">{t("Mesure de Satisfaction")}
+                                                </div>
                                                 <div className="kt-form__section kt-form__section--first">
                                                     <div className="kt-wizard-v2__review">
                                                         <div className="kt-wizard-v2__review-content">
-                                                            {
-                                                                claim ? (
-                                                                    <TreatmentForm
-                                                                        currency={claim.amount_currency ? claim.amount_currency.name["fr"] : null}
-                                                                        amount_disputed={claim?claim.amount_disputed:null}
-                                                                        activeTreatment={
-                                                                            claim.active_treatment ? (
-                                                                                claim.active_treatment
-                                                                            ) : null
-                                                                        }
-                                                                        getId={`${id}`}
-                                                                    />
-                                                                ) : (
-                                                                    <TreatmentForm
-                                                                        currency={null}
-                                                                        amount_disputed={claim?claim.amount_disputed:null}
-                                                                        getId={`${id}`}
-                                                                    />
-                                                                )
-                                                            }
+
+                                                            <ReasonSatisfaction
+                                                                getId={`${id}`}
+                                                                getEndPoint={endPoint.edit}
+                                                            />
+
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
 
                                             <div className="kt-form__actions">
@@ -253,8 +233,8 @@ const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
-        plan: state.plan.plan
+        plan: state.plan.plan,
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssignPendingToStaffDetail);
+export default connect(mapStateToProps)(SatisfactionMeasurePendingDetail);

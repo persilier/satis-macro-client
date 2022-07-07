@@ -88,16 +88,16 @@ const ReasonModal = props => {
                         </div>
                         <div className="modal-body">
                             <form>
-                                <div className={error.length ? "form-group validated" : ""}>
+                                <div className={error?.length ? "form-group validated" : ""}>
                                     <label htmlFor="message-text" className="form-control-label">{props.reasonLabel}:</label>
                                     <textarea
-                                        className={error.length ? "form-control is-invalid" : "form-control"}
+                                        className={error?.length ? "form-control is-invalid" : "form-control"}
                                         id="message-text"
                                         placeholder={t("Veuillez entrer le message à communiquer au réclamant")}
                                         onChange={e => setDescription(e.target.value)}
                                     />
                                     {
-                                        error.map((error, index) => (
+                                        error?.map((error, index) => (
                                             <div key={index} className="invalid-feedback">
                                                 {error}
                                             </div>

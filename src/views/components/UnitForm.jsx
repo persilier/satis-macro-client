@@ -176,8 +176,16 @@ const HoldingUnitForm = (props) => {
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         setUnformatedCountries(response.data.countries);
 
+                        setCountrie(
+                            response.data?.unit?.state?.country ? {
+                                value: response.data?.unit?.state?.country.id,
+                                label: response.data?.unit?.state?.country.name
+                            } : {value: "", label: ""}
+                        );
 
-                        console.log("pays", response.data.unit.state.country )
+
+                        console.log("pays", response.data?.unit?.state?.country_id )
+                        console.log("pays2", countrie )
                         console.log("zones", response.data.unit.state )
                         console.log("unite n+1", response.data?.unit?.parent?.name["fr"] )
                         console.log("type unite", response.data.unit.unit_type_id.name )
@@ -323,13 +331,13 @@ const HoldingUnitForm = (props) => {
                         setState(null);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitution(null);
-                        setUnitType(null);
-                        setunitParent(null);
-                        setCountrie(null);
-                        setState(null)
-                        setError(defaultError);
-                        setData(defaultData);
-                        ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+                            setUnitType(null);
+                            setunitParent(null);
+                            setCountrie(null);
+                            setState(null)
+                            setError(defaultError);
+                            setData(defaultData);
+                            ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
                         setStartRequest(false);

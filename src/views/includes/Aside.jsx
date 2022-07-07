@@ -168,6 +168,8 @@ const Aside = (props) => {
                                                         </NavLink>
                                                     ) : null
                                                 }
+
+
                                                 {
                                                     verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
                                                     verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim')?(
@@ -234,9 +236,36 @@ const Aside = (props) => {
                                                 {
                                                     verifyPermission(props.userPermissions, "list-my-claim-unsatisfied") && props.activePilot ? (
                                                         <NavLink exact to="/process/claim-unsatisfied" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
-                                                            <li className="kt-menu__link mb-3">
+                                                            <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                 <span className="kt-menu__link-text">{t("Réclamations non satisfaites")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
+                                                    (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
+                                                        <NavLink exact to="/process/claim-pending-to-validated"
+                                                                 className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active"
+                                                                 aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("À valider")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim')?(
+                                                        <NavLink exact to="/process/claim_measure_pending" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Mesure de Satisfaction")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null

@@ -50,10 +50,12 @@ import ClaimListPending from "../pages/ClaimListPending";
 import ClaimAssignToStaff from "../pages/ClaimAssignToStaff";
 import ClaimAssignPendingToStaff from "../pages/ClaimAssignPendingToStaff";
 import ClaimToValidatedList from "../pages/ClaimToValidatedList";
+import ClaimToValidatedPendingList from "../pages/ClaimToValidatedPendingList";
 import ClaimMonitoring from "../pages/ClaimMonitoring";
 import ClaimReporting from "../pages/ClaimReporting";
 import Dashboards from "../pages/Dashboards";
 import SatisfactionMeasure from "../pages/SatisfactionMeasure";
+import SatisfactionMeasurePending from "../pages/SatisfactionMeasurePending";
 import ClaimsArchived from "../pages/ClaimsArchived";
 import ConfigNotification from "../pages/ConfigNotification";
 import Chats from "../pages/Discussions/Chats";
@@ -68,10 +70,13 @@ import MessageAPIForm from "../components/MessageAPIForm";
 import InstitutionMessageApi from "../pages/InstitutionMessageApi";
 import ConfigRapportAutoForm from "../components/ConfigRapportAutoForm";
 import ClaimListDetail from "../pages/ClaimListDetail";
+import ClaimListPendingDetail from "../pages/ClaimListPendingDetail";
 import ClaimAssignToStaffDetail from "../pages/ClaimAssignToStaffDetail";
 import ClaimAssignPendingToStaffDetail from "../pages/ClaimAssignPendingToStaffDetail";
 import ClaimToValidatedListDetail from "../pages/ClaimToValidatedListDetail";
+import ClaimToValidatedPendingListDetail from "../pages/ClaimToValidatedPendingListDetail";
 import SatisfactionMeasureDetail from "../pages/SatisfactionMeasureDetail";
+import SatisfactionMeasurePendingDetail from "../pages/SatisfactionMeasurePendingDetail";
 import ClaimsArchivedDetail from "../pages/ClaimsArchivedDetail";
 import User from "../pages/User";
 import UserAdd from "../pages/UserAdd";
@@ -581,12 +586,24 @@ const Body = () => {
                 <ClaimListDetail/>
             </Route>
 
+            <Route exact path="/process/claim-list-pending-detail/:id/detail">
+                <ClaimListPendingDetail/>
+            </Route>
+
             <Route exact path="/process/claim-to-validated">
                 <ClaimToValidatedList/>
             </Route>
 
+            <Route exact path="/process/claim-pending-to-validated">
+                <ClaimToValidatedPendingList/>
+            </Route>
+
             <Route exact path="/process/claim-to-validated/:id/detail">
                 <ClaimToValidatedListDetail/>
+            </Route>
+
+            <Route exact path="/process/claim-pending-to-validated/:id/detail">
+                <ClaimToValidatedPendingListDetail/>
             </Route>
 
             <Route exact path="/monitoring/claims/monitoring">
@@ -645,8 +662,16 @@ const Body = () => {
                 <SatisfactionMeasure/>
             </Route>
 
+            <Route exact path="/process/claim_measure_pending">
+                <SatisfactionMeasurePending/>
+            </Route>
+
             <Route exact path="/process/claim_measure/:id/detail">
                 <SatisfactionMeasureDetail/>
+            </Route>
+
+            <Route exact path="/process/claim_measure_pending/:id/detail">
+                <SatisfactionMeasurePendingDetail/>
             </Route>
 
             <Route exact path="/process/claim_archived">
