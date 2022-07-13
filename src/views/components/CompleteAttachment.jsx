@@ -38,11 +38,11 @@ const CompleteAttachments = ({claimId}) => {
                     setError([]);
                     inputRef.current.files = null;
                     inputRef.current.value = null;
-                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Pièce(s)  jointe(s)  ajouter avec succès')));
+                    ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Pièce(s)  jointe(s)  ajoutée(s) avec succès')));
                     window.reload();
                 })
                 .catch((errorRequest) => {
-                    // console.log("response:", errorRequest);
+                    console.log("response:", errorRequest);
                     setLoad(false);
                     ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Fichier non attaché"));
                 })

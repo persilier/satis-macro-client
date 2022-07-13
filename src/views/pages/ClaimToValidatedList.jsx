@@ -164,7 +164,7 @@ const ClaimToValidatedList = (props) => {
                 <td>{props.plan === 'PRO' ? claim.unit_targeted ? claim.unit_targeted.name.fr : "-" : claim.institution_targeted ? claim.institution_targeted.name : ""}</td>
                 <td>
                     {formatDateToTime(claim.created_at)} <br/>
-                    <strong className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}>
+                    <strong className={claim.timeExpire >= 0 ? "text-danger" : "text-success"}>
                         {`${claim.timeExpire >= 0 ? 'J+'+claim.timeExpire : 'J'+claim.timeExpire}`}
                     </strong>
                 </td>

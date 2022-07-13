@@ -7,6 +7,8 @@ import ModalHead from "../Modal/ModalHead";
 import ModalTitle from "../Modal/ModalTitle";
 import ModalBody from "../Modal/ModalBody";
 
+
+
 const HtmlDescriptionModal = ({message, title = "Message"}) => {
     const element = useRef(null);
 
@@ -23,6 +25,7 @@ const HtmlDescriptionModal = ({message, title = "Message"}) => {
     }, [message]);
 
     return (
+
         <ModalContainer modalId="message_email">
             <ModalHead>
                 <ModalTitle>{title}</ModalTitle>
@@ -34,9 +37,10 @@ const HtmlDescriptionModal = ({message, title = "Message"}) => {
             </ModalBody>
 
             <ModalFooter>
-                <ModalCloseButton>Close</ModalCloseButton>
+                <ModalCloseButton>Fermer</ModalCloseButton>
             </ModalFooter>
         </ModalContainer>
+
     );
 };
 

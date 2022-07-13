@@ -10,7 +10,7 @@ import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import UnfoundedModal from "../components/UnfoundedModal";
-import TreatmentForm from "../components/TreatmentForm";
+import TreatmentFormPending from "../components/TreatmentFormPending";
 import ClientButtonDetail from "../components/ClientButtonDetail";
 import ClaimButtonDetail from "../components/ClaimButtonDetail";
 import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
@@ -201,7 +201,7 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                                         <div className="kt-wizard-v2__review-content">
                                                             {
                                                                 claim ? (
-                                                                    <TreatmentForm
+                                                                    <TreatmentFormPending
                                                                         currency={claim.amount_currency ? claim.amount_currency.name["fr"] : null}
                                                                         amount_disputed={claim?claim.amount_disputed:null}
                                                                         activeTreatment={
@@ -212,7 +212,7 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                                                         getId={`${id}`}
                                                                     />
                                                                 ) : (
-                                                                    <TreatmentForm
+                                                                    <TreatmentFormPending
                                                                         currency={null}
                                                                         amount_disputed={claim?claim.amount_disputed:null}
                                                                         getId={`${id}`}

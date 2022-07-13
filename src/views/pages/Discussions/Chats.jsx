@@ -70,14 +70,14 @@ const Chats = (props) => {
             window.Echo.private(`Satis2020.ServicePackage.Models.Identite.${userDataJson.staff.identite_id}`)
                 .notification((notification) => {
                     if (notification.type.substr(39, notification.type.length) === "PostDiscussionMessage") {
-                        if (notification.discussion.id===idChat){
-                           setListChatMessage(notification.messages.reverse());
+                        if (notification.discussion.id === idChat) {
+                            setListChatMessage(notification.messages.reverse());
                         }
 
                     }
                 });
         }
-    }, [userDataJson.staff.identite_id ,idChat]);
+    }, [userDataJson.staff.identite_id, idChat]);
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -277,76 +277,80 @@ const Chats = (props) => {
                                         <div className="kt-portlet kt-portlet--last">
 
                                             <div className="kt-portlet__body">
-                                                <div className="kt-searchbar">
-                                                    <div className="input-group">
-                                                        <div className="input-group-prepend">
-                                            <span className="input-group-text"
-                                                  id="basic-addon1">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                xmlnsXlink="http://www.w3.org/1999/xlink" width="24px" height="24px"
-                                                viewBox="0 0 24 24" version="1.1" className="kt-svg-icon">
-																		<g stroke="none" strokeWidth="1" fill="none"
-                                                                           fillRule="evenodd">
-																			<rect x="0" y="0" width="24"
-                                                                                  height="24"></rect>
-																			<path
-                                                                                d="M14.2928932,16.7071068 C13.9023689,16.3165825 13.9023689,15.6834175 14.2928932,15.2928932 C14.6834175,14.9023689 15.3165825,14.9023689 15.7071068,15.2928932 L19.7071068,19.2928932 C20.0976311,19.6834175 20.0976311,20.3165825 19.7071068,20.7071068 C19.3165825,21.0976311 18.6834175,21.0976311 18.2928932,20.7071068 L14.2928932,16.7071068 Z"
-                                                                                fill="#000000" fillRule="nonzero"
-                                                                                opacity="0.3"></path>
-																			<path
-                                                                                d="M11,16 C13.7614237,16 16,13.7614237 16,11 C16,8.23857625 13.7614237,6 11,6 C8.23857625,6 6,8.23857625 6,11 C6,13.7614237 8.23857625,16 11,16 Z M11,18 C7.13400675,18 4,14.8659932 4,11 C4,7.13400675 7.13400675,4 11,4 C14.8659932,4 18,7.13400675 18,11 C18,14.8659932 14.8659932,18 11,18 Z"
-                                                                                fill="#000000"
-                                                                                fillRule="nonzero"></path>
-																		</g>
-																	</svg>
-                                            </span>
-                                                        </div>
-                                                        <input id="myInput" type="text"
-                                                               onKeyUp={(e) => searchElement(e)}
-                                                               className="form-control"
-                                                               placeholder={t("Search")}
-                                                               aria-controls="basic-addon1"/>
-                                                    </div>
-                                                </div>
 
-                                                <div className="kt-widget kt-widget--users kt-mt-20">
-                                                    <div className="kt-scroll kt-scroll--pull ps ps--active-y"
-                                                         data-mobile-height="300"
-                                                         style={{height: '250px', overflow: 'hidden'}}>
-                                                        <ul id="myUL">
-                                                            {
-                                                                listChat.map((chat, i) => (
-                                                                    <li key={i}>
+                                 {/*   RECHERCHE*/}
+                                   <div className="kt-searchbar">
+                                        <div className="input-group">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text" id="basic-addon1">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        xmlnsXlink="http://www.w3.org/1999/xlink" width="24px" height="24px"
+                                                        viewBox="0 0 24 24" version="1.1" className="kt-svg-icon">
+                                                    <g stroke="none" strokeWidth="1" fill="none"
+                                                       fillRule="evenodd">
+                                                        <rect x="0" y="0" width="24" height="24">
+                                                        </rect>
+                                                        <path d="M14.2928932,16.7071068 C13.9023689,16.3165825 13.9023689,15.6834175 14.2928932,15.2928932 C14.6834175,14.9023689 15.3165825,14.9023689 15.7071068,15.2928932 L19.7071068,19.2928932 C20.0976311,19.6834175 20.0976311,20.3165825 19.7071068,20.7071068 C19.3165825,21.0976311 18.6834175,21.0976311 18.2928932,20.7071068 L14.2928932,16.7071068 Z"
+                                                            fill="#000000" fillRule="nonzero" opacity="0.3">
+                                                        </path>
+                                                        <path d="M11,16 C13.7614237,16 16,13.7614237 16,11 C16,8.23857625 13.7614237,6 11,6 C8.23857625,6 6,8.23857625 6,11 C6,13.7614237 8.23857625,16 11,16 Z M11,18 C7.13400675,18 4,14.8659932 4,11 C4,7.13400675 7.13400675,4 11,4 C14.8659932,4 18,7.13400675 18,11 C18,14.8659932 14.8659932,18 11,18 Z"
+                                                            fill="#000000" fillRule="nonzero">
+                                                        </path>
+                                                    </g>
+                                                                        </svg>
+                                                </span>
+                                            </div>
+                                                     <input id="myInput" type="text"
+                                                       onKeyUp={(e) => searchElement(e)}
+                                                       className="form-control"
+                                                       placeholder={t("Search")}
+                                                       aria-controls="basic-addon1"/>
+                                        </div>
+                                   </div>
 
-                                                                        <div className="kt-widget__items">
+                                    <div className="kt-widget kt-widget--users kt-mt-20">
+                                        <div className="kt-scroll kt-scroll--pull ps ps--active-y"
+                                             data-mobile-height="300"
+                                             style={{height: '250px', overflow: 'hidden'}}>
+                                            <ul id="myUL">
+                                                {
+                                                    listChat.map((chat, i) => (
+                                                        <li key={i}>
+
+                                                            {/*LISTE DISCUSSION GAUCHE*/}
+                                                            <div className="kt-widget__items">
+                                                                <div className="kt-widget__item">
+
+                                                                    {/*ICONE*/}
+                                                                    <i className="fa-2x flaticon2-chat-2"></i>
+
+                                                                    {/*DISCUSSION*/}
+                                                                    <div className="kt-widget__info">
+
+                                                                        {/*NOM*/}
+                                                                        <div className="kt-widget__section">
+                                                                            <a href={"#messageList"}
+                                                                               activeclassname="kt-menu__item--active"
+                                                                               aria-haspopup="true"
+                                                                               onClick={(e) => onChangeDiscussion(chat.id)}
+                                                                               className="kt-widget__username">{chat.name}
+                                                                            </a>
+                                                                        {
+                                                                            activeChat && idChat === chat.id ?
+                                                                                <span className="kt-badge kt-badge--success kt-badge--dot"> </span>
+                                                                            : ""
+                                                                        }
+                                                                        </div>
+
+                                                                        {/*REFERENCE DE LA RECLAMATION*/}
+                                                                        <span className="kt-widget__desc">{chat.claim.reference} </span>
+
+                                                                    </div>
 
 
-                                                                            <div className="kt-widget__item">
-                                                                                <i className="fa-2x flaticon2-chat-2"></i>
-                                                                                <div className="kt-widget__info">
-                                                                                    <div className="kt-widget__section">
-                                                                                        <a href={"#messageList"}
-                                                                                           activeclassname="kt-menu__item--active"
-                                                                                           aria-haspopup="true"
-                                                                                           onClick={(e) => onChangeDiscussion(chat.id)}
-                                                                                           className="kt-widget__username">{chat.name}
-                                                                                        </a>
-                                                                                        {
-                                                                                            activeChat && idChat === chat.id ?
-                                                                                                <span
-                                                                                                    className="kt-badge kt-badge--success kt-badge--dot"></span>
-                                                                                                : ""
-                                                                                        }
-                                                                                    </div>
-
-                                                                                    <span className="kt-widget__desc">
-																			{chat.claim.reference}
-																		</span>
-                                                                                </div>
-                                                                                <div className="kt-widget__action">
-                                                                        <span
-                                                                            className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
+                                                                    <div className="kt-widget__action">
+                                                                        <span className="kt-widget__date">{moment(chat.created_at).format('ll')}</span>
                                                                                     {idChat === chat.id}
                                                                                     {/*<span*/}
                                                                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
@@ -385,17 +389,17 @@ const Chats = (props) => {
 
                                                                                                 <li className="kt-nav__separator"></li>
 
-                                                                                                {/*                                    <li className="kt-nav__item">*/}
-                                                                                                {/*                                        <Link*/}
-                                                                                                {/*                                            to={chat.id ? `/treatment/chat/add_user/${chat.id}` : ""}*/}
-                                                                                                {/*                                            className="kt-nav__link">*/}
-                                                                                                {/*                                            <i className="kt-nav__link-icon flaticon2-group"></i>*/}
-                                                                                                {/*                                            <span*/}
-                                                                                                {/*                                                className="kt-nav__link-text">Ajouter un Membre</span>*/}
-                                                                                                {/*                                            <span*/}
-                                                                                                {/*                                                className="kt-nav__link-badge">*/}
-                                                                                                {/*    <span*/}
-                                                                                                {/*        className="kt-badge kt-badge--brand  kt-badge--rounded-">{listChatUsers.length}</span>*/}
+                                                                                            {/*                                    <li className="kt-nav__item">*/}
+                                                                                            {/*                                        <Link*/}
+                                                                                            {/*                                            to={chat.id ? `/treatment/chat/add_user/${chat.id}` : ""}*/}
+                                                                                            {/*                                            className="kt-nav__link">*/}
+                                                                                            {/*                                            <i className="kt-nav__link-icon flaticon2-group"></i>*/}
+                                                                                            {/*                                            <span*/}
+                                                                                            {/*                                                className="kt-nav__link-text">Ajouter un Membre</span>*/}
+                                                                                            {/*                                            <span*/}
+                                                                                            {/*                                                className="kt-nav__link-badge">*/}
+                                                                                            {/*    <span*/}
+                                                                                            {/*        className="kt-badge kt-badge--brand  kt-badge--rounded-">{listChatUsers.length}</span>*/}
                                                                                                 {/*</span>*/}
                                                                                                 {/*                                        </Link>*/}
                                                                                                 {/*                                    </li>*/}
@@ -413,7 +417,7 @@ const Chats = (props) => {
                                                                                                                     className="kt-nav__link-text">{t("Supprimer un Tchat")}</span>
                                                                                                             </a>
                                                                                                         </li>
-                                                                                                        :null
+                                                                                                        : null
                                                                                                 }
 
 
@@ -428,11 +432,13 @@ const Chats = (props) => {
                                                                 ))
                                                             }
 
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            </ul>
                                         </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
                                         : ""
                                 }
                             </div>
@@ -539,7 +545,7 @@ const Chats = (props) => {
                                                         getMessage={listChatMessages}
                                                         deletedItem={deletedItem}
                                                         responseItem={responseToMessage}/>
-                                                    :  ""
+                                                    : ""
                                             }
                                         </div>
                                     </div>
