@@ -26,7 +26,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 const endPointConfig = {
     PRO: {
         plan: "PRO",
-        list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
+        list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured?type=unsatisfied`,
     },
     MACRO: {
         holding: {
@@ -42,7 +42,7 @@ const endPointConfig = {
     }
 };
 
-const SatisfactionMeasure = (props) => {
+const SatisfactionMeasurePending = (props) => {
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
@@ -190,7 +190,7 @@ const SatisfactionMeasure = (props) => {
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-my-claim") ||
                     verifyPermission(props.userPermissions, "update-satisfaction-measured-any-claim") ? (
                         <td style={{textAlign: 'center'}}>
-                            <a href={`/process/claim_measure/${measure.id}/detail`}
+                            <a href={`/process/claim_measure_pending/${measure.id}/detail`}
                                className="btn btn-sm btn-clean btn-icon btn-icon-md"
                                title={t("Détails")}>
                                 <i className="la la-eye"/>
@@ -410,4 +410,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(SatisfactionMeasure);
+export default connect(mapStateToProps)(SatisfactionMeasurePending);

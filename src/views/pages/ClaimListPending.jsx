@@ -10,41 +10,44 @@ import {ERROR_401} from "../../config/errorPage";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
 import {
-    forceRound, formatDateToTime,
+    forceRound,
     getLowerCaseString,
-    loadCss, truncateString
+    loadCss,
+    truncateString,
+    formatDateToTime,
 } from "../../helpers/function";
-import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
-import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
+import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ClaimAssignToStaff = (props) => {
+const ClaimListPending = (props) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
 
-    document.title = "Satis client -" + ready ? t("Détails réclamation") : "";
-
-    if (!verifyPermission(props.userPermissions, "list-claim-assignment-to-staff"))
+    if (!verifyPermission(props.userPermissions, "list-claim-awaiting-treatment"))
         window.location.href = ERROR_401;
 
     const [load, setLoad] = useState(true);
     const [claims, setClaims] = useState([]);
-    const [numberPerPage, setNumberPerPage] = useState(5);
+    const [numberPerPage, setNumberPerPage] = useState(10);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
+    const [search, setSearch] = useState(false);
     const [numberPage, setNumberPage] = useState(0);
     const [showList, setShowList] = useState([]);
     const [currentMessage, setCurrentMessage] = useState("");
+    const [idUnit, setIdUnit] = useState(null)
+
+
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
+            axios.get(`${appConfig.apiDomaine}/claim-awaiting-treatment?type=unsatisfied`)
                 .then(response => {
-                    console.log(response.data, "DATA");
                     setNumberPage(forceRound(response.data.length / numberPerPage));
                     setShowList(response.data.slice(0, numberPerPage));
                     setClaims(response.data);
@@ -52,7 +55,7 @@ const ClaimAssignToStaff = (props) => {
                 })
                 .catch(error => {
                     setLoad(false);
-                    console.log("Something is wrong");
+                    //console.log("Something is wrong");
                 })
             ;
         }
@@ -64,25 +67,26 @@ const ClaimAssignToStaff = (props) => {
     const filterShowListBySearchValue = (value) => {
         value = getLowerCaseString(value);
         let newClaims = [...claims];
-        newClaims = newClaims.filter(el => (
-            getLowerCaseString(`${el.reference} ${ el.isInvalidTreatment ? "(R)" : ""} ${ el.lastRevival ? "(R)" : ""}`).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.claimer.lastname} ${el.claimer.firstname} ${el.account_targeted ? " / "+el.account_targeted.number : (el.account_number ? " / "+el.account_number : "")}`).indexOf(value) >= 0 ||
-            getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
-            getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
-            getLowerCaseString(truncateString(el.description)).indexOf(value) >= 0 ||
-            getLowerCaseString(`${el.active_treatment.responsible_staff ? el.active_treatment.responsible_staff.identite.lastname : ""} ${ el.active_treatment.responsible_staff ? el.active_treatment.responsible_staff.identite.firstname : "" }`).indexOf(value) >= 0 ||
-            getLowerCaseString(props.plan === "PRO" ? el.unit_targeted ? el.unit_targeted.name["fr"] : "-" : el.institution_targeted ? el.institution_targeted.name : "-").indexOf(value) >= 0
-        ));
+        newClaims = newClaims.filter(el => {
+            return (
+                getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+                getLowerCaseString(`${ el.claimer ? el.claimer.lastname : "-"} ${ el.claimer ? el.claimer.firstname : ""}  ${el.account_targeted ? " / "+el.account_targeted.number : ""}`).indexOf(value) >= 0 ||
+                getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >= 0 ||
+                getLowerCaseString( el.claim_object ? el.claim_object.name["fr"] : "").indexOf(value) >= 0 ||
+                getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >= 0 ||
+                getLowerCaseString( el.institution_targeted ? el.institution_targeted.name : "").indexOf(value) >= 0
+            )
+        });
 
         return newClaims;
     };
 
     const searchElement = async (e) => {
         if (e.target.value) {
-            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));
         } else {
-            setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
+            setNumberPage(forceRound(claims.length/NUMBER_ELEMENT_PER_PAGE));
             setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
             setActiveNumberPage(1);
         }
@@ -136,7 +140,6 @@ const ClaimAssignToStaff = (props) => {
         }
     };
 
-
     const arrayNumberPage = () => {
         const pages = [];
         for (let i = 0; i < numberPage; i++) {
@@ -154,34 +157,39 @@ const ClaimAssignToStaff = (props) => {
 
     const printBodyTable = (claim, index) => {
         return (
-
             <tr key={index} role="row" className="odd">
-                <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null} {claim.lastRevival ? (<span className="kt-badge kt-badge--warning kt-badge--md">R</span>) : null}</td>
-                <td>{`${claim.claimer && claim.claimer.lastname ? claim.claimer.lastname : ""} ${claim.claimer && claim.claimer.firstname ? claim.claimer.firstname : ""} ${claim.account_targeted ? " / "+ claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
-                <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted ? claim.institution_targeted.name : "-"}</td>
+                <td>{claim.reference}</td>
+                <td>{`${ claim.claimer ? claim.claimer.lastname : "-"} ${ claim.claimer ? claim.claimer.firstname : ""} ${claim.account_targeted ? " / "+claim.account_targeted.number : ""}`}</td>
+                <td>{props.plan === 'PRO' ? claim.unit_targeted ? claim.unit_targeted.name.fr : "-" : claim.institution_targeted ? claim.institution_targeted.name : ""}</td>
                 <td>
                     {formatDateToTime(claim.created_at)} <br/>
                     <strong className={claim.timeExpire >= 0 ? "text-success" : "text-danger"}>
                         {`${claim.timeExpire >= 0 ? 'J+'+claim.timeExpire : 'J'+claim.timeExpire}`}
                     </strong>
                 </td>
-                <td>{claim.claim_object.name["fr"]}</td>
+                <td>{ claim.claim_object ? claim.claim_object.name["fr"] : ""}</td>
                 <td style={{textAlign: 'center'}}>
                     <HtmlDescription onClick={() => showModal(claim.description ? claim.description : '-')}/>
                 </td>
-               {/* <td>{`${truncateString(claim.description)}`}</td>*/}
-                <td>
-                    <a href={`/process/claim-assign/to-staff/${claim.id}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
-                        <i className="la la-eye"/>
-                    </a>
-                </td>
+                {/*<td>{truncateString(claim.description, 37)}</td>*/}
+                {
+                    verifyPermission(props.userPermissions, "assignment-claim-awaiting-treatment") ? (
+                        <td>
+                            <a href={`/process/claim-list-pending-detail/${claim.id}/detail`}
+                               className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                               title={t("Détails")}>
+                                <i className="la la-eye"/>
+                            </a>
+                        </td>
+                    ) : <td/>
+                }
             </tr>
         );
     };
 
     return (
         ready ? (
-            verifyPermission(props.userPermissions, 'list-claim-assignment-to-staff') ? (
+            verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
                 <div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
@@ -191,17 +199,21 @@ const ClaimAssignToStaff = (props) => {
                                 </h3>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
                                         {t("Traitement")}
                                     </a>
                                 </div>
                                 <div className="kt-subheader__breadcrumbs">
-                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
+                                    <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
+                                        className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
-                                    <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Réclamations à traiter")}
+                                    <a href="#button" onClick={e => e.preventDefault()}
+                                       className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
+                                        {t("Liste des réclamations non satisfaites")}
                                     </a>
                                 </div>
                             </div>
@@ -209,20 +221,12 @@ const ClaimAssignToStaff = (props) => {
                     </div>
 
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                        <InfirmationTable information={(
-                            <div>
-                                {t("Liste des réclamations qui vous sont assignées pour traitement")}
-                                <br/>
-                                <span className="kt-badge kt-badge--danger kt-badge--md mr-2">R</span> {t("représente les traitements réjetés")}
-                                <br/>
-                                <span className="kt-badge kt-badge--warning kt-badge--md mr-2">R</span> {t("représente les traitements ayant une relance")}
-
-                            </div>
-                        )}/>
+                        <InfirmationTable
+                            information={t("Cette page vous présente la liste des réclamations transférées des clients non satisfaits à votre unité et qui sont en attente d'affectation")}/>
 
                         <div className="kt-portlet">
                             <HeaderTablePage
-                                title={t("Réclamations à traiter")}
+                                title={t("Liste des réclamations non satisfaites")}
                             />
 
                             {
@@ -249,41 +253,41 @@ const ClaimAssignToStaff = (props) => {
                                                         style={{width: "952px"}}>
                                                         <thead>
                                                         <tr role="row">
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
                                                                 {t("Référence")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
                                                                 {t("Réclamant")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
                                                                 {props.plan === "PRO" ? t("Point de service visé") : t("Institution concernée")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
                                                                 {t("Date de réception")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
                                                                 {t("Objet de réclamation")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "70.25px"}} aria-label="Country: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "70.25px" }} aria-label="Country: activate to sort column ascending">
                                                                 {t("Description")}
                                                             </th>
-                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{width: "40.25px"}} aria-label="Type: activate to sort column ascending">
+                                                            <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1" colSpan="1" style={{ width: "40.25px" }} aria-label="Type: activate to sort column ascending">
                                                                 {t("Action")}
                                                             </th>
                                                         </tr>
-
                                                         </thead>
                                                         <tbody>
                                                         {
                                                             claims.length ? (
-                                                                showList.length ? (
+                                                                search ? (
                                                                     showList.map((claim, index) => (
                                                                         printBodyTable(claim, index)
                                                                     ))
                                                                 ) : (
-                                                                    <EmptyTable search={true}/>
+                                                                    showList.map((claim, index) => (
+                                                                        printBodyTable(claim, index)
+                                                                    ))
                                                                 )
-
                                                             ) : (
                                                                 <EmptyTable/>
                                                             )
@@ -309,22 +313,25 @@ const ClaimAssignToStaff = (props) => {
                                                 <div className="col-sm-12 col-md-5">
                                                     <div className="dataTables_info" id="kt_table_1_info" role="status"
                                                          aria-live="polite">{t("Affichage de")} 1
-                                                        {" " + t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
+                                                        {t("à")} {numberPerPage} {t("sur")} {claims.length} {t("données")}
                                                     </div>
                                                 </div>
-
-                                                <div className="col-sm-12 col-md-7 dataTables_pager">
-                                                    <Pagination
-                                                        numberPerPage={numberPerPage}
-                                                        onChangeNumberPerPage={onChangeNumberPerPage}
-                                                        activeNumberPage={activeNumberPage}
-                                                        onClickPreviousPage={e => onClickPreviousPage(e)}
-                                                        pages={pages}
-                                                        onClickPage={(e, number) => onClickPage(e, number)}
-                                                        numberPage={numberPage}
-                                                        onClickNextPage={e => onClickNextPage(e)}
-                                                    />
-                                                </div>
+                                                {
+                                                    !search ? (
+                                                        <div className="col-sm-12 col-md-7 dataTables_pager">
+                                                            <Pagination
+                                                                numberPerPage={numberPerPage}
+                                                                onChangeNumberPerPage={onChangeNumberPerPage}
+                                                                activeNumberPage={activeNumberPage}
+                                                                onClickPreviousPage={e => onClickPreviousPage(e)}
+                                                                pages={pages}
+                                                                onClickPage={(e, number) => onClickPage(e, number)}
+                                                                numberPage={numberPage}
+                                                                onClickNextPage={e => onClickNextPage(e)}
+                                                            />
+                                                        </div>
+                                                    ) : null
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -341,8 +348,8 @@ const ClaimAssignToStaff = (props) => {
 const mapStateToProps = state => {
     return {
         plan: state.plan.plan,
-        userPermissions: state.user.user.permissions,
+        userPermissions: state.user.user.permissions
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssignToStaff);
+export default connect(mapStateToProps)(ClaimListPending);

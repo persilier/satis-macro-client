@@ -82,22 +82,27 @@ const ClaimUnsatisfiedDetail = (props) => {
     const [startRequest, setStartRequest] = useState(false);
     const [startRequestToUnit, setStartRequestToUnit] = useState(false);
     const [startRequestToTransfert, setStartRequestToTransfert] = useState(false);
+    const [startRequestToTransfertStandard, setStartRequestToTransfertStandard] = useState(false);
     const [showTreatment, setShowTreatment] = useState(null)
     const [showStandard, setStandard] = useState("")
     const [showSpecific, setSpecific] = useState("")
-    const [showVariable, setVariable] = useState("")
+    const [UnitParent, setUnitParent] = useState("")
 
     useEffect(() => {
         async function fetchData() {
             if (verifyTokenExpire()) {
                 await axios.get(`${appConfig.apiDomaine}/claims/details/${id}`)
                     .then(response => {
-                        setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
+
+                        setUnitParent(response.data.active_treatment?.responsible_unit?.parent)
+                        setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id )
                         setStandard(response.data?.standard_bord_exists ?? "0")
                         setSpecific(response.data?.specific_bord_exists ?? "0")
                         setClaim(response.data);
                         setDataId(response.data.institution_targeted ? response.data.institution_targeted.name : "-");
+
                     })
+
                     .catch(error => console.log(error))
                 ;
             }
@@ -148,20 +153,32 @@ const ClaimUnsatisfiedDetail = (props) => {
         }
     };
 
+    const onChangeUnits = (selected) => {
+        const newData = {...data};
+        newData.unit_id = selected ? selected.value : null;
+        setUnit(selected);
+        setData(newData);
+        console.log(newData.unit_id, "UNIT")
+    };
+
     const onClickToTranfert = (e) => {
         e.preventDefault();
         setStartRequestToTransfert(true)
+        setShowTreatment(true)
         const newData = {
-            type: "standard",
+            unit_id: UnitParent.id,
             claim_id: id
         }
-        axios.post(appConfig.apiDomaine + `/treatments-boards`, newData)
+        axios.put(appConfig.apiDomaine + `/transfer-claim-to-circuit-unit/${id}`, newData)
             .then(response => {
                 setStartRequestToTransfert(false)
+                setShowTreatment(response.data.active_treatment?.responsible_unit?.parent_id ?? null)
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 window.location.href = "/process/claim-unsatisfied"
+
             }).catch(error => {
             setStartRequestToTransfert(false)
+            setShowTreatment(false)
             ToastBottomEnd.fire(toastAddErrorMessageConfig());
         })
 
@@ -174,6 +191,7 @@ const ClaimUnsatisfiedDetail = (props) => {
   const onClickToTranfertStandard = (e) => {
         e.preventDefault();
         setStartRequestToUnit(true)
+        setStartRequestToTransfertStandard(true)
         const newData = {
             type: "standard",
             claim_id: id
@@ -181,10 +199,12 @@ const ClaimUnsatisfiedDetail = (props) => {
         axios.post(appConfig.apiDomaine + `/treatments-boards`, newData)
             .then(response => {
                 setStartRequestToUnit(false)
+                setStartRequestToTransfertStandard(false)
                 ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                 window.location.href = "/process/claim-unsatisfied"
             }).catch(error => {
             setStartRequestToUnit(false)
+            setStartRequestToTransfertStandard(false)
             ToastBottomEnd.fire(toastAddErrorMessageConfig());
         })
 
@@ -407,7 +427,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                             <button
                                                                                 className="btn btn-outline-success"
                                                                                 onClick={onClickToTranfertInstitution}>
-                                                                                {t("Transférer a l'institution").toUpperCase()}
+                                                                                {t("Transférer à l'institution").toUpperCase()}
                                                                             </button>
                                                                         ) : (
                                                                             <button
@@ -429,13 +449,35 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                    ( <div className="kt-wizard-v2__review-item">
                                                                     <div
                                                                         className="kt-wizard-v2__review-title">{t("Transférer à l'unité N+1 de l'unité")}</div>
+                                                                     {/*  <div
+                                                                           className={error.unit_id.length ? "form-group validated" : "form-group"}>
+                                                                           <Select
+                                                                               isClearable
+                                                                               value={unit}
+                                                                               onChange={onChangeUnits}
+                                                                               options={unitsData}
+                                                                               placeholder={t("Veuillez sélectionner l'unité N+1 de traitement")}
+                                                                           />
+                                                                           {
+                                                                               error.unit_id.length ? (
+                                                                                   error.unit_id.map((error, index) => (
+                                                                                       <div key={index}
+                                                                                            className="invalid-feedback">
+                                                                                           {error}
+                                                                                       </div>
+                                                                                   ))
+                                                                               ) : ""
+                                                                           }
+                                                                       </div>*/}
+
                                                                     <div className=" text-center">
                                                                         {
                                                                             !startRequestToTransfert ? (
                                                                                 <button
                                                                                     className="btn btn-outline-success"
                                                                                     onClick={onClickToTranfert}>
-                                                                                    {t("Transférer")}
+                                                                                    {t("Transférer à")} {UnitParent.name["fr"]}
+
                                                                                 </button>
                                                                             ) : (
                                                                                 <button
@@ -460,7 +502,7 @@ const ClaimUnsatisfiedDetail = (props) => {
 
                                                                     <div className="modal-footer d-flex text-center">
                                                                         {
-                                                                            showStandard == "1" ? ( !startRequestToTransfert ? (
+                                                                            showStandard == "1" ? ( !startRequestToTransfertStandard ? (
                                                                                 <button
                                                                                     className="btn btn-outline-success"
                                                                                     onClick={onClickToTranfertStandard}>

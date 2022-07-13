@@ -168,6 +168,8 @@ const Aside = (props) => {
                                                         </NavLink>
                                                     ) : null
                                                 }
+
+
                                                 {
                                                     verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
                                                     verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim')?(
@@ -243,11 +245,74 @@ const Aside = (props) => {
                                                 }
 
                                                 {
+                                                    (verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-my-institution') ||
+                                                        verifyPermission(props.userPermissions, 'list-claim-awaiting-validation-any-institution')) && props.activePilot ? (
+                                                        <NavLink exact to="/process/claim-pending-to-validated"
+                                                                 className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active"
+                                                                 aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("À valider")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-any-claim')||
+                                                    verifyPermission(props.userPermissions, 'list-satisfaction-measured-my-claim')?(
+                                                        <NavLink exact to="/process/claim_measure_pending" className="kt-menu__item "
+                                                                 activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Mesure de Satisfaction")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {
                                                     verifyPermission(props.userPermissions, "list-treatment-board") && props.activePilot ? (
                                                         <NavLink exact to="/process/committee-adhoc" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                 <span className="kt-menu__link-text">{t("Liste des comités Ad'hoc")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+                                                {/*LEAD et STAFF*/}
+
+                                                {
+                                                    verifyPermission(props.userPermissions, 'list-claim-awaiting-treatment') ? (
+                                                        <NavLink exact to="/process/unit-claims-pending" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link mb-2">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Liste des réclamations non satisfaites")}</span>
+                                                            </li>
+                                                        </NavLink>
+                                                    ) : null
+                                                }
+
+
+                                                {
+                                                    (verifyPermission(props.userPermissions, 'assignment-claim-awaiting-treatment') && props.lead) && (
+                                                    <NavLink exact to="/process/claim-reassign-pending" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                        <li className="kt-menu__link mb-2">
+                                                            <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                            <span className="kt-menu__link-text">{t("Réassigner réclamation non satisfaites")}</span>
+                                                        </li>
+                                                    </NavLink>
+                                                    )
+                                                }
+
+                                                {
+                                                    verifyPermission(props.userPermissions,"list-claim-assignment-to-staff") ? (
+                                                        <NavLink exact to="/process/claim-assign-pending/to-staff" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
+                                                            <li className="kt-menu__link ">
+                                                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
+                                                                <span className="kt-menu__link-text">{t("Réclamations non satisfaites à traiter")}</span>
                                                             </li>
                                                         </NavLink>
                                                     ) : null

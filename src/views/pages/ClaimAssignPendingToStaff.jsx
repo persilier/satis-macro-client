@@ -22,7 +22,7 @@ import {useTranslation} from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
-const ClaimAssignToStaff = (props) => {
+const ClaimAssignPendingToStaff = (props) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
@@ -42,7 +42,7 @@ const ClaimAssignToStaff = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
+            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff?type=unsatisfied`)
                 .then(response => {
                     console.log(response.data, "DATA");
                     setNumberPage(forceRound(response.data.length / numberPerPage));
@@ -157,7 +157,7 @@ const ClaimAssignToStaff = (props) => {
 
             <tr key={index} role="row" className="odd">
                 <td>{claim.reference} {claim.isInvalidTreatment ? (<span className="kt-badge kt-badge--danger kt-badge--md">R</span>) : null} {claim.lastRevival ? (<span className="kt-badge kt-badge--warning kt-badge--md">R</span>) : null}</td>
-                <td>{`${claim.claimer && claim.claimer.lastname ? claim.claimer.lastname : ""} ${claim.claimer && claim.claimer.firstname ? claim.claimer.firstname : ""} ${claim.account_targeted ? " / "+ claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
+                <td>{`${claim.claimer.lastname} ${claim.claimer.firstname} ${claim.account_targeted ? " / "+claim.account_targeted.number : (claim.account_number ? " / "+claim.account_number : "")}`}</td>
                 <td>{props.plan === "PRO" ? claim.unit_targeted ? claim.unit_targeted.name["fr"] : "-" : claim.institution_targeted ? claim.institution_targeted.name : "-"}</td>
                 <td>
                     {formatDateToTime(claim.created_at)} <br/>
@@ -171,7 +171,7 @@ const ClaimAssignToStaff = (props) => {
                 </td>
                {/* <td>{`${truncateString(claim.description)}`}</td>*/}
                 <td>
-                    <a href={`/process/claim-assign/to-staff/${claim.id}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
+                    <a href={`/process/claim-assign-pending/to-staff/${claim.id}/detail`} className="btn btn-sm btn-clean btn-icon btn-icon-md" title={t("Détails")}>
                         <i className="la la-eye"/>
                     </a>
                 </td>
@@ -211,7 +211,7 @@ const ClaimAssignToStaff = (props) => {
                     <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                         <InfirmationTable information={(
                             <div>
-                                {t("Liste des réclamations qui vous sont assignées pour traitement")}
+                                {t("Liste des réclamations dont les clients ne sont pas satisfaits et qui vous sont assignées pour traitement")}
                                 <br/>
                                 <span className="kt-badge kt-badge--danger kt-badge--md mr-2">R</span> {t("représente les traitements réjetés")}
                                 <br/>
@@ -345,4 +345,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(ClaimAssignToStaff);
+export default connect(mapStateToProps)(ClaimAssignPendingToStaff);
