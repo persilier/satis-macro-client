@@ -508,12 +508,12 @@ const HoldingUnitForm = (props) => {
                                                         <div
                                                             className={error.lead_id.length ? "form-group row validated" : "form-group row"}>
                                                             <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                   htmlFor="institution">{t("Unité d'escalade")}</label>
+                                                                   htmlFor="institution">{t("Unité d'Escalade")}</label>
                                                             <div className="col-lg-9 col-xl-6">
                                                                 <Select
                                                                     isClearable
                                                                     value={unitParent}
-                                                                    placeholder={t("N+1")}
+                                                                    placeholder={t("Sélectionnez l'unité d'escalade")}
                                                                     onChange={onChangeUnitParent}
                                                                     options={unitParents}
                                                                 />

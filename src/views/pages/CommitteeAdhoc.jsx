@@ -17,6 +17,7 @@ import {
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
+import HtmlDescriptionCommittee from "../components/DescriptionDetail/HtmlDescriptionCommittee";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import MemberDescriptionModal from "../components/DescriptionDetail/MemberDescriptionModal";
 import {useTranslation} from "react-i18next";
@@ -164,7 +165,7 @@ const CommitteeAdhoc = (props) => {
         return (
             <tr key={index} role="row" className="odd">
                 <td>{committee.name ? committee.name : "-"}</td>
-                <td>
+                <td className={"text-center"}>
                     {
                         committee.type === "specific" ?
                             <span className="kt-badge kt-badge--inline kt-badge--warning h2">{t("Spécific")}</span>
@@ -176,13 +177,12 @@ const CommitteeAdhoc = (props) => {
 
                     {/*{committee.type ? committee.type : "-"}*/}
                 </td>
-                <td>{committee.members.length}{""} {""}
-                    <HtmlDescription
+                <td> <span style={{marginRight: "5px",}}>{committee.members.length}</span>
+                    <HtmlDescriptionCommittee
                         onClick={() => showMemberModal(committee.members ?
                             committee.members : '-')}/>
 
                 </td>
-                <td>{formatDateToTime(committee.created_at)} <br/></td>
                 <td className={"d-contents"}
                     style={{display: "reverts"}}>{committee.claim && committee.claim.reference ? committee.claim.reference :
                     <td style={{color: "red", borderTop: "1px solid transparent"}}><i
@@ -194,8 +194,8 @@ const CommitteeAdhoc = (props) => {
                     <HtmlDescription
                         onClick={() => showModal(committee.claim && committee.claim.description ? committee.claim.description : '-')}/>
                 </td>
-                {/*<td>{truncateString(claim.description, 41)}</td>*/}
-                <td>
+                <td>{formatDateToTime(committee.created_at)} <br/></td>
+                <td className={"text-center"}>
 
                     {
                         verifyPermission(props.userPermissions, 'update-treatment-board') ? (
@@ -279,6 +279,7 @@ const CommitteeAdhoc = (props) => {
                                                 </div>
                                             </div>*/}
                                         </div>
+
                                         <div className="row">
                                             <div className="col-sm-12">
                                                 <table
@@ -305,11 +306,6 @@ const CommitteeAdhoc = (props) => {
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
-                                                            {t("Date de création")}
-                                                        </th>
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
-                                                            aria-label="Country: activate to sort column ascending">
                                                             {t("Référence")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
@@ -321,6 +317,11 @@ const CommitteeAdhoc = (props) => {
                                                             rowSpan="1" colSpan="1" style={{width: "70.25px"}}
                                                             aria-label="Country: activate to sort column ascending">
                                                             {t("Description")}
+                                                        </th>
+                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                            rowSpan="1" colSpan="1" style={{width: "70.25px"}}
+                                                            aria-label="Country: activate to sort column ascending">
+                                                            {t("Date de création")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1" colSpan="1" style={{width: "40.25px"}}
@@ -351,10 +352,10 @@ const CommitteeAdhoc = (props) => {
                                                         <th rowSpan="1" colSpan="1">{t("Comité")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Types")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Nombre de membres")}</th>
-                                                        <th rowSpan="1" colSpan="1">{t("Date de création")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Référence")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Objet de réclamation")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Description")}</th>
+                                                        <th rowSpan="1" colSpan="1">{t("Date de création")}</th>
                                                         <th rowSpan="1" colSpan="1">{t("Action")}</th>
                                                     </tr>
                                                     </tfoot>
@@ -371,6 +372,8 @@ const CommitteeAdhoc = (props) => {
                                                                         message={memberList}/>
                                             </div>
                                         </div>
+
+
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5">
                                                 <div className="dataTables_info" id="kt_table_1_info" role="status"

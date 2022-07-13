@@ -246,6 +246,30 @@ const CommitteeConfig = (props) => {
 
                                                 </div>
 
+                                                {InputSpecific == 1 ?
+                                                    (
+                                                        <div className="form-group ">
+                                                            <div
+                                                                className={"col-lg-9 col-md-9 col-sm-12 text-left m-auto"}>
+                                                                <div className="alert alert-outline-primary fade show"
+                                                                     role="alert">
+                                                                    <div className="alert-icon"><i className="flaticon-information kt-font-brand"/></div>
+                                                                    <div className="alert-text">
+                                                                        {t(" Chaque comité spécifique est propre à chaque réclamation  et est crée uniquement lors du transfert de la réclamation ")}
+                                                                    </div>
+                                                                    <div className="alert-close">
+                                                                        <button type="button" className="close"
+                                                                                data-dismiss="alert" aria-label="Close">
+                                                                            <span aria-hidden="true"> <i className="la la-close"/></span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <span/>
+                                                            </div>
+                                                        </div>
+                                                    ) : null
+                                                }
+
                                                 {InputStandard == 1 ?
                                                     (
                                                         <>
@@ -280,7 +304,7 @@ const CommitteeConfig = (props) => {
                                                             <div
                                                                 className={error.members?.length ? "col-lg-9 col-md-9 col-sm-12 m-auto validated" : "col-lg-9 col-md-9 col-sm-12 m-auto"}>
                                                                 <label
-                                                                    htmlFor="staff">{t("Agent(s)")} <InputRequire/>
+                                                                    htmlFor="staff">{t("Membre(s) du comité")} <InputRequire/>
                                                                 </label>
                                                                 <div className={""}>
                                                                     <Select
@@ -309,29 +333,7 @@ const CommitteeConfig = (props) => {
                                                         </>
                                                     ) : null
                                                 }
-                                                {InputSpecific == 1 ?
-                                                    (
-                                                        <div className="form-group ">
-                                                            <div
-                                                                className={"col-lg-9 col-md-9 col-sm-12 text-center m-auto pt-5"}>
-                                                                <div className="alert alert-outline-danger fade show"
-                                                                     role="alert">
-                                                                    <div className="alert-icon"><i className="flaticon-warning"/></div>
-                                                                    <div className="alert-text">
-                                                                        {t(" Veuillez configurer le comité spécifique lors du transfert de la réclamation ")}
-                                                                    </div>
-                                                                    <div className="alert-close">
-                                                                        <button type="button" className="close"
-                                                                                data-dismiss="alert" aria-label="Close">
-                                                                            <span aria-hidden="true"> <i className="la la-close"/></span>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <span/>
-                                                            </div>
-                                                        </div>
-                                                    ) : null
-                                                }
+
 
                                             </div>
                                             <div className="kt-portlet__foot">

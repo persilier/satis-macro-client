@@ -337,7 +337,7 @@ const Unit = (props) => {
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "70px" }}
-                                                                aria-label="Country: activate to sort column ascending">{t("Unité N+1")}
+                                                                aria-label="Country: activate to sort column ascending">{t("Unité d'Escalade")}
                                                             </th>
                                                             <th className="sorting" tabIndex="0" aria-controls="kt_table_1" rowSpan="1"
                                                                 colSpan="1" style={{ width: "0px" }}
@@ -383,7 +383,7 @@ const Unit = (props) => {
                                                         <tr>
                                                             <th rowSpan="1" colSpan="1">{t("Nom Unité")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Type Unité")}</th>
-                                                            <th rowSpan="1" colSpan="1">{t("Unité N+1")}</th>
+                                                            <th rowSpan="1" colSpan="1">{t("Unité d'Escalade")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Pays")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Zones")}</th>
                                                             <th rowSpan="1" colSpan="1">{t("Responsable")}</th>

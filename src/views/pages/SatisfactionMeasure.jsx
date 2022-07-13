@@ -176,8 +176,8 @@ const SatisfactionMeasure = (props) => {
                 </td>
                 <td>{formatDateToTime(measure.created_at)} <br/>
                     {measure.timeExpire >= 0 ?
-                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J+" + measure.timeExpire}</span> :
-                        <span style={{color: "red", fontWeight: "bold"}}>{"J" + measure.timeExpire}</span>}
+                        <span style={{color: "red", fontWeight: "bold"}}>{"J+" + measure.timeExpire}</span> :
+                        <span style={{color: "forestgreen", fontWeight: "bold"}}>{"J" + measure.timeExpire}</span>}
                 </td>
                 <td>{measure.claim_object.name["fr"]}</td>
                 <td>
@@ -276,18 +276,18 @@ const SatisfactionMeasure = (props) => {
                                                     <tr role="row">
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            colSpan="1" style={{width: "70.25px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">{t("Référence")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            colSpan="1" style={{width: "70.25px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">{t("Réclamant")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0"
                                                             aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "80.25px"}}
+                                                            colSpan="1" style={{width: "80.25px",paddingRight:"0"}}
 
                                                             aria-label="Country: activate to sort column ascending">
                                                             {(props.plan === 'PRO') ? t("Point de service visé") : t("Institution ciblée")}
@@ -295,28 +295,28 @@ const SatisfactionMeasure = (props) => {
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "50px"}}
+                                                            colSpan="1" style={{width: "50px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">
                                                             {t("Date de réception")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            colSpan="1" style={{width: "70.25px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">{t("Objet de réclamation")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            colSpan="1" style={{width: "70.25px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">{t("Description")}
                                                         </th>
 
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
-                                                            colSpan="1" style={{width: "70.25px"}}
+                                                            colSpan="1" style={{width: "70.25px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">{t("Agent traiteur")}
                                                         </th>
                                                         <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
-                                                            rowSpan="1" colSpan="1" style={{width: "40.25px"}}
+                                                            rowSpan="1" colSpan="1" style={{width: "40.25px",paddingRight:"0"}}
                                                             aria-label="Type: activate to sort column ascending">
                                                             {t("Action")}
                                                         </th>
