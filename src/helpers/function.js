@@ -372,6 +372,8 @@ export const seeEscalade = (userPermissions) => {
         || verifyPermission(userPermissions, 'list-claim-awaiting-validation-any-institution')
         || verifyPermission(userPermissions, 'list-satisfaction-measured-any-claim')
         || verifyPermission(userPermissions, 'list-satisfaction-measured-my-claim')
+        || verifyPermission(userPermissions, 'list-my-discussions')
+        || verifyPermission(userPermissions, 'contribute-discussion')
 
 }
 

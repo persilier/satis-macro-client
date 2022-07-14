@@ -576,8 +576,7 @@ const Chats = (props) => {
                                                 data.files ?
                                                     data.files.map((file, i) => (
                                                         <div className="message_target" key={i}>
-                                                            <i className="d-flex justify-content-end flaticon-close"
-                                                               onClick={(e) => closeTag(e)}></i>
+                                                            <i className="d-flex justify-content-end flaticon-close" onClick={(e) => closeTag(e)}/>
                                                             <img src="/assets/media/users/file-icon.png" alt=""
                                                                  style={{
                                                                      maxWidth: "55px",
@@ -605,7 +604,7 @@ const Chats = (props) => {
                                                 <label htmlFor="file-input"
                                                        data-toggle="kt-tooltip"
                                                        title={t("Ajouter un fichier")}>
-                                                    <i className="fas fa-paperclip"></i>
+                                                    <i className="fas fa-paperclip"/>
                                                 </label>
                                                 <input id="file-input"
                                                        type="file"
