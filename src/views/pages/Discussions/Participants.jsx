@@ -24,7 +24,7 @@ import {useTranslation} from "react-i18next";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Participants = (props) => {
-    const {id} = useParams();
+    const {id,type} = useParams();
     if (!verifyPermission(props.userPermissions, "list-discussion-contributors"))
         window.location.href = ERROR_401;
 
@@ -244,7 +244,7 @@ const Participants = (props) => {
                             <HeaderTablePage
                                 addPermission={"add-discussion-contributor"}
                                 addText={t("Ajouter")}
-                                addLink={`/treatment/chat/add_user/${id}`}
+                                addLink={`/treatment/chat/add_user/${id}/${type || ""}`}
                                 title={t("Liste des participants")}
                             />
                             {

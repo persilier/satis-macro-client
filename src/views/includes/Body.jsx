@@ -690,15 +690,23 @@ const Body = () => {
                 <Chats/>
             </Route>*/}
 
-            <Route exact path="/chat/:type">
+            <Route exact path="/chat/:type?">
                 <Chats/>
             </Route>
 
-            <Route exact path="/treatment/chat/add">
+           {/* <Route exact path="/treatment/chat/add">
+                <AddChatsForm/>
+            </Route>*/}
+
+            <Route exact path="/treatment/chat/add/:type?">
                 <AddChatsForm/>
             </Route>
 
-            <Route exact path="/treatment/chat/contributor/:id">
+           {/* <Route exact path="/treatment/chat/contributor/:id">
+                <Participants/>
+            </Route>*/}
+
+            <Route exact path="/treatment/chat/contributor/:id/:type?">
                 <Participants/>
             </Route>
 
@@ -706,7 +714,11 @@ const Body = () => {
                 <RemoveChats/>
             </Route>
 
-            <Route exact path="/treatment/chat/add_user/:id">
+           {/* <Route exact path="/treatment/chat/add_user/:id">
+                <AddMemberForm/>
+            </Route> */}
+
+            <Route exact path="/treatment/chat/add_user/:id/:type?">
                 <AddMemberForm/>
             </Route>
 

@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
-import {
-    Link,
-    useParams
-} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
     toastAddErrorMessageConfig,
     toastAddSuccessMessageConfig,
+    toastErrorMessageWithParameterConfig,
 } from "../../../config/toastConfig";
 import appConfig from "../../../config/appConfig";
 import Select from "react-select";
@@ -19,7 +17,7 @@ import {useTranslation} from "react-i18next";
 
 
 const AddMemberForm = (props) => {
-const {id}=useParams();
+const {id, type}=useParams();
     if (!verifyPermission(props.userPermissions, 'add-discussion-contributor'))
         window.location.href = ERROR_401;
 
@@ -38,6 +36,9 @@ const {id}=useParams();
     const [startRequest, setStartRequest] = useState(false);
     const [staffId, setStaffId] = useState([]);
     const [staffIdData, setStaffIdData] = useState([]);
+    const [staffEscalId, setStaffEscalId] = useState([]);
+    const [staffEscalIdData, setstaffEscalIdData] = useState([]);
+
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -47,6 +48,12 @@ const {id}=useParams();
                         {value:staff.id, label:staff.identite.lastname+" "+staff.identite.firstname}
                     ));
                     setStaffIdData(newStaffs);
+
+                    let newEscalationStaffs=Object.values(response.data.escalation_staff).map(escalation_staff=>(
+                        {value:escalation_staff.id, label:escalation_staff.identite.lastname+" "+escalation_staff.identite.firstname}
+                    ))
+                    setstaffEscalIdData(newEscalationStaffs);
+
                 })
                 .catch(error => {
                     //console.log("Something is wrong");
@@ -56,9 +63,17 @@ const {id}=useParams();
     }, []);
 
     const onChangeClaim = (e,selected) => {
+        console.log(selected)
         const newData = {...data};
         newData.staff_id = e?e.map(sel => sel.value):"";
         setStaffId(selected);
+        setData(newData);
+    };
+
+    const onChangeClaimEscal = (e,selected) => {
+        const newData = {...data};
+        newData.escalation_staff = e?e.map(sel => sel.value):"";
+        setStaffEscalId(selected);
         setData(newData);
     };
 
@@ -77,7 +92,11 @@ const {id}=useParams();
                 .catch(error => {
                     setStartRequest(false);
                     setError({...defaultError,...error.response.data.error});
-                    ToastBottomEnd.fire(toastAddErrorMessageConfig())
+                    if (error.response.data.code === 422)
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Ce staff n'appartient pas à la liste des contributeurs possibles de la discussion"));
+                    else {
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }
                 })
             ;
         }
@@ -134,7 +153,7 @@ const {id}=useParams();
                                                         <div className="kt-section kt-section--first">
                                                             <div className="kt-section__body">
                                                                 <div
-                                                                    className={error.staff_id.length ? "form-group row validated" : "form-group row"}>
+                                                                    className={error.staff_id?.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
                                                                            htmlFor="exampleSelect1">{t("Participants")}</label>
                                                                     <div className="col-lg-9 col-xl-6">
@@ -150,7 +169,7 @@ const {id}=useParams();
 
 
                                                                         {
-                                                                            error.staff_id.length ? (
+                                                                            error.staff_id?.length ? (
                                                                                 error.staff_id.map((error, index) => (
                                                                                     <div key={index}
                                                                                          className="invalid-feedback">
@@ -161,6 +180,37 @@ const {id}=useParams();
                                                                         }
                                                                     </div>
                                                                 </div>
+
+                                                                { type &&
+                                                                    <div
+                                                                    className={error.escalation_staff?.length ? "form-group row validated" : "form-group row"}>
+                                                                    <label className="col-xl-3 col-lg-3 col-form-label"
+                                                                           htmlFor="exampleSelect1">{t("Staffs de l'ancienne unité de traitement")}</label>
+                                                                    <div className="col-lg-9 col-xl-6">
+                                                                        {staffEscalIdData ? (
+                                                                            <Select
+                                                                                value={staffEscalId}
+                                                                                onChange={(e) => onChangeClaimEscal(e)}
+                                                                                options={staffEscalIdData}
+                                                                                isMulti
+                                                                            />
+                                                                        ) : ''
+                                                                        }
+
+
+                                                                        {
+                                                                            error.escalation_staff?.length ? (
+                                                                                error.escalation_staff.map((error, index) => (
+                                                                                    <div key={index}
+                                                                                         className="invalid-feedback">
+                                                                                        {error}
+                                                                                    </div>
+                                                                                ))
+                                                                            ) : null
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                                }
 
                                                             </div>
                                                             <div className="kt-portlet__foot">

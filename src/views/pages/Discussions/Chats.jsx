@@ -22,7 +22,7 @@ import {useTranslation} from "react-i18next";
 
 const Chats = (props) => {
     const {type} = useParams();
-    alert(type)
+
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))
         window.location.href = ERROR_401;
 
@@ -373,7 +373,7 @@ const Chats = (props) => {
 
                                                                                                 <li className="kt-nav__item">
                                                                                                     <Link
-                                                                                                        to={chat.id ? `/treatment/chat/contributor/${chat.id}` : ""}
+                                                                                                        to={chat.id ? `/treatment/chat/contributor/${chat.id}/${type || ""}` : ""}
                                                                                                         className="kt-nav__link">
                                                                                                         <i className="kt-nav__link-icon flaticon2-group"></i>
                                                                                                         <span
@@ -481,7 +481,7 @@ const Chats = (props) => {
                                                                 {/*</li>*/}
                                                                 {/*<li className="kt-nav__separator"></li>*/}
                                                                 <li className="kt-nav__item">
-                                                                    <Link to={"/treatment/chat/add"}
+                                                                    <Link to={`/treatment/chat/add/${type || ""}`}
                                                                           className="kt-nav__link">
                                                                         <i className="kt-nav__link-icon flaticon-chat-1"></i>
                                                                         <span

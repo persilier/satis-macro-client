@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import {
-    Link,
+    Link, useParams,
 } from "react-router-dom";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
@@ -20,6 +20,8 @@ import InputRequire from "../../components/InputRequire";
 
 
 const AddChatsForm = (props) => {
+    const {type} = useParams();
+
 
     if (!verifyPermission(props.userPermissions, 'store-discussion'))
         window.location.href = ERROR_401;
@@ -45,7 +47,7 @@ const AddChatsForm = (props) => {
 /*
         if (claimId="unsatisfied") ?{*/
             async function fetchData() {
-                axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
+                axios.get(`${appConfig.apiDomaine}/claim-assignment-staff${type ? "?type=unsatisfied" : ""}`)
                     .then(response => {
                         setClaimIdData(response.data);
                     })
