@@ -203,7 +203,7 @@ const ClaimToValidatedPendingList = (props) => {
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link">
-                                    {t("Traitement")}
+                                    {t("Escalade")}
                                 </a>
                             </div>
                             <span className="kt-subheader__separator kt-hidden"/>

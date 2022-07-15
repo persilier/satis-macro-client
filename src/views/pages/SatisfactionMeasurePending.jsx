@@ -221,7 +221,7 @@ const SatisfactionMeasurePending = (props) => {
                                 <span className="kt-subheader__breadcrumbs-separator"/>
                                 <a href="#button" onClick={e => e.preventDefault()}
                                    className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                    {t("Traitement")}
+                                    {t("Escalade")}
                                 </a>
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
@@ -230,7 +230,7 @@ const SatisfactionMeasurePending = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link">
-                                        {t("Mesure de Satisfaction")}
+                                        {t("Mesure de Satisfaction des réclamations non satisfaites ")}
                                     </a>
                                 </div>
                             </div>
@@ -239,7 +239,7 @@ const SatisfactionMeasurePending = (props) => {
                 </div>
 
                 <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                    <InfirmationTable information={t("La liste des réclamations à mésurer la satisfaction")}/>
+                    <InfirmationTable information={t("Mesure de satisfaction des réclamations non satisfaites")}/>
 
                     <div className="kt-portlet">
 
