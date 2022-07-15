@@ -322,7 +322,7 @@ const Aside = (props) => {
                                                 {
                                                     verifyPermission(props.userPermissions, 'list-my-discussions')||
                                                     verifyPermission(props.userPermissions, 'contribute-discussion')?(
-                                                        <NavLink exact to="/chat" className="kt-menu__item "
+                                                        <NavLink exact to="/chat/escalation" className="kt-menu__item "
                                                                  activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                             <li className="kt-menu__link ">
                                                                 <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>

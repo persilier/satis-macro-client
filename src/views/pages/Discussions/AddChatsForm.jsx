@@ -42,16 +42,19 @@ const AddChatsForm = (props) => {
     const [claimIdData, setClaimIdData] = useState([]);
 
     useEffect(() => {
-        async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
-                .then(response => {
-                    setClaimIdData(response.data);
-                })
-                .catch(error => {
-                    //console.log("Something is wrong");
-                })
-            ;
-        }
+/*
+        if (claimId="unsatisfied") ?{*/
+            async function fetchData() {
+                axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
+                    .then(response => {
+                        setClaimIdData(response.data);
+                    })
+                    .catch(error => {
+                        //console.log("Something is wrong");
+                    })
+                ;
+            }
+        /*}*/
 
         if (verifyTokenExpire())
             fetchData();

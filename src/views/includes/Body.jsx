@@ -686,7 +686,11 @@ const Body = () => {
                 <ConfigNotification/>
             </Route>
 
-            <Route exact path="/chat">
+          {/*  <Route exact path="/chat">
+                <Chats/>
+            </Route>*/}
+
+            <Route exact path="/chat/:type">
                 <Chats/>
             </Route>
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import moment from "moment";
 import {connect} from "react-redux";
 import MessageList from "./MessageList";
@@ -21,7 +21,8 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
 const Chats = (props) => {
-
+    const {type} = useParams();
+    alert(type)
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))
         window.location.href = ERROR_401;
 
@@ -49,6 +50,7 @@ const Chats = (props) => {
     const [search, setSearch] = useState(false);
     const [load, setLoad] = useState(true);
     const [activeChat, setActiveChat] = useState(false);
+
 
     let userDataJson = JSON.parse(localStorage.getItem("userData"));
     useEffect(() => {
