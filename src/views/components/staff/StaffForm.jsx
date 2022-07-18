@@ -443,19 +443,19 @@ const StaffForm = (props) => {
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">{t("Informations personnelles")}:</h3>
                                                 <div className="form-group row">
-                                                    <div className={error?.lastname?.length ? "col validated" : "col"}>
+                                                    <div className={error?.lastname.length ? "col validated" : "col"}>
                                                         <label htmlFor="lastname">{t("Nom")} <InputRequire/></label>
                                                         <input
                                                             id="lastname"
                                                             type="text"
-                                                            className={error?.lastname?.length ? "form-control is-invalid" : "form-control"}
+                                                            className={error?.lastname.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder={t("Veuillez entrer le nom")}
                                                             value={data.lastname}
                                                             onChange={(e) => onChangeLastName(e)}
                                                         />
                                                         {
-                                                            error?.lastname?.length ? (
-                                                                error?.lastname?.map((error, index) => (
+                                                            error?.lastname.length ? (
+                                                                error?.lastname.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -464,19 +464,19 @@ const StaffForm = (props) => {
                                                         }
                                                     </div>
 
-                                                    <div className={error?.firstname?.length ? "col validated" : "col"}>
+                                                    <div className={error?.firstname.length ? "col validated" : "col"}>
                                                         <label htmlFor="firstname">{t("Prénom")} <InputRequire/></label>
                                                         <input
                                                             id="firstname"
                                                             type="text"
-                                                            className={error?.firstname?.length ? "form-control is-invalid" : "form-control"}
+                                                            className={error?.firstname.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder={t("Veuillez entrer le prénom")}
                                                             value={data.firstname}
                                                             onChange={(e) => onChangeFirstName(e)}
                                                         />
                                                         {
-                                                            error?.firstname?.length ? (
-                                                                error?.firstname?.map((error, index) => (
+                                                            error?.firstname.length ? (
+                                                                error?.firstname.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -487,11 +487,11 @@ const StaffForm = (props) => {
                                                 </div>
 
                                                 <div className="row">
-                                                    <div className={error?.firstname?.length ? "form-group col validated" : "form-group col"}>
+                                                    <div className={error?.sexe.length ? "form-group col validated" : "form-group col"}>
                                                         <label htmlFor="sexe">{t("Sexe")} <InputRequire/></label>
                                                         <select
                                                             id="sexe"
-                                                            className={error?.sexe?.length ? "form-control is-invalid" : "form-control"}
+                                                            className={error.sexe.length ? "form-control is-invalid" : "form-control"}
                                                             value={data.sexe}
                                                             onChange={(e) => onChangeSexe(e)}
                                                         >
@@ -501,8 +501,8 @@ const StaffForm = (props) => {
                                                             <option value="A">{t("Autres")}</option>
                                                         </select>
                                                         {
-                                                            error?.sexe?.length ? (
-                                                                error?.sexe?.map((error, index) => (
+                                                            error?.sexe.length ? (
+                                                                error?.sexe.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -513,12 +513,12 @@ const StaffForm = (props) => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div className={error?.telephone?.length ? "col validated" : "col"}>
+                                                    <div className={error?.telephone.length ? "col validated" : "col"}>
                                                         <label htmlFor="telephone">{t("Téléphone(s)")}<WithoutCode/> <InputRequire/></label>
                                                         <TagsInput value={data.telephone} onChange={onChangeTelephone} inputProps={{className: 'react-tagsinput-input', placeholder: 'Numéro(s)'}} />
                                                         {
-                                                            error?.telephone?.length ? (
-                                                                error?.telephone?.map((error, index) => (
+                                                            error?.telephone.length ? (
+                                                                error?.telephone.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -527,12 +527,12 @@ const StaffForm = (props) => {
                                                         }
                                                     </div>
 
-                                                    <div className={error?.email?.length ? "col validated" : "col"}>
+                                                    <div className={error?.email.length ? "col validated" : "col"}>
                                                         <label htmlFor="email">Email(s) <InputRequire/></label>
                                                         <TagsInput value={data.email} onChange={onChangeEmail} inputProps={{className: 'react-tagsinput-input', placeholder: 'Email(s)'}}/>
                                                         {
-                                                            error?.email?.length ? (
-                                                                error?.email?.map((error, index) => (
+                                                            error?.email.length ? (
+                                                                error?.email.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -541,19 +541,19 @@ const StaffForm = (props) => {
                                                         }
                                                     </div>
 
-                                                    <div className={error?.ville?.length ? "col validated" : "col"}>
+                                                    <div className={error?.ville.length ? "col validated" : "col"}>
                                                         <label htmlFor="ville">{t("Ville")}</label>
                                                         <input
                                                             id="ville"
                                                             type="text"
-                                                            className={error?.ville?.length ? "form-control is-invalid" : "form-control"}
+                                                            className={error?.ville.length ? "form-control is-invalid" : "form-control"}
                                                             placeholder={t("Veuillez entrer votre ville")}
                                                             value={data.ville ? data.ville : ""}
                                                             onChange={(e) => onChangeVille(e)}
                                                         />
                                                         {
-                                                            error?.ville?.length ? (
-                                                                error?.ville?.map((error, index) => (
+                                                            error?.ville.length ? (
+                                                                error?.ville.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -568,7 +568,7 @@ const StaffForm = (props) => {
                                         <div className="kt-section">
                                             <div className="kt-section__body">
                                                 <h3 className="kt-section__title kt-section__title-lg">{t("Informations professionnelles")}:</h3>
-                                                <div className={error?.position_id?.length ? "form-group row validated" : "form-group row"}>
+                                                <div className={error?.position_id.length ? "form-group row validated" : "form-group row"}>
                                                     <div className="col">
                                                         <label htmlFor="position">{t("Fonction")} <InputRequire/></label>
                                                         <Select
@@ -579,8 +579,8 @@ const StaffForm = (props) => {
                                                             options={formatSelectOption(positions, "name", "fr")}
                                                         />
                                                         {
-                                                            error?.position_id?.length ? (
-                                                                error?.position_id?.map((error, index) => (
+                                                            error?.position_id.length ? (
+                                                                error?.position_id.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -601,8 +601,8 @@ const StaffForm = (props) => {
                                                                     options={formatSelectOption(formatInstitutions(institutions), "name", false)}
                                                                 />
                                                                 {
-                                                                    error?.institution_id?.length ? (
-                                                                        error?.institution_id?.map((error, index) => (
+                                                                    error?.institution_id.length ? (
+                                                                        error?.institution_id.map((error, index) => (
                                                                             <div key={index} className="invalid-feedback">
                                                                                 {error}
                                                                             </div>
@@ -615,7 +615,7 @@ const StaffForm = (props) => {
                                                 </div>
 
                                                 <div className="form-group row">
-                                                    <div  className={error?.unit_id?.length ? "col validated" : "col"}>
+                                                    <div  className={error?.unit_id.length ? "col validated" : "col"}>
                                                         <label htmlFor="unit">{t("Unité")} <InputRequire/></label>
                                                         <Select
                                                             isClearable
@@ -625,8 +625,8 @@ const StaffForm = (props) => {
                                                             options={formatUnitSelectOption(units, "name", "fr")}
                                                         />
                                                         {
-                                                            error?.unit_id?.length ? (
-                                                                error?.unit_id?.map((error, index) => (
+                                                            error?.unit_id.length ? (
+                                                                error?.unit_id.map((error, index) => (
                                                                     <div key={index} className="invalid-feedback">
                                                                         {error}
                                                                     </div>
@@ -635,7 +635,7 @@ const StaffForm = (props) => {
                                                         }
                                                     </div>
 
-                                                    <div  className={error?.unit_id?.length ? "row col validated" : "row col"}>
+                                                    <div  className={error?.unit_id.length ? "row col validated" : "row col"}>
                                                         <label className="col-xl-6 col-lg-6 col-form-label mt-4" htmlFor="name">{t("Responsable de l'unité")} <InputRequire/></label>
                                                         <div className="col-lg-6 col-xl-6 kt-radio-inline">
                                                             <label className="kt-radio mt-4">
