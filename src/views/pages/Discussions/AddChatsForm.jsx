@@ -42,6 +42,9 @@ const AddChatsForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
     const [claimId, setClaimId] = useState([]);
     const [claimIdData, setClaimIdData] = useState([]);
+    const [escal, setEscalation] = useState(1);
+
+    var typeofEscal = escal
 
     useEffect(() => {
 /*
@@ -86,7 +89,7 @@ const AddChatsForm = (props) => {
                     // setError(defaultError);
                     // setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                    window.location.href="/chat";
+                    window.location.href=`/chat/${type || ""}`;
                 })
                 .catch(error => {
                     setStartRequest(false);
@@ -102,15 +105,17 @@ const AddChatsForm = (props) => {
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                {t("Traitement")}
-                            </h3>
+                            {
+                                (typeofEscal) ? (
+                                    <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
+                                ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
+                            }
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/chat" className="kt-subheader__breadcrumbs-link">
+                                <Link to={`/chat/${type || ""}`} className="kt-subheader__breadcrumbs-link">
                                     {t("Tchat")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
@@ -219,12 +224,12 @@ const AddChatsForm = (props) => {
                                                                     }
                                                                     {
                                                                         !startRequest ? (
-                                                                            <Link to="/chat"
+                                                                            <Link to={`/chat/${type || ""}`}
                                                                                   className="btn btn-secondary mx-2">
                                                                                 {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
-                                                                            <Link to="/chat"
+                                                                            <Link to={`/chat/${type || ""}`}
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
                                                                                 {t("Quitter")}

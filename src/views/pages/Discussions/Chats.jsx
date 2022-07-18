@@ -51,6 +51,10 @@ const Chats = (props) => {
     const [load, setLoad] = useState(true);
     const [activeChat, setActiveChat] = useState(false);
 
+    const [escal, setEscalation] = useState(1);
+
+    var typeofEscal = escal
+
 
     let userDataJson = JSON.parse(localStorage.getItem("userData"));
     useEffect(() => {
@@ -247,9 +251,11 @@ const Chats = (props) => {
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            {t("Traitement")}
-                        </h3>
+                        {
+                            (typeofEscal) ? (
+                                <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
+                            ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
+                        }
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
                             <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
