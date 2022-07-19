@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import {
-    Link,
+    Link, useParams,
 } from "react-router-dom";
 import {ToastBottomEnd} from "../../components/Toast";
 import {
@@ -20,6 +20,8 @@ import InputRequire from "../../components/InputRequire";
 
 
 const AddChatsForm = (props) => {
+    const {type} = useParams();
+
 
     if (!verifyPermission(props.userPermissions, 'store-discussion'))
         window.location.href = ERROR_401;
@@ -41,17 +43,21 @@ const AddChatsForm = (props) => {
     const [claimId, setClaimId] = useState([]);
     const [claimIdData, setClaimIdData] = useState([]);
 
+
     useEffect(() => {
-        async function fetchData() {
-            axios.get(`${appConfig.apiDomaine}/claim-assignment-staff`)
-                .then(response => {
-                    setClaimIdData(response.data);
-                })
-                .catch(error => {
-                    //console.log("Something is wrong");
-                })
-            ;
-        }
+/*
+        if (claimId="unsatisfied") ?{*/
+            async function fetchData() {
+                axios.get(`${appConfig.apiDomaine}/claim-assignment-staff${type ? "?type=unsatisfied" : ""}`)
+                    .then(response => {
+                        setClaimIdData(response.data);
+                    })
+                    .catch(error => {
+                        //console.log("Something is wrong");
+                    })
+                ;
+            }
+        /*}*/
 
         if (verifyTokenExpire())
             fetchData();
@@ -81,7 +87,7 @@ const AddChatsForm = (props) => {
                     // setError(defaultError);
                     // setData(defaultData);
                     ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-                    window.location.href="/chat";
+                    window.location.href=`/chat/${type || ""}`;
                 })
                 .catch(error => {
                     setStartRequest(false);
@@ -97,15 +103,17 @@ const AddChatsForm = (props) => {
                 <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
-                            <h3 className="kt-subheader__title">
-                                {t("Traitement")}
-                            </h3>
+                            {
+                                (type) ? (
+                                    <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
+                                ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
+                            }
                             <span className="kt-subheader__separator kt-hidden"/>
                             <div className="kt-subheader__breadcrumbs">
                                 <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
                                     className="flaticon2-shelter"/></a>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
-                                <Link to="/chat" className="kt-subheader__breadcrumbs-link">
+                                <Link to={`/chat/${type || ""}`} className="kt-subheader__breadcrumbs-link">
                                     {t("Tchat")}
                                 </Link>
                                 <span className="kt-subheader__breadcrumbs-separator"/>
@@ -214,12 +222,12 @@ const AddChatsForm = (props) => {
                                                                     }
                                                                     {
                                                                         !startRequest ? (
-                                                                            <Link to="/chat"
+                                                                            <Link to={`/chat/${type || ""}`}
                                                                                   className="btn btn-secondary mx-2">
                                                                                 {t("Quitter")}
                                                                             </Link>
                                                                         ) : (
-                                                                            <Link to="/chat"
+                                                                            <Link to={`/chat/${type || ""}`}
                                                                                   className="btn btn-secondary mx-2"
                                                                                   disabled>
                                                                                 {t("Quitter")}

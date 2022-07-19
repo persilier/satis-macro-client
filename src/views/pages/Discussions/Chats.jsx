@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import moment from "moment";
 import {connect} from "react-redux";
 import MessageList from "./MessageList";
@@ -21,6 +21,7 @@ import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
 
 const Chats = (props) => {
+    const {type} = useParams();
 
     if (!verifyPermission(props.userPermissions, "list-my-discussions"))
         window.location.href = ERROR_401;
@@ -53,7 +54,7 @@ const Chats = (props) => {
     let userDataJson = JSON.parse(localStorage.getItem("userData"));
     useEffect(() => {
         if (verifyTokenExpire()) {
-            axios.get(appConfig.apiDomaine + "/discussions")
+            axios.get(appConfig.apiDomaine + `/discussions${ type ? "?type=unsatisfied" : ""}`)
                 .then(response => {
                     setListChat(response.data);
                     setLoad(false)
@@ -63,7 +64,7 @@ const Chats = (props) => {
                 })
             ;
         }
-    }, []);
+    }, [type]);
 
     useEffect(() => {
         if (userDataJson.staff.identite_id && idChat) {
@@ -239,15 +240,17 @@ const Chats = (props) => {
             })
         ;
     };
-
     return (
+
         ready ? (<div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
-                        <h3 className="kt-subheader__title">
-                            {t("Traitement")}
-                        </h3>
+                        {
+                            (type) ? (
+                                <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
+                            ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
+                        }
                         <span className="kt-subheader__separator kt-hidden"/>
                         <div className="kt-subheader__breadcrumbs">
                             <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
@@ -323,7 +326,7 @@ const Chats = (props) => {
                                                                 <div className="kt-widget__item">
 
                                                                     {/*ICONE*/}
-                                                                    <i className="fa-2x flaticon2-chat-2"></i>
+                                                                   <i className="fa-2x flaticon2-chat-2"></i>
 
                                                                     {/*DISCUSSION*/}
                                                                     <div className="kt-widget__info">
@@ -338,7 +341,11 @@ const Chats = (props) => {
                                                                             </a>
                                                                         {
                                                                             activeChat && idChat === chat.id ?
-                                                                                <span className="kt-badge kt-badge--success kt-badge--dot"> </span>
+                                                                               (
+                                                                                   (type) ? (
+                                                                                     <span className="kt-badge kt-badge--danger kt-badge--dot"> </span>
+                                                                                   ) :  <span className="kt-badge kt-badge--success kt-badge--dot"> </span>
+                                                                                )
                                                                             : ""
                                                                         }
                                                                         </div>
@@ -355,7 +362,7 @@ const Chats = (props) => {
                                                                                     {/*<span*/}
                                                                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
                                                                                     <div
-                                                                                        className="dropdown dropdown-inline">
+                                                                                        className="dropdown dropdown-inline" >
                                                                                         <button type="button"
                                                                                                 className="btn btn-clean btn-sm btn-icon btn-icon-md"
                                                                                                 data-toggle="dropdown"
@@ -371,19 +378,21 @@ const Chats = (props) => {
 
                                                                                                 <li className="kt-nav__item">
                                                                                                     <Link
-                                                                                                        to={chat.id ? `/treatment/chat/contributor/${chat.id}` : ""}
+                                                                                                        to={chat.id ? `/treatment/chat/contributor/${chat.id}/${type || ""}` : ""}
                                                                                                         className="kt-nav__link">
                                                                                                         <i className="kt-nav__link-icon flaticon2-group"></i>
                                                                                                         <span
                                                                                                             className="kt-nav__link-text">{t("Liste des participants")}</span>
 
-                                                                                                        <span
-                                                                                                            className="kt-nav__link-badge">
-                                                                                                        <span
-                                                                                                            className="kt-badge kt-badge--success  kt-badge--rounded-">
-                                                                                                            {chat.staff ? chat.staff.length : 0}
+                                                                                                        <span  className="kt-nav__link-badge">
+                                                                                                             <span
+                                                                                                                 className="kt-badge kt-badge--success  kt-badge--rounded-">
+                                                                                                               {chat.staff ? chat.staff.length : 0}
+                                                                                                           </span>
                                                                                                         </span>
-                                                                                                        </span>
+
+
+
                                                                                                     </Link>
                                                                                                 </li>
 
@@ -479,7 +488,7 @@ const Chats = (props) => {
                                                                 {/*</li>*/}
                                                                 {/*<li className="kt-nav__separator"></li>*/}
                                                                 <li className="kt-nav__item">
-                                                                    <Link to={"/treatment/chat/add"}
+                                                                    <Link to={`/treatment/chat/add/${type || ""}`}
                                                                           className="kt-nav__link">
                                                                         <i className="kt-nav__link-icon flaticon-chat-1"></i>
                                                                         <span
@@ -576,8 +585,7 @@ const Chats = (props) => {
                                                 data.files ?
                                                     data.files.map((file, i) => (
                                                         <div className="message_target" key={i}>
-                                                            <i className="d-flex justify-content-end flaticon-close"
-                                                               onClick={(e) => closeTag(e)}></i>
+                                                            <i className="d-flex justify-content-end flaticon-close" onClick={(e) => closeTag(e)}/>
                                                             <img src="/assets/media/users/file-icon.png" alt=""
                                                                  style={{
                                                                      maxWidth: "55px",
@@ -605,7 +613,7 @@ const Chats = (props) => {
                                                 <label htmlFor="file-input"
                                                        data-toggle="kt-tooltip"
                                                        title={t("Ajouter un fichier")}>
-                                                    <i className="fas fa-paperclip"></i>
+                                                    <i className="fas fa-paperclip"/>
                                                 </label>
                                                 <input id="file-input"
                                                        type="file"

@@ -24,7 +24,7 @@ import {useTranslation} from "react-i18next";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const Participants = (props) => {
-    const {id} = useParams();
+    const {id,type} = useParams();
     if (!verifyPermission(props.userPermissions, "list-discussion-contributors"))
         window.location.href = ERROR_401;
 
@@ -208,9 +208,12 @@ const Participants = (props) => {
                     <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                         <div className="kt-container  kt-container--fluid ">
                             <div className="kt-subheader__main">
-                                <h3 className="kt-subheader__title">
-                                    {t("Traitement")}
-                                </h3>
+
+                                {
+                                    (type) ? (
+                                        <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
+                                    ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
+                                }
                                 <span className="kt-subheader__separator kt-hidden"/>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i
@@ -244,7 +247,7 @@ const Participants = (props) => {
                             <HeaderTablePage
                                 addPermission={"add-discussion-contributor"}
                                 addText={t("Ajouter")}
-                                addLink={`/treatment/chat/add_user/${id}`}
+                                addLink={`/treatment/chat/add_user/${id}/${type || ""}`}
                                 title={t("Liste des participants")}
                             />
                             {
