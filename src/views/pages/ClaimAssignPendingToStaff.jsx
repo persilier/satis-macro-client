@@ -194,14 +194,14 @@ const ClaimAssignPendingToStaff = (props) => {
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Traitement")}
+                                        {t("Escalade")}
                                     </a>
                                 </div>
                                 <div className="kt-subheader__breadcrumbs">
                                     <a href="#icone" className="kt-subheader__breadcrumbs-home"><i className="flaticon2-shelter"/></a>
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()} className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Réclamations à traiter")}
+                                        {t("Réclamations non satisfaites à traiter")}
                                     </a>
                                 </div>
                             </div>

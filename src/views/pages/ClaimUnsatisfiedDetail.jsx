@@ -476,7 +476,7 @@ const ClaimUnsatisfiedDetail = (props) => {
                                                                                 <button
                                                                                     className="btn btn-outline-success"
                                                                                     onClick={onClickToTranfert}>
-                                                                                    {t("Transférer à")} {UnitParent.name["fr"]}
+                                                                                    {t("Transférer à")} {UnitParent.name["fr"] ? UnitParent.name["fr"] : ""}
 
                                                                                 </button>
                                                                             ) : (

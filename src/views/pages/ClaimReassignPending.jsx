@@ -193,7 +193,7 @@ const ClaimReassignPending = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                        {t("Traitement")}
+                                        {t("Escalade")}
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
@@ -202,7 +202,7 @@ const ClaimReassignPending = (props) => {
                                         <span className="kt-subheader__breadcrumbs-separator"/>
                                         <a href="#button" onClick={e => e.preventDefault()}
                                            className="kt-subheader__breadcrumbs-link" style={{cursor: "text"}}>
-                                            {t("Réclamations à réassigner")}
+                                            {t("Réclamations non satisfaites à réassigner")}
                                         </a>
                                     </div>
                                 </div>
