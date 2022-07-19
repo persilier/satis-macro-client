@@ -14,6 +14,7 @@ import {ERROR_401} from "../../../config/errorPage";
 import {verifyPermission} from "../../../helpers/permission";
 import {verifyTokenExpire} from "../../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import InputRequire from "../../components/InputRequire";
 
 
 const AddMemberForm = (props) => {
@@ -38,9 +39,6 @@ const {id, type}=useParams();
     const [staffIdData, setStaffIdData] = useState([]);
     const [staffEscalId, setStaffEscalId] = useState([]);
     const [staffEscalIdData, setstaffEscalIdData] = useState([]);
-    const [escal, setEscalation] = useState(1);
-
-    var typeofEscal = escal
 
 
     useEffect(() => {
@@ -95,8 +93,10 @@ const {id, type}=useParams();
                 .catch(error => {
                     setStartRequest(false);
                     setError({...defaultError,...error.response.data.error});
+                    console.log(error.response.data.error)
                     if (error.response.data.code === 422)
-                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Ce staff n'appartient pas à la liste des contributeurs possibles de la discussion"));
+
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error.staff_id));
                     else {
                         ToastBottomEnd.fire(toastAddErrorMessageConfig);
                     }
@@ -111,7 +111,7 @@ const {id, type}=useParams();
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             {
-                                (typeofEscal) ? (
+                                (type) ? (
                                     <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
                                 ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
                             }
@@ -160,7 +160,7 @@ const {id, type}=useParams();
                                                                 <div
                                                                     className={error.staff_id?.length ? "form-group row validated" : "form-group row"}>
                                                                     <label className="col-xl-3 col-lg-3 col-form-label"
-                                                                           htmlFor="exampleSelect1">{t("Participants")}</label>
+                                                                           htmlFor="exampleSelect1">{t("Participants")} <InputRequire/></label>
                                                                     <div className="col-lg-9 col-xl-6">
                                                                         {staffIdData ? (
                                                                             <Select

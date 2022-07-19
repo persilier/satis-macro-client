@@ -51,15 +51,10 @@ const Chats = (props) => {
     const [load, setLoad] = useState(true);
     const [activeChat, setActiveChat] = useState(false);
 
-    const [escal, setEscalation] = useState(1);
-
-    var typeofEscal = escal
-
-
     let userDataJson = JSON.parse(localStorage.getItem("userData"));
     useEffect(() => {
         if (verifyTokenExpire()) {
-            axios.get(appConfig.apiDomaine + "/discussions")
+            axios.get(appConfig.apiDomaine + `/discussions${ type ? "?type=unsatisfied" : ""}`)
                 .then(response => {
                     setListChat(response.data);
                     setLoad(false)
@@ -69,7 +64,7 @@ const Chats = (props) => {
                 })
             ;
         }
-    }, []);
+    }, [type]);
 
     useEffect(() => {
         if (userDataJson.staff.identite_id && idChat) {
@@ -245,14 +240,14 @@ const Chats = (props) => {
             })
         ;
     };
-
     return (
+
         ready ? (<div className="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
             <div className="kt-subheader   kt-grid__item" id="kt_subheader">
                 <div className="kt-container  kt-container--fluid ">
                     <div className="kt-subheader__main">
                         {
-                            (typeofEscal) ? (
+                            (type) ? (
                                 <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
                             ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
                         }
@@ -331,7 +326,7 @@ const Chats = (props) => {
                                                                 <div className="kt-widget__item">
 
                                                                     {/*ICONE*/}
-                                                                    <i className="fa-2x flaticon2-chat-2"></i>
+                                                                   <i className="fa-2x flaticon2-chat-2"></i>
 
                                                                     {/*DISCUSSION*/}
                                                                     <div className="kt-widget__info">
@@ -346,7 +341,9 @@ const Chats = (props) => {
                                                                             </a>
                                                                         {
                                                                             activeChat && idChat === chat.id ?
+                                                                               (
                                                                                 <span className="kt-badge kt-badge--success kt-badge--dot"> </span>
+                                                                                )
                                                                             : ""
                                                                         }
                                                                         </div>
@@ -363,15 +360,12 @@ const Chats = (props) => {
                                                                                     {/*<span*/}
                                                                                     {/*    className="kt-badge kt-badge--success kt-font-bold">{listChatUsers.length}</span>*/}
                                                                                     <div
-                                                                                        className="dropdown dropdown-inline">
-                                                                                        <button type="button"
-                                                                                                className="btn btn-clean btn-sm btn-icon btn-icon-md"
-                                                                                                data-toggle="dropdown"
-                                                                                                aria-haspopup="true"
-                                                                                                aria-expanded="false">
-                                                                                            <i className="flaticon2-menu-1"></i>
-                                                                                        </button>
-
+                                                                                        className="dropdown dropdown-inline" >
+                                                                                            <button type="button"
+                                                                                                    className="btn btn-clean btn-sm btn-icon btn-icon-md"
+                                                                                                    data-toggle="dropdown"
+                                                                                                    aria-haspopup="true"
+                                                                                                    aria-expanded="false"> </button>
                                                                                         <div
                                                                                             className="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-md">
 
@@ -385,13 +379,15 @@ const Chats = (props) => {
                                                                                                         <span
                                                                                                             className="kt-nav__link-text">{t("Liste des participants")}</span>
 
-                                                                                                        <span
-                                                                                                            className="kt-nav__link-badge">
-                                                                                                        <span
-                                                                                                            className="kt-badge kt-badge--success  kt-badge--rounded-">
-                                                                                                            {chat.staff ? chat.staff.length : 0}
+                                                                                                        <span  className="kt-nav__link-badge">
+                                                                                                             <span
+                                                                                                                 className="kt-badge kt-badge--success  kt-badge--rounded-">
+                                                                                                               {chat.staff ? chat.staff.length : 0}
+                                                                                                           </span>
                                                                                                         </span>
-                                                                                                        </span>
+
+
+
                                                                                                     </Link>
                                                                                                 </li>
 

@@ -41,9 +41,6 @@ const Participants = (props) => {
     const [numberPerPage, setNumberPerPage] = useState(5);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [search, setSearch] = useState(false);
-    const [escal, setEscalation] = useState(1);
-
-    var typeofEscal = escal
 
     useEffect(() => {
         if (verifyTokenExpire()) {
@@ -213,7 +210,7 @@ const Participants = (props) => {
                             <div className="kt-subheader__main">
 
                                 {
-                                    (typeofEscal) ? (
+                                    (type) ? (
                                         <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
                                     ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
                                 }

@@ -42,9 +42,7 @@ const AddChatsForm = (props) => {
     const [startRequest, setStartRequest] = useState(false);
     const [claimId, setClaimId] = useState([]);
     const [claimIdData, setClaimIdData] = useState([]);
-    const [escal, setEscalation] = useState(1);
 
-    var typeofEscal = escal
 
     useEffect(() => {
 /*
@@ -106,7 +104,7 @@ const AddChatsForm = (props) => {
                     <div className="kt-container  kt-container--fluid ">
                         <div className="kt-subheader__main">
                             {
-                                (typeofEscal) ? (
+                                (type) ? (
                                     <h3 className="kt-subheader__title"> {t("Escalade")} </h3>
                                 ) : <h3 className="kt-subheader__title"> {t("Traitement")} </h3>
                             }
