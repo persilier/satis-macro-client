@@ -52,6 +52,7 @@ const ClaimAssignToStaffDetail = (props) => {
             fetchData();
     }, []);
 
+
     return (
         ready ? (
             verifyPermission(props.userPermissions, "show-claim-assignment-to-staff") ? (
@@ -224,6 +225,7 @@ const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
+        staff: state.user.user.staff,
         plan: state.plan.plan
     };
 };

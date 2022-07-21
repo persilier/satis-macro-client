@@ -9,7 +9,7 @@ import {loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import ReasonModal from "../components/ReasonModal";
+import ReasonModalPending from "../components/ReasonModalPending";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";
 import ClientButtonDetail from "../components/ClientButtonDetail";
@@ -21,6 +21,8 @@ import AttachmentsButton from "../components/AttachmentsButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import TreatmentHistory from "../components/TreatmentHistory";
 import {useTranslation} from "react-i18next";
+import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
+import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -62,7 +64,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                 })
                 .catch(({response}) => {
                     setStartRequest(false);
-                    if (response.data && response.data.code === 409)
+                    if (response.data && response.data?.code === 409)
                         ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(response.data.error));
                     else
                         console.log("Something is wrong")
@@ -104,7 +106,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        {t("Traitement")}
+                                        {t("Escalade")}
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
@@ -144,6 +146,38 @@ const ClaimToValidatedPendingListDetail = (props) => {
 
                                                 <AttachmentsButton claim={claim}/>
 
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-list"/>
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Ancien traitement")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Détails de l'ancien traitement effectué")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-list"/>
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Traitement effectué")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Détails du traitement effectué")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 {
                                                     verifyPermission(props.userPermissions, validation[props.plan].permission) ? (
                                                         <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
@@ -168,12 +202,19 @@ const ClaimToValidatedPendingListDetail = (props) => {
                                     </div>
 
                                     <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v2__wrapper">
+
                                         <form className="kt-form" id="kt_form">
+
                                             <ClientButtonDetail claim={claim}/>
 
                                             <ClaimButtonDetail claim={claim}/>
 
                                             <AttachmentsButtonDetail claim={claim}/>
+
+                                            <OldTreatmentButtonDetail claim={claim}/>
+
+                                            <TreatmentButtonDetail claim={claim}/>
+
 
                                             {
                                                 verifyPermission(props.userPermissions, validation[props.plan].permission) ? (
@@ -193,7 +234,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                                                                             <div className="kt-wizard-v2__review-item">
                                                                                 <>
                                                                                     {
-                                                                                        claim.active_treatment.solved_at !== null ? (
+                                                                                        claim.active_treatment?.solved_at !== null ? (
                                                                                             <>
                                                                                                 <div className="kt-wizard-v2__review-item">
                                                                                                     <div className="kt-wizard-v2__review-title">
@@ -299,7 +340,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
 
                                         {
                                             showReason ? (
-                                                <ReasonModal
+                                                <ReasonModalPending
                                                     plan={props.plan}
                                                     id={id}
                                                     action={action}

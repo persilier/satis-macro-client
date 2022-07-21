@@ -46,7 +46,7 @@ const AttachmentsButtonDetail = ({claim, userPermissions}) => {
                         }
 
                         {claim && (
-                            completeAttachment && (
+                            completeAttachment &&  (
                                 <CompleteAttachment claimId={claim.id}/>
                             )
                         )}

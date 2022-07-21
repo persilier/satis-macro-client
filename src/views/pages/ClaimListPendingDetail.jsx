@@ -15,7 +15,7 @@ import {
     toastAddErrorMessageConfig,
     toastAssignClaimSuccessMessageConfig, toastErrorMessageWithParameterConfig
 } from "../../config/toastConfig";
-import ReasonModal from "../components/ReasonModal";
+import ReasonModalPending from "../components/ReasonModalPending";
 import {AssignClaimConfirmation} from "../components/ConfirmationAlert";
 import {confirmAssignConfig} from "../../config/confirmConfig";
 import ClientButton from "../components/ClientButton";
@@ -310,7 +310,7 @@ const ClaimListPendingDetail = (props) => {
 
                                         {
                                             showReason ? (
-                                                <ReasonModal
+                                                <ReasonModalPending
                                                     plan={props.plan}
                                                     id={id}
                                                     action={action}

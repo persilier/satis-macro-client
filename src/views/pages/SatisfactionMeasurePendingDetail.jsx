@@ -9,7 +9,7 @@ import {loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import ReasonSatisfaction from "../components/ReasonSatisfaction";
+import ReasonSatisfactionPending from "../components/ReasonSatisfactionPending";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
@@ -99,7 +99,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        {t("Traitement")}
+                                        {t("Escalade")}
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
@@ -193,7 +193,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                                                     <div className="kt-wizard-v2__review">
                                                         <div className="kt-wizard-v2__review-content">
 
-                                                            <ReasonSatisfaction
+                                                            <ReasonSatisfactionPending
                                                                 getId={`${id}`}
                                                                 getEndPoint={endPoint.edit}
                                                             />

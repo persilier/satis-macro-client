@@ -78,10 +78,11 @@ const HoldingUnitForm = (props) => {
 
     const [unitTypes, setUnitTypes] = useState([]);
     const [unitTypesTemp, setUnitTypesTemp] = useState([]);
-    const [unitParents, setunitParents] = useState([]);
+    const [unitParents, setUnitParents] = useState([]);
+    const [allUnitParents, setAllUnitParents] = useState([]);
     const [institutions, setInstitutions] = useState([]);
     const [unitType, setUnitType] = useState(null);
-    const [unitParent, setunitParent] = useState(null);
+    const [unitParent, setUnitParent] = useState(null);
     const [institution, setInstitution] = useState(null);
     const [leads, setLeads] = useState([]);
     const [lead, setLead] = useState(null);
@@ -90,6 +91,7 @@ const HoldingUnitForm = (props) => {
     const [countrie, setCountrie] = useState(null);
     const [States, setStates] = useState([]);
     const [state, setState] = useState(null);
+    const [units, setUnits] = useState(null);
     const [showEscalade, setShowEscalade] = useState(null)
 
     const defaultData = {
@@ -131,6 +133,7 @@ const HoldingUnitForm = (props) => {
                 await axios.get(endPoint.edit(id))
                     .then(response => {
                         console.log("DATA:",response.data)
+
                         const newData = {
                             name: response.data.unit.name["fr"],
                             unit_type_id: response.data.unit.unit_type_id,
@@ -140,7 +143,8 @@ const HoldingUnitForm = (props) => {
                         };
                         setShowEscalade(response.data.unit.unit_type.can_treat)
 
-                        setunitParents(formatSelectOption(response.data.parents, "name", "fr"));
+                        setAllUnitParents(response.data.parents);
+                        setUnitParents(formatSelectOption(response.data.parents.filter(unit_parent => unit_parent.unit_type_id === response.data.unit.unit_type_id), "name", "fr"));
 
                         if (response.data.unit.state !== null) {
                             axios.get(`${appConfig.apiDomaine}/country/${response.data.unit.state.country_id}/states`,)
@@ -166,31 +170,31 @@ const HoldingUnitForm = (props) => {
                             label: response.data.unit.state.name
                         } : {value: "", label: ""});
 
+
+                        setUnitParent(response.data.unit.parent ? {
+                            value: response.data.unit.parent.id,
+                            label: response.data.unit.parent.name["fr"]
+                        } : null);
+
                         setUnitType({
                             value: response.data.unit.unit_type_id,
                             label: response.data.unit.unit_type.name["fr"]
                         });
+                        setUnitTypesTemp(response.data.unitTypes);
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
 
 
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         setUnformatedCountries(response.data.countries);
 
+                        let countrySelected = response.data.countries?.filter(item => item.id == response.data.unit.state.country_id)
+
                         setCountrie(
-                            response.data?.unit?.state?.country ? {
-                                value: response.data?.unit?.state?.country.id,
-                                label: response.data?.unit?.state?.country.name
+                            countrySelected.length !== 0 ? {
+                                value: countrySelected[0].id,
+                                label: countrySelected[0].name
                             } : {value: "", label: ""}
                         );
-
-
-                        console.log("pays", response.data?.unit?.state?.country_id )
-                        console.log("pays2", countrie )
-                        console.log("zones", response.data.unit.state )
-                        console.log("unite n+1", response.data?.unit?.parent?.name["fr"] )
-                        console.log("type unite", response.data.unit.unit_type_id.name )
-                        console.log("parents", response.data.parents)
-                        console.log("parents", response.data.unit.parent_id)
 
                         setLeads(response.data.leads.length ? formatLeads(response.data.leads) : []);
                         setLead(
@@ -215,10 +219,12 @@ const HoldingUnitForm = (props) => {
             } else {
                 await axios.get(endPoint.create)
                     .then(response => {
-                        //setunitParents(formatSelectOption(response.data.unitTypes, "name", "fr"));
+                        console.log(response);
+                        //setUnitParents(formatSelectOption(response.data.unitTypes, "name", "fr"));
                         setUnitTypes(formatSelectOption(response.data.unitTypes, "name", "fr"));
                         setUnitTypesTemp(response.data.unitTypes);
-                        setunitParents(formatSelectOption(response.data.parents, "name", "fr"));
+                        //setUnitParents(formatSelectOption(response.data.parents, "name", "fr"));
+                        setAllUnitParents(response.data.parents);
                         setCountries(formatSelectOption(response.data.countries, "name"));
                         setUnformatedCountries(response.data.countries);
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
@@ -246,16 +252,18 @@ const HoldingUnitForm = (props) => {
         const newData = {...data};
         newData.unit_type_id = selected ? selected.value : "";
         setUnitType(selected);
-        setData(newData);
         let unitType = unitTypesTemp.find(e => e.id === selected.value);
-
+        setUnitParent(null);
+        newData.parent_id = "";
+        setUnitParents(selected ? formatSelectOption(allUnitParents.filter(unit_parent => unit_parent.unit_type_id === selected.value), "name", "fr") : []);
         setShowEscalade(unitType.can_treat)
+        setData(newData);
     };
 
     const onChangeUnitParent = (selected) => {
         const newData = {...data};
         newData.parent_id = selected ? selected.value : "";
-        setunitParent(selected);
+        setUnitParent(selected);
         setData(newData);
     };
 
@@ -295,7 +303,7 @@ const HoldingUnitForm = (props) => {
                     setData(newData);
                     setLeads(response.data.staffs.length ? formatLeads(response.data.staffs) : []);
                 })
-                .catch(error => console.log("Somthing is wrong"))
+                .catch(error => console.log("Something is wrong"))
             ;
         }
         setData(newData);
@@ -332,7 +340,7 @@ const HoldingUnitForm = (props) => {
                         if (verifyPermission(props.userPermissions, 'store-any-unit'))
                             setInstitution(null);
                             setUnitType(null);
-                            setunitParent(null);
+                            setUnitParent(null);
                             setCountrie(null);
                             setState(null)
                             setError(defaultError);
