@@ -53,7 +53,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
         async function fetchData() {
             let endpoint = "";
             if (verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-my-institution'))
-                endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}`;
+                endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution/${id}?staff=${props.user.staff.id}`;
             else if (verifyPermission(props.userPermissions, 'show-claim-awaiting-validation-any-institution'))
                 endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution/${id}`;
 
@@ -149,7 +149,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                     <div className="kt-wizard-v2__nav-body">
                                                         <div className="kt-wizard-v2__nav-icon">
-                                                            <i className="flaticon-list"/>
+                                                            <i className="flaticon-edit-1"/>
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label">
                                                             <div className="kt-wizard-v2__nav-label-title">
@@ -183,7 +183,7 @@ const ClaimToValidatedPendingListDetail = (props) => {
                                                         <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                             <div className="kt-wizard-v2__nav-body">
                                                                 <div className="kt-wizard-v2__nav-icon">
-                                                                    <i className="flaticon-list"/>
+                                                                    <i className="flaticon-like"/>
                                                                 </div>
                                                                 <div className="kt-wizard-v2__nav-label">
                                                                     <div className="kt-wizard-v2__nav-label-title">
@@ -366,6 +366,7 @@ const mapStateToProps = state => {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
+        user: state.user.user,
         activePilot: state.user.user.staff.is_active_pilot
     };
 };

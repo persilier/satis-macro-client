@@ -41,7 +41,7 @@ const ClaimAssignToStaffDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}`)
+            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}?staff=${props.staff.id}`)
                 .then(response => {
                     setClaim(response.data);
                 })
