@@ -85,6 +85,7 @@ const ClaimReassignDetailPending = (props) => {
                     setStartRequest(false);
                     setStaff(null);
                     setErrors([]);
+                    window.location.href = "/process/claim-reassign-pending";
                 })
                 .catch(error => {
                     setStartRequest(false);

@@ -9,7 +9,7 @@ import {loadCss, loadScript} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import ReasonSatisfaction from "../components/ReasonSatisfaction";
+import ReasonSatisfactionPending from "../components/ReasonSatisfactionPending";
 import ClientButton from "../components/ClientButton";
 import ClaimButton from "../components/ClaimButton";
 import AttachmentsButton from "../components/AttachmentsButton";
@@ -19,6 +19,7 @@ import AttachmentsButtonDetail from "../components/AttachmentsButtonDetail";
 import TreatmentButtonDetail from "../components/TreatmentButtonDetail";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -69,7 +70,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(endPoint.edit + `/${id}`)
+            await axios.get(endPoint.edit + `/${id}?staff=${props.user.staff.id}`)
                 .then(response => {
                     setClaim(response.data);
                 })
@@ -99,7 +100,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                                     <span className="kt-subheader__breadcrumbs-separator"/>
                                     <a href="#button" onClick={e => e.preventDefault()}
                                        className="kt-subheader__breadcrumbs-link" style={{cursor: "default"}}>
-                                        {t("Traitement")}
+                                        {t("Escalade")}
                                     </a>
                                     <span className="kt-subheader__separator kt-hidden"/>
                                     <div className="kt-subheader__breadcrumbs">
@@ -143,6 +144,22 @@ const SatisfactionMeasurePendingDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                     <div className="kt-wizard-v2__nav-body">
                                                         <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-edit-1"/>
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Ancien traitement")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Détails de l'ancien traitement effectué")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
                                                             <i className="flaticon-list"/>
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label">
@@ -159,7 +176,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                     <div className="kt-wizard-v2__nav-body">
                                                         <div className="kt-wizard-v2__nav-icon">
-                                                            <i className="flaticon-list"/>
+                                                            <i className="flaticon-like"/>
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label">
                                                             <div className="kt-wizard-v2__nav-label-title">
@@ -183,6 +200,8 @@ const SatisfactionMeasurePendingDetail = (props) => {
 
                                             <AttachmentsButtonDetail claim={claim}/>
 
+                                            <OldTreatmentButtonDetail claim={claim}/>
+
                                             <TreatmentButtonDetail claim={claim}/>
 
                                             <div className="kt-wizard-v2__content"
@@ -193,7 +212,7 @@ const SatisfactionMeasurePendingDetail = (props) => {
                                                     <div className="kt-wizard-v2__review">
                                                         <div className="kt-wizard-v2__review-content">
 
-                                                            <ReasonSatisfaction
+                                                            <ReasonSatisfactionPending
                                                                 getId={`${id}`}
                                                                 getEndPoint={endPoint.edit}
                                                             />
@@ -234,6 +253,7 @@ const mapStateToProps = state => {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
+        user: state.user.user,
     };
 };
 

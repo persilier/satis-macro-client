@@ -67,6 +67,9 @@ export default function setupAxios(axios, store) {
                             .catch(console.log);
                         return Promise.reject(error);
                     }
+                    if (error.response.status === 401){
+                        logout();
+                    }
                 }
             }
 

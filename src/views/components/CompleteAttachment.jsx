@@ -1,7 +1,11 @@
 import React, {useRef, useState} from "react";
 import axios from "axios";
 import appConfig from "../../config/appConfig";
-import {toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig} from "../../config/toastConfig";
+import {
+    toastAddErrorMessageConfig,
+    toastErrorMessageWithParameterConfig,
+    toastSuccessMessageWithParameterConfig
+} from "../../config/toastConfig";
 import {ToastBottomEnd} from "./Toast";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
@@ -39,12 +43,17 @@ const CompleteAttachments = ({claimId}) => {
                     inputRef.current.files = null;
                     inputRef.current.value = null;
                     ToastBottomEnd.fire(toastSuccessMessageWithParameterConfig(t('Pièce(s)  jointe(s)  ajoutée(s) avec succès')));
-                    window.reload();
+                    window.location.reload();
                 })
                 .catch((errorRequest) => {
-                    console.log("response:", errorRequest);
+                    //console.log("responsee:", errorRequest.response);
                     setLoad(false);
-                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig("Fichier non attaché"));
+                    if (errorRequest.response.status === 404) {
+                        ToastBottomEnd.fire(toastErrorMessageWithParameterConfig( errorRequest.response.data));
+                    } else {
+                        ToastBottomEnd.fire(toastAddErrorMessageConfig);
+                    }
+
                 })
             ;
         }

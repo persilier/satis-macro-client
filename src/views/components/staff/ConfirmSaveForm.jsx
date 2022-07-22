@@ -58,11 +58,11 @@ const ConfirmSaveForm = (props) => {
     const [position, setPosition] = useState(props.position);
 
     const defaultData = {
-        firstname: props.identite.firstname,
-        lastname: props.identite.lastname,
-        sexe: props.identite.sexe,
-        telephone: JSON.parse(props.identite.telephone),
-        email: JSON.parse(props.identite.email),
+        firstname: props.identite?.firstname,
+        lastname: props.identite?.lastname,
+        sexe: props.identite?.sexe,
+        telephone: JSON.parse(props.identite?.telephone),
+        email: JSON.parse(props.identite?.email),
         ville: props.identite.ville === null ? "" : props.identite.ville,
         unit_id: props.unit_id,
         position_id: props.position_id,
@@ -210,19 +210,19 @@ const ConfirmSaveForm = (props) => {
                                         <div className="kt-section__body">
                                             <h3 className="kt-section__title kt-section__title-lg">{t("Informations personnelles")}:</h3>
                                             <div className="form-group row">
-                                                <div className={error.lastname.length ? "col validated" : "col"}>
+                                                <div className={error?.lastname.length ? "col validated" : "col"}>
                                                     <label htmlFor="lastname">{t("Votre nom de famille")}</label>
                                                     <input
                                                         id="lastname"
                                                         type="text"
-                                                        className={error.lastname.length ? "form-control is-invalid" : "form-control"}
+                                                        className={error?.lastname.length ? "form-control is-invalid" : "form-control"}
                                                         placeholder={t("Veuillez entrer le nom de famille")}
-                                                        value={data.lastname}
+                                                        value={data.lastname || ""}
                                                         onChange={(e) => onChangeLastName(e)}
                                                     />
                                                     {
-                                                        error.lastname.length ? (
-                                                            error.lastname.map((error, index) => (
+                                                        error?.lastname.length ? (
+                                                            error?.lastname.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -231,19 +231,19 @@ const ConfirmSaveForm = (props) => {
                                                     }
                                                 </div>
 
-                                                <div className={error.firstname.length ? "col validated" : "col"}>
+                                                <div className={error?.firstname.length ? "col validated" : "col"}>
                                                     <label htmlFor="firstname">{t("Votre prénom")}</label>
                                                     <input
                                                         id="firstname"
                                                         type="text"
-                                                        className={error.firstname.length ? "form-control is-invalid" : "form-control"}
+                                                        className={error?.firstname.length ? "form-control is-invalid" : "form-control"}
                                                         placeholder={t("Veuillez entrer le prénom")}
-                                                        value={data.firstname}
+                                                        value={data.firstname || ""}
                                                         onChange={(e) => onChangeFirstName(e)}
                                                     />
                                                     {
-                                                        error.firstname.length ? (
-                                                            error.firstname.map((error, index) => (
+                                                        error?.firstname.length ? (
+                                                            error?.firstname.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -254,12 +254,12 @@ const ConfirmSaveForm = (props) => {
                                             </div>
 
                                             <div className="row">
-                                                <div className={error.firstname.length ? "form-group col validated" : "form-group col"}>
+                                                <div className={error?.sexe.length ? "form-group col validated" : "form-group col"}>
                                                     <label htmlFor="sexe">{t("Votre sexe")}</label>
                                                     <select
                                                         id="sexe"
-                                                        className={error.sexe.length ? "form-control is-invalid" : "form-control"}
-                                                        value={data.sexe}
+                                                        className={error?.sexe.length ? "form-control is-invalid" : "form-control"}
+                                                        value={data.sexe || ""}
                                                         onChange={(e) => onChangeSexe(e)}
                                                     >
                                                         <option value="" disabled={true}>{t("Veillez choisir le Sexe")}</option>
@@ -267,8 +267,8 @@ const ConfirmSaveForm = (props) => {
                                                         <option value="M">{t("Masculin")}</option>
                                                     </select>
                                                     {
-                                                        error.sexe.length ? (
-                                                            error.sexe.map((error, index) => (
+                                                        error?.sexe.length ? (
+                                                            error?.sexe.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -279,12 +279,12 @@ const ConfirmSaveForm = (props) => {
                                             </div>
 
                                             <div className="form-group row">
-                                                <div className={error.telephone.length ? "col validated" : "col"}>
+                                                <div className={error?.telephone.length ? "col validated" : "col"}>
                                                     <label htmlFor="telephone">{t("Votre Téléphone(s)")}</label>
-                                                    <TagsInput value={data.telephone} onChange={onChangeTelephone} />
+                                                    <TagsInput value={data.telephone || []} onChange={onChangeTelephone} />
                                                     {
-                                                        error.telephone.length ? (
-                                                            error.telephone.map((error, index) => (
+                                                        error?.telephone.length ? (
+                                                            error?.telephone.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -293,12 +293,12 @@ const ConfirmSaveForm = (props) => {
                                                     }
                                                 </div>
 
-                                                <div className={error.email.length ? "col validated" : "col"}>
+                                                <div className={error?.email.length ? "col validated" : "col"}>
                                                     <label htmlFor="email">Votre Email(s)</label>
-                                                    <TagsInput value={data.email} onChange={onChangeEmail} />
+                                                    <TagsInput value={data.email || []} onChange={onChangeEmail} />
                                                     {
-                                                        error.email.length ? (
-                                                            error.email.map((error, index) => (
+                                                        error?.email.length ? (
+                                                            error?.email.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -307,19 +307,19 @@ const ConfirmSaveForm = (props) => {
                                                     }
                                                 </div>
 
-                                                <div className={error.ville.length ? "col validated" : "col"}>
+                                                <div className={error?.ville.length ? "col validated" : "col"}>
                                                     <label htmlFor="ville">{t("Votre ville")}</label>
                                                     <input
                                                         id="ville"
                                                         type="text"
-                                                        className={error.ville.length ? "form-control is-invalid" : "form-control"}
+                                                        className={error?.ville.length ? "form-control is-invalid" : "form-control"}
                                                         placeholder={t("Veuillez entrer votre ville")}
-                                                        value={data.ville}
+                                                        value={data.ville || ""}
                                                         onChange={(e) => onChangeVille(e)}
                                                     />
                                                     {
-                                                        error.ville.length ? (
-                                                            error.ville.map((error, index) => (
+                                                        error?.ville.length ? (
+                                                            error?.ville.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -343,8 +343,8 @@ const ConfirmSaveForm = (props) => {
                                                         options={formatSelectOption(positions, "name", "fr")}
                                                     />
                                                     {
-                                                        error.position_id.length ? (
-                                                            error.position_id.map((error, index) => (
+                                                        error?.position_id.length ? (
+                                                            error?.position_id.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>
@@ -359,7 +359,7 @@ const ConfirmSaveForm = (props) => {
                                                     verifyPermission(props.userPermissions, 'store-staff-from-any-unit') || verifyPermission(props.userPermissions, 'update-staff-from-any-unit') || verifyPermission(props.userPermissions, 'store-staff-from-maybe-no-unit') || verifyPermission(props.userPermissions, 'update-staff-from-maybe-no-unit') ? (
                                                         <div className="col">
                                                             <label htmlFor="institution">{t("Institution")}</label>
-                                                            <div className={error.institution_id.length ? 'is-invalid' : ''}>
+                                                            <div className={error?.institution_id.length ? 'is-invalid' : ''}>
                                                                 <Select
                                                                     value={institution}
                                                                     onChange={onChangeInstitution}
@@ -367,8 +367,8 @@ const ConfirmSaveForm = (props) => {
                                                                 />
                                                             </div>
                                                             {
-                                                                error.institution_id.length ? (
-                                                                    error.institution_id.map((error, index) => (
+                                                                error?.institution_id.length ? (
+                                                                    error?.institution_id.map((error, index) => (
                                                                         <div key={index} className="invalid-feedback">
                                                                             {error}
                                                                         </div>
@@ -381,7 +381,7 @@ const ConfirmSaveForm = (props) => {
 
                                                 <div className="col">
                                                     <label htmlFor="unit">{t("Unité")}</label>
-                                                    <div className={error.unit_id.length ? 'is-invalid' : ''}>
+                                                    <div className={error?.unit_id.length ? 'is-invalid' : ''}>
                                                         <Select
                                                             value={unit}
                                                             onChange={onChangeUnit}
@@ -389,8 +389,8 @@ const ConfirmSaveForm = (props) => {
                                                         />
                                                     </div>
                                                     {
-                                                        error.unit_id.length ? (
-                                                            error.unit_id.map((error, index) => (
+                                                        error?.unit_id.length ? (
+                                                            error?.unit_id.map((error, index) => (
                                                                 <div key={index} className="invalid-feedback">
                                                                     {error}
                                                                 </div>

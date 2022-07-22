@@ -19,7 +19,7 @@ const ClientButton = () => {
                             {t("Client")}
                         </div>
                         <div className="kt-wizard-v2__nav-label-desc">
-                            {t("Acceder aux détails du client")}
+                            {t("Accéder aux détails du client")}
                         </div>
                     </div>
                 </div>

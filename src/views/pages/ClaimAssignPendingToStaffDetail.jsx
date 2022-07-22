@@ -21,6 +21,7 @@ import {verifyTokenExpire} from "../../middleware/verifyToken";
 import TreatmentHistory from "../components/TreatmentHistory";
 import {useTranslation} from "react-i18next";
 import CloseModal from "../components/CloseModal";
+import OldTreatmentButtonDetail from "../components/OldTreatmentButtonDetail";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -113,6 +114,22 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                     <div className="kt-wizard-v2__nav-body">
                                                         <div className="kt-wizard-v2__nav-icon">
+                                                            <i className="flaticon-edit-1"/>
+                                                        </div>
+                                                        <div className="kt-wizard-v2__nav-label">
+                                                            <div className="kt-wizard-v2__nav-label-title">
+                                                                {t("Ancien traitement")}
+                                                            </div>
+                                                            <div className="kt-wizard-v2__nav-label-desc">
+                                                                {t("Détails de l'ancien traitement effectué")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
+                                                    <div className="kt-wizard-v2__nav-body">
+                                                        <div className="kt-wizard-v2__nav-icon">
                                                             <i className="flaticon-clipboard"/>
 
                                                         </div>
@@ -191,6 +208,8 @@ const ClaimAssignPendingToStaffDetail = (props) => {
                                             <ClaimButtonDetail claim={claim}/>
 
                                             <AttachmentsButtonDetail claim={claim}/>
+
+                                            <OldTreatmentButtonDetail claim={claim}/>
 
                                             <div className="kt-wizard-v2__content" data-ktwizard-type="step-content">
                                                 <TreatmentHistory claim={claim}/>

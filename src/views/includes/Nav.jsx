@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
-import {Link, NavLink} from "react-router-dom";
+import {Link, NavLink,} from "react-router-dom";
 import moment from "moment";
 import 'moment/locale/fr';
 import * as LanguageAction from "../../store/actions/languageAction";
@@ -91,6 +91,7 @@ const Nav = (props) => {
             .then(response => {
                 //console.log('response:', response.data);
                 props.logoutUser();
+                window.location.href = "/login";
             })
             .catch(error => {
                 //console.log("")
