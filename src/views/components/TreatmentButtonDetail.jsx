@@ -131,7 +131,9 @@ const TreatmentButtonDetail = ({claim}) => {
                                     <div className="kt-wizard-v2__review-title"><span style={{color: "#48465b"}}>{t("Résultats de la mesure de satisfaction")}</span></div>
                                     <div className="kt-wizard-v2__review-content">
                                         <strong>{t("Le client est-t-il satisfait par le traitement ?")}:</strong>
-                                        <span className="mx-2">{claim.active_treatment.is_claimer_satisfied == 1 ? t("OUI") : t("NON")}</span><br/>
+                                        <span className="mx-2">
+                                            { claim.active_treatment.is_claimer_satisfied == 1 ?  <span className="kt-badge kt-badge--inline kt-badge--success">{t("OUI")}</span> : <span className="kt-badge kt-badge--inline kt-badge--danger">{t("NON")}</span> }
+                                        </span><br/>
 
                                         <strong>{t("Raison / Commentaires")}:</strong>
                                         <span className="mx-2">{claim.active_treatment.unsatisfied_reason ? claim.active_treatment.unsatisfied_reason : "-"}</span><br/>
