@@ -49,7 +49,7 @@ const ReasonModal = props => {
                     .then(response => {
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastRejectTreatmentClaimSuccessMessageConfig());
-                        window.location.href = `/process/claim-to-validated`
+                        window.location.href = `/process/claim-pending-to-validated`
                     })
                     .catch(error => {
                         setStartRequest(false);
@@ -66,7 +66,7 @@ const ReasonModal = props => {
                     .then(response => {
                         setStartRequest(false);
                         ToastBottomEnd.fire(toastValidateTreatmentClaimSuccessMessageConfig());
-                        window.location.href = `/process/claim-to-validated`
+                        window.location.href = `/process/claim-pending-to-validated`
                     })
                     .catch(error => {
                         setStartRequest(false);

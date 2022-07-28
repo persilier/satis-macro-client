@@ -252,6 +252,7 @@ const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
+        staff: state.user.user.staff,
         plan: state.plan.plan,
         user: state.user.user,
     };
