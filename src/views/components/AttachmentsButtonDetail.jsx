@@ -5,14 +5,31 @@ import CompleteAttachment from "./CompleteAttachment";
 import {verifyPermission} from "../../helpers/permission";
 import {useTranslation} from "react-i18next";
 
-const AttachmentsButtonDetail = ({claim, userPermissions}) => {
+const AttachmentsButtonDetail = ({claim, userPermissions, user}) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation()
 
     let completeAttachment = false;
-    if (claim)
+    let canAddAttachmentFirst = false;
+    let canAddAttachmentSecond = false;
+
+
+    const checkRole = (array, role) => {
+        let roleIsValid = false;
+        array.map((elem, index) => {
+            if (elem.name === role)
+                roleIsValid = true;
+        })
+        return roleIsValid;
+    }
+
+    if (claim) {
         completeAttachment = verifyPermission(userPermissions, 'attach-files-to-claim') && claim.status !== "archived";
+        canAddAttachmentFirst = claim.status === "assigned_to_staff" && checkRole(user.data.roles, "staff");
+        canAddAttachmentSecond = claim.status === "validated" && (checkRole(user.data.roles, "pilot") && user.staff.is_active_pilot) && (checkRole(user.data.roles, "staff") && claim.active_treatment.responsible_staff_id === user.staff.id)
+    }
+
 
     return (
         ready ? (
@@ -46,10 +63,11 @@ const AttachmentsButtonDetail = ({claim, userPermissions}) => {
                         }
 
                         {claim && (
-                            completeAttachment && (
+                            completeAttachment && claim.canAddAttachment &&  (
                                 <CompleteAttachment claimId={claim.id}/>
                             )
                         )}
+
                     </div>
                 </div>
             </div>
