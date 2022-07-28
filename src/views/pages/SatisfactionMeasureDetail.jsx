@@ -69,7 +69,7 @@ const SatisfactionMeasureDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(endPoint.edit + `/${id}`)
+            await axios.get(endPoint.edit + `/${id}?staff=${props.user.staff.id}`)
                 .then(response => {
                     setClaim(response.data);
                 })
@@ -159,7 +159,7 @@ const SatisfactionMeasureDetail = (props) => {
                                                 <div className="kt-wizard-v2__nav-item" data-ktwizard-type="step">
                                                     <div className="kt-wizard-v2__nav-body">
                                                         <div className="kt-wizard-v2__nav-icon">
-                                                            <i className="flaticon-list"/>
+                                                            <i className="flaticon-like"/>
                                                         </div>
                                                         <div className="kt-wizard-v2__nav-label">
                                                             <div className="kt-wizard-v2__nav-label-title">
@@ -234,6 +234,7 @@ const mapStateToProps = state => {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
         plan: state.plan.plan,
+        user: state.user.user,
     };
 };
 
