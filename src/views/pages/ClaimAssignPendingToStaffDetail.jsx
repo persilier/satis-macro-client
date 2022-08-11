@@ -43,7 +43,7 @@ const ClaimAssignPendingToStaffDetail = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}?type=unsatisfied`)
+            await axios.get(`${appConfig.apiDomaine}/claim-assignment-staff/${id}?type=unsatisfied?staff=${props.staff.id}`)
                 .then(response => {
                     setClaim(response.data);
                 })
@@ -272,6 +272,7 @@ const mapStateToProps = state => {
     return {
         userPermissions: state.user.user.permissions,
         lead: state.user.user.staff.is_lead,
+        staff: state.user.user.staff,
         plan: state.plan.plan
     };
 };

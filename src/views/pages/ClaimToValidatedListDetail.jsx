@@ -9,7 +9,7 @@ import {loadCss, loadScript, validatedClaimRule} from "../../helpers/function";
 import {verifyPermission} from "../../helpers/permission";
 import {ERROR_401} from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
-import ReasonModal from "../components/ReasonModal";
+import ReasonModalPending from "../components/ReasonModalPending";
 import {ToastBottomEnd} from "../components/Toast";
 import {toastErrorMessageWithParameterConfig} from "../../config/toastConfig";
 import ClientButtonDetail from "../components/ClientButtonDetail";
@@ -299,7 +299,7 @@ const ClaimToValidatedListDetail = (props) => {
 
                                         {
                                             showReason ? (
-                                                <ReasonModal
+                                                <ReasonModalPending
                                                     plan={props.plan}
                                                     id={id}
                                                     action={action}
