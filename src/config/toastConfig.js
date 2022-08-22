@@ -178,6 +178,20 @@ export const toastDeleteSuccessMessageConfig = () => {
 
 };
 
+export const toastDeleteSuccessMessageConfigUser = () => {
+
+    return (
+        i18n.isInitialized ? (
+            {
+                background: "#3c3e40",
+                icon: 'success',
+                title: `<strong style='font-weight: bold; font-size: 1.1rem; color: white' class='m-4'>${i18n.t("Succès de la déconnexion")}</strong>`
+            }
+        ) : null
+    )
+
+};
+
 export const toastDeleteErrorMessageConfig = () => {
 
     return (
