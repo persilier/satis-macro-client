@@ -12,10 +12,10 @@ import {ERROR_401} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import {DeleteConfirmation} from "../components/ConfirmationAlert";
-import {confirmActivation} from "../../config/confirmConfig";
+import {confirmActivation, confirmDeleteUser} from "../../config/confirmConfig";
 import {ToastBottomEnd} from "../components/Toast";
 import {
-    toastErrorMessageWithParameterConfig, toastSuccessMessageWithParameterConfig
+    toastErrorMessageWithParameterConfig,toastDeleteErrorMessageConfig, toastSuccessMessageWithParameterConfig, toastDeleteSuccessMessageConfigUser
 } from "../../config/toastConfig";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
@@ -32,6 +32,7 @@ const User = (props) => {
 
     const [load, setLoad] = useState(true);
     const [users, setUsers] = useState([]);
+    const [userLogout, setUserLogout] = useState(true);
     const [usersFilter, setUsersFilter] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
@@ -253,6 +254,33 @@ const User = (props) => {
         return value;
     };
 
+    const logoutUser= (userId, index) => {
+        let endpoint = `${appConfig.apiDomaine}/logout`;
+        let data = {id:userId}
+        DeleteConfirmation.fire(confirmDeleteUser())
+            .then((result) => {
+                if (verifyTokenExpire()) {
+                    if (result.value) {
+                        axios.post(endpoint, data)
+                            .then(response => {
+                                setUserLogout(false)
+                                ToastBottomEnd.fire(toastDeleteSuccessMessageConfigUser());
+                            })
+                            .catch(error => {
+                                if (error.response.data.error)
+                                    ToastBottomEnd.fire(toastErrorMessageWithParameterConfig(error.response.data.error))
+                                else
+                                    ToastBottomEnd.fire(toastDeleteErrorMessageConfig());
+                            })
+                        ;
+                    }
+                }
+            })
+        ;
+    };
+
+
+
     const printBodyTable = (user, index) => {
         return (
             <tr key={index} role="row" className="odd">
@@ -296,12 +324,27 @@ const User = (props) => {
                         verifyPermission(props.userPermissions, "show-user-any-institution") || verifyPermission(props.userPermissions, "show-user-my-institution") ? (
                             <Link to={`/settings/users/${user.id}/edit`}
                                   id={`user-edit-${user.id}`}
-                                  className="btn btn-sm btn-clean btn-icon btn-icon-md mx-3"
+                                  className="btn btn-sm btn-clean btn-icon btn-icon-md "
                                   title={t("Modifier")}>
                                 <i className="la la-edit"/>
                             </Link>
                         ) : null
                     }
+
+                    {  verifyPermission(props.userPermissions, "logout-user-my-institution") &&
+                        ( <button
+                            onClick={(e) => logoutUser(user.id, index)}
+                            className="btn btn-sm btn-clean btn-icon btn-icon-md"
+                            title={t("Déconnecter")}>
+
+                            {
+                                userLogout === true ? (
+                                    <i className="la la-unlock" style={{color: "green"}}/>
+                                ) :  <i className="la la-unlock" style={{color: "red"}}/>}
+
+                        </button> )
+                    }
+
                 </td>
             </tr>
         );
