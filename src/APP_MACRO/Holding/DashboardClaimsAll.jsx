@@ -128,7 +128,7 @@ const DashboardClaimsAll = (props) => {
                                                         <span className="kt-widget24__desc"/>
                                                     </div>
                                                     <span className="kt-widget24__stats kt-font-success">
-                                                        {(data.totalComplete && data.totalComplete.allInstitution) ? data.totalComplete.allInstitution : ""}
+                                                        {(data.totalComplete && data.totalComplete.allInstitution) ? data.totalComplete.allInstitution : "0"}
                                                     </span>
                                                 </div>
                                             {/*</NavLink>*/}
@@ -174,7 +174,7 @@ const DashboardClaimsAll = (props) => {
                                                     </h5>
                                                     <span className="kt-widget24__desc"/>
                                                 </div>
-                                                <span className="kt-widget24__stats kt-font-brand">{(data.totalTransferredToUnit && data.totalTransferredToUnit.allInstitution) ? data.totalTransferredToUnit.allInstitution : ""}
+                                                <span className="kt-widget24__stats kt-font-brand">{(data.totalTransferredToUnit && data.totalTransferredToUnit.allInstitution) ? data.totalTransferredToUnit.allInstitution : "0"}
                                                         </span>
                                             </div>
                                             {/*</NavLink>*/}
@@ -196,13 +196,9 @@ const DashboardClaimsAll = (props) => {
                                                             {componentData ? componentData.params.fr.pourcent_to_unit.value : ""}
                                                         </span>
                                                 <span className="kt-widget24__number">
-                                                            {
-                                                                data.totalTransferredToUnit && data.totalTransferredToUnit.allInstitution ?
                                                                     <span className="kt-widget24__number">
-                                                                        {percentageData((data.totalTransferredToUnit.allInstitution), totalData)}
+                                                                        {percentageData((data?.totalTransferredToUnit?.allInstitution ?? 0), totalData)}
                                                                    </span>
-                                                                    : null
-                                                            }
                                                         </span>
                                             </div>
                                         </div>
@@ -220,7 +216,7 @@ const DashboardClaimsAll = (props) => {
                                                         <span className="kt-widget24__desc"/>
                                                     </div>
                                                     <span className="kt-widget24__stats kt-font-warning">
-                                                        {(data.totalBeingProcess && data.totalBeingProcess.allInstitution) ? data.totalBeingProcess.allInstitution : ""}
+                                                        {(data.totalBeingProcess && data.totalBeingProcess.allInstitution) ? data.totalBeingProcess.allInstitution : "0"}
                                                     </span>
                                                 </div>
                                             {/*</NavLink>*/}
@@ -243,13 +239,9 @@ const DashboardClaimsAll = (props) => {
                                                     {componentData ? componentData.params.fr.pourcent_in_treatment.value : ""}
                                                 </span>
                                                 <span className="kt-widget24__number">
-                                                    {
-                                                        (data.totalBeingProcess && data.totalBeingProcess.allInstitution) ?
                                                             <span className="kt-widget24__number">
-                                                                {percentageData((data.totalBeingProcess.allInstitution), totalData)}
+                                                                {percentageData((data?.totalBeingProcess?.allInstitution ?? 0), totalData)}
                                                            </span>
-                                                            : null
-                                                    }
                                                 </span>
                                             </div>
                                         </div>
@@ -267,7 +259,7 @@ const DashboardClaimsAll = (props) => {
                                                         <span className="kt-widget24__desc"/>
                                                     </div>
                                                     <span className="kt-widget24__stats kt-font-success">
-                                                    {(data.totalTreated && data.totalTreated.allInstitution) ? data.totalTreated.allInstitution : ""}
+                                                    {(data.totalTreated && data.totalTreated.allInstitution) ? data.totalTreated.allInstitution : "0"}
                                                 </span>
                                                 </div>
                                             {/*</NavLink>*/}
@@ -290,13 +282,9 @@ const DashboardClaimsAll = (props) => {
                                                     {componentData ? componentData.params.fr.pourcent_treat.value : ""}
                                                 </span>
                                                 <span className="kt-widget24__number">
-                                                    {
-                                                        (data.totalTreated && data.totalTreated.allInstitution) ?
                                                             <span className="kt-widget24__number">
-                                                                {percentageData((data.totalTreated.allInstitution), totalData)}
+                                                                {percentageData((data?.totalTreated?.allInstitution ?? 0), totalData)}
                                                            </span>
-                                                            : null
-                                                    }
 								                </span>
                                             </div>
                                         </div>
@@ -314,7 +302,7 @@ const DashboardClaimsAll = (props) => {
                                                         <span className="kt-widget24__desc"/>
                                                     </div>
                                                     <span className="kt-widget24__stats kt-font-success">
-                                                    {(data.totalUnfounded && data.totalUnfounded.allInstitution) ? data.totalUnfounded.allInstitution : ""}
+                                                    {(data.totalUnfounded && data.totalUnfounded.allInstitution) ? data.totalUnfounded.allInstitution : "0"}
                                                 </span>
                                                 </div>
                                             {/*</NavLink>*/}
@@ -340,13 +328,9 @@ const DashboardClaimsAll = (props) => {
                                                     {componentData ? componentData.params.fr.pourcent_unfound.value : ""}
                                                 </span>
                                                 <span className="kt-widget24__number">
-                                                    {
-                                                        (data.totalUnfounded && data.totalUnfounded.allInstitution) ?
                                                             <span className="kt-widget24__number">
-                                                                {percentageData((data.totalUnfounded.allInstitution), totalData)}
+                                                                {percentageData((data?.totalUnfounded?.allInstitution ?? 0), totalData)}
                                                            </span>
-                                                            : null
-                                                    }
                                                 </span>
                                             </div>
                                         </div>
@@ -364,7 +348,7 @@ const DashboardClaimsAll = (props) => {
                                                         <span className="kt-widget24__desc"/>
                                                     </div>
                                                     <span className="kt-widget24__stats kt-font-danger">
-                                                    {(data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.allInstitution) ? data.totalMeasuredSatisfaction.allInstitution : ""}
+                                                    {(data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.allInstitution) ? data.totalMeasuredSatisfaction.allInstitution : "0"}
                                                 </span>
                                                 </div>
                                             {/*</NavLink>*/}
@@ -386,13 +370,9 @@ const DashboardClaimsAll = (props) => {
                                                     {componentData ? componentData.params.fr.pourcent_satisfated.value : ""}
                                                 </span>
                                                 <span className="kt-widget24__number">
-                                                {
-                                                    (data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.allInstitution) ?
                                                         <span className="kt-widget24__number">
-                                                            {percentageData((data.totalMeasuredSatisfaction.allInstitution), totalData)}
+                                                            {percentageData((data?.totalMeasuredSatisfaction?.allInstitution ?? 0), totalData)}
                                                        </span>
-                                                        : null
-                                                }
 								</span>
                                             </div>
                                         </div>
