@@ -67,7 +67,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-brand">
-									{(data.totalRegistered && data.totalRegistered.myActivity) ? data.totalRegistered.myActivity : ""}
+									{(data.totalRegistered && data.totalRegistered.myActivity) ? data.totalRegistered.myActivity : "0"}
 								</span>
                                             </div>
                                         </div>
@@ -84,7 +84,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-danger">
-									{(data.totalIncomplete && data.totalIncomplete.myActivity) ? data.totalIncomplete.myActivity : ""}
+									{(data.totalIncomplete && data.totalIncomplete.myActivity) ? data.totalIncomplete.myActivity : "0"}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
@@ -107,7 +107,7 @@ const DashboardClaimsActivity = (props) => {
                                                 {
                                                     (data.totalIncomplete && data.totalIncomplete.myActivity) ?
                                                         <span className="kt-widget24__number">
-                                                {percentageData((data.totalIncomplete.myActivity), totalData)}
+                                                {percentageData((data?.totalIncomplete?.myActivity ?? 0), totalData)}
                                            </span>
                                                         : null
                                                 }
@@ -127,7 +127,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-success">
-									{(data.totalComplete && data.totalComplete.myActivity) ? data.totalComplete.myActivity : ""}
+									{(data.totalComplete && data.totalComplete.myActivity) ? data.totalComplete.myActivity : "0"}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
@@ -148,13 +148,9 @@ const DashboardClaimsActivity = (props) => {
                                     {componentData ? componentData.params.fr.pourcent_complete.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
-									{
-                                        (data.totalComplete && data.totalComplete.myActivity) ?
                                             <span className="kt-widget24__number">
-                                                {percentageData((data.totalComplete.myActivity), totalData)}
+                                                {percentageData((data?.totalComplete?.myActivity ?? 0), totalData)}
                                            </span>
-                                            : null
-                                    }
 								</span>
                                             </div>
                                         </div>
@@ -172,7 +168,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-brand">
-                                        {(data.totalTransferredToUnit && data.totalTransferredToUnit.myActivity) ? data.totalTransferredToUnit.myActivity : ""}
+                                        {(data.totalTransferredToUnit && data.totalTransferredToUnit.myActivity) ? data.totalTransferredToUnit.myActivity : "0"}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
@@ -194,13 +190,9 @@ const DashboardClaimsActivity = (props) => {
                                     {componentData ? componentData.params.fr.pourcent_to_unit.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
-									{
-                                        (data.totalTransferredToUnit && data.totalTransferredToUnit.myActivity) ?
                                             <span className="kt-widget24__number">
-                                                {percentageData((data.totalTransferredToUnit.myActivity), totalData)}
+                                                {percentageData((data?.totalTransferredToUnit?.myActivity ?? 0), totalData)}
                                            </span>
-                                            : null
-                                    }
 								</span>
                                             </div>
                                         </div>
@@ -218,7 +210,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-warning">
-									   {(data.totalBeingProcess && data.totalBeingProcess.myActivity) ? data.totalBeingProcess.myActivity : ""}
+									   {(data.totalBeingProcess && data.totalBeingProcess.myActivity) ? data.totalBeingProcess.myActivity : "0"}
 
 								</span>
                                             </div>
@@ -240,13 +232,9 @@ const DashboardClaimsActivity = (props) => {
                                     {componentData ? componentData.params.fr.pourcent_in_treatment.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
-									{
-                                        (data.totalBeingProcess && data.totalBeingProcess.myActivity) ?
                                             <span className="kt-widget24__number">
-                                                {percentageData((data.totalBeingProcess.myActivity), totalData)}
+                                                {percentageData((data?.totalBeingProcess?.myActivity ?? 0), totalData)}
                                            </span>
-                                            : null
-                                    }
 								</span>
                                             </div>
                                         </div>
@@ -264,7 +252,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-success">
-                                        {(data.totalTreated && data.totalTreated.myActivity) ? data.totalTreated.myActivity : ""}
+                                        {(data.totalTreated && data.totalTreated.myActivity) ? data.totalTreated.myActivity : "0"}
                                     </span>
                                             </div>
                                             <div className="progress progress--sm">
@@ -285,13 +273,9 @@ const DashboardClaimsActivity = (props) => {
                                     {componentData ? componentData.params.fr.pourcent_treat.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
-									{
-                                        (data.totalTreated && data.totalTreated.myActivity) ?
                                             <span className="kt-widget24__number">
-                                                {percentageData((data.totalTreated.myActivity), totalData)}
+                                                {percentageData((data?.totalTreated?.myActivity ?? 0), totalData)}
                                            </span>
-                                            : null
-                                    }
 								</span>
                                             </div>
                                         </div>
@@ -309,7 +293,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-success">
-                                        {(data.totalUnfounded && data.totalUnfounded.myActivity) ? data.totalUnfounded.myActivity : ""}
+                                        {(data.totalUnfounded && data.totalUnfounded.myActivity) ? data.totalUnfounded.myActivity : "0"}
 								</span>
                                             </div>
                                             <div className="progress progress--sm">
@@ -329,13 +313,9 @@ const DashboardClaimsActivity = (props) => {
                                     {componentData ? componentData.params.fr.pourcent_unfound.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
-									{
-                                        (data.totalUnfounded && data.totalUnfounded.myActivity) ?
                                             <span className="kt-widget24__number">
-                                                {percentageData((data.totalUnfounded.myActivity), totalData)}
+                                                {percentageData((data?.totalUnfounded?.myActivity ?? 0), totalData)}
                                            </span>
-                                            : null
-                                    }
 								</span>
                                             </div>
                                         </div>
@@ -353,7 +333,7 @@ const DashboardClaimsActivity = (props) => {
 									</span>
                                                 </div>
                                                 <span className="kt-widget24__stats kt-font-danger">
-                                        {(data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.myActivity) ? data.totalMeasuredSatisfaction.myActivity : null}
+                                        {(data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.myActivity) ? data.totalMeasuredSatisfaction.myActivity : "0"}
 
 								</span>
                                             </div>
@@ -374,13 +354,9 @@ const DashboardClaimsActivity = (props) => {
                                     {componentData ? componentData.params.fr.pourcent_satisfated.value : ""}
 								</span>
                                                 <span className="kt-widget24__number">
-									{
-                                        (data.totalMeasuredSatisfaction && data.totalMeasuredSatisfaction.myActivity) ?
                                             <span className="kt-widget24__number">
-                                                {percentageData((data.totalMeasuredSatisfaction.myActivity), totalData)}
+                                                {percentageData((data?.totalMeasuredSatisfaction?.myActivity ?? 0), totalData)}
                                            </span>
-                                            : null
-                                    }
 								</span>
                                             </div>
                                         </div>
