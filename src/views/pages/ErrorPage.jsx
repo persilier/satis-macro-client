@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 
 loadCss("/assets/css/pages/error/error-6.css");
 
-const Error401 = () => {
+const ErrorPage = ({code, message}) => {
 
     //usage of useTranslation i18n
     const {t, ready} = useTranslation();
@@ -17,10 +17,10 @@ const Error401 = () => {
                          style={{ backgroundImage: "url(/assets/media/error/bg6.jpg)" }}>
                         <div className="kt-error_container">
                             <div className="kt-error_subtitle kt-font-light">
-                                <h1>401</h1>
+                                <h1>{code}</h1>
                             </div>
                             <p className="kt-error_description kt-font-light" style={{marginBottom: "300px"}}>
-                                {t("L'accès est refusé")} <button onClick={(e) => window.location.href = "/"} className="btn btn-primary mx-5">{t("Quitter")}</button>
+                                {message} <button onClick={(e) => window.location.href = "/"} className="btn btn-primary mx-5">{t("Quitter")}</button>
                             </p>
                         </div>
                     </div>
@@ -30,4 +30,4 @@ const Error401 = () => {
     );
 };
 
-export default Error401;
+export default ErrorPage;

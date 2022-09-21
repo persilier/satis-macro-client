@@ -9,18 +9,27 @@ import Nav from "../includes/Nav";
 import Footer from "../includes/Footer";
 import Aside from "../includes/Aside";
 import Body from "../includes/Body";
-import Error401 from "../pages/Error401";
+import ErrorPage from "../pages/ErrorPage";
+import {errorElements} from "../../constants/errors";
 
 
 function App() {
-    {
-        console.log("Something is wrong")
-    }
+
+
+
     return (
         <Switch>
-            <Route exact path="/error401">
-                <Error401/>
-            </Route>
+
+            {
+                errorElements.map((errorElement, index) => (
+                    <Route exact key={index} path={errorElement.link}>
+                        <ErrorPage message={errorElement.message} code={errorElement.code}/>
+                    </Route>
+                ))
+            }
+{/*            <Route exact path="/error401">
+                <ErrorPage/>
+            </Route>*/}
 
             <Route path={"/"}>
                 <div

@@ -1091,5 +1091,8 @@
     "validée" : "validated",
     "archivée": "archived",
     "en attente" : "awaiting",
-    "considérée": "considered"
+    "considérée": "considered",
+    "L'accès est refusé": "You are not authorized to perform this action or to access this page",
+    "Vous n'avez pas les permissions nécéssaires": "This action is not allowed",
+    "Erreur interne du serveur": "Internal server error"
 }
