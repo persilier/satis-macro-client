@@ -5,6 +5,7 @@ import { logoutUser } from "./crud";
 import {ExpirationConfirmation} from "../views/components/ConfirmationAlert";
 import {ExpireConfig} from "../config/confirmConfig";
 import i18n from "i18next";
+import {redirectErrorPage} from "../config/errorPage";
 
 
 export default function setupAxios(axios, store) {
@@ -72,6 +73,7 @@ export default function setupAxios(axios, store) {
                     }
                 }
             }
+            redirectErrorPage(error.response.status);
 
             return Promise.reject(error);
         }

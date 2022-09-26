@@ -1091,5 +1091,7 @@
     "validée" : "validated",
     "archivée": "archived",
     "en attente" : "awaiting",
-    "considérée": "considered"
+    "considérée": "considered",
+    "Vous n'avez pas les permissions nécéssaires": "This action is not allowed",
+    "Erreur interne du serveur": "Internal server error"
 }

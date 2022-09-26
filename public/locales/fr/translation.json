@@ -1094,5 +1094,7 @@
   "validée" : "validée",
   "archivée": "archivée",
   "en attente" : "en attente",
-  "considérée": "considérée"
+  "considérée": "considérée",
+  "Vous n'avez pas les permissions nécéssaires": "Vous n'avez pas les permissions nécéssaires",
+  "Erreur interne du serveur": "Erreur interne du serveur"
 }

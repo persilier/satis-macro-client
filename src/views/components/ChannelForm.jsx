@@ -13,7 +13,7 @@ import {
     toastEditErrorMessageConfig,
     toastEditSuccessMessageConfig
 } from "../../config/toastConfig";
-import {ERROR_401, redirectError401Page} from "../../config/errorPage";
+import {ERROR_401, redirectErrorPage} from "../../config/errorPage";
 import {verifyPermission} from "../../helpers/permission";
 import InputRequire from "./InputRequire";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
@@ -100,7 +100,7 @@ const ChannelForms = (props) => {
                         ToastBottomEnd.fire(toastAddSuccessMessageConfig());
                     })
                     .catch(errorRequest => {
-                        redirectError401Page(errorRequest.response.data.code);
+                        redirectErrorPage(errorRequest.response.data.code);
                         setStartRequest(false);
                         setError({...defaultError, ...errorRequest.response.data.error});
                         ToastBottomEnd.fire(toastAddErrorMessageConfig());
