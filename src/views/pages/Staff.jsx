@@ -25,6 +25,9 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import Select from "react-select";
+import InputRequire from "../components/InputRequire";
+
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -32,6 +35,7 @@ const endPointConfig = {
     PRO: {
         plan: "PRO",
         list: `${appConfig.apiDomaine}/my/staff`,
+        create: `${appConfig.apiDomaine}/my/staff/create`,
         destroy: unitId => `${appConfig.apiDomaine}/my/staff/${unitId}`,
     },
     MACRO: {
@@ -71,6 +75,9 @@ const Staff = (props) => {
 
     const [load, setLoad] = useState(false);
     const [staffs, setStaffs] = useState([]);
+    const [loadEntities, setLoadEntities] = useState(true);
+    const [entities, setEntities] = useState(null);
+    const [entitiesOption, setEntitiesOption] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -79,10 +86,24 @@ const Staff = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
 
+    const getEntities = useCallback(
+        async () => {
+            await axios.get(endPointConfig["PRO"].create)
+                .then(response => {
+                    setEntitiesOption(response.data.units);
+                })
+                .catch(error => {
+                    setLoadEntities(false);
+                })
+        },
+        [],
+    );
+
+
     const fetchData = useCallback(async (search = {status: false, value: ""}) => {
         if (verifyTokenExpire()) {
             setLoad(true);
-            await axios.get(`${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${search.status ? `&key=${search.value}` : ""}`)
+            await axios.get(`${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${search.status ? `&key=${search.value}` : ""}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.total/numberPerPage));
                     setShowList(response.data.data.slice(0, numberPerPage));
@@ -97,9 +118,10 @@ const Staff = (props) => {
                     //console.log("Something is wrong");
                 });
         }
-    }, [numberPerPage, activeNumberPage])
+    }, [numberPerPage, activeNumberPage, entities])
 
     useEffect(() => {
+        getEntities();
         fetchData();
     }, [fetchData]);
 
@@ -137,6 +159,22 @@ const Staff = (props) => {
             setActiveNumberPage(activeNumberPage - 1);
         }
     };
+
+    const formatUnitSelectOption = (options, labelKey, translate, valueKey = "id") => {
+        const newOptions = [];
+        for (let i = 0; i < options.length; i++) {
+            if (translate)
+                newOptions.push({value: (options[i])[valueKey], label: ((options[i])[labelKey])[translate], lead: (options[i])["lead"]});
+            else
+                newOptions.push({value: (options[i])[valueKey], label: (options[i])[labelKey], lead: (options[i])["lead"]});
+        }
+        return newOptions;
+    };
+
+    const onChangeEntities = (selected) => {
+        setEntities(selected);
+    };
+
 
     const deleteStaff = (staffId, index) => {
         DeleteConfirmation.fire(confirmDeleteConfig())
@@ -265,6 +303,10 @@ const Staff = (props) => {
 
                                     <div className="kt-portlet__body">
                                         <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row mb-3 row">
+                                                <ExportButton className="text-right" style={{marginLeft: "61%"}} downloadLink={`${appConfig.apiDomaine}/download-excel/staffs`} pageUrl={"/settings/staffs/import"}/>
+                                            </div>
+
                                             <div className="row">
                                                 <div className="col-sm-6 text-left">
                                                     <div id="kt_table_1_filter" className="dataTables_filter">
@@ -274,8 +316,21 @@ const Staff = (props) => {
                                                         </label>
                                                     </div>
                                                 </div>
+                                                <div className="col-sm-6 ">
+                                                    <div  className={"row col"}>
+                                                        <label htmlFor="unit" className="col-xl-2 col-lg-2 col-form-label">{t("Unité")} </label>
+                                                        <div className="" style={{width: "83%"}}>
+                                                            <Select
+                                                                isClearable
+                                                                value={entities}
+                                                                onChange={onChangeEntities}
+                                                                placeholder={t("Filtrer en fonction de l'unité")}
+                                                                options={formatUnitSelectOption(entitiesOption, "name", "fr")}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                                <ExportButton downloadLink={`${appConfig.apiDomaine}/download-excel/staffs`} pageUrl={"/settings/staffs/import"}/>
                                             </div>
                                             {
                                                 load ? (
