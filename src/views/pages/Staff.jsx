@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import {connect} from "react-redux";
 import axios from "axios";
 import {
@@ -21,6 +21,8 @@ import {NUMBER_ELEMENT_PER_PAGE} from "../../constants/dataTable";
 import ExportButton from "../components/ExportButton";
 import {verifyTokenExpire} from "../../middleware/verifyToken";
 import {useTranslation} from "react-i18next";
+import Select from "react-select";
+import InputRequire from "../components/InputRequire";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -28,6 +30,7 @@ const endPointConfig = {
     PRO: {
         plan: "PRO",
         list: `${appConfig.apiDomaine}/my/staff`,
+        create: `${appConfig.apiDomaine}/my/staff/create`,
         destroy: unitId => `${appConfig.apiDomaine}/my/staff/${unitId}`,
     },
     MACRO: {
@@ -66,7 +69,10 @@ const   Staff = (props) => {
     }
 
     const [load, setLoad] = useState(true);
+    const [loadEntities, setLoadEntities] = useState(true);
     const [staffs, setStaffs] = useState([]);
+    const [entities, setEntities] = useState(null);
+    const [entitiesOption, setEntitiesOption] = useState([]);
     const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
     const [activeNumberPage, setActiveNumberPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
@@ -75,9 +81,24 @@ const   Staff = (props) => {
     const [nextUrl, setNextUrl] = useState(null);
     const [prevUrl, setPrevUrl] = useState(null);
 
+    const getEntities = useCallback(
+        async () => {
+            await axios.get(endPointConfig["PRO"].create)
+                .then(response => {
+                    setEntitiesOption(response.data.units);
+                })
+                .catch(error => {
+                    setLoadEntities(false);
+                })
+        },
+        [],
+    );
+
+
     useEffect(() => {
         async function fetchData() {
-            await axios.get(endPoint.list + "?size=" + numberPerPage)
+            setLoad(true);
+            await axios.get(`${endPoint.list}?size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                 .then(response => {
                     setNumberPage(forceRound(response.data.total/NUMBER_ELEMENT_PER_PAGE));
                     setShowList(response.data.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
@@ -93,9 +114,11 @@ const   Staff = (props) => {
                     //console.log("Something is wrong");
                 });
         }
-        if (verifyTokenExpire())
-            fetchData();
-    }, [endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
+        if (verifyTokenExpire()) {
+            fetchData().then();
+            getEntities().then();
+        }
+    }, [entities, endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
     const separateStringByComa = (arrayString) => {
         let generateString = "";
@@ -105,21 +128,6 @@ const   Staff = (props) => {
         return generateString;
     };
 
-    const filterShowListBySearchValue = (value) => {
-        value = getLowerCaseString(value);
-        let newStaffs = [...staffs];
-        newStaffs = newStaffs.filter(el => (
-
-            getLowerCaseString(`${el.is_lead ? 'L' : ''} ${el.identite ? el.identite.lastname : ''} ${el.identite ? el.identite.firstname : ''}`).indexOf(value) >= 0 ||
-            getLowerCaseString(separateStringByComa(el.identite ? el.identite.telephone : '')).indexOf(value) >= 0 ||
-            getLowerCaseString(separateStringByComa( el.identite ? el.identite.email : '')).indexOf(value) >= 0 ||
-            getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-maybe-no-unit') ? el.unit ? el.unit.name["fr"] : '' : el.unit.name["fr"]).indexOf(value) >= 0 ||
-            getLowerCaseString(verifyPermission(props.userPermissions, 'list-staff-from-any-unit') ?  el.institution.name["fr"] : '').indexOf(value) >= 0 ||
-            getLowerCaseString(el.position.name["fr"]).indexOf(value) >= 0
-        ));
-
-        return newStaffs;
-    };
 
     const searchElement = async (e) => {
         if (e.target.value) {
@@ -127,7 +135,7 @@ const   Staff = (props) => {
             setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE));*/
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?key=" + getLowerCaseString(e.target.value) + "&size=" + numberPerPage)
+                axios.get(`${endPoint.list}?key=${getLowerCaseString(e.target.value)}&size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                     .then(response => {
                         setLoad(false);
                         setStaffs(response.data["data"]);
@@ -145,7 +153,7 @@ const   Staff = (props) => {
         } else {
             if (verifyTokenExpire()) {
                 setLoad(true);
-                axios.get(endPoint.list + "?size=" + numberPerPage)
+                axios.get(`${endPoint.list}?size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                     .then(response => {
                         setLoad(false);
                         setStaffs(response.data["data"]);
@@ -166,12 +174,13 @@ const   Staff = (props) => {
         }
     };
 
+
     const onChangeNumberPerPage = (e) => {
 
         e.persist();
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list + "?size=" + e.target.value)
+            axios.get(`${endPoint.list}?size=${e.target.value}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                 .then(response => {
                     setLoad(false);
                     setActiveNumberPage(1);
@@ -205,7 +214,7 @@ const   Staff = (props) => {
 
         if (verifyTokenExpire()) {
             setLoad(true);
-            axios.get(endPoint.list + "?page=" + page + "&size=" + numberPerPage)
+            axios.get(`${endPoint.list}?page=${page}&size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                 .then(response => {
                     setLoad(false);
                     setPrevUrl(response.data["prev_page_url"]);
@@ -229,7 +238,7 @@ const   Staff = (props) => {
             if (nextUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(nextUrl + "?size=" + numberPerPage)
+                    axios.get( `${nextUrl}?size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                         .then(response => {
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
@@ -258,7 +267,7 @@ const   Staff = (props) => {
             if (prevUrl !== null) {
                 if (verifyTokenExpire()) {
                     setLoad(true);
-                    axios.get(prevUrl + "?size=" + numberPerPage)
+                    axios.get( `${prevUrl}?size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                         .then(response => {
                             setLoad(false);
                             setPrevUrl(response.data["prev_page_url"]);
@@ -295,7 +304,7 @@ const   Staff = (props) => {
 
                                     if (verifyTokenExpire()) {
                                         setLoad(true);
-                                        axios.get(endPoint.list + "?page=" + activeNumberPage + "&size=" + numberPerPage)
+                                        axios.get(`${endPoint.list}?page=${activeNumberPage}&size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                                             .then(response => {
                                                 setLoad(false);
                                                 setPrevUrl(response.data["prev_page_url"]);
@@ -316,7 +325,7 @@ const   Staff = (props) => {
 
                                     if (verifyTokenExpire()) {
                                         setLoad(true);
-                                        axios.get(endPoint.list + "?page=" + activeNumberPage - 1 + "&size=" + numberPerPage)
+                                        axios.get(`${endPoint.list}?page=${activeNumberPage - 1}&size=${numberPerPage}${entities !== null ? `&unit_id=${entities.value}` : ""}`)
                                             .then(response => {
                                                 setLoad(false);
                                                 setPrevUrl(response.data["prev_page_url"]);
@@ -345,15 +354,21 @@ const   Staff = (props) => {
         ;
     };
 
-    const arrayNumberPage = () => {
-        const pages = [];
-        for (let i = 0; i < numberPage; i++) {
-            pages[i] = i;
+
+    const formatUnitSelectOption = (options, labelKey, translate, valueKey = "id") => {
+        const newOptions = [];
+        for (let i = 0; i < options.length; i++) {
+            if (translate)
+                newOptions.push({value: (options[i])[valueKey], label: ((options[i])[labelKey])[translate], lead: (options[i])["lead"]});
+            else
+                newOptions.push({value: (options[i])[valueKey], label: (options[i])[labelKey], lead: (options[i])["lead"]});
         }
-        return pages
+        return newOptions;
     };
 
-    const pages = arrayNumberPage();
+    const onChangeEntities = (selected) => {
+        setEntities(selected);
+    };
 
     const printBodyTable = (staff, index) => {
         return (
@@ -452,17 +467,32 @@ const   Staff = (props) => {
 
                                     <div className="kt-portlet__body">
                                         <div id="kt_table_1_wrapper" className="dataTables_wrapper dt-bootstrap4">
+                                            <div className="row mb-3 row">
+                                                    <ExportButton className="text-right" style={{marginLeft: "61%"}} downloadLink={`${appConfig.apiDomaine}/download-excel/staffs`} pageUrl={"/settings/staffs/import"}/>
+                                            </div>
                                             <div className="row">
                                                 <div className="col-sm-6 text-left">
-                                                    <div id="kt_table_1_filter" className="dataTables_filter">
-                                                        <label>
-                                                            {t("Recherche")}:
-                                                            <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
-                                                        </label>
+                                                        <div id="kt_table_1_filter" className="dataTables_filter">
+                                                            <label>
+                                                                {t("Recherche")}:
+                                                                <input id="myInput" type="text" onKeyUp={(e) => searchElement(e)} className="form-control form-control-sm" placeholder="" aria-controls="kt_table_1"/>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                <div className="col-sm-6 ">
+                                                    <div  className={"row col"}>
+                                                        <label htmlFor="unit" className="col-xl-2 col-lg-2 col-form-label">{t("Unité")} </label>
+                                                        <div className="" style={{width: "83%"}}>
+                                                            <Select
+                                                                isClearable
+                                                                value={entities}
+                                                                onChange={onChangeEntities}
+                                                                placeholder={t("Filtrer en fonction de l'unité")}
+                                                                options={formatUnitSelectOption(entitiesOption, "name", "fr")}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
-
-                                                <ExportButton downloadLink={`${appConfig.apiDomaine}/download-excel/staffs`} pageUrl={"/settings/staffs/import"}/>
                                             </div>
                                             {
                                                 load ? (
