@@ -51,15 +51,18 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
-                    if (!mounted) return;
-                    setComponentData(response.data);
-                    setLoad(false);
-                    localStorage.removeItem("Dtimeout")
+                    if (mounted) {
+                        setComponentData(response.data);
+                        setLoad(false);
+                        localStorage.removeItem("Dtimeout")
+                    }
                 })
                 .catch(error => {
-                    setLoad(false);
-                    localStorage.removeItem("Dtimeout")
-                    console.log("Something is wrong");
+                    if (mounted) {
+                        setLoad(false);
+                        localStorage.removeItem("Dtimeout")
+                        console.log("Something is wrong");
+                    }
                 })
             ;
         }
