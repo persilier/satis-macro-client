@@ -51,6 +51,7 @@ const LoginPage = (props) => {
         async function fetchData() {
             await axios.get(appConfig.apiDomaine + "/components/retrieve-by-name/connection")
                 .then(response => {
+                    if (!mounted) return;
                     setComponentData(response.data);
                     setLoad(false);
                     localStorage.removeItem("Dtimeout")
@@ -66,6 +67,8 @@ const LoginPage = (props) => {
         fetchData();
         return () => mounted = false;
     }, []);
+
+
 
     useEffect(() => {
         const decount = JSON.parse(localStorage.getItem('decount'));
