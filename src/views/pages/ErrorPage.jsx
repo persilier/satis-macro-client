@@ -20,7 +20,9 @@ const ErrorPage = ({code, message}) => {
                                 <h1>{code}</h1>
                             </div>
                             <p className="kt-error_description kt-font-light" style={{marginBottom: "300px"}}>
-                                {message} <button onClick={(e) => window.location.href = "/"} className="btn btn-primary mx-5">{t("Quitter")}</button>
+                                {message} <button onClick={(e) => {
+                                window.location.href = "/";
+                            }} className="btn btn-primary mx-5">{t("Quitter")}</button>
                             </p>
                         </div>
                     </div>

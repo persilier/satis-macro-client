@@ -46,8 +46,11 @@ export default function setupAxios(axios, store) {
 
                         return response;
                     }
+                    redirectErrorPage(response.status);
                 }
             }
+
+            redirectErrorPage(response.status);
             return response;
         },
         (error) => {
@@ -68,13 +71,11 @@ export default function setupAxios(axios, store) {
                             .catch(console.log);
                         return Promise.reject(error);
                     }
-                    if (error.response.status === 401){
-                        logout();
-                    }
+                    redirectErrorPage(error.response.status);
                 }
             }
-            redirectErrorPage(error.response.status);
 
+            redirectErrorPage(error.response.status);
             return Promise.reject(error);
         }
     );
