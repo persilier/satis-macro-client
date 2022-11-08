@@ -13,19 +13,31 @@ import {
 // react-i18n
 import { useTranslation } from "react-i18next";
 import CurrencUserGuide from "../components/shared/CurrencUserGuide";
+import { manuelsMatch } from "../../constants/guides";
 
 const Aside = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
   const [staff, setStaff] = useState();
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    let staff = JSON.parse(localStorage.getItem("userData")).staff;
-    let data = JSON.parse(localStorage.getItem("userData")).data.roles;
     setStaff(JSON.parse(localStorage.getItem("userData")).staff);
     setData(JSON.parse(localStorage.getItem("userData")).data.roles);
   }, []);
+  console.log(data);
+
+  let canGuidable = data && data.length > 0;
+  for (let ri = 0; ri < data.length; ri++) {
+    const element = data[ri];
+    console.log(element);
+    let isListed = manuelsMatch[element.name];
+    console.log(isListed);
+    if (!isListed) {
+      canGuidable = false;
+      break;
+    }
+  }
 
   return (
     <div
@@ -558,6 +570,51 @@ const Aside = (props) => {
                           </NavLink>
                         ) : null}
 
+                        {/* 
+{verifyPermission(
+                            props.userPermissions,
+                            "bci-monthly-reports"
+                          ) ? (
+                            <NavLink
+                              exact
+                              to="/monitoring/claims/uemoa/reporting-nine"
+                              className="kt-menu__item "
+                              activeClassName="kt-menu__item--active"
+                              aria-haspopup="true"
+                            >
+                              <li className="kt-menu__link ">
+                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                  <span />
+                                </i>
+                                <span className="kt-menu__link-text">
+                                  Etat Suivi des réclamations
+                                </span>
+                              </li>
+                            </NavLink>
+                          ) : null}
+
+                          {verifyPermission(
+                            props.userPermissions,
+                            "bci-annual-reports"
+                          ) ? (
+                            <NavLink
+                              exact
+                              to="/monitoring/claims/uemoa/reporting-ten"
+                              className="kt-menu__item "
+                              activeClassName="kt-menu__item--active"
+                              aria-haspopup="true"
+                            >
+                              <li className="kt-menu__link mt-2">
+                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                  <span />
+                                </i>
+                                <span className="kt-menu__link-text">
+                                  Statistique Globale Annuelle
+                                </span>
+                              </li>
+                            </NavLink>
+                          ) : null} */}
+
                         {/*                   {
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-my-institution') ? (
@@ -811,7 +868,7 @@ const Aside = (props) => {
                                 ) : null}
                                 {verifyPermission(
                                   props.userPermissions,
-                                  "update-my-institution"
+                                  "update-any-institution"
                                 ) ? (
                                   <NavLink
                                     to="/settings/institution/edit"
@@ -1770,7 +1827,7 @@ const Aside = (props) => {
                                         <span />
                                       </i>
                                       <span className="kt-menu__link-text">
-                                        {t("Journal des activitées")}
+                                        {t("Journal des activités")}
                                       </span>
                                     </li>
                                   </NavLink>
@@ -2495,7 +2552,7 @@ const Aside = (props) => {
                                                             <NavLink exact to="/settings/logs" className="kt-menu__item " activeClassName="kt-menu__item--active" aria-haspopup="true">
                                                                 <li className="kt-menu__link ">
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
-                                                                    <span className="kt-menu__link-text">{t("Journal des activitées")}</span>
+                                                                    <span className="kt-menu__link-text">{t("Journal des activités")}</span>
                                                                 </li>
                                                             </NavLink>
                                                         ) : null
@@ -2505,11 +2562,159 @@ const Aside = (props) => {
                   </li>
                 </>
               )}
+              {canGuidable && (
+                <>
+                  <li className="kt-menu__section ">
+                    <h4 className="kt-menu__section-text">{t("Mannuels")}</h4>
+                    <i className="kt-menu__section-icon flaticon-more-v2" />
+                  </li>
+                  <li
+                    className="kt-menu__item  kt-menu__item--submenu"
+                    aria-haspopup="true"
+                    data-ktmenu-submenu-toggle="hover"
+                  >
+                    <a
+                      href="#manuals"
+                      onClick={(e) => e.preventDefault()}
+                      className="kt-menu__link kt-menu__toggle"
+                    >
+                      <i className="kt-menu__link-icon flaticon2-paper" />
+                      <span className="kt-menu__link-text">{t("Guides")}</span>
+                      <i className="kt-menu__ver-arrow la la-angle-right" />
+                    </a>
+                    <div className="kt-menu__submenu ">
+                      <span className="kt-menu__arrow" />
+                      <ul className="kt-menu__subnav">
+                        <li
+                          className="kt-menu__item  kt-menu__item--parent"
+                          aria-haspopup="true"
+                        >
+                          <span className="kt-menu__link">
+                            <span className="kt-menu__link-text">
+                              {t("Guides")}
+                            </span>
+                          </span>
+                        </li>
 
+                        {data?.map((mes) => {
+                          const role_name = mes.name;
+                          const role_label = mes.description;
+                          return (
+                            <CurrencUserGuide
+                              role={role_name}
+                              label={role_label}
+                            />
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </li>
+                </>
+              )}
+              {canGuidable && (
+                <>
+                  <li className="kt-menu__section ">
+                    <h4 className="kt-menu__section-text">{t("Mannuels")}</h4>
+                    <i className="kt-menu__section-icon flaticon-more-v2" />
+                  </li>
+                  <li
+                    className="kt-menu__item  kt-menu__item--submenu"
+                    aria-haspopup="true"
+                    data-ktmenu-submenu-toggle="hover"
+                  >
+                    <a
+                      href="#manuals"
+                      onClick={(e) => e.preventDefault()}
+                      className="kt-menu__link kt-menu__toggle"
+                    >
+                      <i className="kt-menu__link-icon flaticon2-paper" />
+                      <span className="kt-menu__link-text">{t("Guides")}</span>
+                      <i className="kt-menu__ver-arrow la la-angle-right" />
+                    </a>
+                    <div className="kt-menu__submenu ">
+                      <span className="kt-menu__arrow" />
+                      <ul className="kt-menu__subnav">
+                        <li
+                          className="kt-menu__item  kt-menu__item--parent"
+                          aria-haspopup="true"
+                        >
+                          <span className="kt-menu__link">
+                            <span className="kt-menu__link-text">
+                              {t("Guides")}
+                            </span>
+                          </span>
+                        </li>
+
+                        {data?.map((mes) => {
+                          const role_name = mes.name;
+                          const role_label = mes.description;
+                          return (
+                            <CurrencUserGuide
+                              role={role_name}
+                              label={role_label}
+                            />
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </li>
+                </>
+              )}
+              {canGuidable && (
+                <>
+                  <li className="kt-menu__section ">
+                    <h4 className="kt-menu__section-text">{t("Mannuels")}</h4>
+                    <i className="kt-menu__section-icon flaticon-more-v2" />
+                  </li>
+                  <li
+                    className="kt-menu__item  kt-menu__item--submenu"
+                    aria-haspopup="true"
+                    data-ktmenu-submenu-toggle="hover"
+                  >
+                    <a
+                      href="#manuals"
+                      onClick={(e) => e.preventDefault()}
+                      className="kt-menu__link kt-menu__toggle"
+                    >
+                      <i className="kt-menu__link-icon flaticon2-paper" />
+                      <span className="kt-menu__link-text">{t("Guides")}</span>
+                      <i className="kt-menu__ver-arrow la la-angle-right" />
+                    </a>
+                    <div className="kt-menu__submenu ">
+                      <span className="kt-menu__arrow" />
+                      <ul className="kt-menu__subnav">
+                        <li
+                          className="kt-menu__item  kt-menu__item--parent"
+                          aria-haspopup="true"
+                        >
+                          <span className="kt-menu__link">
+                            <span className="kt-menu__link-text">
+                              {t("Guides")}
+                            </span>
+                          </span>
+                        </li>
+
+                        {data?.map((mes) => {
+                          const role_name = mes.name;
+                          const role_label = mes.description;
+                          return (
+                            <CurrencUserGuide
+                              role={role_name}
+                              label={role_label}
+                            />
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </li>
+                </>
+              )}
               <>
                 <li className="kt-menu__section ">
-                  <h4 className="kt-menu__section-text">{t("Mannuels")}</h4>
-                  <i className="kt-menu__section-icon flaticon-more-v2" />
+                  <h4 className="kt-menu__section-text">
+                    {t("Communication")}
+                  </h4>
+                  <i className="kt-menu__section-icon flaticon-support-v2" />
                 </li>
                 <li
                   className="kt-menu__item  kt-menu__item--submenu"
@@ -2517,12 +2722,14 @@ const Aside = (props) => {
                   data-ktmenu-submenu-toggle="hover"
                 >
                   <a
-                    href="#manuals"
+                    href="#calls"
                     onClick={(e) => e.preventDefault()}
                     className="kt-menu__link kt-menu__toggle"
                   >
-                    <i className="kt-menu__link-icon flaticon2-paper" />
-                    <span className="kt-menu__link-text">{t("Guides")}</span>
+                    <i className="kt-menu__link-icon flaticon2-phone" />
+                    <span className="kt-menu__link-text">
+                      {t("Centre d'appel")}
+                    </span>
                     <i className="kt-menu__ver-arrow la la-angle-right" />
                   </a>
                   <div className="kt-menu__submenu ">
@@ -2534,21 +2741,26 @@ const Aside = (props) => {
                       >
                         <span className="kt-menu__link">
                           <span className="kt-menu__link-text">
-                            {t("Guides")}
+                            {t("Centre d'appel")}
                           </span>
                         </span>
                       </li>
-
-                      {data?.map((mes) => {
-                        const role_name = mes.name;
-                        const role_label = mes.description;
-                        return (
-                          <CurrencUserGuide
-                            role={role_name}
-                            label={role_label}
-                          />
-                        );
-                      })}
+                      <NavLink
+                        exact
+                        to={`/call-center/composer`}
+                        className="kt-menu__item "
+                        activeClassName="kt-menu__item--active"
+                        aria-haspopup="true"
+                      >
+                        <li className="kt-menu__link ">
+                          <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                            <span />
+                          </i>
+                          <span className="kt-menu__link-text">
+                            {t("Composer")}
+                          </span>
+                        </li>
+                      </NavLink>
                     </ul>
                   </div>
                 </li>

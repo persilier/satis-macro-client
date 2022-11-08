@@ -2,18 +2,10 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import FileSaver from "file-saver";
+import { manuelsMatch } from "../../../constants/guides";
 
 const CurrencUserGuide = ({ role, label }) => {
   const { t } = useTranslation();
-
-  const manuelsMatch = {
-    "admin-pro":
-      "assets/media/files/2207_DMD_RD_Guide-SatisPro_Profil-Admin.pdf",
-    pilot: "assets/media/files/2207_DMD_RD_Guide-SatisPro_Profil-Pilote.pdf",
-    staff: "assets/media/files/2207_DMD_RD_Guide-SatisPro_Profil-Analyste.pdf",
-    "collector-filial-pro":
-      "assets/media/files/2207_DMD_RD_Guide-SatisPro_Profil-Collecteur.pdf",
-  };
 
   const getGuidePath = (role) => {
     let path = manuelsMatch[role];
