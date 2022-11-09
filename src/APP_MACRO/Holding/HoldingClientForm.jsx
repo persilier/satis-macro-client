@@ -220,7 +220,7 @@ const HoldingClientForm = (props) => {
       });
 
       if (id) {
-        axios.get(endPoint.edit(id)).then((response) => {
+        axios.get(`${endPoint.edit(id)}?clearNumber=1`).then((response) => {
           const newClient = {
             firstname:
               response.data.client_institution.client.identite.firstname,
@@ -234,7 +234,7 @@ const HoldingClientForm = (props) => {
               response.data.client_institution.client.identite.ville === null
                 ? ""
                 : response.data.client_institution.client.identite.ville,
-            number: response.data.account_number,
+            number: response.data.number,
             account_type_id: response.data.account_type_id,
             category_client_id:
               response.data.client_institution.category_client_id,
@@ -262,21 +262,25 @@ const HoldingClientForm = (props) => {
   }, []);
 
   const handleCustomerChange = (e, selected) => {
-    const newData = { ...data };
+    console.log(selected);
+    let newData = { ...data };
     setAccount(null);
     newData.account_type_id = "";
     newData.number = [];
     setAccounts(formatSelectOption(selected.accounts, "number", false));
-    newData.firstname = selected.identity.firstname;
-    newData.lastname = selected.identity.lastname;
-    newData.sexe = selected.identity.sexe;
-    newData.telephone = selected.identity.telephone
-      ? selected.identity.telephone
+    newData.firstname = selected.client.identite.firstname;
+    newData.lastname = selected.client.identite.lastname;
+    newData.sexe = selected.client.identite.sexe;
+    newData.telephone = selected.client.identite.telephone
+      ? selected.client.identite.telephone
       : [];
-    newData.email = selected.identity.email ? selected.identity.email : [];
-    newData.ville = selected.identity.ville;
+    newData.email = selected.client.identite.email
+      ? selected.client.identite.email
+      : [];
+    newData.ville = selected.client.identite.ville;
     newData.client_id = selected.client_id;
     newData.category_client_id = selected.category_client_id;
+
     setShowSearchResult(false);
     setSearchList([]);
     setData(newData);
@@ -289,17 +293,17 @@ const HoldingClientForm = (props) => {
     });
 
     if (
-      selected.identity?.telephone &&
-      Array.isArray(selected.identity.telephone) &&
-      selected.identity.telephone.length > 0
+      selected.client.identite?.telephone &&
+      Array.isArray(selected.client.identite.telephone) &&
+      selected.client.identite.telephone.length > 0
     ) {
       setDisabledInputTel(true);
     }
 
     if (
-      selected.identity?.email &&
-      Array.isArray(selected.identity.email) &&
-      selected.identity.email.length > 0
+      selected.client.identite?.email &&
+      Array.isArray(selected.client.identite.email) &&
+      selected.client.identite.email.length > 0
     ) {
       setDisabledInputEmail(true);
     }
@@ -322,58 +326,63 @@ const HoldingClientForm = (props) => {
           )
         ? props.currentUserInstitution
         : institution.value;
-    if (searchInputValue === clientCash.searchInputValue) {
-      setStartSearch(false);
-      setSearchList(clientCash.clients);
+    if (!verifyTokenExpire()) {
     } else {
-      if (tag.name.length && tag.show) {
-        if (tag.name === "full_name" && isNaN(searchInputValue)) {
-          if (verifyTokenExpire()) {
+      if (searchInputValue === clientCash.searchInputValue) {
+        setStartSearch(false);
+        setSearchList(clientCash.clients);
+      } else {
+        if (tag.name.length && tag.show) {
+          if (tag.name === "full_name" && isNaN(searchInputValue)) {
+            let searchEndpoints =
+              props.plan === "PRO"
+                ? `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
+                : `${appConfig.apiDomaine}/any/clients?type=name_or_phone&r=${searchInputValue}`;
             await axios
-              .get(
-                `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
-              )
+              .get(searchEndpoints)
               .then(({ data }) => {
-                console.log(data);
                 setStartSearch(false);
                 setShowSearchResult(true);
-                if (data.length)
+                data = data.data;
+
+                if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
+                }
                 setSearchList(data);
               })
-              .catch(({ response }) => {
+              .catch(({ error }) => {
+                console.log(error);
                 setStartSearch(false);
-                console.log("Something is wrong");
+                // console.log("Something is wrong");
               });
-          }
-        } else if (tag.name === "telephone" && !isNaN(searchInputValue)) {
-          if (verifyTokenExpire()) {
+          } else if (tag.name === "telephone" && !isNaN(searchInputValue)) {
+            let searchEndpoints =
+              props.plan === "PRO"
+                ? `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
+                : `${appConfig.apiDomaine}/any/clients?type=name_or_phone&r=${searchInputValue}`;
+
             await axios
-              .get(
-                `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
-              )
+              .get(searchEndpoints)
               .then(({ data }) => {
                 setStartSearch(false);
                 setShowSearchResult(true);
+
                 if (data.length)
                   setClientCash({
                     searchInputValue: searchInputValue,
                     clients: data,
                   });
                 setSearchList(data);
-                console.log(data);
                 console.log(searchInputValue);
               })
               .catch(({ response }) => {
                 setStartSearch(false);
                 console.log("Something is wrong");
               });
-          }
-        } else if (tag.name === "account_number") {
-          if (verifyTokenExpire()) {
+          } else if (tag.name === "account_number") {
             await axios
               .get(
                 `${appConfig.apiDomaine}/search/institutions/${value}/clients?type=account_number&r=${searchInputValue}`
@@ -394,13 +403,11 @@ const HoldingClientForm = (props) => {
                 setStartSearch(false);
                 console.log("Something is wrong");
               });
+          } else {
+            setStartSearch(false);
+            setSearchList([]);
           }
         } else {
-          setStartSearch(false);
-          setSearchList([]);
-        }
-      } else {
-        if (verifyTokenExpire()) {
           await axios
             .get(
               `${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`
@@ -446,22 +453,26 @@ const HoldingClientForm = (props) => {
   };
 
   const searchClient = () => {
-    console.log(searchInputValue);
     if (searchInputValue.length) {
       if (
         verifyPermission(
           props.userPermissions,
           "store-claim-against-any-institution"
+        ) ||
+        verifyPermission(
+          props.userPermissions,
+          "store-client-from-any-institution"
         )
       ) {
-        if (institution) {
+        if (institution.value) {
           startSearchClient();
-        } else
+        } else {
           ToastBottomEnd.fire(
             toastErrorMessageWithParameterConfig(
               t("Veuillez selectionner une institution")
             )
           );
+        }
       } else if (
         verifyPermission(
           props.userPermissions,
@@ -557,6 +568,7 @@ const HoldingClientForm = (props) => {
               `/any/clients/${newData.institution_id}/institutions`
           )
           .then((response) => {
+            response.data = response.data?.data;
             const options = response.data
               ? response.data.map((client) => ({
                   value: client.client_id,
@@ -793,7 +805,7 @@ const HoldingClientForm = (props) => {
               <div className="kt-portlet__head">
                 <div className="kt-portlet__head-label">
                   <h3 className="kt-portlet__head-title">
-                    {id ? t("Modification de Clients") : t("Ajout de Client")}
+                    {id ? t("Modification de Client") : t("Ajout de Client")}
                   </h3>
                 </div>
               </div>
@@ -951,9 +963,9 @@ const HoldingClientForm = (props) => {
                                   }}
                                   type="text"
                                   value={searchInputValue}
-                                  onChange={(e) =>
-                                    setSearchInputValue(e.target.value)
-                                  }
+                                  onChange={(e) => {
+                                    setSearchInputValue(e.target.value);
+                                  }}
                                   placeholder={
                                     t("Rechercher un client") + "..."
                                   }
@@ -1036,18 +1048,25 @@ const HoldingClientForm = (props) => {
                                     <span className="d-flex justify-content-center mb-2">
                                       <em>{"---" + t("Fin") + "---"}</em>
                                     </span>
-                                    {searchList.map((el, index) => (
-                                      <span
-                                        onClick={(e) =>
-                                          handleCustomerChange(e, el)
-                                        }
-                                        key={index}
-                                        className="dropdown-item"
-                                        style={{ cursor: "pointer" }}
-                                      >
-                                        <strong>{el.fullName}</strong>
-                                      </span>
-                                    ))}
+                                    {searchList.map((el, index) => {
+                                      let {
+                                        firstname,
+                                        lastname,
+                                      } = el.client.identite;
+
+                                      return (
+                                        <span
+                                          onClick={(e) =>
+                                            handleCustomerChange(e, el)
+                                          }
+                                          key={index}
+                                          className="dropdown-item"
+                                          style={{ cursor: "pointer" }}
+                                        >
+                                          <strong>{`${firstname} ${lastname}`}</strong>
+                                        </span>
+                                      );
+                                    })}
                                   </div>
                                 </div>
                               ) : (

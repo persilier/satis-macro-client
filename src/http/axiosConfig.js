@@ -2,8 +2,8 @@ import appConfig from "../config/appConfig";
 import { logout } from "../helpers/function";
 import { isTimeOut } from "../helpers";
 import { logoutUser } from "./crud";
-import {ExpirationConfirmation} from "../views/components/ConfirmationAlert";
-import {ExpireConfig} from "../config/confirmConfig";
+import { ExpirationConfirmation } from "../views/components/ConfirmationAlert";
+import { ExpireConfig } from "../config/confirmConfig";
 import i18n from "i18next";
 
 
@@ -39,7 +39,7 @@ export default function setupAxios(axios, store) {
                                             logout();
                                         }
                                     })
-                                ;
+                                    ;
                             })
                             .catch(console.log);
 
@@ -62,13 +62,15 @@ export default function setupAxios(axios, store) {
                                             logout();
                                         }
                                     })
-                                ;
+                                    ;
                             })
                             .catch(console.log);
                         return Promise.reject(error);
                     }
-                    if (error.response.status === 401){
-                        logout();
+                    if (error.response.status === 401) {
+                        console.log(error.response)
+                        // ExpirationConfirmation.fire(ExpireConfig(i18n.t("Action non autorisée")))
+                        // logout();
                     }
                 }
             }

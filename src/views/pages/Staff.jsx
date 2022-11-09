@@ -626,7 +626,12 @@ const Staff = (props) => {
                 ) : (
                   <>
                     <div className="row">
-                      <div className="col-sm-12">
+                      <div
+                        className="col-sm-12"
+                        style={{
+                          overflowX: "auto",
+                        }}
+                      >
                         <table
                           className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                           id="myTable"
