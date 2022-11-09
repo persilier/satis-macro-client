@@ -25,14 +25,10 @@ const Aside = (props) => {
     setStaff(JSON.parse(localStorage.getItem("userData")).staff);
     setData(JSON.parse(localStorage.getItem("userData")).data.roles);
   }, []);
-  console.log(data);
-
   let canGuidable = data && data.length > 0;
   for (let ri = 0; ri < data.length; ri++) {
     const element = data[ri];
-    console.log(element);
     let isListed = manuelsMatch[element.name];
-    console.log(isListed);
     if (!isListed) {
       canGuidable = false;
       break;
@@ -2616,109 +2612,13 @@ const Aside = (props) => {
                           </span>
                         </li>
 
-                        {data?.map((mes) => {
+                        {data?.map((mes, i) => {
                           const role_name = mes.name;
                           const role_label = mes.description;
+                          console.log("----------", i, mes);
                           return (
                             <CurrencUserGuide
-                              role={role_name}
-                              label={role_label}
-                            />
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  </li>
-                </>
-              )}
-              {canGuidable && (
-                <>
-                  <li className="kt-menu__section ">
-                    <h4 className="kt-menu__section-text">{t("Mannuels")}</h4>
-                    <i className="kt-menu__section-icon flaticon-more-v2" />
-                  </li>
-                  <li
-                    className="kt-menu__item  kt-menu__item--submenu"
-                    aria-haspopup="true"
-                    data-ktmenu-submenu-toggle="hover"
-                  >
-                    <a
-                      href="#manuals"
-                      onClick={(e) => e.preventDefault()}
-                      className="kt-menu__link kt-menu__toggle"
-                    >
-                      <i className="kt-menu__link-icon flaticon2-paper" />
-                      <span className="kt-menu__link-text">{t("Guides")}</span>
-                      <i className="kt-menu__ver-arrow la la-angle-right" />
-                    </a>
-                    <div className="kt-menu__submenu ">
-                      <span className="kt-menu__arrow" />
-                      <ul className="kt-menu__subnav">
-                        <li
-                          className="kt-menu__item  kt-menu__item--parent"
-                          aria-haspopup="true"
-                        >
-                          <span className="kt-menu__link">
-                            <span className="kt-menu__link-text">
-                              {t("Guides")}
-                            </span>
-                          </span>
-                        </li>
-
-                        {data?.map((mes) => {
-                          const role_name = mes.name;
-                          const role_label = mes.description;
-                          return (
-                            <CurrencUserGuide
-                              role={role_name}
-                              label={role_label}
-                            />
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  </li>
-                </>
-              )}
-              {canGuidable && (
-                <>
-                  <li className="kt-menu__section ">
-                    <h4 className="kt-menu__section-text">{t("Mannuels")}</h4>
-                    <i className="kt-menu__section-icon flaticon-more-v2" />
-                  </li>
-                  <li
-                    className="kt-menu__item  kt-menu__item--submenu"
-                    aria-haspopup="true"
-                    data-ktmenu-submenu-toggle="hover"
-                  >
-                    <a
-                      href="#manuals"
-                      onClick={(e) => e.preventDefault()}
-                      className="kt-menu__link kt-menu__toggle"
-                    >
-                      <i className="kt-menu__link-icon flaticon2-paper" />
-                      <span className="kt-menu__link-text">{t("Guides")}</span>
-                      <i className="kt-menu__ver-arrow la la-angle-right" />
-                    </a>
-                    <div className="kt-menu__submenu ">
-                      <span className="kt-menu__arrow" />
-                      <ul className="kt-menu__subnav">
-                        <li
-                          className="kt-menu__item  kt-menu__item--parent"
-                          aria-haspopup="true"
-                        >
-                          <span className="kt-menu__link">
-                            <span className="kt-menu__link-text">
-                              {t("Guides")}
-                            </span>
-                          </span>
-                        </li>
-
-                        {data?.map((mes) => {
-                          const role_name = mes.name;
-                          const role_label = mes.description;
-                          return (
-                            <CurrencUserGuide
+                              key={i}
                               role={role_name}
                               label={role_label}
                             />
