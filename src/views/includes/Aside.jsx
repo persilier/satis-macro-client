@@ -2631,7 +2631,7 @@ const Aside = (props) => {
               <>
                 <li className="kt-menu__section ">
                   <h4 className="kt-menu__section-text">
-                    {t("Communication")}
+                    {t("GESTION DES APPELS ENTRANTS")}
                   </h4>
                   <i className="kt-menu__section-icon flaticon-support-v2" />
                 </li>
@@ -2647,7 +2647,7 @@ const Aside = (props) => {
                   >
                     <i className="kt-menu__link-icon flaticon2-phone" />
                     <span className="kt-menu__link-text">
-                      {t("Centre d'appel")}
+                      {t("Appel Téléphonique")}
                     </span>
                     <i className="kt-menu__ver-arrow la la-angle-right" />
                   </a>
@@ -2660,26 +2660,74 @@ const Aside = (props) => {
                       >
                         <span className="kt-menu__link">
                           <span className="kt-menu__link-text">
-                            {t("Centre d'appel")}
+                            {t("Appel Téléphonique")}
                           </span>
                         </span>
                       </li>
-                      <NavLink
-                        exact
-                        to={`/#/call-center/composer`}
-                        className="kt-menu__item "
-                        activeClassName="kt-menu__item--active"
+                    </ul>
+                  </div>
+                </li>
+                <li
+                  className="kt-menu__item  kt-menu__item--submenu"
+                  aria-haspopup="true"
+                  data-ktmenu-submenu-toggle="hover"
+                >
+                  <a
+                    href="#telephone"
+                    onClick={(e) => e.preventDefault()}
+                    className="kt-menu__link kt-menu__toggle"
+                  >
+                    <i className="kt-menu__link-icon flaticon2-phone" />
+                    <span className="kt-menu__link-text">
+                      {t("Appels Sortants")}
+                    </span>
+                    <i className="kt-menu__ver-arrow la la-angle-right" />
+                  </a>
+                  <div className="kt-menu__submenu ">
+                    <span className="kt-menu__arrow" />
+                    <ul className="kt-menu__subnav">
+                      <li
+                        className="kt-menu__item  kt-menu__item--parent"
                         aria-haspopup="true"
                       >
-                        <li className="kt-menu__link ">
-                          <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                            <span />
-                          </i>
+                        <span className="kt-menu__link">
                           <span className="kt-menu__link-text">
-                            {t("Composer")}
+                            {t("Appels Sortants")}
                           </span>
-                        </li>
-                      </NavLink>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+                <li
+                  className="kt-menu__item  kt-menu__item--submenu"
+                  aria-haspopup="true"
+                  data-ktmenu-submenu-toggle="hover"
+                >
+                  <a
+                    href="#historique"
+                    onClick={(e) => e.preventDefault()}
+                    className="kt-menu__link kt-menu__toggle"
+                  >
+                    <i className="kt-menu__link-icon flaticon2-phone" />
+                    <span className="kt-menu__link-text">
+                      {t("Historique des Appels")}
+                    </span>
+                    <i className="kt-menu__ver-arrow la la-angle-right" />
+                  </a>
+                  <div className="kt-menu__submenu ">
+                    <span className="kt-menu__arrow" />
+                    <ul className="kt-menu__subnav">
+                      <li
+                        className="kt-menu__item  kt-menu__item--parent"
+                        aria-haspopup="true"
+                      >
+                        <span className="kt-menu__link">
+                          <span className="kt-menu__link-text">
+                            {t("Historique des Appels")}
+                          </span>
+                        </span>
+                      </li>
                     </ul>
                   </div>
                 </li>
