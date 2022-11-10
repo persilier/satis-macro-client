@@ -83,15 +83,15 @@ const ClaimsArchived = (props) => {
 
   const [institution, setInstitution] = useState(null);
   const [institutions, setInstitutions] = useState([]);
-  const fetchData = () => {
+  const fetchData = (newData) => {
     if (verifyTokenExpire()) {
-      console.log(data);
       axios
         .get(
           endPoint.list +
             "?size=" +
             numberPerPage +
-            `&institution_id=${data.institution_targeted_id}`
+            `&institution_id=${newData.institution_targeted_id ||
+              data.institution_targeted_id}`
         )
         .then((response) => {
           setLoad(false);
