@@ -49,7 +49,7 @@ const FilialeInstitutionForm = (props) => {
   useEffect(() => {
     const fetchData = () => {
       axios
-        .get(appConfig.apiDomaine + `/any/institutions`)
+        .get(appConfig.apiDomaine + `/my/institutions`)
         .then((response) => {
           const newInstitution = {
             name: response.data.institution?.name ?? "",

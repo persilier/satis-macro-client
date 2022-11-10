@@ -51,8 +51,10 @@ const ClaimReportingUemoaTen = (props) => {
     const [year, setYear] = useState({
         value: moment().format("YYYY"),
         label: moment().format("YYYY"),
-    });
+    }); const defaultData = { institution_targeted_id: "" };
+
     const [years, setYears] = useState([]);
+    const [data, setData] = useState(defaultData);
 
     const [error, setError] = useState({
         year: [],
@@ -69,8 +71,19 @@ const ClaimReportingUemoaTen = (props) => {
     const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
+    const [dataInstitution, setDataInstitution] = useState([]);
 
+    const getResponseAxios = (data) => {
+        axios
+            .post(appConfig.apiDomaine + "/dashboard", data)
+            .then((response) => {
+                setDataInstitution(response.data.institutions);
+                setLoad(false);
+            })
+            .catch((error) => console.log("Something is wrong"));
+    };
     const fetchData = async (click = false) => {
+        getResponseAxios()
         setLoadFilter(true);
         setLoad(true);
         let endpoint = "";
@@ -152,6 +165,7 @@ const ClaimReportingUemoaTen = (props) => {
                 setLoadFilter(false);
                 setLoad(false);
             });
+
     };
 
     useEffect(() => {
@@ -191,10 +205,22 @@ const ClaimReportingUemoaTen = (props) => {
     const onChangeYear = (selected) => {
         setYear(selected ?? []);
     };
-
     const onChangeInstitution = (selected) => {
-        setYear(selected);
+        const newData = { ...data };
+        setLoad(true);
+
+        if (selected) {
+            newData.institution_targeted_id = selected.value;
+            setInstitution(selected);
+            fetchData(newData);
+        } else {
+            newData.institution_targeted_id = "";
+            setInstitution(null);
+            fetchData();
+        }
+        setData(newData);
     };
+
 
     const filterReporting = () => {
         setLoadFilter(true);
