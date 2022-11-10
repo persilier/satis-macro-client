@@ -10,6 +10,7 @@ import EmptyTable from "../components/EmptyTable";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {
+    formatSelectOption,
     getLowerCaseString,
     loadCss,
 } from "../../helpers/function";
@@ -22,10 +23,13 @@ import InputRequire from "../components/InputRequire";
 import pdfMake from "pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import htmlToPdfmake from "html-to-pdfmake";
+import { useTranslation } from "react-i18next";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimReportingUemoaNine = (props) => {
+    const { t, ready } = useTranslation();
+
     if (
         !(
             verifyPermission(
@@ -55,13 +59,24 @@ const ClaimReportingUemoaNine = (props) => {
         year: [],
         institution_id: [],
     };
-
+    const defaultData = { institution_targeted_id: "" };
     const [loadFilter, setLoadFilter] = useState(false);
     const [loadDownload, setLoadDownload] = useState(false);
     const [loadDownloadPdf, setLoadDownloadPdf] = useState(false);
     const [institution, setInstitution] = useState(null);
     const [institutions, setInstitutions] = useState([]);
+    const [data, setData] = useState(defaultData);
 
+    const [dataInstitution, setDataInstitution] = useState([]);
+    const getResponseAxios = (data) => {
+        axios
+            .post(appConfig.apiDomaine + "/dashboard", data)
+            .then((response) => {
+                setDataInstitution(response.data.institutions);
+                setLoad(false);
+            })
+            .catch((error) => console.log("Something is wrong"));
+    };
     const fetchData = async (click = false) => {
         setLoadFilter(true);
         setLoad(true);
@@ -74,9 +89,7 @@ const ClaimReportingUemoaNine = (props) => {
                 "list-reporting-claim-any-institution"
             )
         ) {
-            if (props.plan === "MACRO")
-                endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
-            else endpoint = `${appConfig.apiDomaine}/bci-reports/global`;
+            endpoint = `${appConfig.apiDomaine}/bci-reports/global`;
             sendData = {
                 year: year ? year.value : null,
                 institution_id: institution ? institution.value : null,
@@ -165,9 +178,21 @@ const ClaimReportingUemoaNine = (props) => {
                 setLoadFilter(false);
                 setLoad(false);
             });
+
+        getResponseAxios()
+
+
     };
 
     useEffect(() => {
+
+
+
+
+
+
+
+
         if (verifyTokenExpire()) fetchData();
     }, [numberPerPage]);
 
@@ -197,10 +222,22 @@ const ClaimReportingUemoaNine = (props) => {
     const onChangeYear = (selected) => {
         setYear(selected ?? []);
     };
-
     const onChangeInstitution = (selected) => {
-        setYear(selected);
+        const newData = { ...data };
+        setLoad(true);
+
+        if (selected) {
+            newData.institution_targeted_id = selected.value;
+            setInstitution(selected);
+            fetchData(newData);
+        } else {
+            newData.institution_targeted_id = "";
+            setInstitution(null);
+            fetchData();
+        }
+        setData(newData);
     };
+
 
     const filterReporting = () => {
         setLoadFilter(true);
@@ -420,13 +457,25 @@ const ClaimReportingUemoaNine = (props) => {
                                         }
                                     >
                                         <label htmlFor="">Institution</label>
-                                        <Select
-                                            isClearable
-                                            value={institution}
-                                            placeholder={"Veuillez sélectionner l'institution"}
-                                            onChange={onChangeInstitution}
-                                            options={institutions}
-                                        />
+                                        {dataInstitution ? (
+                                            <Select
+                                                isClearable
+                                                classNamePrefix="select"
+                                                placeholder={t(
+                                                    "Choisissez une institution pour le filtre"
+                                                )}
+                                                className="basic-single"
+                                                value={institution}
+                                                onChange={onChangeInstitution}
+                                                options={formatSelectOption(
+                                                    dataInstitution,
+                                                    "name",
+                                                    false
+                                                )}
+                                            />
+                                        ) : (
+                                            ""
+                                        )}
 
                                         {error.institution_id.length
                                             ? error.institution_id.map((error, index) => (

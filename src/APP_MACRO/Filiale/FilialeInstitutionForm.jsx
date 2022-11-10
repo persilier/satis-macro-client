@@ -19,9 +19,10 @@ const FilialeInstitutionForm = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
-  const canSeeINstitution =
-    verifyPermission(props.userPermissions, "update-any-institution") ||
-    verifyPermission(props.userPermissions, "update-my-institution");
+  const canSeeINstitution = verifyPermission(
+    props.userPermissions,
+    "update-my-institution"
+  );
   if (!canSeeINstitution) window.location.href = ERROR_401;
 
   const defaultData = {
