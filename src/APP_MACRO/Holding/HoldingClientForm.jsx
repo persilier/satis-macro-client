@@ -337,7 +337,7 @@ const HoldingClientForm = (props) => {
             let searchEndpoints =
               props.plan === "PRO"
                 ? `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
-                : `${appConfig.apiDomaine}/any/clients?type=name_or_phone&r=${searchInputValue}`;
+                : `${appConfig.apiDomaine}/any/clients?type=name_or_phone&key=${searchInputValue}`;
             await axios
               .get(searchEndpoints)
               .then(({ data }) => {
@@ -362,7 +362,7 @@ const HoldingClientForm = (props) => {
             let searchEndpoints =
               props.plan === "PRO"
                 ? `${appConfig.apiDomaine}/my/clients/search?type=name_or_phone&r=${searchInputValue}`
-                : `${appConfig.apiDomaine}/any/clients?type=name_or_phone&r=${searchInputValue}`;
+                : `${appConfig.apiDomaine}/any/clients?type=name_or_phone&key=${searchInputValue}`;
 
             await axios
               .get(searchEndpoints)

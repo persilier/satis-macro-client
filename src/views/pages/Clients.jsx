@@ -309,6 +309,7 @@ const Clients = (props) => {
   };
 
   const deleteClient = (accountId, index) => {
+    console.log(index);
     DeleteConfirmation.fire(confirmDeleteConfig()).then((result) => {
       if (result.value) {
         if (verifyTokenExpire()) {
@@ -324,9 +325,11 @@ const Clients = (props) => {
 
                 if (verifyTokenExpire()) {
                   setLoad(true);
+
                   axios
                     .get(
-                      "/my/clients?page=" +
+                      endPoint.list +
+                        "?page=" +
                         activeNumberPage +
                         "&size=" +
                         numberPerPage

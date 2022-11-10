@@ -19,8 +19,10 @@ const FilialeInstitutionForm = (props) => {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
 
-  if (!verifyPermission(props.userPermissions, "update-any-institution"))
-    window.location.href = ERROR_401;
+  const canSeeINstitution =
+    verifyPermission(props.userPermissions, "update-any-institution") ||
+    verifyPermission(props.userPermissions, "update-my-institution");
+  if (!canSeeINstitution) window.location.href = ERROR_401;
 
   const defaultData = {
     name: "",
@@ -475,9 +477,7 @@ const FilialeInstitutionForm = (props) => {
     );
   };
 
-  return verifyPermission(props.userPermissions, "update-any-institution")
-    ? printJsx()
-    : null;
+  return canSeeINstitution ? printJsx() : null;
 };
 const mapStateToProps = (state) => {
   return {

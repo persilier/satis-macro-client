@@ -566,50 +566,49 @@ const Aside = (props) => {
                           </NavLink>
                         ) : null}
 
-                        {/* 
-{verifyPermission(
-                            props.userPermissions,
-                            "bci-monthly-reports"
-                          ) ? (
-                            <NavLink
-                              exact
-                              to="/monitoring/claims/uemoa/reporting-nine"
-                              className="kt-menu__item "
-                              activeClassName="kt-menu__item--active"
-                              aria-haspopup="true"
-                            >
-                              <li className="kt-menu__link ">
-                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                  <span />
-                                </i>
-                                <span className="kt-menu__link-text">
-                                  Etat Suivi des réclamations
-                                </span>
-                              </li>
-                            </NavLink>
-                          ) : null}
+                        {verifyPermission(
+                          props.userPermissions,
+                          "bci-monthly-reports"
+                        ) ? (
+                          <NavLink
+                            exact
+                            to="/monitoring/claims/uemoa/reporting-nine"
+                            className="kt-menu__item "
+                            activeClassName="kt-menu__item--active"
+                            aria-haspopup="true"
+                          >
+                            <li className="kt-menu__link ">
+                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                <span />
+                              </i>
+                              <span className="kt-menu__link-text">
+                                Etat Suivi des réclamations
+                              </span>
+                            </li>
+                          </NavLink>
+                        ) : null}
 
-                          {verifyPermission(
-                            props.userPermissions,
-                            "bci-annual-reports"
-                          ) ? (
-                            <NavLink
-                              exact
-                              to="/monitoring/claims/uemoa/reporting-ten"
-                              className="kt-menu__item "
-                              activeClassName="kt-menu__item--active"
-                              aria-haspopup="true"
-                            >
-                              <li className="kt-menu__link mt-2">
-                                <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                  <span />
-                                </i>
-                                <span className="kt-menu__link-text">
-                                  Statistique Globale Annuelle
-                                </span>
-                              </li>
-                            </NavLink>
-                          ) : null} */}
+                        {verifyPermission(
+                          props.userPermissions,
+                          "bci-annual-reports"
+                        ) ? (
+                          <NavLink
+                            exact
+                            to="/monitoring/claims/uemoa/reporting-ten"
+                            className="kt-menu__item "
+                            activeClassName="kt-menu__item--active"
+                            aria-haspopup="true"
+                          >
+                            <li className="kt-menu__link mt-2">
+                              <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">
+                                <span />
+                              </i>
+                              <span className="kt-menu__link-text">
+                                Statistique Globale Annuelle
+                              </span>
+                            </li>
+                          </NavLink>
+                        ) : null}
 
                         {/*                   {
                                                         verifyPermission(props.userPermissions, 'list-regulatory-reporting-claim-any-institution') ||
@@ -1129,7 +1128,7 @@ const Aside = (props) => {
                                 {verifyPermission(
                                   props.userPermissions,
                                   "update-active-pilot"
-                                ) ? (
+                                ) || props.activePilot ? (
                                   <NavLink
                                     exact
                                     to="/settings/activate-pilot"
