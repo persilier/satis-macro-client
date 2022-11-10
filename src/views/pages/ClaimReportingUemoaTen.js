@@ -95,9 +95,7 @@ const ClaimReportingUemoaTen = (props) => {
                 "list-reporting-claim-any-institution"
             )
         ) {
-            if (props.plan === "MACRO")
-                endpoint = `${appConfig.apiDomaine}/any/uemoa/state-analytique`;
-            else endpoint = `${appConfig.apiDomaine}/bci-reports/global-condensed`;
+            endpoint = `${appConfig.apiDomaine}/bci-reports/global-condensed`;
             sendData = {
                 year: year ? year.value : null,
                 institution_id: institution ? institution.value : null,
@@ -365,7 +363,7 @@ const ClaimReportingUemoaTen = (props) => {
                         <div className="row">
                             {verifyPermission(
                                 props.userPermissions,
-                                "list-reporting-claim-any-institution"
+                                "show-dashboard-data-all-institution"
                             ) ? (
                                 <div className="col">
                                     <div
@@ -376,13 +374,25 @@ const ClaimReportingUemoaTen = (props) => {
                                         }
                                     >
                                         <label htmlFor="">Institution</label>
-                                        <Select
-                                            isClearable
-                                            value={institution}
-                                            placeholder={"Veuillez sélectionner l'institution"}
-                                            onChange={onChangeInstitution}
-                                            options={institutions}
-                                        />
+                                        {dataInstitution ? (
+                                            <Select
+                                                isClearable
+                                                classNamePrefix="select"
+                                                placeholder={
+                                                    "Choisissez une institution pour le filtre"
+                                                }
+                                                className="basic-single"
+                                                value={institution}
+                                                onChange={onChangeInstitution}
+                                                options={formatSelectOption(
+                                                    dataInstitution,
+                                                    "name",
+                                                    false
+                                                )}
+                                            />
+                                        ) : (
+                                            ""
+                                        )}
 
                                         {error.institution_id.length
                                             ? error.institution_id.map((error, index) => (

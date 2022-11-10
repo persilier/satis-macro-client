@@ -446,7 +446,7 @@ const ClaimReportingUemoaNine = (props) => {
                         <div className="row">
                             {verifyPermission(
                                 props.userPermissions,
-                                "list-reporting-claim-any-institution"
+                                "show-dashboard-data-all-institution"
                             ) ? (
                                 <div className="col">
                                     <div
