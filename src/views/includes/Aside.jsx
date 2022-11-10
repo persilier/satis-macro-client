@@ -2666,7 +2666,7 @@ const Aside = (props) => {
                       </li>
                       <NavLink
                         exact
-                        to={`/call-center/composer`}
+                        to={`/#/call-center/composer`}
                         className="kt-menu__item "
                         activeClassName="kt-menu__item--active"
                         aria-haspopup="true"

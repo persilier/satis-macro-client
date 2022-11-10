@@ -69,14 +69,45 @@ const ClaimReportingUemoaNine = (props) => {
 
     const [dataInstitution, setDataInstitution] = useState([]);
     const getResponseAxios = (data) => {
-        axios
-            .post(appConfig.apiDomaine + "/dashboard", data)
-            .then((response) => {
-                setDataInstitution(response.data.institutions);
-                setLoad(false);
-            })
-            .catch((error) => console.log("Something is wrong"));
-    };
+
+        var endpoint = "";
+        if (
+            verifyPermission(
+                props.userPermissions,
+                "list-reporting-claim-any-institution"
+            )
+        ) {
+            if (props.plan === "MACRO")
+                endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+            else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+        }
+
+        if (
+            verifyPermission(
+                props.userPermissions,
+                "list-reporting-claim-my-institution"
+            )
+        )
+            endpoint = `${appConfig.apiDomaine}/my/uemoa/data-filter`;
+
+        if (verifyTokenExpire()) {
+            axios
+                .get(endpoint)
+                .then((response) => {
+                    if (
+                        verifyPermission(
+                            props.userPermissions,
+                            "list-reporting-claim-any-institution"
+                        )
+                    ) {
+                        setInstitutions(
+                            formatSelectOption(response.data.institutions, "name", false)
+                        );
+                    }
+                })
+                .catch((error) => console.log("Something is wrong"));
+        };
+    }
     const fetchData = async (click = false) => {
         setLoadFilter(true);
         setLoad(true);
@@ -457,25 +488,14 @@ const ClaimReportingUemoaNine = (props) => {
                                         }
                                     >
                                         <label htmlFor="">Institution</label>
-                                        {dataInstitution ? (
-                                            <Select
-                                                isClearable
-                                                classNamePrefix="select"
-                                                placeholder={t(
-                                                    "Choisissez une institution pour le filtre"
-                                                )}
-                                                className="basic-single"
-                                                value={institution}
-                                                onChange={onChangeInstitution}
-                                                options={formatSelectOption(
-                                                    dataInstitution,
-                                                    "name",
-                                                    false
-                                                )}
-                                            />
-                                        ) : (
-                                            ""
-                                        )}
+                                        <Select
+                                            isClearable
+                                            value={institution}
+                                            placeholder={t("Veuillez sélectionner l'institution")}
+                                            onChange={onChangeInstitution}
+                                            options={institutions}
+                                        />
+
 
                                         {error.institution_id.length
                                             ? error.institution_id.map((error, index) => (
