@@ -2709,7 +2709,7 @@ const Aside = (props) => {
                     onClick={(e) => e.preventDefault()}
                     className="kt-menu__link kt-menu__toggle"
                   >
-                    <i className="kt-menu__link-icon flaticon2-phone" />
+                    <i className="kt-menu__link-icon flaticon2-soft-icons" />
                     <span className="kt-menu__link-text">
                       {t("Historique des Appels")}
                     </span>

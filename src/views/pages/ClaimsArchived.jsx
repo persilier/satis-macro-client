@@ -7,6 +7,7 @@ import {
   getLowerCaseString,
   formatDateToTime,
   reduceCharacter,
+  formatSelectOption,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -21,6 +22,7 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
+import Select from "react-select";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -76,14 +78,22 @@ const ClaimsArchived = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+  const defaultData = { institution_targeted_id: "" };
+  const [data, setData] = useState(defaultData);
 
-  useEffect(() => {
+  const [institution, setInstitution] = useState(null);
+  const [institutions, setInstitutions] = useState([]);
+  const fetchData = () => {
     if (verifyTokenExpire()) {
+      console.log(data);
       axios
-        .get(endPoint.list + "?size=" + numberPerPage)
+        .get(
+          endPoint.list +
+            "?size=" +
+            numberPerPage +
+            `&institution_id=${data.institution_targeted_id}`
+        )
         .then((response) => {
-          console.log(response.data);
-
           setLoad(false);
           if (response.data.length === 0) {
             setNumberPage(forceRound(0 / numberPerPage));
@@ -106,8 +116,50 @@ const ClaimsArchived = (props) => {
           //console.log("Something is wrong");
         });
     }
+  };
+  useEffect(() => {
+    fetchData();
+    getResponseAxios();
   }, []);
+  const getResponseAxios = (data) => {
+    var endpoint = "";
+    if (
+      verifyPermission(
+        props.userPermissions,
+        "list-reporting-claim-any-institution"
+      )
+    ) {
+      if (props.plan === "MACRO")
+        endpoint = `${appConfig.apiDomaine}/any/uemoa/data-filter`;
+      else endpoint = `${appConfig.apiDomaine}/without/uemoa/data-filter`;
+    }
 
+    if (
+      verifyPermission(
+        props.userPermissions,
+        "list-reporting-claim-my-institution"
+      )
+    )
+      endpoint = `${appConfig.apiDomaine}/my/uemoa/data-filter`;
+
+    if (verifyTokenExpire()) {
+      axios
+        .get(endpoint)
+        .then((response) => {
+          if (
+            verifyPermission(
+              props.userPermissions,
+              "list-reporting-claim-any-institution"
+            )
+          ) {
+            setInstitutions(
+              formatSelectOption(response.data.institutions, "name", false)
+            );
+          }
+        })
+        .catch((error) => console.log("Something is wrong"));
+    }
+  };
   const filterShowListBySearchValue = (value) => {
     value = getLowerCaseString(value);
     let newClaims = [...claimsArchived];
@@ -128,6 +180,20 @@ const ClaimsArchived = (props) => {
     );
 
     return newClaims;
+  };
+  const onChangeInstitution = (selected) => {
+    const newData = { ...data };
+    setLoad(true);
+    if (selected) {
+      newData.institution_targeted_id = selected.value;
+      setInstitution(selected);
+      fetchData(newData);
+    } else {
+      newData.institution_targeted_id = "";
+      setInstitution(null);
+      fetchData();
+    }
+    setData(newData);
   };
 
   const searchElement = async (e) => {
@@ -418,6 +484,23 @@ const ClaimsArchived = (props) => {
         <div className="kt-portlet">
           <HeaderTablePage title={t("Réclamations archivées")} />
           <div className="kt-portlet__body">
+            {verifyPermission(
+              props.userPermissions,
+              "show-dashboard-data-all-institution"
+            ) ? (
+              <div className="col">
+                <div className={"form-group"}>
+                  <label htmlFor="">Institution</label>
+                  <Select
+                    isClearable
+                    value={institution}
+                    placeholder={t("Veuillez sélectionner l'institution")}
+                    onChange={onChangeInstitution}
+                    options={institutions}
+                  />
+                </div>
+              </div>
+            ) : null}
             <div
               id="kt_table_1_wrapper"
               className="dataTables_wrapper dt-bootstrap4"
