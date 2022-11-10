@@ -43,10 +43,9 @@ const DashboardPieChart = (props) => {
 
     let showBlock = false
     for (let di = 0; di < dataSource.length; di++) {
-        if (dataSource.value > 0) {
+        if (dataSource[di].value > 0) {
             showBlock = true
         }
-
     }
     return showBlock ? (
         <div>
