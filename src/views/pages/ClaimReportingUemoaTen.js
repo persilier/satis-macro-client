@@ -532,7 +532,11 @@ const ClaimReportingUemoaTen = (props) => {
                                         display: "flex",
                                     }}
                                 >
-                                    <div className="col-sm-12" id="myTable">
+                                    <div className="col-sm-12" id="myTable"
+                                        style={{
+                                            overflowX: "auto",
+                                        }}
+                                    >
                                         <table
                                             className="mb-4 table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                             role="grid"

@@ -610,7 +610,11 @@ const ClaimReportingUemoaNine = (props) => {
                                 className="dataTables_wrapper dt-bootstrap4"
                             >
                                 <div className="row">
-                                    <div className="col-sm-12" id="myTable">
+                                    <div className="col-sm-12" id="myTable"
+                                      style={{
+                                        overflowX: "auto",
+                                      }}
+                                    >
                                         {/*  <div style={{display:"none"}} className="kt-header__brand " id="kt_header_brand">
                                                         <div className="kt-header__brand-logo">
                                                             <a href="index.html">

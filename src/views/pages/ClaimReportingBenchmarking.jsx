@@ -284,7 +284,9 @@ const ClaimReportingBenchmarking = (props) => {
                                     <div className="kt-portlet__body">
                                         <div>
                                             <div className="row">
-                                                <div className="table-responsive col-sm-12" id="benchmarking-div">
+                                                <div className="table-responsive col-sm-12" id="benchmarking-div"   style={{
+                          overflowX: "auto",
+                        }}>
                                                     <table className="table table-striped table-bordered table-hover table-checkable dtr-inline" id="benchmarking-table">
                                                         <thead>
                                                             <tr>

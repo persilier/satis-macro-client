@@ -742,7 +742,9 @@ const ClaimReportingUemoaFive = (props) => {
                                                     </p>
                                                 </div>
 
-                                                <div id="myTable"  className="col-sm-12">
+                                                <div id="myTable"  className="col-sm-12"   style={{
+                          overflowX: "auto",
+                        }}>
                                                     <table id="myExcel"
                                                         className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                                                        role="grid" aria-describedby="kt_table_1_info"
