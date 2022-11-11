@@ -482,7 +482,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat global")}
+                                {t("UEMOA - Etat global")}
                               </span>
                             </li>
                           </NavLink>
@@ -508,7 +508,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat Retard de +30 jrs")}
+                                {t("UEMOA - Etat Retard de +30 jrs")}
                               </span>
                             </li>
                           </NavLink>
@@ -534,7 +534,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat Hors Délai")}
+                                {t("UEMOA - Etat Hors Délai")}
                               </span>
                             </li>
                           </NavLink>
@@ -560,7 +560,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Etat analytique")}
+                                {t("UEMOA - Etat analytique")}
                               </span>
                             </li>
                           </NavLink>
@@ -582,7 +582,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                Etat Suivi des réclamations
+                                COBAC - Etat Suivi des réclamations
                               </span>
                             </li>
                           </NavLink>
@@ -604,7 +604,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                Statistique Globale Annuelle
+                                COBAC - Statistique Globale Annuelle
                               </span>
                             </li>
                           </NavLink>
@@ -655,7 +655,7 @@ const Aside = (props) => {
                                                                     <i className="kt-menu__link-bullet kt-menu__link-bullet--dot"><span/></i>
                                                                     <span className="kt-menu__link-text">{t("Rapport SATIS")}</span>
                                                                 </li>
-                                                            </NavLink>
+                                                             </NavLink>
                                                         ) : null
                                                     }*/}
                       </ul>

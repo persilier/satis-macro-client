@@ -163,32 +163,6 @@ const ConfigProcessingCircuit = (props) => {
     }
   }, [endPoint.list, numberPerPage, props.userPermissions]);
 
-  {
-    /*<tr key={i} role="row" className="odd">
-        {
-            i === 0 ?
-                <td rowSpan={category.claim_objects.length}>{category.name.fr}</td>
-                : <td style={{display: "none"}}/>
-        }
-        <td>
-            {object.name.fr}
-        </td>
-        <td>
-            {units ? (
-                <Select
-                    value={data[object.id]}
-                    onChange={(e) => onChangeProcessing(e, object.id)}
-                    options={formatSelectOption(units, 'name', "fr")}
-                    isMulti
-                    placeholder={"Veillez selectionez le circuit"}
-                    key={object.id}
-                />
-            ) : null
-            }
-        </td>
-    </tr>*/
-  }
-
   const matchToClaimObjectOrEntity = (list, value) => {
     let match = false;
     list.map((el) => {
@@ -366,8 +340,8 @@ const ConfigProcessingCircuit = (props) => {
             response.data.units ? response.data.units.map((unit) => unit) : null
           );
           let newObjectData = [];
-          response.data.claimCategories.map((claimCategory) =>
-            claimCategory.claim_objects.map(
+          response.data.claimCategories.map((claimCategory) => {
+            return claimCategory.claim_objects.map(
               (claimObject) =>
                 (newObjectData[claimObject.id] = claimObject.units.map(
                   (unit) => ({
@@ -375,16 +349,15 @@ const ConfigProcessingCircuit = (props) => {
                     label: unit.name.fr,
                   })
                 ))
-            )
-          );
+            );
+          });
+
           setData(newObjectData);
         });
     }
   };
 
   const printBodyTable = (category, index) => {
-    console.log(units);
-
     return category.claim_objects
       ? category.claim_objects.map((object, i) => {
           return (
