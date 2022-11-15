@@ -42,10 +42,10 @@ const CurrencUserGuide = ({ role, label }) => {
       className="kt-menu__item "
       activeClassName="kt-menu__item--active"
       aria-haspopup="true"
-      onClick={(e) => {
-        e.preventDefault();
-        actDownload(role);
-      }}
+      target="_blank"
+      // onClick={(e) => {
+      //   actDownload(role);
+      // }}
     >
       <li className="kt-menu__link ">
         <i className="kt-menu__link-bullet kt-menu__link-bullet--dot">

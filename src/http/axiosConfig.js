@@ -71,11 +71,12 @@ export default function setupAxios(axios, store) {
                             .catch(console.log);
                         return Promise.reject(error);
                     }
-                    redirectErrorPage(error.response.status);
+                    console.log(error.response);
+                    //redirectErrorPage(error.response.status);
                 }
             }
-
-            redirectErrorPage(error.response.status);
+                    console.log(error.response);
+            // redirectErrorPage(error.response.status);
             return Promise.reject(error);
         }
     );
