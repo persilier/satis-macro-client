@@ -85,20 +85,21 @@ const ClaimsArchived = (props) => {
   const [institutions, setInstitutions] = useState([]);
   const fetchData = (newData) => {
     if (verifyTokenExpire()) {
+      console.log(newData);
       axios
         .get(
           endPoint.list +
             "?size=" +
             numberPerPage +
-            `&institution_id=${newData.institution_targeted_id ||
-              data.institution_targeted_id}`
+            `&institution_id=${newData?.institution_targeted_id ||
+              data?.institution_targeted_id}`
         )
         .then((response) => {
           setLoad(false);
           if (response.data.length === 0) {
             setNumberPage(forceRound(0 / numberPerPage));
             setShowList([]);
-            setClaimsArchived(response.data);
+            setClaimsArchived([]);
             setTotal(0);
             setPrevUrl(response.data["prev_page_url"]);
             setNextUrl(response.data["next_page_url"]);
