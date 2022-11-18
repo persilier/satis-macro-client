@@ -6,6 +6,7 @@ import {
   forceRound,
   formatDateToTime,
   reduceCharacter,
+  getLowerCaseString,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
 import appConfig from "../../config/appConfig";
@@ -20,7 +21,6 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
-
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const endPointConfig = {
@@ -30,7 +30,7 @@ const endPointConfig = {
   },
   MACRO: {
     holding: {
-      list: `${appConfig.apiDomaine}/any/claim-satisfaction-measured`,
+      list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
     },
     filial: {
       list: `${appConfig.apiDomaine}/my/claim-satisfaction-measured`,
@@ -88,6 +88,9 @@ const SatisfactionMeasure = (props) => {
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [search, setSearch] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [total, setTotal] = useState(0);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
 
   useEffect(() => {
     if (verifyTokenExpire()) {
@@ -95,9 +98,22 @@ const SatisfactionMeasure = (props) => {
         .get(endPoint.list)
         .then((response) => {
           setLoad(false);
-          setSatisfactionMeasure(response.data);
-          setShowList(response.data.slice(0, numberPerPage));
-          setNumberPage(forceRound(response.data.length / numberPerPage));
+
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setSatisfactionMeasure([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setSatisfactionMeasure(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
         })
         .catch((error) => {
           setLoad(false);
@@ -108,12 +124,53 @@ const SatisfactionMeasure = (props) => {
 
   const searchElement = async (e) => {
     if (e.target.value) {
-      await setSearch(true);
-      filterDataTableBySearchValue(e);
+      /*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
+            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/ if (
+        verifyTokenExpire()
+      ) {
+        setLoad(true);
+        axios
+          .get(
+            endPoint.list +
+              "?key=" +
+              getLowerCaseString(e.target.value) +
+              "&size=" +
+              numberPerPage
+          )
+          .then((response) => {
+            setLoad(false);
+            setSatisfactionMeasure(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
     } else {
-      await setSearch(true);
-      filterDataTableBySearchValue(e);
-      setSearch(false);
+      /*            setNumberPage(forceRound(claimsArchived.length / NUMBER_ELEMENT_PER_PAGE));
+            setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(endPoint.list + "?size=" + numberPerPage)
+          .then((response) => {
+            setLoad(false);
+            setSatisfactionMeasure(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
+      setActiveNumberPage(1);
     }
   };
 
@@ -515,9 +572,10 @@ const SatisfactionMeasure = (props) => {
                         aria-live="polite"
                       >
                         {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {satisfactionMeasure.length} {t("données")}
+                        {t("sur")} {total} {t("données")}
                       </div>
                     </div>
+
                     {!search ? (
                       <div className="col-sm-12 col-md-7 dataTables_pager">
                         <Pagination
