@@ -363,6 +363,23 @@ const SatisfactionMeasure = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Mesure de Satisfaction")} />
+          <div className="row">
+            <div className="col-sm-6 text-left pl-3 ml-4 pt-3">
+              <div id="kt_table_1_filter" className="dataTables_filter">
+                <label>
+                  {t("Rechercher")}:
+                  <input
+                    id="myInput"
+                    type="text"
+                    onKeyUp={(e) => searchElement(e)}
+                    className="form-control form-control-sm"
+                    placeholder=""
+                    aria-controls="kt_table_1"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
           {load ? (
             <LoadingTable />
           ) : (
@@ -371,23 +388,6 @@ const SatisfactionMeasure = (props) => {
                 id="kt_table_1_wrapper"
                 className="dataTables_wrapper dt-bootstrap4"
               >
-                <div className="row">
-                  <div className="col-sm-6 text-left">
-                    <div id="kt_table_1_filter" className="dataTables_filter">
-                      <label>
-                        {t("Rechercher")}:
-                        <input
-                          id="myInput"
-                          type="text"
-                          onKeyUp={(e) => searchElement(e)}
-                          className="form-control form-control-sm"
-                          placeholder=""
-                          aria-controls="kt_table_1"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
                 <div className="row">
                   <div className="col-sm-12">
                     <table
