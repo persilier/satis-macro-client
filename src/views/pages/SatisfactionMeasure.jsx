@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   loadCss,
-  filterDataTableBySearchValue,
   forceRound,
   formatDateToTime,
-  reduceCharacter,
   getLowerCaseString,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
@@ -84,9 +82,9 @@ const SatisfactionMeasure = (props) => {
   const [satisfactionMeasure, setSatisfactionMeasure] = useState([]);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
-  const [numberPerPage, setNumberPerPage] = useState(5);
+  const [numberPerPage, setNumberPerPage] = useState(10);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
@@ -95,7 +93,11 @@ const SatisfactionMeasure = (props) => {
   useEffect(() => {
     if (verifyTokenExpire()) {
       axios
-        .get(endPoint.list)
+        .get(
+          `${endPoint.list}?size=${numberPerPage}&page=${activeNumberPage}${
+            search.status === true ? `&key=${search.value}` : ""
+          }`
+        )
         .then((response) => {
           setLoad(false);
 
@@ -120,14 +122,12 @@ const SatisfactionMeasure = (props) => {
           //console.log("Something is wrong");
         });
     }
-  }, []);
+  }, [numberPerPage, activeNumberPage]);
 
   const searchElement = async (e) => {
+    setSearch(e.target.value);
     if (e.target.value) {
-      /*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/ if (
-        verifyTokenExpire()
-      ) {
+      if (verifyTokenExpire()) {
         setLoad(true);
         axios
           .get(
@@ -151,8 +151,6 @@ const SatisfactionMeasure = (props) => {
           });
       }
     } else {
-      /*            setNumberPage(forceRound(claimsArchived.length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(claimsArchived.slice(0, NUMBER_ELEMENT_PER_PAGE));*/
       if (verifyTokenExpire()) {
         setLoad(true);
         axios
@@ -175,56 +173,26 @@ const SatisfactionMeasure = (props) => {
   };
 
   const onChangeNumberPerPage = (e) => {
-    setActiveNumberPage(1);
+    e.persist();
     setNumberPerPage(parseInt(e.target.value));
-    setShowList(satisfactionMeasure.slice(0, parseInt(e.target.value)));
-    setNumberPage(
-      forceRound(satisfactionMeasure.length / parseInt(e.target.value))
-    );
-  };
-
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
   };
 
   const onClickPage = (e, page) => {
     e.preventDefault();
     setActiveNumberPage(page);
-    setShowList(
-      satisfactionMeasure.slice(
-        getEndByPosition(page) - numberPerPage,
-        getEndByPosition(page)
-      )
-    );
   };
 
   const onClickNextPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage <= numberPage) {
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
       setActiveNumberPage(activeNumberPage + 1);
-      setShowList(
-        satisfactionMeasure.slice(
-          getEndByPosition(activeNumberPage + 1) - numberPerPage,
-          getEndByPosition(activeNumberPage + 1)
-        )
-      );
     }
   };
 
   const onClickPreviousPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage >= 1) {
+    if (activeNumberPage >= 1 && prevUrl !== null) {
       setActiveNumberPage(activeNumberPage - 1);
-      setShowList(
-        satisfactionMeasure.slice(
-          getEndByPosition(activeNumberPage - 1) - numberPerPage,
-          getEndByPosition(activeNumberPage - 1)
-        )
-      );
     }
   };
 
@@ -551,7 +519,7 @@ const SatisfactionMeasure = (props) => {
                     />
                   </div>
                 </div>
-                <div className="row">
+                <div className="row justify-content-between">
                   <div className="col-sm-12 col-md-5">
                     <div
                       className="dataTables_info"
@@ -577,7 +545,7 @@ const SatisfactionMeasure = (props) => {
                     </div>
 
                     {!search ? (
-                      <div className="col-sm-12 col-md-7 dataTables_pager">
+                      <div className="col-sm-12 col-md-7 dataTables_pager text-right">
                         <Pagination
                           numberPerPage={numberPerPage}
                           onChangeNumberPerPage={onChangeNumberPerPage}
