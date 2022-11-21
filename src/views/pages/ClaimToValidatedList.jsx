@@ -10,15 +10,12 @@ import Pagination from "../components/Pagination";
 import { ERROR_401 } from "../../config/errorPage";
 import appConfig from "../../config/appConfig";
 import {
-  filterDataTableBySearchValue,
   forceRound,
   formatDateToTime,
   getLowerCaseString,
   loadCss,
-  truncateString,
 } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
-import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
@@ -27,7 +24,7 @@ loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
 const ClaimToValidatedList = (props) => {
   //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
+  const { t } = useTranslation();
 
   if (
     !(
@@ -48,28 +45,45 @@ const ClaimToValidatedList = (props) => {
   const [claims, setClaims] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(10);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
-  const [search, setSearch] = useState(false);
+  const [search, setSearch] = useState("");
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [total, setTotal] = useState(0);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
+  let endpoint = "";
+  if (props.plan === "MACRO" || props.plan === "PRO")
+    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution`;
+  else
+    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
   useEffect(() => {
-    let endpoint = "";
-    if (props.plan === "MACRO" || props.plan === "PRO")
-      endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution`;
-    else
-      endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
     async function fetchData() {
       axios
-        .get(endpoint)
+        .get(
+          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+            search.length ? `&key=${search.value}` : ""
+          }`
+        )
         .then((response) => {
-          console.log(response.data);
-          setNumberPage(
-            forceRound(Object.values(response.data).length / numberPerPage)
-          );
-          setShowList(Object.values(response.data).slice(0, numberPerPage));
-          setClaims(Object.values(response.data));
           setLoad(false);
+
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setClaims([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          } else {
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setClaims(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          }
         })
         .catch((error) => {
           setLoad(false);
@@ -77,107 +91,76 @@ const ClaimToValidatedList = (props) => {
         });
     }
     if (verifyTokenExpire()) fetchData();
-  }, []);
-
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newClaims = [...claims];
-    newClaims = newClaims.filter((el) => {
-      return (
-        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          `${el.claimer && el.claimer.lastname ? el.claimer.lastname : ""} ${
-            el.claimer && el.claimer.firstname ? el.claimer.firstname : ""
-          }  ${
-            el.account_targeted
-              ? " / " + el.account_targeted.number
-              : el.account_number
-              ? " / " + el.account_number
-              : ""
-          }`
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(el.claim_object.name["fr"]).indexOf(value) >= 0 ||
-        getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(el.institution_targeted.name).indexOf(value) >= 0
-      );
-    });
-
-    return newClaims;
-  };
+  }, [numberPerPage, activeNumberPage]);
 
   const searchElement = async (e) => {
+    setSearch(e.target.value);
     if (e.target.value) {
-      setNumberPage(
-        forceRound(
-          filterShowListBySearchValue(e.target.value).length /
-            NUMBER_ELEMENT_PER_PAGE
-        )
-      );
-      setShowList(
-        filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
-          0,
-          NUMBER_ELEMENT_PER_PAGE
-        )
-      );
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(
+            endpoint +
+              "?key=" +
+              getLowerCaseString(e.target.value) +
+              "&size=" +
+              numberPerPage
+          )
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
     } else {
-      setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
-      setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(endpoint + "?size=" + numberPerPage)
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
       setActiveNumberPage(1);
     }
   };
-
   const onChangeNumberPerPage = (e) => {
-    setActiveNumberPage(1);
+    e.persist();
     setNumberPerPage(parseInt(e.target.value));
-    setShowList(claims.slice(0, parseInt(e.target.value)));
-    setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
-  };
-
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
   };
 
   const onClickPage = (e, page) => {
     e.preventDefault();
     setActiveNumberPage(page);
-    setShowList(
-      claims.slice(
-        getEndByPosition(page) - numberPerPage,
-        getEndByPosition(page)
-      )
-    );
   };
 
   const onClickNextPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage <= numberPage) {
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
       setActiveNumberPage(activeNumberPage + 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage + 1) - numberPerPage,
-          getEndByPosition(activeNumberPage + 1)
-        )
-      );
     }
   };
 
   const onClickPreviousPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage >= 1) {
+    if (activeNumberPage >= 1 && prevUrl !== null) {
       setActiveNumberPage(activeNumberPage - 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage - 1) - numberPerPage,
-          getEndByPosition(activeNumberPage - 1)
-        )
-      );
     }
   };
 
@@ -505,9 +488,10 @@ const ClaimToValidatedList = (props) => {
                       aria-live="polite"
                     >
                       {t("Affichage de")} 1 {t("à")} {numberPerPage} {t("sur")}{" "}
-                      {claims.length} {t("données")}
+                      {total} {t("données")}
                     </div>
                   </div>
+
                   {!search ? (
                     <div className="col-sm-12 col-md-7 dataTables_pager">
                       <Pagination

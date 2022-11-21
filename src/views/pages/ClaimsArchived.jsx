@@ -5,8 +5,6 @@ import {
   loadCss,
   forceRound,
   getLowerCaseString,
-  formatDateToTime,
-  reduceCharacter,
   formatSelectOption,
 } from "../../helpers/function";
 import LoadingTable from "../components/LoadingTable";
@@ -161,27 +159,7 @@ const ClaimsArchived = (props) => {
         .catch((error) => console.log("Something is wrong"));
     }
   };
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newClaims = [...claimsArchived];
-    newClaims = newClaims.filter(
-      (el) =>
-        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          `${el.claimer ? el.claimer.lastname : "-"} ${
-            el.claimer ? el.claimer.firstname : ""
-          }`
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(el.description).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          el.active_treatment.solution === null
-            ? "-"
-            : el.active_treatment.solution
-        ).indexOf(value) >= 0
-    );
 
-    return newClaims;
-  };
   const onChangeInstitution = (selected) => {
     const newData = { ...data };
     setLoad(true);
