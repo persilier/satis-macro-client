@@ -252,14 +252,6 @@ const ClaimsArchived = (props) => {
     setNumberPerPage(parseInt(e.target.value));
   };
 
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
-  };
-
   const onClickPage = (e, page) => {
     e.preventDefault();
     setActiveNumberPage(page);
