@@ -2628,7 +2628,7 @@ const Aside = (props) => {
                   </li>
                 </>
               )}
-              <>
+              {/* <>
                 <li className="kt-menu__section ">
                   <h4 className="kt-menu__section-text">
                     {t("GESTION DES APPELS ENTRANTS")}
@@ -2731,7 +2731,7 @@ const Aside = (props) => {
                     </ul>
                   </div>
                 </li>
-              </>
+              </> */}
             </ul>
           ) : null}
         </div>
