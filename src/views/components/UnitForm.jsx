@@ -181,6 +181,7 @@ const HoldingUnitForm = (props) => {
               .includes(`${response.data.unit.state_id}`);
             return isgood;
           });
+
           firstableData.countrie_id = response.data.countries[cid].id;
           onChangeCountries({
             value: response.data.countries[cid].id,
@@ -198,6 +199,7 @@ const HoldingUnitForm = (props) => {
                 }
               : { value: "", label: "" }
           );
+
           setUnitType({
             value: response.data.unit.unit_type_id,
             label: response.data.unit.unit_type.name["fr"],
@@ -210,10 +212,6 @@ const HoldingUnitForm = (props) => {
 
           setCountries(formatSelectOption(response.data.countries, "name"));
 
-          setLeads(
-            response.data.leads.length ? formatLeads(response.data.leads) : []
-          );
-
           setLead(
             response.data.unit.lead
               ? {
@@ -225,6 +223,7 @@ const HoldingUnitForm = (props) => {
                 }
               : { value: "", label: "" }
           );
+
           firstableData.lead_id = response?.data?.unit?.lead?.id;
           if (verifyPermission(props.userPermissions, "update-any-unit")) {
             setInstitutions(
@@ -241,6 +240,10 @@ const HoldingUnitForm = (props) => {
             firstableData.institution_id = response.data?.unit?.institution?.id;
           }
           setData(firstableData);
+
+          setLeads(
+            response.data.leads.length ? formatLeads(response.data.leads) : []
+          );
         })
         .catch((error) => {
           //console.log("Something is wrong");
@@ -431,6 +434,7 @@ const HoldingUnitForm = (props) => {
                             }
                             placeholder="Ex:dmd"
                             value={data.name}
+                            defaultValue={firstableData.name}
                             onChange={(e) => onChangeName(e)}
                           />
                           {error.name.length
