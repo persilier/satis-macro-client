@@ -137,7 +137,6 @@ import Logs from "../pages/Logs";
 import ProofReceipt from "../pages/ProofReceipt";
 import ConfigTitreRapport from "../pages/ConfigTitreRapport";
 import ConfigTitreRapportEdit from "../components/ConfigTitreRapportEdit";
-import ResetPassword from "../pages/password-reset";
 import ClaimReportingBenchmarking from "../pages/ClaimReportingBenchmarking";
 import ClaimSystemUsageReport from "../pages/ClaimSystemUsageReport";
 
