@@ -432,7 +432,7 @@ const Unit = (props) => {
                               {t("Type Unité")}
                             </th>
                             <th
-                              className="sorting"
+                              className="sorting "
                               tabIndex="0"
                               aria-controls="kt_table_1"
                               rowSpan="1"

@@ -18,8 +18,6 @@ const Aside = (props) => {
   const [data, setData] = useState();
 
   useEffect(() => {
-    let staff = JSON.parse(localStorage.getItem("userData")).staff;
-    let data = JSON.parse(localStorage.getItem("userData")).data.roles;
     setStaff(JSON.parse(localStorage.getItem("userData")).staff);
     setData(JSON.parse(localStorage.getItem("userData")).data.roles);
   }, []);

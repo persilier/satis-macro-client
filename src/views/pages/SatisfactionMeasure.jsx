@@ -274,7 +274,7 @@ const SatisfactionMeasure = (props) => {
                                                     style={{width: "952px"}}>
                                                     <thead>
                                                     <tr role="row">
-                                                        <th className="sorting" tabIndex="0" aria-controls="kt_table_1"
+                                                        <th className="sorting " tabIndex="0" aria-controls="kt_table_1"
                                                             rowSpan="1"
                                                             colSpan="1" style={{width: "70.25px",paddingRight:"0"}}
                                                             aria-label="Country: activate to sort column ascending">{t("Référence")}

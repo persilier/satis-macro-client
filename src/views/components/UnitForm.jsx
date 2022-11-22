@@ -496,7 +496,7 @@ const HoldingUnitForm = (props) => {
                             }
                           >
                             <label
-                              className="col-xl-3 col-lg-3 col-form-label"
+                              className="col-xl-3 col-lg-3 col-form-label "
                               htmlFor="institution"
                             >
                               {t("Responsable")}
