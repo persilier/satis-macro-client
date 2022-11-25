@@ -1,11 +1,7 @@
 import { DOTS, usePagination } from "./PaginationRange";
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 const Pagination = (props) => {
-  //usage of useTranslation i18n
-  const { t, ready } = useTranslation();
-
   const {
     onClickPage,
     onClickPreviousPage,
@@ -20,18 +16,18 @@ const Pagination = (props) => {
     siblingCount,
     activeNumberPage,
   });
-
   /*    if (activeNumberPage === 0 || paginationRange.length < 2) {
             return null;
         }*/
-
-  let lastPage = paginationRange[paginationRange.length - 1];
-
-  return ready ? (
+  let lastPage = [];
+  if (paginationRange) {
+    lastPage = paginationRange[(paginationRange?.length || 1) - 1];
+  }
+  return (
     <div>
       <div className="dataTables_length" id="kt_table_1_length">
         <label>
-          {t("Afficher") + " "}
+          Afficher
           <select
             value={props.numberPerPage}
             onChange={(e) => props.onChangeNumberPerPage(e)}
@@ -45,7 +41,7 @@ const Pagination = (props) => {
             <option value="50">50</option>
             <option value="100">100</option>
           </select>
-          {" " + t("données")}
+          données
         </label>
       </div>
 
@@ -73,44 +69,46 @@ const Pagination = (props) => {
               <i className="la la-angle-left" />
             </a>
           </li>
-          {paginationRange.map((number) => {
-            if (number === DOTS) {
-              return (
-                <li key={number} className={"paginate_button page-item"}>
-                  <a
-                    href="#page"
-                    aria-controls="kt_table_1"
-                    data-dt-idx="1"
-                    tabIndex="0"
-                    className="page-link"
-                  >
-                    {number}
-                  </a>
-                </li>
-              );
-            }
-            return (
-              <li
-                key={number}
-                className={
-                  number === activeNumberPage
-                    ? "paginate_button page-item active"
-                    : "paginate_button page-item"
+          {paginationRange
+            ? paginationRange.map((number) => {
+                if (number === DOTS) {
+                  return (
+                    <li key={number} className={"paginate_button page-item"}>
+                      <a
+                        href="#page"
+                        aria-controls="kt_table_1"
+                        data-dt-idx="1"
+                        tabIndex="0"
+                        className="page-link"
+                      >
+                        {number}
+                      </a>
+                    </li>
+                  );
                 }
-              >
-                <a
-                  onClick={(e) => onClickPage(e, number)}
-                  href="#page"
-                  aria-controls="kt_table_1"
-                  data-dt-idx="1"
-                  tabIndex="0"
-                  className="page-link"
-                >
-                  {number}
-                </a>
-              </li>
-            );
-          })}
+                return (
+                  <li
+                    key={number}
+                    className={
+                      number === activeNumberPage
+                        ? "paginate_button page-item active"
+                        : "paginate_button page-item"
+                    }
+                  >
+                    <a
+                      onClick={(e) => onClickPage(e, number)}
+                      href="#page"
+                      aria-controls="kt_table_1"
+                      data-dt-idx="1"
+                      tabIndex="0"
+                      className="page-link"
+                    >
+                      {number}
+                    </a>
+                  </li>
+                );
+              })
+            : null}
 
           <li
             className={
@@ -134,7 +132,7 @@ const Pagination = (props) => {
         </ul>
       </div>
     </div>
-  ) : null;
+  );
 };
 
 export default Pagination;
