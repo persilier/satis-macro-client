@@ -39,6 +39,7 @@ const endPointConfig = {
     destroy: (unitId) => `${appConfig.apiDomaine}/my/staff/${unitId}`,
   },
   MACRO: {
+    create: `${appConfig.apiDomaine}/any/staff/create`,
     holding: {
       list: `${appConfig.apiDomaine}/any/staff`,
       destroy: (unitId) => `${appConfig.apiDomaine}/any/staff/${unitId}`,
@@ -92,10 +93,12 @@ const Staff = (props) => {
   const [prevUrl, setPrevUrl] = useState(null);
 
   const getEntities = useCallback(async () => {
+    console.log(props.plan, endPointConfig[props.plan].create);
+
     await axios
       .get(endPointConfig[props.plan].create)
       .then((response) => {
-        setEntitiesOption(response.data.units);
+        setEntitiesOption(response.data.institutions);
       })
       .catch((error) => {
         setLoadEntities(false);
@@ -108,7 +111,7 @@ const Staff = (props) => {
       await axios
         .get(
           `${endPoint.list}?size=${numberPerPage}${
-            entities !== null ? `&unit_id=${entities.value}` : ""
+            entities !== null ? `&institution_id=${entities.value}` : ""
           }`
         )
         .then((response) => {
@@ -128,8 +131,8 @@ const Staff = (props) => {
         });
     }
     if (verifyTokenExpire()) {
-      fetchData().then();
-      getEntities().then();
+      fetchData();
+      getEntities();
     }
   }, [entities, endPoint.list, NUMBER_ELEMENT_PER_PAGE]);
 
@@ -155,7 +158,7 @@ const Staff = (props) => {
             `${endPoint.list}?key=${getLowerCaseString(
               e.target.value
             )}&size=${numberPerPage}${
-              entities !== null ? `&unit_id=${entities.value}` : ""
+              entities !== null ? `&institution_id=${entities.value}` : ""
             }`
           )
           .then((response) => {
@@ -177,7 +180,7 @@ const Staff = (props) => {
         axios
           .get(
             `${endPoint.list}?size=${numberPerPage}${
-              entities !== null ? `&unit_id=${entities.value}` : ""
+              entities !== null ? `&institution_id=${entities.value}` : ""
             }`
           )
           .then((response) => {
@@ -206,7 +209,7 @@ const Staff = (props) => {
       axios
         .get(
           `${endPoint.list}?size=${e.target.value}${
-            entities !== null ? `&unit_id=${entities.value}` : ""
+            entities !== null ? `&institution_id=${entities.value}` : ""
           }`
         )
         .then((response) => {
@@ -245,7 +248,7 @@ const Staff = (props) => {
       axios
         .get(
           `${endPoint.list}?page=${page}&size=${numberPerPage}${
-            entities !== null ? `&unit_id=${entities.value}` : ""
+            entities !== null ? `&institution_id=${entities.value}` : ""
           }`
         )
         .then((response) => {
@@ -272,7 +275,7 @@ const Staff = (props) => {
           axios
             .get(
               `${nextUrl}?size=${numberPerPage}${
-                entities !== null ? `&unit_id=${entities.value}` : ""
+                entities !== null ? `&institution_id=${entities.value}` : ""
               }`
             )
             .then((response) => {
@@ -301,7 +304,7 @@ const Staff = (props) => {
           axios
             .get(
               `${prevUrl}?size=${numberPerPage}${
-                entities !== null ? `&unit_id=${entities.value}` : ""
+                entities !== null ? `&institution_id=${entities.value}` : ""
               }`
             )
             .then((response) => {
@@ -339,7 +342,9 @@ const Staff = (props) => {
                       `${
                         endPoint.list
                       }?page=${activeNumberPage}&size=${numberPerPage}${
-                        entities !== null ? `&unit_id=${entities.value}` : ""
+                        entities !== null
+                          ? `&institution_id=${entities.value}`
+                          : ""
                       }`
                     )
                     .then((response) => {
@@ -368,7 +373,9 @@ const Staff = (props) => {
                     .get(
                       `${endPoint.list}?page=${activeNumberPage -
                         1}&size=${numberPerPage}${
-                        entities !== null ? `&unit_id=${entities.value}` : ""
+                        entities !== null
+                          ? `&institution_id=${entities.value}`
+                          : ""
                       }`
                     )
                     .then((response) => {
@@ -407,22 +414,24 @@ const Staff = (props) => {
   ) => {
     const newOptions = [];
     for (let i = 0; i < options.length; i++) {
-      if (translate)
+      if (translate) {
         newOptions.push({
           value: options[i][valueKey],
           label: options[i][labelKey][translate],
           lead: options[i]["lead"],
         });
-      else
+      } else {
+        console.log(options[i], valueKey);
+
         newOptions.push({
           value: options[i][valueKey],
           label: options[i][labelKey],
           lead: options[i]["lead"],
         });
+      }
     }
     return newOptions;
   };
-
   const onChangeEntities = (selected) => {
     setEntities(selected);
   };
@@ -613,8 +622,7 @@ const Staff = (props) => {
                           placeholder={t("Filtrer en fonction de l'unité")}
                           options={formatUnitSelectOption(
                             entitiesOption,
-                            "name",
-                            "fr"
+                            "name"
                           )}
                         />
                       </div>

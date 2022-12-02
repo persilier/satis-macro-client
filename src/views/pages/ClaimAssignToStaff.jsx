@@ -14,9 +14,7 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
-  truncateString,
 } from "../../helpers/function";
-import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
