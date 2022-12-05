@@ -212,6 +212,7 @@ const SatisfactionMeasure = (props) => {
   };
 
   const printBodyTable = (measure, index) => {
+    console.log(measure);
     return (
       <tr key={index} role="row" className="odd">
         <td>{measure.reference === null ? "" : measure.reference}</td>
@@ -259,7 +260,9 @@ const SatisfactionMeasure = (props) => {
           measure.active_treatment.responsible_staff
             ? measure.active_treatment.responsible_staff.identite.firstname
             : ""
-        }/${measure.active_treatment.responsible_staff?.unit?.name["fr"]}`}</td>
+        }/${
+          measure?.active_treatment?.responsible_staff?.unit?.name["fr"]
+        }`}</td>
         {verifyPermission(
           props.userPermissions,
           "update-satisfaction-measured-my-claim"
