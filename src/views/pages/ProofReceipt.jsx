@@ -19,10 +19,7 @@ import { verifyPermission } from "../../helpers/permission";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { ToastBottomEnd } from "../components/Toast";
-import {
-  toastDeleteSuccessMessageConfig,
-  toastSuccessMessageWithParameterConfig,
-} from "../../config/toastConfig";
+import { toastSuccessMessageWithParameterConfig } from "../../config/toastConfig";
 import FileSaver from "file-saver";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
@@ -264,37 +261,49 @@ const ProofReceipt = (props) => {
   const printBodyTable = (proof, index) => {
     return (
       <tr key={index} role="row" className="odd">
-        {(verifyPermission(
-          props.userPermissions,
-          "list-any-notification-proof"
-        ) ||
-          verifyPermission(
-            props.userPermissions,
-            "pilot-list-any-notification-proof"
-          )) && <td>{proof.institution ? proof.institution.name : ""}</td>}
-        <td>
-          {proof.to
-            ? `${proof.to.firstname ? proof.to.firstname : ""} ${
-                proof.to.lastname ? proof.to.lastname : ""
-              }`
-            : ""}{" "}
-          /{" "}
-          {proof.to
-            ? proof.channel === "sms"
-              ? `${
-                  proof.to.telephone && proof.to.telephone[0]
-                    ? proof.to.telephone[0]
-                    : ""
-                }`
-              : `${
-                  proof.to.email && proof.to.email[0] ? proof.to.email[0] : ""
-                }`
-            : ""}
-        </td>
-        <td>{proof.channel ? proof.channel : ""}</td>
-        <td>{proof.message ? proof.message : ""}</td>
-        <td>{proof.sent_at ? formatDateToTimeStampte(proof.sent_at) : ""}</td>
-        <td>{proof.status ? proof.status : ""}</td>
+        {proof && (
+          <>
+            {(verifyPermission(
+              props.userPermissions,
+              "list-any-notification-proof"
+            ) ||
+              verifyPermission(
+                props.userPermissions,
+                "pilot-list-any-notification-proof"
+              )) && <td>{proof.institution ? proof.institution.name : ""}</td>}
+            <td>
+              {proof
+                ? proof.to
+                  ? `${proof.to.firstname ? proof.to.firstname : ""} ${
+                      proof.to.lastname ? proof.to.lastname : ""
+                    }`
+                  : ""
+                : "-"}{" "}
+              /{" "}
+              {proof
+                ? proof.to
+                  ? proof.channel === "sms"
+                    ? `${
+                        proof.to.telephone && proof.to.telephone[0]
+                          ? proof.to.telephone[0]
+                          : ""
+                      }`
+                    : `${
+                        proof.to.email && proof.to.email[0]
+                          ? proof.to.email[0]
+                          : ""
+                      }`
+                  : ""
+                : ""}
+            </td>
+            <td>{proof.channel ? proof.channel : ""}</td>
+            <td>{proof.message ? proof.message : ""}</td>
+            <td>
+              {proof.sent_at ? formatDateToTimeStampte(proof.sent_at) : ""}
+            </td>
+            <td>{proof.status ? proof.status : ""}</td>
+          </>
+        )}
       </tr>
     );
   };
