@@ -14,7 +14,6 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
-  truncateString,
 } from "../../helpers/function";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
@@ -40,7 +39,7 @@ const ClaimAssign = (props) => {
 
   const [load, setLoad] = useState(true);
   const [claims, setClaims] = useState([]);
-  const [numberPerPage, setNumberPerPage] = useState(10);
+  const [numberPerPage, setNumberPerPage] = useState(NUMBER_ELEMENT_PER_PAGE);
   const [activeNumberPage, setActiveNumberPage] = useState(1);
   const [numberPage, setNumberPage] = useState(0);
   const [showList, setShowList] = useState([]);
@@ -48,11 +47,11 @@ const ClaimAssign = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-
+  let endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment`;
   useEffect(() => {
     async function fetchData() {
       axios
-        .get(`${appConfig.apiDomaine}/claim-awaiting-assignment`)
+        .get(endpoint)
         .then((response) => {
           setLoad(false);
           if (response.data.length === 0) {
@@ -80,118 +79,76 @@ const ClaimAssign = (props) => {
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage]);
 
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newClaims = [...claims];
-    newClaims = newClaims.filter((el) => {
-      return (
-        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          `${el.claimer && el.claimer.lastname ? el.claimer.lastname : ""} ${
-            el.claimer && el.claimer.firstname ? el.claimer.firstname : ""
-          }  ${
-            el.account_targeted
-              ? " / " + el.account_targeted.number
-              : el.account_number
-              ? " / " + el.account_number
-              : ""
-          }`
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(
-          el.claim_object ? el.claim_object.name["fr"] : ""
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(
-          props.plan === "PRO"
-            ? el.unit_targeted
-              ? el.unit_targeted.name["fr"]
-              : "-"
-            : el.institution_targeted
-            ? el.institution_targeted.name
-            : ""
-        ).indexOf(value) >= 0
-      );
-    });
-
-    return newClaims;
-  };
-
   const searchElement = async (e) => {
     if (e.target.value) {
-      setNumberPage(
-        forceRound(
-          filterShowListBySearchValue(e.target.value).length /
-            NUMBER_ELEMENT_PER_PAGE
-        )
-      );
-      setShowList(
-        filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
-          0,
-          NUMBER_ELEMENT_PER_PAGE
-        )
-      );
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(
+            endpoint +
+              "?key=" +
+              getLowerCaseString(e.target.value) +
+              "&size=" +
+              numberPerPage
+          )
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
     } else {
-      setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
-      setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(endpoint + "?size=" + numberPerPage)
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
+      }
       setActiveNumberPage(1);
     }
   };
 
   const onChangeNumberPerPage = (e) => {
-    setActiveNumberPage(1);
+    e.persist();
     setNumberPerPage(parseInt(e.target.value));
-    setShowList(claims.slice(0, parseInt(e.target.value)));
-    setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
-  };
-
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
   };
 
   const onClickPage = (e, page) => {
     e.preventDefault();
     setActiveNumberPage(page);
-    setShowList(
-      claims.slice(
-        getEndByPosition(page) - numberPerPage,
-        getEndByPosition(page)
-      )
-    );
   };
 
   const onClickNextPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage <= numberPage) {
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
       setActiveNumberPage(activeNumberPage + 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage + 1) - numberPerPage,
-          getEndByPosition(activeNumberPage + 1)
-        )
-      );
     }
   };
 
   const onClickPreviousPage = (e) => {
     e.preventDefault();
-    if (activeNumberPage >= 1) {
+    if (activeNumberPage >= 1 && prevUrl !== null) {
       setActiveNumberPage(activeNumberPage - 1);
-      setShowList(
-        claims.slice(
-          getEndByPosition(activeNumberPage - 1) - numberPerPage,
-          getEndByPosition(activeNumberPage - 1)
-        )
-      );
     }
   };
-
   const arrayNumberPage = () => {
     const pages = [];
     for (let i = 0; i < numberPage; i++) {
