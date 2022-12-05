@@ -212,7 +212,6 @@ const SatisfactionMeasure = (props) => {
   };
 
   const printBodyTable = (measure, index) => {
-    console.log(measure);
     return (
       <tr key={index} role="row" className="odd">
         <td>{measure.reference === null ? "" : measure.reference}</td>
