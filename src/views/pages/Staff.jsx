@@ -78,6 +78,11 @@ const Staff = (props) => {
   } else {
     endPoint = endPointConfig[props.plan];
   }
+  let unit_triable = props.plan === "PRO" ? "unit_id" : "institution_id";
+  const [staff, setStaff] = useState();
+
+  let data = JSON.parse(localStorage.getItem("userData")).data.roles;
+  data = data.map((mes) => mes.name);
 
   const [load, setLoad] = useState(true);
   const [loadEntities, setLoadEntities] = useState(true);
@@ -98,20 +103,19 @@ const Staff = (props) => {
     await axios
       .get(endPointConfig[props.plan].create)
       .then((response) => {
-        setEntitiesOption(response.data.institutions);
+        setEntitiesOption(response.data.institutions || response.data.units);
       })
       .catch((error) => {
         setLoadEntities(false);
       });
   }, []);
-
   useEffect(() => {
     async function fetchData() {
       setLoad(true);
       await axios
         .get(
           `${endPoint.list}?size=${numberPerPage}${
-            entities !== null ? `&institution_id=${entities.value}` : ""
+            entities !== null ? `&${unit_triable}=${entities.value}` : ""
           }`
         )
         .then((response) => {
@@ -158,7 +162,7 @@ const Staff = (props) => {
             `${endPoint.list}?key=${getLowerCaseString(
               e.target.value
             )}&size=${numberPerPage}${
-              entities !== null ? `&institution_id=${entities.value}` : ""
+              entities !== null ? `&${unit_triable}=${entities.value}` : ""
             }`
           )
           .then((response) => {
@@ -180,7 +184,7 @@ const Staff = (props) => {
         axios
           .get(
             `${endPoint.list}?size=${numberPerPage}${
-              entities !== null ? `&institution_id=${entities.value}` : ""
+              entities !== null ? `&${unit_triable}=${entities.value}` : ""
             }`
           )
           .then((response) => {
@@ -209,7 +213,7 @@ const Staff = (props) => {
       axios
         .get(
           `${endPoint.list}?size=${e.target.value}${
-            entities !== null ? `&institution_id=${entities.value}` : ""
+            entities !== null ? `&${unit_triable}=${entities.value}` : ""
           }`
         )
         .then((response) => {
@@ -248,7 +252,7 @@ const Staff = (props) => {
       axios
         .get(
           `${endPoint.list}?page=${page}&size=${numberPerPage}${
-            entities !== null ? `&institution_id=${entities.value}` : ""
+            entities !== null ? `&${unit_triable}=${entities.value}` : ""
           }`
         )
         .then((response) => {
@@ -275,7 +279,7 @@ const Staff = (props) => {
           axios
             .get(
               `${nextUrl}?size=${numberPerPage}${
-                entities !== null ? `&institution_id=${entities.value}` : ""
+                entities !== null ? `&${unit_triable}=${entities.value}` : ""
               }`
             )
             .then((response) => {
@@ -304,7 +308,7 @@ const Staff = (props) => {
           axios
             .get(
               `${prevUrl}?size=${numberPerPage}${
-                entities !== null ? `&institution_id=${entities.value}` : ""
+                entities !== null ? `&${unit_triable}=${entities.value}` : ""
               }`
             )
             .then((response) => {
@@ -343,7 +347,7 @@ const Staff = (props) => {
                         endPoint.list
                       }?page=${activeNumberPage}&size=${numberPerPage}${
                         entities !== null
-                          ? `&institution_id=${entities.value}`
+                          ? `&${unit_triable}=${entities.value}`
                           : ""
                       }`
                     )
@@ -374,7 +378,7 @@ const Staff = (props) => {
                       `${endPoint.list}?page=${activeNumberPage -
                         1}&size=${numberPerPage}${
                         entities !== null
-                          ? `&institution_id=${entities.value}`
+                          ? `&${unit_triable}=${entities.value}`
                           : ""
                       }`
                     )
@@ -612,7 +616,13 @@ const Staff = (props) => {
                         htmlFor="unit"
                         className="col-xl-2 col-lg-2 col-form-label"
                       >
-                        {t("Unité")}{" "}
+                        {props.plan === "PRO"
+                          ? t("Unité")
+                          : t(
+                              data.includes("admin-filial")
+                                ? "Unité"
+                                : "Institution"
+                            )}
                       </label>
                       <div className="" style={{ width: "83%" }}>
                         <Select
@@ -622,7 +632,8 @@ const Staff = (props) => {
                           placeholder={t("Filtrer en fonction de l'unité")}
                           options={formatUnitSelectOption(
                             entitiesOption,
-                            "name"
+                            "name",
+                            props.plan === "PRO" ? "fr" : false
                           )}
                         />
                       </div>
