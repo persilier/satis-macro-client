@@ -14,11 +14,13 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
+  truncateString,
 } from "../../helpers/function";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import { useTranslation } from "react-i18next";
+import { NUMBER_ELEMENT_PER_PAGE } from "constants/dataTable";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 
@@ -45,6 +47,7 @@ const ClaimAssignToStaff = (props) => {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
   const [search, setSearch] = useState("");
+  const isPro = props.plan === "PRO";
 
   useEffect(() => {
     async function fetchData() {
@@ -57,20 +60,27 @@ const ClaimAssignToStaff = (props) => {
         .then((response) => {
           setLoad(false);
 
-          if (response.data.length === 0) {
-            setNumberPage(forceRound(0 / numberPerPage));
-            setShowList([]);
-            setClaims([]);
-            setTotal(0);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+          if (isPro) {
+            setNumberPage(forceRound(response.data.length / numberPerPage));
+            setShowList(response.data.slice(0, numberPerPage));
+            setClaims(response["data"]);
+            setTotal(response.data.length);
           } else {
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setClaims(response.data["data"]);
-            setTotal(response.data.total);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+            if (response.data.length === 0) {
+              setNumberPage(forceRound(0 / numberPerPage));
+              setShowList([]);
+              setClaims([]);
+              setTotal(0);
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            } else {
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setClaims(response.data["data"]);
+              setTotal(response.data.total);
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            }
           }
         })
         .catch((error) => {
@@ -81,75 +91,166 @@ const ClaimAssignToStaff = (props) => {
 
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage]);
+  const filterShowListBySearchValue = (value) => {
+    value = getLowerCaseString(value);
+    let newClaims = [...claims];
+    newClaims = newClaims.filter((el) => {
+      return (
+        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+        getLowerCaseString(
+          `${el.claimer ? el.claimer.lastname : "-"} ${
+            el.claimer ? el.claimer.firstname : ""
+          }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
+        ).indexOf(value) >= 0 ||
+        getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
+          0 ||
+        getLowerCaseString(
+          el.claim_object ? el.claim_object.name["fr"] : ""
+        ).indexOf(value) >= 0 ||
+        getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
+          0 ||
+        getLowerCaseString(
+          el.institution_targeted ? el.institution_targeted.name : ""
+        ).indexOf(value) >= 0
+      );
+    });
+
+    return newClaims;
+  };
 
   const searchElement = async (e) => {
-    setSearch(e.target.value);
-    if (e.target.value) {
-      if (verifyTokenExpire()) {
-        setLoad(true);
-        axios
-          .get(
-            endpoint +
-              "?key=" +
-              getLowerCaseString(e.target.value) +
-              "&size=" +
-              numberPerPage
+    if (isPro) {
+      if (e.target.value) {
+        setNumberPage(
+          forceRound(
+            filterShowListBySearchValue(e.target.value).length /
+              NUMBER_ELEMENT_PER_PAGE
           )
-          .then((response) => {
-            setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          })
-          .catch((error) => {
-            setLoad(false);
-          });
+        );
+        setShowList(
+          filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
+            0,
+            NUMBER_ELEMENT_PER_PAGE
+          )
+        );
+      } else {
+        setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
+        setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
+        setActiveNumberPage(1);
       }
     } else {
-      if (verifyTokenExpire()) {
-        setLoad(true);
-        axios
-          .get(endpoint + "?size=" + numberPerPage)
-          .then((response) => {
-            setLoad(false);
-            setClaims(response.data["data"]);
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setTotal(response.data.total);
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
-          })
-          .catch((error) => {
-            setLoad(false);
-          });
+      setSearch(e.target.value);
+
+      if (e.target.value) {
+        if (verifyTokenExpire()) {
+          setLoad(true);
+          axios
+            .get(
+              endpoint +
+                "?key=" +
+                getLowerCaseString(e.target.value) +
+                "&size=" +
+                numberPerPage
+            )
+            .then((response) => {
+              setLoad(false);
+              setClaims(response.data["data"]);
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setTotal(response.data.total);
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            })
+            .catch((error) => {
+              setLoad(false);
+            });
+        }
+      } else {
+        if (verifyTokenExpire()) {
+          setLoad(true);
+          axios
+            .get(endpoint + "?size=" + numberPerPage)
+            .then((response) => {
+              setLoad(false);
+              setClaims(response.data["data"]);
+              setShowList(response.data.data.slice(0, numberPerPage));
+              setTotal(response.data.total);
+              setNumberPage(forceRound(response.data.total / numberPerPage));
+              setPrevUrl(response.data["prev_page_url"]);
+              setNextUrl(response.data["next_page_url"]);
+            })
+            .catch((error) => {
+              setLoad(false);
+            });
+        }
+        setActiveNumberPage(1);
       }
-      setActiveNumberPage(1);
     }
   };
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setNumberPerPage(parseInt(e.target.value));
   };
-
+  const getEndByPosition = (position) => {
+    let end = numberPerPage;
+    for (let i = 1; i < position; i++) {
+      end = end + numberPerPage;
+    }
+    return end;
+  };
   const onClickPage = (e, page) => {
-    e.preventDefault();
-    setActiveNumberPage(page);
+    if (isPro) {
+      e.preventDefault();
+      setActiveNumberPage(page);
+      setShowList(
+        claims.slice(
+          getEndByPosition(page) - numberPerPage,
+          getEndByPosition(page)
+        )
+      );
+    } else {
+      e.preventDefault();
+      setActiveNumberPage(page);
+    }
   };
 
   const onClickNextPage = (e) => {
-    e.preventDefault();
-    if (activeNumberPage <= numberPage && nextUrl !== null) {
-      setActiveNumberPage(activeNumberPage + 1);
+    if (isPro) {
+      e.preventDefault();
+      if (activeNumberPage <= numberPage) {
+        setActiveNumberPage(activeNumberPage + 1);
+        setShowList(
+          claims.slice(
+            getEndByPosition(activeNumberPage + 1) - numberPerPage,
+            getEndByPosition(activeNumberPage + 1)
+          )
+        );
+      }
+    } else {
+      e.preventDefault();
+      if (activeNumberPage <= numberPage && nextUrl !== null) {
+        setActiveNumberPage(activeNumberPage + 1);
+      }
     }
   };
 
   const onClickPreviousPage = (e) => {
-    e.preventDefault();
-    if (activeNumberPage >= 1 && prevUrl !== null) {
-      setActiveNumberPage(activeNumberPage - 1);
+    if (isPro) {
+      e.preventDefault();
+      if (activeNumberPage >= 1) {
+        setActiveNumberPage(activeNumberPage - 1);
+        setShowList(
+          claims.slice(
+            getEndByPosition(activeNumberPage - 1) - numberPerPage,
+            getEndByPosition(activeNumberPage - 1)
+          )
+        );
+      }
+    } else {
+      e.preventDefault();
+      if (activeNumberPage >= 1 && prevUrl !== null) {
+        setActiveNumberPage(activeNumberPage - 1);
+      }
     }
   };
   const arrayNumberPage = () => {
@@ -159,7 +260,6 @@ const ClaimAssignToStaff = (props) => {
     }
     return pages;
   };
-
   const pages = arrayNumberPage();
 
   const showModal = (message) => {
@@ -471,7 +571,7 @@ const ClaimAssignToStaff = (props) => {
                         aria-live="polite"
                       >
                         {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {total} {t("données")}
+                        {t("sur")} {isPro ? claims.length : total}{" "}
                       </div>
                     </div>
 
