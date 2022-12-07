@@ -14,7 +14,6 @@ import {
   formatDateToTime,
   getLowerCaseString,
   loadCss,
-  truncateString,
 } from "../../helpers/function";
 import { NUMBER_ELEMENT_PER_PAGE } from "../../constants/dataTable";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
@@ -49,34 +48,33 @@ const ClaimAssign = (props) => {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
   let endpoint = `${appConfig.apiDomaine}/claim-awaiting-assignment`;
-  const isPro = props.plan === "PRO";
   useEffect(() => {
     async function fetchData() {
       axios
         .get(endpoint)
         .then((response) => {
           setLoad(false);
-          if (isPro) {
-            setNumberPage(forceRound(response.data.length / numberPerPage));
-            setShowList(response.data.slice(0, numberPerPage));
-            setClaims(response["data"]);
-            setTotal(response.data.length);
+          if (response.data.length === 0) {
+            setNumberPage(forceRound(0 / numberPerPage));
+            setShowList([]);
+            setClaims([]);
+            setTotal(0);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
           } else {
-            if (response.data.length === 0) {
-              setNumberPage(forceRound(0 / numberPerPage));
-              setShowList([]);
-              setClaims([]);
-              setTotal(0);
-              setPrevUrl(response.data["prev_page_url"]);
-              setNextUrl(response.data["next_page_url"]);
-            } else {
-              setNumberPage(forceRound(response.data.total / numberPerPage));
-              setShowList(response.data.data.slice(0, numberPerPage));
-              setClaims(response.data["data"]);
-              setTotal(response.data.total);
-              setPrevUrl(response.data["prev_page_url"]);
-              setNextUrl(response.data["next_page_url"]);
-            }
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setClaims(response.data["data"]);
+            setTotal(response.data.total);
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+
+            // setNumberPage(forceRound(response.data.total / numberPerPage));
+            // setShowList(response.data.slice(0, numberPerPage));
+            // setClaims(response["data"]);
+            // setTotal(response.data.total);
+            // setPrevUrl(response["prev_page_url"]);
+            // setNextUrl(response["next_page_url"]);
           }
         })
         .catch((error) => {
@@ -87,171 +85,75 @@ const ClaimAssign = (props) => {
 
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage]);
-  const filterShowListBySearchValue = (value) => {
-    value = getLowerCaseString(value);
-    let newClaims = [...claims];
-    newClaims = newClaims.filter((el) => {
-      return (
-        getLowerCaseString(el.reference).indexOf(value) >= 0 ||
-        getLowerCaseString(
-          `${el.claimer ? el.claimer.lastname : "-"} ${
-            el.claimer ? el.claimer.firstname : ""
-          }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(
-          el.claim_object ? el.claim_object.name["fr"] : ""
-        ).indexOf(value) >= 0 ||
-        getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
-          0 ||
-        getLowerCaseString(
-          el.institution_targeted ? el.institution_targeted.name : ""
-        ).indexOf(value) >= 0
-      );
-    });
 
-    return newClaims;
-  };
   const searchElement = async (e) => {
-    if (isPro) {
-      if (e.target.value) {
-        setNumberPage(
-          forceRound(
-            filterShowListBySearchValue(e.target.value).length /
-              NUMBER_ELEMENT_PER_PAGE
+    if (e.target.value) {
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(
+            endpoint +
+              "?key=" +
+              getLowerCaseString(e.target.value) +
+              "&size=" +
+              numberPerPage
           )
-        );
-        setShowList(
-          filterShowListBySearchValue(e.target.value.toLowerCase()).slice(
-            0,
-            NUMBER_ELEMENT_PER_PAGE
-          )
-        );
-      } else {
-        setNumberPage(forceRound(claims.length / NUMBER_ELEMENT_PER_PAGE));
-        setShowList(claims.slice(0, NUMBER_ELEMENT_PER_PAGE));
-        setActiveNumberPage(1);
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
       }
     } else {
-      if (e.target.value) {
-        if (verifyTokenExpire()) {
-          setLoad(true);
-          axios
-            .get(
-              endpoint +
-                "?key=" +
-                getLowerCaseString(e.target.value) +
-                "&size=" +
-                numberPerPage
-            )
-            .then((response) => {
-              setLoad(false);
-              setClaims(response.data["data"]);
-              setShowList(response.data.data.slice(0, numberPerPage));
-              setTotal(response.data.total);
-              setNumberPage(forceRound(response.data.total / numberPerPage));
-              setPrevUrl(response.data["prev_page_url"]);
-              setNextUrl(response.data["next_page_url"]);
-            })
-            .catch((error) => {
-              setLoad(false);
-            });
-        }
-      } else {
-        if (verifyTokenExpire()) {
-          setLoad(true);
-          axios
-            .get(endpoint + "?size=" + numberPerPage)
-            .then((response) => {
-              setLoad(false);
-              setClaims(response.data["data"]);
-              setShowList(response.data.data.slice(0, numberPerPage));
-              setTotal(response.data.total);
-              setNumberPage(forceRound(response.data.total / numberPerPage));
-              setPrevUrl(response.data["prev_page_url"]);
-              setNextUrl(response.data["next_page_url"]);
-            })
-            .catch((error) => {
-              setLoad(false);
-            });
-        }
-        setActiveNumberPage(1);
+      if (verifyTokenExpire()) {
+        setLoad(true);
+        axios
+          .get(endpoint + "?size=" + numberPerPage)
+          .then((response) => {
+            setLoad(false);
+            setClaims(response.data["data"]);
+            setShowList(response.data.data.slice(0, numberPerPage));
+            setTotal(response.data.total);
+            setNumberPage(forceRound(response.data.total / numberPerPage));
+            setPrevUrl(response.data["prev_page_url"]);
+            setNextUrl(response.data["next_page_url"]);
+          })
+          .catch((error) => {
+            setLoad(false);
+          });
       }
+      setActiveNumberPage(1);
     }
   };
 
   const onChangeNumberPerPage = (e) => {
-    if (isPro) {
-      setActiveNumberPage(1);
-      setNumberPerPage(parseInt(e.target.value));
-      setShowList(claims.slice(0, parseInt(e.target.value)));
-      setNumberPage(forceRound(claims.length / parseInt(e.target.value)));
-    } else {
-      e.persist();
-      setNumberPerPage(parseInt(e.target.value));
-    }
+    e.persist();
+    setNumberPerPage(parseInt(e.target.value));
   };
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
-  };
+
   const onClickPage = (e, page) => {
-    if (isPro) {
-      e.preventDefault();
-      setActiveNumberPage(page);
-      setShowList(
-        claims.slice(
-          getEndByPosition(page) - numberPerPage,
-          getEndByPosition(page)
-        )
-      );
-    } else {
-      e.preventDefault();
-      setActiveNumberPage(page);
-    }
+    e.preventDefault();
+    setActiveNumberPage(page);
   };
 
   const onClickNextPage = (e) => {
-    if (isPro) {
-      e.preventDefault();
-      if (activeNumberPage <= numberPage) {
-        setActiveNumberPage(activeNumberPage + 1);
-        setShowList(
-          claims.slice(
-            getEndByPosition(activeNumberPage + 1) - numberPerPage,
-            getEndByPosition(activeNumberPage + 1)
-          )
-        );
-      }
-    } else {
-      e.preventDefault();
-      if (activeNumberPage <= numberPage && nextUrl !== null) {
-        setActiveNumberPage(activeNumberPage + 1);
-      }
+    e.preventDefault();
+    if (activeNumberPage <= numberPage && nextUrl !== null) {
+      setActiveNumberPage(activeNumberPage + 1);
     }
   };
 
   const onClickPreviousPage = (e) => {
-    if (isPro) {
-      e.preventDefault();
-      if (activeNumberPage >= 1) {
-        setActiveNumberPage(activeNumberPage - 1);
-        setShowList(
-          claims.slice(
-            getEndByPosition(activeNumberPage - 1) - numberPerPage,
-            getEndByPosition(activeNumberPage - 1)
-          )
-        );
-      }
-    } else {
-      e.preventDefault();
-      if (activeNumberPage >= 1 && prevUrl !== null) {
-        setActiveNumberPage(activeNumberPage - 1);
-      }
+    e.preventDefault();
+    if (activeNumberPage >= 1 && prevUrl !== null) {
+      setActiveNumberPage(activeNumberPage - 1);
     }
   };
   const arrayNumberPage = () => {
@@ -578,8 +480,7 @@ const ClaimAssign = (props) => {
                         aria-live="polite"
                       >
                         {t("Affichage de")} 1 {t("à")} {numberPerPage}{" "}
-                        {t("sur")} {isPro ? claims.length : total}{" "}
-                        {t("données")}
+                        {t("sur")} {total} {t("données")}
                       </div>
                     </div>
 
