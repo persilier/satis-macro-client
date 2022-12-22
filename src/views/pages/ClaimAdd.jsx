@@ -644,7 +644,7 @@ const ClaimAdd = (props) => {
               .get(
                 `${appConfig.apiDomaine}/search/institutions/${value}/clients?type=name_or_phone&r=${searchInputValue}`
               )
-              .then(({ data }) => {
+              .then((data) => {
                 setStartSearch(false);
                 setShowSearchResult(true);
                 if (data.length)
