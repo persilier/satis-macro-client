@@ -344,7 +344,6 @@ const HoldingClientForm = (props) => {
                 setStartSearch(false);
                 setShowSearchResult(true);
                 data = data.data;
-
                 if (data.length) {
                   setClientCash({
                     searchInputValue: searchInputValue,
@@ -376,7 +375,6 @@ const HoldingClientForm = (props) => {
                     clients: data,
                   });
                 setSearchList(data);
-                console.log(searchInputValue);
               })
               .catch(({ response }) => {
                 setStartSearch(false);

@@ -172,12 +172,8 @@ const ProofReceipt = (props) => {
 
   const searchElement = async (e) => {
     if (e.target.value) {
-      /*            setNumberPage(forceRound(filterShowListBySearchValue(e.target.value).length / NUMBER_ELEMENT_PER_PAGE));
-            setShowList(filterShowListBySearchValue(e.target.value.toLowerCase()).slice(0, NUMBER_ELEMENT_PER_PAGE))*/ if (
-        verifyTokenExpire()
-      ) {
+      if (verifyTokenExpire()) {
         setLoad(true);
-
         axios
           .post(
             endPointi +
@@ -247,14 +243,6 @@ const ProofReceipt = (props) => {
         });
     }
     setNumberPerPage(parseInt(e.target.value));
-  };
-
-  const getEndByPosition = (position) => {
-    let end = numberPerPage;
-    for (let i = 1; i < position; i++) {
-      end = end + numberPerPage;
-    }
-    return end;
   };
 
   const onClickPage = (e, page) => {
@@ -441,11 +429,12 @@ const ProofReceipt = (props) => {
             "pilot-list-notification-proof"
           )
         ) {
-          setNumberPage(
-            forceRound(response.data.length / NUMBER_ELEMENT_PER_PAGE)
-          );
-          setShowList(response.data.slice(0, NUMBER_ELEMENT_PER_PAGE));
-          setProofs(response.data);
+          setNumberPage(forceRound(response.data.total / numberPerPage));
+          setShowList(response.data.data.slice(0, numberPerPage));
+          setProofs(response.data["data"]);
+          setTotal(response.data.total);
+          setPrevUrl(response.data["prev_page_url"]);
+          setNextUrl(response.data["next_page_url"]);
           ToastBottomEnd.fire(
             toastSuccessMessageWithParameterConfig(t("Succès de l'opération"))
           );
