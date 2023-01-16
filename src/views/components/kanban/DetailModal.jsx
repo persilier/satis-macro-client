@@ -3,6 +3,7 @@ import ClaimDetails from "./ClaimDetails";
 import {loadCss, loadScript} from "../../../helpers/function";
 import {useTranslation} from "react-i18next";
 
+
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
 loadScript("/assets/js/pages/custom/chat/chat.js");

@@ -67,6 +67,7 @@ const ClaimMonitoring = (props) => {
   const [toTreat, setToTreat] = useState(false);
   const [toValidate, setToValidate] = useState(false);
   const [toMeasure, setToMeasure] = useState(false);
+  const [Drived, setDrived] = useState(false);
 
   const [institution, setInstitution] = useState(null);
   const [institutions, setInstitutions] = useState([]);
@@ -123,9 +124,10 @@ const ClaimMonitoring = (props) => {
         endpoint = `${appConfig.apiDomaine}/any/monitoring-claim`;
       else if (props.plan === "PRO")
         endpoint = `${appConfig.apiDomaine}/my/monitoring-claim`;
+
       await axios
         .get(endpoint)
-        .then((response) => {
+        .then(async (response) => {
           //console.log("plainte recupérée", response.data)
           setClaimsToComplete(response.data.incompletes);
           setClaimsToAssignUnit(response.data.toAssignementToUnit);
@@ -133,7 +135,6 @@ const ClaimMonitoring = (props) => {
           setClaimsToTreat(response.data.awaitingTreatment);
           setClaimsToValidate(response.data.toValidate);
           setClaimsToMeasure(response.data.toMeasureSatisfaction);
-
           if (
             verifyPermission(
               props.userPermissions,
@@ -151,12 +152,17 @@ const ClaimMonitoring = (props) => {
           setUnits(response.data.units);
           setStaffs(response.data.staffs);
           setObjects(response.data.claimObjects);
-          setActivePilots(response.data?.activePilots)
+          setActivePilots(response.data?.activePilots);
           setIsLoad(false);
         })
         .catch((error) => {
           //console.log("Something is wrong");
           setIsLoad(false);
+        });
+      await axios
+        .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
+        .then((res) => {
+          setDrived(res);
         });
     }
     if (verifyTokenExpire()) fetchData();
@@ -255,7 +261,9 @@ const ClaimMonitoring = (props) => {
   const onChangeToMeasure = (e) => {
     setToMeasure(e.target.checked);
   };
-
+  // const onChangeDriving = (e) => {
+  //   setDrived(e.target.checked);
+  // };
   const onChangeAllChecked = (e) => {
     setToComplete(e.target.checked);
     setToAssignUnit(e.target.checked);
@@ -406,6 +414,15 @@ const ClaimMonitoring = (props) => {
                       {t("A valider")}
                       <span />
                     </label>
+                    {/* <label className="kt-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={Drived}
+                        onChange={(e) => onChangeDriving(e)}
+                      />{" "}
+                      {t("Pilote")}
+                      <span />
+                    </label> */}
                     <label className="kt-checkbox">
                       <input
                         type="checkbox"
@@ -479,17 +496,19 @@ const ClaimMonitoring = (props) => {
                         options={filterUnits}
                       />
                     </div>
-                    <div className={"col"}>
-                      <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
-                      <Select
-                        isClearable
-                        placeholder={t("Veuillez sélectionner l'agent")}
-                        value={ActivePilot}
-                        onChange={onChangeActivePilot}
-                        isLoading={isLoad}
-                        options={ActivePilots}
-                      />
-                    </div>
+                    {
+                      <div className={"col"}>
+                        <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                        <Select
+                          isClearable
+                          placeholder={t("Veuillez sélectionner l'agent")}
+                          value={ActivePilot}
+                          onChange={onChangeActivePilot}
+                          isLoading={isLoad}
+                          options={ActivePilots}
+                        />
+                      </div>
+                    }
                     <div className={"col"}>
                       <label htmlFor="staff">{t("Agent traitant")}</label>
                       <Select
@@ -603,6 +622,7 @@ const ClaimMonitoring = (props) => {
                     filterInstitution={institution}
                     filterCategory={category}
                     filterObject={object}
+                    filterPilot={ActivePilot}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -630,6 +650,7 @@ const ClaimMonitoring = (props) => {
                     onClick={showModal}
                     filterInstitution={institution}
                     filterCategory={category}
+                    filterPilot={ActivePilot}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate
@@ -660,6 +681,7 @@ const ClaimMonitoring = (props) => {
                     filterUnit={unit}
                     filterCategory={category}
                     filterObject={object}
+                    filterPilot={ActivePilot}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -688,6 +710,7 @@ const ClaimMonitoring = (props) => {
                     filterStaff={staff}
                     filterCategory={category}
                     filterObject={object}
+                    filterPilot={ActivePilot}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -719,6 +742,7 @@ const ClaimMonitoring = (props) => {
                     filterStaff={staff}
                     filterCategory={category}
                     filterObject={object}
+                    filterPilot={ActivePilot}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -748,6 +772,7 @@ const ClaimMonitoring = (props) => {
                     filterUnit={unit}
                     filterStaff={staff}
                     filterCategory={category}
+                    filterPilot={ActivePilot}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate
