@@ -166,7 +166,6 @@ const LoginPage = (props) => {
             // setError(defaultError);
             // setStartRequest(false);
             ToastBottomEnd.fire(toastConnectSuccessMessageConfig());
-            const user = response.data;
             localStorage.setItem("userData", JSON.stringify(response.data));
             localStorage.setItem("token", token);
             localStorage.setItem("expire_in", expire_in);
