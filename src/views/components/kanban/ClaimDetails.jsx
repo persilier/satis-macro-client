@@ -11,7 +11,10 @@ import appConfig from "../../../config/appConfig";
 import Loader from "../Loader";
 import { useTranslation } from "react-i18next";
 import { ToastBottomEnd } from "../Toast";
-import { toastAssignClaimSuccessMessageConfig } from "config/toastConfig";
+import {
+  toastAssignClaimSuccessMessageConfig,
+  toastAddErrorMessageConfig,
+} from "config/toastConfig";
 
 loadCss("/assets/css/pages/wizard/wizard-2.css");
 loadScript("/assets/js/pages/custom/wizard/wizard-2.js");
@@ -496,23 +499,42 @@ const ClaimDetails = (props) => {
 function ChangePiloteForm({ id }) {
   //usage of useTranslation i18n
   const { t, ready } = useTranslation();
+  const defaultError = {
+    pilot_id: [],
+    message: [],
+  };
   const [Pilots, setPilots] = useState({
     pilot: [],
     observation: [],
   });
   const [Pilot, setPilot] = useState(null);
   const [Observation, setObservation] = useState("");
-  const [Errors, setErrors] = useState([]);
+  const [Errors, setErrors] = useState(defaultError);
   const [startRequest, setStartRequest] = useState(false);
+  useEffect(() => {
+    axios
+      .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
+      .then((res) => {
+        setPilots(
+          res.data?.all_active_pilots.map((item) => ({
+            label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
+            value: item.staff.id,
+          }))
+        );
+      })
+      .catch((e) => console.log("error", e));
+  }, []);
 
   const assignClaim = (e) => {
     e.preventDefault();
     if (verifyTokenExpire()) {
+      setStartRequest(true);
       axios
-        .put(
-          `${appConfig.apiDomaine}/claim-awaiting-treatment/${id}/assignment`,
-          { pilot_id: Pilot?.value, claim_id: id, observation: Observation }
-        )
+        .post(`${appConfig.apiDomaine}/reassignment-to-pilot`, {
+          pilot_id: Pilot?.value,
+          claim_id: id,
+          message: Observation,
+        })
         .then((response) => {
           ToastBottomEnd.fire(toastAssignClaimSuccessMessageConfig());
           setStartRequest(false);
@@ -522,7 +544,10 @@ function ChangePiloteForm({ id }) {
         })
         .catch((error) => {
           setStartRequest(false);
-          setErrors(error.response.data.error.staff_id);
+          setErrors({ ...defaultError, ...error.response.data.error });
+          ToastBottomEnd.fire(
+            toastAddErrorMessageConfig("Echec d'affectation")
+          );
         });
     }
   };
@@ -542,7 +567,9 @@ function ChangePiloteForm({ id }) {
         <div className="kt-wizard-v2__review">
           <div className="kt-wizard-v2__review-content">
             <div
-              className={Errors.length ? "form-group validated" : "form-group"}
+              className={
+                Errors?.pilot_id?.length ? "form-group validated" : "form-group"
+              }
             >
               <label>{t("Pilote(s) actif(s)")}</label>
               <Select
@@ -552,7 +579,7 @@ function ChangePiloteForm({ id }) {
                 onChange={onChangePilot}
                 options={Pilots}
               />
-              {Errors?.pilot?.map((error, index) => (
+              {Errors?.pilot_id?.map((error, index) => (
                 <div key={index} className="invalid-feedback">
                   {error}
                 </div>
@@ -560,7 +587,7 @@ function ChangePiloteForm({ id }) {
             </div>
             <div
               className={
-                Error?.observation?.length
+                Errors?.message?.length
                   ? "form-group row validated"
                   : "form-group row"
               }
@@ -572,7 +599,7 @@ function ChangePiloteForm({ id }) {
                 <textarea
                   id="observation"
                   className={
-                    Error?.observation?.length
+                    Errors?.message?.length
                       ? "form-control is-invalid"
                       : "form-control"
                   }
@@ -582,13 +609,13 @@ function ChangePiloteForm({ id }) {
                   value={Observation}
                   onChange={(e) => onChangeObservation(e)}
                 />
-                {Error?.observation?.length
-                  ? Error.obsevation.map((error, index) => (
+                {Errors?.message?.length
+                  ? Errors.message.map((error, index) => (
                       <div key={index} className="invalid-feedback">
                         {error}
                       </div>
                     ))
-                  : ""}
+                  : ""}{" "}
               </div>
             </div>
             <div className="form-group d-flex justify-content-between">

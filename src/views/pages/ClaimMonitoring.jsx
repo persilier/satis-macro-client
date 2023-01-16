@@ -152,17 +152,23 @@ const ClaimMonitoring = (props) => {
           setUnits(response.data.units);
           setStaffs(response.data.staffs);
           setObjects(response.data.claimObjects);
-          setActivePilots(response.data?.activePilots);
+          setActivePilots(
+            response.data?.activePilots.map((item) => ({
+              label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
+              value: item.staff.id,
+            }))
+          );
+          await axios
+            .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
+            .then((res) => {
+              setDrived(Boolean(res.data.configuration.many_active_pilot * 1));
+            })
+            .catch((e) => console.log("error", e));
           setIsLoad(false);
         })
         .catch((error) => {
           //console.log("Something is wrong");
           setIsLoad(false);
-        });
-      await axios
-        .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
-        .then((res) => {
-          setDrived(res);
         });
     }
     if (verifyTokenExpire()) fetchData();
@@ -261,9 +267,7 @@ const ClaimMonitoring = (props) => {
   const onChangeToMeasure = (e) => {
     setToMeasure(e.target.checked);
   };
-  // const onChangeDriving = (e) => {
-  //   setDrived(e.target.checked);
-  // };
+
   const onChangeAllChecked = (e) => {
     setToComplete(e.target.checked);
     setToAssignUnit(e.target.checked);
@@ -414,15 +418,6 @@ const ClaimMonitoring = (props) => {
                       {t("A valider")}
                       <span />
                     </label>
-                    {/* <label className="kt-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={Drived}
-                        onChange={(e) => onChangeDriving(e)}
-                      />{" "}
-                      {t("Pilote")}
-                      <span />
-                    </label> */}
                     <label className="kt-checkbox">
                       <input
                         type="checkbox"
@@ -496,7 +491,7 @@ const ClaimMonitoring = (props) => {
                         options={filterUnits}
                       />
                     </div>
-                    {
+                    {Drived && (
                       <div className={"col"}>
                         <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
                         <Select
@@ -508,7 +503,7 @@ const ClaimMonitoring = (props) => {
                           options={ActivePilots}
                         />
                       </div>
-                    }
+                    )}
                     <div className={"col"}>
                       <label htmlFor="staff">{t("Agent traitant")}</label>
                       <Select
