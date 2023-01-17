@@ -305,7 +305,23 @@ const ClaimToValidatedList = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
-
+          <div className="kt-portlet pt-2">
+            <div className="col-sm-6 text-left">
+              <div id="kt_table_1_filter" className="dataTables_filter">
+                <label>
+                  {t("Recherche")}:
+                  <input
+                    id="myInput"
+                    type="text"
+                    onKeyUp={(e) => searchElement(e)}
+                    className="form-control form-control-sm"
+                    placeholder=""
+                    aria-controls="kt_table_1"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
           {load ? (
             <LoadingTable />
           ) : (
@@ -314,23 +330,6 @@ const ClaimToValidatedList = (props) => {
                 id="kt_table_1_wrapper"
                 className="dataTables_wrapper dt-bootstrap4"
               >
-                <div className="row">
-                  <div className="col-sm-6 text-left">
-                    <div id="kt_table_1_filter" className="dataTables_filter">
-                      <label>
-                        {t("Recherche")}:
-                        <input
-                          id="myInput"
-                          type="text"
-                          onKeyUp={(e) => searchElement(e)}
-                          className="form-control form-control-sm"
-                          placeholder=""
-                          aria-controls="kt_table_1"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
                 <div className="row">
                   <div className="col-sm-12">
                     <table

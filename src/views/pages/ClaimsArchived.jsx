@@ -487,7 +487,7 @@ const ClaimsArchived = (props) => {
                         onKeyUp={(e) => searchElement(e)}
                         className="form-control form-control-sm"
                         placeholder=""
-                        aria-controls="kt_table_1"
+                        aria-controls="kt_table_1" 
                       />
                     </label>
                   </div>
