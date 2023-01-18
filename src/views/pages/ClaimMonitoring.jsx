@@ -155,7 +155,7 @@ const ClaimMonitoring = (props) => {
           setActivePilots(
             response.data?.activePilots.map((item) => ({
               label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
-              value: item.staff.id,
+              value: item?.staff?.id,
             }))
           );
           await axios
@@ -617,7 +617,7 @@ const ClaimMonitoring = (props) => {
                     filterInstitution={institution}
                     filterCategory={category}
                     filterObject={object}
-                    filterPilot={ActivePilot}
+                    filterPilot={ActivePilot?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -645,7 +645,7 @@ const ClaimMonitoring = (props) => {
                     onClick={showModal}
                     filterInstitution={institution}
                     filterCategory={category}
-                    filterPilot={ActivePilot}
+                    filterPilot={ActivePilot?.value}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate
@@ -676,7 +676,7 @@ const ClaimMonitoring = (props) => {
                     filterUnit={unit}
                     filterCategory={category}
                     filterObject={object}
-                    filterPilot={ActivePilot}
+                    filterPilot={ActivePilot?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -705,7 +705,7 @@ const ClaimMonitoring = (props) => {
                     filterStaff={staff}
                     filterCategory={category}
                     filterObject={object}
-                    filterPilot={ActivePilot}
+                    filterPilot={ActivePilot?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -737,7 +737,7 @@ const ClaimMonitoring = (props) => {
                     filterStaff={staff}
                     filterCategory={category}
                     filterObject={object}
-                    filterPilot={ActivePilot}
+                    filterPilot={ActivePilot?.value}
                     filterPeriod={
                       startDate && endDate
                         ? new Date(startDate) <= new Date(endDate)
@@ -767,7 +767,7 @@ const ClaimMonitoring = (props) => {
                     filterUnit={unit}
                     filterStaff={staff}
                     filterCategory={category}
-                    filterPilot={ActivePilot}
+                    filterPilot={ActivePilot?.value}
                     filterObject={object}
                     filterPeriod={
                       startDate && endDate

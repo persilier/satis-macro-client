@@ -76,7 +76,8 @@ const ColToAssignStaff = (props) => {
 
   const filterByPilot = () => {
     currentFilterData = currentFilterData.filter(
-      (claim) => claim?.treatment?.transferred_to_unit_by === props?.filterPilot
+      (claim) =>
+        claim?.active_treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
   if (props.filterPilot) filterByPilot();
