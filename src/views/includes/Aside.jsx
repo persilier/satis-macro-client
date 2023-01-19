@@ -725,7 +725,7 @@ const Aside = (props) => {
                         ) : null}
                         {verifyPermission(
                           props.userPermissions,
-                          "history-list-create-claim"
+                          "list-claim-transferred-my-institution"
                         ) ? (
                           <NavLink
                             exact
@@ -739,7 +739,7 @@ const Aside = (props) => {
                                 <span />
                               </i>
                               <span className="kt-menu__link-text">
-                                {t("Réclamations Transférée")}
+                                {t("Réclamations Transférées")}
                               </span>
                             </li>
                           </NavLink>

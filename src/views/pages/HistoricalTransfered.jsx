@@ -24,7 +24,7 @@ import Select from "react-select";
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
 let AllshowList = {};
 
-const ClaimToValidatedList = (props) => {
+const HistoricalTransfered = (props) => {
   //usage of useTranslation i18n
   const { t } = useTranslation();
 
@@ -59,7 +59,7 @@ const ClaimToValidatedList = (props) => {
 
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config`;
+    endpoint = `${appConfig.apiDomaine}/claim-transferred-my-institution-with-config`;
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
@@ -121,7 +121,6 @@ const ClaimToValidatedList = (props) => {
     }
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, ActivePilot]);
-  console.log(props);
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
@@ -620,4 +619,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(ClaimToValidatedList);
+export default connect(mapStateToProps)(HistoricalTransfered);

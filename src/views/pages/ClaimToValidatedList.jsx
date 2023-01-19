@@ -121,7 +121,6 @@ const ClaimToValidatedList = (props) => {
     }
     if (verifyTokenExpire()) fetchData();
   }, [numberPerPage, activeNumberPage, ActivePilot]);
-  console.log(props);
   const searchElement = async (e) => {
     setSearch(e.target.value);
     if (e.target.value) {
