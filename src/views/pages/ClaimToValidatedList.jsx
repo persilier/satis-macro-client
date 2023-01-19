@@ -374,47 +374,20 @@ const ClaimToValidatedList = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
-
-          <div id="kt_table_1_wrapper" className=" pl-5 pt-3">
-            <div className="row pr-4">
-              {Drived && props.lead && (
-                <div className="col col-6 pl-0 pr-3">
-                  <span
-                    className="d-block mb-3"
-                    style={{ fontSize: "1.8rem", fontWeight: "400" }}
-                  ></span>
-                  {Drived && (
-                    <div className={"col"}>
-                      <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
-                      <Select
-                        isClearable
-                        placeholder={t("Veuillez sélectionner l'agent")}
-                        value={ActivePilot}
-                        onChange={onChangeActivePilot}
-                        isLoading={load}
-                        options={ActivePilots}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-              <div
-                className="col-sm-6 pt-3"
-                style={{ paddingLeft: "14rem", paddingRight: "2rem" }}
-              >
-                <div id="kt_table_1_filter" className="dataTables_filter">
-                  <label className="w-100 mt-3">
-                    {t("Recherche")}:
-                    <input
-                      id="myInput"
-                      type="text"
-                      onKeyUp={(e) => searchElement(e)}
-                      className="form-control form-control-sm w-100"
-                      placeholder=""
-                      aria-controls="kt_table_1"
-                    />
-                  </label>
-                </div>
+          <div className="kt-portlet pt-2">
+            <div className="col-sm-6 text-left">
+              <div id="kt_table_1_filter" className="dataTables_filter">
+                <label>
+                  {t("Recherche")}:
+                  <input
+                    id="myInput"
+                    type="text"
+                    onKeyUp={(e) => searchElement(e)}
+                    className="form-control form-control-sm"
+                    placeholder=""
+                    aria-controls="kt_table_1"
+                  />
+                </label>
               </div>
             </div>
           </div>
