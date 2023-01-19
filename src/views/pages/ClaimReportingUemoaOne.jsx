@@ -706,10 +706,18 @@ const ClaimReportingUemoaOne = (props) => {
               </p>
             </div>
             <div className="d-flex justify-content-between">
-              <strong>{t("Pilote en charge")}</strong>
+              <strong>{t("Collecteur")}</strong>
               <p className="ml-5">
-                {claim.staffTreating ? claim.staffTreating : "-"}
+                {`${claim?.collector?.firstname} ${claim?.collector?.lastname}`}
               </p>
+            </div>
+            <div className="d-flex justify-content-between">
+              <strong>{t("Pilote en charge")}</strong>
+              <p className="ml-5">{`${claim?.pilot_in_charge?.firstname} ${claim?.pilot_in_charge?.lastname}`}</p>
+            </div>
+            <div className="d-flex justify-content-between">
+              <strong>{t("Unité concernée")}</strong>
+              <p className="ml-5">{`${claim?.unit?.name?.fr}`}</p>
             </div>
             <div className="d-flex justify-content-between">
               <strong>{t("Agent traitant")}</strong>

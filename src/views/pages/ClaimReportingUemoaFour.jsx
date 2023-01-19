@@ -492,6 +492,24 @@ const ClaimReportingUemoaThree = (props) => {
               </strong>
               <p className="ml-5">{claim.percentageNoTreated + "%"}</p>
             </div>
+            <div className="d-flex justify-content-between">
+              <strong>
+                {t("Nombre de réclamations traités dans le délai")}
+              </strong>
+              <p className="ml-5">{claim.countTreatedInDelay}</p>
+            </div>
+
+            <div className="d-flex justify-content-between">
+              <strong>{t("Nombre de réclamations traités hors délai")}</strong>
+              <p className="ml-5">{claim.countTreatedOutDelay}</p>
+            </div>
+
+            <div className="d-flex justify-content-between">
+              <strong>
+                {t("Nombre de réclamations en cours de traitement")}
+              </strong>
+              <p className="ml-5">{claim.countNoTreated}</p>
+            </div>
           </div>
         </td>
         {verifyPermission(

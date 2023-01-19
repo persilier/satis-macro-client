@@ -23,7 +23,7 @@ const ExportButton = ({pageUrl, downloadLink, className = "col-sm-6 text-right",
                         <span>{t("Télécharger le format")}</span>
                     </a>
 
-                    <NavLink to={pageUrl} className="btn ml-1 btn-primary buttons-excel buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
+                    <NavLink to={pageUrl} style={{paddingLeft:"8px",paddingRight:"8px"}} className="btn ml-1 btn-primary buttons-excel buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
                         <span>{t("Importer via Excel")}</span>
                     </NavLink>
                     {/*<button className="btn btn-secondary buttons-csv buttons-html5" tabIndex="0" aria-controls="kt_table_1" type="button">
