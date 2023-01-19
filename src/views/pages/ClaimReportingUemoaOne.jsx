@@ -675,7 +675,16 @@ const ClaimReportingUemoaOne = (props) => {
           >
             {/*<i className="flaticon2-down"/>*/}
           </button>
-          <div className="dropdown-menu px-5" style={{ width: "550px" }}>
+          <div
+            className="dropdown-menu px-5"
+            style={{
+              width: "550px",
+              height: "300px",
+              overflowY: "scroll",
+              paddingTop: "10px",
+              paddingBottom: "10px",
+            }}
+          >
             <div className="d-flex justify-content-between">
               <strong>{t("Objet de réclamation")}</strong>
               <p className="ml-5">
@@ -700,7 +709,7 @@ const ClaimReportingUemoaOne = (props) => {
             </div>
 
             <div className="d-flex justify-content-between">
-              <strong>{t("Fonction de traitement")}</strong>
+              <strong>{t("Unité de traitement")}</strong>
               <p className="ml-5">
                 {claim.functionTreating ? claim.functionTreating : "-"}
               </p>
@@ -708,16 +717,18 @@ const ClaimReportingUemoaOne = (props) => {
             <div className="d-flex justify-content-between">
               <strong>{t("Collecteur")}</strong>
               <p className="ml-5">
-                {`${claim?.collector?.firstname} ${claim?.collector?.lastname}`}
+                {`${claim?.collector?.firstname ?? "-"} ${claim?.collector
+                  ?.lastname ?? ""}`}
               </p>
             </div>
             <div className="d-flex justify-content-between">
               <strong>{t("Pilote en charge")}</strong>
-              <p className="ml-5">{`${claim?.pilot_in_charge?.firstname} ${claim?.pilot_in_charge?.lastname}`}</p>
+              <p className="ml-5">{`${claim?.pilot_in_charge?.firstname ??
+                "-"} ${claim?.pilot_in_charge?.lastname ?? ""}`}</p>
             </div>
             <div className="d-flex justify-content-between">
               <strong>{t("Unité concernée")}</strong>
-              <p className="ml-5">{`${claim?.unit?.name?.fr}`}</p>
+              <p className="ml-5">{`${claim?.unit?.name?.fr ?? ""}`}</p>
             </div>
             <div className="d-flex justify-content-between">
               <strong>{t("Agent traitant")}</strong>

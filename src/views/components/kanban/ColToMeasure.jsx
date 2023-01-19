@@ -61,6 +61,14 @@ const ColToMeasure = (props) => {
         claim?.active_treatment?.transferred_to_unit_by === props?.filterPilot
     );
   };
+
+  const filterByCollector = () => {
+    currentFilterData = currentFilterData.filter(
+      (claim) => claim?.created_by?.identite_id === props?.filterCollector
+    );
+  };
+
+  if (props.filterByCollector) filterByCollector();
   // if (props.filterPilot) filterByPilot();
 
   if (props.filterInstitution) filterByInstitution();
