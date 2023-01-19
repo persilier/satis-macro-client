@@ -990,10 +990,7 @@ const Aside = (props) => {
                           props.userPermissions,
                           "list-user-any-institution"
                         ) ||
-                        verifyPermission(
-                          props.userPermissions,
-                          "update-active-pilot"
-                        ) ? (
+                        props.lead ? (
                           <li
                             className="kt-menu__item  kt-menu__item--submenu"
                             aria-haspopup="true"
@@ -2744,7 +2741,7 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state?.user?.user?.permissions || null,
     activePilot: state?.user?.user?.staff?.is_active_pilot || false,
-    lead: state?.user?.user?.staff?.is_lead || false,
+    lead: state?.user?.user?.staff?.is_pilot_lead || false,
   };
 };
 

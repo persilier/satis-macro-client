@@ -70,7 +70,7 @@ const ColToComplete = (props) => {
 
   if (props.filterTimeLimit) filterTimeLimit();
 
-  if (props.filterPilot) filterByPilot();
+  // if (props.filterPilot) filterByPilot();
 
   return (
     <div
