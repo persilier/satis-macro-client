@@ -27,7 +27,10 @@ import WithoutCode from "../components/WithoutCode";
 import Loader from "../components/Loader";
 import { verifyTokenExpire } from "../../middleware/verifyToken";
 import { useTranslation } from "react-i18next";
-import ClaimCategory from "./ClaimCategory";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const endPointConfig = {
   PRO: {
@@ -190,6 +193,44 @@ const ClaimAdd = (props) => {
   const [startSearch, setStartSearch] = useState(false);
   const [componentData, setComponentData] = useState(undefined);
   const [load, setLoad] = useState(true);
+  let dataLabel = {
+    lastname: componentData ? componentData.params.fr.nom.value : "",
+    firstname: componentData ? componentData.params.fr.prenoms.value : "",
+    sexe: componentData ? componentData.params.fr.sexe.value : "",
+    telephone: componentData ? componentData.params.fr.telephone.value : "",
+    email: componentData ? componentData.params.fr.email.value : "",
+    ville: componentData ? componentData.params.fr.ville.value : "",
+    lieu: componentData ? componentData.params.fr.lieu.value : "",
+    unit_targeted_id: componentData ? componentData.params.fr.unite.value : "",
+    account_number: componentData ? componentData.params.fr.compte.value : "",
+    description: componentData ? componentData.params.fr.description.value : "",
+    institution_targeted_id: componentData
+      ? componentData.params.fr.institution.value
+      : "",
+    account_targeted_id: componentData
+      ? componentData.params.fr.unite.value
+      : "",
+    relationship_id: componentData ? componentData.params.fr.date.value : "",
+    claim_object_id: componentData ? componentData.params.fr.object.value : "",
+    request_channel_slug: componentData
+      ? componentData.params.fr.canal_reception.value
+      : "",
+    response_channel_slug: componentData
+      ? componentData.params.fr.canal_reception.value
+      : "",
+    claimer_expectation: componentData
+      ? componentData.params.fr.attente.value
+      : "",
+    amount_currency_slug: componentData
+      ? componentData.params.fr.devise.value
+      : "",
+    claim_category: componentData
+      ? componentData.params.fr.categorie.value
+      : "",
+    amount_disputed: componentData ? componentData.params.fr.montant.value : "",
+    event_occured_at: componentData ? componentData.params.fr.date.value : "",
+    is_revival: componentData ? componentData.params.fr.question.value : "",
+  };
 
   const [tag, setTag] = useState({
     name: "",
@@ -825,7 +866,6 @@ const ClaimAdd = (props) => {
     e.preventDefault();
     const newData = { ...data };
     newData.event_occured_at = formatToTimeStamp(data.event_occured_at);
-    setStartRequest(true);
     if (!newData.file.length) delete newData.file;
     if (!newData.response_channel_slug) delete newData.response_channel_slug;
     if (!newData.unit_targeted_id) delete newData.unit_targeted_id;
@@ -836,56 +876,99 @@ const ClaimAdd = (props) => {
 
     if (!newData.claimer_id) delete newData.claimer_id;
     if (props.plan !== "HUB") delete newData.relationship_id;
-    if (verifyTokenExpire()) {
-      axios
-        .post(endPoint.store, formatFormData(newData))
-        .then(async (response) => {
-          setDisabledInput(false);
-          ToastBottomEnd.fire(toastAddSuccessMessageConfig());
-          await resetAllData();
-          document.getElementById("customFile").value = "";
-          if (response.data.errors)
-            setCompletionError({
-              ref: response.data.claim.reference,
-              list: response.data.errors,
-            });
-        })
-        .catch(async (error) => {
-          if (completionError.length)
-            if (completionError.length)
-              setCompletionError({ ref: "", list: [] });
-          if (error.response.data.code === 409) {
-            //Existing entity claimer
-            setFoundData(error.response.data.error);
-            setStartRequest(false);
-            await setError(defaultError);
-            await document.getElementById("confirmSaveForm").click();
-          } else {
-            setStartRequest(false);
-            let fileErrors = [];
-            let i = 0;
-            for (const key in error.response.data.error) {
-              if (key === `file.${i}`) {
-                fileErrors = [
-                  ...fileErrors,
-                  ...error.response.data.error[`file.${i}`],
-                ];
-                i++;
+    let labelkeys = Object.keys(dataLabel);
+    labelkeys = labelkeys.filter((l) => newData[l]);
+    MySwal.fire({
+      title: "<strong>Detail sur la reclamation</strong>",
+      icon: "info",
+      width: "50%",
+      html: `
+        <div class="p-3 row" >
+         ${labelkeys
+           .map((dl) => {
+             return `<div class="col-6 mb-4"> <strong>${
+               dataLabel[dl]
+             }</strong>: ${
+               Array.isArray(newData[dl])
+                 ? newData[dl].map((t, i) => `  ${t}`)
+                 : dl === "institution_targeted_id"
+                 ? institutions.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "claim_object_id"
+                 ? claimObjects.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "claim_category"
+                 ? claimObjects.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "unit_targeted_id"
+                 ? units.find((ins) => ins.value === newData[dl])?.label
+                 : dl === "is_revival"
+                 ? newData[dl]
+                   ? "Oui"
+                   : "Non"
+                 : newData[dl]
+             } </div>`;
+           })
+           .join("")}
+        </div>
+        `,
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      confirmButtonText: "oui",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (verifyTokenExpire()) {
+          setStartRequest(true);
+          axios
+            .post(endPoint.store, formatFormData(newData))
+            .then(async (response) => {
+              setDisabledInput(false);
+              ToastBottomEnd.fire(toastAddSuccessMessageConfig());
+              await resetAllData();
+              document.getElementById("customFile").value = "";
+              if (response.data.errors)
+                setCompletionError({
+                  ref: response.data.claim.reference,
+                  list: response.data.errors,
+                });
+            })
+            .catch(async (error) => {
+              if (completionError.length)
+                if (completionError.length)
+                  setCompletionError({ ref: "", list: [] });
+              if (error.response.data.code === 409) {
+                //Existing entity claimer
+                setFoundData(error.response.data.error);
+                setStartRequest(false);
+                await setError(defaultError);
+                await document.getElementById("confirmSaveForm").click();
+              } else {
+                setStartRequest(false);
+                let fileErrors = [];
+                let i = 0;
+                for (const key in error.response.data.error) {
+                  if (key === `file.${i}`) {
+                    fileErrors = [
+                      ...fileErrors,
+                      ...error.response.data.error[`file.${i}`],
+                    ];
+                    i++;
+                  }
+                }
+                setError({
+                  ...defaultError,
+                  ...error.response.data.error,
+                  file: fileErrors,
+                  claim_category:
+                    claimCategory === null
+                      ? ["Le champ claim_category est obligatoire."]
+                      : [],
+                });
+                ToastBottomEnd.fire(toastAddErrorMessageConfig());
               }
-            }
-            setError({
-              ...defaultError,
-              ...error.response.data.error,
-              file: fileErrors,
-              claim_category:
-                claimCategory === null
-                  ? ["Le champ claim_category est obligatoire."]
-                  : [],
             });
-            ToastBottomEnd.fire(toastAddErrorMessageConfig());
-          }
-        });
-    }
+        }
+      }
+    });
   };
 
   return load || !ready ? (

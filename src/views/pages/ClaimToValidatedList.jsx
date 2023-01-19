@@ -19,8 +19,10 @@ import { verifyTokenExpire } from "../../middleware/verifyToken";
 import HtmlDescription from "../components/DescriptionDetail/HtmlDescription";
 import HtmlDescriptionModal from "../components/DescriptionDetail/HtmlDescriptionModal";
 import { useTranslation } from "react-i18next";
+import Select from "react-select";
 
 loadCss("/assets/plugins/custom/datatables/datatables.bundle.css");
+let AllshowList = {};
 
 const ClaimToValidatedList = (props) => {
   //usage of useTranslation i18n
@@ -40,7 +42,6 @@ const ClaimToValidatedList = (props) => {
     )
   )
     window.location.href = ERROR_401;
-
   const [load, setLoad] = useState(true);
   const [claims, setClaims] = useState([]);
   const [numberPerPage, setNumberPerPage] = useState(10);
@@ -52,46 +53,103 @@ const ClaimToValidatedList = (props) => {
   const [total, setTotal] = useState(0);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+  const [ActivePilot, setActivePilot] = useState(null);
+  const [ActivePilots, setActivePilots] = useState([]);
+  const [Drived, setDrived] = useState(false);
+
   let endpoint = "";
   if (props.plan === "MACRO" || props.plan === "PRO")
-    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution`;
+    endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-my-institution-with-config`;
   else
     endpoint = `${appConfig.apiDomaine}/claim-awaiting-validation-any-institution`;
 
   useEffect(() => {
     async function fetchData() {
-      axios
-        .get(
-          `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
-            search.length ? `&key=${search.value}` : ""
-          }`
-        )
-        .then((response) => {
-          setLoad(false);
-
-          if (response.data.length === 0) {
-            setNumberPage(forceRound(0 / numberPerPage));
-            setShowList([]);
-            setClaims([]);
-            setTotal(0);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+      setLoad(true);
+      await axios
+        .get(`${appConfig.apiDomaine}/configuration-active-pilot`)
+        .then(async (res) => {
+          const isMultiple = Boolean(
+            res.data.configuration.many_active_pilot * 1
+          );
+          setDrived(isMultiple);
+          if (isMultiple) {
+            setActivePilots(
+              res.data?.all_active_pilots.map((item) => ({
+                label: `${item?.staff?.identite?.firstname} ${item?.staff?.identite?.lastname}`,
+                value: item?.staff?.id,
+              }))
+            ); // ?size=20&key=0613898c-7d04-4353-8b9e-fa1ce52ca03d&type=transferred_to_unit_by
+            axios
+              .get(
+                `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+                  search.length ? `&key=${search.value}` : ""
+                }${ActivePilot ? `&pilot=${ActivePilot.value}` : ""}`
+              )
+              .then((response) => {
+                console.log(response);
+                setLoad(false);
+                if (response.data.length === 0) {
+                  setNumberPage(forceRound(0 / numberPerPage));
+                  setShowList([]);
+                  setClaims([]);
+                  setTotal(0);
+                  setPrevUrl(response.data["prev_page_url"]);
+                  setNextUrl(response.data["next_page_url"]);
+                } else {
+                  setNumberPage(
+                    forceRound(response.data.total / numberPerPage)
+                  );
+                  setShowList(response.data.data.slice(0, numberPerPage));
+                  setClaims(response.data["data"]);
+                  setTotal(response.data.total);
+                  setPrevUrl(response.data["prev_page_url"]);
+                  setNextUrl(response.data["next_page_url"]);
+                }
+              })
+              .catch((error) => {
+                setLoad(false);
+                console.log("Something is wrong");
+              });
           } else {
-            setNumberPage(forceRound(response.data.total / numberPerPage));
-            setShowList(response.data.data.slice(0, numberPerPage));
-            setClaims(response.data["data"]);
-            setTotal(response.data.total);
-            setPrevUrl(response.data["prev_page_url"]);
-            setNextUrl(response.data["next_page_url"]);
+            // ?size=20&key=0613898c-7d04-4353-8b9e-fa1ce52ca03d&type=transferred_to_unit_by
+            axios
+              .get(
+                `${endpoint}?size=${numberPerPage}&page=${activeNumberPage}${
+                  search.length ? `&key=${search.value}` : ""
+                }${ActivePilot ? `&pilot=${ActivePilot.value}` : ""}`
+              )
+              .then((response) => {
+                console.log(response);
+                setLoad(false);
+                if (response.data.length === 0) {
+                  setNumberPage(forceRound(0 / numberPerPage));
+                  setShowList([]);
+                  setClaims([]);
+                  setTotal(0);
+                  setPrevUrl(response.data["prev_page_url"]);
+                  setNextUrl(response.data["next_page_url"]);
+                } else {
+                  setNumberPage(
+                    forceRound(response.data.total / numberPerPage)
+                  );
+                  setShowList(response.data.data.slice(0, numberPerPage));
+                  setClaims(response.data["data"]);
+                  setTotal(response.data.total);
+                  setPrevUrl(response.data["prev_page_url"]);
+                  setNextUrl(response.data["next_page_url"]);
+                }
+              })
+              .catch((error) => {
+                setLoad(false);
+                console.log("Something is wrong");
+              });
           }
         })
-        .catch((error) => {
-          setLoad(false);
-          console.log("Something is wrong");
-        });
+        .catch((e) => console.log("error", e));
     }
     if (verifyTokenExpire()) fetchData();
-  }, [numberPerPage, activeNumberPage]);
+  }, [numberPerPage, activeNumberPage, ActivePilot]);
 
   const searchElement = async (e) => {
     setSearch(e.target.value);
@@ -140,6 +198,34 @@ const ClaimToValidatedList = (props) => {
       setActiveNumberPage(1);
     }
   };
+
+  // const filterShowListBySearchValue = (value) => {
+  //   value = getLowerCaseString(value);
+  //   let newClaims = [...claims];
+  //   newClaims = newClaims.filter((el) => {
+  //     return (
+  //       getLowerCaseString(el.reference).indexOf(value) >= 0 ||
+  //       getLowerCaseString(
+  //         `${el.claimer ? el.claimer.lastname : "-"} ${
+  //           el.claimer ? el.claimer.firstname : ""
+  //         }  ${el.account_targeted ? " / " + el.account_targeted.number : ""}`
+  //       ).indexOf(value) >= 0 ||
+  //       getLowerCaseString(formatDateToTime(el.created_at)).indexOf(value) >=
+  //         0 ||
+  //       getLowerCaseString(
+  //         el.claim_object ? el.claim_object.name["fr"] : ""
+  //       ).indexOf(value) >= 0 ||
+  //       getLowerCaseString(truncateString(el.description, 41)).indexOf(value) >=
+  //         0 ||
+  //       getLowerCaseString(
+  //         el.institution_targeted ? el.institution_targeted.name : ""
+  //       ).indexOf(value) >= 0
+  //     );
+  //   });
+
+  //   return newClaims;
+  // };
+
   const onChangeNumberPerPage = (e) => {
     e.persist();
     setNumberPerPage(parseInt(e.target.value));
@@ -164,6 +250,19 @@ const ClaimToValidatedList = (props) => {
     }
   };
 
+  const onChangeActivePilot = (selected) => {
+    setActivePilot(selected);
+    // let concernedPilotClaims = AllshowList[selected.value]
+    //   ? AllshowList[selected.value]
+    //   : AllshowList["18f69a5c-b1b9-403c-b8af-883cdb40cfe9"];
+    // // console.log(concernedPilotClaims,AllshowList,AllshowList["18f69a5c-b1b9-403c-b8af-883cdb40cfe9"] );
+    // setNumberPage(
+    //   forceRound(concernedPilotClaims.claims.length / numberPerPage)
+    // );
+    // setShowList(concernedPilotClaims.claims.slice(0, numberPerPage));
+    // setClaims(concernedPilotClaims.claims);
+  };
+
   const arrayNumberPage = () => {
     const pages = [];
     for (let i = 0; i < numberPage; i++) {
@@ -178,7 +277,6 @@ const ClaimToValidatedList = (props) => {
     setCurrentMessage(message);
     document.getElementById("button_modal").click();
   };
-
   const printBodyTable = (claim, index) => {
     return (
       <tr key={index} role="row" className="odd">
@@ -305,6 +403,28 @@ const ClaimToValidatedList = (props) => {
 
         <div className="kt-portlet">
           <HeaderTablePage title={t("Liste des réclamations")} />
+
+          <div className="form-group row pt-3 px-3 rounded">
+            <div className="col">
+              <span
+                className="d-block mb-3"
+                style={{ fontSize: "1.8rem", fontWeight: "400" }}
+              ></span>
+              {Drived && (
+                <div className={"col"}>
+                  <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
+                  <Select
+                    isClearable
+                    placeholder={t("Veuillez sélectionner l'agent")}
+                    value={ActivePilot}
+                    onChange={onChangeActivePilot}
+                    isLoading={load}
+                    options={ActivePilots}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
 
           {load ? (
             <LoadingTable />
