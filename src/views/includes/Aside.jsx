@@ -2741,7 +2741,7 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state?.user?.user?.permissions || null,
     activePilot: state?.user?.user?.staff?.is_active_pilot || false,
-    lead: state?.user?.user?.staff?.is_pilot_lead || false,
+    lead: state?.user?.user?.staff?.is_institution_lead || false,
   };
 };
 

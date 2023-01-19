@@ -1,5 +1,5 @@
 import React from "react";
-import ClaimDetails from "./ClaimDetails";
+import ClaimDetails from "./ClaimDetails"; 
 import {loadCss, loadScript} from "../../../helpers/function";
 import {useTranslation} from "react-i18next";
 
