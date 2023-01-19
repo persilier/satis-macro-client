@@ -102,6 +102,11 @@ const ClaimMonitoring = (props) => {
   const [isLoad, setIsLoad] = useState(true);
 
   useEffect(() => {
+    if (!props.lead) {
+      setActivePilot({
+        value: props?.staff,
+      });
+    }
     async function fetchData() {
       setIsLoad(true);
       let endpoint = "";
@@ -491,7 +496,7 @@ const ClaimMonitoring = (props) => {
                         options={filterUnits}
                       />
                     </div>
-                    {Drived && (
+                    {Drived && props.lead && (
                       <div className={"col"}>
                         <label htmlFor="staff">{t("Pilote(s) actif(s)")}</label>
                         <Select
@@ -575,7 +580,7 @@ const ClaimMonitoring = (props) => {
                     style={{ marginRight: "12px" }}
                   >
                     <div className="col-12">
-                      <h4 className="text-center">
+                      <h4 className="">
                         {t("Période de reception de la réclamation")}
                       </h4>
                     </div>
@@ -822,6 +827,8 @@ const mapStateToProps = (state) => {
   return {
     userPermissions: state.user.user.permissions,
     plan: state.plan.plan,
+    lead: state?.user?.user?.staff?.is_institution_lead || false,
+    staff: state?.user?.user?.staff?.id || null,
   };
 };
 
