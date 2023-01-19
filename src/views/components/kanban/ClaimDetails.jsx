@@ -227,7 +227,7 @@ const ClaimDetails = (props) => {
                               <Loader />
                             ) : (
                               <a href="#" className="kt-widget__username">
-                                {`${claim.claimer.lastname} ${claim.claimer.firstname}`}
+                                {`${claim?.claimer?.lastname} ${claim?.claimer?.firstname}`}
                                 <i className="flaticon2-correct kt-font-success" />
                               </a>
                             )}
@@ -357,6 +357,31 @@ const ClaimDetails = (props) => {
                     <div className="kt-wizard-v2__review-title">
                       <h5>
                         <span style={{ color: "#48465b" }}>{t("Cible")}</span>
+                      </h5>
+                    </div>
+                    {!claim ? null : (
+                      <div className="kt-wizard-v2__review-content">
+                        <strong>{t("Institution")}</strong>:{" "}
+                        <span className="mx-2">
+                          {claim.institution_targeted.name}
+                        </span>
+                        <br />
+                        <strong>{t("Unité")}</strong>:{" "}
+                        <span className="mx-2">
+                          {claim.unit_targeted
+                            ? claim.unit_targeted.name["fr"]
+                            : "-"}
+                        </span>
+                        <br />
+                      </div>
+                    )}
+                  </div>
+                  <div className="kt-wizard-v2__review-item">
+                    <div className="kt-wizard-v2__review-title">
+                      <h5>
+                        <span style={{ color: "#48465b" }}>
+                          {t("Unité traitante")}
+                        </span>
                       </h5>
                     </div>
                     {!claim ? null : (

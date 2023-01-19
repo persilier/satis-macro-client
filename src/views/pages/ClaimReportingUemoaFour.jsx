@@ -445,7 +445,10 @@ const ClaimReportingUemoaThree = (props) => {
           >
             {/*<i className="flaticon2-down"/>*/}
           </button>
-          <div className="dropdown-menu px-5" style={{ width: "550px" }}>
+          <div
+            className="dropdown-menu px-5"
+            style={{ width: "550px", height: "300px", overflowY: "scroll", paddingTop:"10px", paddingBottom:"10px" }}
+          >
             <div className="d-flex justify-content-between">
               <strong>
                 {t("Délai moyen de qualification")} (J) {t("avec weekend")}
