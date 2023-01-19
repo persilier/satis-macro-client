@@ -92,13 +92,16 @@ const ColToValidate = (props) => {
   };
 
   const filterByCollector = () => {
-    currentFilterData = currentFilterData.filter(
-      (claim) => claim?.created_by?.identite_id === props?.filterCollector
-    );
+    currentFilterData = currentFilterData.filter((claim) => {
+      if (claim?.created_by) {
+        return claim?.created_by?.identite_id === props?.filterCollector;
+      }
+      return true;
+    });
   };
 
-  if (props.filterByCollector) filterByCollector();
-  
+  if (props.filterCollector) filterByCollector();
+
   if (props.filterPilot) filterByPilot();
 
   if (props.filterUnit) filterByUnit();

@@ -288,6 +288,23 @@ const ClaimReassign = (props) => {
         <div className="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
           <div className="kt-portlet">
             <HeaderTablePage title={t("Réclamations à réassigner")} />
+            <div className="kt-portlet pt-2">
+              <div className="col-sm-6 text-left">
+                <div id="kt_table_1_filter" className="dataTables_filter">
+                  <label>
+                    {t("Recherche")}:
+                    <input
+                      id="myInput"
+                      type="text"
+                      onKeyUp={(e) => searchElement(e)}
+                      className="form-control form-control-sm"
+                      placeholder=""
+                      aria-controls="kt_table_1"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
             {load ? (
               <LoadingTable />
             ) : (
