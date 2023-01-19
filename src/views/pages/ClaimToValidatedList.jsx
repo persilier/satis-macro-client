@@ -405,7 +405,7 @@ const ClaimToValidatedList = (props) => {
                       className="table table-striped table-bordered table-hover table-checkable dataTable dtr-inline"
                       id="myTable"
                       role="grid"
-                      aria-describedby="kt_table_1_info"
+                      aria-describedby="kt*_table_1_info"
                       style={{ width: "952px" }}
                     >
                       <thead>
