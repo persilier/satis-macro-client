@@ -587,7 +587,7 @@ const Chats = (props) => {
                   </div>
                 </div>
                 <div className="kt-portlet__foot position-relative">
-                  {["closed"].includes(chatStatus) && (
+                  {["closed", "archived"].includes(chatStatus) && (
                     <div className="chat-grisser"></div>
                   )}
                   <div className="kt-chat__input">
